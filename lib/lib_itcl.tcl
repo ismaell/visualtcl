@@ -111,7 +111,7 @@ proc vTcl:widget:lib:lib_itcl {args} {
             namespace import iwidgets::panedwindow
             namespace import iwidgets::scrolledtext
 
-            switch {$tcl_platform(platform)} {
+            switch $tcl_platform(platform) {
                 windows {
                     option add *Scrolledhtml.sbWidth    16
                     option add *Scrolledtext.sbWidth    16
@@ -141,7 +141,7 @@ proc vTcl:widget:lib:lib_itcl {args} {
 }
 
 proc vTcl:lib_itcl:setup {} {
-    global vTcl
+    global vTcl tcl_platform
 
     #
     # additional attributes to set on insert
@@ -169,7 +169,7 @@ proc vTcl:lib_itcl:setup {} {
     set vTcl(option,translate,-balloonfont) vTcl:font:translate
     set vTcl(option,noencase,-balloonfont) 1
 
-    switch {$tcl_platform(platform)} {
+    switch $tcl_platform(platform) {
         windows {
             option add *Scrolledhtml.sbWidth    16
             option add *Scrolledtext.sbWidth    16
@@ -267,6 +267,7 @@ proc vTcl:widget:combobox:inscmd {target} {
 proc vTcl:lib_itcl:dump_subwidgets {subwidget} {
     global vTcl classes
     set output ""
+    set geometry ""
     set widget_tree [vTcl:widget_tree $subwidget]
 
     foreach i $widget_tree {
@@ -276,8 +277,11 @@ proc vTcl:lib_itcl:dump_subwidgets {subwidget} {
         if {"$i" != "$subwidget"} {
             set class [vTcl:get_class $i]
             append output [$classes($class,dumpCmd) $i $basename]
-            append output [vTcl:dump_widget_geom $i $basename]
+            append geometry [vTcl:dump_widget_geom $i $basename]
         }
     }
+    append output $geometry
     return $output
 }
+
+

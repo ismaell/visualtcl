@@ -780,7 +780,7 @@ proc vTcl:dump:widget_fonts_and_images {} {
 
     foreach var $vars { set vTcl(dump,$var) {} }
 
-    set children [vTcl:list_widget_tree .]
+    set children [vTcl:complete_widget_tree . 0]
 
     foreach child $children {
 
@@ -815,12 +815,13 @@ proc vTcl:dump:widget_fonts_and_images {} {
 proc vTcl:dump:project_info {basedir project} {
     global vTcl
 
-    set widgets [vTcl:complete_widget_tree .]
+    # we don't want information for the displayed widget tree
+    #                                        v
+    set widgets [vTcl:complete_widget_tree . 0]
 
     set out "proc vTcl:project:info \{\} \{\n"
 
     foreach widget $widgets {
-        set widget [lindex [split $widget \#] 0]
         if {[vTcl:streq $widget "."]} { continue }
         set testing [namespace children ::widgets ::widgets::${widget}]
         if {$testing == ""} { continue }
@@ -862,3 +863,5 @@ proc vTcl:dump:project_info {basedir project} {
     close $fp
     return
 }
+
+

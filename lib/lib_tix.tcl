@@ -29,7 +29,7 @@ proc vTcl:lib_tix:init {} {
 
     if {[catch {package require Tix} erg]} {
         lappend vTcl(libNames) {(not detected) Tix Widget Support Library}
-	return 0
+        return 0
     }
     lappend vTcl(libNames) {Tix Widget Support Library}
     return 1
@@ -177,62 +177,20 @@ proc vTcl:lib_tix:new_option {cmd args} {
 # install them.
 #
 proc vTcl:lib_tix:setup {} {
-	global vTcl
+    global vTcl
 
     ## Preferences
     set vTcl(tixPref,dump_colors) 0 ;# if 0, don't save -background, etc.
 
     ## Add to procedure, var, bind regular expressions
     if {[lempty $vTcl(bind,ignore)]} {
-	append vTcl(bind,ignore) "tix"
+        append vTcl(bind,ignore) "tix"
     } else {
-	append vTcl(bind,ignore) "|tix"
+        append vTcl(bind,ignore) "|tix"
     }
 
     append vTcl(proc,ignore) "|tix"
     append vTcl(var,ignore)  "|tix"
-}
-
-#
-# per-widget-class dump procedures
-#
-proc vTcl:dump:TixNoteBook {target basename} {
-    global vTcl
-    set result [vTcl:lib_tix:dump_widget_opt $target $basename]
-    set entries [$target pages]
-    foreach page $entries {
-        set conf [$target pageconfigure $page]
-        set pairs [vTcl:conf_to_pairs $conf ""]
-        append result "$vTcl(tab)$basename add $page \\\n"
-        append result "[vTcl:clean_pairs $pairs]\n"
-    }
-    foreach page $entries {
-        set subwidget [$target subwidget $page]
-        append result [vTcl:lib_tix:dump_subwidgets $subwidget]
-    }
-    return $result
-}
-
-proc vTcl:dump:TixPanedWindow {target basename} {
-    global vTcl
-    set result [vTcl:lib_tix:dump_widget_opt $target $basename]
-    set entries [$target panes]
-    foreach page $entries {
-        set conf [$target paneconfigure $page]
-        foreach c $conf { # Filter the valid options out
-            if [regexp -- {^-(after|allow|at|before|expand|max|min|size)} $c] {
-                lappend validcfg $c
-            }
-        }
-        set pairs [vTcl:conf_to_pairs $validcfg ""]
-        append result "$vTcl(tab)$basename add $page \\\n"
-        append result "[vTcl:clean_pairs $pairs]\n"
-    }
-    foreach page $entries {
-        set subwidget [$target subwidget $page]
-        append result [vTcl:lib_tix:dump_subwidgets $subwidget]
-    }
-    return $result
 }
 
 proc vTcl:dump:TixOptionMenu {target basename} {
@@ -304,7 +262,7 @@ proc vTcl:dump:TixSelect {target basename} {
 # itself (`vTcl:dump:widgets $subwidget' doesn't do the right thing if
 # the grid geometry manager is used to manage children of $subwidget.
 proc vTcl:lib_tix:dump_subwidgets {subwidget} {
-    global vTcl
+    global vTcl classes
     set output ""
     set widget_tree [vTcl:widget_tree $subwidget]
     foreach i $widget_tree {
@@ -312,10 +270,8 @@ proc vTcl:lib_tix:dump_subwidgets {subwidget} {
         # don't try to dump subwidget itself
         if {"$i" != "$subwidget"} {
             set class [vTcl:get_class $i]
-            #puts "kc:dump_subwidgets1:[$vTcl($class,dump_opt) $i $basename]:"
-            append output [$vTcl($class,dump_opt) $i $basename]
+            append output [$classes($class,dumpCmd) $i $basename]
         }
-        #puts "kc:dump_subwidgets2:[vTcl:dump_widget_geom $i $basename]:"
         append output [vTcl:dump_widget_geom $i $basename]
     }
     return $output

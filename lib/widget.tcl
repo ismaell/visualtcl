@@ -254,8 +254,11 @@ proc vTcl:list_widget_tree {target {which ""} {include_menus 0} {include_megachi
 
 # this func returns the same as list_widget_tree plus all the
 # children in megawidgets' childsites
+#
+# wantsdiff returns along with each megawidget's children the
+# level difference for the widget tree (ex. #-4 to skip 4 levels)
 
-proc vTcl:complete_widget_tree {{root .}} {
+proc vTcl:complete_widget_tree {{root .} {wantsdiff 1}} {
 
     global classes
     set tree [vTcl:list_widget_tree $root]
@@ -269,10 +272,12 @@ proc vTcl:complete_widget_tree {{root .}} {
             continue
         }
 
-        set children [$childrenCmd $i]
-        foreach j $children {
-            lappend result $j
+        if {$wantsdiff} {
+             set children [$childrenCmd $i]
+        } else {
+             set children [$childrenCmd $i ""]
         }
+        eval lappend result $children
     }
 
     return $result
@@ -1075,6 +1080,8 @@ proc vTcl:widget:register_widget_megachildren {w} {
     # when the user clicks on such a child, and such an information is
     # found, then the parent will be selected instead
 
+    # puts "vTcl:widget:register_widget_megachildren $w"
+
     if {[info exists classes(${wdg_class},megaWidget)]} {
         if {$classes(${wdg_class},megaWidget)} {
 
@@ -1085,6 +1092,32 @@ proc vTcl:widget:register_widget_megachildren {w} {
                     variable parent
                 }
                 set ::widgets::${child}::parent $w
+            }
+            
+            #puts "=>$w"
+		#puts "before: $children"
+            
+            # Now, we shall unmark those widgets as parent that
+            # are in childsites, because the user should be able
+            # to manipulate them. First, let try to get a list of
+            # eligible children.
+            
+            set childrenCmd [lindex $classes($wdg_class,treeChildrenCmd) 0]
+            if {$childrenCmd == ""} {
+                return
+            }
+
+            # don't include levels info for widget tree display
+            #                                 v
+            set realChildren [$childrenCmd $w ""]
+		
+            #puts "after: $realChildren"
+            
+            foreach realChild $realChildren {
+                if {[info exists ::widgets::${realChild}::parent]} {
+                   unset ::widgets::${realChild}::parent
+                }
+                vTcl:widget:register_widget $realChild
             }
         }
     }
@@ -1164,4 +1197,6 @@ proc vTcl:widget:register_all_widgets {{w .}} {
         vTcl:widget:register_widget $w
     }
 }
+
+
 

@@ -869,6 +869,7 @@ proc vTclWindow.vTclMenuEdit {base menu} {
     wm resizable $base 1 1
     wm deiconify $base
     wm title $base "Menu editor"
+    wm transient $base .vTcl
 
     frame $base.fra21 \
         -borderwidth 2 -height 75 -width 125
@@ -1224,6 +1225,8 @@ proc vTclWindow.vTclMenuEdit {base menu} {
         }
     }
 }
+
+
 
 
 
