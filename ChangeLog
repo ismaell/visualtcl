@@ -1,5 +1,21 @@
 ChangeLog for Visual Tcl:
 
+1.51b3 ->
+    o Fixed "Set command" bug where it would prevent from saving the project
+    o Made sure -label, -anchor and other options are saved
+    o Fixed error when inserting compound for the first time after starting vTcl
+    o The behavior for aliases in compounds is modified as such:
+      - if there are aliases in the compound, define them when compound is inserted
+        (so the alias will point to the pasted widget, not the original one, but
+         because vTcl allows aliases existing in several toplevels to be referred
+         to by using MyTop.MyAlias, this is not a problem)
+      - if there are no aliases for subwidgets in the compound, and the
+        "Auto Aliasing for New Widgets" option is turned on, then new automatic
+        aliases are created
+    o Added right-click menu in attributes editor to allow setting an option for
+      a range of widgets at once, as well as to save/not save options and restore
+      the default value for an option
+
 1.51b2 -> 1.51b3
     o Usability improvements:
       - added "Set Variable" for checkbutton and radiobutton
