@@ -108,19 +108,8 @@ proc vTcl:export_procs {} {
     vTcl:dump:not_sourcing_header output
     set children [vTcl:complete_widget_tree . 0]
 
-    foreach child $children {
-        set class [vTcl:get_class $child]
-        lappend classList $class
-
-        ## if this is a compound container with a megawidget inside,
-        ## save the megawidget support procs into the project
-        if {$class == "CompoundContainer" && 
-            [$child innerClass] == "MegaWidget"} {
-            lappend classList MegaWidget
-        }
-    }
-
-    foreach class [vTcl:lrmdups $classList] {
+    set classList [vTcl::widgets::usedClasses .]
+    foreach class $classList {
         if {[info exists classes($class,exportCmds)]} {
             eval lappend list $classes($class,exportCmds)
         }
@@ -864,6 +853,7 @@ proc vTcl:dump:sourcing_footer {varName} {
     if {![vTcl:streq [string index $var end] "\n"]} { append var "\n" }
     append var "\}\n"
 }
+
 
 
 

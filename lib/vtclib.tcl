@@ -66,17 +66,9 @@ proc vTcl:WidgetProc {w args} {
         ## If no arguments, returns the path the alias points to
         return $w
     }
-    ## The first argument is a switch, they must be doing a configure.
-    if {[string index $args 0] == "-"} {
-        set command configure
-        ## There's only one argument, must be a cget.
-        if {[llength $args] == 1} {
-            set command cget
-        }
-    } else {
-        set command [lindex $args 0]
-        set args [lrange $args 1 end]
-    }
+
+    set command [lindex $args 0]
+    set args [lrange $args 1 end]
     uplevel $w $command $args
 }
 
@@ -177,4 +169,5 @@ proc {info_script} {} {
     }
     return $scriptdir
 }
+
 

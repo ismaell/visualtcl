@@ -1525,6 +1525,30 @@ namespace eval vTcl::widgets {
         }
     }
 
+    proc getClasses {w args} {
+        set c [vTcl:get_class $w]
+
+        ## if this is a compound container with a megawidget inside,
+        ## save the megawidget support procs into the project as well
+        if {$c == "CompoundContainer" && [$w innerClass] == "MegaWidget"} {
+            return [concat $c [usedClasses [$w innerWidget]]]
+        } else {
+            return $c
+        }
+    }
+
+    proc usedClasses {root} {
+        array set classArray {}
+        iterateCompleteWidgetTree $root getClasses {} classArray
+
+        set result ""
+        foreach index [array names classArray] {
+            set result [concat $result $classArray($index)]
+        }
+
+        return [lsort -unique $result]
+    }
+
     proc getLibrary {w arg} {
         set c [vTcl:get_class $w]
         return $::classes($c,lib)
@@ -1624,6 +1648,4 @@ namespace eval vTcl::widgets {
         return [lsort -unique $result]
     }
 }
-
-
 

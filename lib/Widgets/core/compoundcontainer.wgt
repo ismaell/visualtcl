@@ -187,6 +187,9 @@ namespace eval vTcl::widgets::core::compoundcontainer {
             innerClass {
                 return [winfo class $w.cmpd]
             }
+            innerWidget {
+                return $w.cmpd
+            }
             default {
                 ## we have renamed the default widgetProc _<widgetpath>
                 uplevel _$w $command $args
@@ -331,4 +334,5 @@ namespace eval vTcl::widgets::core::compoundcontainer {
         return [::vTcl::compounds::getFonts $compoundType [join $compoundClass]]
     }
 }
+
 
