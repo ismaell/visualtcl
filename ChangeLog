@@ -1,6 +1,18 @@
 ChangeLog for Visual Tcl:
 
-1.6.0b1 ->
+1.6.0b2 -> 1.6.0
+    o Do not save a menubutton's menu if it does not exist.
+    o Redesigned font and image selection from attributes manager.
+    o If freewrap is not installed, will tell user where he/she should
+      install it.
+    o Added help.
+    o Saving help window position and size.
+    o Added database viewer megawidget sample and image list megawidget
+      sample.
+    o Redesigned font manager using BWidget's listbox.
+    o Redesigned image manager using BWidget's listbox.
+
+1.6.0b1 -> 1.6.0b2
     o Saving fonts with description rather than a font key. This will
       allow compounds to be merged into an existing project without
       problems.
@@ -1001,6 +1013,8 @@ ChangeLog for Visual Tcl:
     o And much, much more :)
 
 1.01 released (December 5, 1996)
+
+
 
 
 

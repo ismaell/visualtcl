@@ -52,16 +52,10 @@
     o  Put vtcl in your path (/usr/local/bin or /usr/bin) or change your
        path to include $(VTCL_HOME)
 
-    o  Type the following command:
+    o  Make sure your DISPLAY environment variable is set and type "vtcl".
 
-       wish <vtcl home>/vtsetup.tcl
-
-       where <vtcl home> is the directory where you installed Visual Tcl.
-       For example:
-
-       wish /usr/local/vtcl-1.5.1/vtsetup.tcl
-
-    o  Select the libraries you want to be loaded on start up.
+    o  Select File / Preferences... then select the libraries you want to 
+       be loaded on start up.
 
        Note:
        - lib_core.tcl must always be selected.
@@ -70,15 +64,16 @@
        - lib_itcl.tcl adds support for [Incr Tcl/Tk]
        - lib_tix.tcl  adds support for Tix
        - lib_blt.tcl  adds support for BLT
+       - the libraries you selected will be loaded the next time you start
+         Visual Tcl. The first time you start vTcl, it will attempt to load
+         all the libraries. For faster startup time, it is recommended you
+         select only the libraries you need.
 
        We recommend to select lib_core.tcl and lib_vtcl.tcl for a starter.
        Depending on what extensions you have installed, you can then load
        additional libraries. It is not an error to load a library if the
        targeted extension is not installed, but vTcl will use more
        memory if you do so.
-
-    o  Make sure your DISPLAY environment variable is set and type "vtcl".
-
 
                               WINDOWS 95 and NT
 
@@ -94,9 +89,10 @@
        This is usually done by default by the newest Tcl/Tk packages for
        Windows.
 
-    o  Double-click on the "vtsetup.tcl" icon.
+    o  Double-click on the "vtcl.tcl" icon.
 
-    o  Select the libraries you want to be loaded on start up.
+    o  Select File / Preferences... then select the libraries you want to 
+       be loaded on start up.
 
        Note:
        - lib_core.tcl must always be selected.
@@ -105,14 +101,16 @@
        - lib_itcl.tcl adds support for [Incr Tcl/Tk]
        - lib_tix.tcl  adds support for Tix
        - lib_blt.tcl  adds support for BLT
+       - the libraries you selected will be loaded the next time you start
+         Visual Tcl. The first time you start vTcl, it will attempt to load
+         all the libraries. For faster startup time, it is recommended you
+         select only the libraries you need.
 
        We recommend to select lib_core.tcl and lib_vtcl.tcl for a starter.
        Depending on what extensions you have installed, you can then load
        additional libraries. It is not an error to load a library if the
        targeted extension is not installed, but vTcl will use more
        memory if you do so.
-
-    o  Double-click on the "vtcl.tcl" icon.
 
 
                                   MACINTOSH
@@ -127,10 +125,12 @@
  III. REQUIREMENTS
 
     Tcl8.3.2 and Tk8.3.2 or newer. You can obtain a binary for most platforms
-    from http://www.scriptics.com/. If not, source code is also available.
+    from http://www.activestate.com/. If not, source code is also available
+    from http://www.sourceforge.net/.
 
                                       --
                               stewart@neuron.com
                                 cgavin@dnai.com
                               damon@unreality.com
+
 
