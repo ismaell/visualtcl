@@ -283,8 +283,8 @@ proc vTcl:prop:update_attr {} {
         }
         foreach i $vTcl(options) {
 	    set type $options($i,type)
-	    if {[info exists specialOpts($i,type)]} {
-	    	set type $specialOpts($i,type)
+	    if {[info exists specialOpts($vTcl(w,class),$i,type)]} {
+	    	set type $specialOpts($vTcl(w,class),$i,type)
 	    }
 	    if {$type == "synonym"} { continue }
             if {[lsearch $vTcl(w,optlist) $i] >= 0} {
@@ -380,10 +380,10 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
     if {[winfo exists $top.$option]} { return }
 
     if {$prefix == "opt"} {
-	if {[info exists specialOpts($option,type)]} {
-	    set text    $specialOpts($option,text)
-	    set type    $specialOpts($option,type)
-	    set choices $specialOpts($option,choices)
+	if {[info exists specialOpts($vTcl(w,class),$option,type)]} {
+	    set text    $specialOpts($vTcl(w,class),$option,text)
+	    set type    $specialOpts($vTcl(w,class),$option,type)
+	    set choices $specialOpts($vTcl(w,class),$option,choices)
 	} else {
 	    set text    $options($option,text)
 	    set type    $options($option,type)
@@ -410,7 +410,7 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
     set focusControl $base
 
     append config_cmd "; vTcl:prop:save_opt \$vTcl(w,widget) $option $variable"
-    
+
     switch $type {
         boolean {
             frame $base

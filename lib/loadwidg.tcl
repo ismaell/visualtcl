@@ -303,12 +303,12 @@ proc ResizeCmd {val} {
 }
 
 proc SpecialOpt {args} {
-    global specialOpts
+    global specialOpts tmp
     lassign $args option text type choices title
-    set specialOpts($option,text) $text
-    set specialOpts($option,type) $type
-    set specialOpts($option,choices) $choices
-    set specialOpts($option,title) $title
+    set specialOpts($tmp(class),$option,text) $text
+    set specialOpts($tmp(class),$option,type) $type
+    set specialOpts($tmp(class),$option,choices) $choices
+    set specialOpts($tmp(class),$option,title) $title
 }
 
 proc AdditionalClasses {args} {

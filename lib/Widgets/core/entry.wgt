@@ -20,3 +20,5 @@ proc vTcl:widget:entry:SetTextVariable {} {
                          -textvariable \
                          "Text Variable for $vTcl(w,widget)"
 }
+
+SpecialOpt -validate "Validate" choice {none focus focusin focusout key all}
