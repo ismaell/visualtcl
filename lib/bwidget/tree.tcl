@@ -75,7 +75,7 @@ namespace eval Tree {
     Widget::declare Tree {
         {-deltax           Int 10 0 "%d >= 0"}
         {-deltay           Int 15 0 "%d >= 0"}
-        {-padx             Int 20 0 "%d >= 0"}
+        {-padx             Int 0 0 "%d >= 0"}
         {-background       TkResource "" 0 listbox}
         {-selectbackground TkResource "" 0 listbox}
         {-selectforeground TkResource "" 0 listbox}
@@ -1863,4 +1863,5 @@ proc Tree::_set_current_node {win node} {
 proc Tree::_get_node_name {path {item current} {tagindex end-1}} {
     return [string range [lindex [$path.c gettags $item] $tagindex] 2 end]
 }
+
 
