@@ -25,7 +25,7 @@
 
 if {[info tclversion] >= 8.4} {
 
-Class		PanedWindow
+Class		Panedwindow
 Lib		core
 MegaWidget      yes
 CreateCmd       panedwindow
@@ -38,14 +38,23 @@ TreeChildrenCmd	{vTcl::widgets::core::panedwindow::treeChildrenCmd
 DumpCmd         vTcl::widgets::core::panedwindow::dumpCmd
 DumpInfoCmd     vTcl::widgets::core::panedwindow::dumpInfoCmd
 
-## Special proc for setting up icons on the toolbar.
-proc vTcl:PanedWindow:ToolBarSetup {} {
+## Right-click menu
+Function        "Edit Panes..."         vTcl::widgets::core::panedwindow::editCmd
 
-    vTcl:toolbar_add PanedWindow \
+## Pane specific options
+NewOption -after		"after"		type
+NewOption -before		"before"		type
+NewOption -minsize	"min size"		type
+NewOption -sticky       "sticky"		type
+
+## Special proc for setting up icons on the toolbar.
+proc vTcl:Panedwindow:ToolBarSetup {} {
+
+    vTcl:toolbar_add Panedwindow \
 	"horizontal paned window" \
 	../lib/Widgets/core/panedwindowhoriz.gif "-orient horizontal"
 
-    vTcl:toolbar_add PanedWindow \
+    vTcl:toolbar_add Panedwindow \
     	"vertical paned window" \
 	../lib/Widgets/core/panedwindow.gif "-orient vertical"
 }
@@ -65,6 +74,11 @@ namespace eval vTcl::widgets::core::panedwindow {
                 return ../lib/Widgets/core/panedwindow.gif
             }
         }
+    }
+
+    proc editCmd {} {
+        set target $::vTcl(w,widget)
+        ::vTcl::itemEdit::edit $target vTcl::widgets::core::panedwindow::edit
     }
 
     proc insertCmd {target} {
@@ -128,4 +142,61 @@ namespace eval vTcl::widgets::core::panedwindow {
     }
 }
 
+###########################################################
+## Code for editing pages in paned window widgets
+##
+namespace eval vTcl::widgets::core::panedwindow::edit {
+
+    proc getTitle {target} {
+        return "Edit panes for $target"
+    }
+
+    proc getLabelOption {} {
+        return -label
+    }
+
+    proc getItems {target} {
+        ## first item in the list is the current index
+        set sites [$target panes]
+        set current 0
+        set values $current
+        for {set i 1} {$i <= [llength $sites]} {incr i} {
+            lappend values "Pane $i"
+        }
+        return $values
+    }
+
+    proc addItem {target} {
+        ::vTcl::MessageBox -message "Not implemented yet" -title "Error"
+         return ""
+    }
+
+    proc removeItem {target index} {
+        error "Cannot delete a pane!"
+    }
+
+    proc itemConfigure {target index args} {
+        set sites [$target panes]
+        set pane [lindex $sites $index]
+        if {$args == ""} {
+            set options [$target paneconfigure $pane]
+            set result ""
+            foreach option $options {
+                ## only return valid options
+                if {[llength $option] == 5} {
+                    lappend result $option
+                }
+            }
+            return $result
+        } else {
+            eval $target paneconfigure $pane $args
+        }
+    }
+
+    proc moveUpOrDown {target index direction} {
+        error "Not implemented yet!"
+    }
+}
+
 } ; # if ...
+
