@@ -1,6 +1,8 @@
 ChangeLog for Visual Tcl:
 
 1.51b3 ->
+    o Fixed copy/paste problem for toplevels.
+    o Fixed "ask for widget name on insert" problem for toplevels.
     o When inserting a compound, widgets are registered one at a time as
       the compound is created, instead of after the compound creation. This
       allows default values for the widget to be known and applied when
