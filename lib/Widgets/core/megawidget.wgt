@@ -30,7 +30,7 @@ Lib		core
 Icon        icon_frame.gif
 DefaultValues   -background -highlightbackground -highlightcolor
 DumpCmd         ::vTcl::widgets::core::frame::dumpCmd
-DumpInfoCmd     ::vTcl::widgets::core::frame::dumpInfoCmd
+DumpInfoCmd     ::vTcl::widgets::core::megawidget::dumpInfoCmd
 CreateCmd       vTcl::widgets::core::megawidget::createCmd
 WidgetProc      vTcl::widgets::core::megawidget::widgetProc
 TreeLabel       @vTcl::widgets::core::megawidget::getWidgetTreeLabel
@@ -46,6 +46,23 @@ NewOption -widgetProc  "Widget Proc"  type
 Function        "Save Megawidget..."         vTcl::widgets::core::megawidget::saveCmd
 
 namespace eval vTcl::widgets::core::megawidget {
+
+    proc dumpInfoCmd {target basename} {
+        set out [$::classes(Frame,dumpInfoCmd) $target $basename]
+        if {![info exists ::widgets::${target}::sourceFilename]} {
+            return $out
+        }
+
+        upvar ::widgets::${target}::sourceFilename  sourceFilename
+
+        append out $::vTcl(tab)
+        append out "namespace eval ::widgets::$basename \{\n"
+        append out $::vTcl(tab2)
+        append out "set sourceFilename \"$sourceFilename\"\n"
+        append out $::vTcl(tab)\}\n
+
+        return $out
+    }
 
     proc saveCmd {} {
         set w $::vTcl(w,widget)
@@ -68,6 +85,9 @@ namespace eval vTcl::widgets::core::megawidget {
 
         close $f
         vTcl:statbar 0
+
+        ## save the path to propose it on the next save
+        namespace eval ::widgets::${w} [list set sourceFilename $file]
     }
 
     proc cgetProc {w args} {
@@ -188,5 +208,6 @@ namespace eval vTcl::widgets::core::megawidget {
         return "MegaWidget widgetProc: $widgetProc"
     }
 }
+
 
 
