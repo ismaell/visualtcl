@@ -1,0 +1,6 @@
+Class Toolbar
+Lib   itcl
+
+Icon icon_toolbar.gif
+DumpChildren  no
+MegaWidget    yes

@@ -1,0 +1,6 @@
+Class Panedwindow
+Lib   itcl
+
+Icon icon_panedwindow.gif
+DumpChildren  no
+MegaWidget    yes

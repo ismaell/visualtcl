@@ -1,0 +1,6 @@
+Class Scrolledtext
+Lib   itcl
+
+Icon icon_scrolledtext.gif
+DumpChildren  no
+MegaWidget    yes

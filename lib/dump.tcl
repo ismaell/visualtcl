@@ -356,7 +356,7 @@ proc vTcl:get_opts_special {opts w {save_always ""}} {
 proc vTcl:dump_widget_quick {target} {
     global vTcl
     vTcl:update_widget_info $target
-    set result "$target conf $vTcl(w,options)\n"
+    set result "$target configure $vTcl(w,options)\n"
     append result "$vTcl(w,manager) $target $vTcl(w,info)\n"
     return $result
 }
@@ -372,7 +372,7 @@ proc vTcl:dump_widget_opt {target basename} {
 
     set result ""
     set class [vTcl:get_class $target]
-    set opt [$target conf]
+    set opt [$target configure]
 
     ## Let's be safe and force wm for toplevel windows.  Just incase...
     if {$class == "Toplevel"} { set mgr wm }

@@ -1,0 +1,6 @@
+Class Tabnotebook
+Lib   itcl
+
+Icon icon_tabnotebook.gif
+DumpChildren  no
+MegaWidget    yes

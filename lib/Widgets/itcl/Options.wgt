@@ -1,0 +1,74 @@
+NewOption -labelimage        {Label Img}        image
+NewOption -closedicon        {Closed icon}      image
+NewOption -nodeicon          {Node Icon}        image
+NewOption -openicon          {Open Icon}        image
+NewOption -textfont          {Text Font}        font
+NewOption -balloonfont       {Balloon Font}     font
+NewOption -textfont          {Text Font}        font
+NewOption -hscrollmode       {Horz Scroll}      choice {static dynamic none}
+NewOption -vscrollmode       {Vert Scroll}      choice {static dynamic none}
+NewOption -validate          {Validate}         choice {none focus focusin focusout key all}
+NewOption -labelpos          {Label Pos}        choice  {n ne e se s sw w nw center}
+NewOption -tabpos            {Tab pos}          choice {n s e w}
+NewOption -arrowrelief       {Arrow Relief}     relief
+NewOption -clientdata        {Client Data}      type
+NewOption -sbwidth           {ScrollBar Width}  type
+NewOption -sashborderwidth   {Sash Bd Width}    type
+NewOption -sashcursor        {Sash Cursor}      type
+NewOption -sashheight        {Sash Height}      type
+NewOption -sashindent        {Sash Indent}      type
+NewOption -sashwidth         {Sash Width}       type
+NewOption -thickness         {Sep. Thickness}   type
+NewOption -angle             {Angle}            type
+NewOption -bevelamount       {Bevel amount}     type
+NewOption -gap               {Overlap}          type
+NewOption -start             {Start}            type
+NewOption -menucursor        {Menu Cursor}      type
+NewOption -clicktime         {Click Time}       type
+NewOption -labeltext         Label              type
+NewOption -range             Range              type
+NewOption -step              Step               type
+NewOption -listheight        "List Height"      type
+NewOption -helpvariable      {Help Var}         type
+NewOption -steps             {Steps}            type
+NewOption -barheight         {Bar Height}       type
+NewOption -balloondelay1     {Balloon Delay 1}  type
+NewOption -balloondelay2     {Balloon Delay 2}  type
+NewOption -margin            {Margin}           type
+NewOption -popupcursor       {Popup Cursor}     type
+NewOption -visibleitems      {Visible Items}    type
+NewOption -fixed             {Fixed}            type
+NewOption -backdrop          {Backdrop Color}   color {} Colors
+NewOption -markbackground    {Mark BgColor}     color {} Colors
+NewOption -markforeground    {Mark FgColor}     color {} Colors
+NewOption -tabbackground     {Tab BgColor}      color {} Colors
+NewOption -tabforeground     {Tab FgColor}      color {} Colors
+NewOption -barcolor          {Bar Color}        color {} Colors
+NewOption -troughcolor       {Trough Color}     color {} Colors
+NewOption -textbackground    {Text BgColor}     color {} Colors
+NewOption -alink             {ALink color}      color {} Colors
+NewOption -link              {Link color}       color {} Colors
+NewOption -linkhighlight     {Link highlight}   color {} Colors
+NewOption -balloonforeground {Balloon Fg}       color {} Colors
+NewOption -textbackground    {Text BgColor}     color {} Colors
+NewOption -balloonbackground {Balloon Bg}       color {} Colors
+NewOption -equaltabs         {Equal tabs}       boolean {0 1}
+NewOption -raiseselect       {Raise select}     boolean {0 1}
+NewOption -tabborders        {Tab borders}      boolean {0 1}
+NewOption -alwaysquery       {Always Query}     boolean {0 1}
+NewOption -expanded          {Expanded}         boolean {0 1}
+NewOption -filter            {Filter}           boolean {0 1}
+NewOption -completion        {Completion}       boolean {0 1}
+NewOption -dropdown          {Drop Down}        boolean {0 1}
+NewOption -unique            {Unique}           boolean {0 1}
+NewOption -cyclicon          {Cyclic}           boolean {0 1}
+NewOption -iconcommand       {Icon Cmd}         command
+NewOption -querycommand      {Query Cmd}        command
+NewOption -vcmd              {Validate Cmd}     command
+NewOption -decrement         {Decrement Cmd}    command
+NewOption -increment         {Increment Cmd}    command
+NewOption -items             Items              command
+NewOption -focuscommand      {Focus Cmd}        command
+NewOption -invalid           {Invalid Cmd}      command
+NewOption -selectioncommand  {Selection Cmd}    command
+NewOption -dblclickcommand   {DblClk Cmd}       command
