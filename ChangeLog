@@ -1,6 +1,13 @@
 ChangeLog for Visual Tcl:
 
 1.51b3 ->
+    o When inserting a compound, widgets are registered one at a time as
+      the compound is created, instead of after the compound creation. This
+      allows default values for the widget to be known and applied when
+      possible (see below).
+    o When inserting a compound, widgets for which options aren't specified
+      take their default values for the most common options like -background,
+      -highlightbackground, etc. This reduces the size of saved projects.
     o Have the most common options like -background, -activebackground etc.
       take their default value when a widget is created, instead of using the
       value from the options database. This saves space when saving projects, and
