@@ -137,7 +137,20 @@ namespace eval vTcl::widgets::blt::tabset::edit {
             }
             return $result
         } else {
-            eval $target tab configure $page $args
+            set result [eval $target tab configure $page $args]
+	    ## because of a bug in BLT, select only the option we want
+	    if {[llength $args] == 1} {
+	        set option [lindex $args 0]
+		foreach conf $result {
+		    if {[lindex $conf 0] == $option} {
+		        return $conf
+		    }
+		}
+		## couldn't find it!
+		return ""
+	    } else {
+	        return $result
+	    }
         }
     }
 

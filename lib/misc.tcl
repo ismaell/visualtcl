@@ -1218,7 +1218,7 @@ namespace eval ::vTcl::ui::attributes {
     }
 
     ## returns: a string used to enable/disable the option
-    proc newAttribute {target top option variable config_cmd check_cmd} {
+    proc newAttribute {target top option variable config_cmd check_cmd keyrelease_cmd} {
         variable pendingCmds
         variable checked
 
@@ -1253,16 +1253,21 @@ namespace eval ::vTcl::ui::attributes {
                 frame $base
                 radiobutton ${base}.y \
                     -variable $variable -value 1 -text "Yes" -relief sunken  \
-                    -command "$config_cmd" -padx 0 -pady 1
+                    -command "$config_cmd
+		    $keyrelease_cmd $option $variable ::vTcl::ui::attributes::checked($base)" \
+		    -padx 0 -pady 1
                 radiobutton ${base}.n \
                     -variable $variable -value 0 -text "No" -relief sunken  \
-                    -command "$config_cmd" -padx 0 -pady 1
+                    -command "$config_cmd
+		    $keyrelease_cmd $option $variable ::vTcl::ui::attributes::checked($base)" \
+		    -padx 0 -pady 1
                 pack ${base}.y ${base}.n -side left -expand 1 -fill both
                 lappend enableData ${base}.y ${base}.n
             }
             choice {
                 ComboBox ${base} -editable 0 -width 12 -values $choices \
-                    -modifycmd "vTcl:prop:choice_select ${base} $variable; $config_cmd"
+                    -modifycmd "vTcl:prop:choice_select ${base} $variable; $config_cmd
+		    $keyrelease_cmd $option $variable ::vTcl::ui::attributes::checked($base)"
                 trace variable $variable w "vTcl:prop:choice_update ${base} $variable"
                 vTcl:prop:choice_update ${base} $variable
                 lappend enableData ${base}
@@ -1338,7 +1343,8 @@ namespace eval ::vTcl::ui::attributes {
         bind $focusControl <KeyRelease-Return> "::vTcl::ui::attributes::setPending"
         bind $focusControl <FocusOut> "::vTcl::ui::attributes::setPending"
         bind $focusControl <KeyRelease> \
-		"set ::vTcl::ui::attributes::pendingCmds($focusControl) [list $config_cmd]"
+		"set ::vTcl::ui::attributes::pendingCmds($focusControl) [list $config_cmd]
+		 $keyrelease_cmd $option $variable ::vTcl::ui::attributes::checked($base)"
 
         ## Checkbox to save/not save the option
         set theCheck $top.${option}check

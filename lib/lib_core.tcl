@@ -686,10 +686,28 @@ namespace eval ::vTcl::itemEdit {
     proc initBoxes {top} {
         variable target
         variable allOptions
+	variable cmds
 
         set w $target($top)
         set nm ::widgets::${w}::subOptions
         namespace eval $nm {}
+
+	## first time ? if so, check values that are not the default
+	if {![info exists ${nm}::save]} {
+            ## how many subitems ?
+            set size [llength [vTcl:at ::${top}::list_items]]
+            for {set i 0} {$i < $size} {incr i} {
+	        set conf [::$cmds($top)::itemConfigure $target($top) $i]
+                foreach opt $conf {
+		    set option  [lindex $opt 0]
+                    set default [lindex $opt 3]
+		    set value   [lindex $opt 4]
+		    if {$value != $default} {
+		        set ${nm}::save($option) 1
+		    }
+                }
+            }
+	}
     }
 
     ## action to take when a box is checked
@@ -709,6 +727,22 @@ namespace eval ::vTcl::itemEdit {
         }
     }
 
+    ## action to take when a key is released in an option
+    proc keyRelease {top option var boxvar} {
+        variable cmds
+        variable current
+	variable target
+
+	set conf [::$cmds($top)::itemConfigure $target($top) $current($top) $option]
+	set default [lindex $conf 3]
+	set value [vTcl:at $var]
+
+	if {$value != $default} {
+	    set $boxvar 1
+	    setGetBox $top $option $boxvar
+	}
+    }
+
     proc init {top w cmdsEdit} {
         variable cmds
         variable target
@@ -722,9 +756,9 @@ namespace eval ::vTcl::itemEdit {
         set current($top) [lindex $list_items 0]
         set list_items [lrange $list_items 1 end]
         set ::${top}::list_items $list_items
+        initBoxes $top
         initProperties $top
         selectItem $top $current($top)
-        initBoxes $top
         wm title $top [::$cmds($top)::getTitle $w]
     }
 
@@ -775,7 +809,8 @@ namespace eval ::vTcl::itemEdit {
                "
             set enableData($top,$option) [::vTcl::ui::attributes::newAttribute \
                 $target($top) $f $option $variable $config_cmd \
-                "::vTcl::itemEdit::setGetBox $top"]
+                "::vTcl::itemEdit::setGetBox $top" \
+		"::vTcl::itemEdit::keyRelease $top"]
             pack $f -side top -fill x -expand 0
         }
 
