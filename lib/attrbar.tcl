@@ -178,7 +178,8 @@ proc vTcl:attrbar:toggle_console {} {
 proc vTcl:attrbar {args} {
     global vTcl tk_version
 
-    set vTcl(attrbar,console_state) [info exists vTcl(geometry,.vTcl.con)]
+    set vTcl(attrbar,console_state) \
+        [expr [lsearch -exact $vTcl(gui,showlist) .vTcl.tkcon] != -1]
 
     set base .vTcl
     frame .vTcl.attr \
