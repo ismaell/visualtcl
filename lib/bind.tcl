@@ -857,6 +857,7 @@ namespace eval ::widgets_bindings {
         set vTcl(bindtags,$target) $tags
         ::widgets_bindings::fill_bindings $target
         ::widgets_bindings::select_show_binding $tag ""     
+    	::widgets_bindings::enable_toolbar_buttons
     }
 
     proc {::widgets_bindings::addtag} {tag} {
@@ -879,6 +880,7 @@ namespace eval ::widgets_bindings {
 
         ::widgets_bindings::fill_bindings $target
         ::widgets_bindings::select_show_binding $tag ""     
+    	::widgets_bindings::enable_toolbar_buttons
     }
 
     proc {::widgets_bindings::is_editable_tag} {tag} {
@@ -936,6 +938,7 @@ namespace eval ::widgets_bindings {
         
         ::widgets_bindings::fill_bindings $target
         ::widgets_bindings::select_show_binding $tag $event     
+    	::widgets_bindings::enable_toolbar_buttons
     }
 
     proc {::widgets_bindings::can_change_modifier} {l index} {
