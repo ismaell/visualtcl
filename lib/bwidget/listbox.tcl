@@ -71,7 +71,7 @@ namespace eval ListBox {
     Widget::declare ListBox {
         {-deltax           Int 10 0 "%d >= 0"}
         {-deltay           Int 15 0 "%d >= 0"}
-        {-padx             Int 20 0 "%d >= 0"}
+        {-padx             Int 0 0 "%d >= 0"}
         {-foreground       TkResource "" 0 listbox}
         {-background       TkResource "" 0 listbox}
         {-selectbackground TkResource "" 0 listbox}
@@ -1280,3 +1280,4 @@ proc ListBox::_scroll { path cmd dir } {
         DropSite::setcursor dot
     }
 }
+
