@@ -126,12 +126,11 @@
 
  III. REQUIREMENTS
 
-    Tcl8.03 and Tk8.03 or newer. You can obtain a binary for most platforms
+    Tcl8.3.2 and Tk8.3.2 or newer. You can obtain a binary for most platforms
     from http://www.scriptics.com/. If not, source code is also available.
-
-    Tcl8.3.2 and Tk8.3.2 recommended.
 
                                       --
                               stewart@neuron.com
                                 cgavin@dnai.com
                               damon@unreality.com
+
