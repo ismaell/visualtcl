@@ -414,9 +414,12 @@ proc vTcl:save2 {file} {
     # code to load images
     # code to load fonts
 
-    puts $output "if {!\[info exist vTcl(sourcing)\]} \{"
-    puts $output $vTcl(head,importheader)
-    puts $output "\}"
+    # emergency fix to keep the thing working
+    if {[info exist vTcl(head,importheader)]} {
+        puts $output "if {!\[info exist vTcl(sourcing)\]} \{"
+        puts $output $vTcl(head,importheader)
+        puts $output "\}"
+    }
 
     ## Gather information about fonts and images.
     vTcl:dump:widget_fonts_and_images
