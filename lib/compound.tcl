@@ -721,8 +721,22 @@ namespace eval ::vTcl::compounds {
 
     proc deleteCompound {type compoundName} {
         set spc ${type}::[list $compoundName]
+
+        set procs [set ${spc}::procs]
+        foreach procName $procs {
+            if {[info procs $procName] == "$procName"} {
+                rename $procName {}
+            }
+        }
+
+        set tags [set ${spc}::bindtags]
+        foreach tag $tags {
+            foreach event [bind $tag] {
+                bind $tag $event ""
+            }
+        }
+
         namespace delete $spc
     }
 }
-
 

@@ -340,6 +340,8 @@ proc vTcl:close {} {
     vTcl:prop:clear
     ::widgets_bindings::init
     ::menu_edit::close_all_editors
+    ::vTcl::project::closeCompounds main
+    vTcl:cmp_user_menu
     ::vTcl::project::initModule main
 
     after idle {vTcl:init_wtree}
@@ -668,7 +670,8 @@ namespace eval vTcl::project {
 
     proc addCompound {moduleName type compoundName} {
         upvar ::vTcl::modules::${moduleName}::compounds compounds
-        lappend compounds [list $type $compoundName]
+        set compound $type
+        lappend compounds [list $type [join $compoundName]]
     }
 
     proc saveCompounds {moduleName} {
@@ -690,6 +693,21 @@ namespace eval vTcl::project {
 
     proc getCompounds {moduleName} {
         return [vTcl:at ::vTcl::modules::${moduleName}::compounds]
+    }
+
+    proc closeCompounds {moduleName} {
+        upvar ::vTcl::modules::${moduleName}::compounds compounds
+
+        foreach compound $compounds {
+            closeCompound $compound
+        }
+        set compounds ""
+    }
+
+    proc closeCompound {compound} {
+        set type         [lindex $compound 0]
+        set compoundName [lindex $compound 1]
+        vTcl::compounds::deleteCompound $type $compoundName
     }
 }
 
