@@ -853,12 +853,23 @@ namespace eval ::widgets_bindings {
         # event already bound ?
         set old_code [bind $tag $event]
         if {$old_code == ""} {
-            bind $tag $event "\# TODO: your event handler here"
+            ## this is a new event; allow for undoing
+            set do ""
+            append do "bind $tag $event \"\# TODO: your event handler here\""
+            append do ";::widgets_bindings::fill_bindings $target"
+            append do ";::widgets_bindings::select_show_binding $tag $event"
+            append do ";::widgets_bindings::enable_toolbar_buttons"
+            set undo ""
+            append undo "bind $tag $event \"\""
+            append undo ";::widgets_bindings::clear_current_binding"
+            append undo ";if \{\$vTcl(w,widget)==\"$target\"\} \{vTcl:get_bind $target\}"
+            vTcl:push_action $do $undo
+        } else {
+            ## event has been bound already; just select it, no do/undo required
+            ::widgets_bindings::fill_bindings $target
+            ::widgets_bindings::select_show_binding $tag $event
+            ::widgets_bindings::enable_toolbar_buttons
         }
-
-        ::widgets_bindings::fill_bindings $target
-        ::widgets_bindings::select_show_binding $tag $event
-        ::widgets_bindings::enable_toolbar_buttons
     }
 
     proc {::widgets_bindings::can_change_modifier} {l index} {
@@ -1189,6 +1200,11 @@ namespace eval ::widgets_bindings {
         }
     }
 
+    proc clear_current_binding {} {
+        variable lasttag
+        set lasttag ""
+    }
+
     proc {::widgets_bindings::select_binding} {} {
 
         global widget
@@ -1394,3 +1410,5 @@ namespace eval ::widgets_bindings {
     }
 
 } ; # namespace eval
+
+
