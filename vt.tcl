@@ -198,14 +198,14 @@ proc vTcl:setup {} {
 
     set vTcl(LIB_DIR)   [file join $vTcl(VTCL_HOME) lib]
     set vTcl(LIB_WIDG)  [glob -nocomplain [file join $vTcl(LIB_DIR) lib_*.tcl]]
-    set vTcl(LIBS)      "globals.tcl about.tcl propmgr.tcl balloon.tcl
+    set vTcl(LIBS)      [lsort "globals.tcl about.tcl propmgr.tcl balloon.tcl
         		attrbar.tcl bgerror.tcl bind.tcl command.tcl color.tcl
 			console.tcl compound.tcl compounds.tcl do.tcl
 			dragsize.tcl dump.tcl edit.tcl file.tcl font.tcl
 			handle.tcl input.tcl images.tcl menu.tcl misc.tcl
 			name.tcl prefs.tcl proc.tcl tclet.tcl toolbar.tcl
 			tops.tcl tree.tcl var.tcl vtclib.tcl widget.tcl
-			help.tcl loadwidg.tcl"
+			help.tcl loadwidg.tcl"]
 
     set tk_strictMotif    1
     wm withdraw .
@@ -527,7 +527,7 @@ proc vTcl:define_bindings {} {
 
     bind vTcl(b) <Shift-Button-1>    {vTcl:bind_scrollbar %W $vTcl(w,widget)}
     bind vTcl(b) <Button-3>          {vTcl:right_click %W %X %Y %x %y}
-    bind vTcl(b) <Double-Button-1>   {vTcl:widget_dblclick %W %X %Y}
+    bind vTcl(b) <Double-Button-1>   {vTcl:widget_dblclick %W %X %Y %x %y}
     bind vTcl(b) <Button-1>          {vTcl:bind_button_1 %W %X %Y %x %y}
     bind vTcl(b) <Button-2>          {vTcl:bind_button_2 %W %X %Y %x %y}
     bind vTcl(b) <Control-Button-1>  {vTcl:bind_button_2 %W %X %Y %x %y}
