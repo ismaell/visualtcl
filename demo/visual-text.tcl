@@ -130,8 +130,8 @@ proc vTcl:image:broken_image {} {
 
 foreach img {
 
-        {{[file join / home cgavin vtcl images edit copy.gif]} {} stock {
-R0lGODdhFAAUAPcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwMDcwKbK8AAA
+        {{[file join / home cgavin vtcl2-0 images edit copy.gif]} {} stock {
+R0lGODlhFAAUAPcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwMDcwKbK8AAA
 AAAAKgAAVQAAfwAAqgAA1AAqAAAqKgAqVQAqfwAqqgAq1ABVAABVKgBVVQBV
 fwBVqgBV1AB/AAB/KgB/VQB/fwB/qgB/1ACqAACqKgCqVQCqfwCqqgCq1ADU
 AADUKgDUVQDUfwDUqgDU1CoAACoAKioAVSoAfyoAqioA1CoqACoqKioqVSoq
@@ -148,12 +148,12 @@ ANQAKtQAVdQAf9QAqtQA1NQqANQqKtQqVdQqf9QqqtQq1NRVANRVKtRVVdRV
 f9RVqtRV1NR/ANR/KtR/VdR/f9R/qtR/1NSqANSqKtSqVdSqf9SqqtSq1NTU
 ANTUKtTUVdTUf9TUqtTU1AAAAAwMDBkZGSYmJjMzMz8/P0xMTFlZWWZmZnJy
 cn9/f4yMjJmZmaWlpbKysr+/v8zMzNjY2OXl5fLy8v/78KCgpICAgP8AAAD/
-AP//AAAA//8A/wD//////ywAAAAAFAAUAAAIcwDnCRxIsKDBgwgN4lu4EEDC
-gvj+SfwHwOFDgREnAqB4cV7Eiv8YNkyYUSI+bii5VUT4seLJlBstQpwYUiUA
-mytnVgTwMiVKmQNL1txZUaVCii59wjw68STRm0AFPu3pM6pCnEWtQlT68+JT
-oh3Dih37MCAAOw==}}
-        {{[file join / home cgavin vtcl images edit add.gif]} {} stock {
-R0lGODdhFAAUAPcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwMDcwKbK8AAA
+AP//AAAA//8A/wD//////yH5BAEAAPMALAAAAAAUABQAAAhzAOcJHEiwoMGD
+CA3iW7gQQMKC+P5J/AfA4UOBEScCoHhxXsSK/xg2TJhRIj5uKLlVRPix4smU
+Gy1CnBhSJQCbK2dWBPAyJUqZA0vW3FlRpUKKLn3CPDrxJNGbQAU+7ekzqkKc
+Ra1CVPrz4lOiHcOKHfswIAA7}}
+        {{[file join / home cgavin vtcl2-0 images edit add.gif]} {} stock {
+R0lGODlhFAAUAPcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwMDcwKbK8AAA
 AAAAKgAAVQAAfwAAqgAA1AAqAAAqKgAqVQAqfwAqqgAq1ABVAABVKgBVVQBV
 fwBVqgBV1AB/AAB/KgB/VQB/fwB/qgB/1ACqAACqKgCqVQCqfwCqqgCq1ADU
 AADUKgDUVQDUfwDUqgDU1CoAACoAKioAVSoAfyoAqioA1CoqACoqKioqVSoq
@@ -170,11 +170,11 @@ ANQAKtQAVdQAf9QAqtQA1NQqANQqKtQqVdQqf9QqqtQq1NRVANRVKtRVVdRV
 f9RVqtRV1NR/ANR/KtR/VdR/f9R/qtR/1NSqANSqKtSqVdSqf9SqqtSq1NTU
 ANTUKtTUVdTUf9TUqtTU1AAAAAwMDBkZGSYmJjMzMz8/P0xMTFlZWWZmZnJy
 cn9/f4yMjJmZmaWlpbKysr+/v8zMzNjY2OXl5fLy8v/78KCgpICAgP8AAAD/
-AP//AAAA//8A/wD//////ywAAAAAFAAUAAAIWADnCRxIsKDBgwgTKlzIsCA+
-gfj+zcO3r+FDihQBzNOoEeE+iv/wiXwosKNDkQf2VWw4ryK+lCQHmiSITyNF
-ljQRziS4E6fCniV9sgS6sShHo0KTKl26MCAAOw==}}
-        {{[file join / home cgavin vtcl images edit remove.gif]} {} stock {
-R0lGODdhFAAUAPcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwMDcwKbK8AAA
+AP//AAAA//8A/wD//////yH5BAEAAPMALAAAAAAUABQAAAhYAOcJHEiwoMGD
+CBMqXMiwID6B+P7Nw7ev4UOKFAHM06gR4T6K//CJfCiwo0ORB/ZVbDivIr6U
+JAeaJIhPI0WWNBHOJLgTp8KeJX2yBLqxKEejQpMqXbowIAA7}}
+        {{[file join / home cgavin vtcl2-0 images edit remove.gif]} {} stock {
+R0lGODlhFAAUAPcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwMDcwKbK8AAA
 AAAAKgAAVQAAfwAAqgAA1AAqAAAqKgAqVQAqfwAqqgAq1ABVAABVKgBVVQBV
 fwBVqgBV1AB/AAB/KgB/VQB/fwB/qgB/1ACqAACqKgCqVQCqfwCqqgCq1ADU
 AADUKgDUVQDUfwDUqgDU1CoAACoAKioAVSoAfyoAqioA1CoqACoqKioqVSoq
@@ -191,11 +191,11 @@ ANQAKtQAVdQAf9QAqtQA1NQqANQqKtQqVdQqf9QqqtQq1NRVANRVKtRVVdRV
 f9RVqtRV1NR/ANR/KtR/VdR/f9R/qtR/1NSqANSqKtSqVdSqf9SqqtSq1NTU
 ANTUKtTUVdTUf9TUqtTU1AAAAAwMDBkZGSYmJjMzMz8/P0xMTFlZWWZmZnJy
 cn9/f4yMjJmZmaWlpbKysr+/v8zMzNjY2OXl5fLy8v/78KCgpICAgP8AAAD/
-AP//AAAA//8A/wD//////ywAAAAAFAAUAAAITADnCRxIsKDBgwgTKkQYIMA/
-hg4NNmz4kCBFiBcFZkw48WHEhRonfgQ5ryPJkCZBmtyIsWLJkRJZlnQZE6ZG
-mgVtDtR5sqfPn0B/BgQAOw==}}
-        {{[file join / home cgavin vtcl images edit cut.gif]} {} stock {
-R0lGODdhFAAUAPcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwMDcwKbK8AAA
+AP//AAAA//8A/wD//////yH5BAEAAPMALAAAAAAUABQAAAhMAOcJHEiwoMGD
+CBMqRBggwD+GDg02bPiQIEWIFwVmTDjxYcSFGid+BDmvI8mQJkGa3IixYsmR
+ElmWdBkTpkaaBW0O1Hmyp8+fQH8GBAA7}}
+        {{[file join / home cgavin vtcl2-0 images edit cut.gif]} {} stock {
+R0lGODlhFAAUAPcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwMDcwKbK8AAA
 AAAAKgAAVQAAfwAAqgAA1AAqAAAqKgAqVQAqfwAqqgAq1ABVAABVKgBVVQBV
 fwBVqgBV1AB/AAB/KgB/VQB/fwB/qgB/1ACqAACqKgCqVQCqfwCqqgCq1ADU
 AADUKgDUVQDUfwDUqgDU1CoAACoAKioAVSoAfyoAqioA1CoqACoqKioqVSoq
@@ -212,11 +212,11 @@ ANQAKtQAVdQAf9QAqtQA1NQqANQqKtQqVdQqf9QqqtQq1NRVANRVKtRVVdRV
 f9RVqtRV1NR/ANR/KtR/VdR/f9R/qtR/1NSqANSqKtSqVdSqf9SqqtSq1NTU
 ANTUKtTUVdTUf9TUqtTU1AAAAAwMDBkZGSYmJjMzMz8/P0xMTFlZWWZmZnJy
 cn9/f4yMjJmZmaWlpbKysr+/v8zMzNjY2OXl5fLy8v/78KCgpICAgP8AAAD/
-AP//AAAA//8A/wD//////ywAAAAAFAAUAAAIXQDnCRxIsKDBgwgT4sMHYB7D
-hAYfPoRYkOFEigMXXsQocGFDjgQ3cixyoMhHkCZNgpxXJKVKjP9aAij5EmJK
-ADFlUrwpE0DNgzdZzvxpMChLnTYBnFR6cqXTpxwDAgA7}}
-        {{[file join / home cgavin vtcl images edit paste.gif]} {} stock {
-R0lGODdhFAAUAPcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwMDcwKbK8AAA
+AP//AAAA//8A/wD//////yH5BAEAAPMALAAAAAAUABQAAAhdAOcJHEiwoMGD
+CBPiwwdgHsOEBh8+hFiQ4USKAxdexChwYUOOBDdyLHKgyEeQJk2CnFckpUqM
+/1oCKPkSYkoAMWVSvCkTQM2DN1nO/GkwKEudNgGcVHpypdOnHAMCADs=}}
+        {{[file join / home cgavin vtcl2-0 images edit paste.gif]} {} stock {
+R0lGODlhFAAUAPcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwMDcwKbK8AAA
 AAAAKgAAVQAAfwAAqgAA1AAqAAAqKgAqVQAqfwAqqgAq1ABVAABVKgBVVQBV
 fwBVqgBV1AB/AAB/KgB/VQB/fwB/qgB/1ACqAACqKgCqVQCqfwCqqgCq1ADU
 AADUKgDUVQDUfwDUqgDU1CoAACoAKioAVSoAfyoAqioA1CoqACoqKioqVSoq
@@ -233,12 +233,12 @@ ANQAKtQAVdQAf9QAqtQA1NQqANQqKtQqVdQqf9QqqtQq1NRVANRVKtRVVdRV
 f9RVqtRV1NR/ANR/KtR/VdR/f9R/qtR/1NSqANSqKtSqVdSqf9SqqtSq1NTU
 ANTUKtTUVdTUf9TUqtTU1AAAAAwMDBkZGSYmJjMzMz8/P0xMTFlZWWZmZnJy
 cn9/f4yMjJmZmaWlpbKysr+/v8zMzNjY2OXl5fLy8v/78KCgpICAgP8AAAD/
-AP//AAAA//8A/wD//////ywAAAAAFAAUAAAIeADnCRxIsKDBgwgTzgPAEIDC
-gfgiAvj3D0BEfAnxUZzIsOJGhBon/rso0eHBkAzxcVvJjSFIihRVsuR4EubI
-lgBwuiyoEaZMlitNEuwZUyfDlgaJ3gQaNKlNlQ2PCoX4lGlTnlWj5pw6MOpP
-oFwNao36sKzZs2cDAgA7}}
-        {{[file join / home cgavin vtcl images edit new.gif]} {} stock {
-R0lGODdhFAAUAPcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwMDcwKbK8AAA
+AP//AAAA//8A/wD//////yH5BAEAAPMALAAAAAAUABQAAAh4AOcJHEiwoMGD
+CBPOA8AQgMKB+CIC+PcPQER8CfFRnMiw4kaEGif+uyjR4cGQDPFxW8mNIUiK
+FFWy5HgS5siWAHC6LKgRpkyWK00S7BlTJ8OWBoneBBo0qU2VDY8KhfiUaVOe
+VaPmnDow6k+gXA1qjfqwrNmzZwMCADs=}}
+        {{[file join / home cgavin vtcl2-0 images edit new.gif]} {} stock {
+R0lGODlhFAAUAPcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwMDcwKbK8AAA
 AAAAKgAAVQAAfwAAqgAA1AAqAAAqKgAqVQAqfwAqqgAq1ABVAABVKgBVVQBV
 fwBVqgBV1AB/AAB/KgB/VQB/fwB/qgB/1ACqAACqKgCqVQCqfwCqqgCq1ADU
 AADUKgDUVQDUfwDUqgDU1CoAACoAKioAVSoAfyoAqioA1CoqACoqKioqVSoq
@@ -255,11 +255,11 @@ ANQAKtQAVdQAf9QAqtQA1NQqANQqKtQqVdQqf9QqqtQq1NRVANRVKtRVVdRV
 f9RVqtRV1NR/ANR/KtR/VdR/f9R/qtR/1NSqANSqKtSqVdSqf9SqqtSq1NTU
 ANTUKtTUVdTUf9TUqtTU1AAAAAwMDBkZGSYmJjMzMz8/P0xMTFlZWWZmZnJy
 cn9/f4yMjJmZmaWlpbKysr+/v8zMzNjY2OXl5fLy8v/78KCgpICAgP8AAAD/
-AP//AAAA//8A/wD//////ywAAAAAFAAUAAAIUQDnCRxIsKDBgwgNAljIsOFC
-hAASCoyoUOLEig4bDqS40WLHjhkdXvzokeO8iCFFmjQpceXJlAxPEmSZ0CXM
-mC49ygR5E+VMnTsn9tQItKjHgAA7}}
-        {{[file join / home cgavin vtcl images edit save.gif]} {} stock {
-R0lGODdhFAATAPcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwMDcwKbK8AAA
+AP//AAAA//8A/wD//////yH5BAEAAPMALAAAAAAUABQAAAhRAOcJHEiwoMGD
+CA0CWMiw4UKEABIKjKhQ4sSKDhsOpLjRYseOGR1e/OiR47yIIUWaNClx5cmU
+DE8SZJnQJcyYLj3KBHkT5UydOyf21Ai0qMeAADs=}}
+        {{[file join / home cgavin vtcl2-0 images edit save.gif]} {} stock {
+R0lGODlhFAATAPcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwMDcwKbK8AAA
 AAAAKgAAVQAAfwAAqgAA1AAqAAAqKgAqVQAqfwAqqgAq1ABVAABVKgBVVQBV
 fwBVqgBV1AB/AAB/KgB/VQB/fwB/qgB/1ACqAACqKgCqVQCqfwCqqgCq1ADU
 AADUKgDUVQDUfwDUqgDU1CoAACoAKioAVSoAfyoAqioA1CoqACoqKioqVSoq
@@ -276,10 +276,10 @@ ANQAKtQAVdQAf9QAqtQA1NQqANQqKtQqVdQqf9QqqtQq1NRVANRVKtRVVdRV
 f9RVqtRV1NR/ANR/KtR/VdR/f9R/qtR/1NSqANSqKtSqVdSqf9SqqtSq1NTU
 ANTUKtTUVdTUf9TUqtTU1AAAAAwMDBkZGSYmJjMzMz8/P0xMTFlZWWZmZnJy
 cn9/f4yMjJmZmaWlpbKysr+/v8zMzNjY2OXl5fLy8v/78KCgpICAgP8AAAD/
-AP//AAAA//8A/wD//////ywAAAAAFAATAAAIbgDnCRxIsKDBgwgP4lvIsGFD
-g/i44ftHsSLFiAAgSrRocWHGghEncrzI7SPBkCNJmhyIMiVGjSJHvgTJTaLD
-hTVXCoxYs6fPnBp73gRKs2ZIhhJLBk3aMKnOeTxtNp1ZEIDVq1ivJtzKtatX
-hAEBADs=}}
+AP//AAAA//8A/wD//////yH5BAEAAPMALAAAAAAUABMAAAhuAOcJHEiwoMGD
+CA/iW8iwYUOD+Ljh+0exIsWIACBKtGhxYcaCESdyvMjtI8GQI0maHIgyJUaN
+Ike+BMlNosOFNVcKjFizp8+cGnveBEqzZkiGEksGTdowqc55PG02nVkQgNWr
+WK8m3Mq1q1eEAQEAOw==}}
 
             } {
     eval set _file [lindex $img 0]
@@ -371,10 +371,12 @@ proc {vTcl:FireEvent} {target event} {
             if {$tag_event == $event} {
                 set bind_code [bind $bindtag $tag_event]
                 regsub -all %W $bind_code $target bind_code
-                set result [catch {uplevel #0 $bind_code}]
+                set result [catch {uplevel #0 $bind_code} errortext]
                 if {$result == 3} {
-                   # break exception, stop processing
-                   set stop_processing 1
+                    # break exception, stop processing
+                    set stop_processing 1
+                } elseif {$result != 0} {
+                    bgerror $errortext
                 }
                 break
             }
@@ -384,6 +386,8 @@ proc {vTcl:FireEvent} {target event} {
 }
 
 proc {vTcl:Toplevel:WidgetProc} {w args} {
+    global tcl_platform
+
     if {[llength $args] == 0} {
         return -code error "wrong # args: should be \"$w option ?arg arg ...?\""
     }
@@ -402,19 +406,17 @@ proc {vTcl:Toplevel:WidgetProc} {w args} {
     }
 
     switch -- $command {
-        "hide" -
-        "Hide" {
+        "hide" - "Hide" {
             Window hide $w
         }
 
-        "show" -
-        "Show" {
+        "show" - "Show" {
             Window show $w
         }
 
         "ShowModal" {
             Window show $w
-            raise $w
+            if {$tcl_platform(platform) != "unix"} {raise $w}
             grab $w
             tkwait window $w
             grab release $w
@@ -790,7 +792,7 @@ proc vTcl:project:info {} {
         array set save {-anchor 1 -command 1 -pady 1 -text 1 -value 1 -variable 1}
     }
     namespace eval ::widgets::.top22.fra27.fra29.rad42 {
-        array set save {-anchor 1 -command 1 -padx 1 -pady 1 -text 1 -value 1 -variable 1}
+        array set save {-anchor 1 -command 1 -pady 1 -text 1 -value 1 -variable 1}
     }
     namespace eval ::widgets::.top22.fra27.fra29.rad43 {
         array set save {-anchor 1 -command 1 -pady 1 -text 1 -value 1 -variable 1}
@@ -1973,14 +1975,13 @@ init $argc $argv
 # VTCL GENERATED GUI PROCEDURES
 #
 
-proc vTclWindow. {base {container 0}} {
+proc vTclWindow. {base} {
     if {$base == ""} {
         set base .
     }
     ###################
     # CREATING WIDGETS
     ###################
-    if {!$container} {
     wm focusmodel $base passive
     wm geometry $base 1x1+0+0; update
     wm maxsize $base 1009 738
@@ -1991,7 +1992,8 @@ proc vTclWindow. {base {container 0}} {
     wm title $base "vtcl.tcl"
     bindtags $base "$base Vtcl.tcl all"
     vTcl:FireEvent $base <<Create>>
-    }
+    wm protocol $base WM_DELETE_WINDOW "vTcl:FireEvent $base <<DeleteWindow>>"
+
     ###################
     # SETTING GEOMETRY
     ###################
@@ -1999,11 +2001,11 @@ proc vTclWindow. {base {container 0}} {
     vTcl:FireEvent $base <<Ready>>
 }
 
-proc vTclWindow.top18 {base {container 0}} {
+proc vTclWindow.top18 {base} {
     if {$base == ""} {
         set base .top18
     }
-    if {[winfo exists $base] && (!$container)} {
+    if {[winfo exists $base]} {
         wm deiconify $base; return
     }
 
@@ -2014,7 +2016,6 @@ proc vTclWindow.top18 {base {container 0}} {
     ###################
     # CREATING WIDGETS
     ###################
-    if {!$container} {
     vTcl:toplevel $base -class Toplevel
     wm withdraw $base
     wm focusmodel $base passive
@@ -2025,7 +2026,8 @@ proc vTclWindow.top18 {base {container 0}} {
     wm resizable $base 1 1
     wm title $base "About Visual Text"
     vTcl:FireEvent $base <<Create>>
-    }
+    wm protocol $base WM_DELETE_WINDOW "vTcl:FireEvent $base <<DeleteWindow>>"
+
     frame $base.cpd19 \
         -borderwidth 1 -height 30 -relief sunken -width 30 
     scrollbar $base.cpd19.01 \
@@ -2061,11 +2063,11 @@ proc vTclWindow.top18 {base {container 0}} {
     vTcl:FireEvent $base <<Ready>>
 }
 
-proc vTclWindow.top19 {base {container 0}} {
+proc vTclWindow.top19 {base} {
     if {$base == ""} {
         set base .top19
     }
-    if {[winfo exists $base] && (!$container)} {
+    if {[winfo exists $base]} {
         wm deiconify $base; return
     }
 
@@ -2077,7 +2079,6 @@ proc vTclWindow.top19 {base {container 0}} {
     ###################
     # CREATING WIDGETS
     ###################
-    if {!$container} {
     vTcl:toplevel $base -class Toplevel
     wm withdraw $base
     wm focusmodel $base passive
@@ -2097,10 +2098,11 @@ proc vTclWindow.top19 {base {container 0}} {
         set [winfo toplevel %W]::status "delete"
     }
     vTcl:FireEvent $base <<Create>>
-    }
+    wm protocol $base WM_DELETE_WINDOW "vTcl:FireEvent $base <<DeleteWindow>>"
+
     label $base.lab20 \
         -anchor w -padx 1 -pady 1 \
-        -text {Select the tag you want to delete, then press "Delete".}
+        -text {Select the tag you want to delete, then press "Delete".} 
     frame $base.cpd22 \
         -borderwidth 1 -height 30 -relief sunken -width 30 
     listbox $base.cpd22.01 \
@@ -2154,11 +2156,11 @@ proc vTclWindow.top19 {base {container 0}} {
     vTcl:FireEvent $base <<Ready>>
 }
 
-proc vTclWindow.top21 {base {container 0}} {
+proc vTclWindow.top21 {base} {
     if {$base == ""} {
         set base .top21
     }
-    if {[winfo exists $base] && (!$container)} {
+    if {[winfo exists $base]} {
         wm deiconify $base; return
     }
 
@@ -2176,11 +2178,10 @@ proc vTclWindow.top21 {base {container 0}} {
     ###################
     # CREATING WIDGETS
     ###################
-    if {!$container} {
     vTcl:toplevel $base -class Toplevel \
         -menu "$base.m26" 
     wm focusmodel $base passive
-    wm geometry $base 678x575+145+66; update
+    wm geometry $base 678x575+130+67; update
     wm maxsize $base 1009 738
     wm minsize $base 100 1
     wm overrideredirect $base 0
@@ -2192,7 +2193,8 @@ proc vTclWindow.top21 {base {container 0}} {
         ::visual_text::main %W
     }
     vTcl:FireEvent $base <<Create>>
-    }
+    wm protocol $base WM_DELETE_WINDOW "vTcl:FireEvent $base <<DeleteWindow>>"
+
     frame $base.fra22 \
         -borderwidth 1 
     label $base.fra22.lab30 \
@@ -2224,7 +2226,7 @@ proc vTclWindow.top21 {base {container 0}} {
     bindtags $base.cpd23.01.fra18.cpd23.centerframe.05 "$base.cpd23.01.fra18.cpd23.centerframe.05 Frame $base all BitmapButtonSub2"
     label $base.cpd23.01.fra18.cpd23.centerframe.05.06 \
         -borderwidth 0 -height 20 \
-        -image [vTcl:image:get_image [file join / home cgavin vtcl images edit save.gif]] \
+        -image [vTcl:image:get_image [file join / home cgavin vtcl2-0 images edit save.gif]] \
         -text label 
     bindtags $base.cpd23.01.fra18.cpd23.centerframe.05.06 "$base.cpd23.01.fra18.cpd23.centerframe.05.06 Label $base all BitmapButtonSub3"
     label $base.cpd23.01.fra18.cpd23.centerframe.05.07 \
@@ -2253,7 +2255,7 @@ proc vTclWindow.top21 {base {container 0}} {
     bindtags $base.cpd23.01.fra18.cpd19.centerframe.05 "$base.cpd23.01.fra18.cpd19.centerframe.05 Frame $base all BitmapButtonSub2"
     label $base.cpd23.01.fra18.cpd19.centerframe.05.06 \
         -borderwidth 0 \
-        -image [vTcl:image:get_image [file join / home cgavin vtcl images edit new.gif]] \
+        -image [vTcl:image:get_image [file join / home cgavin vtcl2-0 images edit new.gif]] \
         -text label 
     bindtags $base.cpd23.01.fra18.cpd19.centerframe.05.06 "$base.cpd23.01.fra18.cpd19.centerframe.05.06 Label $base all BitmapButtonSub3"
     label $base.cpd23.01.fra18.cpd19.centerframe.05.07 \
@@ -2284,7 +2286,7 @@ proc vTclWindow.top21 {base {container 0}} {
     bindtags $base.cpd23.01.fra18.cpd20.centerframe.05 "$base.cpd23.01.fra18.cpd20.centerframe.05 Frame $base all BitmapButtonSub2"
     label $base.cpd23.01.fra18.cpd20.centerframe.05.06 \
         -borderwidth 0 \
-        -image [vTcl:image:get_image [file join / home cgavin vtcl images edit cut.gif]] \
+        -image [vTcl:image:get_image [file join / home cgavin vtcl2-0 images edit cut.gif]] \
         -text label 
     bindtags $base.cpd23.01.fra18.cpd20.centerframe.05.06 "$base.cpd23.01.fra18.cpd20.centerframe.05.06 Label $base all BitmapButtonSub3"
     label $base.cpd23.01.fra18.cpd20.centerframe.05.07 \
@@ -2313,7 +2315,7 @@ proc vTclWindow.top21 {base {container 0}} {
     bindtags $base.cpd23.01.fra18.cpd21.centerframe.05 "$base.cpd23.01.fra18.cpd21.centerframe.05 Frame $base all BitmapButtonSub2"
     label $base.cpd23.01.fra18.cpd21.centerframe.05.06 \
         -borderwidth 0 \
-        -image [vTcl:image:get_image [file join / home cgavin vtcl images edit copy.gif]] \
+        -image [vTcl:image:get_image [file join / home cgavin vtcl2-0 images edit copy.gif]] \
         -text label 
     bindtags $base.cpd23.01.fra18.cpd21.centerframe.05.06 "$base.cpd23.01.fra18.cpd21.centerframe.05.06 Label $base all BitmapButtonSub3"
     label $base.cpd23.01.fra18.cpd21.centerframe.05.07 \
@@ -2342,7 +2344,7 @@ proc vTclWindow.top21 {base {container 0}} {
     bindtags $base.cpd23.01.fra18.cpd22.centerframe.05 "$base.cpd23.01.fra18.cpd22.centerframe.05 Frame $base all BitmapButtonSub2"
     label $base.cpd23.01.fra18.cpd22.centerframe.05.06 \
         -borderwidth 0 \
-        -image [vTcl:image:get_image [file join / home cgavin vtcl images edit paste.gif]] \
+        -image [vTcl:image:get_image [file join / home cgavin vtcl2-0 images edit paste.gif]] \
         -text label 
     bindtags $base.cpd23.01.fra18.cpd22.centerframe.05.06 "$base.cpd23.01.fra18.cpd22.centerframe.05.06 Label $base all BitmapButtonSub3"
     label $base.cpd23.01.fra18.cpd22.centerframe.05.07 \
@@ -2387,13 +2389,13 @@ proc vTclWindow.top21 {base {container 0}} {
     button $base.cpd23.02.fra22.but23 \
         \
         -command [list vTcl:DoCmdOption $base.cpd23.02.fra22.but23 {::visual_text::command-add_tag %top $widget(EditTag)}] \
-        -image [vTcl:image:get_image [file join / home cgavin vtcl images edit add.gif]] \
+        -image [vTcl:image:get_image [file join / home cgavin vtcl2-0 images edit add.gif]] \
         -relief flat -text button 
     bindtags $base.cpd23.02.fra22.but23 "$base.cpd23.02.fra22.but23 Button $base all FlatToolbarButton"
     button $base.cpd23.02.fra22.but24 \
         \
         -command [list vTcl:DoCmdOption $base.cpd23.02.fra22.but24 {::delete_tag::do_modal %top $widget(DeleteTextTag)}] \
-        -image [vTcl:image:get_image [file join / home cgavin vtcl images edit remove.gif]] \
+        -image [vTcl:image:get_image [file join / home cgavin vtcl2-0 images edit remove.gif]] \
         -relief flat -text button 
     bindtags $base.cpd23.02.fra22.but24 "$base.cpd23.02.fra22.but24 Button $base all FlatToolbarButton"
     frame $base.cpd23.02.cpd22 \
@@ -2714,11 +2716,11 @@ break
     vTcl:FireEvent $base <<Ready>>
 }
 
-proc vTclWindow.top22 {base {container 0}} {
+proc vTclWindow.top22 {base} {
     if {$base == ""} {
         set base .top22
     }
-    if {[winfo exists $base] && (!$container)} {
+    if {[winfo exists $base]} {
         wm deiconify $base; return
     }
 
@@ -2734,18 +2736,18 @@ proc vTclWindow.top22 {base {container 0}} {
     ###################
     # CREATING WIDGETS
     ###################
-    if {!$container} {
     vTcl:toplevel $base -class Toplevel
     wm withdraw $base
     wm focusmodel $base passive
-    wm geometry $base 439x473+272+161; update
+    wm geometry $base 439x473+276+181; update
     wm maxsize $base 1009 738
     wm minsize $base 100 1
     wm overrideredirect $base 0
     wm resizable $base 1 1
     wm title $base "Edit Tag"
     vTcl:FireEvent $base <<Create>>
-    }
+    wm protocol $base WM_DELETE_WINDOW "vTcl:FireEvent $base <<DeleteWindow>>"
+
     label $base.lab23 \
         -anchor w -text {Tag name:} 
     entry $base.ent24 \
@@ -2817,8 +2819,7 @@ proc vTclWindow.top22 {base {container 0}} {
     radiobutton $base.fra27.fra29.rad42 \
         -anchor w \
         -command [list vTcl:DoCmdOption $base.fra27.fra29.rad42 {::edit_tag::update_sample %top}] \
-        -padx 1 -pady 0 -text center -value center \
-        -variable "$base\::justify_radio" 
+        -pady 0 -text center -value center -variable "$base\::justify_radio" 
     radiobutton $base.fra27.fra29.rad43 \
         -anchor w \
         -command [list vTcl:DoCmdOption $base.fra27.fra29.rad43 {::edit_tag::update_sample %top}] \
@@ -2849,7 +2850,7 @@ proc vTclWindow.top22 {base {container 0}} {
         -xscrollcommand "$base.cpd44.01 set" \
         -yscrollcommand "$base.cpd44.02 set" 
     frame $base.fra45 \
-        -borderwidth 2 -height 2 -relief groove -width 125
+        -borderwidth 2 -height 2 -relief groove -width 125 
     frame $base.fra46 \
         -borderwidth 2 -height 75 -width 125 
     button $base.fra46.but47 \
