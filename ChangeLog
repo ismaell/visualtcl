@@ -1,6 +1,9 @@
 ChangeLog for Visual Tcl:
 
 1.21 -> 1.22 (not released yet)
+        o Support for combobox package (combobox by Bryan Oakley)
+        o Font manager/Image manager now use default background/foreground
+          colors
         o Preferences dialog now uses default font
 	o Support for mclistbox (multicolumn listbox) package
 	  mclistbox by Bryan Oakley <oakley@channelpoint.com>

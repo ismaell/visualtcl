@@ -163,6 +163,7 @@ install -m 644 usr/local/vtcl-1.2.2/lib/lib_blt.tcl		$RPM_BUILD_ROOT/usr/local/v
 install -m 644 usr/local/vtcl-1.2.2/lib/lib_core.tcl		$RPM_BUILD_ROOT/usr/local/vtcl-1.2.2/lib/lib_core.tcl
 install -m 644 usr/local/vtcl-1.2.2/lib/lib_itcl.tcl		$RPM_BUILD_ROOT/usr/local/vtcl-1.2.2/lib/lib_itcl.tcl
 install -m 644 usr/local/vtcl-1.2.2/lib/lib_mclistbox.tcl       $RPM_BUILD_ROOT/usr/local/vtcl-1.2.2/lib/lib_mclistbox.tcl
+install -m 644 usr/local/vtcl-1.2.2/lib/lib_tcombobox.tcl       $RPM_BUILD_ROOT/usr/local/vtcl-1.2.2/lib/lib_tcombobox.tcl
 install -m 644 usr/local/vtcl-1.2.2/lib/lib_tix.tcl		$RPM_BUILD_ROOT/usr/local/vtcl-1.2.2/lib/lib_tix.tcl
 install -m 644 usr/local/vtcl-1.2.2/lib/menu.tcl		$RPM_BUILD_ROOT/usr/local/vtcl-1.2.2/lib/menu.tcl
 install -m 644 usr/local/vtcl-1.2.2/lib/misc.tcl		$RPM_BUILD_ROOT/usr/local/vtcl-1.2.2/lib/misc.tcl
@@ -329,6 +330,7 @@ install -m 644 usr/local/vtcl-1.2.2/vtclmac			$RPM_BUILD_ROOT/usr/local/vtcl-1.2
 /usr/local/vtcl-1.2.2/lib/lib_core.tcl
 /usr/local/vtcl-1.2.2/lib/lib_itcl.tcl
 /usr/local/vtcl-1.2.2/lib/lib_mclistbox.tcl
+/usr/local/vtcl-1.2.2/lib/lib_tcombobox.tcl
 /usr/local/vtcl-1.2.2/lib/lib_tix.tcl
 /usr/local/vtcl-1.2.2/lib/menu.tcl
 /usr/local/vtcl-1.2.2/lib/misc.tcl
