@@ -87,6 +87,10 @@ namespace eval vTcl::widgets::tablelist::tablelist {
             append result "$::vTcl(tab)$basename columnconfigure $i \\\n"
             append result "[vTcl:clean_pairs $pairs]\n"
         }
+	global basenames
+	set body [$target bodypath]
+	set basenames($body) "\[$basename bodypath\]"
+	append result [vTcl:dump_widget_bind $body [vTcl:base_name $body] 0]
         return $result
     }
 

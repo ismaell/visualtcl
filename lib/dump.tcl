@@ -489,17 +489,18 @@ proc vTcl:dump:dump_user_bind {} {
     return $result
 }
 
-proc vTcl:dump_widget_bind {target basename} {
+proc vTcl:dump_widget_bind {target basename {include_bindtags 1}} {
     global vTcl
     set result ""
     if {[catch {bindtags $target \{$vTcl(bindtags,$target)\}}]} {
         return ""
     }
     # well, let's see if we have to save the bindtags
-    set tags $vTcl(bindtags,$target)
-    lremove tags vTcl(a) vTcl(b)
-    if {$tags !=
-        [::widgets_bindings::get_standard_bindtags $target]} {
+    if {$include_bindtags} {
+        set tags $vTcl(bindtags,$target)
+        lremove tags vTcl(a) vTcl(b)
+        if {$tags !=
+            [::widgets_bindings::get_standard_bindtags $target]} {
             set reltags ""
             foreach tag $tags {
                 if {"$tag" == "$target"} {
@@ -517,6 +518,7 @@ proc vTcl:dump_widget_bind {target basename} {
                 }
             }
             append result "$vTcl(tab)bindtags [vTcl:base_name $target] \"$reltags\"\n"
+        }
     }
 
     set bindlist [lsort [bind $target]]
@@ -530,7 +532,6 @@ proc vTcl:dump_widget_bind {target basename} {
             append result "$vTcl(tab2)[string trim $command]\n    \}\n"
         }
     }
-    bindtags $target vTcl(b)
     return $result
 }
 
