@@ -121,10 +121,14 @@ proc vTcl:lib_itcl:setup {} {
     set vTcl(panedwindow,insert)        ""
     set vTcl(scrolledtext,insert)       ""
 
-    set vTcl(option,translate,-textfont) vTcl:font:translate
-    set vTcl(option,noencase,-textfont) 1
-    set vTcl(option,translate,-balloonfont) vTcl:font:translate
-    set vTcl(option,noencase,-balloonfont) 1
+    TranslateOption    -textfont vTcl:font:translate
+    NoEncaseOption     -textfont 1
+
+    TranslateOption    -balloonfont vTcl:font:translate
+    NoEncaseOption     -balloonfont 1
+
+    TranslateOption    -labelfont vTcl:font:translate
+    NoEncaseOption     -labelfont 1
 
     ## under Windows, we want to use the default values
     switch $tcl_platform(platform) {

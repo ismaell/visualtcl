@@ -511,20 +511,6 @@ proc vTcl:font:prompt_noborder_fontlist {font} {
     return $vTcl(font,noborder_fontlist,font)
 }
 
-# translation for options when saving files
-set vTcl(option,translate,-font) vTcl:font:translate
-set vTcl(option,noencase,-font) 1
-
-proc vTcl:font:translate {value} {
-    global vTcl
-
-    if [info exists vTcl(fonts,$value,key)] {
-	set value "\[vTcl:font:get_font \"$vTcl(fonts,$value,key)\"\]"
-    }
-
-    return $value
-}
-
 proc vTcl:font:refresh_manager {{position 0.0}} {
     global vTcl
 

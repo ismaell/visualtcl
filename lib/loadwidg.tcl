@@ -408,3 +408,15 @@ proc InsertChildCmd {cmd} {
 proc IgnoreProc {args} {
     eval lappend ::vTcl(proc,ignore) $args
 }
+
+proc TranslateOption {option proc} {
+    set ::vTcl(option,translate,$option) $proc
+}
+
+proc NoEncaseOption {option value} {
+    set ::vTcl(option,noencase,$option) $value
+}
+
+proc NoEncaseOptionWhen {option proc} {
+    set ::vTcl(option,noencasewhen,$option) $proc
+}

@@ -345,9 +345,22 @@ proc vTcl:core:get_widget_tree_label {target} {
 
 # translation for options when saving files
 
-set vTcl(option,translate,-menu) vTcl:core:menutranslate
-set vTcl(option,noencase,-menu) 1
-set vTcl(option,noencasewhen,-menu) vTcl:core:noencasewhen
+TranslateOption    -font vTcl:font:translate
+NoEncaseOption     -font 1
+
+TranslateOption    -menu vTcl:core:menutranslate
+NoEncaseOption     -menu 1
+NoEncaseOptionWhen -menu vTcl:core:noencasewhen
+
+proc vTcl:font:translate {value} {
+    global vTcl
+
+    if [info exists vTcl(fonts,$value,key)] {
+	set value "\[vTcl:font:get_font \"$vTcl(fonts,$value,key)\"\]"
+    }
+
+    return $value
+}
 
 proc vTcl:core:menutranslate {value} {
 
@@ -366,30 +379,29 @@ proc vTcl:core:menutranslate {value} {
       	return $value
 }
 
-set vTcl(option,translate,-xscrollcommand) vTcl:core:scrolltranslate
-set vTcl(option,noencase,-xscrollcommand) 1
+TranslateOption    -xscrollcommand vTcl:core:scrolltranslate
+NoEncaseOption     -xscrollcommand 1
+NoEncaseOptionWhen -xscrollcommand vTcl:core:noencasewhen
 
-set vTcl(option,translate,-yscrollcommand) vTcl:core:scrolltranslate
-set vTcl(option,noencase,-yscrollcommand) 1
+TranslateOption    -yscrollcommand vTcl:core:scrolltranslate
+NoEncaseOption     -yscrollcommand 1
+NoEncaseOptionWhen -yscrollcommand vTcl:core:noencasewhen
 
-set vTcl(option,noencasewhen,-xscrollcommand) vTcl:core:noencasewhen
-set vTcl(option,noencasewhen,-yscrollcommand) vTcl:core:noencasewhen
+TranslateOption    -command vTcl:core:commandtranslate
+NoEncaseOption     -command 1
+NoEncaseOptionWhen -command vTcl:core:noencasecommandwhen
 
-set vTcl(option,translate,-command) vTcl:core:commandtranslate
-set vTcl(option,noencase,-command) 1
-set vTcl(option,noencasewhen,-command) vTcl:core:noencasecommandwhen
+TranslateOption    -listvariable vTcl:core:variabletranslate
+NoEncaseOption     -listvariable 1
+NoEncaseOptionWhen -listvariable vTcl:core:noencasewhen
 
-set vTcl(option,translate,-listvariable) vTcl:core:variabletranslate
-set vTcl(option,noencase,-listvariable) 1
-set vTcl(option,noencasewhen,-listvariable) vTcl:core:noencasewhen
+TranslateOption    -variable vTcl:core:variabletranslate
+NoEncaseOption     -variable 1
+NoEncaseOptionWhen -variable vTcl:core:noencasewhen
 
-set vTcl(option,translate,-variable) vTcl:core:variabletranslate
-set vTcl(option,noencase,-variable) 1
-set vTcl(option,noencasewhen,-variable) vTcl:core:noencasewhen
-
-set vTcl(option,translate,-textvariable) vTcl:core:variabletranslate
-set vTcl(option,noencase,-textvariable) 1
-set vTcl(option,noencasewhen,-textvariable) vTcl:core:noencasewhen
+TranslateOption    -textvariable vTcl:core:variabletranslate
+NoEncaseOption     -textvariable 1
+NoEncaseOptionWhen -textvariable vTcl:core:noencasewhen
 
 proc vTcl:core:variabletranslate {value} {
 

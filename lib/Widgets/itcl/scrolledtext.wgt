@@ -32,3 +32,19 @@ Icon		icon_scrolledtext.gif
 DumpChildren	no
 MegaWidget	yes
 DontSaveOptions -sbwidth
+GetFontsCmd     vTcl::widgets::iwidgets::scrolledtext::getFontsCmd
+
+namespace eval vTcl::widgets::iwidgets::scrolledtext {
+
+    proc getFontsCmd {target} {
+        set result ""
+	set labelfont [$target cget -labelfont]
+	set textfont  [$target cget -textfont]
+	if {$labelfont != ""} {
+	    lappend result $labelfont
+	}
+	if {$textfont != ""} {
+	    lappend result $textfont
+	}
+    }
+}
