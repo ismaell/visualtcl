@@ -40,10 +40,10 @@ proc vTcl:image:get_creation_type {filename} {
     set ext [string tolower $ext]
 
     switch $ext {
-	.ppm -
-	.gif    {return photo}
-	.xbm    {return bitmap}
-	default {return photo}
+        .ppm -
+        .gif    {return photo}
+        .xbm    {return bitmap}
+        default {return photo}
     }
 }
 
@@ -81,13 +81,13 @@ proc {vTcl:image:create_new_image} {filename
 
     # Does the image already exist?
     if {[info exists vTcl(images,files)]} {
-	if {[lsearch -exact $vTcl(images,files) $filename] > -1} { return }
+        if {[lsearch -exact $vTcl(images,files) $filename] > -1} { return }
     }
 
     if {![info exists vTcl(sourcing)] && [string length $data] > 0} {
-	set object [image create \
-	    [vTcl:image:get_creation_type $filename] \
-	    -data $data]
+        set object [image create \
+            [vTcl:image:get_creation_type $filename] \
+            -data $data]
     } else {
         # Wait a minute... Does the file actually exist?
         if {! [file exists $filename] } {
@@ -138,17 +138,17 @@ proc {vTcl:image:get_image} {filename} {
 
     # Let's do some checking first
     if {![info exists vTcl(images,$reference,image)]} {
-	# Well, the path may be wrong; in that case check
-	# only the filename instead, without the path.
+        # Well, the path may be wrong; in that case check
+        # only the filename instead, without the path.
 
-	set imageTail [file tail $filename]
+        set imageTail [file tail $filename]
 
-	foreach oneFile $vTcl(images,files) {
-	    if {[file tail $oneFile] == $imageTail} {
-		set reference [vTcl:rename $oneFile]
-		break
-	    }
-	}
+        foreach oneFile $vTcl(images,files) {
+            if {[file tail $oneFile] == $imageTail} {
+                set reference [vTcl:rename $oneFile]
+                break
+            }
+        }
     }
     return $vTcl(images,$reference,image)
 }
@@ -162,9 +162,9 @@ proc {vTcl:image:init_img_manager} {} {
     set noeditor 0
 
     if {![info exists vTcl(pr,imageeditor)]} {
-	set noeditor 1
+        set noeditor 1
     } elseif {$vTcl(pr,imageeditor) == ""} {
-	set noeditor 1
+        set noeditor 1
     }
 
     if {$noeditor} {
