@@ -48,6 +48,22 @@ proc vTcl:show_selection {button_path target} {
     $b itemconfigure "TEXT$button_path" -fill #0000ff
 
     set vTcl(tree,last_selected) $button_path
+
+    # let's see if we can bring the thing into view
+    lassign [$b cget -scrollregion] foo foo cx cy
+    lassign [$b bbox $button_path] x1 y1 x2 y2
+
+    set yf0 [expr $y1.0 / $cy]
+    set yf1 [expr $y2.0 / $cy]
+    lassign [$b yview] yv0 yv1
+
+    if {$yf0 < $yv0 || $yf1 > $yv1} {
+        set ynew [expr $yf0 - ($yf1 - $yf0) / 2.0]
+        if {$ynew < 0.0} {
+            set ynew $yf0
+        }
+        $b yview moveto $ynew
+    }
 }
 
 proc vTcl:show_wtree {} {
