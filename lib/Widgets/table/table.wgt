@@ -1,7 +1,7 @@
 Class		Table
 Lib		TkTable
 
-Icon		icon_mclistbox.gif
+Icon		icon_table.gif
 TreeLabel	tkTable
 
 DefaultOptions	-rows 3 -cols 3
