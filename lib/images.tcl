@@ -360,55 +360,37 @@ proc vTcl:image:replace_image {filename} {
     vTcl:image:refresh_manager $pos
 }
 
-proc vTcl:image:tag_image_list {t tagname object} {
-
-    $t tag bind $tagname <Enter> \
-        "$t tag configure $tagname -background gray -relief raised -borderwidth 2"
-
-    $t tag bind $tagname <Leave> \
-        "$t tag configure $tagname -background white -relief flat -borderwidth 0"
-
-    $t tag bind $tagname <ButtonPress-1> \
-        "set vTcl(images,selector_dlg,current) $object"
-}
-
 proc vTcl:image:fill_noborder_image_list {t} {
-    global vTcl
-
     update
-    $t configure -state normal -tabs "[winfo width $t]p"
-    $t delete 0.0 end
 
-    foreach image $vTcl(images,files) {
-        set object [vTcl:image:get_image $image]
-        set reference [vTcl:rename $image]
-
-        $t image create end -image $object
-        $t insert end " $image\t" vTcl:image_list:$object
-        $t insert end "\n\n"
-
-        vTcl:image:tag_image_list $t \
-                                  vTcl:image_list:$object \
-                                  $object
+    set imageTextList {}
+    foreach imageFilename $::vTcl(images,files) {
+        set source [::vTcl:image:get_image $imageFilename]
+        lappend imageTextList $source
+        lappend imageTextList $imageFilename
     }
 
-    # add additional item to create a new image
-    $t insert end "\n New image...\t\n\t" vTcl:image_list:new
+    lappend imageTextList ""
+    lappend imageTextList "New image..."
 
-    vTcl:image:tag_image_list $t \
-                              vTcl:image_list:new \
-                              <new>
+    lappend imageTextList ""
+    lappend imageTextList "Cancel"
 
-    # cancel
-    $t insert end "\n Cancel\t\n\t" vTcl:image_list:cancel
+    $t widget fill $imageTextList
+}
 
-    vTcl:image:tag_image_list $t \
-                              vTcl:image_list:cancel \
-                              <cancel>
+proc vTcl:image:listboxSelect {l} {
+    set item [$l widget selection get]
+    set text [$l widget itemcget $item -text]
 
-    $t tag configure vTcl:image_list:cancel -foreground #ff0000
-
-    $t configure -state disabled
+    if {$text == "New image..."} {
+        set ::vTcl(images,selector_dlg,current) <new>
+    } elseif {$text == "Cancel"} {
+        set ::vTcl(images,selector_dlg,current) <cancel>
+    } else {
+        set ::vTcl(images,selector_dlg,current) \
+             [vTcl:image:get_image $text]
+    }
 }
 
 proc vTcl:image:create_selector_dlg {base} {
@@ -435,32 +417,30 @@ proc vTcl:image:create_selector_dlg {base} {
         -highlightcolor #000000
     wm focusmodel $base passive
 
-    vTcl:prepare_pulldown $base 496 252
+    vTcl:prepare_pulldown $base 400 252
 
     wm maxsize $base 1009 738
     wm minsize $base 1 1
     wm resizable $base 1 1
     wm deiconify $base
 
-    ScrolledWindow $base.cpd29 -background #bcbcbc
-    text $base.cpd29.03 \
-        -background white \
-        -foreground #000000 -highlightbackground #f3f3f3 \
-        -highlightcolor #000000 -selectbackground #000080 \
-        -selectforeground #ffffff -state disabled -cursor left_ptr
-    $base.cpd29 setwidget $base.cpd29.03
+    vTcl::widgets::core::compoundcontainer::createCmd $base.cpd29 \
+        -compoundType internal -compoundClass {Image Listbox} 
+    $base.cpd29 widget configure -mouseover yes
+    bind $base.cpd29 <<ListboxSelect>> {
+        vTcl:image:listboxSelect %W
+    }
 
     ###################
     # SETTING GEOMETRY
     ###################
     pack $base.cpd29 \
         -in $base -anchor center -expand 1 -fill both -side top
-    pack $base.cpd29.03
 
-    vTcl:display_pulldown $base 496 252 \
+    vTcl:display_pulldown $base 400 252 \
         "set vTcl(images,selector_dlg,current) <cancel>"
 
-    vTcl:image:fill_noborder_image_list $base.cpd29.03
+    vTcl:image:fill_noborder_image_list $base.cpd29
 }
 
 proc vTcl:prompt_user_image {target option} {
@@ -798,6 +778,4 @@ proc vTcl:image:external_editor {imageName} {
         vTcl:error "Could not execute external image editor!"
     }
 }
-
-
 

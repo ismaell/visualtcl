@@ -748,7 +748,335 @@ proc vTclWindow.top81 {base} {
 
 }
 
+#############################################################################
+## Compound:: Image listbox
+namespace eval {vTcl::compounds::internal::{Image Listbox}} {
+
+set bindtags {}
+
+set libraries {
+    bwidget
+    core
+}
+
+set source .top72.cpd73
+
+set class MegaWidget
+
+set procs {
+    ::imagelistbox::cleanList
+    ::imagelistbox::getThumbnail
+    ::imagelistbox::myWidgetProc
+    ::imagelistbox::init
+    ::imagelistbox::configureCmd
+    ::imagelistbox::configureAllCmd
+    ::imagelistbox::cgetCmd
+    ::imagelistbox::configureOptionCmd
+    ::imagelistbox::getListbox
+    ::imagelistbox::fillCmd
+    ::imagelistbox::setMouseOver
+    ::imagelistbox::selectionCmd
+    ::imagelistbox::itemsCmd
+    ::imagelistbox::itemcgetCmd
+    ::imagelistbox::button1
+    ::imagelistbox::button1-release
+}
 
 
+proc bindtagsCmd {} {}
 
+
+proc infoCmd {target} {
+    namespace eval ::widgets::$target {
+        array set save {-class 1 -widgetProc 1}
+    }
+    set site_3_0 $target
+    namespace eval ::widgets::$site_3_0.scr79 {
+        array set save {-auto 1}
+    }
+    namespace eval ::widgets::$site_3_0.scr79.f.lis80 {
+        array set save {-background 1 -deltay 1 -height 1 -padx 1}
+    }
+    namespace eval ::widgets::$target {
+        set sourceFilename "D:/cygwin/home/cgavin/vtcl/Projects/imagelistbox/imagelistbox_compound.tcl"
+        set compoundName {Image Listbox}
+    }
+
+}
+
+
+proc vTcl:DefineAlias {target alias args} {
+    if {![info exists ::vTcl(running)]} {
+        return [eval ::vTcl:DefineAlias $target $alias $args]
+    }
+    set class [vTcl:get_class $target]
+    vTcl:set_alias $target [vTcl:next_widget_name $class $target $alias] -noupdate
+}
+
+
+proc compoundCmd {target} {
+    ::imagelistbox::init $target
+
+    set items [split $target .]
+    set parent [join [lrange $items 0 end-1] .]
+    set top [winfo toplevel $parent]
+    vTcl::widgets::core::megawidget::createCmd $target  -widgetProc ::imagelistbox::myWidgetProc 
+    vTcl:DefineAlias "$target" "MegaWidget1" vTcl::widgets::core::megawidget::widgetProc "Toplevel1" 1
+    set site_3_0 $target
+    vTcl::widgets::bwidgets::scrolledwindow::createCmd $site_3_0.scr79  -auto horizontal 
+    vTcl:DefineAlias "$site_3_0.scr79" "ScrolledWindow1" vTcl:WidgetProc "Toplevel1" 1
+    ListBox $site_3_0.scr79.f.lis80  -background white -deltay 32 -height 0 -padx 32 
+    vTcl:DefineAlias "$site_3_0.scr79.f.lis80" "ListBox1" vTcl:WidgetProc "Toplevel1" 1
+    bind $site_3_0.scr79.f.lis80 <Configure> {
+        ListBox::_resize  %W
+    }
+    bind $site_3_0.scr79.f.lis80 <Destroy> "
+        foreach tempImage \[set ::imagelistbox::${target}::tempImages\] {image delete \$tempImage}
+        ListBox::_destroy %W"
+    pack $site_3_0.scr79.f.lis80 -fill both -expand 1
+    $site_3_0.scr79 setwidget $site_3_0.scr79.f
+    pack $site_3_0.scr79  -in $site_3_0 -anchor center -expand 1 -fill both -side top 
+
+}
+
+
+proc procsCmd {} {
+#############################################################################
+## Procedure:  ::imagelistbox::cleanList
+
+namespace eval ::imagelistbox {
+proc cleanList {w} {
+upvar ::imagelistbox::${w}::tempImages tempImages
+foreach tempImage $tempImages {
+    image delete $tempImage
+}
+set tempImages {}
+
+set l [getListbox $w] 
+$l delete [$l items]
+}
+}
+
+#############################################################################
+## Procedure:  ::imagelistbox::getThumbnail
+
+namespace eval ::imagelistbox {
+proc getThumbnail {w source {size 32}} {
+   set source_width  [image width $source]
+   set source_height [image height $source]
+
+   if {$source_width <= $size && $source_height <= $size} {
+       ## right size or smaller
+       return $source
+   }
+
+   if {$source_width > $source_height} {
+      set target_width $size
+      set target_height [expr $size * $source_height / $source_width]
+   } else {
+      set target_height $size
+      set target_width [expr $size * $source_width / $source_height]
+   }
+
+   set target [image create photo -width $size -height $size]
+
+   set deltax [expr ($size - $target_width)  / 2]
+   set deltay [expr ($size - $target_height) / 2]
+
+   $target copy $source -from 0 0 [expr $source_width - 1] [expr $source_height - 1]  -to   $deltax $deltay [expr $target_width - 1 + $deltax ]  [expr $target_height - 1 + $deltay]  -subsample [expr $source_width  / $target_width]  [expr $source_height / $target_height]
+
+   upvar ::imagelistbox::${w}::tempImages tempImages
+   lappend tempImages $target
+   
+   return $target
+}
+}
+
+#############################################################################
+## Procedure:  ::imagelistbox::myWidgetProc
+
+namespace eval ::imagelistbox {
+proc myWidgetProc {w args} {
+set command [lindex $args 0]
+set args [lrange $args 1 end]
+
+return [eval ${command}Cmd $w $args]
+}
+}
+
+#############################################################################
+## Procedure:  ::imagelistbox::init
+
+namespace eval ::imagelistbox {
+proc init {w} {
+namespace eval ::imagelistbox::${w} {
+    variable tempImages; set tempImages {}
+    variable mouseOver;  set mouseOver 0
+}
+}
+}
+
+#############################################################################
+## Procedure:  ::imagelistbox::configureCmd
+
+namespace eval ::imagelistbox {
+proc configureCmd {w args} {
+if {[llength $args] == 0} {
+    return [configureAllCmd $w]
+} elseif {[llength $args] == 1} {
+    return [configureOptionCmd $w $args]
+}
+
+foreach {option value} $args {
+    if {$option == "-mouseover"} {
+        setMouseOver $w $value
+    } else {
+        ## delegate options to listbox
+        [getListbox $w] configure $option $value
+    }
+}
+}
+}
+
+#############################################################################
+## Procedure:  ::imagelistbox::configureAllCmd
+
+namespace eval ::imagelistbox {
+proc configureAllCmd {w} {
+set result [list [configureCmd $w -mouseover]]
+set result [concat $result [[getListbox $w] configure]]
+
+return $result
+}
+}
+
+#############################################################################
+## Procedure:  ::imagelistbox::cgetCmd
+
+namespace eval ::imagelistbox {
+proc cgetCmd {w args} {
+set option $args
+if {$option == "-mouseover"} {
+    return [set ::imagelistbox::${w}::mouseOver]
+}
+
+return [[getListbox $w] cget $option]
+}
+}
+
+#############################################################################
+## Procedure:  ::imagelistbox::configureOptionCmd
+
+namespace eval ::imagelistbox {
+proc configureOptionCmd {w option} {
+if {$option == "-mouseover"} {
+    return [list -mouseover mouseOver MouseOver 0 [set ::imagelistbox::${w}::mouseOver]]
+}
+
+set result [[getListbox $w] configure $option]
+return $result
+}
+}
+
+#############################################################################
+## Procedure:  ::imagelistbox::getListbox
+
+namespace eval ::imagelistbox {
+proc getListbox {w} {
+return $w.scr79.f.lis80
+}
+}
+
+#############################################################################
+## Procedure:  ::imagelistbox::fillCmd
+
+namespace eval ::imagelistbox {
+proc fillCmd {w imageTextList} {
+cleanList $w
+set l [getListbox $w]
+
+set i 0
+foreach {image text} $imageTextList {
+    set reference item_$i
+    if {$image == ""} {
+        $l insert end $reference -text $text
+    } else {
+        set thumbnail [getThumbnail $w $image]
+        $l insert end $reference -image $thumbnail -text $text
+    }
+    incr i
+}
+
+$l bindImage <Button-1> "::imagelistbox::button1 $w"
+$l bindText  <Button-1> "::imagelistbox::button1 $w"
+$l bindImage <ButtonRelease-1> "::imagelistbox::button1-release $w"
+$l bindText  <ButtonRelease-1> "::imagelistbox::button1-release $w"
+}
+}
+
+#############################################################################
+## Procedure:  ::imagelistbox::setMouseOver
+
+namespace eval ::imagelistbox {
+proc setMouseOver {w value} {
+namespace eval ::imagelistbox::${w} "set mouseOver $value"
+
+set l [getListbox $w]
+if {$value} {
+    $l bindImage <Enter> "$l selection set"
+    $l bindText <Enter> "$l selection set"
+} else {
+    $l bindImage <Enter> ""
+    $l bindText <Enter> ""
+}
+}
+}
+
+#############################################################################
+## Procedure:  ::imagelistbox::selectionCmd
+
+namespace eval ::imagelistbox {
+proc selectionCmd {w args} {
+eval [getListbox $w] selection $args
+}
+}
+
+#############################################################################
+## Procedure:  ::imagelistbox::itemsCmd
+
+namespace eval ::imagelistbox {
+proc itemsCmd {w args} {
+eval [getListbox $w] items $args
+}
+}
+
+#############################################################################
+## Procedure:  ::imagelistbox::itemcgetCmd
+
+namespace eval ::imagelistbox {
+proc itemcgetCmd {w args} {
+eval [getListbox $w] itemcget $args
+}
+}
+
+#############################################################################
+## Procedure:  ::imagelistbox::button1
+
+namespace eval ::imagelistbox {
+proc button1 {w node} {
+set l [getListbox $w]
+focus $l
+$l selection set $node
+}
+}
+
+namespace eval ::imagelistbox {
+proc button1-release {w node} {
+vTcl:FireEvent [winfo parent $w] <<ListboxSelect>>
+}
+}
+
+}
+
+}
 
