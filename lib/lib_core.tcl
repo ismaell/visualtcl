@@ -54,7 +54,7 @@ proc vTcl:widget:lib:lib_core {args} {
     if {[info tclversion] >= 8.4} {
 	lappend order Spinbox
 	lappend order Labelframe
-	lappend order PanedWindow
+	lappend order Panedwindow
     }
 
     vTcl:lib:add_widgets_to_toolbar $order
@@ -991,4 +991,5 @@ namespace eval ::vTcl::itemEdit {
 	$top.ItemsEditMenuAddDelete entryconfigure 1 -state $state($enabled)
     }
 }
+
 

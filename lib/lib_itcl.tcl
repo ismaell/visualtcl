@@ -86,6 +86,11 @@ proc vTcl:widget:lib:lib_itcl {args} {
                Notebook Tabnotebook Panedwindow Scrolledtext Scrolledcanvas
                Scrolledframe}
 
+    ## avoid conflicts with Tk 8.4
+    if {[info tclversion] >= 8.4} {
+        ::vTcl::lremove order Panedwindow
+    }
+
     vTcl:lib:add_widgets_to_toolbar $order
 
     lappend vTcl(proc,ignore) "::iwidgets::*"
@@ -451,3 +456,4 @@ namespace eval vTcl::widgets::iwidgets::notebooks::edit {
         error "Not implemented yet!"
     }
 }
+
