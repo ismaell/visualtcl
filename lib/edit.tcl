@@ -125,7 +125,7 @@ proc vTcl:paste {{fromMouse ""}} {
     vTcl:active_widget $name
 }
 
-namespace eval ::findReplace {
+namespace eval ::vTcl::findReplace {
     variable base	.find
     variable txtbox	""
     variable count	0
@@ -141,7 +141,7 @@ namespace eval ::findReplace {
     variable origInd	0.0
 }
 
-proc ::findReplace::window {{newBase ""} {container 0}} {
+proc ::vTcl::findReplace::window {{newBase ""} {container 0}} {
     variable base
 
     if {[llength $newBase] > 0} { set base $newBase }
@@ -171,40 +171,40 @@ proc ::findReplace::window {{newBase ""} {container 0}} {
     entry $base.replaceEnt \
         -width 256 
     button $base.findBut \
-        -height 23 -text {Find Next} -width 90 -command ::findReplace::find -underline 0
+        -height 23 -text {Find Next} -width 90 -command ::vTcl::findReplace::find -underline 0
     button $base.cancelBut \
-        -height 23 -text Cancel -width 90 -command ::findReplace::cancel -underline 0
+        -height 23 -text Cancel -width 90 -command ::vTcl::findReplace::cancel -underline 0
     button $base.replaceBut \
-        -height 23 -text Replace -width 90 -command ::findReplace::replace -underline 0
+        -height 23 -text Replace -width 90 -command ::vTcl::findReplace::replace -underline 0
     button $base.replaceAllBut \
-        -height 23 -text {Replace All} -width 90 -command ::findReplace::replaceAll \
+        -height 23 -text {Replace All} -width 90 -command ::vTcl::findReplace::replaceAll \
 	-underline 8
     checkbutton $base.caseCheck \
         -anchor w -height 17 -text {Match case} -variable che32 -width 88 \
-	-variable ::findReplace::case -underline 0
+	-variable ::vTcl::findReplace::case -underline 0
     checkbutton $base.wildCheck \
         -anchor w -height 17 -text {Use wildcards} -variable che33 -width 98 \
-	-variable ::findReplace::wild -underline 4
+	-variable ::vTcl::findReplace::wild -underline 4
     checkbutton $base.regexpCheck \
         -anchor w -height 17 -text {Regular expression} -variable che34 -width 123 \
-	-variable ::findReplace::regexp -underline 2
+	-variable ::vTcl::findReplace::regexp -underline 2
     frame $base.fra22 \
         -borderwidth 2 -height 35 -relief groove -width 110 
     radiobutton $base.fra22.upRadio \
         -height 17 -text Up -underline 0 -value up \
-        -variable ::findReplace::dir -width 41 
+        -variable ::vTcl::findReplace::dir -width 41 
     radiobutton $base.fra22.downRadio \
         -height 17 -text Down -underline 0 -value down \
-        -variable ::findReplace::dir -width 51 
+        -variable ::vTcl::findReplace::dir -width 51 
     label $base.lab25 \
         -borderwidth 1 -height 0 -padx 1 -text Direction -width 46 
 
     focus $base.findEnt
 
-    bind $base <Key-Escape> "::findReplace::cancel"
+    bind $base <Key-Escape> "::vTcl::findReplace::cancel"
 
-    bind $base.findEnt <Key-Return> "::findReplace::find"
-    bind $base.replaceEnt <Key-Return> "::findReplace::replace"
+    bind $base.findEnt <Key-Return> "::vTcl::findReplace::find"
+    bind $base.replaceEnt <Key-Return> "::vTcl::findReplace::replace"
 
     bind $base <Alt-f> "focus $base.findEnt"
     bind $base <Alt-e> "focus $base.replaceEnt"
@@ -253,19 +253,19 @@ proc ::findReplace::window {{newBase ""} {container 0}} {
         -x 235 -y 79 -width 46 -height 12 -anchor nw -bordermode ignore 
 }
 
-proc ::findReplace::show {textWidget} {
+proc ::vTcl::findReplace::show {textWidget} {
     variable base
     variable txtbox  $textWidget
     variable index   0.0
     variable origInd [$txtbox index current]
 
     ## Bind the F3 key so the user can continue to find the next entry.
-    bind $txtbox <Key-F3> "::findReplace::find"
+    bind $txtbox <Key-F3> "::vTcl::findReplace::find"
 
     window
 }
 
-proc ::findReplace::find {{replace 0}} {
+proc ::vTcl::findReplace::find {{replace 0}} {
     variable base
     variable txtbox
     variable dir
@@ -291,7 +291,7 @@ proc ::findReplace::find {{replace 0}} {
 	set start bottom
     }
 
-    lappend switches -count ::findReplace::count --
+    lappend switches -count ::vTcl::findReplace::count --
 
     set text [$base.findEnt get]
     if {[llength $text] == 0} { return }
@@ -304,7 +304,7 @@ proc ::findReplace::find {{replace 0}} {
 	    if {[string compare $x "yes"] == 0} {
 		set index 0.0
 		if {$up} { set index end }
-		::findReplace::find
+		::vTcl::findReplace::find
 	    }
 	}
 	return -1
@@ -326,7 +326,7 @@ proc ::findReplace::find {{replace 0}} {
     return $i
 }
 
-proc ::findReplace::replace {} {
+proc ::vTcl::findReplace::replace {} {
     variable base
     variable txtbox
     variable index
@@ -337,7 +337,7 @@ proc ::findReplace::replace {} {
 
     set text [$base.replaceEnt get]
 
-    while {[::findReplace::find 1] > -1} {
+    while {[::vTcl::findReplace::find 1] > -1} {
 	set ln [lindex [split $selFirst .] 0]
 	$txtbox see $selFirst
 	set x [tk_dialog .__replace__ "Match found" \
@@ -363,14 +363,14 @@ proc ::findReplace::replace {} {
     set x [tk_messageBox -title "No match found" -parent $base -type yesno \
 	-message "   Cannot find \"$text\"\nSearch again from the $start?"]
 
-    if {[vTcl:streq $x "yes"]} { ::findReplace::replace }
+    if {[vTcl:streq $x "yes"]} { ::vTcl::findReplace::replace }
 
     $txtbox tag remove sel 0.0 end
     $txtbox see $origInd
     focus $txtbox
 }
 
-proc ::findReplace::replaceAll {} {
+proc ::vTcl::findReplace::replaceAll {} {
     variable base
     variable txtbox
     variable dir
@@ -381,7 +381,7 @@ proc ::findReplace::replaceAll {} {
 
     set text [$base.replaceEnt get]
 
-    while {[::findReplace::find 1] > -1} {
+    while {[::vTcl::findReplace::find 1] > -1} {
 	$txtbox delete $selFirst $selLast
 	$txtbox insert $selFirst $text
     }
@@ -394,7 +394,7 @@ proc ::findReplace::replaceAll {} {
     focus $txtbox
 }
 
-proc ::findReplace::cancel {} {
+proc ::vTcl::findReplace::cancel {} {
     variable base
     variable txtbox
 

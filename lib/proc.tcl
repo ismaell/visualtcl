@@ -359,7 +359,7 @@ proc vTclWindow.vTcl.proc {args} {
 
     set butFind [vTcl:formCompound:add $base.f3.toolbar button \
         -image [vTcl:image:get_image [file join $vTcl(VTCL_HOME) images edit search.gif] ] \
-	-command "::findReplace::show $base.f3.text"]
+	-command "::vTcl::findReplace::show $base.f3.text"]
     pack configure $butFind -side left
     vTcl:set_balloon $butFind "Find/Replace"
 
