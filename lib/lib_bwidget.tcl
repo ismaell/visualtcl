@@ -44,6 +44,10 @@ proc vTcl:widget:lib:lib_bwidget {args} {
     # Button
     # Entry
     # Label
+    #
+    ## This one announces itself as 'Canvas' class which is no good for us.
+    ## Need to investigate.
+    # PagesManager
 
     set order {
 	ArrowButton
@@ -52,7 +56,7 @@ proc vTcl:widget:lib:lib_bwidget {args} {
         ComboBox
 	MainFrame
 	NoteBook
-	PagesManager
+        PanedWindow
 	ProgressBar
 	ScrollView
 	Separator
@@ -76,7 +80,8 @@ proc vTcl:widget:lib:lib_bwidget {args} {
     append vTcl(proc,ignore) "|::DragSite::.*"
     append vTcl(proc,ignore) "|::DropSite::.*"
     append vTcl(proc,ignore) "|::Entry::.*"
-    append vTcl(proc,ignore) "|ArrowButton|NoteBook|ComboBox|Entry"
+    append vTcl(proc,ignore) "|::PanedWindow::.*"
+    append vTcl(proc,ignore) "|ArrowButton|NoteBook|ComboBox|Entry|PanedWindow"
 }
 
 namespace eval vTcl::widgets::bwidgets {
