@@ -1,7 +1,7 @@
 Class         Combobox2
 Lib           vtcl
 
-CreateCmd     ::combobox::combobox
+CreateCmd     ::combobox2::combobox2
 Icon          icon_combobox.gif
 Balloon       vTcl combo box
 DumpChildren  no
@@ -9,47 +9,47 @@ MegaWidget    yes
 Resizable     horizontal
 TreeLabel     Combo Box
 AliasPrefix   Combobox
-ResizeCmd     vTcl:Combobox:Resize
+ResizeCmd     vTcl:Combobox2:Resize
 
 # New options for this widget
 NewOption -commandstate    "Command State"  choice {normal disabled}
 NewOption -maxheight       "Max Height"     type
 
-proc vTcl:Combobox:Resize {widget w h} {
+proc vTcl:Combobox2:Resize {widget w h} {
     $widget configure -width $w
 }
 
 # Routines that need to be exported to a saved project
 
-Export __combobox_Setup
-Export ::combobox::combobox
-Export ::combobox::Init
-Export ::combobox::SetClassBindings
-Export ::combobox::SetBindings
-Export ::combobox::Build
-Export ::combobox::HandleEvent
-Export ::combobox::DestroyHandler
-Export ::combobox::Find
-Export ::combobox::Select
-Export ::combobox::HandleScrollbar
-Export ::combobox::ComputeGeometry
-Export ::combobox::DoInternalWidgetCommand
-Export ::combobox::WidgetProc
-Export ::combobox::Configure
-Export ::combobox::VTrace
-Export ::combobox::SetValue
-Export ::combobox::CallCommand
-Export ::combobox::GetBoolean
-Export ::combobox::convert
-Export ::combobox::Canonize
-Export ::combobox::HumanizeList
+Export __combobox2_Setup
+Export ::combobox2::combobox2
+Export ::combobox2::Init
+Export ::combobox2::SetClassBindings
+Export ::combobox2::SetBindings
+Export ::combobox2::Build
+Export ::combobox2::HandleEvent
+Export ::combobox2::DestroyHandler
+Export ::combobox2::Find
+Export ::combobox2::Select
+Export ::combobox2::HandleScrollbar
+Export ::combobox2::ComputeGeometry
+Export ::combobox2::DoInternalWidgetCommand
+Export ::combobox2::WidgetProc
+Export ::combobox2::Configure
+Export ::combobox2::VTrace
+Export ::combobox2::SetValue
+Export ::combobox2::CallCommand
+Export ::combobox2::GetBoolean
+Export ::combobox2::convert
+Export ::combobox2::Canonize
+Export ::combobox2::HumanizeList
 
-proc __combobox_Setup {} {
+proc __combobox2_Setup {} {
 
-    namespace eval ::combobox {
+    namespace eval ::combobox2 {
 
         # this is the public interface
-        namespace export combobox
+        namespace export combobox2
 
         # these contain references to available options
         variable widgetOptions
@@ -61,7 +61,7 @@ proc __combobox_Setup {} {
     }
 }
 
-__combobox_Setup
+__combobox2_Setup
 
 # Copyright (c) 1998-1999, Bryan Oakley
 # All Rights Reservered
@@ -108,10 +108,10 @@ __combobox_Setup
 #
 # }
 
-# ::combobox::combobox --
+# ::combobox2::combobox2 --
 #
 #     This is the command that gets exported. It creates a new
-#     combobox widget.
+#     combobox2 widget.
 #
 # Arguments:
 #
@@ -126,7 +126,7 @@ __combobox_Setup
 #
 #     The name of the newly create widget
 
-proc ::combobox::combobox {w args} {
+proc ::combobox2::combobox2 {w args} {
     variable widgetOptions
     variable widgetCommands
     variable scanCommands
@@ -134,7 +134,7 @@ proc ::combobox::combobox {w args} {
 
     # perform a one time initialization
     if {![info exists widgetOptions]} {
-	__combobox_Setup
+	__combobox2_Setup
         Init
     }
 
@@ -149,7 +149,7 @@ proc ::combobox::combobox {w args} {
 }
 
 
-# ::combobox::Init --
+# ::combobox2::Init --
 #
 #     Initialize the global (well, namespace) variables. This should
 #     only be called once, immediately prior to creating the first
@@ -168,7 +168,7 @@ proc ::combobox::combobox {w args} {
 # 
 #     empty string
 
-proc ::combobox::Init {} {
+proc ::combobox2::Init {} {
     variable widgetOptions
     variable widgetCommands
     variable scanCommands
@@ -234,7 +234,7 @@ proc ::combobox::Init {} {
 
 	# the image used for the button...
 	if {$::tcl_platform(platform) == "windows"} {
-	    image create bitmap ::combobox::bimage -data {
+	    image create bitmap ::combobox2::bimage -data {
 		#define down_arrow_width 12
 		#define down_arrow_height 12
 		static char down_arrow_bits[] = {
@@ -244,7 +244,7 @@ proc ::combobox::Init {} {
 		}
 	    }
 	} else {
-	    image create bitmap ::combobox::bimage -data  {
+	    image create bitmap ::combobox2::bimage -data  {
 		#define down_arrow_width 15
 		#define down_arrow_height 15
 		static char down_arrow_bits[] = {
@@ -289,13 +289,13 @@ proc ::combobox::Init {} {
 	    if {[llength $foo] == 5} {
 		set option [lindex $foo 1]
 		set value [lindex $foo 4]
-		option add *Combobox.$option $value widgetDefault
+		option add *Combobox2.$option $value widgetDefault
 
 		# these options also apply to the dropdown listbox
 		if {[string compare $option "foreground"] == 0 \
 			|| [string compare $option "background"] == 0 \
 			|| [string compare $option "font"] == 0} {
-		    option add *Combobox*ComboboxListbox.$option $value \
+		    option add *Combobox2*ComboboxListbox.$option $value \
 			    widgetDefault
 		}
 	    }
@@ -303,18 +303,18 @@ proc ::combobox::Init {} {
 	destroy $tmpWidget
 
 	# these are unique to us...
-	option add *Combobox.cursor              {}
-	option add *Combobox.commandState        normal widgetDefault
-	option add *Combobox.editable            1      widgetDefault
-	option add *Combobox.maxHeight           10     widgetDefault
-	option add *Combobox.height              0
+	option add *Combobox2.cursor              {}
+	option add *Combobox2.commandState        normal widgetDefault
+	option add *Combobox2.editable            1      widgetDefault
+	option add *Combobox2.maxHeight           10     widgetDefault
+	option add *Combobox2.height              0
     }
 
     # set class bindings
     SetClassBindings
 }
 
-# ::combobox::SetClassBindings --
+# ::combobox2::SetClassBindings --
 #
 #    Sets up the default bindings for the widget class
 #
@@ -323,7 +323,7 @@ proc ::combobox::Init {} {
 #    binding stuff on a class level. The main problem is that
 #    the entry widget must have focus for the insertion cursor
 #    to be visible. So, I either have to have the entry widget
-#    have the Combobox bindtag, or do some fancy juggling of
+#    have the Combobox2 bindtag, or do some fancy juggling of
 #    events or some such. What a pain.
 #
 # Arguments:
@@ -334,39 +334,39 @@ proc ::combobox::Init {} {
 #
 #    empty string
 
-proc ::combobox::SetClassBindings {} {
+proc ::combobox2::SetClassBindings {} {
 
     # make sure we clean up after ourselves...
-    bind Combobox <Destroy> [list ::combobox::DestroyHandler %W]
+    bind Combobox2 <Destroy> [list ::combobox2::DestroyHandler %W]
 
     # this will (hopefully) close (and lose the grab on) the
     # listbox if the user clicks anywhere outside of it. Note
     # that on Windows, you can click on some other app and
     # the listbox will still be there, because tcl won't see
     # that button click
-    set this {[::combobox::convert %W -W]}
-    bind Combobox <Any-ButtonPress>   "$this close"
-    bind Combobox <Any-ButtonRelease> "$this close"
+    set this {[::combobox2::convert %W -W]}
+    bind Combobox2 <Any-ButtonPress>   "$this close"
+    bind Combobox2 <Any-ButtonRelease> "$this close"
 
     # this helps (but doesn't fully solve) focus issues. The general
     # idea is, whenever the frame gets focus it gets passed on to
     # the entry widget
-    bind Combobox <FocusIn> {tkTabToWindow [::combobox::convert %W -W].entry}
+    bind Combobox2 <FocusIn> {tkTabToWindow [::combobox2::convert %W -W].entry}
 
     # this closes the listbox if we get hidden
-    bind Combobox <Unmap> {[::combobox::convert %W -W] close}
+    bind Combobox2 <Unmap> {[::combobox2::convert %W -W] close}
 
     return ""
 }
 
-# ::combobox::SetBindings --
+# ::combobox2::SetBindings --
 #
 #    here's where we do most of the binding foo. I think there's probably
 #    a few bindings I ought to add that I just haven't thought
 #    about...
 #
 #    I'm not convinced these are the proper bindings. Ideally all
-#    bindings should be on "Combobox", but because of my juggling of
+#    bindings should be on "Combobox2", but because of my juggling of
 #    bindtags I'm not convinced thats what I want to do. But, it all
 #    seems to work, its just not as robust as it could be.
 #
@@ -378,13 +378,13 @@ proc ::combobox::SetClassBindings {} {
 #
 #    empty string
 
-proc ::combobox::SetBindings {w} {
-    upvar ::combobox::${w}::widgets  widgets
-    upvar ::combobox::${w}::options  options
+proc ::combobox2::SetBindings {w} {
+    upvar ::combobox2::${w}::widgets  widgets
+    upvar ::combobox2::${w}::options  options
 
     # juggle the bindtags. The basic idea here is to associate the
     # widget name with the entry widget, so if a user does a bind
-    # on the combobox it will get handled properly since it is
+    # on the combobox2 it will get handled properly since it is
     # the entry widget that has keyboard focus.
     bindtags $widgets(entry) \
 	    [concat $widgets(this) [bindtags $widgets(entry)]]
@@ -412,7 +412,7 @@ proc ::combobox::SetBindings {w} {
     bind $widgets(entry) <B1-Enter> "break"
 
     bind $widgets(listbox) <ButtonRelease-1> \
-	    "::combobox::Select $widgets(this) \[$widgets(listbox) nearest %y\]; break"
+	    "::combobox2::Select $widgets(this) \[$widgets(listbox) nearest %y\]; break"
 
     bind $widgets(vsb) <ButtonPress-1>   {continue}
     bind $widgets(vsb) <ButtonRelease-1> {continue}
@@ -433,15 +433,15 @@ proc ::combobox::SetBindings {w} {
 	    <Next> <Prior> <Double-1> <1> <Any-KeyPress> \
 	    <FocusIn> <FocusOut>] {
 	bind $widgets(entry) $event \
-		"::combobox::HandleEvent $widgets(this) $event"
+		"::combobox2::HandleEvent $widgets(this) $event"
     }
 
 }
 
-# ::combobox::Build --
+# ::combobox2::Build --
 #
 #    This does all of the work necessary to create the basic
-#    combobox. 
+#    combobox2. 
 #
 # Arguments:
 #
@@ -452,13 +452,13 @@ proc ::combobox::SetBindings {w} {
 #
 #    Creates a new widget with the given name. Also creates a new
 #    namespace patterened after the widget name, as a child namespace
-#    to ::combobox
+#    to ::combobox2
 #
 # Returns:
 #
 #    the name of the widget
 
-proc ::combobox::Build {w args } {
+proc ::combobox2::Build {w args } {
     variable widgetOptions
 
     if {[winfo exists $w]} {
@@ -467,7 +467,7 @@ proc ::combobox::Build {w args } {
 
     # create the namespace for this instance, and define a few
     # variables
-    namespace eval ::combobox::$w {
+    namespace eval ::combobox2::$w {
 
 	variable ignoreTrace 0
 	variable oldFocus    {}
@@ -487,13 +487,13 @@ proc ::combobox::Build {w args } {
     # import the widgets and options arrays into this proc so
     # we don't have to use fully qualified names, which is a
     # pain.
-    upvar ::combobox::${w}::widgets widgets
-    upvar ::combobox::${w}::options options
+    upvar ::combobox2::${w}::widgets widgets
+    upvar ::combobox2::${w}::options options
 
-    # this is our widget -- a frame of class Combobox. Naturally,
+    # this is our widget -- a frame of class Combobox2. Naturally,
     # it will contain other widgets. We create it here because
     # we need it to be able to set our default options.
-    set widgets(this)   [frame  $w -class Combobox -takefocus 0]
+    set widgets(this)   [frame  $w -class Combobox2 -takefocus 0]
     set widgets(entry)  [entry  $w.entry -takefocus 1 -width 8]
     set widgets(button) [label  $w.button -takefocus 0] 
 
@@ -522,7 +522,7 @@ proc ::combobox::Build {w args } {
     # we will later rename the frame's widget proc to be our
     # own custom widget proc. We need to keep track of this
     # new name, so we'll define and store it here...
-    set widgets(frame) ::combobox::${w}::$w
+    set widgets(frame) ::combobox2::${w}::$w
 
     # gotta do this sooner or later. Might as well do it now
     pack $widgets(entry)  -side left  -fill both -expand yes
@@ -577,8 +577,8 @@ proc ::combobox::Build {w args } {
 	    -borderwidth 0
 
 
-#    trace variable ::combobox::${w}::entryTextVariable w \
-#	    [list ::combobox::EntryTrace $w]
+#    trace variable ::combobox2::${w}::entryTextVariable w \
+#	    [list ::combobox2::EntryTrace $w]
 	
     # do some window management foo on the dropdown window
     wm overrideredirect $widgets(popup) 1
@@ -592,15 +592,15 @@ proc ::combobox::Build {w args } {
     rename ::$w $widgets(frame)
 
     # now, create our widget proc. Obviously (?) it goes in
-    # the global namespace. All combobox widgets will actually
+    # the global namespace. All combobox2 widgets will actually
     # share the same widget proc to cut down on the amount of
     # bloat. 
     proc ::$w {command args} \
-	    "eval ::combobox::WidgetProc $w \$command \$args"
+	    "eval ::combobox2::WidgetProc $w \$command \$args"
 
 
     # ok, the thing exists... let's do a bit more configuration. 
-    if {[catch "::combobox::Configure $widgets(this) [array get options]" error]} {
+    if {[catch "::combobox2::Configure $widgets(this) [array get options]" error]} {
 	catch {destroy $w}
 	error $error
     }
@@ -609,7 +609,7 @@ proc ::combobox::Build {w args } {
 
 }
 
-# ::combobox::HandleEvent --
+# ::combobox2::HandleEvent --
 #
 #    this proc handles events from the entry widget that we want
 #    handled specially (typically, to allow navigation of the list
@@ -621,10 +621,10 @@ proc ::combobox::Build {w args } {
 #    event   a string representing the event (not necessarily an
 #            actual event)
 
-proc ::combobox::HandleEvent {w event} {
-    upvar ::combobox::${w}::widgets  widgets
-    upvar ::combobox::${w}::options  options
-    upvar ::combobox::${w}::oldValue oldValue
+proc ::combobox2::HandleEvent {w event} {
+    upvar ::combobox2::${w}::widgets  widgets
+    upvar ::combobox2::${w}::options  options
+    upvar ::combobox2::${w}::oldValue oldValue
 
     # for all of these events, if we have a special action we'll
     # do that and do a "return -code break" to keep additional
@@ -652,7 +652,7 @@ proc ::combobox::HandleEvent {w event} {
 	"<FocusOut>" {
 	    if {![winfo ismapped $widgets(popup)]} {
 		# did the value change?
-#		set newValue [set ::combobox::${w}::entryTextVariable]
+#		set newValue [set ::combobox2::${w}::entryTextVariable]
 		set newValue [$widgets(entry) get]
 		if {$oldValue != $newValue} {
 		    CallCommand $widgets(this) $newValue
@@ -661,7 +661,7 @@ proc ::combobox::HandleEvent {w event} {
 	}
 
 	"<1>" {
-	    set editable [::combobox::GetBoolean $options(-editable)]
+	    set editable [::combobox2::GetBoolean $options(-editable)]
 	    if {!$editable} {
 		if {[winfo ismapped $widgets(popup)]} {
 		    $widgets(this) close
@@ -685,10 +685,10 @@ proc ::combobox::HandleEvent {w event} {
 
 	"<Tab>" {
 	    if {[winfo ismapped $widgets(popup)]} {
-		::combobox::Find $widgets(this) 0
+		::combobox2::Find $widgets(this) 0
 		return -code break;
 	    } else {
-		::combobox::SetValue $widgets(this) [$widgets(this) get]
+		::combobox2::SetValue $widgets(this) [$widgets(this) get]
 	    }
 	}
 
@@ -703,14 +703,14 @@ proc ::combobox::HandleEvent {w event} {
 
 	"<Return>" {
 	    # did the value change?
-#	    set newValue [set ::combobox::${w}::entryTextVariable]
+#	    set newValue [set ::combobox2::${w}::entryTextVariable]
 	    set newValue [$widgets(entry) get]
 	    if {$oldValue != $newValue} {
 		CallCommand $widgets(this) $newValue
 	    }
 
 	    if {[winfo ismapped $widgets(popup)]} {
-		::combobox::Select $widgets(this) \
+		::combobox2::Select $widgets(this) \
 			[$widgets(listbox) curselection]
 		return -code break;
 	    } 
@@ -767,9 +767,9 @@ proc ::combobox::HandleEvent {w event} {
     return ""
 }
 
-# ::combobox::DestroyHandler {w} --
+# ::combobox2::DestroyHandler {w} --
 # 
-#    Cleans up after a combobox widget is destroyed
+#    Cleans up after a combobox2 widget is destroyed
 #
 # Arguments:
 #
@@ -780,25 +780,25 @@ proc ::combobox::HandleEvent {w event} {
 #    The namespace that was created for the widget is deleted,
 #    and the widget proc is removed.
 
-proc ::combobox::DestroyHandler {w} {
+proc ::combobox2::DestroyHandler {w} {
 
-    # If the widget actually being destroyed is of class Combobox,
+    # If the widget actually being destroyed is of class Combobox2,
     # crush the namespace and kill the proc. Get it? Crush. Kill. 
     # Destroy. Heh. Danger Will Robinson! Oh, man! I'm so funny it
     # brings tears to my eyes.
-    if {[string compare [winfo class $w] "Combobox"] == 0} {
-	upvar ::combobox::${w}::widgets  widgets
-	upvar ::combobox::${w}::options  options
+    if {[string compare [winfo class $w] "Combobox2"] == 0} {
+	upvar ::combobox2::${w}::widgets  widgets
+	upvar ::combobox2::${w}::options  options
 
 	# delete the namespace and the proc which represents
 	# our widget
-	namespace delete ::combobox::$w
+	namespace delete ::combobox2::$w
 	rename ::$w {}
     }   
     return
 }
 
-# ::combobox::Find
+# ::combobox2::Find
 #
 #    finds something in the listbox that matches the pattern in the
 #    entry widget and selects it
@@ -817,9 +817,9 @@ proc ::combobox::DestroyHandler {w} {
 #
 #    Empty string
 
-proc ::combobox::Find {w {exact 0}} {
-    upvar ::combobox::${w}::widgets widgets
-    upvar ::combobox::${w}::options options
+proc ::combobox2::Find {w {exact 0}} {
+    upvar ::combobox2::${w}::widgets widgets
+    upvar ::combobox2::${w}::options options
 
     ## *sigh* this logic is rather gross and convoluted. Surely
     ## there is a more simple, straight-forward way to implement
@@ -927,9 +927,9 @@ proc ::combobox::Find {w {exact 0}} {
     }
 }
 
-# ::combobox::Select --
+# ::combobox2::Select --
 #
-#    selects an item from the list and sets the value of the combobox
+#    selects an item from the list and sets the value of the combobox2
 #    to that value
 #
 # Arguments:
@@ -941,13 +941,13 @@ proc ::combobox::Find {w {exact 0}} {
 #
 #    empty string
 
-proc ::combobox::Select {w index} {
-    upvar ::combobox::${w}::widgets widgets
-    upvar ::combobox::${w}::options options
+proc ::combobox2::Select {w index} {
+    upvar ::combobox2::${w}::widgets widgets
+    upvar ::combobox2::${w}::options options
 
     catch {
 	set data [$widgets(listbox) get [lindex $index 0]]
-	::combobox::SetValue $widgets(this) $data
+	::combobox2::SetValue $widgets(this) $data
 
 	$widgets(listbox) selection clear 0 end
 	$widgets(listbox) selection anchor $index
@@ -961,7 +961,7 @@ proc ::combobox::Select {w index} {
     return ""
 }
 
-# ::combobox::HandleScrollbar --
+# ::combobox2::HandleScrollbar --
 # 
 #    causes the scrollbar of the dropdown list to appear or disappear
 #    based on the contents of the dropdown listbox
@@ -975,9 +975,9 @@ proc ::combobox::Select {w index} {
 #
 #    an empty string
 
-proc ::combobox::HandleScrollbar {w {action "unknown"}} {
-    upvar ::combobox::${w}::widgets widgets
-    upvar ::combobox::${w}::options options
+proc ::combobox2::HandleScrollbar {w {action "unknown"}} {
+    upvar ::combobox2::${w}::widgets widgets
+    upvar ::combobox2::${w}::options options
 
     if {$options(-height) == 0} {
 	set hlimit $options(-maxheight)
@@ -1016,10 +1016,10 @@ proc ::combobox::HandleScrollbar {w {action "unknown"}} {
     return ""
 }
 
-# ::combobox::ComputeGeometry --
+# ::combobox2::ComputeGeometry --
 #
 #    computes the geometry of the popup list based on the size of the
-#    combobox...
+#    combobox2...
 #
 # Arguments:
 #
@@ -1029,9 +1029,9 @@ proc ::combobox::HandleScrollbar {w {action "unknown"}} {
 #
 #    the desired geometry of the listbox
 
-proc ::combobox::ComputeGeometry {w} {
-    upvar ::combobox::${w}::widgets widgets
-    upvar ::combobox::${w}::options options
+proc ::combobox2::ComputeGeometry {w} {
+    upvar ::combobox2::${w}::widgets widgets
+    upvar ::combobox2::${w}::options options
 
     if {$options(-height) == 0 && $options(-maxheight) != "0"} {
 	# if this is the case, count the items and see if
@@ -1137,7 +1137,7 @@ proc ::combobox::ComputeGeometry {w} {
     return $geometry
 }
 
-# ::combobox::DoInternalWidgetCommand --
+# ::combobox2::DoInternalWidgetCommand --
 #
 #    perform an internal widget command, then mung any error results
 #    to look like it came from our megawidget. A lot of work just to
@@ -1154,9 +1154,9 @@ proc ::combobox::ComputeGeometry {w} {
 #
 #    The result of the subwidget command, or an error
 
-proc ::combobox::DoInternalWidgetCommand {w subwidget command args} {
-    upvar ::combobox::${w}::widgets widgets
-    upvar ::combobox::${w}::options options
+proc ::combobox2::DoInternalWidgetCommand {w subwidget command args} {
+    upvar ::combobox2::${w}::widgets widgets
+    upvar ::combobox2::${w}::options options
 
     set subcommand $command
     set command [concat $widgets($subwidget) $command $args]
@@ -1181,9 +1181,9 @@ proc ::combobox::DoInternalWidgetCommand {w subwidget command args} {
 }
 
 
-# ::combobox::WidgetProc --
+# ::combobox2::WidgetProc --
 #
-#    This gets uses as the widgetproc for an combobox widget. 
+#    This gets uses as the widgetproc for an combobox2 widget. 
 #    Notice where the widget is created and you'll see that the
 #    actual widget proc merely evals this proc with all of the
 #    arguments intact.
@@ -1203,17 +1203,17 @@ proc ::combobox::DoInternalWidgetCommand {w subwidget command args} {
 #
 #    Performs the requested widget command
 
-proc ::combobox::WidgetProc {w command args} {
-    upvar ::combobox::${w}::widgets widgets
-    upvar ::combobox::${w}::options options
-    upvar ::combobox::${w}::oldFocus oldFocus
-    upvar ::combobox::${w}::oldFocus oldGrab
+proc ::combobox2::WidgetProc {w command args} {
+    upvar ::combobox2::${w}::widgets widgets
+    upvar ::combobox2::${w}::options options
+    upvar ::combobox2::${w}::oldFocus oldFocus
+    upvar ::combobox2::${w}::oldFocus oldGrab
 
-    set command [::combobox::Canonize $w command $command]
+    set command [::combobox2::Canonize $w command $command]
 
     # this is just shorthand notation...
     set doWidgetCommand \
-	    [list ::combobox::DoInternalWidgetCommand $widgets(this)]
+	    [list ::combobox2::DoInternalWidgetCommand $widgets(this)]
 
     if {$command == "list"} {
 	# ok, the next argument is a list command; we'll 
@@ -1301,7 +1301,7 @@ proc ::combobox::WidgetProc {w command args} {
 
 	open {
 
-	    # if this is an editable combobox, the focus should
+	    # if this is an editable combobox2, the focus should
 	    # be set to the entry widget
 	    if {$options(-editable)} {
 		focus $widgets(entry)
@@ -1322,7 +1322,7 @@ proc ::combobox::WidgetProc {w command args} {
 	    # mapped, but we'll go ahead and set the geometry here
 	    # since its harmless and *may* actually reset the geometry
 	    # to something better in some weird case.
-	    set geometry [::combobox::ComputeGeometry $widgets(this)]
+	    set geometry [::combobox2::ComputeGeometry $widgets(this)]
 	    wm geometry $widgets(popup) $geometry
 	    update idletasks
 
@@ -1347,7 +1347,7 @@ proc ::combobox::WidgetProc {w command args} {
 
 	    # select something by default, but only if its an
 	    # exact match...
-	    ::combobox::Find $widgets(this) 1
+	    ::combobox2::Find $widgets(this) 1
 
 	    # save the current grab state for the display containing
 	    # this widget. We'll restore it when we close the dropdown
@@ -1399,7 +1399,7 @@ proc ::combobox::WidgetProc {w command args} {
 	    # select the data in the entry widget. Not sure
 	    # why, other than observation seems to suggest that's
 	    # what windows widgets do.
-	    set editable [::combobox::GetBoolean $options(-editable)]
+	    set editable [::combobox2::GetBoolean $options(-editable)]
 	    if {$editable} {
 		$widgets(entry) selection range 0 end
 		$widgets(button) configure -relief raised
@@ -1417,7 +1417,7 @@ proc ::combobox::WidgetProc {w command args} {
 	    if {[llength $args] != 1} {
 		error "wrong # args: should be $w cget option"
 	    }
-	    set opt [::combobox::Canonize $w option [lindex $args 0]]
+	    set opt [::combobox2::Canonize $w option [lindex $args 0]]
 
 	    if {$opt == "-value"} {
 		set result [$widget(entry) get]
@@ -1427,7 +1427,7 @@ proc ::combobox::WidgetProc {w command args} {
 	}
 
 	configure {
-	    set result [eval ::combobox::Configure {$w} $args]
+	    set result [eval ::combobox2::Configure {$w} $args]
 	}
 
 	default {
@@ -1438,7 +1438,7 @@ proc ::combobox::WidgetProc {w command args} {
     return $result
 }
 
-# ::combobox::Configure --
+# ::combobox2::Configure --
 #
 #    Implements the "configure" widget subcommand
 #
@@ -1451,12 +1451,12 @@ proc ::combobox::WidgetProc {w command args} {
 #    
 #    Performs typcial "configure" type requests on the widget
 
-proc ::combobox::Configure {w args} {
+proc ::combobox2::Configure {w args} {
     variable widgetOptions
     variable defaultEntryCursor
 
-    upvar ::combobox::${w}::widgets widgets
-    upvar ::combobox::${w}::options options
+    upvar ::combobox2::${w}::widgets widgets
+    upvar ::combobox2::${w}::options options
 
     if {[llength $args] == 0} {
 	# hmmm. User must be wanting all configuration information
@@ -1489,7 +1489,7 @@ proc ::combobox::Configure {w args} {
     # one argument means we are looking for configuration
     # information on a single option
     if {[llength $args] == 1} {
-	set opt [::combobox::Canonize $w option [lindex $args 0]]
+	set opt [::combobox2::Canonize $w option [lindex $args 0]]
 
 	set optName  [lindex $widgetOptions($opt) 0]
 	set optClass [lindex $widgetOptions($opt) 1]
@@ -1510,7 +1510,7 @@ proc ::combobox::Configure {w args} {
     # will generate an error if it finds a bogus option; otherwise
     # it returns the canonical option name
     foreach {name value} $args {
-	set name [::combobox::Canonize $w option $name]
+	set name [::combobox2::Canonize $w option $name]
 	set opts($name) $value
     }
 
@@ -1614,7 +1614,7 @@ proc ::combobox::Configure {w args} {
 		if {[string length $newValue] > 0} {
 		    $widgets(button) configure -image $newValue
 		} else {
-		    $widgets(button) configure -image ::combobox::bimage
+		    $widgets(button) configure -image ::combobox2::bimage
 		}
 		set options($option) $newValue
 	    }
@@ -1653,7 +1653,7 @@ proc ::combobox::Configure {w args} {
 	    -state {
 		if {$newValue == "normal"} {
 		    # it's enabled
-		    set editable [::combobox::GetBoolean \
+		    set editable [::combobox2::GetBoolean \
 			    $options(-editable)]
 		    if {$editable} {
 			$widgets(entry) configure -state normal
@@ -1685,7 +1685,7 @@ proc ::combobox::Configure {w args} {
 	    }
 
 	    -value {
-		::combobox::SetValue $widgets(this) $newValue
+		::combobox2::SetValue $widgets(this) $newValue
 		set options($option) $newValue
 	    }
 
@@ -1704,7 +1704,7 @@ proc ::combobox::Configure {w args} {
     }
 }
 
-# ::combobox::VTrace --
+# ::combobox2::VTrace --
 #
 #    this proc is called whenever the user changes the value of
 #    the -textvariable associated with a widget
@@ -1718,37 +1718,37 @@ proc ::combobox::Configure {w args} {
 #
 #    Empty String
 
-proc ::combobox::VTrace {w args} {
-    upvar ::combobox::${w}::widgets widgets
-    upvar ::combobox::${w}::options options
-    upvar ::combobox::${w}::ignoreTrace ignoreTrace
+proc ::combobox2::VTrace {w args} {
+    upvar ::combobox2::${w}::widgets widgets
+    upvar ::combobox2::${w}::options options
+    upvar ::combobox2::${w}::ignoreTrace ignoreTrace
 
     if {[info exists ignoreTrace]} return
-    ::combobox::SetValue $widgets(this) [set ::$options(-textvariable)]
+    ::combobox2::SetValue $widgets(this) [set ::$options(-textvariable)]
 
     return ""
 }
 
-# ::combobox::SetValue --
+# ::combobox2::SetValue --
 #
-#    sets the value of the combobox and calls the -command, 
+#    sets the value of the combobox2 and calls the -command, 
 #    if defined
 #
 # Arguments:
 #
 #    w          widget pathname
-#    newValue   the new value of the combobox
+#    newValue   the new value of the combobox2
 #
 # Returns
 #
 #    Empty string
 
-proc ::combobox::SetValue {w newValue} {
+proc ::combobox2::SetValue {w newValue} {
 
-    upvar ::combobox::${w}::widgets     widgets
-    upvar ::combobox::${w}::options     options
-    upvar ::combobox::${w}::ignoreTrace ignoreTrace
-    upvar ::combobox::${w}::oldValue    oldValue
+    upvar ::combobox2::${w}::widgets     widgets
+    upvar ::combobox2::${w}::options     options
+    upvar ::combobox2::${w}::ignoreTrace ignoreTrace
+    upvar ::combobox2::${w}::oldValue    oldValue
 
     if {[info exists options(-textvariable)] \
 	    && [string length $options(-textvariable)] > 0} {
@@ -1765,7 +1765,7 @@ proc ::combobox::SetValue {w newValue} {
     # set our internal textvariable; this will cause any public
     # textvariable (ie: defined by the user) to be updated as
     # well
-#    set ::combobox::${w}::entryTextVariable $newValue
+#    set ::combobox2::${w}::entryTextVariable $newValue
 
     # redefine our concept of the "old value". Do it before running
     # any associated command so we can be sure it happens even
@@ -1780,7 +1780,7 @@ proc ::combobox::SetValue {w newValue} {
     return ""
 }
 
-# ::combobox::CallCommand --
+# ::combobox2::CallCommand --
 #
 #   calls the associated command, if any, appending the new
 #   value to the command to be called.
@@ -1788,15 +1788,15 @@ proc ::combobox::SetValue {w newValue} {
 # Arguments:
 #
 #    w         widget pathname
-#    newValue  the new value of the combobox
+#    newValue  the new value of the combobox2
 #
 # Returns
 #
 #    empty string
 
-proc ::combobox::CallCommand {w newValue} {
-    upvar ::combobox::${w}::widgets widgets
-    upvar ::combobox::${w}::options options
+proc ::combobox2::CallCommand {w newValue} {
+    upvar ::combobox2::${w}::widgets widgets
+    upvar ::combobox2::${w}::options options
     
     # call the associated command, if defined and -commandstate is
     # set to "normal"
@@ -1808,7 +1808,7 @@ proc ::combobox::CallCommand {w newValue} {
 }
 
 
-# ::combobox::GetBoolean --
+# ::combobox2::GetBoolean --
 #
 #     returns the value of a (presumably) boolean string (ie: it should
 #     do the right thing if the string is "yes", "no", "true", 1, etc
@@ -1823,7 +1823,7 @@ proc ::combobox::CallCommand {w newValue} {
 #     a 1 or zero, or the value of errorValue if the string isn't
 #     a proper boolean value
 
-proc ::combobox::GetBoolean {value {errorValue 1}} {
+proc ::combobox2::GetBoolean {value {errorValue 1}} {
     if {[catch {expr {([string trim $value])?1:0}} res]} {
 	return $errorValue
     } else {
@@ -1831,14 +1831,14 @@ proc ::combobox::GetBoolean {value {errorValue 1}} {
     }
 }
 
-# ::combobox::convert --
+# ::combobox2::convert --
 #
 #     public routine to convert %x, %y and %W binding substitutions.
 #     Given an x, y and or %W value relative to a given widget, this
-#     routine will convert the values to be relative to the combobox
+#     routine will convert the values to be relative to the combobox2
 #     widget. For example, it could be used in a binding like this:
 #
-#     bind .combobox <blah> {doSomething [::combobox::convert %W -x %x]}
+#     bind .combobox2 <blah> {doSomething [::combobox2::convert %W -x %x]}
 #
 #     Note that this procedure is *not* exported, but is indented for
 #     public use. It is not exported because the name could easily 
@@ -1848,7 +1848,7 @@ proc ::combobox::GetBoolean {value {errorValue 1}} {
 #
 #     w     a widget path; typically the actual result of a %W 
 #           substitution in a binding. It should be either a
-#           combobox widget or one of its subwidgets
+#           combobox2 widget or one of its subwidgets
 #
 #     args  should one or more of the following arguments or 
 #           pairs of arguments:
@@ -1857,18 +1857,18 @@ proc ::combobox::GetBoolean {value {errorValue 1}} {
 #                       be the result of a %x substitution
 #           -y <y>      will convert the value <y>; typically <y> will
 #                       be the result of a %y substitution
-#           -W (or -w)  will return the name of the combobox widget
+#           -W (or -w)  will return the name of the combobox2 widget
 #                       which is the parent of $w
 #
 # Returns:
 #
 #     a list of the requested values. For example, a single -w will
-#     result in a list of one items, the name of the combobox widget.
+#     result in a list of one items, the name of the combobox2 widget.
 #     Supplying "-x 10 -y 20 -W" (in any order) will return a list of
 #     three values: the converted x and y values, and the name of 
-#     the combobox widget.
+#     the combobox2 widget.
 
-proc ::combobox::convert {w args} {
+proc ::combobox2::convert {w args} {
     set result {}
     if {![winfo exists $w]} {
 	error "window \"$w\" doesn't exist"
@@ -1883,7 +1883,7 @@ proc ::combobox::convert {w args} {
 		set value [lindex $args 0]
 		set args [lrange $args 1 end]
 		set win $w
-		while {[winfo class $win] != "Combobox"} {
+		while {[winfo class $win] != "Combobox2"} {
 		    incr value [winfo x $win]
 		    set win [winfo parent $win]
 		    if {$win == "."} break
@@ -1895,7 +1895,7 @@ proc ::combobox::convert {w args} {
 		set value [lindex $args 0]
 		set args [lrange $args 1 end]
 		set win $w
-		while {[winfo class $win] != "Combobox"} {
+		while {[winfo class $win] != "Combobox2"} {
 		    incr value [winfo y $win]
 		    set win [winfo parent $win]
 		    if {$win == "."} break
@@ -1906,7 +1906,7 @@ proc ::combobox::convert {w args} {
 	    -w -
 	    -W {
 		set win $w
-		while {[winfo class $win] != "Combobox"} {
+		while {[winfo class $win] != "Combobox2"} {
 		    set win [winfo parent $win]
 		    if {$win == "."} break;
 		}
@@ -1917,7 +1917,7 @@ proc ::combobox::convert {w args} {
     return $result
 }
 
-# ::combobox::Canonize --
+# ::combobox2::Canonize --
 #
 #    takes a (possibly abbreviated) option or command name and either
 #    returns the canonical name or an error
@@ -1935,7 +1935,7 @@ proc ::combobox::convert {w args} {
 #    or raises an error if the option or command is unknown or
 #    ambiguous.
 
-proc ::combobox::Canonize {w object opt} {
+proc ::combobox2::Canonize {w object opt} {
     variable widgetOptions
     variable columnOptions
     variable widgetCommands
@@ -2027,7 +2027,7 @@ proc ::combobox::Canonize {w object opt} {
     }
 }
 
-# ::combobox::HumanizeList --
+# ::combobox2::HumanizeList --
 #
 #    Returns a human-readable form of a list by separating items
 #    by columns, but separating the last two elements with "or"
@@ -2042,7 +2042,7 @@ proc ::combobox::Canonize {w object opt} {
 #    A string which as all of the elements joined with ", " or
 #    the word " or "
 
-proc ::combobox::HumanizeList {list} {
+proc ::combobox2::HumanizeList {list} {
 
     if {[llength $list] == 1} {
 	return [lindex $list 0]
