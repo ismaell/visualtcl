@@ -102,23 +102,25 @@ proc vTclWindow.vTcl.bind {args} {
     set {widget(Frame3)} "$base.cpd21.03"
     set {widget(child,Frame3)} "cpd21.03"
     interp alias {} Frame3 {} vTcl:WidgetProc $base.cpd21.03
+    set widget(MoveTagUp) $base.cpd21.01.fra22.but25
+    set widget(MoveTagDown) $base.cpd21.01.fra22.but26
 
     ###################
     # CREATING WIDGETS
     ###################
     if {!$container} {
-    toplevel $base -class Toplevel \
-        -background #dcdcdc -highlightbackground #dcdcdc \
-        -highlightcolor #000000 
-    wm focusmodel $base passive
-    wm withdraw $base
-    wm geometry $base 660x514+264+138
-    wm maxsize $base 1284 1010
-    wm minsize $base 100 1
-    wm overrideredirect $base 0
-    wm resizable $base 1 1
-    wm title $base "Widget bindings"
-    wm transient .vTcl.bind .vTcl
+        toplevel $base -class Toplevel \
+            -background #dcdcdc -highlightbackground #dcdcdc \
+            -highlightcolor #000000 
+        wm focusmodel $base passive
+        wm withdraw $base
+        wm geometry $base 660x514+264+138
+        wm maxsize $base 1284 1010
+        wm minsize $base 100 1
+        wm overrideredirect $base 0
+        wm resizable $base 1 1
+        wm title $base "Widget bindings"
+        wm transient .vTcl.bind .vTcl
     }
     frame $base.fra22 \
         -borderwidth 2 -height 75 \
@@ -182,6 +184,18 @@ proc vTclWindow.vTcl.bind {args} {
         -highlightthickness 0 \
         -image [vTcl:image:get_image "/home/cgavin/vtcl/images/edit/remove.gif"] \
         -padx 0 -pady 0 -text button -width 23 
+    button $base.cpd21.01.fra22.but25 \
+        -command "tk_messageBox -message {To be implemented}" \
+        -height 23 \
+        -highlightthickness 0 \
+        -image up \
+        -padx 0 -pady 0 -text button -width 23 
+    button $base.cpd21.01.fra22.but26 \
+        -command "tk_messageBox -message {To be implemented}" \
+        -height 23 \
+        -highlightthickness 0 \
+        -image down \
+        -padx 0 -pady 0 -text button -width 23 
     frame $base.cpd21.01.cpd25 \
         -background #dcdcdc -borderwidth 1 -height 30 \
         -highlightbackground #dcdcdc -highlightcolor #000000 -relief raised \
@@ -192,21 +206,22 @@ proc vTclWindow.vTcl.bind {args} {
         -yscrollcommand "$base.cpd21.01.cpd25.03 set" 
     bind $base.cpd21.01.cpd25.01 <Button-3> {
         ListboxBindings selection clear 0 end
-ListboxBindings selection set @%x,%y
-::widgets_bindings::enable_add_delete
-::widgets_bindings::select_binding
+        ListboxBindings selection set @%x,%y
+        ::widgets_bindings::enable_add_delete
+        ::widgets_bindings::select_binding
     }
     bind $base.cpd21.01.cpd25.01 <ButtonRelease-1> {
         set n [vTcl:rename $widget(BindingsEditor)]
-set ${n}::lastselected [lindex [ListboxBindings curselection] 0]
+        set ${n}::lastselected [lindex [ListboxBindings curselection] 0]
 
-::widgets_bindings::enable_add_delete
-after idle "::widgets_bindings::select_binding"
+        ::widgets_bindings::enable_add_delete
+        after idle "::widgets_bindings::select_binding"
     }
     bind $base.cpd21.01.cpd25.01 <ButtonRelease-3> {
-        if {[::widgets_bindings::can_change_modifier %W [lindex [%W curselection] 0] ]} {
-    tk_popup %W.menu %X %Y
-}
+        if {[::widgets_bindings::can_change_modifier %W \
+            [lindex [%W curselection] 0] ]} {
+            tk_popup %W.menu %X %Y
+        }
     }
     bind $base.cpd21.01.cpd25.01 <KeyRelease-Delete> {
         ::widgets_bindings::delete_binding
@@ -278,56 +293,56 @@ after idle "::widgets_bindings::select_binding"
         -yscrollcommand "$base.cpd21.02.cpd21.02 set" 
     bind $base.cpd21.02.cpd21.03 <ButtonRelease-3> {
         if {! [winfo exists %W.menu] } {
-   menu %W.menu
-}
+            menu %W.menu
+        }
 
-%W.menu configure -tearoff 0
-%W.menu delete 0 end
-%W.menu add command -label "%%%% Single percent"  \
-    -command "TextBindings insert insert %%"
-%W.menu add command -label "%%\# Request number"  \
-    -command "TextBindings insert insert %%\#"
-%W.menu add command -label "%%W Window name"  \
-    -command "TextBindings insert insert %%W"
-%W.menu add command -label "%%b Mouse button number"  \
-    -command "TextBindings insert insert %%b"
-%W.menu add command -label "%%d Detail"  \
-    -command "TextBindings insert insert %%d"
-%W.menu add command -label "%%A Key pressed/released (ASCII)"  \
-    -command "TextBindings insert insert %%A"
-%W.menu add command -label "%%K Key pressed/released (Keysym)"  \
-    -command "TextBindings insert insert %%K"
-%W.menu add command -label "%%x Mouse x coordinate widget-relative"  \
-    -command "TextBindings insert insert %%x"
-%W.menu add command -label "%%y Mouse y coordinate widget-relative"  \
-    -command "TextBindings insert insert %%y"
-%W.menu add command -label "%%T Event type"  \
-    -command "TextBindings insert insert %%T"
-%W.menu add command -label "%%X Mouse x coordinate desktop-relative"  \
-    -command "TextBindings insert insert %%X"
-%W.menu add command -label "%%Y Mouse y coordinate desktop-relative"  \
-    -command "TextBindings insert insert %%Y"
-tk_popup %W.menu %X %Y
+        %W.menu configure -tearoff 0
+        %W.menu delete 0 end
+        %W.menu add command -label "%%%% Single percent"  \
+            -command "TextBindings insert insert %%"
+        %W.menu add command -label "%%\# Request number"  \
+            -command "TextBindings insert insert %%\#"
+        %W.menu add command -label "%%W Window name"  \
+            -command "TextBindings insert insert %%W"
+        %W.menu add command -label "%%b Mouse button number"  \
+            -command "TextBindings insert insert %%b"
+        %W.menu add command -label "%%d Detail"  \
+            -command "TextBindings insert insert %%d"
+        %W.menu add command -label "%%A Key pressed/released (ASCII)"  \
+            -command "TextBindings insert insert %%A"
+        %W.menu add command -label "%%K Key pressed/released (Keysym)"  \
+            -command "TextBindings insert insert %%K"
+        %W.menu add command -label "%%x Mouse x coordinate widget-relative"  \
+            -command "TextBindings insert insert %%x"
+        %W.menu add command -label "%%y Mouse y coordinate widget-relative"  \
+            -command "TextBindings insert insert %%y"
+        %W.menu add command -label "%%T Event type"  \
+            -command "TextBindings insert insert %%T"
+        %W.menu add command -label "%%X Mouse x coordinate desktop-relative"  \
+            -command "TextBindings insert insert %%X"
+        %W.menu add command -label "%%Y Mouse y coordinate desktop-relative"  \
+            -command "TextBindings insert insert %%Y"
+        tk_popup %W.menu %X %Y
     }
     frame $base.cpd21.03 \
         -background #ff0000 -borderwidth 2 -highlightbackground #dcdcdc \
         -highlightcolor #000000 -relief raised 
     bind $base.cpd21.03 <B1-Motion> {
         set root [ split %W . ]
-    set nb [ llength $root ]
-    incr nb -1
-    set root [ lreplace $root $nb $nb ]
-    set root [ join $root . ]
-    set width [ winfo width $root ].0
+        set nb [ llength $root ]
+        incr nb -1
+        set root [ lreplace $root $nb $nb ]
+        set root [ join $root . ]
+        set width [ winfo width $root ].0
+        
+        set val [ expr (%X - [winfo rootx $root]) /$width ]
     
-    set val [ expr (%X - [winfo rootx $root]) /$width ]
-
-    if { $val >= 0 && $val <= 1.0 } {
-    
-        place $root.01 -relwidth $val
-        place $root.03 -relx $val
-        place $root.02 -relwidth [ expr 1.0 - $val ]
-    }
+        if { $val >= 0 && $val <= 1.0 } {
+        
+            place $root.01 -relwidth $val
+            place $root.03 -relx $val
+            place $root.02 -relwidth [ expr 1.0 - $val ]
+        }
     }
     ###################
     # SETTING GEOMETRY
@@ -347,6 +362,12 @@ tk_popup %W.menu %X %Y
         -in $base.cpd21.01.fra22 -anchor center -expand 0 -fill none \
         -side left 
     pack $base.cpd21.01.fra22.but24 \
+        -in $base.cpd21.01.fra22 -anchor center -expand 0 -fill none \
+        -side left 
+    pack $base.cpd21.01.fra22.but25  \
+        -in $base.cpd21.01.fra22 -anchor center -expand 0 -fill none \
+        -side left 
+    pack $base.cpd21.01.fra22.but26  \
         -in $base.cpd21.01.fra22 -anchor center -expand 0 -fill none \
         -side left 
     pack $base.cpd21.01.cpd25 \
@@ -381,6 +402,11 @@ tk_popup %W.menu %X %Y
     place $base.cpd21.03 \
         -x 0 -relx 0.3681 -y 0 -rely 0.9 -width 10 -height 10 -anchor s \
         -bordermode ignore 
+
+    vTcl:set_balloon $widget(AddBinding)    "Add a binding"
+    vTcl:set_balloon $widget(RemoveBinding) "Remove a binding"
+    vTcl:set_balloon $widget(MoveTagUp)     "Move tag up"
+    vTcl:set_balloon $widget(MoveTagDown)   "Move tag down"
         
     Window hide .vTcl.newbind
     
@@ -444,19 +470,19 @@ proc vTclWindow.vTcl.newbind {base {container 0}} {
     # CREATING WIDGETS
     ###################
     if {!$container} {
-    toplevel $base -class Toplevel \
-        -background #dcdcdc -highlightbackground #dcdcdc \
-        -highlightcolor #000000 
-    wm focusmodel $base passive
-    wm geometry $base 541x457+418+226
-    update
-    wm maxsize $base 1284 1010
-    wm minsize $base 100 1
-    wm overrideredirect $base 0
-    wm resizable $base 1 1
-    wm deiconify $base
-    wm title $base "Insert new binding"
-    wm transient .vTcl.newbind .vTcl
+        toplevel $base -class Toplevel \
+            -background #dcdcdc -highlightbackground #dcdcdc \
+            -highlightcolor #000000 
+        wm focusmodel $base passive
+        wm geometry $base 541x457+418+226
+        update
+        wm maxsize $base 1284 1010
+        wm minsize $base 100 1
+        wm overrideredirect $base 0
+        wm resizable $base 1 1
+        wm deiconify $base
+        wm title $base "Insert new binding"
+        wm transient .vTcl.newbind .vTcl
     }
     frame $base.fra20 \
         -background #dcdcdc -borderwidth 2 -highlightbackground #dcdcdc \
@@ -469,7 +495,7 @@ proc vTclWindow.vTcl.newbind {base {container 0}} {
         -textvariable bindingsKeystrokes -width 10 
     bind $base.fra20.ent22 <Key> {
         set bindingsEventEntry "$bindingsEventEntry<Key-%K>"
-after idle {set bindingsKeystrokes ""}
+        after idle {set bindingsKeystrokes ""}
     }
     frame $base.fra23 \
         -background #dcdcdc -borderwidth 2 -highlightbackground #dcdcdc \
@@ -492,7 +518,8 @@ after idle {set bindingsKeystrokes ""}
         -yscrollcommand "$base.fra23.cpd34.03 set" 
     bind $base.fra23.cpd34.01 <Button-1> {
         set modifier [BindingsModifiers get @%x,%y]
-set bindingsEventEntry [::widgets_bindings::set_modifier_in_event $bindingsEventEntry $modifier]
+        set bindingsEventEntry [::widgets_bindings::set_modifier_in_event \
+            $bindingsEventEntry $modifier]
     }
     scrollbar $base.fra23.cpd34.02 \
         -activebackground #dcdcdc -background #dcdcdc \
@@ -516,7 +543,10 @@ set bindingsEventEntry [::widgets_bindings::set_modifier_in_event $bindingsEvent
         -yscrollcommand "$base.fra23.cpd35.03 set" 
     bind $base.fra23.cpd35.01 <Button-1> {
         set event [BindingsEvents get @%x,%y]
-set bindingsEventEntry $bindingsEventEntry<$event>
+        if {![string match <<*>> $event]} {
+            set event <$event>
+        }
+        set bindingsEventEntry $bindingsEventEntry$event
     }
     scrollbar $base.fra23.cpd35.02 \
         -activebackground #dcdcdc -background #dcdcdc \
@@ -537,17 +567,42 @@ set bindingsEventEntry $bindingsEventEntry<$event>
     entry $base.fra36.ent38 \
         -background #ffffff -cursor {} -foreground #000000 \
         -textvariable bindingsEventEntry 
+    bind $base.fra36.ent38 <ButtonRelease-1> {
+    	set index [BindingsEventEntry index @%x]
+    	set stindex ""
+    	set endindex ""
+    	::widgets_bindings::find_event_in_sequence \
+    	    $bindingsEventEntry $index stindex endindex
+    	BindingsEventEntry selection range $stindex [expr $endindex + 1]
+    }
+    bind $base.fra36.ent38 <Control-KeyRelease-Left> {
+    	set index [BindingsEventEntry index insert]
+    	set stindex ""
+    	set endindex ""
+    	::widgets_bindings::find_event_in_sequence \
+    	    $bindingsEventEntry $index stindex endindex
+    	BindingsEventEntry selection range $stindex [expr $endindex + 1]
+    }
+    bind $base.fra36.ent38 <Control-KeyRelease-Right> {
+    	set index [BindingsEventEntry index insert]
+    	set stindex ""
+    	set endindex ""
+    	::widgets_bindings::find_event_in_sequence \
+    	    $bindingsEventEntry $index stindex endindex
+    	BindingsEventEntry selection range $stindex [expr $endindex + 1]
+    }
     frame $base.fra39 \
         -background #dcdcdc -borderwidth 2 -height 75 \
         -highlightbackground #dcdcdc -highlightcolor #000000 -width 125 
     button $base.fra39.but40 \
         -activebackground #dcdcdc -activeforeground #000000 \
         -background #dcdcdc \
-        -command {if {$bindingsEventEntry != ""} {
-    
-    BindingsInsert hide
-    ::widgets_bindings::add_binding $bindingsEventEntry
-}} \
+        -command {
+             if {$bindingsEventEntry != ""} {
+                 BindingsInsert hide
+                 ::widgets_bindings::add_binding $bindingsEventEntry
+             }
+         } \
         -foreground #000000 -highlightbackground #dcdcdc \
         -highlightcolor #000000 -padx 9 -pady 3 -text Add -width 8 
     button $base.fra39.but41 \
@@ -630,6 +685,10 @@ set bindingsEventEntry $bindingsEventEntry<$event>
     } {
         BindingsEvents insert end $event
     }
+    
+    foreach event [event info] {
+    	BindingsEvents insert end $event
+    }
 }
 
 #################################
@@ -653,7 +712,8 @@ namespace eval ::widgets_bindings {
         set tag ""
         set tmp_event ""
         
-        ::widgets_bindings::find_tag_event  $widget(ListboxBindings) $index tag tmp_event
+        ::widgets_bindings::find_tag_event \
+            $widget(ListboxBindings) $index tag tmp_event
         
         eval set target $${n}::target
         
@@ -731,7 +791,8 @@ namespace eval ::widgets_bindings {
         set tag ""
         set event ""
         
-        ::widgets_bindings::find_tag_event  $widget(ListboxBindings) $index tag event
+        ::widgets_bindings::find_tag_event \
+            $widget(ListboxBindings) $index tag event
         
         eval set target $${n}::target
         
@@ -766,12 +827,12 @@ namespace eval ::widgets_bindings {
         set tag ""
         set event ""
         
-        ::widgets_bindings::find_tag_event  $widget(ListboxBindings) $index tag event
+        ::widgets_bindings::find_tag_event \
+            $widget(ListboxBindings) $index tag event
         
         eval set target $${n}::target
         
         if {$tag == $target} {
-        
             AddBinding configure -state normal
             
             if {$event == ""} {
@@ -780,7 +841,6 @@ namespace eval ::widgets_bindings {
                 RemoveBinding configure -state normal
             }
         } else {
-        
             AddBinding    configure -state disabled
             RemoveBinding configure -state disabled
         }
@@ -866,10 +926,7 @@ namespace eval ::widgets_bindings {
     proc {::widgets_bindings::init} {} {
 
         global widget vTcl
-        
-        vTcl:set_balloon $widget(AddBinding) "Add a binding"
-        vTcl:set_balloon $widget(RemoveBinding) "Remove a binding"
-        
+                
         TextBindings configure -font $vTcl(pr,font_fixed)
                 
         set w $widget(BindingsEditor)
@@ -893,7 +950,8 @@ namespace eval ::widgets_bindings {
         set tag ""
         set event ""
         
-        ::widgets_bindings::find_tag_event  $widget(ListboxBindings) $index tag event
+        ::widgets_bindings::find_tag_event \
+            $widget(ListboxBindings) $index tag event
         
         if {$tag == "" || $event == ""} {
             return
@@ -958,7 +1016,8 @@ namespace eval ::widgets_bindings {
         set tag ""
         set event ""
         
-        ::widgets_bindings::find_tag_event  $widget(ListboxBindings) $index tag event
+        ::widgets_bindings::find_tag_event \
+            $widget(ListboxBindings) $index tag event
         
         if {$tag == "" || $event == ""} {
         
@@ -1009,6 +1068,11 @@ namespace eval ::widgets_bindings {
     proc {::widgets_bindings::set_modifier_in_event} {event modifier} {
         global widget
         
+        # modifiers not allowed for virtual events
+        if {[string match <<*>> $event]} {
+            return $event
+        }
+        
         # adds the modifier to the last event in the sequence
         
         set last [string last < $event]
@@ -1035,7 +1099,7 @@ namespace eval ::widgets_bindings {
         }
         
         set newbind [string range $event 0 $last]
-        set newbind $newbind${modifier}-[string range $event  [expr $last+1] end]
+        set newbind $newbind${modifier}-[string range $event [expr $last+1] end]
         return $newbind
     }
 
@@ -1067,4 +1131,53 @@ namespace eval ::widgets_bindings {
         }
     }
 
+    # given an event sequence ("eg. <Key-Space><Button-1>") and
+    # an index into this event sequence (eg. 18) returns the start
+    # and end index of the event pointed to
+    #
+    # in the example above the values returned would be 11 and 20
+    
+    proc {::widgets_bindings::find_event_in_sequence} \
+       {sequence index ref_start_index ref_end_index} {
+    	
+    	upvar $ref_start_index start_index
+    	upvar $ref_end_index   end_index
+
+    	if {$sequence == ""} {
+            set start_index -1
+            set end_index -1
+            return
+        }  		
+    	
+    	regsub -all << $sequence <_ sequence
+    	regsub -all >> $sequence _> sequence
+    	set start_index $index
+    	set end_index   $index
+    	
+    	while {1} {
+            set result [string range $sequence $start_index $end_index]
+
+            if { ![string match *>  $result]} {
+                incr end_index
+                if {$end_index == [string length $sequence]} {
+                    incr end_index -1
+                    break
+                }
+            }
+
+            if { ![string match <*  $result]} {
+                incr start_index -1
+                if {$start_index < 0} {
+                    set start_index 0
+                    break
+                }
+            }
+            
+            # exit condition ?
+            if { [string match <*> $result]} {
+                break
+            }
+    	}
+    }
+    
 } ; # namespace eval
