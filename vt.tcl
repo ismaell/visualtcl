@@ -46,6 +46,7 @@ if {$tcl_platform(platform) != "windows"} {
 }
 
 proc vTcl:log {msg} {
+    return
     global vTcl tcl_platform
 
      set outCmd vTcl:puts
@@ -60,9 +61,9 @@ proc vTcl:log {msg} {
      } else {
           $outCmd "$msg"
      }
-     
+
      if {$tcl_platform(platform) != "windows"} {
-     	
+
      	# don't display log info into the console window
      	vTcl:console:get_output 0
      }
@@ -100,7 +101,7 @@ proc vTcl:splash {} {
 proc vTcl:load_lib {lib} {
     global vTcl
     # vTcl:puts "Loading library: $lib"
-    
+
     set file [file join $vTcl(LIB_DIR) $lib]
     if {[file exists $file] == 0} {
         vTcl:log "Missing Libary: $lib"
@@ -111,31 +112,31 @@ proc vTcl:load_lib {lib} {
 
 proc vTcl:load_widgets {} {
     global vTcl
-    
+
     # ok, by default, we enable all the libraries to be loaded
     # now let's check for a .vtcllibs file that tells us what the
     # user wants to load (which can significantly reduce startup time)
-    
+
     set toload $vTcl(LIB_WIDG)
-    
+
     if [file exists $vTcl(LIB_FILE)] {
-    	
+
     	set toload ""
     	set inID [open $vTcl(LIB_FILE) r]
     	set contents [split [read $inID] \n]
     	close $inID
-    	
+
     	foreach content $contents {
-    		
+
     		if { [string trim $content] == ""} continue
     		lappend toload [file join $vTcl(LIB_DIR) $content]
     	}
     }
-    
+
     # puts "To load: $toload"
-    
+
     foreach i $vTcl(LIB_WIDG) {
-    	
+
     	if { [lsearch -exact $toload $i] == -1} continue
         vTcl:load_lib $i
         lappend vTcl(w,libs) [lindex [split [lindex [file split $i] end] .] 0]
@@ -157,14 +158,14 @@ proc vTcl:setup {} {
     set vTcl(megaWidget) ""
     set vTcl(head,importheader) ""
     # @@end_change
-    
+
     # @@change by Christian Gavin 3/14/2000
     # text widget children should not be saved/seen
     lappend vTcl(megaWidget) Text
-    
-    set vTcl(version)   1.22
+
+    set vTcl(version)   1.40
     set vTcl(VTCL_HOME) $env(VTCL_HOME)
-    
+
     if {$env(HOME) == ""} {
         set vTcl(CONF_FILE) [file join $env(VTCL_HOME) .vtclrc]
         set vTcl(LIB_FILE)  [file join $env(VTCL_HOME) .vtcllibs]
@@ -174,11 +175,11 @@ proc vTcl:setup {} {
         set vTcl(LIB_FILE)  [file join $env(HOME) .vtcllibs]
         set vTcl(LOG_FILE)  [file join $env(HOME) .vtclog]
     }
-    
+
     set vTcl(LOG_FD_W)  [open $vTcl(LOG_FILE) "w"]
     set vTcl(LOG_FD_R)  [open $vTcl(LOG_FILE) "r"]
     fconfigure $vTcl(LOG_FD_R) -buffering line
-    
+
     set vTcl(LIB_DIR)   [file join $vTcl(VTCL_HOME) lib]
     set vTcl(LIB_WIDG)  [glob -nocomplain [file join $vTcl(LIB_DIR) lib_*.tcl]]
     set vTcl(LIBS)      "globals.tcl about.tcl propmgr.tcl balloon.tcl
@@ -428,7 +429,7 @@ proc vTcl:define_bindings {} {
         break
     }
     #
-    # handles auto-indent
+    # handles auto-indent and syntax coloring
     #
     bind Text <Key-Return>    {
 
@@ -438,7 +439,7 @@ proc vTcl:define_bindings {} {
             focus %W
             break
         }
-        
+
     	vTcl:syntax_color %W
         set pos [%W index "insert linestart"]
         set nos [%W search -regexp -nocase "\[a-z0-9\]" $pos]
@@ -452,6 +453,30 @@ proc vTcl:define_bindings {} {
             focus %W
             break
         }
+    }
+
+    bind Text <KeyRelease>   {
+
+        # exclude user inserted text widgets from vTcl bindings
+        if {! [string match .vTcl* %W] } {
+            break
+        }
+
+	if {"%K"=="Up" ||
+            "%K"=="Down" ||
+            "%K"=="Right" ||
+            "%K"=="Left"||
+            "%K"=="space"||
+            "%K"=="End"||
+            "%K"=="Home"||
+            [regexp {[]")\}]} %A]} {
+
+		scan [%W index insert] %%d pos
+
+		vTcl:syntax_color %W $pos $pos
+		focus %W
+		break
+	}
     }
 
     bind vTcl(b) <Shift-Button-1>    {vTcl:bind_scrollbar %W $vTcl(w,widget)}
@@ -564,7 +589,7 @@ proc vTcl:main {argc argv} {
 
 	# @@change by Christian Gavin 3/5/2000
 	# autoloading of compounds if "Preferences" options enabled
-	
+
 	if [info exists vTcl(pr,autoloadcomp)] {
         	if {$vTcl(pr,autoloadcomp)} {
         		vTcl:load_compounds $vTcl(pr,autoloadcompfile)
