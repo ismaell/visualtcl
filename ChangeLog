@@ -1,7 +1,50 @@
 ChangeLog for Visual Tcl:
 
+1.51b2 -> 1.51b3
+    o Tclets now save images as inline as well as font definitions
+    o Added menu keyboard shortcuts in main window
+    o Added keyboard accelerators where missing, eg. in bindings
+      editor, menu editor, system inspector, image manager, font
+      manager, you can use any of the standard Accelerators like
+      Ctrl + Q, Ctrl + N, etc
+    o Added code so that Ctrl + C, Ctrl + V, Ctrl + X, Delete do
+      act differently if invoked from entry or text widget in
+      a visual tcl window (eg. if you press Delete in an entry
+      field inside the menu editor, it shouldn't delete the
+      currently selected widget)
+    o A few fixes to import vTcl 1.20-1.22 projects:
+      - hidden toplevels are shown/hidden when importing a project,
+        then they show up in the widget tree and get saved properly,
+        including their aliases
+      - when saving ignore aliases to non-existing widgets
+      - when a hidden toplevel is shown for the first time, it gets
+        registered
+    o Fixed font saving bug not totally fixed in 1.51b2; adding
+      and deleting fonts now works properly
+    o Images are now saved with platform independent filenames
+    o A few fixes for Macintosh compatibility:
+      - made sure [file join] is used when loading widgets
+      - made sure titlebars appear properly
+      - changed button with pulldown menu to label in menu editor
+      - "Save As..." dialog box doesn't use -filetypes on Mac
+      - main window now resizes automatically, positions itself
+        just below the Macintosh menu bar
+    o Fixed menu dump bug (manager switches to place and
+      project cannot be reloaded)
+    o Added menus to bindings editor
+    o Added menus to menu editor (sic)
+    o Fixed "Delete" bug in menu editor
+    o Adding a cascade in menu editor refreshes widget tree
+      and activates widget
+    o Fixed cursor bug (when user selected a widget with a different
+      cursor then selected a toplevel, the toplevel was getting the
+      cursor from the widget)
+    o Added more credits in About box for combobox, multicolumn listbox
+      and progress bar
+    o Added support for labeledframe in Iwidgets
+
 1.51b1 -> 1.51b2
-	o Defined a Tktable widget.
+    o Defined a Tktable widget.
     o Support for childsites in the following Iwidgets:
       tabnotebook, panedwinodw
     o Support for childsites in the following tix widgets:
