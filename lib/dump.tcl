@@ -36,7 +36,7 @@ proc vTcl:save_vars {} {
                     set names [lsort [array names $i]]
                     foreach j $names {
                         set value "[subst $$i\($j\)]"
-                        if {$vTcl(pr,saveglob) == 1 || $i == "widget"} {
+                        if {$vTcl(pr,saveglob) == 1} {
                             append output "$vTcl(tab)set $i\($j\) \{$value\}\n"
                         }
                     }
@@ -76,20 +76,57 @@ proc vTcl:save_procs {} {
     return $output
 }
 
-proc vTcl:save_tree {target} {
+proc vTcl:dump_top_tofile {target basedir project_name} {
+
+    catch {
+        file mkdir [file join $basedir [file rootname $project_name]]
+    }
+
+    set filename [file join $basedir [file rootname $project_name] $target.tcl]
+    set id [open $filename w]
+    puts $id [vTcl:dump_top $target]
+    close $id
+
+    set output "source \"$filename\"\n"
+    return $output
+}
+
+proc vTcl:save_tree {target {basedir ""} {project_name ""}} {
     global vTcl
+
+    if {! [info exists vTcl(pr,projecttype)]} {
+        set vTcl(pr,projecttype) single
+    }
+
     set output ""
     set vTcl(dumptops) ""
     set vTcl(showtops) ""
     set vTcl(var_update) "no"
     set vTcl(num,index) 0
     set tops ". $vTcl(tops)"
+
     vTcl:status "Saving: collecting data"
     set vTcl(num,total) [llength [vTcl:list_widget_tree $target]]
+
     foreach i $tops {
-        append output [vTcl:dump_top $i]
+
+        switch $vTcl(pr,projecttype) {
+
+		single {
+		        append output [vTcl:dump_top $i]
+		}
+
+		multiple {
+			append output [vTcl:dump_top_tofile $i $basedir $project_name]
+		}
+
+		default {
+		        append output [vTcl:dump_top $i]
+		}
+	}
     }
     append output "\n"
+
     vTcl:status "Saving: collecting options"
     foreach i $vTcl(showtops) {
         append output "Window show $i\n"
@@ -442,10 +479,40 @@ proc vTcl:dump_top {target} {
     return $output
 }
 
+proc vTcl:dump:aliases {target} {
+
+    if {$target == "."} {
+    	return ""
+    }
+
+    global widget
+    global vTcl
+
+    set output "\n$vTcl(tab)global widget\n"
+    set aliases [lsort [array names widget] ]
+
+    foreach name $aliases {
+
+    	if [string match rev,$target* $name] {
+
+    	    set value $widget($name)
+    	    append output "$vTcl(tab)set widget(rev,[vTcl:base_name $name]) \{$value\}\n"
+
+    	    set alias $value
+    	    set value $widget($alias)
+    	    append output "$vTcl(tab)set widget($alias) \"[vTcl:base_name $value]\"\n"
+    	}
+    }
+
+    return "$output\n"
+}
+
 proc vTcl:dump:widgets {target} {
     global vTcl
 
     set output ""
+    append output "[vTcl:dump:aliases $target]"
+
     set tree [vTcl:widget_tree $target]
     append output $vTcl(head,proc,widgets)
     foreach i $tree {

@@ -327,7 +327,7 @@ proc vTcl:save2 {file} {
 
     puts $output "\#!/bin/sh"
     puts $output "\# the next line restarts using wish\\"
-    puts $output {exec wish8.0 "$0" "$@" }
+    puts $output {exec wish "$0" "$@" }
 
     # header to import libraries
     # code to load images
@@ -358,7 +358,7 @@ proc vTcl:save2 {file} {
         puts $output "proc init \{argc argv\} \{\n$body\n\}\n"
         puts $output "init \$argc \$argv\n"
         puts $output $vTcl(head,gui)
-        puts $output [vTcl:save_tree .]
+        puts $output [vTcl:save_tree . [file dirname $file] $vTcl(project,name)]
         puts $output "main \$argc \$argv"
     } else {
         puts $output [vTcl:save_tree $vTcl(w,widget)]

@@ -178,6 +178,19 @@ proc vTclWindow.vTcl.prefs {{base ""}} {
         -foreground #000000 -highlightbackground #bcbcbc \
         -highlightcolor #000000 -highlightthickness 0 -text Quotes \
         -value quote -variable vTcl(pr,encase) -width 5
+    label $base.fra21.lab22 \
+        -foreground #000000 -highlightbackground #bcbcbc \
+        -highlightcolor #000000 -relief raised -text {Project}
+    radiobutton $base.fra21.rad22 \
+        -activebackground #bcbcbc -activeforeground #000000 -anchor w \
+        -foreground #000000 -highlightbackground #bcbcbc \
+        -highlightcolor #000000 -highlightthickness 0 -text "Single file" \
+        -value single -variable vTcl(pr,projecttype) -width 5
+    radiobutton $base.fra21.rad23 \
+        -activebackground #bcbcbc -activeforeground #000000 -anchor w \
+        -foreground #000000 -highlightbackground #bcbcbc \
+        -highlightcolor #000000 -highlightthickness 0 -text "Multiple files" \
+        -value multiple -variable vTcl(pr,projecttype) -width 5
     frame $base.fra21.fra20 \
         -height 5 -highlightbackground #bcbcbc \
         -highlightcolor #000000 -width 5
@@ -272,7 +285,7 @@ proc vTclWindow.vTcl.prefs {{base ""}} {
         -in $base -column 1 -row 0 -columnspan 1 -rowspan 2 -ipadx 5 -padx 5 \
         -pady 5 -sticky nesw
     grid columnconf $base.fra21 0 -weight 1
-    grid rowconf $base.fra21 8 -weight 1
+    grid rowconf $base.fra21 11 -weight 1
     grid $base.fra21.lab41 \
         -in $base.fra21 -column 0 -row 0 -columnspan 1 -rowspan 1 -padx 5 \
         -pady 5 -sticky nesw
@@ -297,9 +310,18 @@ proc vTclWindow.vTcl.prefs {{base ""}} {
     grid $base.fra21.rad21 \
         -in $base.fra21 -column 0 -row 7 -columnspan 1 -rowspan 1 \
         -sticky nesw
-    grid $base.fra21.fra20 \
+    grid $base.fra21.lab22 \
         -in $base.fra21 -column 0 -row 8 -columnspan 1 -rowspan 1 \
+        -sticky nesw -padx 5 -pady 5
+    grid $base.fra21.rad22 \
+        -in $base.fra21 -column 0 -row 9 -columnspan 1 -rowspan 1 \
         -sticky nesw
+    grid $base.fra21.rad23 \
+        -in $base.fra21 -column 0 -row 10 -columnspan 1 -rowspan 1 \
+        -sticky nesw
+    grid $base.fra21.fra20 \
+        -in $base.fra21 -column 0 -row 11 -columnspan 1 -rowspan 1 \
+        -sticky new
     grid $base.fra22 \
         -in $base -column 0 -row 2 -columnspan 2 -rowspan 1 -padx 5 -pady 5 \
         -sticky nesw

@@ -474,12 +474,15 @@ proc vTcl:dialog_safeguard {win} {
 # "Tcl and the Tk Toolkit"
 # @@end_change
 
-proc vTcl:forAllMatches {w tags callback} {
+proc vTcl:forAllMatches {w tags callback {from 1} {to -1}} {
 
 	global vTcl
-	scan [$w index end] %d numLines
 
-	for {set i 1} {$i <= $numLines} {incr i} {
+	if {$to == -1} {
+		scan [$w index end] %d to
+	}
+
+	for {set i $from} {$i <= $to} {incr i} {
 
 		# get the line only once
 		set currentLine [$w get $i.0 $i.end]
@@ -534,18 +537,26 @@ proc vTcl:syntax_item {w tag} {
 	$w tag add $tag first last
 }
 
-proc vTcl:syntax_color {w} {
+# from, to indicate the line numbers of the area to colorize
+# if not specified, the full text widget is colorized
+
+proc vTcl:syntax_color {w {from 1} {to -1}} {
 
 	global vTcl
 
 	set patterns ""
 
-	foreach tag $vTcl(syntax,tags) {
-
-		$w tag remove $tag 0.0 end
+	if {$to == -1} {
+		scan [$w index end] %d to
 	}
 
-	vTcl:forAllMatches $w $vTcl(syntax,tags) vTcl:syntax_item
+	foreach tag $vTcl(syntax,tags) {
+
+		$w tag remove $tag $from.0 $to.end
+	}
+
+	vTcl:forAllMatches $w $vTcl(syntax,tags) vTcl:syntax_item \
+		$from $to
 
 	foreach tag $vTcl(syntax,tags) {
 
