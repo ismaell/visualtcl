@@ -21,12 +21,12 @@
 ##############################################################################
 #
 
-proc vTcl:show_console {} {
+proc vTcl:show_console {{show show}} {
     global vTcl tcl_platform
     if {$vTcl(console) == 1} {
-        console show
+        console $show
     } else {
-        Window show .vTcl.con
+        Window $show .vTcl.con
     }
 }
 

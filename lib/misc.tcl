@@ -48,7 +48,8 @@ proc vTcl:load_images {} {
 
     foreach i {fg bg mgr_grid mgr_pack mgr_place
                 rel_groove rel_ridge rel_raised rel_sunken justify
-                relief border ellipses anchor fontbase fontsize fontstyle} {
+                relief border ellipses anchor fontbase fontsize fontstyle
+                tconsole} {
         image create photo "$i" \
             -file [file join $vTcl(VTCL_HOME) images $i.gif]
     }
