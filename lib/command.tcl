@@ -67,6 +67,7 @@ proc vTcl:get_command {title initial base} {
     toplevel $base -class vTcl
     wm transient $base .vTcl
     # wm geometry $base $vTcl(pr,geom_comm)
+    vTcl:check_mouse_coords
     wm geometry $base 350x200+[expr $vTcl(mouse,X)-120]+[expr $vTcl(mouse,Y)-20]
     wm resizable $base 1 1
     wm title $base $title

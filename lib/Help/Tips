@@ -1,5 +1,121 @@
 "The tip of the day dialog offers you valuable tips on Visual Tcl"
 
+{The main window gives access to common functions like open, save,
+close, cut, copy, paste.
+
+Below the menu bar, a number of buttons allow you to quickly change
+the visual properties of a widget such as the border width, the
+relief (sunken, raised), or the position of the text (left, center,
+right, etc.).
+
+You can also set the font type and size from the main window.}
+
+{The Tk Toolkit has different ways of arranging widgets inside a
+window. Geometry managers are responsible for arranging widgets.
+
+Tk has three geometry managers available.
+
+Visual Tcl supports all three geometry managers. You may need to
+use one or the other depending on your needs.}
+
+{One of the geometry managers is the "packer".
+
+The packer arranges widgets so that they can expand or contract,
+automatically adjusting their size. Widgets can stick to a given
+side of the window, and they can be instructed to expand horizon-
+tally, vertically or both.
+
+The packer is very convenient because you don't have to worry
+how big the buttons are. They will adjust so the button text fits.
+
+On the other hand, the packer requires a little bit of thinking
+while you design your forms, but because of its flexibility,
+it is the best choice to quickly port your application to
+other platforms.}
+
+{Another geometry manager is called the "placer".
+
+The placer simply places widgets to particular positions inside
+a window by using a system of x, y coordinates. Each widget is
+given a specific position (x, y) and a size (width, height).
+
+The placer does not resize widgets according to their content,
+which means that if you change the font size, buttons won't
+resize, contrary to the packer.}
+
+{It is recommended that you use the packer, to ensure that your
+application will have a consistent look, regardless of platform
+or font size. However, you may need to use the placer in some
+situations.}
+
+{A very useful geometry manager is the "gridder".
+
+The gridder arranges items in a grid of rows and columns. All
+items in the same row have the same height, and all items in the
+same column have the same width.
+
+In addition, an item in a grid can span on more than one column,
+or more than one row.
+
+Rows and columns automatically adjust to the contents of the
+widgets, like the packer. Rows and columns expand or contract.}
+
+{The vertical window containing two rows of icons in Visual
+Tcl is known as the toolbar. It is a palette of visual elements
+that you can use to build your application.
+
+Visual Tcl refers to visual elements with which the user interacts
+or that offer visual information to the user as 'widgets'. A widget
+may be a button (you can interact with a button by clicking on it),
+a scrollbar (you can drag the bar up or down to browse through
+a long text for example), a label (you cannot interact with a
+label, but the label displays text in a window), or a entry field
+(you can enter a value inside an entry field). There are many
+widgets for you to use in Visual Tcl.
+
+All these widgets (visual elements) form the building blocks of
+your application.}
+
+{Visual Tcl has two modes:
+
+EDIT mode allows you to place widgets on forms, move them around,
+change their size, their color, their font, how they respond
+to events, etc.
+
+TEST mode does not allow you to place widgets, but enables you
+to interact with them, as if you were running your application
+outside Visual Tcl.}
+
+{Widgets in Tk are characterized by their properties.
+
+A property can be a font, a background color, a border size,
+a text string, anything that defines the behavior and appearance
+of a widget.
+
+You customize widgets to your own liking by changing their
+properties. For example, you set the background color, you change
+the font, or you define a command when a button is pressed.}
+
+{Widgets with a similar behavior and appearance belong to the
+same class.
+
+For example, widgets of the "Button" class all look rectangular
+with a text inside. They all execute a command when you click on
+them.
+
+Widgets of the "Scrollbar" class are made to browse through
+large documents. They all look like an elevator where you could
+drag the car up or down from one story to the other.
+
+Widgets of the "Text" class allow you to display text or
+modify it by inserting characters, copying or pasting bits of
+text.}
+
+{The basic building block of an application in Visual Tcl is
+the form, also called a "toplevel" window. Think of a toplevel
+window as an interactive form, displaying information to the
+user, or allowing the user to enter data.}
+
 "Aliases are symbolic names used to refer to widgets."
 
 "You can access a widget by it's alias using $widget(MyWidget)"

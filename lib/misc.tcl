@@ -782,6 +782,18 @@ proc vTcl:WrongNumArgs {string} {
     return "wrong # args: should be \"$string\""
 }
 
+proc vTcl:check_mouse_coords {} {
+
+    global vTcl
+
+    if {$vTcl(mouse,X) == 0} {
+        set vTcl(mouse,X) [expr [winfo screenwidth .] / 2]
+    }
+    if {$vTcl(mouse,Y) == 0} {
+        set vTcl(mouse,Y) [expr [winfo screenheight .] / 2]
+    }
+}
+
 proc vTcl:set_mouse_coords {X Y x y} {
     global vTcl
     foreach var [list X Y x y] {

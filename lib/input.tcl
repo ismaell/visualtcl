@@ -45,6 +45,8 @@ proc vTcl:snarf_string {base} {
 proc vTcl:string_window {title base {value ""}} {
     global vTcl
 
+    vTcl:check_mouse_coords
+
     toplevel $base
     wm transient $base .vTcl
     wm focusmodel $base passive

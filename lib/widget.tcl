@@ -742,6 +742,9 @@ proc vTcl:valid_alias {target alias} {
     if {[info exists widget($toplevel,$alias)] &&
          $widget($toplevel,$alias) != $target} {
         return 0
+    } elseif {[info exists widget($alias)] &&
+              [vTcl:get_class $widget($alias)] == "Toplevel"} {
+        return 0
     } else {
         return 1
     }
@@ -765,7 +768,7 @@ proc vTcl:set_alias {target {alias ""} {noupdate ""}} {
                 # make sure no other widget in the same toplevel has the same alias
                 set valid [vTcl:valid_alias $target $alias]
                 if {!$valid} {
-                    vTcl:dialog "Alias '$alias' already exists in the same toplevel"
+                    vTcl:dialog "Alias '$alias' already exists"
                 }
             } else {
                 # user decided not to change the alias, or to cancel

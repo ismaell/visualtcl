@@ -1,6 +1,10 @@
 ChangeLog for Visual Tcl:
 
 1.51b4 -> 1.51rc0
+    o Prevent the same alias from being defined in two toplevels
+    o Center alias dialog and command dialog if no widget has been
+      selected using the mouse (it is possible to select a widget in
+      the widget tree)
     o Use as many default values as possible for new menu widgets
     o Fixed bug where Visual Tcl would switch the manager for a menu from
       'wm' to 'place'
