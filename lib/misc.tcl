@@ -752,6 +752,38 @@ proc incr0 {varName {num 1}} {
 namespace eval base64 {
   set charset "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 
+  # this proc by Christian Gavin
+  proc encode_file {filename} {
+
+     set inID [open $filename r]
+     fconfigure $inID -translation binary
+     set contents [read $inID]
+     close $inID
+
+     set encoded [::base64::encode $contents]
+     set length  [string length $encoded]
+     set chunk   60
+     set result  ""
+
+     for {set index 0} {$index < $length} {set index [expr $index + $chunk] } {
+
+         set index_end [expr $index + $chunk - 1]
+
+         if {$index_end >= $length} {
+
+             set index_end [expr $length - 1]
+             append result [string range $encoded $index $index_end]
+
+         } else {
+
+             append result [string range $encoded $index $index_end]
+             append result \n
+         }
+     }
+
+     return $result
+  }
+
   # ----------------------------------------
   # encode the given text
   proc encode {text} {
