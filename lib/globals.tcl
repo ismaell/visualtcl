@@ -118,7 +118,7 @@ set vTcl(proc,body)      ""
 set vTcl(proc,ignore)    "tcl.*|tk.*|auto_.*|vTcl:.*|bgerror|\\..*"
 set vTcl(project,name)   ""
 set vTcl(project,file)   ""
-set vTcl(quit)           1
+set vTcl(quit)           0
 set vTcl(tool,list)      ""
 set vTcl(tool,last)      ""
 set vTcl(toolbar,width) 2

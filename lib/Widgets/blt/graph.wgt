@@ -1,6 +1,5 @@
-Class   Graph
-Lib     blt
+Class		Graph
+Lib		blt
 
-Icon    icon_graph.gif
-
-
+CreateCmd	::BLT::graph
+Icon		icon_graph.gif

@@ -38,27 +38,8 @@ proc vTcl:lib_itcl:init {} {
 
     if {[catch {
         package require Itcl 3.0
-        namespace import itcl::*
         package require Itk 3.0
         package require Iwidgets 3.0
-        namespace import iwidgets::entryfield
-        namespace import iwidgets::spinint
-        namespace import iwidgets::combobox
-        namespace import iwidgets::scrolledlistbox
-        namespace import iwidgets::calendar
-        namespace import iwidgets::dateentry
-        namespace import iwidgets::scrolledhtml
-        namespace import iwidgets::toolbar
-        namespace import iwidgets::feedback
-        namespace import iwidgets::optionmenu
-        namespace import iwidgets::hierarchy
-        namespace import iwidgets::buttonbox
-        namespace import iwidgets::checkbox
-        namespace import iwidgets::radiobox
-        namespace import iwidgets::labeledframe
-        namespace import iwidgets::tabnotebook
-        namespace import iwidgets::panedwindow
-        namespace import iwidgets::scrolledtext
     } errorText]} {
         vTcl:log $errorText
         lappend vTcl(libNames) \
@@ -75,57 +56,34 @@ proc vTcl:widget:lib:lib_itcl {args} {
     # Setup required variables
     vTcl:lib_itcl:setup
 
-    append vTcl(head,importheader) {
-        # Provoke name search
-        catch {package require foobar}
-        set names [package names]
+    append vTcl(head,itcl,importheader) {
+    # Check if Itcl is available
+    if {[lsearch -exact $packageNames Itcl] != -1} {
+	package require Itcl 3.0
+    }
 
-        # Check if Itcl is available
-        if {[lsearch -exact $names Itcl] != -1} {
-            package require Itcl 3.0
-            namespace import itcl::*
-        }
+    # Check if Itk is available
+    if {[lsearch -exact $packageNames Itk] != -1} {
+	package require Itk 3.0
+    }
 
-        # Check if Itk is available
-        if {[lsearch -exact $names Itk] != -1} {
-            package require Itk 3.0
-        }
+    # Check if Iwidgets is available
+    if {[lsearch -exact $packageNames Iwidgets] != -1} {
+	package require Iwidgets 3.0
 
-        # Check if Iwidgets is available
-        if {[lsearch -exact $names Iwidgets] != -1} {
-            package require Iwidgets 3.0
-            namespace import iwidgets::entryfield
-            namespace import iwidgets::spinint
-            namespace import iwidgets::combobox
-            namespace import iwidgets::scrolledlistbox
-            namespace import iwidgets::calendar
-            namespace import iwidgets::dateentry
-            namespace import iwidgets::scrolledhtml
-            namespace import iwidgets::toolbar
-            namespace import iwidgets::feedback
-            namespace import iwidgets::optionmenu
-            namespace import iwidgets::hierarchy
-            namespace import iwidgets::buttonbox
-            namespace import iwidgets::checkbox
-            namespace import iwidgets::radiobox
-            namespace import iwidgets::labeledframe
-            namespace import iwidgets::tabnotebook
-            namespace import iwidgets::panedwindow
-            namespace import iwidgets::scrolledtext
-
-            switch $tcl_platform(platform) {
-                windows {
-                    option add *Scrolledhtml.sbWidth    16
-                    option add *Scrolledtext.sbWidth    16
-                    option add *Scrolledlistbox.sbWidth 16
-                }
-                default {
-                    option add *Scrolledhtml.sbWidth    10
-                    option add *Scrolledtext.sbWidth    10
-                    option add *Scrolledlistbox.sbWidth 10
-                }
-            }
-        }
+	switch $tcl_platform(platform) {
+	    windows {
+		option add *Scrolledhtml.sbWidth    16
+		option add *Scrolledtext.sbWidth    16
+		option add *Scrolledlistbox.sbWidth 16
+	    }
+	    default {
+		option add *Scrolledhtml.sbWidth    10
+		option add *Scrolledtext.sbWidth    10
+		option add *Scrolledlistbox.sbWidth 10
+	    }
+	}
+    }
     }
 
     set order {Entryfield Spinint Combobox Scrolledlistbox Calendar

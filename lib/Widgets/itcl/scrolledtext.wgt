@@ -1,6 +1,7 @@
-Class Scrolledtext
-Lib   itcl
+Class		Scrolledtext
+Lib		itcl
 
-Icon icon_scrolledtext.gif
-DumpChildren  no
-MegaWidget    yes
+CreateCmd	::iwidgets::scrolledtext
+Icon		icon_scrolledtext.gif
+DumpChildren	no
+MegaWidget	yes

@@ -28,21 +28,19 @@ proc vTcl:bind_button_1 {target X Y x y} {
 
     set parent $target
 
-    # megawidget ?
-    if {[info exists ::widgets::${target}::parent]} {
-        set parent [vTcl:at ::widgets::${target}::parent]
-    }
+    # Megawidget ?
+    if {[vTcl:WidgetVar $target parent tmp]} { set parent $tmp }
 
-    if {[lindex [split %W .] 1] != "vTcl"} {
-        if {$parent != "." && [winfo class $parent] != "Toplevel"} {
-            vTcl:active_widget $parent
-            vTcl:grab $target $X $Y
-            set vTcl(cursor,last) [$target cget -cursor]
-            $target configure -cursor fleur
-        } else {
-            set vTcl(cursor,last) [$target cget -cursor]
-            vTcl:active_widget $parent
-        }
+    if {[lindex [split %W .] 1] == "vTcl"} { return }
+
+    if {$parent != "." && [winfo class $parent] != "Toplevel"} {
+	vTcl:active_widget $parent
+	vTcl:grab $target $X $Y
+	set vTcl(cursor,last) [$target cget -cursor]
+	$target configure -cursor fleur
+    } else {
+	set vTcl(cursor,last) [$target cget -cursor]
+	vTcl:active_widget $parent
     }
 }
 
@@ -53,19 +51,18 @@ proc vTcl:bind_button_2 {target X Y x y} {
 
     set parent $target
 
-    # megawidget ?
-    if {[info exists ::widgets::${target}::parent]} {
-        set parent [vTcl:at ::widgets::${target}::parent]
-    }
+    # Megawidget ?
+    if {[vTcl:WidgetVar $target parent tmp]} { set parent $tmp }
 
     vTcl:active_widget $parent
 
     if {$vTcl(w,widget) != "." && \
         [winfo class $vTcl(w,widget)] != "Toplevel" && \
         $vTcl(w,widget) != ""} {
-            vTcl:grab $target $X $Y
-            set vTcl(cursor,last) [$vTcl(w,widget) cget -cursor]
-            $target configure -cursor fleur
+
+	vTcl:grab $target $X $Y
+	set vTcl(cursor,last) [$vTcl(w,widget) cget -cursor]
+	$target configure -cursor fleur
     }
 }
 

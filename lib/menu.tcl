@@ -185,11 +185,12 @@ proc vTcl:addRcFile {file} {
 proc vTcl:updateRcFileMenu {} {
     global vTcl
 
-    if {![info exists vTcl(rcFiles)]} then {
-       set vTcl(rcFiles) {}
-    }
+    if {![info exists vTcl(rcFiles)]} { set vTcl(rcFiles) {} }
 
-    if {[info tclversion] >= 8} then {
+    ## Remove duplicate entries in the file list.
+    set vTcl(rcFiles) [vTcl:lrmdups $vTcl(rcFiles)]
+
+    if {[info tclversion] >= 8} {
         set w .vTcl.m.file.projects
     } else {
         set w $vTcl(gui,main).menu.projects

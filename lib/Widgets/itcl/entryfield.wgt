@@ -1,6 +1,7 @@
-Class Entryfield
-Lib   itcl
+Class		Entryfield
+Lib		itcl
 
-Icon icon_entryfield.gif
-DumpChildren  no
-MegaWidget    yes
+CreateCmd	::iwidgets::entryfield
+Icon		icon_entryfield.gif
+DumpChildren	no
+MegaWidget	yes

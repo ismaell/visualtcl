@@ -1,16 +1,18 @@
-Class Labeledframe
-Lib   itcl
+Class		Labeledframe
+Lib		itcl
 
-Icon			icon_incrLabelFrame.gif
+CreateCmd	::iwidgets::labeledframe
+Icon		icon_incrLabelFrame.gif
 DumpChildren	no
-MegaWidget		yes
-TreeChildrenCmd   "vTcl:widget:labeledframe:treeChildrenCmd \
-                   vTcl:widget:labeledframe:treeChildrenChildsite"
-DumpCmd           vTcl:dump:labeledframe
-DefaultOptions    -labeltext "Labeled frame"
+MegaWidget	yes
+TreeChildrenCmd	{
+		vTcl:widget:labeledframe:treeChildrenCmd
+		vTcl:widget:labeledframe:treeChildrenChildsite
+		}
+DumpCmd		vTcl:dump:labeledframe
+DefaultOptions	-labeltext "Labeled frame"
 
 proc vTcl:widget:labeledframe:treeChildrenCmd {target {diff ""}} {
-
     set children ""
     set wantsdiff [expr {$diff != ""}]
 
@@ -22,17 +24,15 @@ proc vTcl:widget:labeledframe:treeChildrenCmd {target {diff ""}} {
 }
 
 proc vTcl:widget:labeledframe:treeChildrenChildsite {target} {
-
     return [$target childsite]
 }
 
 proc vTcl:dump:labeledframe {target basename} {
-
     global vTcl
+
     set result [vTcl:dump_widget_opt $target $basename]
     set page   [$target childsite]
     append result [vTcl:lib_itcl:dump_subwidgets $page]
 
     return $result
 }
-

@@ -1,18 +1,20 @@
-Class Panedwindow
-Lib   itcl
+Class		Panedwindow
+Lib		itcl
 
-Icon icon_panedwindow.gif
-DumpChildren  no
-MegaWidget    yes
+CreateCmd	::iwidgets::panedwindow
+Icon		icon_panedwindow.gif
+DumpChildren	no
+MegaWidget	yes
+TreeChildrenCmd	{
+		vTcl:widget:panedwindow:treeChildrenCmd
+		vTcl:widget:panedwindow:treeChildrenChildsite
+		}
+DumpCmd		vTcl:dump:panedwindow
+InsertCmd	vTcl:widget:panedwindow:inscmd
+
 AdditionalClasses Pane
-TreeChildrenCmd     "vTcl:widget:panedwindow:treeChildrenCmd \
-                     vTcl:widget:panedwindow:treeChildrenChildsite"
-DumpCmd             vTcl:dump:panedwindow
-
-InsertCmd vTcl:widget:panedwindow:inscmd
 
 proc vTcl:widget:panedwindow:inscmd {target} {
-
     return "$target add pane1; $target add pane2"
 }
 

@@ -1,15 +1,17 @@
-Class Tabnotebook
-Lib   itcl
+Class		Tabnotebook
+Lib		itcl
 
-Icon icon_tabnotebook.gif
-DumpChildren  no
-MegaWidget    yes
+CreateCmd	::iwidgets::tabnotebook
+Icon		icon_tabnotebook.gif
+DumpChildren	no
+MegaWidget	yes
+InsertCmd	vTcl:widget:tabnotebook:inscmd
+TreeChildrenCmd	"vTcl:widget:tabnotebook:treeChildrenCmd
+		vTcl:widget:tabnotebook:treeChildrenChildsite"
+DumpCmd		vTcl:dump:tabnotebook
+
+
 AdditionalClasses Notebook Tabset Page
-
-InsertCmd           vTcl:widget:tabnotebook:inscmd
-TreeChildrenCmd     "vTcl:widget:tabnotebook:treeChildrenCmd \
-                     vTcl:widget:tabnotebook:treeChildrenChildsite"
-DumpCmd             vTcl:dump:tabnotebook
 
 proc vTcl:widget:tabnotebook:inscmd {target} {
 

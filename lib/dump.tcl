@@ -88,7 +88,7 @@ proc vTcl:export_procs {} {
     global vTcl classes
 
     set output ""
-    append output "if {!\[info exists vTcl(sourcing)\]} \{"
+    vTcl:dump:not_sourcing_header output
     set children [vTcl:list_widget_tree .]
 
     foreach child $children {
@@ -114,8 +114,9 @@ proc vTcl:export_procs {} {
                 lappend args $j
             }
         }
-        set body [string trim [info body $i]]
-        if {($body != "" || $i == "main") && $i != "init"} {
+        set body [string trim [info body $i] "\n"]
+	if {(![lempty $body] || [vTcl:streq $i "main"]) \
+	    && ![vTcl:streq $i "init"]} {
 
             if {[regexp (.*):: $i matchAll context] } {
                append output "\nnamespace eval ${context} \{\n"
@@ -128,7 +129,7 @@ proc vTcl:export_procs {} {
             }
         }
     }
-    append output "\}\n"
+    vTcl:dump:sourcing_footer output
     return $output
 }
 
@@ -139,9 +140,11 @@ proc vTcl:vtcl_library_procs {} {
         Window
     }
 
+    vTcl:dump:not_sourcing_header output
     foreach proc $list {
         append output [vTcl:maybe_dump_proc $proc]
     }
+    vTcl:dump:sourcing_footer output
     return $output
 }
 
@@ -328,7 +331,7 @@ proc vTcl:get_opts {opts} {
 
 proc vTcl:get_opts_special {opts w {save_always ""}} {
     global vTcl
-    upvar ::widgets::${w}::save save
+    vTcl:WidgetVar $w save
 
     set ret {}
     foreach i $opts {
@@ -772,16 +775,16 @@ proc vTcl:dump:save_tops {} {
            append string "Window show $top\n"
             continue
         }
-        append string "if {\[info exists vTcl(sourcing)\]} \{"
+	vTcl:dump:not_sourcing_header string
         append string "Window show $top; update; Window hide $top"
-        append string "\}\n"
+	vTcl:dump_sourcing_footer string
     }
 
     return $string
 }
 
-proc vTcl:dump:widget_fonts_and_images {} {
-    global vTcl
+proc vTcl:dump:gather_widget_info {} {
+    global vTcl classes
 
     if {[info exists vTcl(images,stock)]} { lappend vars stockImages }
     if {[info exists vTcl(images,user)]}  { lappend vars userImages  }
@@ -790,14 +793,15 @@ proc vTcl:dump:widget_fonts_and_images {} {
 
     if {[lempty $vars]} { return }
 
+    set vTcl(dump,libraries) {}
     foreach var $vars { set vTcl(dump,$var) {} }
 
     set children [vTcl:complete_widget_tree . 0]
 
     foreach child $children {
-
+	set c [vTcl:get_class $child]
+    	lappend vTcl(dump,libraries) $classes($c,lib)
         foreach type [list stock user] {
-
             if {![catch {$child cget -image} image]
                 && [lsearch $vTcl(images,$type) $image] > -1} {
                 lappend vTcl(dump,${type}Images) $image
@@ -808,37 +812,46 @@ proc vTcl:dump:widget_fonts_and_images {} {
             }
 
             if {[vTcl:get_class $child] == "Menu"} {
-
                 set size [$child index end]
-                if {$size != "none"} {
-
-                    for {set i 0} {$i <= $size} {incr i} {
-                        if {![catch {$child entrycget $i -image} image]
-                            && [lsearch $vTcl(images,$type) $image] > -1} {
-                            lappend vTcl(dump,${type}Images) $image
-                        }
-                    }
-                }
+		if {[vTcl:streq $size "none"]} { continue }
+		for {set i 0} {$i <= $size} {incr i} {
+		    if {![catch {$child entrycget $i -image} image]
+			&& [lsearch $vTcl(images,$type) $image] > -1} {
+			lappend vTcl(dump,${type}Images) $image
+		    }
+		}
             }
         } ; # foreach type [...]
     }
+
+    set vTcl(dump,libraries) [vTcl:lrmdups $vTcl(dump,libraries)]
 }
 
 proc vTcl:dump:project_info {basedir project} {
     global vTcl
 
-    # we don't want information for the displayed widget tree
+    set out   {}
+    set multi 0
+    if {![vTcl:streq $vTcl(pr,projecttype) "single"]} { set multi 1 }
+
+    # We don't want information for the displayed widget tree
     #                                        v
     set widgets [vTcl:complete_widget_tree . 0]
 
-    set out "proc vTcl:project:info \{\} \{\n"
+    ## It's a single project without a project file.
+    if {!$multi && !$vTcl(pr,projfile)} {
+    	vTcl:dump:sourcing_header out
+	append out "\n"
+    }
+
+    append out "proc vTcl:project:info \{\} \{\n"
 
     foreach widget $widgets {
         if {[vTcl:streq $widget "."]} { continue }
         set testing [namespace children ::widgets ::widgets::${widget}]
         if {$testing == ""} { continue }
 
-        upvar ::widgets::${widget}::save save
+	vTcl:WidgetVar $widget save
         set list {}
         foreach var [lsort [array names save]] {
             if {!$save($var)} { continue }
@@ -860,8 +873,11 @@ proc vTcl:dump:project_info {basedir project} {
 
     append out "\}\n"
 
-    if {[vTcl:streq $vTcl(pr,projecttype) "single"]} {
-        if {!$vTcl(pr,projfile)} { return $out }
+    if {!$multi} {
+        if {!$vTcl(pr,projfile)} {
+	    vTcl:dump:sourcing_footer out
+	    return $out
+	}
         set file [file root $project].vtp
     } else {
         set file [file root $project].vtp
@@ -876,4 +892,18 @@ proc vTcl:dump:project_info {basedir project} {
     return
 }
 
+proc vTcl:dump:sourcing_header {varName} {
+    upvar 1 $varName var
+    append var "\nif {\[info exists vTcl(sourcing)\]} \{"
+}
 
+proc vTcl:dump:not_sourcing_header {varName} {
+    upvar 1 $varName var
+    append var "\nif {!\[info exists vTcl(sourcing)\]} \{"
+}
+
+proc vTcl:dump:sourcing_footer {varName} {
+    upvar 1 $varName var
+    if {![vTcl:streq [string index $var end] "\n"]} { append var "\n" }
+    append var "\}"
+}

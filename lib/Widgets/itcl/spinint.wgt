@@ -1,6 +1,7 @@
-Class Spinint
-Lib   itcl
+Class		Spinint
+Lib		itcl
 
-Icon icon_spinint.gif
-DumpChildren  no
-MegaWidget    yes
+CreateCmd	::iwidgets::spinint
+Icon		icon_spinint.gif
+DumpChildren	no
+MegaWidget	yes

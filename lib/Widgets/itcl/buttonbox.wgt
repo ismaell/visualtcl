@@ -1,13 +1,15 @@
-Class Buttonbox
-Lib   itcl
+Class		Buttonbox
+Lib		itcl
 
-Icon          icon_buttonbox.gif
-DumpChildren  no
-MegaWidget    yes
-InsertCmd     vTcl:widget:buttonbox:inscmd
-DumpCmd       vTcl:dump:buttonbox
+CreateCmd	::iwidgets::buttonbox
+Icon		icon_buttonbox.gif
+DumpChildren	no
+MegaWidget	yes
+InsertCmd	vTcl:widget:buttonbox:inscmd
+DumpCmd		vTcl:dump:buttonbox
+DefaultOptions	-padx 0 -pady 0
+
 AdditionalClasses Pushbutton
-DefaultOptions -padx 0 -pady 0
 
 proc vTcl:dump:buttonbox {target basename} {
 

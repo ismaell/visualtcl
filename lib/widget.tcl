@@ -169,6 +169,11 @@ proc vTcl:select_widget {target} {
         return
     }
 
+    ## Set the focus to an arbitrary widget when a widget is selected.
+    ## This is so that focus_out_cmd gets called on the property manager
+    ## if a widget is selected.
+    focus .vTcl.widgetname
+
     vTcl:log "vTcl:select_widget $target"
     if {$target == $vTcl(w,widget)} {
         # show selection in widget tree
@@ -535,6 +540,7 @@ proc vTcl:switch_mode {} {
     global vTcl
     if {$vTcl(mode) == "EDIT"} {
         vTcl:setup_unbind_tree .
+    	vTcl:propmgr:deselect_attr
     } else {
         vTcl:setup_bind_tree .
     }
@@ -542,7 +548,7 @@ proc vTcl:switch_mode {} {
 
 proc vTcl:setup_bind_tree {target} {
     global vTcl
-    # include special menu windows under X with '#'
+    # Include special menu windows under X with '#'
     set bindlist [vTcl:list_widget_tree $target "" 1 1]
     update idletasks
     foreach i $bindlist {
@@ -550,8 +556,7 @@ proc vTcl:setup_bind_tree {target} {
     }
 
     foreach i [vTcl:list_widget_tree $target] {
-
-        # make sure megawidgets' children are properly tagged
+        # Make sure megawidgets' children are properly tagged
         # as such; test mode could have added/removed children
         vTcl:widget:register_widget_megachildren $i
     }
@@ -572,7 +577,7 @@ proc vTcl:setup_unbind_tree {target} {
     global vTcl
     vTcl:select_widget .
     vTcl:destroy_handles
-    # include special menu windows under X with '#'
+    # Include special menu windows under X with '#'
     set bindlist [vTcl:list_widget_tree $target "" 1 1]
     update idletasks
     foreach i $bindlist {
@@ -1138,7 +1143,7 @@ proc vTcl:widget:register_widget {w {save_options ""}} {
     if {![catch {namespace children ::widgets} namespaces]} {
         if {[lsearch $namespaces ::widgets::${w}] > -1} {
 
-            if {! [info exists ::widgets::${w}::options] } {
+            if {![info exists ::widgets::${w}::options] } {
 
                 # at least, if the widget has already been registered
                 # (typically just after a "file open" operation), we
@@ -1155,7 +1160,6 @@ proc vTcl:widget:register_widget {w {save_options ""}} {
                     set ::widgets::${w}::defaults($opt) $def
                 }
             }
-
             return
         }
     }
@@ -1198,6 +1202,3 @@ proc vTcl:widget:register_all_widgets {{w .}} {
         vTcl:widget:register_widget $w
     }
 }
-
-
-

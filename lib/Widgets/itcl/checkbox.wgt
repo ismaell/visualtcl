@@ -1,16 +1,17 @@
-Class Checkbox
-Lib   itcl
+Class		Checkbox
+Lib		itcl
 
-Icon icon_checkbox.gif
-DumpChildren  no
-MegaWidget    yes
-DumpCmd       vTcl:dump:checkbox
-InsertCmd     vTcl:widget:checkbox:inscmd
-DefaultOptions -labeltext "Checkbox"
+CreateCmd	::iwidgets::checkbox
+Icon		icon_checkbox.gif
+DumpChildren	no
+MegaWidget	yes
+DumpCmd		vTcl:dump:checkbox
+InsertCmd	vTcl:widget:checkbox:inscmd
+DefaultOptions	-labeltext "Checkbox"
 
 proc vTcl:dump:checkbox {target basename} {
-
     global vTcl
+
     set result [vTcl:dump_widget_opt $target $basename]
     set last -1
     catch {set last [$target index end]}

@@ -27,28 +27,6 @@ exec wish "$0" "$@"
 
 set vTcl(sourcing) 0
 
-# under Windows/Macintosh we are using the standard wish console
-
-if {$tcl_platform(platform) != "windows" &&
-    $tcl_platform(platform) != "macintosh"} {
-
-	rename puts vTcl:puts
-
-	proc puts {args} {
-	    global vTcl
-
-	    if { [llength $args] > 1 } {
-		eval vTcl:puts $args
-	    } else {
-		eval vTcl:puts $vTcl(LOG_FD_W) $args
-		flush $vTcl(LOG_FD_W)
-
-		# refresh the command console if visible
-		vTcl:console:get_output
-	    }
-        }
-}
-
 proc vTcl:log {msg} {
     return
     global vTcl tcl_platform
@@ -181,25 +159,33 @@ proc vTcl:setup {} {
         set vTcl(VTCL_HOME) $env(VTCL_HOME)
     }
 
-    if {$env(HOME) == "" || ![file exists $env(HOME)]} {
-        set vTcl(CONF_FILE) [file join $env(VTCL_HOME) .vtclrc]
-        set vTcl(LIB_FILE)  [file join $env(VTCL_HOME) .vtcllibs]
-        set vTcl(LOG_FILE)  [file join $env(VTCL_HOME) .vtclog]
+    if {$env(HOME) == ""} {
+        set vTcl(CONF_FILE) [file join $vTcl(VTCL_HOME) .vtclrc]
+        set vTcl(LIB_FILE)  [file join $vTcl(VTCL_HOME) .vtcllibs]
+        set vTcl(LOG_FILE)  [file join $vTcl(VTCL_HOME) .vtclog]
     } else {
         set vTcl(CONF_FILE) [file join $env(HOME) .vtclrc]
         set vTcl(LIB_FILE)  [file join $env(HOME) .vtcllibs]
         set vTcl(LOG_FILE)  [file join $env(HOME) .vtclog]
     }
 
-    set vTcl(LOG_FD_W)  [open $vTcl(LOG_FILE) "w"]
-    set vTcl(LOG_FD_R)  [open $vTcl(LOG_FILE) "r"]
-    fconfigure $vTcl(LOG_FD_R) -buffering line
+    ## If we can't open the log files in HOME, try in the vTcl directory.
+    if {[catch {open $vTcl(LOG_FILE) "w"} vTcl(LOG_FD_W)] \
+    	|| [catch {open $vTcl(LOG_FILE) "r"} vTcl(LOG_FD_R)]} {
+        set vTcl(CONF_FILE) [file join $vTcl(VTCL_HOME) .vtclrc]
+        set vTcl(LIB_FILE)  [file join $vTcl(VTCL_HOME) .vtcllibs]
+        set vTcl(LOG_FILE)  [file join $vTcl(VTCL_HOME) .vtclog]
+    	catch {open $vTcl(LOG_FILE) "w"} vTcl(LOG_FD_W)
+    	catch {open $vTcl(LOG_FILE) "r"} vTcl(LOG_FD_R)
+    }	
+	
+    catch {fconfigure $vTcl(LOG_FD_R) -buffering line}
 
     set vTcl(LIB_DIR)   [file join $vTcl(VTCL_HOME) lib]
     set vTcl(LIB_WIDG)  [glob -nocomplain [file join $vTcl(LIB_DIR) lib_*.tcl]]
     set vTcl(LIBS)      "globals.tcl about.tcl propmgr.tcl balloon.tcl
         		attrbar.tcl bgerror.tcl bind.tcl command.tcl color.tcl
-			console.tcl compound.tcl compounds.tcl do.tcl
+			tkcon.tcl compound.tcl compounds.tcl do.tcl
 			dragsize.tcl dump.tcl edit.tcl file.tcl font.tcl
 			handle.tcl input.tcl images.tcl loadwidg.tcl menu.tcl
 			misc.tcl name.tcl prefs.tcl proc.tcl tclet.tcl
@@ -418,7 +404,7 @@ proc vTclWindow.vTcl {args} {
 
     ## Create a hidden entry widget that holds the name of the current widget.
     ## We use this for copying the widget name and using it globally.
-    entry .vTcl.widgetname -textvar fakeClipboard
+    entry .vTcl.widgetname -textvariable vTcl(fakeClipboard)
 }
 
 proc vTcl:vtcl:remap {w} {
@@ -653,10 +639,6 @@ proc vTcl:main {argc argv} {
         pack .f.l1 .f.l2 -side top -padx 5
         pack .f.b -side top -pady 5
     } else {
-        if {[info commands console] == "console"} {
-            console title "Visual Tcl"
-            console hide
-        }
         if {$tcl_platform(platform) == "macintosh"} {
             set vTcl(VTCL_HOME) $env(HOME)
         }
@@ -686,9 +668,6 @@ proc vTcl:main {argc argv} {
                 vTcl:open [file join [pwd] $file]
             }
         }
-        if {[info commands console] == "console"} {
-            set vTcl(console) 1
-        }
 
 	# @@change by Christian Gavin 3/5/2000
 	# autoloading of compounds if "Preferences" options enabled
@@ -713,6 +692,3 @@ proc vTcl:main {argc argv} {
 }
 
 vTcl:main $argc $argv
-
-
-

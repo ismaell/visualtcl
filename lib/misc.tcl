@@ -689,7 +689,7 @@ proc vTcl:get_win_position {w} {
     return "+$x+$y"
 }
 
-proc lremove {varName args} {
+proc ::vTcl::lremove {varName args} {
     upvar 1 $varName list
 
     set found 0
@@ -742,8 +742,8 @@ proc vTcl:copy_widgetname {} {
 # }
 
 proc echo {args} {
-    puts stdout [join $args ""]
-    flush stdout
+    ::vTcl::InitTkcon
+    tkcon_puts $args
 }
 
 proc incr0 {varName {num 1}} {
@@ -1229,4 +1229,40 @@ proc vTcl:read_file {file} {
 proc ::vTcl::change {} {
     global vTcl
     set vTcl(change) 1
+}
+
+proc vTcl:show_console {{show show}} {
+    ::vTcl::InitTkcon
+    tkcon $show
+}
+
+proc ::vTcl::InitTkcon {} {
+    if {[catch {winfo exists $::tkcon::PRIV(root)}]} {
+    	::tkcon::Init
+	tkcon title "Visual Tcl"
+    }	
+}
+
+proc vTcl:canvas:see {c item} {
+    lassign [$c cget -scrollregion] foo foo cx cy
+    lassign [$c bbox $item] ix iy
+    set x [expr $ix.0 / $cx]
+    set y [expr $iy.0 / $cy]
+    $c xview moveto $x
+    $c yview moveto $y
+}
+
+proc vTcl:canvas:seewidget {c w} {
+    lassign [$c cget -scrollregion] foo foo cx cy
+    lassign [vTcl:split_geom [winfo geometry $w]] foo foo ix iy
+    set x [expr $ix.0 / $cx]
+    set y [expr $iy.0 / $cy]
+    $c xview moveto $x
+    $c yview moveto $y
+}
+
+proc vTcl:WidgetVar {w varName {newVar ""}} {
+    if {[lempty $newVar]} { set newVar $varName }
+    uplevel 1 "upvar #0 ::widgets::${w}::$varName $newVar"
+    return [info exists ::widgets::${w}::$varName]
 }

@@ -1,6 +1,14 @@
 ChangeLog for Visual Tcl:
 
 1.51b2 -> 1.51b3
+    o Raised the labels on the property manager.  As each individual option
+      is selected, the label becomes sunken.  This is a cosmetic change
+      that is in place for a future enhancement.
+    o Added scrolling through the property manager using direction keys.
+    o Added Jeffrey Hobbs' TkCon as the default console on all platforms.
+    o If you quit, it no longer asks you twice if you want to quit.
+    o Cleaned up the import header code.
+    o Cleaned up all the library import headers.
     o Tclets now save images as inline as well as font definitions
     o Added menu keyboard shortcuts in main window
     o Added keyboard accelerators where missing, eg. in bindings

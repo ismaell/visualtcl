@@ -1,12 +1,13 @@
-Class Radiobox
-Lib   itcl
+Class		Radiobox
+Lib		itcl
 
-Icon icon_radiobox.gif
-DumpChildren  no
-MegaWidget    yes
-DumpCmd       vTcl:dump:radiobox
-InsertCmd     vTcl:widget:radiobox:inscmd
-DefaultOptions -labeltext "Radiobox"
+CreateCmd	::iwidgets::radiobox
+Icon		icon_radiobox.gif
+DumpChildren	no
+MegaWidget	yes
+DumpCmd		vTcl:dump:radiobox
+InsertCmd	vTcl:widget:radiobox:inscmd
+DefaultOptions	-labeltext "Radiobox"
 
 proc vTcl:dump:radiobox {target basename} {
 

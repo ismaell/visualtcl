@@ -1,6 +1,7 @@
-Class Optionmenu
-Lib   itcl
+Class		Optionmenu
+Lib		itcl
 
-Icon icon_optionmenu.gif
-DumpChildren  no
-MegaWidget    yes
+CreateCmd	::iwidgets::optionmenu
+Icon		icon_optionmenu.gif
+DumpChildren	no
+MegaWidget	yes

@@ -1,6 +1,7 @@
-Class Scrolledlistbox
-Lib   itcl
+Class		Scrolledlistbox
+Lib		itcl
 
-Icon icon_scrolledlistbox.gif
-DumpChildren  no
-MegaWidget    yes
+CreateCmd	::iwidgets::scrolledlistbox
+Icon		icon_scrolledlistbox.gif
+DumpChildren	no
+MegaWidget	yes

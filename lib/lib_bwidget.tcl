@@ -37,10 +37,16 @@ proc vTcl:widget:lib:lib_bwidget {args} {
     global vTcl
 
     set order {
-	    NoteBook
-	    Tree
-	    ProgressBar
+	NoteBook
+	Tree
+	ProgressBar
     }
 
     vTcl:lib:add_widgets_to_toolbar $order
+
+    append vTcl(head,bwidget,importheader) {
+    if {[lsearch -exact $packageNames Bwidget] > -1} {
+	package require Bwidget
+    }
+    }
 }
