@@ -399,6 +399,7 @@ proc vTcl:project:info {} {
             ::imagelist::configureCmd
             ::imagelist::configureAllCmd
             ::imagelist::cgetCmd
+            ::imagelist::configureOptionCmd
         }
         set compounds {
         }
@@ -523,6 +524,8 @@ namespace eval ::imagelist {
 proc configureCmd {w args} {
 if {[llength $args] == 0} {
     return [configureAllCmd $w]
+} elseif {[llength $args] == 1} {
+    return [configureOptionCmd $w $args]
 }
 
 foreach {option value} $args {
@@ -568,6 +571,22 @@ if {$option == "-directory"} {
 }
 }
 }
+#############################################################################
+## Procedure:  ::imagelist::configureOptionCmd
+
+namespace eval ::imagelist {
+proc configureOptionCmd {w option} {
+if {$option == "-directory"} {
+    upvar ::imagelist::${w}::_path path
+
+    set result [list [list -directory directory Directory {} $path]]
+    return $result
+} else {
+    set result [$w.tab73 configure $option]
+    return $result
+}
+}
+}
 
 #############################################################################
 ## Initialization Procedure:  init
@@ -588,7 +607,7 @@ proc vTclWindow. {base} {
     # CREATING WIDGETS
     ###################
     wm focusmodel $top passive
-    wm geometry $top 200x200+176+200; update
+    wm geometry $top 200x200+198+225; update
     wm maxsize $top 1284 1006
     wm minsize $top 111 1
     wm overrideredirect $top 0

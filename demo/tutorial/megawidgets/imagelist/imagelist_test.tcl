@@ -36,12 +36,12 @@ namespace eval {vTcl::compounds::user::{Image List}} {
 
 set bindtags {}
 
+set source .top72.cpd73
+
 set libraries {
     core
     tablelist
 }
-
-set source .top72.cpd73
 
 set class MegaWidget
 
@@ -55,6 +55,7 @@ set procs {
     ::imagelist::configureCmd
     ::imagelist::configureAllCmd
     ::imagelist::cgetCmd
+    ::imagelist::configureOptionCmd
 }
 
 
@@ -226,6 +227,8 @@ namespace eval ::imagelist {
 proc configureCmd {w args} {
 if {[llength $args] == 0} {
     return [configureAllCmd $w]
+} elseif {[llength $args] == 1} {
+    return [configureOptionCmd $w $args]
 }
 
 foreach {option value} $args {
@@ -270,6 +273,23 @@ if {$option == "-directory"} {
     return $path
 } else {
     return [$w.tab73 cget $option]
+}
+}
+}
+
+#############################################################################
+## Procedure:  ::imagelist::configureOptionCmd
+
+namespace eval ::imagelist {
+proc configureOptionCmd {w option} {
+if {$option == "-directory"} {
+    upvar ::imagelist::${w}::_path path
+
+    set result [list [list -directory directory Directory {} $path]]
+    return $result
+} else {
+    set result [$w.tab73 configure $option]
+    return $result
 }
 }
 }
@@ -829,7 +849,7 @@ proc vTclWindow. {base} {
     # CREATING WIDGETS
     ###################
     wm focusmodel $top passive
-    wm geometry $top 200x200+66+75; update
+    wm geometry $top 200x200+110+125; update
     wm maxsize $top 1284 1006
     wm minsize $top 111 1
     wm overrideredirect $top 0
