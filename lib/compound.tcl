@@ -481,10 +481,13 @@ proc vTcl:gen_compound {target {name ""} {cmpdname ""}} {
     } else {
         set mgrt [winfo manager $target]
 
-        # in Iwidgets, some controls are not yet packed/gridded/placed when
-        # they are in edit mode, therefore there is no manager at this time
+        ## in Iwidgets, some controls are not yet packed/gridded/placed when
+        ## they are in edit mode, therefore there is no manager at this time
+        ##
+        ## in BWidgets, pages in a notebook either don't have a manager or have
+        ## the 'canvas' manager
 
-	if {[lempty $mgrt] || [lempty [info commands $mgrt]]} {
+	if {[lempty $mgrt] || [lempty [info commands $mgrt]] || $mgrt == "canvas"} {
 	    set mgri {}
         } else {
 	    set mgri [vTcl:get_mgropts [$mgrt info $target]]
