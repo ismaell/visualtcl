@@ -61,6 +61,22 @@ OptionConfigCmd -_mclistbox_columns     config     vTcl::widgets::vtcl::mclistbo
 OptionConfigCmd -_mclistbox_columns     update     vTcl::widgets::vtcl::mclistbox::update_columns
 OptionConfigCmd -_mclistbox_columns     get        vTcl::widgets::vtcl::mclistbox::get_columns
 OptionConfigCmd -_mclistbox_columns     select     vTcl::widgets::vtcl::mclistbox::select_column
+OptionConfigCmd -_mclistbox_columns     edit       vTcl::itemEdit::edit
+OptionConfigCmd -_mclistbox_columns     editArg    vTcl::widgets::vtcl::mclistbox::edit
+
+namespace eval ::vTcl::widgets::vtcl::mclistbox::edit {
+
+    proc get_items {target} {
+        ## first item in the list is the current index
+        set names [$target column names]
+        set values 0
+        foreach name $names {
+            set label_opt [$target column cget $name -label]
+            lappend values $label_opt
+        }
+        return $values
+    }
+}
 
 namespace eval ::vTcl::widgets::vtcl::mclistbox {
 
@@ -523,7 +539,7 @@ proc ::mclistbox::Build {w args} {
     $widgets(text) configure -state disabled
 
     # here's the tricky part (shhhh... don't tell anybody!)
-    # we are going to create column that completely fills 
+    # we are going to create column that completely fills
     # the base frame. We will use it to control the sizing
     # of the widget. The trick is, we'll pack it in the frame 
     # and then place the text widget over it so it is never
@@ -536,7 +552,7 @@ proc ::mclistbox::Build {w args} {
 
     # by default geometry propagation is turned off, but for this
     # super-secret widget we want it turned on. The idea is, we 
-    # resize the listbox which resizes the frame which resizes the 
+    # resize the listbox which resizes the frame which resizes the
     # whole shibang.
     pack propagate $widgets(hiddenFrame) on
 
@@ -649,7 +665,7 @@ proc ::mclistbox::SelectionHandler {w type {offset ""} {length ""}} {
 #     bind .mclistbox <blah> {doSomething [::mclistbox::convert %W -x %x]}
 #
 #     Note that this procedure is *not* exported, but is indented for
-#     public use. It is not exported because the name could easily 
+#     public use. It is not exported because the name could easily
 #     clash with existing commands. 
 #
 # Arguments:

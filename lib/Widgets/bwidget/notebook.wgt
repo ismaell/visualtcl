@@ -40,6 +40,20 @@ DeleteSiteCmd   vTcl::widgets::bwidgets::notebook::deleteSiteCmd
 DumpCmd         vTcl::widgets::bwidgets::notebook::dumpCmd
 CompoundCmd     vTcl::widgets::bwidgets::notebook::compoundCmd
 
+namespace eval ::vTcl::widgets::bwidgets::notebook::edit {
+
+    proc get_items {target} {
+        ## first item in the list is the current index
+        set sites [$target pages]
+        set current [$target index [$target raise]]
+        set values $current
+        foreach site $sites {
+            lappend values [$target itemcget $site -text]
+        }
+        return $values
+    }
+}
+
 namespace eval vTcl::widgets::bwidgets::notebook {
 
     proc insertCmd {target} {

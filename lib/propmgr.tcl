@@ -378,6 +378,10 @@ proc vTcl:prop:combo_select {w option} {
     $::configcmd($option,select) $::vTcl(w,widget) [$w getvalue]
 }
 
+proc vTcl:prop:combo_edit {w option} {
+    $::configcmd($option,edit) $::vTcl(w,widget) $::configcmd($option,editArg)
+}
+
 proc vTcl:prop:choice_update {w var args} {
     if {[winfo exists $w]} {
         set values [$w cget -values]
@@ -457,7 +461,8 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix {isGeomOpt ""}} {
             frame $base
             ComboBox ${base}.c -width 8 -editable 0 \
                 -modifycmd "vTcl:prop:combo_select ${base}.c $option"
-            button ${base}.b -image ellipses -width 12 -padx 0 -pady 1
+            button ${base}.b -image ellipses -width 12 -padx 0 -pady 1 \
+                -command "vTcl:prop:combo_edit ${base}.c $option"
             pack ${base}.c -side left -fill x -expand 1
             pack ${base}.b -side right -fill none -expand 0
 	    set focusControl ${base}.c

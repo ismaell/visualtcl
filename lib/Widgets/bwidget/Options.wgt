@@ -70,3 +70,5 @@ OptionConfigCmd -_bwidgets_notebook_pages     config     vTcl::widgets::bwidgets
 OptionConfigCmd -_bwidgets_notebook_pages     update     vTcl::widgets::bwidgets::update_pages
 OptionConfigCmd -_bwidgets_notebook_pages     get        vTcl::widgets::bwidgets::get_pages
 OptionConfigCmd -_bwidgets_notebook_pages     select     vTcl::widgets::bwidgets::select_page
+OptionConfigCmd -_bwidgets_notebook_pages     edit       vTcl::itemEdit::edit
+OptionConfigCmd -_bwidgets_notebook_pages     editArg    vTcl::widgets::bwidgets::notebook::edit

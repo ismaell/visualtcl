@@ -467,3 +467,146 @@ proc vTcl:core:set_option {target option description} {
         vTcl:init_wtree 0
     }
 }
+
+####################################################################
+# Add/remove pages to notebooks, columns to the multicolumn listbox,
+# edit sites in a paned window, etc.
+
+proc vTclWindow.vTcl.itemEdit {base} {
+    if {$base == ""} {
+        set base .vTcl.itemEdit
+    }
+    if {[winfo exists $base]} {
+        wm deiconify $base; return
+    }
+
+    global widget
+
+    ###################
+    # CREATING WIDGETS
+    ###################
+    vTcl:toplevel $base -class Toplevel
+    wm focusmodel $base passive
+    wm geometry $base 510x343
+    wm withdraw $base
+    wm maxsize $base 1009 738
+    wm minsize $base 1 1
+    wm overrideredirect $base 0
+    wm resizable $base 1 1
+    wm title $base "Edit Pages"
+    vTcl:FireEvent $base <<Create>>
+    wm protocol $base WM_DELETE_WINDOW "destroy $base"
+
+    frame $base.fra34 \
+        -width 125
+    vTcl:toolbar_button $base.fra34.but35 \
+        -image [vTcl:image:get_image add.gif] \
+        -text button
+    bindtags $base.fra34.but35 "$base.fra34.but35 Button $base all _vTclBalloon"
+    bind $base.fra34.but35 <<SetBalloon>> {
+        set ::vTcl::balloon::%W {Add}
+    }
+    vTcl:toolbar_button $base.fra34.but36 \
+        -image [vTcl:image:get_image remove.gif] \
+        -text button
+    bindtags $base.fra34.but36 "$base.fra34.but36 Button $base all _vTclBalloon"
+    bind $base.fra34.but36 <<SetBalloon>> {
+        set ::vTcl::balloon::%W {Delete}
+    }
+    vTcl:toolbar_button $base.fra34.but39 \
+        -image [vTcl:image:get_image ok.gif] \
+        -command "destroy $base"
+    bindtags $base.fra34.but39 "$base.fra34.but39 Button $base all _vTclBalloon"
+    bind $base.fra34.but39 <<SetBalloon>> {
+        set ::vTcl::balloon::%W {Close}
+    }
+    frame $base.cpd37 \
+        -background #000000 -height 100 -width 200
+    frame $base.cpd37.01 \
+        -background #9900991B99FE
+    frame $base.cpd37.01.cpd38 \
+        -borderwidth 1 -height 30 -relief raised -width 30
+    listbox $base.cpd37.01.cpd38.01 \
+        -background #ffffff \
+        -xscrollcommand "$base.cpd37.01.cpd38.02 set" \
+        -yscrollcommand "$base.cpd37.01.cpd38.03 set" \
+        -listvariable ::${base}::list_items
+    scrollbar $base.cpd37.01.cpd38.02 \
+        -command "$base.cpd37.01.cpd38.01 xview" -orient horizontal
+    scrollbar $base.cpd37.01.cpd38.03 \
+        -command "$base.cpd37.01.cpd38.01 yview"
+    frame $base.cpd37.02 \
+        -background #9900991B99FE
+    frame $base.cpd37.03 \
+        -background #ff0000 -borderwidth 2 -relief raised
+    bind $base.cpd37.03 <B1-Motion> {
+        set root [ split %W . ]
+    set nb [ llength $root ]
+    incr nb -1
+    set root [ lreplace $root $nb $nb ]
+    set root [ join $root . ]
+    set width [ winfo width $root ].0
+    set val [ expr (%X - [winfo rootx $root]) /$width ]
+    if { $val >= 0 && $val <= 1.0 } {
+
+        place $root.01 -relwidth $val
+        place $root.03 -relx $val
+        place $root.02 -relwidth [ expr 1.0 - $val ]
+    }
+    }
+    ###################
+    # SETTING GEOMETRY
+    ###################
+    pack $base.fra34 \
+        -in $base -anchor center -expand 0 -fill x -side top
+    pack $base.fra34.but35 \
+        -in $base.fra34 -anchor center -expand 0 -fill none -side left
+    pack $base.fra34.but36 \
+        -in $base.fra34 -anchor center -expand 0 -fill none -side left
+    pack $base.fra34.but39 \
+        -in $base.fra34 -anchor center -expand 0 -fill none -side right
+    pack $base.cpd37 \
+        -in $base -anchor center -expand 1 -fill both -side top
+    place $base.cpd37.01 \
+        -x 0 -y 0 -width -1 -relwidth 0.3588 -relheight 1 -anchor nw \
+        -bordermode ignore
+    pack $base.cpd37.01.cpd38 \
+        -in $base.cpd37.01 -anchor center -expand 1 -fill both -side top
+    grid columnconf $base.cpd37.01.cpd38 0 -weight 1
+    grid rowconf $base.cpd37.01.cpd38 0 -weight 1
+    grid $base.cpd37.01.cpd38.01 \
+        -in $base.cpd37.01.cpd38 -column 0 -row 0 -columnspan 1 -rowspan 1 \
+        -sticky nesw
+    grid $base.cpd37.01.cpd38.02 \
+        -in $base.cpd37.01.cpd38 -column 0 -row 1 -columnspan 1 -rowspan 1 \
+        -sticky ew
+    grid $base.cpd37.01.cpd38.03 \
+        -in $base.cpd37.01.cpd38 -column 1 -row 0 -columnspan 1 -rowspan 1 \
+        -sticky ns
+    place $base.cpd37.02 \
+        -x 0 -relx 1 -y 0 -width -1 -relwidth 0.6412 -relheight 1 -anchor ne \
+        -bordermode ignore
+    place $base.cpd37.03 \
+        -x 0 -relx 0.3588 -y 0 -rely 0.9 -width 10 -height 10 -anchor s \
+        -bordermode ignore
+
+    vTcl:center $base 510 343
+    wm deiconify $base
+
+    vTcl:FireEvent $base <<Ready>>
+}
+
+namespace eval ::vTcl::itemEdit {
+
+    proc edit {target cmds} {
+        Window show .vTcl.itemEdit
+        init .vTcl.itemEdit $target $cmds
+    }
+
+    proc init {top target cmds} {
+        set list_items [::${cmds}::get_items $target]
+        set current [lindex $list_items 0]
+        set list_items [lrange $list_items 1 end]
+        set ::${top}::list_items $list_items
+    }
+}
