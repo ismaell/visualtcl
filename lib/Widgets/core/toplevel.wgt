@@ -27,18 +27,18 @@ Class		Toplevel
 Lib		core
 
 Icon		icon_toplevel.gif
-CreateCmd   vTcl:toplevel
-DoubleClickCmd	vTcl:widget:toplevel:dblclkcmd
+CreateCmd       vTcl:toplevel
+DoubleClickCmd	vTcl::widgets::core::toplevel::dblClkCmd
 
-TreeLabel	@vTcl:core:get_widget_tree_label
-InsertCmd	vTcl:widget:toplevel:inscmd
-DeleteCmd       vTcl:widget:toplevel:deletecmd
+TreeLabel	@vTcl::widgets::core::toplevel::getWidgetTreeLabel
+InsertCmd	vTcl::widgets::core::toplevel::insertCmd
+DeleteCmd       vTcl::widgets::core::toplevel::deleteCmd
 WidgetProc	vTcl:Toplevel:WidgetProc
 DefaultValues   -background -highlightbackground -highlightcolor
 
-Function        "Edit Menu..."              vTcl:widget:toplevel:edit_menu
-Function	"Set New Toplevel Geometry" vTcl:widget:toplevel:set_new_geom
-Function        "Adjust Size To Children"   vTcl:widget:toplevel:adjust_size
+Function        "Edit Menu..."              vTcl::widgets::core::toplevel::editMenu
+Function	"Set New Toplevel Geometry" vTcl::widgets::core::toplevel::setNewGeom
+Function        "Adjust Size To Children"   vTcl::widgets::core::toplevel::adjustSize
 
 Export          vTcl:DefineAlias
 Export          vTcl:toplevel
@@ -63,73 +63,6 @@ proc vTcl:toplevel {args} {
     uplevel #0 eval toplevel $args
     set target [lindex $args 0]
     namespace eval ::$target {}
-}
-
-proc vTcl:widget:toplevel:edit_menu {} {
-    global vTcl
-    vTcl:widget:toplevel:dblclkcmd $vTcl(w,widget)
-}
-
-proc vTcl:widget:toplevel:dblclkcmd {target} {
-    global vTcl
-    set vTcl(w,opt,-menu) [$target cget -menu]
-    vTcl:edit_target_menu $target
-    vTcl:prop:save_opt $target -menu vTcl(w,opt,-menu)
-}
-
-proc vTcl:widget:toplevel:set_bindings {} {
-
-    bind _TopLevel <<Create>> {
-        if {![info exists _topcount]} {set _topcount 0}; incr _topcount
-    }
-
-    bind _TopLevel <Destroy> {
-        if {[winfo toplevel %W] == "%W"} {incr _topcount -1}
-    }
-
-    bind _TopLevel <<DeleteWindow>> {
-        destroy %W; if {$_topcount == 0} {exit}
-    }
-}
-
-proc vTcl:widget:toplevel:inscmd {target} {
-    global vTcl
-
-    wm geometry $target $vTcl(pr,geom_new)
-    wm protocol $target WM_DELETE_WINDOW "vTcl:hide_top $target"
-    if {$vTcl(pr,winfocus) == 1} {
-        wm protocol $target WM_TAKE_FOCUS "vTcl:wm_take_focus $target"
-    }
-    wm title $target "New Toplevel $vTcl(newtops)"
-    incr vTcl(newtops)
-    set vTcl(w,insert) $target
-    lappend vTcl(tops) $target
-    vTcl:update_top_list
-    vTcl:widget:toplevel:set_bindings
-    bindtags $target [concat [bindtags $target] _TopLevel]
-    ::widgets_bindings::add_tag_to_tagslist _TopLevel
-    vTcl:FireEvent $target <<Create>>
-}
-
-proc vTcl:widget:toplevel:deletecmd {target} {
-    global vTcl
-
-    set vTcl(tops) [lremove $vTcl(tops) $target]
-    destroy $target
-    namespace delete ::$target
-    vTcl:update_top_list
-}
-
-proc vTcl:widget:toplevel:adjust_size {} {
-    global vTcl
-
-    wm geometry $vTcl(w,widget) {}
-}
-
-proc vTcl:widget:toplevel:set_new_geom {} {
-    global vTcl
-
-    set vTcl(pr,geom_new) [wm geometry $vTcl(w,widget)]
 }
 
 proc vTcl:Toplevel:WidgetProc {w args} {
@@ -162,5 +95,82 @@ proc vTcl:Toplevel:WidgetProc {w args} {
         default {
             uplevel $w $command $args
         }
+    }
+}
+
+namespace eval vTcl::widgets::core::toplevel {
+
+    proc getWidgetTreeLabel {target} {
+        return [wm title $target]
+    }
+
+    proc editMenu {} {
+    	dblClkCmd $::vTcl(w,widget)
+    }
+
+    proc dblClkCmd {target} {
+        global vTcl
+        set vTcl(w,opt,-menu) [$target cget -menu]
+        vTcl:edit_target_menu $target
+
+	# this is necessary in order for the -menu option to be set right now
+	update
+
+        vTcl:prop:save_opt $target -menu vTcl(w,opt,-menu)
+    }
+
+    proc setBindings {} {
+
+    	bind _TopLevel <<Create>> {
+	    if {![info exists _topcount]} {set _topcount 0}; incr _topcount
+        }
+
+        bind _TopLevel <Destroy> {
+            if {[winfo toplevel %W] == "%W"} {incr _topcount -1}
+        }
+
+        bind _TopLevel <<DeleteWindow>> {
+            destroy %W; if {$_topcount == 0} {exit}
+        }
+    }
+
+    proc insertCmd {target} {
+        global vTcl
+
+        wm geometry $target $vTcl(pr,geom_new)
+        wm protocol $target WM_DELETE_WINDOW "vTcl:hide_top $target"
+        if {$vTcl(pr,winfocus) == 1} {
+            wm protocol $target WM_TAKE_FOCUS "vTcl:wm_take_focus $target"
+        }
+        wm title $target "New Toplevel $vTcl(newtops)"
+        incr vTcl(newtops)
+        set vTcl(w,insert) $target
+        lappend vTcl(tops) $target
+        vTcl:update_top_list
+        setBindings
+        bindtags $target [concat [bindtags $target] _TopLevel]
+        ::widgets_bindings::add_tag_to_tagslist _TopLevel
+        vTcl:FireEvent $target <<Create>>
+    }
+
+    proc deleteCmd {target} {
+        global vTcl
+
+        set vTcl(tops) [lremove $vTcl(tops) $target]
+        destroy $target
+        namespace delete ::$target
+        vTcl:update_top_list
+    }
+
+    proc adjustSize {} {
+        global vTcl
+
+        wm geometry $vTcl(w,widget) {}
+    }
+
+    proc setNewGeom {} {
+        global vTcl
+
+        set vTcl(pr,geom_new) [wm geometry $vTcl(w,widget)]
     }
 }

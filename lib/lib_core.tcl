@@ -238,18 +238,6 @@ proc vTcl:edit_menu {menu} {
     vTclWindow.vTclMenuEdit $base $menu
 }
 
-proc vTcl:core:get_widget_tree_label {target} {
-    set t ""
-
-    set class [vTcl:get_class $target]
-
-    switch [string tolower $class] {
-	toplevel { set t [wm title $target] }
-    }
-
-    return $t
-}
-
 # translation for options when saving files
 
 TranslateOption    -font vTcl:font:translate
@@ -418,7 +406,7 @@ proc vTclWindow.vTcl.itemEdit {base} {
     ###################
     # CREATING WIDGETS
     ###################
-    vTcl:toplevel $base -class Toplevel
+    vTcl:toplevel $base -class Toplevel -menu $base.m73
     wm focusmodel $base passive
     set defaultGeometry 1
     if {[info exists ::vTcl(pr,edit[vTcl:at ::vTcl::itemEdit::class($base)])]} {
@@ -443,6 +431,24 @@ proc vTclWindow.vTcl.itemEdit {base} {
     vTcl:DefineAlias $base.cpd37.01.cpd38.01 ItemsListbox vTcl:WidgetProc $base 1
     vTcl:DefineAlias $base.cpd37.02.sw.c.f PropertiesFrame vTcl:WidgetProc $base 1
     vTcl:DefineAlias $base.cpd37.02.sw.c PropertiesCanvas vTcl:WidgetProc $base 1
+
+    menu $base.m73 -relief flat
+    $base.m73 add cascade \
+        -menu "$base.m73.men74" -label Item
+    $base.m73 add cascade \
+        -menu "$base.m73.men75" -label Move
+    menu $base.m73.men74 \
+        -tearoff 0
+    $base.m73.men74 add command \
+        -command "::vTcl::itemEdit::addItem $base" -label Add
+    $base.m73.men74 add command \
+        -command "::vTcl::itemEdit::removeItem $base" -label Delete
+    menu $base.m73.men75 \
+        -tearoff 0
+    $base.m73.men75 add command \
+        -command "::vTcl::itemEdit::moveUpOrDown $base up" -label Up
+    $base.m73.men75 add command \
+        -command "::vTcl::itemEdit::moveUpOrDown $base down" -label Down
 
     frame $base.fra34 \
         -width 125
