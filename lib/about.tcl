@@ -40,8 +40,8 @@ proc vTclWindow.vTcl.about {args} {
     wm resizable $base 0 0
     wm transient $base .vTcl
     wm title $base "About Visual Tcl"
-    bind $base <Key-Escape> "%W.fra30.but31 invoke"
-    bind $base <Key-Return> "%W.fra30.but31 invoke"
+    bind $base <Key-Escape> "$base.fra30.but31 invoke"
+    bind $base <Key-Return> "$base.fra30.but31 invoke"
 
     label $base.lab28 \
         -background #000000 -borderwidth 1 -image title -relief groove \

@@ -160,14 +160,14 @@ namespace eval ::stack_trace {
 
         global widget
 
-        $top.$widget(child,stack_trace_callstack) insert end $context
+        $widget($top,stack_trace_callstack) insert end $context
     }
 
     proc {::stack_trace::get_statement_at_level} {top index} {
 
         global widget [vTcl:rename $top.errorInfo]
 
-        set context [$top.$widget(child,stack_trace_callstack) get $index]
+        set context [$widget($top,stack_trace_callstack) get $index]
         set context [string trim $context]
 
         if { [string match "(file*)"  $context] } {
@@ -260,13 +260,13 @@ namespace eval ::stack_trace {
 
         # get current selection in listbox
 
-        set indices  [$top.$widget(child,stack_trace_callstack) curselection]
+        set indices  [$widget($top,stack_trace_callstack) curselection]
 
         if { [llength $indices] == 0 } {return}
 
         set index [lindex $indices 0]
 
-        set context [$top.$widget(child,stack_trace_callstack) get $index]
+        set context [$widget($top,stack_trace_callstack) get $index]
         set context [string trim $context]
 
         if { [string match "(file*)"  $context] } {
@@ -275,7 +275,7 @@ namespace eval ::stack_trace {
             regexp {line ([0-9]+)} $context matchAll lineno
 
             ::stack_trace::set_details $top [::stack_trace::get_file_contents $filename]
-            vTcl:syntax_color $top.$widget(child,stack_trace_details) 0 -1
+            vTcl:syntax_color $widget($top,stack_trace_details) 0 -1
             ::stack_trace::highlight_details $top $lineno
 
         } elseif { [string match "(procedure*)" $context] ||
@@ -290,7 +290,7 @@ namespace eval ::stack_trace {
 
                 ::stack_trace::set_details $top  \
                     [::stack_trace::get_proc_details $procname]
-                vTcl:syntax_color $top.$widget(child,stack_trace_details)  0 -1
+                vTcl:syntax_color $widget($top,stack_trace_details)  0 -1
                 ::stack_trace::highlight_details $top [expr $lineno +1]
 
             } else {
@@ -309,7 +309,7 @@ namespace eval ::stack_trace {
                   [vTcl:at [vTcl:rename $top.errorInfo] ] $context]
 
             ::stack_trace::set_details $top $statement
-            vTcl:syntax_color $top.$widget(child,stack_trace_details)  0 -1
+            vTcl:syntax_color $widget($top,stack_trace_details)  0 -1
 
         } elseif [string match "(*arm line *)" $context] {
 
@@ -325,7 +325,7 @@ namespace eval ::stack_trace {
                 regexp {([0-9]+)} [lindex $context 3] matchAll lineno
 
                 ::stack_trace::set_details $top $arm
-                vTcl:syntax_color $top.$widget(child,stack_trace_details)  0 -1
+                vTcl:syntax_color $widget($top,stack_trace_details)  0 -1
                 ::stack_trace::highlight_details $top $lineno
 
             } else {
@@ -345,7 +345,7 @@ namespace eval ::stack_trace {
 	          regexp {line ([0-9]+)} $context matchAll lineno
 
                 ::stack_trace::set_details $top $statement
-                vTcl:syntax_color $top.$widget(child,stack_trace_details)  0 -1
+                vTcl:syntax_color $widget($top,stack_trace_details)  0 -1
                 ::stack_trace::highlight_details $top $lineno
 
             } else {
@@ -359,7 +359,7 @@ namespace eval ::stack_trace {
                 [::stack_trace::get_statement_at_level $top [expr $index + 1] ]
 
             ::stack_trace::set_details $top $statement
-            vTcl:syntax_color $top.$widget(child,stack_trace_details)  0 -1
+            vTcl:syntax_color $widget($top,stack_trace_details)  0 -1
             ::stack_trace::highlight_details $top 1
 
         } else {
@@ -437,7 +437,7 @@ namespace eval ::stack_trace {
 
         global widget vTcl
 
-        set t $top.$widget(child,stack_trace_details)
+        set t $widget($top,stack_trace_details)
 
         foreach tag $vTcl(syntax,tags) {
 
@@ -474,10 +474,10 @@ namespace eval ::stack_trace {
         set [vTcl:rename $top.errorInfo] $errorInfo
 
         # show top of stack
-        focus $top.$widget(child,stack_trace_callstack)
-        $top.$widget(child,stack_trace_callstack) selection clear 0 end
-        $top.$widget(child,stack_trace_callstack) selection set 0
-        $top.$widget(child,stack_trace_callstack) activate 0
+        focus $widget($top,stack_trace_callstack)
+        $widget($top,stack_trace_callstack) selection clear 0 end
+        $widget($top,stack_trace_callstack) selection set 0
+        $widget($top,stack_trace_callstack) activate 0
 
         ::stack_trace::extract_code $top
     }
@@ -488,23 +488,23 @@ namespace eval ::stack_trace {
 
         global widget
 
-        $top.$widget(child,stack_trace_callstack) delete 0 end
+        $widget($top,stack_trace_callstack) delete 0 end
     }
 
     proc {::stack_trace::set_details} {top details} {
 
         global widget
 
-        $top.$widget(child,stack_trace_details) delete 0.1 end
-        $top.$widget(child,stack_trace_details) insert 0.1 $details
+        $widget($top,stack_trace_details) delete 0.1 end
+        $widget($top,stack_trace_details) insert 0.1 $details
     }
 
     proc {::stack_trace::set_error} {top error} {
 
         global widget
 
-        $top.$widget(child,stack_trace_msg) delete 0.1 end
-        $top.$widget(child,stack_trace_msg) insert 0.1 $error
+        $widget($top,stack_trace_msg) delete 0.1 end
+        $widget($top,stack_trace_msg) insert 0.1 $error
     }
 
     # return a list such as {pattern body pattern body ...} from
@@ -575,12 +575,12 @@ namespace eval ::stack_trace {
     proc {::stack_trace::move_level} {top up_or_down} {
 
         global widget
-        set indices  [$top.$widget(child,stack_trace_callstack) curselection]
+        set indices  [$widget($top,stack_trace_callstack) curselection]
 
         if { [llength $indices] == 0 } return
 
         set index [lindex $indices 0]
-        set size  [$top.$widget(child,stack_trace_callstack) index end]
+        set size  [$widget($top,stack_trace_callstack) index end]
 
         switch $up_or_down {
             up {
@@ -595,9 +595,9 @@ namespace eval ::stack_trace {
             }
         }
 
-        $top.$widget(child,stack_trace_callstack) selection clear 0 end
-        $top.$widget(child,stack_trace_callstack) selection set $index
-        $top.$widget(child,stack_trace_callstack) activate $index
+        $widget($top,stack_trace_callstack) selection clear 0 end
+        $widget($top,stack_trace_callstack) selection set $index
+        $widget($top,stack_trace_callstack) activate $index
 
         ::stack_trace::extract_code $top
     }
@@ -614,18 +614,10 @@ proc vTclWindow.vTcl.stack_trace {base {container 0}} {
     }
 
     global widget vTcl
-    set widget(rev,$base) {stack_trace}
-    set {widget(stack_trace)} "$base"
-    set {widget(child,stack_trace)} ""
-    set widget(rev,$base.cpd18.01.cpd20.03) {stack_trace_msg}
-    set {widget(stack_trace_msg)} "$base.cpd18.01.cpd20.03"
-    set {widget(child,stack_trace_msg)} "cpd18.01.cpd20.03"
-    set widget(rev,$base.cpd18.02.cpd21.01.cpd22.01) {stack_trace_callstack}
-    set {widget(stack_trace_callstack)} "$base.cpd18.02.cpd21.01.cpd22.01"
-    set {widget(child,stack_trace_callstack)} "cpd18.02.cpd21.01.cpd22.01"
-    set widget(rev,$base.cpd18.02.cpd21.02.cpd23.03) {stack_trace_details}
-    set {widget(stack_trace_details)} "$base.cpd18.02.cpd21.02.cpd23.03"
-    set {widget(child,stack_trace_details)} "cpd18.02.cpd21.02.cpd23.03"
+    vTcl:DefineAlias $base stack_trace vTcl:Toplevel:WidgetProc "" 0
+    vTcl:DefineAlias $base.cpd18.01.cpd20.03 stack_trace_msg vTcl:WidgetProc $base 0
+    vTcl:DefineAlias $base.cpd18.02.cpd21.01.cpd22.01 stack_trace_callstack vTcl:WidgetProc $base 0
+    vTcl:DefineAlias $base.cpd18.02.cpd21.02.cpd23.03 stack_trace_details vTcl:WidgetProc $base 0
 
     ###################
     # CREATING WIDGETS
@@ -856,12 +848,8 @@ proc vTclWindow.vTcl.bgerror {base {container 0}} {
     eval set errorInfo $[vTcl:rename $base.errorInfo]
 
     global widget
-    set widget(rev,$base) {error_box}
-    set {widget(error_box)} "$base"
-    set {widget(child,error_box)} ""
-    set widget(rev,$base.fra20.cpd23.03) {error_box_text}
-    set {widget(error_box_text)} "$base.fra20.cpd23.03"
-    set {widget(child,error_box_text)} "fra20.cpd23.03"
+    vTcl:DefineAlias $base error_box vTcl:Toplevel:WidgetProc "" 0
+    vTcl:DefineAlias $base.fra20.cpd23.03 error_box_text vTcl:WidgetProc $base 0
 
     ###################
     # CREATING WIDGETS
@@ -943,7 +931,7 @@ proc vTclWindow.vTcl.bgerror {base {container 0}} {
     pack $base.fra25.but28 \
         -in $base.fra25 -anchor center -expand 1 -fill none -side left
 
-    $base.$widget(child,error_box_text) insert 1.0 $error
+    $widget($base,error_box_text) insert 1.0 $error
 }
 
 proc bgerror {error} {
