@@ -155,6 +155,7 @@ proc vTclWindow.vTcl.infolibs {{base ""} {container 0}} {
     toplevel $base -class Toplevel
     wm withdraw $base
     wm focusmodel $base passive
+    wm transient  $base .vTcl
     wm maxsize $base 1009 738
     wm minsize $base 1 1
     wm overrideredirect $base 0
