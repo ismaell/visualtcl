@@ -1,3 +1,25 @@
+##############################################################################
+#
+# new.tcl - dialog "about Visual Tcl"
+#
+# Copyright (C) 1996-1998 Stewart Allen
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+#
+##############################################################################
+
 namespace eval ::NewWizard {
     variable base	   .vTcl.newProjectWizard
     variable listbox
@@ -18,15 +40,6 @@ proc GetFolder {} {
     if {[lempty $f]} { return }
     set ProjectFolder $f
     return $ProjectFolder
-}
-
-proc SetFolderFromName {} {
-    variable DefaultFolder
-    variable ProjectFolder
-    variable ProjectName
-
-    set ProjectFolder [file join $DefaultFolder $ProjectName]
-    return 1
 }
 
 proc Raise1 {} {
@@ -50,26 +63,22 @@ proc Done {} {
     	::vTcl::MessageBox -title "Specify Project Type" -message \
 	    "You must specify a Project Type"
 	return
-    }
-
-    if {[lempty $ProjectName]} {
+    } elseif {[lempty $ProjectName]} {
     	::vTcl::MessageBox -title "Specify Project Name" -message \
 	    "You must specify a Project Name"
 	return
-    }
-
-    if {[file exists $ProjectFolder]} {
+    } elseif {[file exists [file join $ProjectFolder $ProjectName]]} {
     	::vTcl::MessageBox -title "Folder Exists" -message \
 	    "A project already exists in '$ProjectFolder'"
 	return
+    } else {
+    	set ProjectFolder [file join $ProjectFolder $ProjectName]
+    	file mkdir $ProjectFolder
+    	Window hide $base
+    	
+    	## Set the variable to end the grab.
+    	variable Done 1
     }
-
-    file mkdir $ProjectFolder
-
-    Window hide $base
-
-    ## Set the variable to end the grab.
-    variable Done 1
 }
 
 } ;## eval namespace ::NewWizard
@@ -129,14 +138,12 @@ proc vTclWindow.vTcl.newProjectWizard {args} {
 
     label $f.l1 -text "Project Name:" -underline 8
     pack $f.l1 -anchor w
-    entry $f.e1 -textvariable ::NewWizard::ProjectName \
-   	 -validate focusout -vcmd "::NewWizard::SetFolderFromName"
+    entry $f.e1 -textvariable ::NewWizard::ProjectName
     pack $f.e1 -fill x
-    bind $f.e1 <Key-Return> "::NewWizard::SetFolderFromName"
-
+    bind $f.e1 <Return> "::NewWizard::Done"
     pack [frame $f.spacer1 -height 10]
 
-    label $f.l2 -text "Project Folder:" -underline 8
+    label $f.l2 -text "Projects Parent Directory:" -underline 8
     pack $f.l2 -anchor w
     frame $f.f1
     entry $f.f1.e2 -textvariable ::NewWizard::ProjectFolder
@@ -170,3 +177,5 @@ proc vTclWindow.vTcl.newProjectWizard {args} {
 
     wm deiconify $base
 }
+
+
