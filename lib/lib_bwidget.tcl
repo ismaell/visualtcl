@@ -62,8 +62,69 @@ proc vTcl:widget:lib:lib_bwidget {args} {
     vTcl:lib:add_widgets_to_toolbar $order
 
     append vTcl(head,bwidget,importheader) {
-    if {[lsearch -exact $packageNames Bwidget] > -1} {
-	package require Bwidget
+    if {[lsearch -exact $packageNames BWidget] > -1} {
+	package require BWidget
     }
+    }
+}
+
+namespace eval vTcl::widgets::bwidgets {
+
+    proc update_pages {target var} {
+        ## there is a trace on var to update the combobox
+        ## first item in the list is the current index
+        set sites [$target pages]
+        set current [$target index [$target raise]]
+        set num_pages [llength $sites]
+        set values $current
+        for {set i 0} {$i < $num_pages} {incr i} {
+            set label_opt [$target itemconfigure [lindex $sites $i] -text]
+            lappend values [lindex $label_opt 4]
+        }
+
+        ## this will trigger the trace
+        set ::$var $values
+    }
+
+    proc config_pages {target var} {
+    }
+
+    proc get_pages {target} {
+    }
+
+    proc select_page {target index} {
+        $target raise [$target pages $index]
+    }
+
+    ## Utility proc.  Dump a megawidget's children, but not those that are
+    ## part of the megawidget itself.  Differs from vTcl:dump:widgets in that
+    ## it dumps the geometry of $subwidget, but it doesn't dump $subwidget
+    ## itself (`vTcl:dump:widgets $subwidget' doesn't do the right thing if
+    ## the grid geometry manager is used to manage children of $subwidget.
+    proc dump_subwidgets {subwidget {sitebasename {}}} {
+        global vTcl basenames classes
+        set output ""
+        set geometry ""
+        set widget_tree [vTcl:widget_tree $subwidget]
+        set length      [string length $subwidget]
+        set basenames($subwidget) $sitebasename
+
+        foreach i $widget_tree {
+
+            set basename [vTcl:base_name $i]
+
+            # don't try to dump subwidget itself
+            if {"$i" != "$subwidget"} {
+                set basenames($i) $basename
+                set class [vTcl:get_class $i]
+                append output [$classes($class,dumpCmd) $i $basename]
+                append geometry [vTcl:dump_widget_geom $i $basename]
+                unset basenames($i)
+            }
+        }
+        append output $geometry
+
+        unset basenames($subwidget)
+        return $output
     }
 }

@@ -1,6 +1,9 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Default insertion of three pages when creating new bwidgets tabnotebook.
+    o Display of pages of bwidgets tabnotebook in attributes editor.
+    o Dumping bwidgets tabnotebook in file.
     o Selection of tab/notebook pages from attributes editor.
     o Laying out the foundation for custom class options. Current custom class
       option is -_tooltip. Each custom class option has commands for config-

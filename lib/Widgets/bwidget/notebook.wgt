@@ -5,3 +5,91 @@ Icon		icon_BwTabnotebook.gif
 TreeLabel	BWidget Tabbed Notebook
 CreateCmd	NoteBook
 MegaWidget	yes
+DefaultValues   -background -foreground
+ClassOption     -_bwidgets_notebook_pages
+InsertCmd       vTcl::widgets::bwidgets::notebook::insertCmd
+TreeChildrenCmd	{vTcl::widgets::bwidgets::notebook::treeChildrenCmd
+		 vTcl::widgets::bwidgets::notebook::treeChildrenChildsite}
+SelectSiteCmd   vTcl::widgets::bwidgets::notebook::selectSiteCmd
+DeleteSiteCmd   vTcl::widgets::bwidgets::notebook::deleteSiteCmd
+DumpCmd         vTcl::widgets::bwidgets::notebook::dumpCmd
+
+namespace eval vTcl::widgets::bwidgets::notebook {
+
+    proc insertCmd {target} {
+        $target insert end page1 -text {Page 1}
+        $target insert end page2 -text {Page 2}
+        $target insert end page3 -text {Page 3}
+        $target raise page1
+    }
+
+    # All right, I explain it: 0 is the number of extra levels
+    # in the window path between the megawidget and its
+    # pages (childsites).
+
+    proc treeChildrenCmd {target {diff \#0}} {
+        set children ""
+        set wantsdiff [expr {$diff != ""}]
+
+        foreach site [treeChildrenChildsite $target] {
+            foreach child [::vTcl:complete_widget_tree $site $wantsdiff] {
+                lappend children $child$diff
+            }
+        }
+
+        return $children
+    }
+
+    proc treeChildrenChildsite {target} {
+        set pages [$target pages]
+        set sites ""
+        foreach page $pages {
+            lappend sites [$target getframe $page]
+        }
+        return $sites
+    }
+
+    proc selectSiteCmd {target site} {
+        set pages [$target pages]
+        foreach page $pages {
+            if {[$target getframe $page] == $site} {
+                $target raise $page
+                break
+            }
+        }
+    }
+
+    proc deleteSiteCmd {target site} {
+        set pages [$target pages]
+        foreach page $pages {
+            if {[$target getframe $page] == $site} {
+                $target delete $page
+                $target raise [$target pages 0]
+                break
+            }
+        }
+    }
+
+    proc dumpCmd {target basename} {
+        set result [vTcl:dump_widget_opt $target $basename]
+        set pages [$target pages]
+        foreach page $pages {
+            set conf [$target itemconfigure $page]
+            set pairs [vTcl:conf_to_pairs $conf ""]
+            append result "$::vTcl(tab)$basename insert end $page \\\n"
+            append result "[vTcl:clean_pairs $pairs]\n"
+        }
+        set size  [llength $pages]
+        for {set i 0} {$i < $size} {incr i} {
+            set site [$target getframe [lindex $pages $i]]
+            append result "$::vTcl(tab)"
+            set sitevariable "site_[llength [split $site .]]_$i"
+            append result "set $sitevariable "
+            append result "\[$basename getframe [lindex $pages $i]\]\n"
+            append result \
+                [vTcl::widgets::bwidgets::dump_subwidgets $site \$$sitevariable]
+        }
+        append result "$::vTcl(tab)$basename raise [lindex $pages 0]\n"
+        return $result
+    }
+}
