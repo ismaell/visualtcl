@@ -1,6 +1,8 @@
 ChangeLog for Visual Tcl:
 
 1.6.0a2 ->
+    o Fixed problem where an alias would be defined twice when doing
+      copy/paste in the same toplevel.
     o Prevents the user from using pack and grid in the same container. This
       hangs the program completely (Tk bug).
 1.6.0a1 -> 1.6.0a2

@@ -675,6 +675,9 @@ proc vTcl:setup_unbind_tree {target} {
 ##
 proc vTcl:can_insert {parent manager} {
 
+    if {$parent == ""} {
+        return 1
+    }
     ## Enumerates children
     foreach child [winfo children $parent] {
         set child_manager [winfo manager $child]
@@ -822,7 +825,7 @@ proc vTcl:valid_alias {target alias} {
 }
 
 proc vTcl:set_alias {target {alias ""} {noupdate ""}} {
-    global vTcl widget classes
+    global vTcl widget widgetNums classes
 
     if {[lempty $target]} { return }
 
@@ -866,6 +869,13 @@ proc vTcl:set_alias {target {alias ""} {noupdate ""}} {
                 interp alias {} [vTcl:get_top_level_or_alias $target].$alias {} \
                       $classes($c,widgetProc) $target
             }
+        }
+
+        ## If the alias is something like Button1, we try to add its number
+        ## to the widgetNums($class) variable.  This lets us re-use aliases
+        ## when widgets are deleted.
+        if {[regexp "$c\(\[0-9\]+\)" $alias trash num]} {
+            lappend widgetNums($c) $num
         }
 
         # Refresh property manager after changing an alias
@@ -915,7 +925,7 @@ proc vTcl:unset_alias {w} {
     ## from the widgetNums($class) variable.  This lets us re-use aliases
     ## when widgets are deleted.
     if {[regexp "$class\(\[0-9\]+\)" $alias trash num] && $other == ""} {
-        lremove widgetNums($class) $num
+        ::vTcl::lremove widgetNums($class) $num
     }
 }
 
@@ -1185,7 +1195,9 @@ proc vTcl:next_widget_name {class} {
     }
     set num [lindex [lsort -decreasing -integer $widgetNums($var)] 0]
     incr num
-    lappend widgetNums($var) $num
+
+    ## do this in vTcl:set_alias instead
+    # lappend widgetNums($var) $num
     return $var$num
 }
 
