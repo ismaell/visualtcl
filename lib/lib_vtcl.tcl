@@ -28,7 +28,8 @@ proc vTcl:widget:lib:lib_vtcl {args} {
 
     set order {
 	Progressbar1
-    } 
+    Combobox
+    }
 
     vTcl:lib:add_widgets_to_toolbar $order
 }
