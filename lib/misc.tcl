@@ -1223,6 +1223,21 @@ proc ::vTcl::change {} {
     set vTcl(change) 1
 }
 
+proc vTclWindow.vTcl.tkcon {args} {
+    if {[winfo exists .vTcl.tkcon]} {
+	wm deiconify .vTcl.tkcon
+    } else {
+	tkcon show
+	after idle {
+	    catch {wm geometry .vTcl.tkcon $vTcl(geometry,.vTcl.tkcon)}
+	}
+    }
+}
+
+proc vTcl:show_console {} {
+	vTcl:attrbar:toggle_console
+}
+      
 proc ::vTcl::InitTkcon {} {
     if {[catch {winfo exists $::tkcon::PRIV(root)}]} {
     	::tkcon::Init
