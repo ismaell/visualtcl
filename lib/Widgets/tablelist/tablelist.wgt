@@ -1,5 +1,4 @@
 ##############################################################################
-# $ $
 #
 # tablelist.wgt widget description file
 #
@@ -34,18 +33,31 @@ CreateCmd       ::tablelist::tablelist
 InsertCmd       vTcl::widgets::tablelist::tablelist::insertCmd
 DumpCmd         vTcl::widgets::tablelist::tablelist::dumpCmd
 
+## Procs to ignore when saving
+IgnoreProc      ::tablelist::*
+IgnoreProc      ::mwutil::*
+
 ## Right-click menu
 Function        "Edit columns..."   vTcl::widgets::tablelist::tablelist::editCmd
 
-NewOption -align         "align"        choice {left right center}
-NewOption -formatcommand "format cmd"   command
-NewOption -hide          "hide"         boolean {0 1}
-NewOption -labelalign    "label align"  choice {left right center}
-NewOption -labelcommand  "label cmd"    command
-NewOption -labelpady     "label pady"   type
-NewOption -showarrow     "show arrow"   boolean {0 1}
-NewOption -sortcommand   "sort command" command
-NewOption -sortmode      "sort mode"    choice {ascii command dictionary integer real}
+NewOption -activestyle   "active style"       choice {underline frame}
+NewOption -arrowcolor         "arrow col"     color {} Colors
+NewOption -arrowdisabledcolor "arrow dis col" color {} Colors
+NewOption -align         "align"              choice {left right center}
+NewOption -formatcommand "format cmd"         command
+NewOption -hide          "hide"               boolean {0 1}
+NewOption -incrarrowtype "incr arr type"      choice {up down}
+NewOption -labelalign    "label align"        choice {left right center}
+NewOption -labelcommand  "label cmd"          command
+NewOption -labelpady     "label pady"         type
+NewOption -showlabels    "show labels"        boolean {0 1}
+NewOption -showarrow     "show arrow"         boolean {0 1}
+NewOption -sortcommand   "sort command"       command
+NewOption -sortmode      "sort mode"          choice {ascii command dictionary integer real}
+NewOption -showseparators   "show separators" boolean {0 1}
+NewOption -stretch          "stretch"         type
+NewOption -stripebackground "strip backgnd"   color {} Colors
+NewOption -stripeforeground "strip foregnd"   color {} Colors
 
 ## Namespace name is made of lib name and widget name (here there are same)
 ##
