@@ -172,17 +172,31 @@ proc vTclWindow.vTcl.bind {args} {
     frame $base.cpd21.01.cpd25 \
         -background #dcdcdc -borderwidth 1 -height 30 \
         -highlightbackground #dcdcdc -highlightcolor #000000 -relief raised \
-        -width 30 
+        -width 30
     listbox $base.cpd21.01.cpd25.01 \
         -xscrollcommand "$base.cpd21.01.cpd25.02 set" \
-        -yscrollcommand "$base.cpd21.01.cpd25.03 set" 
+        -yscrollcommand "$base.cpd21.01.cpd25.03 set"
+    bindtags $base.cpd21.01.cpd25.01 "Listbox $base.cpd21.01.cpd25.01 $base all"
     bind $base.cpd21.01.cpd25.01 <Button-3> {
         ListboxBindings selection clear 0 end
         ListboxBindings selection set @%x,%y
+        ListboxBindings activate @%x,%y
         ::widgets_bindings::enable_toolbar_buttons
         ::widgets_bindings::select_binding
     }
     bind $base.cpd21.01.cpd25.01 <ButtonRelease-1> {
+        set widgets_bindings::lastselected [lindex [ListboxBindings curselection] 0]
+
+        ::widgets_bindings::enable_toolbar_buttons
+        after idle "::widgets_bindings::select_binding"
+    }
+    bind $base.cpd21.01.cpd25.01 <KeyRelease-Up> {
+        set widgets_bindings::lastselected [lindex [ListboxBindings curselection] 0]
+
+        ::widgets_bindings::enable_toolbar_buttons
+        after idle "::widgets_bindings::select_binding"
+    }
+    bind $base.cpd21.01.cpd25.01 <KeyRelease-Down> {
         set widgets_bindings::lastselected [lindex [ListboxBindings curselection] 0]
 
         ::widgets_bindings::enable_toolbar_buttons
@@ -323,7 +337,7 @@ proc vTclWindow.vTcl.bind {args} {
     pack $base.fra22.but24 \
         -in $base.fra22 -anchor center -expand 0 -fill none -side right 
     pack $base.cpd21 \
-        -in $base -anchor center -expand 1 -fill both -side top 
+        -in $base -anchor center -expand 1 -fill both -side top
     place $base.cpd21.01 \
         -x 0 -y 0 -width -1 -relwidth 0.3681 -relheight 1 -anchor nw \
         -bordermode ignore 
@@ -773,7 +787,7 @@ proc vTclWindow.vTcl.newtag {base} {
         -sticky ew 
     grid $base.fra24.cpd26.03 \
         -in $base.fra24.cpd26 -column 1 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky ns 
+        -sticky ns
     pack $base.fra24.lab27 \
         -in $base.fra24 -anchor center -expand 0 -fill none -side top 
     pack $base.fra24.ent28 \
@@ -1223,7 +1237,7 @@ namespace eval ::widgets_bindings {
         
         ::widgets_bindings::find_tag_event \
             $widget(ListboxBindings) $index tag event
-        
+
         if {$tag == "" || $event == ""} {
         
             TextBindings configure -state normal

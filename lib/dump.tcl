@@ -476,7 +476,7 @@ proc vTcl:dump:dump_user_bind {} {
         set bindlist [lsort [bind $tag]]
         foreach event $bindlist {
             set command [bind $tag $event]
-            append result "bind $tag $event \{\n"
+            append result "bind \"$tag\" $event \{\n"
             append result "$vTcl(tab)[string trim $command]\n\}\n"
         }
     }
@@ -496,7 +496,23 @@ proc vTcl:dump_widget_bind {target basename} {
     lremove tags vTcl(a) vTcl(b)
     if {$tags !=
         [::widgets_bindings::get_standard_bindtags $target]} {
-            append result "$vTcl(tab)bindtags $target \"$tags\"\n"
+            set reltags ""
+            foreach tag $tags {
+                if {"$tag" == "$target"} {
+                    set tag [vTcl:base_name $target]
+                } elseif {"$tag" == "[winfo toplevel $target]"} {
+                    set tag \$base
+                }
+                if {[string match "* *" $tag]} {
+                    set tag "\{$tag\}"
+                }
+                if {$reltags == ""} {
+                    set reltags $tag
+                } else {
+                    append reltags " $tag"
+                }
+            }
+            append result "$vTcl(tab)bindtags [vTcl:base_name $target] \"$reltags\"\n"
     }
 
     set bindlist [lsort [bind $target]]
@@ -766,12 +782,12 @@ proc vTcl:dump:widget_fonts_and_images {} {
 
     foreach type [list stock user] {
 	foreach child $children {
-	    if {![catch {$child cget -image} image] 
+	    if {![catch {$child cget -image} image]
 	    	&& [lsearch $vTcl(images,$type) $image] > -1} {
 		lappend vTcl(dump,${type}Images) $image
 	    }
 
-	    if {![catch {$child cget -font} font] 
+	    if {![catch {$child cget -font} font]
 	    	&& [lsearch $vTcl(fonts,$type) $font] > -1} {
 		lappend vTcl(dump,${type}Fonts) $font
 	    }
@@ -824,14 +840,3 @@ proc vTcl:dump:project_info {basedir project} {
     close $fp
     return
 }
-
-
-
-
-
-
-
-
-
-
-

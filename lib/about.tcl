@@ -96,7 +96,7 @@ proc vTclWindow.vTcl.credits {base {container 0}} {
         wm deiconify $base; return
     }
 
-    global widget
+    global widget tcl_version tk_version
     set widget(rev,$base) {CreditsWindow}
     set {widget(CreditsWindow)} "$base"
     set {widget(child,CreditsWindow)} ""
@@ -133,7 +133,7 @@ proc vTclWindow.vTcl.credits {base {container 0}} {
     wm transient $base .vTcl
     }
     button $base.but23 \
-        -command {Window hide $widget(CreditsWindow)} -text Close -width 8 
+        -command {Window hide $widget(CreditsWindow)} -text Close -width 8
     frame $base.cpd24 \
         -borderwidth 1 -height 30 -relief raised -width 30
     scrollbar $base.cpd24.01 \
@@ -143,32 +143,33 @@ proc vTclWindow.vTcl.credits {base {container 0}} {
     text $base.cpd24.03 \
         -font -Adobe-Helvetica-Medium-R-Normal-*-*-120-*-*-*-*-*-* -height 1 \
         -width 8 -wrap none -xscrollcommand "$base.cpd24.01 set" \
-        -yscrollcommand "$base.cpd24.02 set" 
+        -yscrollcommand "$base.cpd24.02 set"
     ###################
     # SETTING GEOMETRY
     ###################
     pack $base.but23 \
-        -in $base -anchor center -expand 0 -fill none -pady 5 -side bottom 
+        -in $base -anchor center -expand 0 -fill none -pady 5 -side bottom
     pack $base.cpd24 \
-        -in $base -anchor center -expand 1 -fill both -side top 
+        -in $base -anchor center -expand 1 -fill both -side top
     grid columnconf $base.cpd24 0 -weight 1
     grid rowconf $base.cpd24 0 -weight 1
     grid $base.cpd24.01 \
-        -in $base.cpd24 -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew 
+        -in $base.cpd24 -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew
     grid $base.cpd24.02 \
-        -in $base.cpd24 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns 
+        -in $base.cpd24 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns
     grid $base.cpd24.03 \
         -in $base.cpd24 -column 0 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky nesw 
+        -sticky nesw
 
     CreditsText delete 0.0 end
     CreditsText insert 0.0 \
          "Copyright\ (C)\ 1996-2000\ Stewart\ Allen\ (stewart@neuron.com)\n\n======================================================================\nMaintained\ by:\n\nChristian\ Gavin\ (cgavin@dnai.com)\nDamon\ Courtney\ (damon@unreality.com)\n\n======================================================================\nFreewrap\ is\ Copyright\ (C)\ 1998\ by\ Dennis\ LaBelle\n(dlabelle@albany.net)\ All\ Rights\ Reserved.\n\n======================================================================\nPortions\ of\ this\ software\ from\n\n\ \ Effective\ Tcl/Tk\ Programming\n\ \ Mark\ Harrison,\ DSC\ Communications\ Corp.\n\ \ Michael\ McLennan,\ Bell\ Labs\ Innovations\ for\ Lucent\ Technologies\n\ \ Addison-Wesley\ Professional\ Computing\ Series\n\n\ \ Copyright\ (c)\ 1996-1997\ \ Lucent\ Technologies\ Inc.\ and\ Mark\ Harrison\n======================================================================\n"
- 
+    CreditsText insert end \
+         "\nTcl version $tcl_version\nTk version $tk_version"
     bind $base <Key-Escape> "$base.but23 invoke"
 
-    wm geometry $base 500x400
-    vTcl:center $base 500 400
+    wm geometry $base 500x420
+    vTcl:center $base 500 420
     wm deiconify $base
 }
 
