@@ -1055,7 +1055,17 @@ proc vTcl:place_widget {class button options rx ry x y} {
         vTcl:rebind_button_1
     }
 
-    set vTcl(w,insert) [winfo containing $rx $ry]
+    set try_insert [winfo containing $rx $ry]
+    set tree [vTcl:complete_widget_tree . 0]
+
+    ## we can only insert inside existing widgets
+    if {[lsearch -exact $tree $try_insert] == -1} {
+        tk_messageBox -title "Insert Widget" \
+            -message "You cannot insert a widget here!" -type ok
+        return ""
+    }
+
+    set vTcl(w,insert) $try_insert
 
     set vTcl(mgrs,update) no
     if $vTcl(pr,getname) {

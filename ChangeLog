@@ -1,6 +1,7 @@
 ChangeLog for Visual Tcl:
 
 1.51b4 -> 1.51
+    o Don't allow inserting into widgets that are not part of the widget tree
     o Fixed bug where combobox/mclistbox/progressbar code wouldn't be
       saved with project in some situations
     o File Open/Save remembers last directory
