@@ -70,7 +70,7 @@ proc vTcl:save_procs {} {
             if {($body != "" || $i == "main") && $i != "init"} {
 
                 if {[regexp (.*):: $i matchAll context] } {
-                   append output "\nnamespace eval ${context} \{\n"
+                   append output "\nnamespace eval [list ${context}] \{\n"
                 }
 
                 append output "\nproc \{$i\} \{$args\} \{\n$body\n\}\n"
@@ -119,7 +119,7 @@ proc vTcl:export_procs {} {
 	    && ![vTcl:streq $i "init"]} {
 
             if {[regexp (.*):: $i matchAll context] } {
-               append output "\nnamespace eval ${context} \{\n"
+               append output "\nnamespace eval [list ${context}] \{\n"
             }
 
             append output "\nproc \{$i\} \{$args\} \{\n$body\n\}\n"

@@ -174,8 +174,8 @@ proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
 
             # if the proc name is in a namespace, make sure the
             # namespace exists
-		if {[string match ::${cmpdname}::* $nme]} {
-                namespace eval ::${cmpdname} [list proc $nme $arg $bdy]
+	    if {[string match ::${cmpdname}::* $nme]} {
+                namespace eval [list ::${cmpdname}] [list proc $nme $arg $bdy]
             } else {
                 proc $nme $arg $bdy
             }
@@ -183,7 +183,7 @@ proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
             vTcl:list add "{$nme}" vTcl(procs)
         }
         if {[lsearch -exact $vTcl(procs) "::${cmpdname}::init"] >= 0 } {
-            eval ::${cmpdname}::init $name
+            eval [list ::${cmpdname}::init] $name
         }
         if {$mgrt == "wm" || $base == "."} {
             set base $name
@@ -291,7 +291,7 @@ proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
     	append todo "vTcl:set_alias $name $next -noupdate; "
 
         if {[lsearch -exact $vTcl(procs) "::${cmpdname}::main"] >= 0 } {
-            eval ::${cmpdname}::main $name 
+	    append todo "[list ::${cmpdname}::main] $name"
         }
     }
 
