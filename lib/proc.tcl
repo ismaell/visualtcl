@@ -95,6 +95,14 @@ proc vTcl:update_proc {base {close 1}} {
 	namespace eval ${context} {}
     }
 
+    ## verify that proc really changed before marking project as changed
+    set old_args ""
+    set old_body ""
+    if {[info proc $name] != ""} {
+        ## proc existed before
+        set old_args [info args $name]
+        set old_body [string trim [info body $name] "\n"]
+    }
     proc $name $args \n$body\n
 
     vTcl:list add "{$name}" vTcl(procs)
@@ -104,7 +112,11 @@ proc vTcl:update_proc {base {close 1}} {
         ::vTcl::proc::edit_reset $base
     }
     vTcl:update_proc_list $name
-    ::vTcl::change
+
+    ## body or argument have changed?
+    if {$old_args != $args || $old_body != $body} {
+        ::vTcl::change
+    }
 }
 
 proc vTcl:update_proc_list {{name {}}} {
@@ -464,4 +476,5 @@ namespace eval ::vTcl::proc {
         set vTcl(proc,$w,chg) 1
     }
 }
+
 
