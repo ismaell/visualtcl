@@ -1,3 +1,28 @@
+##############################################################################
+#
+# Visual TCL - A cross-platform application development environment
+#
+# Copyright (C) 2001 Damon Courtney
+#
+# Description file for Bwidgets notebook
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+##############################################################################
+#
+
 Class		NoteBook
 Lib		bwidget
 
@@ -13,6 +38,7 @@ TreeChildrenCmd	{vTcl::widgets::bwidgets::notebook::treeChildrenCmd
 SelectSiteCmd   vTcl::widgets::bwidgets::notebook::selectSiteCmd
 DeleteSiteCmd   vTcl::widgets::bwidgets::notebook::deleteSiteCmd
 DumpCmd         vTcl::widgets::bwidgets::notebook::dumpCmd
+CompoundCmd     vTcl::widgets::bwidgets::notebook::compoundCmd
 
 namespace eval vTcl::widgets::bwidgets::notebook {
 
@@ -90,6 +116,21 @@ namespace eval vTcl::widgets::bwidgets::notebook {
                 [vTcl::widgets::bwidgets::dump_subwidgets $site \$$sitevariable]
         }
         append result "$::vTcl(tab)$basename raise [lindex $pages 0]\n"
+        return $result
+    }
+
+    proc compoundCmd {target} {
+        set result ""
+        set pages [$target pages]
+        foreach page $pages {
+            set conf [$target itemconfigure $page]
+            set pairs [vTcl:conf_to_pairs $conf ""]
+            append result "\$target insert end $page $pairs; "
+            append result "set site \[\$target getframe $page\]; "
+            set compound [vTcl:create_compound [$target getframe $page]]
+            append result "vTcl:insert_compound \$site [list $compound] pack \{\}; "
+        }
+        append result "\$target raise [lindex $pages 0]; "
         return $result
     }
 }
