@@ -143,9 +143,9 @@ set vTcl(w,options)      ""
 set vTcl(w,widget)       ""
 set vTcl(winname)        "vTclWindow"
 set vTcl(windows)        ".vTcl.toolbar .vTcl.mgr .vTcl.ae .vTcl.wstat
-                          .vTcl.proclist .vTcl.varlist .vTcl.toplist .vTcl.tree
+                          .vTcl.proclist .vTcl.toplist .vTcl.tree
                           .vTcl.con .vTcl.prefs .vTcl.about .vTcl.bind .vTcl.imgManager
-                          .vTcl.fontManager"
+                          .vTcl.fontManager .vTcl.inspector"
 set vTcl(newtops)        1
 set vTcl(mode)           "EDIT"
 set vTcl(pwd)            [pwd]
