@@ -147,6 +147,7 @@ proc ::vTcl::findReplace::window {{newBase ""} {container 0}} {
     if {[llength $newBase] > 0} { set base $newBase }
     if {[winfo exists $base] && (!$container)} {
 	wm deiconify $base
+	$base.findEnt select range 0 end
 	focus $base.findEnt
 	return
     }

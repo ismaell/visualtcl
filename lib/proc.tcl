@@ -383,7 +383,7 @@ proc vTclWindow.vTcl.proc {args} {
         -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 2 -pady 2 \
         -side left
 
-    bind $base.f3.text <KeyPress> "+set vTcl(proc,[lindex $args 0],chg) 1"
+    bind $base.f3.text <KeyPress> "+::vTcl::proc_edit_change $base %K"
     bind $base.f3.text <Control-Key-i> "$butInsert invoke"
     bind $base.f3.text <Control-Key-f> "$butFind invoke"
     bind $base <Destroy> {
@@ -450,4 +450,20 @@ proc vTcl:proc:edit_cancel {base} {
     }
 }
 
-
+proc ::vTcl::proc_edit_change {w k} {
+    ## We don't want to mark the text as changed when we're just moving around.
+    switch -- $k {
+	"Up"	-
+	"Down"	-
+	"Right"	-
+	"Left"	-
+	"Prior"	-
+	"Next"	-
+	"Home"	-
+	"End"	-
+	"Insert" -
+	"Delete" { return }
+    }
+    global vTcl
+    set vTcl(proc,$w,chg) 1
+}
