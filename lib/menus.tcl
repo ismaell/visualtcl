@@ -54,6 +54,7 @@ namespace eval ::menu_edit {
             }
 
             $menu delete $pos
+            vTcl:init_wtree
         }
 
         ::menu_edit::fill_menu_list $top [vTcl:at ::${top}::menu]
@@ -93,8 +94,8 @@ namespace eval ::menu_edit {
         global widget
 
         set ctrls "$top.EntryLabel    $top.EntryImage   $top.EntryAccelerator
-                   $top.EntryVariable $top.EntryValueOn $top.EntryValueOff 
-                   $top.MenuText      $top.NewMenu      $top.DeleteMenu 
+                   $top.EntryVariable $top.EntryValueOn $top.EntryValueOff
+                   $top.MenuText      $top.NewMenu      $top.DeleteMenu
                    $top.MoveMenuUp    $top.MoveMenuDown $top.BrowseImage"
 
         switch $enable {
@@ -197,38 +198,55 @@ namespace eval ::menu_edit {
         }
     }
 
+    proc {::menu_edit::set_uistate} {top} {
+        foreach name [array names ::${top}::uistate] {
+            if {$name != "Tearoff"} {
+                $top.$name configure -state [vTcl:at ::${top}::uistate($name)]
+            }
+        }
+    }
+
     proc {::menu_edit::enable_toolbar_buttons} {top} {
         set indices [$top.MenuListbox curselection]
         set index [lindex $indices 0]
 
         if {$index == "" || $index == 0} {
-            $top.DeleteMenu   configure -state disabled
-            $top.MoveMenuUp   configure -state disabled
-            $top.MoveMenuDown configure -state disabled
+            array set ::${top}::uistate {
+                DeleteMenu disabled  MoveMenuUp disabled MoveMenuDown disabled
+                Tearoff disabled
+            }
+            ::menu_edit::set_uistate $top
             return
         }
 
-        $top.DeleteMenu   configure -state normal
+        array set ::${top}::uistate { DeleteMenu normal Tearoff disabled }
 
         set m ""
         set i ""
 
         ::menu_edit::get_menu_index $top $index m i
+        set j $i
         if {[$m cget -tearoff] == 1 && $i == 1} {
-        incr i -1
+           set j [expr $i -1]
         }
 
-        if {$i == 0} {
-            $top.MoveMenuUp   configure -state disabled
+        if {$j == 0} {
+            array set ::${top}::uistate { MoveMenuUp disabled }
         } else {
-            $top.MoveMenuUp   configure -state normal
+            array set ::${top}::uistate { MoveMenuUp normal }
         }
 
         if {$i < [$m index end]} {
-            $top.MoveMenuDown configure -state normal
+            array set ::${top}::uistate { MoveMenuDown normal }
         } else {
-            $top.MoveMenuDown configure -state disabled
+            array set ::${top}::uistate { MoveMenuDown disabled }
         }
+
+        if {[$m type $i] == "cascade"} {
+            array set ::${top}::uistate { Tearoff normal }
+        }
+
+        ::menu_edit::set_uistate $top
     }
 
     proc {::menu_edit::fill_command} {top command} {
@@ -422,10 +440,12 @@ namespace eval ::menu_edit {
         switch $type {
             "cascade" {
                 set nmenu [vTcl:new_widget_name menu $menu]
-                menu $nmenu
+                menu $nmenu -tearoff 0
                 vTcl:widget:register_widget $nmenu -tearoff
                 vTcl:setup_vTcl:bind $nmenu
                 $menu add $type -label "New cascade" -menu $nmenu
+                vTcl:init_wtree
+                vTcl:active_widget $nmenu
             }
             "command" {
                 $menu add $type -label "New command"  \
@@ -515,6 +535,7 @@ namespace eval ::menu_edit {
                 set ${top}::entry_image [$m entrycget $i -image]
                 set ${top}::entry_accelerator ""
                 ::menu_edit::indicate_label_or_image $top
+                vTcl:active_widget [$m entrycget $i -menu]
             }
             "separator" {
                 ::menu_edit::enable_controls $top {"label" 0} \
@@ -691,7 +712,7 @@ namespace eval ::menu_edit {
 
         ::menu_edit::update_current $top
 
-        set indices [MenuListbox curselection]
+        set indices [$top.MenuListbox curselection]
         set index [lindex $indices 0]
 
         if {$index != ""} {
@@ -707,9 +728,60 @@ namespace eval ::menu_edit {
         }
     }
 
+    proc {::menu_edit::includes_menu} {top m} {
+
+        set size [$top.MenuListbox index end]
+
+        for {set i 0} {$i < $size} {incr i} {
+
+            set mm ""
+            set mi ""
+
+            ::menu_edit::get_menu_index $top $i mm mi
+
+            if {$mm != "" && $mi != -1 &&
+                [$mm type $mi] == "cascade" &&
+                [$mm entrycget $mi -menu] == $m} then {
+                return $i
+            }
+        }
+
+        # oh well
+        return -1
+    }
+
+    # check if the menu to edit is a submenu in an already open
+    # menu editor, and if so, open that menu editor
+
+    proc {::menu_edit::open_existing_editor} {m} {
+
+        # let's check each menu editor
+        variable menu_edit_windows
+
+        foreach top $menu_edit_windows {
+
+            set index [::menu_edit::includes_menu $top $m]
+
+            if {$index != -1} {
+                Window show $top
+                raise $top
+                $top.MenuListbox selection clear 0 end
+                $top.MenuListbox selection set $index
+                $top.MenuListbox activate $index
+                ::menu_edit::show_menu $top $index
+                return 1
+            }
+        }
+
+        return 0
+    }
+
 } ; # namespace eval
 
 proc vTclWindow.vTclMenuEdit {base menu} {
+
+    if {[::menu_edit::open_existing_editor $menu]} then {
+        return }
 
     global widget vTcl
 
@@ -860,7 +932,7 @@ proc vTclWindow.vTclMenuEdit {base menu} {
     ###################
     # CREATING WIDGETS
     ###################
-    toplevel $base -class Toplevel
+    toplevel $base -class Toplevel -menu $base.m22
     wm focusmodel $base passive
     wm geometry $base 550x450+323+138; update
     wm maxsize $base 1284 1010
@@ -870,6 +942,47 @@ proc vTclWindow.vTclMenuEdit {base menu} {
     wm deiconify $base
     wm title $base "Menu editor"
     wm transient $base .vTcl
+
+    menu $base.m22 -tearoff 0
+    $base.m22 add cascade \
+        -menu "$base.m22.men23" -label Insert
+    $base.m22 add cascade \
+        -menu "$base.m22.men24" -label Delete
+    $base.m22 add cascade \
+        -menu "$base.m22.men36" -label Move
+    menu $base.m22.men23 -tearoff 0
+    $base.m22.men23 add command \
+        -command "::menu_edit::new_item $base command" \
+        -label {New command}
+    $base.m22.men23 add command \
+        -command "::menu_edit::new_item $base cascade" \
+        -label {New cascade}
+    $base.m22.men23 add command \
+        -command "::menu_edit::new_item $base separator" \
+        -label {New separator}
+    $base.m22.men23 add command \
+        -command "::menu_edit::new_item $base radiobutton" \
+        -label {New radio}
+    $base.m22.men23 add command \
+        -command "::menu_edit::new_item $base checkbutton" \
+        -label {New check}
+    menu $base.m22.men24 -tearoff 0  \
+        -postcommand "$base.m22.men24 entryconfigure 0 -state \
+            \[vTcl:at ::${base}::uistate(DeleteMenu)\]"
+    $base.m22.men24 add command \
+        -command "::menu_edit::ask_delete_menu $base" \
+        -label {Selected item...}
+    menu $base.m22.men36 -tearoff 0 \
+        -postcommand "$base.m22.men36 entryconfigure 0 -state \
+            \[vTcl:at ::${base}::uistate(MoveMenuUp)\]
+            $base.m22.men36 entryconfigure 1 -state \
+            \[vTcl:at ::${base}::uistate(MoveMenuDown)\]"
+    $base.m22.men36 add command \
+        -command "::menu_edit::move_item $base up" \
+        -label Up
+    $base.m22.men36 add command \
+        -command "::menu_edit::move_item $base down" \
+        -label Down
 
     frame $base.fra21 \
         -borderwidth 2 -height 75 -width 125
@@ -964,7 +1077,9 @@ proc vTclWindow.vTclMenuEdit {base menu} {
         -command "::menu_edit::new_item $base checkbutton" \
         -label {New check}
     menu $base.cpd24.01.cpd25.01.m25 \
-        -activeborderwidth 1 -tearoff 0
+        -activeborderwidth 1 -tearoff 0 \
+        -postcommand "$base.cpd24.01.cpd25.01.m25 entryconfigure 8 -state \
+            \[vTcl:at ::${base}::uistate(Tearoff)\]"
     $base.cpd24.01.cpd25.01.m25 add command \
         -accelerator {} -command "::menu_edit::new_item $base command" \
         -label {New command}
@@ -1203,7 +1318,17 @@ proc vTclWindow.vTclMenuEdit {base menu} {
     vTcl:set_balloon $widget(MoveMenuDown) \
         "Move menu down"
 
+    array set ::${base}::uistate {
+        DeleteMenu disabled  MoveMenuUp disabled MoveMenuDown disabled
+        Tearoff disabled
+    }
+
+    # initializes menu editor
     ::menu_edit::fill_menu_list $base $menu
+    $base.MenuListbox selection clear 0 end
+    $base.MenuListbox selection set 0
+    $base.MenuListbox activate 0
+    ::menu_edit::click_listbox $base
 
     # keep a record of open menu editors
     lappend ::menu_edit::menu_edit_windows $base
@@ -1225,6 +1350,19 @@ proc vTclWindow.vTclMenuEdit {base menu} {
     }
 
     vTcl:setup_vTcl:bind $base
+
+    # ok, let's add a special tag to override the <KeyPress-Delete> mechanism
+    bindtags $widget($base,MenuListbox) \
+        "_vTclMenuDelete [bindtags $widget($base,MenuListbox)]"
+
+    bind _vTclMenuDelete <KeyPress-Delete> {
+
+        ::menu_edit::ask_delete_menu [winfo toplevel %W]
+
+        # we stop processing here so that Delete does not get processed
+        # by further binding tags, which would have the quite undesirable
+        # effect of deleting the current toplevel...
+
+        break
+    }
 }
-
-

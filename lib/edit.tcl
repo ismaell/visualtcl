@@ -21,11 +21,20 @@
 ##############################################################################
 #
 
-proc vTcl:copy {{w ""}} {
-    # cut/copy/paste handled by text widget only
+proc vTcl:entry_or_text {w} {
     if {$w != "" &&
         [string match .vTcl* $w] &&
-        [vTcl:get_class $w] == "Text"} then return
+        ([vTcl:get_class $w] == "Text" ||
+         [vTcl:get_class $w] == "Entry")} then {
+		return 1
+    } else {
+		return 0
+	}
+}
+
+proc vTcl:copy {{w ""}} {
+    # cut/copy/paste handled by text widget only
+    if {[vTcl:entry_or_text $w]} then return
 
     global vTcl
     set vTcl(buffer) [vTcl:create_compound $vTcl(w,widget)]
@@ -34,9 +43,7 @@ proc vTcl:copy {{w ""}} {
 
 proc vTcl:cut {{w ""}} {
     # cut/copy/paste handled by text widget only
-    if {$w != "" &&
-        [string match .vTcl* $w] &&
-        [vTcl:get_class $w] == "Text"} then return
+    if {[vTcl:entry_or_text $w]} then return
 
     global vTcl
     if { $vTcl(w,widget) == "." } { return }
@@ -47,9 +54,7 @@ proc vTcl:cut {{w ""}} {
 
 proc vTcl:delete {{w ""}} {
     # cut/copy/paste handled by text widget only
-    if {$w != "" &&
-        [string match .vTcl* $w] &&
-        [vTcl:get_class $w] == "Text"} then return
+    if {[vTcl:entry_or_text $w]} then return
 
     global vTcl
     if { $vTcl(w,widget) == "." } { return }
@@ -127,9 +132,7 @@ proc vTcl:delete {{w ""}} {
 
 proc vTcl:paste {{fromMouse ""} {w ""}} {
     # cut/copy/paste handled by text widget only
-    if {$w != "" &&
-        [string match .vTcl* $w] &&
-        [vTcl:get_class $w] == "Text"} then return
+    if {[vTcl:entry_or_text $w]} then return
 
     global vTcl
 
