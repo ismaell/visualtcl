@@ -1,6 +1,14 @@
 ChangeLog for Visual Tcl:
 
 1.51b4 -> 1.51rc0
+    o Added code to select pages in tabnotebook and notebook widgets
+      when selecting a frame in the widget tree
+    o Made sure Visual Tcl doesn't change the manager for childsites!
+      This was the "manager switches from pack to place" mysterious bug,
+      which is actually not a Tk bug at all. What happened is when
+      a widget is selected, if it is hidden, Visual Tcl tried to re-
+      manage it using the default manager.
+    o Unregister widgets (delete their namespace) when destroyed
     o Cleaned up the keyboard scrolling in the property manager.
     o Fixed a bug where options would get changed while scrolling in the
       property manager.

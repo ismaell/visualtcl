@@ -91,7 +91,13 @@ proc vTcl:show {target} {
     if {[vTcl:streq $target "."]} { return }
     if {![winfo viewable $target]} {
         if {[catch {eval $vTcl(hide,$target,m) $target $vTcl(hide,$target,i)}] == 1} {
-            catch {$vTcl(w,def_mgr) $target $vTcl($vTcl(w,def_mgr),insert)}
+
+            ## don't try to change the manager of childsites !!
+            ## only show widgets that are not childsites and have been hidden
+
+            if {[vTcl:Frame:containing_megawidget $target] == ""} {
+                catch {$vTcl(w,def_mgr) $target $vTcl($vTcl(w,def_mgr),insert)}
+            }
         }
     }
 }
@@ -144,15 +150,23 @@ proc vTcl:raise {target} {
 }
 
 proc vTcl:active_widget {target} {
-    global vTcl widgetSelected
+    global vTcl widgetSelected classes
     if {$target == ""} {return}
     if {[vTcl:streq $target "."]} { return }
     if {$vTcl(w,widget) != "$target"} {
+
+        vTcl:destroy_handles
+        ## Any custom selection command?
+        set class [vTcl:get_class $target]
+        if {[info exists classes($class,selectCmd)] &&
+            $classes($class,selectCmd) != ""} {
+            $classes($class,selectCmd) $target
+        }
+
         vTcl:select_widget $target
         vTcl:attrbar_color $target
         set vTcl(redo) [vTcl:dump_widget_quick $target]
         if {$vTcl(w,class) == "Toplevel"} {
-            vTcl:destroy_handles
             set vTcl(w,insert) $target
             wm deiconify $target
             vTcl:raise $target
@@ -174,7 +188,7 @@ proc vTcl:active_widget {target} {
 }
 
 proc vTcl:select_widget {target} {
-    global vTcl
+    global vTcl classes
 
     if {[vTcl:streq $target "."]} {
         vTcl:prop:clear

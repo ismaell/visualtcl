@@ -10,6 +10,7 @@ DumpChildren    no
 MegaWidget      yes
 InsertCmd       vTcl:widget:tixNoteBook:inscmd
 DeleteSiteCmd   vTcl:widget:tixNotebook:deleteSiteCmd
+SelectSiteCmd   vTcl:widget:tixNotebook:selectSiteCmd
 TreeChildrenCmd     "vTcl:widget:tixNotebook:treeChildrenCmd \
                      vTcl:widget:tixNotebook:treeChildrenChildsite"
 
@@ -69,6 +70,19 @@ proc vTcl:widget:tixNotebook:deleteSiteCmd {target site} {
         if {$site == $subwidget} {
             $target delete $page
             $target raise [lindex [$target pages] 0]
+            return
+        }
+    }
+}
+
+proc vTcl:widget:tixNotebook:selectSiteCmd {target site} {
+
+    set entries [$target pages]
+
+    foreach page $entries {
+        set subwidget [$target subwidget $page]
+        if {$site == $subwidget} {
+            $target raise $page
             return
         }
     }

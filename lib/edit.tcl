@@ -93,7 +93,14 @@ proc vTcl:delete {{w ""}} {
     set undo "vTcl:insert_compound $vTcl(w,widget) \{$buffer\} $vTcl(w,def_mgr)"
     vTcl:push_action $do $undo
 
-    catch {namespace delete ::widgets::$vTcl(w,widget)} error
+    ## Destroy the widget namespace, as well as the namespaces of
+    ## all it's subwidgets
+    set namespaces [vTcl:namespace_tree ::widgets]
+    foreach namespace $namespaces {
+        if {[string match ::widgets::$vTcl(w,widget)* $namespace]} {
+            catch {namespace delete $namespace} error
+        }
+    }
 
     ## If it's a toplevel window, remove it from the tops list.
     if {$class == "Toplevel"} {

@@ -20,7 +20,6 @@
 
 ##############################################################################
 #
-#
 # This file has been modified by:
 #   Christian Gavin
 #   Damon Courtney
@@ -268,7 +267,7 @@ proc vTcl:close {} {
         }
     }
 
-    set tops [winfo children .]
+    set tops $vTcl(tops)
     foreach i $tops {
         if {$i != ".vTcl" && $i != ".__tk_filedialog"} {
             # list widget tree without including $i (it's why the "0" parameter)
@@ -283,7 +282,17 @@ proc vTcl:close {} {
             set _cmds [info commands $i.*]
             foreach _cmd $_cmds {catch {rename $_cmd ""}}
         }
+
+        ## Destroy the widget namespace, as well as the namespaces of
+        ## all it's subwidgets
+        set namespaces [vTcl:namespace_tree ::widgets]
+        foreach namespace $namespaces {
+            if {[string match ::widgets::$i* $namespace]} {
+                catch {namespace delete $namespace} error
+            }
+        }
     }
+
     set vTcl(tops) ""
     set vTcl(newtops) 1
     catch {unset widgetNums}

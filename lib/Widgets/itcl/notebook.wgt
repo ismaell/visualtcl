@@ -6,6 +6,7 @@ Icon		icon_notebook.gif
 DumpChildren	no
 MegaWidget	yes
 InsertCmd	vTcl:widget:notebook:inscmd
+SelectSiteCmd   vTcl:widget:notebook:selectSiteCmd
 DeleteSiteCmd   vTcl:widget:notebook:deleteSiteCmd
 TagsCmd         vTcl:lib_itcl:tagscmd
 TreeChildrenCmd	{vTcl:widget:notebook:treeChildrenCmd
@@ -28,6 +29,15 @@ proc vTcl:widget:notebook:deleteSiteCmd {target site} {
     if {$index != -1} {
         $target delete $index
         $target select 0
+    }
+}
+
+proc vTcl:widget:notebook:selectSiteCmd {target site} {
+
+    set index [lsearch -exact [$target childsite] $site]
+
+    if {$index != -1} {
+        $target select $index
     }
 }
 

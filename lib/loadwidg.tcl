@@ -90,6 +90,7 @@ proc SetClassArray {} {
         $tmp(class),options         {}
         $tmp(class),defaultOptions  {}
         $tmp(class),insertCmd       {}
+        $tmp(class),selectCmd       {}
         $tmp(class),dblClickCmd     {}
         $tmp(class),exportCmds      {}
         $tmp(class),functionCmds    {}
@@ -106,6 +107,7 @@ proc SetClassArray {} {
         $tmp(class),treeChildrenCmd {}
         $tmp(class),deleteCmd       {}
         $tmp(class),deleteSiteCmd   {}
+        $tmp(class),selectSiteCmd   {}
         $tmp(class),defaultValues   {}
         $tmp(class),dontSaveOptions {}
     "
@@ -241,6 +243,11 @@ proc InsertCmd {name} {
     set tmp(insertCmd) $name
 }
 
+proc SelectCmd {name} {
+    global tmp
+    set tmp(selectCmd) $name
+}
+
 proc DeleteCmd {name} {
     global tmp
     set tmp(deleteCmd) $name
@@ -249,6 +256,11 @@ proc DeleteCmd {name} {
 proc DeleteSiteCmd {name} {
     global tmp
     set tmp(deleteSiteCmd) $name
+}
+
+proc SelectSiteCmd {name} {
+    global tmp
+    set tmp(selectSiteCmd) $name
 }
 
 proc DoubleClickCmd {name} {
