@@ -131,6 +131,18 @@ proc vTcl:select_toplevel {} {
     vTcl:set_insert
 }
 
+proc vTcl:raise {target} {
+    global tcl_platform
+
+    # go figure, but on Unix raise introduces delays of one to
+    # 2 seconds at least, which grays out the whole app for a
+    # while
+
+    if {$tcl_platform(platform) != "unix"} {
+        raise $target
+    }
+}
+
 proc vTcl:active_widget {target} {
     global vTcl widgetSelected
     if {$target == ""} {return}
@@ -143,7 +155,7 @@ proc vTcl:active_widget {target} {
             vTcl:destroy_handles
             set vTcl(w,insert) $target
             wm deiconify $target
-            raise $target
+            vTcl:raise $target
         } else {
             vTcl:create_handles $target
             vTcl:place_handles $target
@@ -156,7 +168,7 @@ proc vTcl:active_widget {target} {
     } elseif {$vTcl(w,class) == "Toplevel"} {
         set vTcl(w,insert) $target
         wm deiconify $target
-        raise $target
+        vTcl:raise $target
     }
     set widgetSelected 1
 }
@@ -966,7 +978,8 @@ proc vTcl:new_widget {class button {options ""}} {
 
     bind vTcl(b) <Button-1> \
         "vTcl:place_widget $class $button [list $options] %X %Y %x %y
-         set vTcl(cursor,last) \[%W cget -cursor\]"
+         set vTcl(cursor,last) \[%W cget -cursor\]
+         set vTcl(cursor,w) %W"
 }
 
 proc vTcl:place_widget {class button options rx ry x y} {

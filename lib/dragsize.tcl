@@ -33,15 +33,24 @@ proc vTcl:bind_button_1 {target X Y x y} {
 
     if {[lindex [split %W .] 1] == "vTcl"} { return }
 
+    # puts "click button 1: $target"
+    set vTcl(cursor,inside_button_1) 1
+
     if {$parent != "." && [winfo class $parent] != "Toplevel"} {
 	vTcl:active_widget $parent
 	vTcl:grab $target $X $Y
 	set vTcl(cursor,last) [$target cget -cursor]
+        set vTcl(cursor,w) $target
+        # puts "configure $target -cursor fleur"
 	$target configure -cursor fleur
     } else {
 	set vTcl(cursor,last) [$target cget -cursor]
+        set vTcl(cursor,w) $target
 	vTcl:active_widget $parent
     }
+
+    # puts "end click button 1: $target"
+    set vTcl(cursor,inside_button_1) 0
 }
 
 proc vTcl:bind_button_2 {target X Y x y} {
@@ -61,7 +70,8 @@ proc vTcl:bind_button_2 {target X Y x y} {
         $vTcl(w,widget) != ""} {
 
 	vTcl:grab $target $X $Y
-	set vTcl(cursor,last) [$vTcl(w,widget) cget -cursor]
+	set vTcl(cursor,last) [$target cget -cursor]
+        set vTcl(cursor,w) $target
 	$target configure -cursor fleur
     }
 }
@@ -76,10 +86,24 @@ proc vTcl:bind_motion {W x y} {
 proc vTcl:bind_release {W X Y x y} {
     global vTcl
 
+    if {[info exist vTcl(cursor,inside_button_1)] &&
+        $vTcl(cursor,inside_button_1)} {
+
+        # puts "oops: release button 1: $W"
+        after 500 "vTcl:bind_release $W $X $Y $x $y"
+        return
+    }
+
+    # puts "release button 1: $W"
+
     vTcl:set_mouse_coords $X $Y $x $y
 
     if {$vTcl(w,widget) == ""} {return}
-    $W configure -cursor "$vTcl(cursor,last)"
+    if {$W == $vTcl(cursor,w)} {
+        # puts "$W configure -cursor $vTcl(cursor,last)"
+        $W configure -cursor "$vTcl(cursor,last)"
+        set vTcl(cursor,w) ""
+    }
     vTcl:place_handles $vTcl(w,widget)
     vTcl:grab_release $W
     vTcl:update_widget_info $vTcl(w,widget)
