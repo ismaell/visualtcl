@@ -21,6 +21,11 @@
 ##############################################################################
 #
 
+## for Tcl/Tk 8.4
+if {![llength [info commands tkMbPost]]} {
+    ::tk::unsupported::ExposePrivateCommand tkMbPost
+}
+
 set vTcl(w,last_widget_in) ""
 set vTcl(w,last_value) ""
 

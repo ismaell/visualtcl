@@ -148,11 +148,8 @@ proc vTcl:Toplevel:WidgetProc {w args} {
         set args [lrange $args 1 end]
     }
     switch -- $command {
-        "hide" - "Hide" {
-            Window hide $w
-        }
-        "show" - "Show" {
-            Window show $w
+        "hide" - "Hide" - "show" - "Show" {
+            Window [string tolower $command] $w
         }
         "ShowModal" {
             Window show $w

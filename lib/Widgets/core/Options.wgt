@@ -120,3 +120,8 @@ NewOption -yscrollincrement	"y increment"		type
 
 ## Tooltip support
 NewOption -_tooltip             "tooltip text"          type
+
+## Tk 8.4 support
+NewOption -compound             "compound"              choice    "none bottom center left right top"
+NewOption -disabledbackground   "disabled bg"           color     {}   Colors
+NewOption -overrelief           "over relief"           relief

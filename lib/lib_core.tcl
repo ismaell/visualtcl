@@ -94,11 +94,17 @@ proc vTcl:config_balloon {target var} {
     if {$old != "" && $new == ""} {
         bind $target <<SetBalloon>> {}
         ::widgets_bindings::remove_tag_from_widget $target _vTclBalloon
-        return
+    } else {
+        bind $target <<SetBalloon>> "set ::vTcl::balloon::%W \{$new\}"
+        ::widgets_bindings::add_tag_to_widget $target _vTclBalloon
+        ::widgets_bindings::add_tag_to_tagslist _vTclBalloon
     }
-    bind $target <<SetBalloon>> "set ::vTcl::balloon::%W \{$new\}"
-    ::widgets_bindings::add_tag_to_widget $target _vTclBalloon
-    ::widgets_bindings::add_tag_to_tagslist _vTclBalloon
+
+    ## if the bindings editor is there, refresh it
+    if {[winfo exists .vTcl.bind]} {
+        ::widgets_bindings::save_current_binding
+        vTcl:get_bind $target
+    }
 }
 
 ####################################################################

@@ -1,6 +1,10 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Support for dump/copy/paste of Iwidget optionmenu
+    o Added patch from Don Porter <dgp@users.sourceforge.net> to support Tk8.4.
+      This is a short term solution until we stop using internal Tk variables
+      and commands.
     o Added "Do not show news on startup" checkbox
     o Support for copy/paste in itcl toolbar, buttonbox, checkbox, radiobox
     o Trying to compute approximate height of preferences dialog based on

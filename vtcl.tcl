@@ -25,6 +25,11 @@ exec wish "$0" "$@"
 ##############################################################################
 #
 
+## for Tcl/Tk 8.4
+if {![llength [info commands tkTextInsert]]} {
+    ::tk::unsupported::ExposePrivateCommand tkTextInsert
+}
+
 namespace eval ::vTcl {}
 
 set vTcl(sourcing) 0

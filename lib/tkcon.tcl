@@ -24,6 +24,16 @@ if {$tcl_version < 8.0} {
     package require -exact Tk $tcl_version
 }
 
+## for Tcl/Tk 8.4
+if {![llength [info globals tkPriv]]} {
+    ::tk::unsupported::ExposePrivateVariable tkPriv
+}
+foreach cmd {SetCursor UpDownLine Transpose ScrollPages} {
+    if {![llength [info commands tkText$cmd]]} {
+        ::tk::unsupported::ExposePrivateCommand tkText$cmd
+    }
+}
+
 catch {package require bogus-package-name}
 foreach pkg [info loaded {}] {
     set file [lindex $pkg 0]

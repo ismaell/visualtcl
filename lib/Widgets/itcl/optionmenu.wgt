@@ -30,10 +30,45 @@ CreateCmd	::iwidgets::optionmenu
 InsertCmd       vTcl:widget:optionmenu:inscmd
 Icon		icon_optionmenu.gif
 DumpChildren	no
+CompoundCmd     vTcl:compound:optionmenu
+DumpCmd         vTcl:dump:optionmenu
 MegaWidget	yes
 TagsCmd         vTcl:lib_itcl:tagscmd
 
 proc vTcl:widget:optionmenu:inscmd {target} {
 
     $target insert 0 {Choice 1} {Choice 2} {Choice 3}
+}
+
+proc vTcl:compound:optionmenu {target} {
+
+    set result ""
+    set last -1
+    # in fact, index end returns the number of items
+    catch {set last [$target index end]}
+
+    for {set i 0} {$i < $last} {incr i} {
+
+        set item [$target get $i]
+        append result "\$target insert end \{$item\}\n"
+    }
+
+    return $result
+}
+
+proc vTcl:dump:optionmenu {target basename} {
+
+    global vTcl
+    set result [vTcl:dump_widget_opt $target $basename]
+    set last -1
+    # in fact, index end returns the number of items
+    catch {set last [$target index end]}
+
+    for {set i 0} {$i < $last} {incr i} {
+
+        set item [$target get $i]
+        append result "$vTcl(tab)$basename insert end \{$item\}\n"
+    }
+
+    return $result
 }
