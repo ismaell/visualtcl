@@ -34,7 +34,7 @@ proc vTcl:destroy_top {target} {
     global vTcl
 
     vTcl:active_widget $target
-    vTcl:delete
+    vTcl:delete "" $target
 
     return [expr ![winfo exists $target]]
 }

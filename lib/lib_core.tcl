@@ -431,6 +431,8 @@ proc vTclWindow.vTcl.itemEdit {base} {
     vTcl:DefineAlias $base.cpd37.01.cpd38.01 ItemsListbox vTcl:WidgetProc $base 1
     vTcl:DefineAlias $base.cpd37.02.sw.c.f PropertiesFrame vTcl:WidgetProc $base 1
     vTcl:DefineAlias $base.cpd37.02.sw.c PropertiesCanvas vTcl:WidgetProc $base 1
+    vTcl:DefineAlias $base.fra34.but36 ItemsEditDelete vTcl:WidgetProc $base 1
+    vTcl:DefineAlias $base.m73.men74 ItemsEditMenuAddDelete vTcl:WidgetProc $base 1
 
     menu $base.m73 -relief flat
     $base.m73 add cascade \
@@ -713,7 +715,7 @@ namespace eval ::vTcl::itemEdit {
         foreach option $options {
             set variable ::vTcl::itemEdit::${option}_$suffix($top)
             set $variable ""
-            set f $::widget(${top},PropertiesFrame).$option
+            set f [$top.PropertiesFrame].$option
             frame $f
             set config_cmd "
                ::$cmds($top)::itemConfigure $target($top) \
@@ -738,8 +740,8 @@ namespace eval ::vTcl::itemEdit {
 
         ## calculate the scrolling region
         update idletasks
-        set w [winfo width  $::widget(${top},PropertiesFrame)]
-        set h [winfo height $::widget(${top},PropertiesFrame)]
+        set w [winfo width  [$top.PropertiesFrame]]
+        set h [winfo height [$top.PropertiesFrame]]
         ${top}.PropertiesCanvas configure -scrollregion [list 0 0 $w $h]
     }
 
@@ -836,6 +838,7 @@ namespace eval ::vTcl::itemEdit {
         vTcl:setup_bind_tree $target($top)
         selectItem $top [expr $length - 1]
         set adding($top) 0
+    	enableMenus $top
     }
 
     proc removeItem {top} {
@@ -850,6 +853,7 @@ namespace eval ::vTcl::itemEdit {
         set length [llength [::vTcl:at ::${top}::list_items]]
         set current($top) [expr $current($top) % $length]
         selectItem $top $current($top)
+	enableMenus $top
     }
 
     proc moveUpOrDown {top direction} {
@@ -867,5 +871,18 @@ namespace eval ::vTcl::itemEdit {
         set length [llength $list_items]
         set current($top) [expr ($current($top) + $offset($direction)) % $length]
         selectItem $top $current($top)
+    }
+
+    proc enableMenus {top} {
+        set length [llength [vTcl:at ::${top}::list_items]]
+
+	## if there is only one item left, we don't allow the user to delete it
+	## (it wouldn't make much sense to have a tabnotebook with no pages or a toolbar
+	##  with no buttons)
+	set enabled [expr $length > 1]
+	set state(1) normal
+	set state(0) disabled
+	$top.ItemsEditDelete configure -state $state($enabled)
+	$top.ItemsEditMenuAddDelete entryconfigure 1 -state $state($enabled)
     }
 }

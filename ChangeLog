@@ -1,7 +1,13 @@
 ChangeLog for Visual Tcl:
 
-1.6.0a1 ->
-    o Namespace'izing label and entry widgets for cleaner code
+1.6.0a1 -> 1.6.0a2
+    o Fixed tooltips bindings bug.
+    o Added tooltip option to checkbutton, radiobutton, message, scale,
+      text
+    o Megawidgets editor does not allow to delete the last subitem
+      (eg. the last column, or the last page in a tabnotebook)
+    o Added BLT Bar chart widget
+    o Namespace'izing widgets for cleaner code
     o Saving suboptions for megawidgets according to checkboxes.
     o For megawidgets, saving checkboxes for saving suboptions or not.
     o Fixed bug where setting geometry padx/y option would set regular

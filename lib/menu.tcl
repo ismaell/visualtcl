@@ -47,7 +47,7 @@ set vTcl(menu,edit) {
     {&Copy            Ctrl+C       vTcl:copy                  }
     {&Paste           Ctrl+V       vTcl:paste                 }
     {separator        {}           {}                         }
-    {&Delete          {Del}        vTcl:delete                }
+    {&Delete          {Del}        {vTcl:delete "" $vTcl(w,widget)} }
     {separator        {}           {}                         }
     {&Images...       {}           vTcl:image:prompt_image_manager }
     {&Fonts...        {}           vTcl:font:prompt_font_manager   }

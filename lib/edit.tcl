@@ -45,16 +45,18 @@ proc vTcl:cut {{w ""}} {
     if { $vTcl(w,widget) == "." } { return }
 
     vTcl:copy
-    vTcl:delete
+    vTcl:delete $w
 }
 
-proc vTcl:delete {{w ""}} {
+proc vTcl:delete {recipient {w ""}} {
     # Cut/copy/paste handled by text widget only
-    if {[vTcl:entry_or_text $w]} { return }
+    if {[vTcl:entry_or_text $recipient]} { return }
 
     global vTcl classes
 
-    set w $vTcl(w,widget)
+    if {$w == ""} {
+        set w $vTcl(w,widget)
+    }
 
     if {[lempty $w]} { return }
     if {[vTcl:streq $w "."]} { return }
@@ -74,9 +76,9 @@ proc vTcl:delete {{w ""}} {
     set top [winfo toplevel $w]
     # list widget tree without including $w (it's why the "0" parameter)
     set children [vTcl:widget_tree $w 0]
-    set parent [winfo parent $vTcl(w,widget)]
+    set parent [winfo parent $w]
 
-    set buffer [vTcl:create_compound $vTcl(w,widget)]
+    set buffer [vTcl:create_compound $w]
     set do ""
     set destroy_cmd "destroy"
     foreach child $children {
@@ -85,19 +87,19 @@ proc vTcl:delete {{w ""}} {
     if {$classes($class,deleteCmd) != ""} {
         set destroy_cmd $classes($class,deleteCmd)
     }
-    append do "vTcl:unset_alias $vTcl(w,widget); "
-    append do "vTcl:setup_unbind $vTcl(w,widget); "
-    append do "$destroy_cmd $vTcl(w,widget); "
-    append do "set _cmds \[info commands $vTcl(w,widget).*\]; "
+    append do "vTcl:unset_alias $w; "
+    append do "vTcl:setup_unbind $w; "
+    append do "$destroy_cmd $w; "
+    append do "set _cmds \[info commands $w.*\]; "
     append do {foreach _cmd $_cmds {catch {rename $_cmd ""}}}
-    set undo "vTcl:insert_compound $vTcl(w,widget) \{$buffer\} $vTcl(w,def_mgr)"
+    set undo "vTcl:insert_compound $w \{$buffer\} $vTcl(w,def_mgr)"
     vTcl:push_action $do $undo
 
     ## Destroy the widget namespace, as well as the namespaces of
     ## all it's subwidgets
     set namespaces [vTcl:namespace_tree ::widgets]
     foreach namespace $namespaces {
-        if {[string match ::widgets::$vTcl(w,widget)* $namespace]} {
+        if {[string match ::widgets::$w* $namespace]} {
             catch {namespace delete $namespace} error
         }
     }

@@ -33,6 +33,7 @@ DefaultValues   -activebackground -activeforeground -activeborderwidth \
                 -background -foreground -highlightbackground -highlightcolor
 DoubleClickCmd	vTcl:set_command
 TreeLabel	@vTcl::widgets::core::radiobutton::getWidgetTreeLabel
+ClassOption     -_tooltip
 
 Function        "Set Variable" vTcl::widgets::core::radiobutton::setVariable
 Function        "Set Value"    vTcl::widgets::core::radiobutton::setValue

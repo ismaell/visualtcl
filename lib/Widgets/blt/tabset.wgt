@@ -120,8 +120,15 @@ namespace eval vTcl::widgets::blt::tabset::edit {
     }
 
     proc removeItem {target index} {
+        set innerFrame [$target tab cget [$target get $index] -window]
         $target delete $index
-        vTcl:init_wtree
+
+        ## if there is a frame, destroy it
+	if {$innerFrame != ""} {
+	    vTcl:delete "" $innerFrame
+	}
+
+	## vTcl:delete will refresh the widget tree
     }
 
     proc itemConfigure {target index args} {

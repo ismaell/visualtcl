@@ -31,6 +31,7 @@ DefaultOptions	-text message -width 70
 DefaultValues   -background -foreground
 DoubleClickCmd	vTcl:set_text
 TreeLabel	@vTcl::widgets::core::message::getWidgetTreeLabel
+ClassOption     -_tooltip
 
 Function	"Set Text"	vTcl::widgets::core::message::setText
 

@@ -387,7 +387,7 @@ proc vTclWindow.vTcl {args} {
 	vTcl:paste -mouse
     } -accel "Ctrl+V"
     $vTcl(gui,rc_menu) add comm -label "Delete" -comm {
-	vTcl:delete
+	vTcl:delete "" $vTcl(w,widget)
     } -accel "Del"
 
     $vTcl(gui,rc_menu) add separator
@@ -488,7 +488,7 @@ proc vTcl:define_bindings {} {
         bind vTcl($i) <Control-s>  { vTcl:save }
         bind vTcl($i) <Control-w>  { vTcl:close }
 	bind vTcl($i) <Control-h>  { vTcl:hide }
-        bind vTcl($i) <Key-Delete> { vTcl:delete %W }
+        bind vTcl($i) <Key-Delete> { vTcl:delete %W $vTcl(w,widget) }
         bind vTcl($i) <Alt-a>      { vTcl:set_alias $vTcl(w,widget) }
         bind vTcl($i) <Alt-f>      { vTcl:proclist:show flip }
         bind vTcl($i) <Alt-o>      { vTcl:toplist:show flip }

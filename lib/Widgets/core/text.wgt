@@ -32,6 +32,7 @@ TreeLabel	Text Widget
 DefaultOptions  -background white
 DefaultValues   -foreground -highlightbackground -highlightcolor \
                 -selectbackground -selectforeground -font
+ClassOption     -_tooltip
 
 namespace eval vTcl::widgets::core::text {
 

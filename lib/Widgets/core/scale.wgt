@@ -30,6 +30,7 @@ TreeLabel	@vTcl::widgets::core::scale::getWidgetTreeLabel
 InsertCmd	vTcl::widgets::core::scale::insertCmd
 DefaultValues   -activebackground -background -foreground \
                 -highlightbackground -highlightcolor -troughcolor
+ClassOption     -_tooltip
 
 ## Special proc for setting up icons on the toolbar.
 proc vTcl:Scale:ToolBarSetup {} {

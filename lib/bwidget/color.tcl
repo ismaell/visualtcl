@@ -37,6 +37,10 @@ proc SelectColor::menu {path placement args} {
     variable _selectype
     variable _selection
 
+    # menu already exists ? shouldn't, but you never know...
+    if {[winfo exists $path]} {
+        destroy $path
+    }
     Widget::init SelectColor $path $args
     set top [::menu $path]
     wm withdraw  $top

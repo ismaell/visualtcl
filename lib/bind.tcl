@@ -786,7 +786,8 @@ namespace eval ::widgets_bindings {
 
     proc {::widgets_bindings::add_tag_to_widget} {target tag} {
         # target has tag in its list ?
-        if {[lsearch -exact ::vTcl(bindtags,$target) $tag] == -1} {
+	set result [lsearch -exact $::vTcl(bindtags,$target) $tag]
+        if {$result == -1} {
             lappend ::vTcl(bindtags,$target) $tag
         }
     }
