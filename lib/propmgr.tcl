@@ -291,6 +291,7 @@ proc vTcl:prop:geom_config_mgr {target option variable value args} {
         $mgr configure $target $option $value
     }
     vTcl:setup_bind_widget $target
+    ::vTcl::notify::publish geom_config_mgr $target $mgr $option
 }
 
 proc vTcl:prop:geom_config_cmd {target option variable value args} {
@@ -304,6 +305,7 @@ proc vTcl:prop:geom_config_cmd {target option variable value args} {
         $cmd $target $option $value
     }
     vTcl:setup_bind_widget $target
+    ::vTcl::notify::publish geom_config_cmd $target $cmd $option
 }
 
 proc vTcl:prop:update_attr {} {

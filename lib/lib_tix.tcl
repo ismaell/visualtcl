@@ -44,10 +44,8 @@ proc vTcl:widget:lib:lib_tix {args} {
     vTcl:lib:add_widgets_to_toolbar $order
 
     append vTcl(head,tix,importheader) {
-    # Check if Tix is available
-    if {[lsearch -exact $packageNames Tix] != -1} {
-	package require Tix
-    }
+    # Tix is required
+    package require Tix
     }
 }
 

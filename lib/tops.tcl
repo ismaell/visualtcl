@@ -212,4 +212,17 @@ proc vTclWindow.vTcl.toplist {args} {
         # stop event processing here
         break
     }
+
+    # when the title option changes in the attributes editor, we want
+    # to know about it
+    ::vTcl::notify::subscribe geom_config_cmd tops ::vTcl::tops::geom_config_event
+}
+
+namespace eval ::vTcl::tops {
+
+    proc geom_config_event {id target cmd option} {
+        if {$cmd == "vTcl:wm:conf_title" && $option == "title"} {
+            vTcl:update_top_list
+	}
+    }
 }

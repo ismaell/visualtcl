@@ -5,37 +5,54 @@ Class               TixLabelFrame
 Icon                icon_tixLabelFrame.gif
 TreeLabel           Tix LabelFrame
 DefaultOptions      -label "Label"
-DumpCmd             vTcl:dump:TixLabelFrame
+DumpCmd             ::vTcl::widgets::tix::tixLabelFrame::dumpCmd
+DumpInfoCmd         ::vTcl::widgets::tix::tixLabelFrame::dumpInfoCmd
 DumpChildren        no
 MegaWidget          yes
-InsertCmd           vTcl:widget:tixLabelFrame:inscmd
-TreeChildrenCmd     "vTcl:widget:tixLabelFrame:treeChildrenCmd \
-                     vTcl:widget:tixLabelFrame:treeChildrenChildsite"
+InsertCmd           ::vTcl::widgets::tix::tixLabelFrame::insertCmd
+TreeChildrenCmd     "::vTcl::widgets::tix::tixLabelFrame::treeChildrenCmd \
+                     ::vTcl::widgets::tix::tixLabelFrame::treeChildrenChildsite"
 
-proc vTcl:widget:tixLabelFrame:inscmd {target} {
-    $target subwidget frame configure -width 30 -height 20
-}
+namespace eval ::vTcl::widgets::tix::tixLabelFrame {
 
-proc vTcl:widget:tixLabelFrame:treeChildrenCmd {target {diff \#-1}} {
-
-    set children ""
-    set wantsdiff [expr {$diff != ""}]
-
-    foreach child [vTcl:complete_widget_tree [$target subwidget frame] $wantsdiff] {
-        lappend children $child$diff
+    proc insertCmd {target} {
+        $target subwidget frame configure -width 30 -height 20
     }
 
-    return $children
+    proc treeChildrenCmd {target {diff \#-1}} {
+        set children ""
+        set wantsdiff [expr {$diff != ""}]
+
+        foreach child [vTcl:complete_widget_tree [$target subwidget frame] $wantsdiff] {
+            lappend children $child$diff
+        }
+
+        return $children
+    }
+
+    proc treeChildrenChildsite {target} {
+        return [$target subwidget frame]
+    }
+
+    proc dumpCmd {target basename} {
+        global vTcl
+        set result [vTcl:dump_widget_opt $target $basename]
+        set page   [$target subwidget frame]
+        set sitevariable "site_[llength [split $page .]]_0"
+        append result "$vTcl(tab)set $sitevariable "
+        append result "\[$basename subwidget frame\]\n"
+        append result [vTcl:lib_tix:dump_subwidgets $page \$$sitevariable]
+    }
+
+    proc dumpInfoCmd {target basename} {
+        global vTcl classes
+        set result [vTcl:dump:widget_info $target $basename]
+        set page   [$target subwidget frame]
+        set sitevariable "site_[llength [split $page .]]_0"
+        append result "$vTcl(tab)set $sitevariable "
+        append result "\[$basename subwidget frame\]\n"
+        append result [$classes(Frame,dumpInfoCmd) $page \$$sitevariable]
+
+        return $result
+    }
 }
-
-proc vTcl:widget:tixLabelFrame:treeChildrenChildsite {target} {
-
-    return [$target subwidget frame]
-}
-
-proc vTcl:dump:TixLabelFrame {target basename} {
-    set output [vTcl:dump_widget_opt $target $basename]
-    append output [vTcl:lib_tix:dump_subwidgets [$target subwidget frame]]
-    return $output
-}
-
