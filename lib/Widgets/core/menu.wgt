@@ -97,7 +97,7 @@ namespace eval vTcl::widgets::core::menu {
     proc getOption {target option} {
         set result {}
         set size [$target index end]
-        if {[vTcl:streq $size "none"]} { continue }
+        if {[vTcl:streq $size "none"]} { return {} }
         for {set i 0} {$i <= $size} {incr i} {
 	    if {![catch {$target entrycget $i $option} value]} {
                 lappend result $value

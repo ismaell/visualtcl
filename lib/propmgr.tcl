@@ -300,10 +300,12 @@ proc vTcl:prop:geom_config_cmd {target option variable value args} {
 
 proc vTcl:prop:update_attr {} {
     global vTcl options specialOpts
+    set ae $vTcl(gui,ae)
+    if {![winfo exists $ae]} {return}
+
     if {$vTcl(var_update) == "no"} {
         return
     }
-
     if {[vTcl:streq $vTcl(w,widget) "."]} {
     	vTcl:prop:clear
 	return
