@@ -47,54 +47,45 @@ proc vTclWindow.vTcl.prefs {{base ""}} {
         -highlightbackground #bcbcbc -highlightcolor #000000 -relief sunken \
         -width 125 
     label $base.fra18.lab32 \
-        -font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1 \
         -foreground #000000 -highlightbackground #bcbcbc \
         -highlightcolor #000000 -relief raised -text {The Basics} 
     checkbutton $base.fra18.che33 \
         -activebackground #bcbcbc -activeforeground #000000 -anchor w \
-        -font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1 \
         -foreground #000000 -highlightbackground #bcbcbc \
         -highlightcolor #000000 -highlightthickness 0 \
         -text {Use Balloon Help} -variable vTcl(pr,balloon) 
     checkbutton $base.fra18.che34 \
         -activebackground #bcbcbc -activeforeground #000000 -anchor w \
-        -font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1 \
         -foreground #000000 -highlightbackground #bcbcbc \
         -highlightcolor #000000 -highlightthickness 0 \
         -text {Ask for Widget name on insert} -variable vTcl(pr,getname) 
     checkbutton $base.fra18.che35 \
         -activebackground #bcbcbc -activeforeground #000000 -anchor w \
-        -font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1 \
         -foreground #000000 -highlightbackground #bcbcbc \
         -highlightcolor #000000 -highlightthickness 0 \
         -text {Save verbose widget configuration} -variable vTcl(pr,fullcfg) 
     checkbutton $base.fra18.che36 \
         -activebackground #bcbcbc -activeforeground #000000 -anchor w \
-        -font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1 \
         -foreground #000000 -highlightbackground #bcbcbc \
         -highlightcolor #000000 -highlightthickness 0 \
         -text {Short automatic widget names} -variable vTcl(pr,shortname) 
     checkbutton $base.fra18.che37 \
         -activebackground #bcbcbc -activeforeground #000000 -anchor w \
-        -font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1 \
         -foreground #000000 -highlightbackground #bcbcbc \
         -highlightcolor #000000 -highlightthickness 0 \
         -text {Save global variable values} -variable vTcl(pr,saveglob) 
     checkbutton $base.fra18.che39 \
         -activebackground #bcbcbc -activeforeground #000000 -anchor w \
-        -font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1 \
         -foreground #000000 -highlightbackground #bcbcbc \
         -highlightcolor #000000 -highlightthickness 0 \
         -text {Window focus selects window} -variable vTcl(pr,winfocus) 
     checkbutton $base.fra18.che40 \
         -activebackground #bcbcbc -activeforeground #000000 -anchor w \
-        -font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1 \
         -foreground #000000 -highlightbackground #bcbcbc \
         -highlightcolor #000000 -highlightthickness 0 \
         -text {Window focus selects window} -variable vTcl(pr,winfocus) 
     checkbutton $base.fra18.che41 \
         -activebackground #bcbcbc -activeforeground #000000 -anchor w \
-        -font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1 \
         -foreground #000000 -highlightbackground #bcbcbc \
         -highlightcolor #000000 -highlightthickness 0 \
         -text {Auto load compounds} -variable vTcl(pr,autoloadcomp) \
@@ -113,12 +104,10 @@ proc vTclWindow.vTcl.prefs {{base ""}} {
         -highlightbackground #bcbcbc -highlightcolor #000000 -width 30 
     label $base.fra18.cpd17.01 \
         -anchor w \
-        -font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1 \
         -foreground #000000 -highlightbackground #bcbcbc \
         -highlightcolor #000000 -text File: 
     entry $base.fra18.cpd17.02 \
         -cursor {} \
-        -font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1 \
         -foreground #000000 -highlightbackground #f3f3f3 \
         -highlightcolor #000000 -highlightthickness 0 \
         -selectbackground #000080 -selectforeground #ffffff \
@@ -128,24 +117,19 @@ proc vTclWindow.vTcl.prefs {{base ""}} {
         -highlightbackground #bcbcbc -highlightcolor #000000 -relief sunken \
         -width 30 
     label $base.fra20.lab22 \
-        -font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1 \
         -foreground #000000 -highlightbackground #bcbcbc \
         -highlightcolor #000000 -relief raised -text {Font Settings} 
     label $base.fra20.lab23 \
-        -font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1 \
         -foreground #000000 -highlightbackground #bcbcbc \
         -highlightcolor #000000 -relief raised -text Dialog -width 7 
     label $base.fra20.lab24 \
-        -font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1 \
         -foreground #000000 -highlightbackground #bcbcbc \
         -highlightcolor #000000 -relief raised -text Fixed -width 7 
     entry $base.fra20.ent25 \
-        -font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1 \
         -foreground #000000 -highlightbackground #f3f3f3 \
         -highlightcolor #000000 -selectbackground #000080 \
         -selectforeground #ffffff -textvariable vTcl(pr,font_dlg) -width 8 
     entry $base.fra20.ent26 \
-        -font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1 \
         -foreground #000000 -highlightbackground #f3f3f3 \
         -highlightcolor #000000 -selectbackground #000080 \
         -selectforeground #ffffff -textvariable vTcl(pr,font_fixed) -width 8 
@@ -157,46 +141,38 @@ proc vTclWindow.vTcl.prefs {{base ""}} {
         -highlightbackground #bcbcbc -highlightcolor #000000 -relief sunken \
         -width 30 
     label $base.fra21.lab41 \
-        -font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1 \
         -foreground #000000 -highlightbackground #bcbcbc \
         -highlightcolor #000000 -relief raised -text {Default Manager} 
     radiobutton $base.fra21.rad42 \
         -activebackground #bcbcbc -activeforeground #000000 -anchor w \
-        -font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1 \
         -foreground #000000 -highlightbackground #bcbcbc \
         -highlightcolor #000000 -highlightthickness 0 -text Grid -value grid \
         -variable vTcl(pr,manager) -width 5 
     radiobutton $base.fra21.rad43 \
         -activebackground #bcbcbc -activeforeground #000000 -anchor w \
-        -font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1 \
         -foreground #000000 -highlightbackground #bcbcbc \
         -highlightcolor #000000 -highlightthickness 0 -text Pack -value pack \
         -variable vTcl(pr,manager) -width 5 
     radiobutton $base.fra21.rad44 \
         -activebackground #bcbcbc -activeforeground #000000 -anchor w \
-        -font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1 \
         -foreground #000000 -highlightbackground #bcbcbc \
         -highlightcolor #000000 -highlightthickness 0 -text Place \
         -value place -variable vTcl(pr,manager) -width 5 
     label $base.fra21.lab18 \
-        -font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1 \
         -foreground #000000 -highlightbackground #bcbcbc \
         -highlightcolor #000000 -relief raised -text {Option Encaps} 
     radiobutton $base.fra21.rad19 \
         -activebackground #bcbcbc -activeforeground #000000 -anchor w \
-        -font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1 \
         -foreground #000000 -highlightbackground #bcbcbc \
         -highlightcolor #000000 -highlightthickness 0 -text List -value list \
         -variable vTcl(pr,encase) -width 5 
     radiobutton $base.fra21.rad20 \
         -activebackground #bcbcbc -activeforeground #000000 -anchor w \
-        -font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1 \
         -foreground #000000 -highlightbackground #bcbcbc \
         -highlightcolor #000000 -highlightthickness 0 -text Braces \
         -value brace -variable vTcl(pr,encase) -width 5 
     radiobutton $base.fra21.rad21 \
         -activebackground #bcbcbc -activeforeground #000000 -anchor w \
-        -font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1 \
         -foreground #000000 -highlightbackground #bcbcbc \
         -highlightcolor #000000 -highlightthickness 0 -text Quotes \
         -value quote -variable vTcl(pr,encase) -width 5 
@@ -210,7 +186,6 @@ proc vTclWindow.vTcl.prefs {{base ""}} {
     button $base.fra23.but18 \
         -activebackground #bcbcbc -activeforeground #000000 \
         -command {wm withdraw .vTcl.prefs} \
-        -font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1 \
         -foreground #000000 -highlightbackground #bcbcbc \
         -highlightcolor #000000 -highlightthickness 0 -padx 9 -pady 3 \
         -text OK 
@@ -218,15 +193,12 @@ proc vTclWindow.vTcl.prefs {{base ""}} {
         -borderwidth 1 \
         -highlightbackground #bcbcbc -highlightcolor #000000 -relief sunken
     label $base.fra22.lab0 \
-        -font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1 \
         -foreground #000000 -highlightbackground #bcbcbc \
         -highlightcolor #000000 -relief raised -text {Helper applications} 
     label $base.fra22.lab1 \
-        -font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1 \
         -text "Editor for images:"
     entry $base.fra22.ent1 \
         -cursor {} \
-        -font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1 \
         -foreground #000000 -highlightbackground #f3f3f3 \
         -selectbackground #000080 -selectforeground #ffffff \
         -textvariable vTcl(pr,imageeditor)
@@ -384,15 +356,12 @@ proc vTclWindow.vTcl.infolibs {{base ""} {container 0}} {
     frame $base.cpd39 \
         -borderwidth 1 -height 30 -relief raised -width 30 
     listbox $base.cpd39.01 \
-        -font -Adobe-Helvetica-Medium-R-Normal-*-*-120-*-*-*-*-*-* -height 0 \
         -width 0 -xscrollcommand "$base.cpd39.02 set" \
         -yscrollcommand "$base.cpd39.03 set"
     scrollbar $base.cpd39.02 \
-        -borderwidth 1 -command "$base.cpd39.01 xview" -orient horiz \
-        -width 10 
+        -borderwidth 1 -command "$base.cpd39.01 xview" -orient horiz
     scrollbar $base.cpd39.03 \
-        -borderwidth 1 -command "$base.cpd39.01 yview" -orient vert \
-        -width 10 
+        -borderwidth 1 -command "$base.cpd39.01 yview" -orient vert
     button $base.but40 \
         -padx 9 -pady 3 -text Close -command {wm withdraw .vTcl.infolibs}
     ###################
