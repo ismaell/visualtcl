@@ -83,6 +83,8 @@ proc vTcl:set_font {which widget option} {
             $widget conf -font [list $base $size $style]
         }
     }
+    set vTcl(w,opt,-font) [$widget cget -font]
+    vTcl:prop:save_opt $widget -font vTcl(w,opt,-font)
 }
 
 proc vTcl:widget_set_relief {relief} {

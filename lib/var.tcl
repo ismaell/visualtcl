@@ -507,39 +507,25 @@ proc vTclWindow.vTcl.inspector {base {container 0}} {
     global widget
     set widget(rev,$base.cpd26.01.cpd27.01) {InspectorListbox}
     set {widget(InspectorListbox)} "$base.cpd26.01.cpd27.01"
-    set widget(Toplevel1,InspectorListbox) "$base.cpd26.01.cpd27.01"
     interp alias {} InspectorListbox {} vTcl:WidgetProc $base.cpd26.01.cpd27.01
-    interp alias {} Toplevel1.InspectorListbox {} vTcl:WidgetProc $base.cpd26.01.cpd27.01
     set widget(rev,$base.cpd26.02.cpd28.03) {InspectorValue}
     set {widget(InspectorValue)} "$base.cpd26.02.cpd28.03"
-    set widget(Toplevel1,InspectorValue) "$base.cpd26.02.cpd28.03"
     interp alias {} InspectorValue {} vTcl:WidgetProc $base.cpd26.02.cpd28.03
-    interp alias {} Toplevel1.InspectorValue {} vTcl:WidgetProc $base.cpd26.02.cpd28.03
     set widget(rev,$base.cpd26.02.ent24) {InspectorItem}
     set {widget(InspectorItem)} "$base.cpd26.02.ent24"
-    set widget(Toplevel1,InspectorItem) "$base.cpd26.02.ent24"
     interp alias {} InspectorItem {} vTcl:WidgetProc $base.cpd26.02.ent24
-    interp alias {} Toplevel1.InspectorItem {} vTcl:WidgetProc $base.cpd26.02.ent24
     set widget(rev,$base.cpd26.02.ent26) {InspectorArguments}
     set {widget(InspectorArguments)} "$base.cpd26.02.ent26"
-    set widget(Toplevel1,InspectorArguments) "$base.cpd26.02.ent26"
     interp alias {} InspectorArguments {} vTcl:WidgetProc $base.cpd26.02.ent26
-    interp alias {} Toplevel1.InspectorArguments {} vTcl:WidgetProc $base.cpd26.02.ent26
     set widget(rev,$base.cpd26.02.lab22) {InspectorItemLabel}
     set {widget(InspectorItemLabel)} "$base.cpd26.02.lab22"
-    set widget(Toplevel1,InspectorItemLabel) "$base.cpd26.02.lab22"
     interp alias {} InspectorItemLabel {} vTcl:WidgetProc $base.cpd26.02.lab22
-    interp alias {} Toplevel1.InspectorItemLabel {} vTcl:WidgetProc $base.cpd26.02.lab22
     set widget(rev,$base.cpd26.02.lab25) {InspectorArgumentsLabel}
     set {widget(InspectorArgumentsLabel)} "$base.cpd26.02.lab25"
-    set widget(Toplevel1,InspectorArgumentsLabel) "$base.cpd26.02.lab25"
     interp alias {} InspectorArgumentsLabel {} vTcl:WidgetProc $base.cpd26.02.lab25
-    interp alias {} Toplevel1.InspectorArgumentsLabel {} vTcl:WidgetProc $base.cpd26.02.lab25
     set widget(rev,$base.cpd26.02.lab27) {InspectorValueLabel}
     set {widget(InspectorValueLabel)} "$base.cpd26.02.lab27"
-    set widget(Toplevel1,InspectorValueLabel) "$base.cpd26.02.lab27"
     interp alias {} InspectorValueLabel {} vTcl:WidgetProc $base.cpd26.02.lab27
-    interp alias {} Toplevel1.InspectorValueLabel {} vTcl:WidgetProc $base.cpd26.02.lab27
 
     ###################
     # CREATING WIDGETS

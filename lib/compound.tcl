@@ -451,6 +451,8 @@ proc vTcl:gen_compound {target {name ""} {cmpdname ""}} {
 
     foreach i [vTcl:get_children $target] {
 
+      if {[string match {*#*} $i]} {continue}
+
       # change cy CGavin to retain children names
       # while creating a compound
       set windowpath [split $i .]
