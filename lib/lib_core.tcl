@@ -606,4 +606,71 @@ proc vTcl:edit_menu {target} {
     vTcl:menu_setup $base $target
 }
 
+set vTcl(Radiobutton,get_widget_tree_label) vtcl:core:get_widget_tree_label
+set vTcl(Checkbutton,get_widget_tree_label) vtcl:core:get_widget_tree_label
+set vTcl(Button,get_widget_tree_label)      vtcl:core:get_widget_tree_label
+set vTcl(Label,get_widget_tree_label)       vtcl:core:get_widget_tree_label
 
+proc vtcl:core:get_widget_tree_label {class {target ""}} {
+
+	set t ""
+	
+	switch [string tolower $class] {
+
+	   label {
+                    set ttt1 [$target cget -text]
+                    set ttt2 [$target cget -textvariable]
+
+                    if {$ttt2 == ""} {
+                          set t "LAB: $ttt1"
+                    } else {
+                          set t "LAB: $ttt1 var=$ttt2"
+                    }
+                                
+           }
+                                		
+           radiobutton {
+  
+  	            set ttt1 [$target cget -text]
+                    set ttt2 [$target cget -variable]
+                    set ttt3 [$target cget -value]
+   
+                    if {$ttt2 == ""} {
+                          set t "RB: $ttt1"
+                    } else {
+                          set t "RB: $ttt1 var=$ttt2\(val=$ttt3\)"
+                    }
+                                
+           }
+ 
+           checkbutton {
+ 
+                    set ttt1 [$target cget -text]
+                    set ttt2 [$target cget -variable]
+                    set ttt3 [$target cget -onvalue]
+                    set ttt4 [$target cget -offvalue]
+  
+                    if {$ttt2 == ""} {
+                           set t "CB: $ttt1"
+                    } else {
+                           set t "CB: $ttt1 var=$ttt2\(on=$ttt3,off=$ttt4\)"
+                    }
+           }
+           
+	   button {
+                    set ttt1 [$target cget -text]
+                    set ttt2 [$target cget -textvariable]
+
+                    if {$ttt2 == ""} {
+                           set t "BUT: $ttt1"
+                    } else {
+                           set t "BUT: $ttt1 var=$ttt2"
+                    }
+                                
+           }
+           
+           default {}
+        }
+
+	return $t    
+}
