@@ -130,6 +130,28 @@ proc vTcl:image:broken_image {} {
 
 foreach img {
 
+        {{[file join / home cgavin vtcl images edit copy.gif]} {} stock {
+R0lGODdhFAAUAPcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwMDcwKbK8AAA
+AAAAKgAAVQAAfwAAqgAA1AAqAAAqKgAqVQAqfwAqqgAq1ABVAABVKgBVVQBV
+fwBVqgBV1AB/AAB/KgB/VQB/fwB/qgB/1ACqAACqKgCqVQCqfwCqqgCq1ADU
+AADUKgDUVQDUfwDUqgDU1CoAACoAKioAVSoAfyoAqioA1CoqACoqKioqVSoq
+fyoqqioq1CpVACpVKipVVSpVfypVqipV1Cp/ACp/Kip/VSp/fyp/qip/1Cqq
+ACqqKiqqVSqqfyqqqiqq1CrUACrUKirUVSrUfyrUqirU1FUAAFUAKlUAVVUA
+f1UAqlUA1FUqAFUqKlUqVVUqf1UqqlUq1FVVAFVVKlVVVVVVf1VVqlVV1FV/
+AFV/KlV/VVV/f1V/qlV/1FWqAFWqKlWqVVWqf1WqqlWq1FXUAFXUKlXUVVXU
+f1XUqlXU1H8AAH8AKn8AVX8Af38Aqn8A1H8qAH8qKn8qVX8qf38qqn8q1H9V
+AH9VKn9VVX9Vf39Vqn9V1H9/AH9/Kn9/VX9/f39/qn9/1H+qAH+qKn+qVX+q
+f3+qqn+q1H/UAH/UKn/UVX/Uf3/Uqn/U1KoAAKoAKqoAVaoAf6oAqqoA1Koq
+AKoqKqoqVaoqf6oqqqoq1KpVAKpVKqpVVapVf6pVqqpV1Kp/AKp/Kqp/Vap/
+f6p/qqp/1KqqAKqqKqqqVaqqf6qqqqqq1KrUAKrUKqrUVarUf6rUqqrU1NQA
+ANQAKtQAVdQAf9QAqtQA1NQqANQqKtQqVdQqf9QqqtQq1NRVANRVKtRVVdRV
+f9RVqtRV1NR/ANR/KtR/VdR/f9R/qtR/1NSqANSqKtSqVdSqf9SqqtSq1NTU
+ANTUKtTUVdTUf9TUqtTU1AAAAAwMDBkZGSYmJjMzMz8/P0xMTFlZWWZmZnJy
+cn9/f4yMjJmZmaWlpbKysr+/v8zMzNjY2OXl5fLy8v/78KCgpICAgP8AAAD/
+AP//AAAA//8A/wD//////ywAAAAAFAAUAAAIcwDnCRxIsKDBgwgN4lu4EEDC
+gvj+SfwHwOFDgREnAqB4cV7Eiv8YNkyYUSI+bii5VUT4seLJlBstQpwYUiUA
+mytnVgTwMiVKmQNL1txZUaVCii59wjw68STRm0AFPu3pM6pCnEWtQlT68+JT
+oh3Dih37MCAAOw==}}
         {{[file join / home cgavin vtcl images edit add.gif]} {} stock {
 R0lGODdhFAAUAPcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwMDcwKbK8AAA
 AAAAKgAAVQAAfwAAqgAA1AAqAAAqKgAqVQAqfwAqqgAq1ABVAABVKgBVVQBV
@@ -172,6 +194,92 @@ cn9/f4yMjJmZmaWlpbKysr+/v8zMzNjY2OXl5fLy8v/78KCgpICAgP8AAAD/
 AP//AAAA//8A/wD//////ywAAAAAFAAUAAAITADnCRxIsKDBgwgTKkQYIMA/
 hg4NNmz4kCBFiBcFZkw48WHEhRonfgQ5ryPJkCZBmtyIsWLJkRJZlnQZE6ZG
 mgVtDtR5sqfPn0B/BgQAOw==}}
+        {{[file join / home cgavin vtcl images edit cut.gif]} {} stock {
+R0lGODdhFAAUAPcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwMDcwKbK8AAA
+AAAAKgAAVQAAfwAAqgAA1AAqAAAqKgAqVQAqfwAqqgAq1ABVAABVKgBVVQBV
+fwBVqgBV1AB/AAB/KgB/VQB/fwB/qgB/1ACqAACqKgCqVQCqfwCqqgCq1ADU
+AADUKgDUVQDUfwDUqgDU1CoAACoAKioAVSoAfyoAqioA1CoqACoqKioqVSoq
+fyoqqioq1CpVACpVKipVVSpVfypVqipV1Cp/ACp/Kip/VSp/fyp/qip/1Cqq
+ACqqKiqqVSqqfyqqqiqq1CrUACrUKirUVSrUfyrUqirU1FUAAFUAKlUAVVUA
+f1UAqlUA1FUqAFUqKlUqVVUqf1UqqlUq1FVVAFVVKlVVVVVVf1VVqlVV1FV/
+AFV/KlV/VVV/f1V/qlV/1FWqAFWqKlWqVVWqf1WqqlWq1FXUAFXUKlXUVVXU
+f1XUqlXU1H8AAH8AKn8AVX8Af38Aqn8A1H8qAH8qKn8qVX8qf38qqn8q1H9V
+AH9VKn9VVX9Vf39Vqn9V1H9/AH9/Kn9/VX9/f39/qn9/1H+qAH+qKn+qVX+q
+f3+qqn+q1H/UAH/UKn/UVX/Uf3/Uqn/U1KoAAKoAKqoAVaoAf6oAqqoA1Koq
+AKoqKqoqVaoqf6oqqqoq1KpVAKpVKqpVVapVf6pVqqpV1Kp/AKp/Kqp/Vap/
+f6p/qqp/1KqqAKqqKqqqVaqqf6qqqqqq1KrUAKrUKqrUVarUf6rUqqrU1NQA
+ANQAKtQAVdQAf9QAqtQA1NQqANQqKtQqVdQqf9QqqtQq1NRVANRVKtRVVdRV
+f9RVqtRV1NR/ANR/KtR/VdR/f9R/qtR/1NSqANSqKtSqVdSqf9SqqtSq1NTU
+ANTUKtTUVdTUf9TUqtTU1AAAAAwMDBkZGSYmJjMzMz8/P0xMTFlZWWZmZnJy
+cn9/f4yMjJmZmaWlpbKysr+/v8zMzNjY2OXl5fLy8v/78KCgpICAgP8AAAD/
+AP//AAAA//8A/wD//////ywAAAAAFAAUAAAIXQDnCRxIsKDBgwgT4sMHYB7D
+hAYfPoRYkOFEigMXXsQocGFDjgQ3cixyoMhHkCZNgpxXJKVKjP9aAij5EmJK
+ADFlUrwpE0DNgzdZzvxpMChLnTYBnFR6cqXTpxwDAgA7}}
+        {{[file join / home cgavin vtcl images edit paste.gif]} {} stock {
+R0lGODdhFAAUAPcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwMDcwKbK8AAA
+AAAAKgAAVQAAfwAAqgAA1AAqAAAqKgAqVQAqfwAqqgAq1ABVAABVKgBVVQBV
+fwBVqgBV1AB/AAB/KgB/VQB/fwB/qgB/1ACqAACqKgCqVQCqfwCqqgCq1ADU
+AADUKgDUVQDUfwDUqgDU1CoAACoAKioAVSoAfyoAqioA1CoqACoqKioqVSoq
+fyoqqioq1CpVACpVKipVVSpVfypVqipV1Cp/ACp/Kip/VSp/fyp/qip/1Cqq
+ACqqKiqqVSqqfyqqqiqq1CrUACrUKirUVSrUfyrUqirU1FUAAFUAKlUAVVUA
+f1UAqlUA1FUqAFUqKlUqVVUqf1UqqlUq1FVVAFVVKlVVVVVVf1VVqlVV1FV/
+AFV/KlV/VVV/f1V/qlV/1FWqAFWqKlWqVVWqf1WqqlWq1FXUAFXUKlXUVVXU
+f1XUqlXU1H8AAH8AKn8AVX8Af38Aqn8A1H8qAH8qKn8qVX8qf38qqn8q1H9V
+AH9VKn9VVX9Vf39Vqn9V1H9/AH9/Kn9/VX9/f39/qn9/1H+qAH+qKn+qVX+q
+f3+qqn+q1H/UAH/UKn/UVX/Uf3/Uqn/U1KoAAKoAKqoAVaoAf6oAqqoA1Koq
+AKoqKqoqVaoqf6oqqqoq1KpVAKpVKqpVVapVf6pVqqpV1Kp/AKp/Kqp/Vap/
+f6p/qqp/1KqqAKqqKqqqVaqqf6qqqqqq1KrUAKrUKqrUVarUf6rUqqrU1NQA
+ANQAKtQAVdQAf9QAqtQA1NQqANQqKtQqVdQqf9QqqtQq1NRVANRVKtRVVdRV
+f9RVqtRV1NR/ANR/KtR/VdR/f9R/qtR/1NSqANSqKtSqVdSqf9SqqtSq1NTU
+ANTUKtTUVdTUf9TUqtTU1AAAAAwMDBkZGSYmJjMzMz8/P0xMTFlZWWZmZnJy
+cn9/f4yMjJmZmaWlpbKysr+/v8zMzNjY2OXl5fLy8v/78KCgpICAgP8AAAD/
+AP//AAAA//8A/wD//////ywAAAAAFAAUAAAIeADnCRxIsKDBgwgTzgPAEIDC
+gfgiAvj3D0BEfAnxUZzIsOJGhBon/rso0eHBkAzxcVvJjSFIihRVsuR4EubI
+lgBwuiyoEaZMlitNEuwZUyfDlgaJ3gQaNKlNlQ2PCoX4lGlTnlWj5pw6MOpP
+oFwNao36sKzZs2cDAgA7}}
+        {{[file join / home cgavin vtcl images edit new.gif]} {} stock {
+R0lGODdhFAAUAPcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwMDcwKbK8AAA
+AAAAKgAAVQAAfwAAqgAA1AAqAAAqKgAqVQAqfwAqqgAq1ABVAABVKgBVVQBV
+fwBVqgBV1AB/AAB/KgB/VQB/fwB/qgB/1ACqAACqKgCqVQCqfwCqqgCq1ADU
+AADUKgDUVQDUfwDUqgDU1CoAACoAKioAVSoAfyoAqioA1CoqACoqKioqVSoq
+fyoqqioq1CpVACpVKipVVSpVfypVqipV1Cp/ACp/Kip/VSp/fyp/qip/1Cqq
+ACqqKiqqVSqqfyqqqiqq1CrUACrUKirUVSrUfyrUqirU1FUAAFUAKlUAVVUA
+f1UAqlUA1FUqAFUqKlUqVVUqf1UqqlUq1FVVAFVVKlVVVVVVf1VVqlVV1FV/
+AFV/KlV/VVV/f1V/qlV/1FWqAFWqKlWqVVWqf1WqqlWq1FXUAFXUKlXUVVXU
+f1XUqlXU1H8AAH8AKn8AVX8Af38Aqn8A1H8qAH8qKn8qVX8qf38qqn8q1H9V
+AH9VKn9VVX9Vf39Vqn9V1H9/AH9/Kn9/VX9/f39/qn9/1H+qAH+qKn+qVX+q
+f3+qqn+q1H/UAH/UKn/UVX/Uf3/Uqn/U1KoAAKoAKqoAVaoAf6oAqqoA1Koq
+AKoqKqoqVaoqf6oqqqoq1KpVAKpVKqpVVapVf6pVqqpV1Kp/AKp/Kqp/Vap/
+f6p/qqp/1KqqAKqqKqqqVaqqf6qqqqqq1KrUAKrUKqrUVarUf6rUqqrU1NQA
+ANQAKtQAVdQAf9QAqtQA1NQqANQqKtQqVdQqf9QqqtQq1NRVANRVKtRVVdRV
+f9RVqtRV1NR/ANR/KtR/VdR/f9R/qtR/1NSqANSqKtSqVdSqf9SqqtSq1NTU
+ANTUKtTUVdTUf9TUqtTU1AAAAAwMDBkZGSYmJjMzMz8/P0xMTFlZWWZmZnJy
+cn9/f4yMjJmZmaWlpbKysr+/v8zMzNjY2OXl5fLy8v/78KCgpICAgP8AAAD/
+AP//AAAA//8A/wD//////ywAAAAAFAAUAAAIUQDnCRxIsKDBgwgNAljIsOFC
+hAASCoyoUOLEig4bDqS40WLHjhkdXvzokeO8iCFFmjQpceXJlAxPEmSZ0CXM
+mC49ygR5E+VMnTsn9tQItKjHgAA7}}
+        {{[file join / home cgavin vtcl images edit save.gif]} {} stock {
+R0lGODdhFAATAPcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwMDcwKbK8AAA
+AAAAKgAAVQAAfwAAqgAA1AAqAAAqKgAqVQAqfwAqqgAq1ABVAABVKgBVVQBV
+fwBVqgBV1AB/AAB/KgB/VQB/fwB/qgB/1ACqAACqKgCqVQCqfwCqqgCq1ADU
+AADUKgDUVQDUfwDUqgDU1CoAACoAKioAVSoAfyoAqioA1CoqACoqKioqVSoq
+fyoqqioq1CpVACpVKipVVSpVfypVqipV1Cp/ACp/Kip/VSp/fyp/qip/1Cqq
+ACqqKiqqVSqqfyqqqiqq1CrUACrUKirUVSrUfyrUqirU1FUAAFUAKlUAVVUA
+f1UAqlUA1FUqAFUqKlUqVVUqf1UqqlUq1FVVAFVVKlVVVVVVf1VVqlVV1FV/
+AFV/KlV/VVV/f1V/qlV/1FWqAFWqKlWqVVWqf1WqqlWq1FXUAFXUKlXUVVXU
+f1XUqlXU1H8AAH8AKn8AVX8Af38Aqn8A1H8qAH8qKn8qVX8qf38qqn8q1H9V
+AH9VKn9VVX9Vf39Vqn9V1H9/AH9/Kn9/VX9/f39/qn9/1H+qAH+qKn+qVX+q
+f3+qqn+q1H/UAH/UKn/UVX/Uf3/Uqn/U1KoAAKoAKqoAVaoAf6oAqqoA1Koq
+AKoqKqoqVaoqf6oqqqoq1KpVAKpVKqpVVapVf6pVqqpV1Kp/AKp/Kqp/Vap/
+f6p/qqp/1KqqAKqqKqqqVaqqf6qqqqqq1KrUAKrUKqrUVarUf6rUqqrU1NQA
+ANQAKtQAVdQAf9QAqtQA1NQqANQqKtQqVdQqf9QqqtQq1NRVANRVKtRVVdRV
+f9RVqtRV1NR/ANR/KtR/VdR/f9R/qtR/1NSqANSqKtSqVdSqf9SqqtSq1NTU
+ANTUKtTUVdTUf9TUqtTU1AAAAAwMDBkZGSYmJjMzMz8/P0xMTFlZWWZmZnJy
+cn9/f4yMjJmZmaWlpbKysr+/v8zMzNjY2OXl5fLy8v/78KCgpICAgP8AAAD/
+AP//AAAA//8A/wD//////ywAAAAAFAATAAAIbgDnCRxIsKDBgwgP4lvIsGFD
+g/i44ftHsSLFiAAgSrRocWHGghEncrzI7SPBkCNJmhyIMiVGjSJHvgTJTaLD
+hTVXCoxYs6fPnBp73gRKs2ZIhhJLBk3aMKnOeTxtNp1ZEIDVq1ivJtzKtatX
+hAEBADs=}}
 
             } {
     eval set _file [lindex $img 0]
@@ -361,6 +469,147 @@ proc vTcl:project:info {} {
     namespace eval ::widgets::.top21.cpd23.01 {
         array set save {}
     }
+    namespace eval ::widgets::.top21.cpd23.01.fra18 {
+        array set save {-borderwidth 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd23 {
+        array set save {-borderwidth 1 -relief 1 -takefocus 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd23.upframe {
+        array set save {-borderwidth 1 -height 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd23.centerframe {
+        array set save {-borderwidth 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd23.centerframe.leftframe {
+        array set save {-borderwidth 1 -width 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd23.centerframe.rightframe {
+        array set save {-borderwidth 1 -width 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd23.centerframe.05 {
+        array set save {-borderwidth 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd23.centerframe.05.06 {
+        array set save {-borderwidth 1 -height 1 -image 1 -text 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd23.centerframe.05.07 {
+        array set save {-borderwidth 1 -padx 1 -text 1 -width 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd23.downframe {
+        array set save {-borderwidth 1 -height 1 -relief 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd19 {
+        array set save {-borderwidth 1 -relief 1 -takefocus 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd19.upframe {
+        array set save {-borderwidth 1 -height 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd19.centerframe {
+        array set save {-borderwidth 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd19.centerframe.leftframe {
+        array set save {-borderwidth 1 -width 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd19.centerframe.rightframe {
+        array set save {-borderwidth 1 -width 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd19.centerframe.05 {
+        array set save {-borderwidth 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd19.centerframe.05.06 {
+        array set save {-borderwidth 1 -image 1 -text 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd19.centerframe.05.07 {
+        array set save {-borderwidth 1 -padx 1 -pady 1 -text 1 -width 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd19.downframe {
+        array set save {-borderwidth 1 -height 1 -relief 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.fra24 {
+        array set save {-borderwidth 1 -width 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd20 {
+        array set save {-borderwidth 1 -relief 1 -takefocus 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd20.upframe {
+        array set save {-borderwidth 1 -height 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd20.centerframe {
+        array set save {-borderwidth 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd20.centerframe.leftframe {
+        array set save {-borderwidth 1 -width 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd20.centerframe.rightframe {
+        array set save {-borderwidth 1 -width 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd20.centerframe.05 {
+        array set save {-borderwidth 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd20.centerframe.05.06 {
+        array set save {-borderwidth 1 -image 1 -text 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd20.centerframe.05.07 {
+        array set save {-borderwidth 1 -text 1 -width 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd20.downframe {
+        array set save {-borderwidth 1 -height 1 -relief 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd21 {
+        array set save {-borderwidth 1 -relief 1 -takefocus 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd21.upframe {
+        array set save {-borderwidth 1 -height 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd21.centerframe {
+        array set save {-borderwidth 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd21.centerframe.leftframe {
+        array set save {-borderwidth 1 -width 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd21.centerframe.rightframe {
+        array set save {-borderwidth 1 -width 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd21.centerframe.05 {
+        array set save {-borderwidth 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd21.centerframe.05.06 {
+        array set save {-borderwidth 1 -image 1 -text 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd21.centerframe.05.07 {
+        array set save {-borderwidth 1 -padx 1 -pady 1 -text 1 -width 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd21.downframe {
+        array set save {-borderwidth 1 -height 1 -relief 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd22 {
+        array set save {-borderwidth 1 -relief 1 -takefocus 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd22.upframe {
+        array set save {-borderwidth 1 -height 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd22.centerframe {
+        array set save {-borderwidth 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd22.centerframe.leftframe {
+        array set save {-borderwidth 1 -width 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd22.centerframe.rightframe {
+        array set save {-borderwidth 1 -width 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd22.centerframe.05 {
+        array set save {-borderwidth 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd22.centerframe.05.06 {
+        array set save {-borderwidth 1 -image 1 -text 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd22.centerframe.05.07 {
+        array set save {-borderwidth 1 -text 1 -width 1}
+    }
+    namespace eval ::widgets::.top21.cpd23.01.fra18.cpd22.downframe {
+        array set save {-borderwidth 1 -height 1 -relief 1}
+    }
     namespace eval ::widgets::.top21.cpd23.01.cpd24 {
         array set save {-borderwidth 1 -height 1 -relief 1 -width 1}
     }
@@ -530,7 +779,7 @@ proc vTcl:project:info {} {
         array set save {-command 1 -text 1 -width 1}
     }
     namespace eval ::widgets_bindings {
-        set tagslist {FlatToolbarButton Accelerators}
+        set tagslist {FlatToolbarButton Accelerators BitmapButtonTop BitmapButtonSub1 BitmapButtonSub2 BitmapButtonSub3}
     }
 }
 }
@@ -553,6 +802,180 @@ AboutVisualText.AboutText configure -state normal
 AboutVisualText.AboutText delete 1.0 end
 ttd::insert $widget(AboutVisualText,AboutText) $ttd
 AboutVisualText.AboutText configure -state disabled
+}
+
+}
+###########################################################
+## Procedure:  ::bitmapbutton::get_parent
+
+namespace eval ::bitmapbutton {
+
+proc {::bitmapbutton::get_parent} {W {level 1}} {
+global widget
+
+set items [split $W .]
+set last [expr [llength $items] - 1]
+
+set parent_items [lrange $items 0 [expr $last - $level] ]
+return [join $parent_items .]
+}
+
+}
+###########################################################
+## Procedure:  ::bitmapbutton::init
+
+namespace eval ::bitmapbutton {
+
+proc {::bitmapbutton::init} {W} {
+global widget
+
+set N [vTcl:rename $W]
+namespace eval ::${N} {
+    variable command
+    set command ""}
+}
+
+}
+###########################################################
+## Procedure:  ::bitmapbutton::mouse_down
+
+namespace eval ::bitmapbutton {
+
+proc {::bitmapbutton::mouse_down} {W X Y} {
+global widget
+
+::bitmapbutton::show_state $W sunken
+
+set N [vTcl:rename $W]
+namespace eval ::$N {variable state}
+
+set ::${N}::state "mouse_down"
+}
+
+}
+###########################################################
+## Procedure:  ::bitmapbutton::mouse_inside
+
+namespace eval ::bitmapbutton {
+
+proc {::bitmapbutton::mouse_inside} {W X Y} {
+global widget
+
+set button_X [winfo rootx $W]
+set button_Y [winfo rooty $W]
+set button_width [winfo width $W]
+set button_height [winfo height $W]
+
+set N [vTcl:rename $W]
+set S "mouse_up"
+
+catch {
+   eval set S $\:\:$N\:\:state
+}
+
+if {$S == "mouse_up"} return
+
+if {$button_X <= $X &&
+    $button_X + $button_width >= $X &&
+    $button_Y <= $Y &&
+    $button_Y + $button_height >= $Y } {
+    
+   ::bitmapbutton::show_state $W sunken
+
+} else {
+
+   ::bitmapbutton::show_state $W raised
+}
+}
+
+}
+###########################################################
+## Procedure:  ::bitmapbutton::mouse_up
+
+namespace eval ::bitmapbutton {
+
+proc {::bitmapbutton::mouse_up} {W X Y} {
+set button_X [winfo rootx $W]
+set button_Y [winfo rooty $W]
+set button_width [winfo width $W]
+set button_height [winfo height $W]
+
+::bitmapbutton::show_state $W raised
+
+set N [vTcl:rename $W]
+set S ""
+catch {
+   eval set S $\:\:$N\:\:state
+}
+
+if {$S == "mouse_down" } {
+
+    set ::${N}::state "mouse_up"
+
+    ## command triggered ?
+    if {$button_X <= $X &&
+        $button_X + $button_width >= $X &&
+        $button_Y <= $Y &&
+        $button_Y + $button_height >= $Y } {
+        
+        set ::${N}::W $W
+        namespace eval ::${N} {
+            variable command
+            variable W
+            if {[info exists command] && $command != ""} {
+                vTcl:DoCmdOption $W $command
+            }
+        }
+    }
+}
+}
+
+}
+###########################################################
+## Procedure:  ::bitmapbutton::set_command
+
+namespace eval ::bitmapbutton {
+
+proc {::bitmapbutton::set_command} {W cmd} {
+global widget
+
+set N [vTcl:rename $W]
+namespace eval ::${N} {}
+set ::${N}::command $cmd
+}
+
+}
+###########################################################
+## Procedure:  ::bitmapbutton::show_state
+
+namespace eval ::bitmapbutton {
+
+proc {::bitmapbutton::show_state} {W S} {
+global widget
+
+set upframe    $W.upframe
+set downframe  $W.downframe
+set leftframe  $W.centerframe.leftframe
+set rightframe $W.centerframe.rightframe
+
+switch $S {
+
+   sunken {
+     $W configure -relief sunken
+     $upframe    configure -height 4
+     $leftframe  configure -width 4
+     $rightframe configure -width 1
+     $downframe  configure -height 1
+   }
+
+   raised {
+     $W configure -relief raised
+     $upframe configure -height 3
+     $leftframe configure -width 3
+     $rightframe configure -width 2
+     $downframe configure -height 2
+   }
+}
 }
 
 }
@@ -1415,6 +1838,13 @@ wm protocol .top21 WM_DELETE_WINDOW {exit}
 
 ::edit_tag::init_edit_tag $widget(EditTag)
 ::about::init
+
+## set commands for toolbar buttons
+::bitmapbutton::set_command $widget(ToolbarButtonSave)  {tk_messageBox -message {to implement!}}
+::bitmapbutton::set_command $widget(ToolbarButtonNew)   {::visual_text::command-new %top}
+::bitmapbutton::set_command $widget(ToolbarButtonCut)   {tk_messageBox -message {to implement!}}
+::bitmapbutton::set_command $widget(ToolbarButtonCopy)  {tk_messageBox -message {to implement!}}
+::bitmapbutton::set_command $widget(ToolbarButtonPaste) {tk_messageBox -message {to implement!}}
 }
 
 proc init {argc argv} {
@@ -1496,20 +1926,18 @@ proc vTclWindow.top18 {base {container 0}} {
     # SETTING GEOMETRY
     ###################
     pack $base.cpd19 \
-        -in "$base" -anchor center -expand 1 -fill both -side top 
+        -in $base -anchor center -expand 1 -fill both -side top 
     grid columnconf $base.cpd19 0 -weight 1
     grid rowconf $base.cpd19 0 -weight 1
     grid $base.cpd19.01 \
-        -in "$base.cpd19" -column 0 -row 1 -columnspan 1 -rowspan 1 \
-        -sticky ew 
+        -in $base.cpd19 -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew 
     grid $base.cpd19.02 \
-        -in "$base.cpd19" -column 1 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky ns 
+        -in $base.cpd19 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns 
     grid $base.cpd19.03 \
-        -in "$base.cpd19" -column 0 -row 0 -columnspan 1 -rowspan 1 \
+        -in $base.cpd19 -column 0 -row 0 -columnspan 1 -rowspan 1 \
         -sticky nesw 
     pack $base.but20 \
-        -in "$base" -anchor center -expand 0 -fill none -pady 5 -side top 
+        -in $base -anchor center -expand 0 -fill none -pady 5 -side top 
 }
 
 proc vTclWindow.top21 {base {container 0}} {
@@ -1522,6 +1950,11 @@ proc vTclWindow.top21 {base {container 0}} {
 
     global widget
     vTcl:DefineAlias "$base.cpd23.01.cpd24.03" "MainText" vTcl:WidgetProc "$base" 1
+    vTcl:DefineAlias "$base.cpd23.01.fra18.cpd19" "ToolbarButtonNew" vTcl:WidgetProc "$base" 1
+    vTcl:DefineAlias "$base.cpd23.01.fra18.cpd20" "ToolbarButtonCut" vTcl:WidgetProc "$base" 1
+    vTcl:DefineAlias "$base.cpd23.01.fra18.cpd21" "ToolbarButtonCopy" vTcl:WidgetProc "$base" 1
+    vTcl:DefineAlias "$base.cpd23.01.fra18.cpd22" "ToolbarButtonPaste" vTcl:WidgetProc "$base" 1
+    vTcl:DefineAlias "$base.cpd23.01.fra18.cpd23" "ToolbarButtonSave" vTcl:WidgetProc "$base" 1
     vTcl:DefineAlias "$base.cpd23.02.cpd22.01" "TagsListbox" vTcl:WidgetProc "$base" 1
     vTcl:DefineAlias "$base.cpd23.02.fra25.03" "TagsText" vTcl:WidgetProc "$base" 1
     vTcl:DefineAlias "$base.fra22.lab30" "LineCol" vTcl:WidgetProc "$base" 1
@@ -1533,7 +1966,7 @@ proc vTclWindow.top21 {base {container 0}} {
     vTcl:toplevel $base -class Toplevel \
         -menu "$base.m26" 
     wm focusmodel $base passive
-    wm geometry $base 678x575+140+58; update
+    wm geometry $base 678x575+125+63; update
     wm maxsize $base 1009 738
     wm minsize $base 100 1
     wm overrideredirect $base 0
@@ -1551,6 +1984,155 @@ proc vTclWindow.top21 {base {container 0}} {
     frame $base.cpd23 \
         -background #000000 
     frame $base.cpd23.01
+    frame $base.cpd23.01.fra18 \
+        -borderwidth 2 
+    frame $base.cpd23.01.fra18.cpd23 \
+        -borderwidth 2 -relief raised -takefocus 1 
+    bindtags $base.cpd23.01.fra18.cpd23 "$base.cpd23.01.fra18.cpd23 Frame .top18 all BitmapButtonTop"
+    frame $base.cpd23.01.fra18.cpd23.upframe \
+        -borderwidth 2 -height 3 
+    bindtags $base.cpd23.01.fra18.cpd23.upframe "$base.cpd23.01.fra18.cpd23.upframe Frame .top18 all BitmapButtonSub1"
+    frame $base.cpd23.01.fra18.cpd23.centerframe \
+        -borderwidth 2 
+    bindtags $base.cpd23.01.fra18.cpd23.centerframe "$base.cpd23.01.fra18.cpd23.centerframe Frame .top18 all BitmapButtonSub1"
+    frame $base.cpd23.01.fra18.cpd23.centerframe.leftframe \
+        -borderwidth 2 -width 3 
+    bindtags $base.cpd23.01.fra18.cpd23.centerframe.leftframe "$base.cpd23.01.fra18.cpd23.centerframe.leftframe Frame .top18 all BitmapButtonSub2"
+    frame $base.cpd23.01.fra18.cpd23.centerframe.rightframe \
+        -borderwidth 2 -width 2 
+    bindtags $base.cpd23.01.fra18.cpd23.centerframe.rightframe "$base.cpd23.01.fra18.cpd23.centerframe.rightframe Frame .top18 all BitmapButtonSub2"
+    frame $base.cpd23.01.fra18.cpd23.centerframe.05 \
+        -borderwidth 1 
+    bindtags $base.cpd23.01.fra18.cpd23.centerframe.05 "$base.cpd23.01.fra18.cpd23.centerframe.05 Frame .top18 all BitmapButtonSub2"
+    label $base.cpd23.01.fra18.cpd23.centerframe.05.06 \
+        -borderwidth 0 -height 20 \
+        -image [vTcl:image:get_image [file join / home cgavin vtcl images edit save.gif]] \
+        -text label 
+    bindtags $base.cpd23.01.fra18.cpd23.centerframe.05.06 "$base.cpd23.01.fra18.cpd23.centerframe.05.06 Label .top18 all BitmapButtonSub3"
+    label $base.cpd23.01.fra18.cpd23.centerframe.05.07 \
+        -borderwidth 1 -padx 1 -text Save -width 5 
+    bindtags $base.cpd23.01.fra18.cpd23.centerframe.05.07 "$base.cpd23.01.fra18.cpd23.centerframe.05.07 Label .top18 all BitmapButtonSub3"
+    frame $base.cpd23.01.fra18.cpd23.downframe \
+        -borderwidth 2 -height 2 -relief groove 
+    bindtags $base.cpd23.01.fra18.cpd23.downframe "$base.cpd23.01.fra18.cpd23.downframe Frame .top18 all BitmapButtonSub1"
+    frame $base.cpd23.01.fra18.cpd19 \
+        -borderwidth 2 -relief raised -takefocus 1 
+    bindtags $base.cpd23.01.fra18.cpd19 "$base.cpd23.01.fra18.cpd19 Frame .top18 all BitmapButtonTop"
+    frame $base.cpd23.01.fra18.cpd19.upframe \
+        -borderwidth 2 -height 3 
+    bindtags $base.cpd23.01.fra18.cpd19.upframe "$base.cpd23.01.fra18.cpd19.upframe Frame .top18 all BitmapButtonSub1"
+    frame $base.cpd23.01.fra18.cpd19.centerframe \
+        -borderwidth 2 
+    bindtags $base.cpd23.01.fra18.cpd19.centerframe "$base.cpd23.01.fra18.cpd19.centerframe Frame .top18 all BitmapButtonSub1"
+    frame $base.cpd23.01.fra18.cpd19.centerframe.leftframe \
+        -borderwidth 2 -width 3 
+    bindtags $base.cpd23.01.fra18.cpd19.centerframe.leftframe "$base.cpd23.01.fra18.cpd19.centerframe.leftframe Frame .top18 all BitmapButtonSub2"
+    frame $base.cpd23.01.fra18.cpd19.centerframe.rightframe \
+        -borderwidth 2 -width 2 
+    bindtags $base.cpd23.01.fra18.cpd19.centerframe.rightframe "$base.cpd23.01.fra18.cpd19.centerframe.rightframe Frame .top18 all BitmapButtonSub2"
+    frame $base.cpd23.01.fra18.cpd19.centerframe.05 \
+        -borderwidth 1 
+    bindtags $base.cpd23.01.fra18.cpd19.centerframe.05 "$base.cpd23.01.fra18.cpd19.centerframe.05 Frame .top18 all BitmapButtonSub2"
+    label $base.cpd23.01.fra18.cpd19.centerframe.05.06 \
+        -borderwidth 0 \
+        -image [vTcl:image:get_image [file join / home cgavin vtcl images edit new.gif]] \
+        -text label 
+    bindtags $base.cpd23.01.fra18.cpd19.centerframe.05.06 "$base.cpd23.01.fra18.cpd19.centerframe.05.06 Label .top18 all BitmapButtonSub3"
+    label $base.cpd23.01.fra18.cpd19.centerframe.05.07 \
+        -borderwidth 1 -padx 1 -pady 1 -text New -width 5 
+    bindtags $base.cpd23.01.fra18.cpd19.centerframe.05.07 "$base.cpd23.01.fra18.cpd19.centerframe.05.07 Label .top18 all BitmapButtonSub3"
+    frame $base.cpd23.01.fra18.cpd19.downframe \
+        -borderwidth 2 -height 2 -relief groove 
+    bindtags $base.cpd23.01.fra18.cpd19.downframe "$base.cpd23.01.fra18.cpd19.downframe Frame .top18 all BitmapButtonSub1"
+    frame $base.cpd23.01.fra18.fra24 \
+        -borderwidth 2 -width 5 
+    frame $base.cpd23.01.fra18.cpd20 \
+        -borderwidth 2 -relief raised -takefocus 1 
+    bindtags $base.cpd23.01.fra18.cpd20 "$base.cpd23.01.fra18.cpd20 Frame .top18 all BitmapButtonTop"
+    frame $base.cpd23.01.fra18.cpd20.upframe \
+        -borderwidth 2 -height 3 
+    bindtags $base.cpd23.01.fra18.cpd20.upframe "$base.cpd23.01.fra18.cpd20.upframe Frame .top18 all BitmapButtonSub1"
+    frame $base.cpd23.01.fra18.cpd20.centerframe \
+        -borderwidth 2 
+    bindtags $base.cpd23.01.fra18.cpd20.centerframe "$base.cpd23.01.fra18.cpd20.centerframe Frame .top18 all BitmapButtonSub1"
+    frame $base.cpd23.01.fra18.cpd20.centerframe.leftframe \
+        -borderwidth 2 -width 3 
+    bindtags $base.cpd23.01.fra18.cpd20.centerframe.leftframe "$base.cpd23.01.fra18.cpd20.centerframe.leftframe Frame .top18 all BitmapButtonSub2"
+    frame $base.cpd23.01.fra18.cpd20.centerframe.rightframe \
+        -borderwidth 2 -width 2 
+    bindtags $base.cpd23.01.fra18.cpd20.centerframe.rightframe "$base.cpd23.01.fra18.cpd20.centerframe.rightframe Frame .top18 all BitmapButtonSub2"
+    frame $base.cpd23.01.fra18.cpd20.centerframe.05 \
+        -borderwidth 1 
+    bindtags $base.cpd23.01.fra18.cpd20.centerframe.05 "$base.cpd23.01.fra18.cpd20.centerframe.05 Frame .top18 all BitmapButtonSub2"
+    label $base.cpd23.01.fra18.cpd20.centerframe.05.06 \
+        -borderwidth 0 \
+        -image [vTcl:image:get_image [file join / home cgavin vtcl images edit cut.gif]] \
+        -text label 
+    bindtags $base.cpd23.01.fra18.cpd20.centerframe.05.06 "$base.cpd23.01.fra18.cpd20.centerframe.05.06 Label .top18 all BitmapButtonSub3"
+    label $base.cpd23.01.fra18.cpd20.centerframe.05.07 \
+        -borderwidth 1 -text Cut -width 5 
+    bindtags $base.cpd23.01.fra18.cpd20.centerframe.05.07 "$base.cpd23.01.fra18.cpd20.centerframe.05.07 Label .top18 all BitmapButtonSub3"
+    frame $base.cpd23.01.fra18.cpd20.downframe \
+        -borderwidth 2 -height 2 -relief groove 
+    bindtags $base.cpd23.01.fra18.cpd20.downframe "$base.cpd23.01.fra18.cpd20.downframe Frame .top18 all BitmapButtonSub1"
+    frame $base.cpd23.01.fra18.cpd21 \
+        -borderwidth 2 -relief raised -takefocus 1 
+    bindtags $base.cpd23.01.fra18.cpd21 "$base.cpd23.01.fra18.cpd21 Frame .top18 all BitmapButtonTop"
+    frame $base.cpd23.01.fra18.cpd21.upframe \
+        -borderwidth 2 -height 3 
+    bindtags $base.cpd23.01.fra18.cpd21.upframe "$base.cpd23.01.fra18.cpd21.upframe Frame .top18 all BitmapButtonSub1"
+    frame $base.cpd23.01.fra18.cpd21.centerframe \
+        -borderwidth 2 
+    bindtags $base.cpd23.01.fra18.cpd21.centerframe "$base.cpd23.01.fra18.cpd21.centerframe Frame .top18 all BitmapButtonSub1"
+    frame $base.cpd23.01.fra18.cpd21.centerframe.leftframe \
+        -borderwidth 2 -width 3 
+    bindtags $base.cpd23.01.fra18.cpd21.centerframe.leftframe "$base.cpd23.01.fra18.cpd21.centerframe.leftframe Frame .top18 all BitmapButtonSub2"
+    frame $base.cpd23.01.fra18.cpd21.centerframe.rightframe \
+        -borderwidth 2 -width 2 
+    bindtags $base.cpd23.01.fra18.cpd21.centerframe.rightframe "$base.cpd23.01.fra18.cpd21.centerframe.rightframe Frame .top18 all BitmapButtonSub2"
+    frame $base.cpd23.01.fra18.cpd21.centerframe.05 \
+        -borderwidth 1 
+    bindtags $base.cpd23.01.fra18.cpd21.centerframe.05 "$base.cpd23.01.fra18.cpd21.centerframe.05 Frame .top18 all BitmapButtonSub2"
+    label $base.cpd23.01.fra18.cpd21.centerframe.05.06 \
+        -borderwidth 0 \
+        -image [vTcl:image:get_image [file join / home cgavin vtcl images edit copy.gif]] \
+        -text label 
+    bindtags $base.cpd23.01.fra18.cpd21.centerframe.05.06 "$base.cpd23.01.fra18.cpd21.centerframe.05.06 Label .top18 all BitmapButtonSub3"
+    label $base.cpd23.01.fra18.cpd21.centerframe.05.07 \
+        -borderwidth 1 -padx 1 -pady 1 -text Copy -width 5 
+    bindtags $base.cpd23.01.fra18.cpd21.centerframe.05.07 "$base.cpd23.01.fra18.cpd21.centerframe.05.07 Label .top18 all BitmapButtonSub3"
+    frame $base.cpd23.01.fra18.cpd21.downframe \
+        -borderwidth 2 -height 2 -relief groove 
+    bindtags $base.cpd23.01.fra18.cpd21.downframe "$base.cpd23.01.fra18.cpd21.downframe Frame .top18 all BitmapButtonSub1"
+    frame $base.cpd23.01.fra18.cpd22 \
+        -borderwidth 2 -relief raised -takefocus 1 
+    bindtags $base.cpd23.01.fra18.cpd22 "$base.cpd23.01.fra18.cpd22 Frame .top18 all BitmapButtonTop"
+    frame $base.cpd23.01.fra18.cpd22.upframe \
+        -borderwidth 2 -height 3 
+    bindtags $base.cpd23.01.fra18.cpd22.upframe "$base.cpd23.01.fra18.cpd22.upframe Frame .top18 all BitmapButtonSub1"
+    frame $base.cpd23.01.fra18.cpd22.centerframe \
+        -borderwidth 2 
+    bindtags $base.cpd23.01.fra18.cpd22.centerframe "$base.cpd23.01.fra18.cpd22.centerframe Frame .top18 all BitmapButtonSub1"
+    frame $base.cpd23.01.fra18.cpd22.centerframe.leftframe \
+        -borderwidth 2 -width 3 
+    bindtags $base.cpd23.01.fra18.cpd22.centerframe.leftframe "$base.cpd23.01.fra18.cpd22.centerframe.leftframe Frame .top18 all BitmapButtonSub2"
+    frame $base.cpd23.01.fra18.cpd22.centerframe.rightframe \
+        -borderwidth 2 -width 2 
+    bindtags $base.cpd23.01.fra18.cpd22.centerframe.rightframe "$base.cpd23.01.fra18.cpd22.centerframe.rightframe Frame .top18 all BitmapButtonSub2"
+    frame $base.cpd23.01.fra18.cpd22.centerframe.05 \
+        -borderwidth 1 
+    bindtags $base.cpd23.01.fra18.cpd22.centerframe.05 "$base.cpd23.01.fra18.cpd22.centerframe.05 Frame .top18 all BitmapButtonSub2"
+    label $base.cpd23.01.fra18.cpd22.centerframe.05.06 \
+        -borderwidth 0 \
+        -image [vTcl:image:get_image [file join / home cgavin vtcl images edit paste.gif]] \
+        -text label 
+    bindtags $base.cpd23.01.fra18.cpd22.centerframe.05.06 "$base.cpd23.01.fra18.cpd22.centerframe.05.06 Label .top18 all BitmapButtonSub3"
+    label $base.cpd23.01.fra18.cpd22.centerframe.05.07 \
+        -borderwidth 1 -text Paste -width 5 
+    bindtags $base.cpd23.01.fra18.cpd22.centerframe.05.07 "$base.cpd23.01.fra18.cpd22.centerframe.05.07 Label .top18 all BitmapButtonSub3"
+    frame $base.cpd23.01.fra18.cpd22.downframe \
+        -borderwidth 2 -height 2 -relief groove 
+    bindtags $base.cpd23.01.fra18.cpd22.downframe "$base.cpd23.01.fra18.cpd22.downframe Frame .top18 all BitmapButtonSub1"
     frame $base.cpd23.01.cpd24 \
         -borderwidth 1 -height 30 -relief sunken -width 30 
     scrollbar $base.cpd23.01.cpd24.01 \
@@ -1709,74 +2291,214 @@ break
     # SETTING GEOMETRY
     ###################
     pack $base.fra22 \
-        -in "$base" -anchor center -expand 0 -fill x -side bottom 
+        -in $base -anchor center -expand 0 -fill x -side bottom 
     pack $base.fra22.lab30 \
-        -in "$base.fra22" -anchor center -expand 0 -fill none -padx 2 \
+        -in $base.fra22 -anchor center -expand 0 -fill none -padx 2 \
         -side left 
     pack $base.fra22.lab31 \
-        -in "$base.fra22" -anchor center -expand 0 -fill none -padx 2 \
+        -in $base.fra22 -anchor center -expand 0 -fill none -padx 2 \
         -side left 
     pack $base.cpd23 \
-        -in "$base" -anchor center -expand 1 -fill both -side top 
+        -in $base -anchor center -expand 1 -fill both -side top 
     place $base.cpd23.01 \
         -x 0 -y 0 -width -1 -relwidth 0.6906 -relheight 1 -anchor nw \
         -bordermode ignore 
+    pack $base.cpd23.01.fra18 \
+        -in $base.cpd23.01 -anchor center -expand 0 -fill x -side top 
+    pack $base.cpd23.01.fra18.cpd23 \
+        -in $base.cpd23.01.fra18 -anchor center -expand 0 -fill none -padx 5 \
+        -side left 
+    pack $base.cpd23.01.fra18.cpd23.upframe \
+        -in $base.cpd23.01.fra18.cpd23 -anchor center -expand 0 -fill none \
+        -side top 
+    pack $base.cpd23.01.fra18.cpd23.centerframe \
+        -in $base.cpd23.01.fra18.cpd23 -anchor center -expand 0 -fill none \
+        -side top 
+    pack $base.cpd23.01.fra18.cpd23.centerframe.leftframe \
+        -in $base.cpd23.01.fra18.cpd23.centerframe -anchor center -expand 0 \
+        -fill none -side left 
+    pack $base.cpd23.01.fra18.cpd23.centerframe.rightframe \
+        -in $base.cpd23.01.fra18.cpd23.centerframe -anchor center -expand 0 \
+        -fill none -side right 
+    pack $base.cpd23.01.fra18.cpd23.centerframe.05 \
+        -in $base.cpd23.01.fra18.cpd23.centerframe -anchor center -expand 0 \
+        -fill none -side top 
+    pack $base.cpd23.01.fra18.cpd23.centerframe.05.06 \
+        -in $base.cpd23.01.fra18.cpd23.centerframe.05 -anchor center \
+        -expand 0 -fill none -side top 
+    pack $base.cpd23.01.fra18.cpd23.centerframe.05.07 \
+        -in $base.cpd23.01.fra18.cpd23.centerframe.05 -anchor center \
+        -expand 0 -fill none -side top 
+    pack $base.cpd23.01.fra18.cpd23.downframe \
+        -in $base.cpd23.01.fra18.cpd23 -anchor center -expand 0 -fill none \
+        -side bottom 
+    pack $base.cpd23.01.fra18.cpd19 \
+        -in $base.cpd23.01.fra18 -anchor center -expand 0 -fill none -pady 5 \
+        -side left 
+    pack $base.cpd23.01.fra18.cpd19.upframe \
+        -in $base.cpd23.01.fra18.cpd19 -anchor center -expand 0 -fill none \
+        -side top 
+    pack $base.cpd23.01.fra18.cpd19.centerframe \
+        -in $base.cpd23.01.fra18.cpd19 -anchor center -expand 0 -fill none \
+        -side top 
+    pack $base.cpd23.01.fra18.cpd19.centerframe.leftframe \
+        -in $base.cpd23.01.fra18.cpd19.centerframe -anchor center -expand 0 \
+        -fill none -side left 
+    pack $base.cpd23.01.fra18.cpd19.centerframe.rightframe \
+        -in $base.cpd23.01.fra18.cpd19.centerframe -anchor center -expand 0 \
+        -fill none -side right 
+    pack $base.cpd23.01.fra18.cpd19.centerframe.05 \
+        -in $base.cpd23.01.fra18.cpd19.centerframe -anchor center -expand 0 \
+        -fill none -side top 
+    pack $base.cpd23.01.fra18.cpd19.centerframe.05.06 \
+        -in $base.cpd23.01.fra18.cpd19.centerframe.05 -anchor center \
+        -expand 0 -fill none -side top 
+    pack $base.cpd23.01.fra18.cpd19.centerframe.05.07 \
+        -in $base.cpd23.01.fra18.cpd19.centerframe.05 -anchor center \
+        -expand 0 -fill none -side top 
+    pack $base.cpd23.01.fra18.cpd19.downframe \
+        -in $base.cpd23.01.fra18.cpd19 -anchor center -expand 0 -fill none \
+        -side bottom 
+    pack $base.cpd23.01.fra18.fra24 \
+        -in $base.cpd23.01.fra18 -anchor center -expand 0 -fill none \
+        -side left 
+    pack $base.cpd23.01.fra18.cpd20 \
+        -in $base.cpd23.01.fra18 -anchor center -expand 0 -fill none -padx 5 \
+        -pady 5 -side left 
+    pack $base.cpd23.01.fra18.cpd20.upframe \
+        -in $base.cpd23.01.fra18.cpd20 -anchor center -expand 0 -fill none \
+        -side top 
+    pack $base.cpd23.01.fra18.cpd20.centerframe \
+        -in $base.cpd23.01.fra18.cpd20 -anchor center -expand 0 -fill none \
+        -side top 
+    pack $base.cpd23.01.fra18.cpd20.centerframe.leftframe \
+        -in $base.cpd23.01.fra18.cpd20.centerframe -anchor center -expand 0 \
+        -fill none -side left 
+    pack $base.cpd23.01.fra18.cpd20.centerframe.rightframe \
+        -in $base.cpd23.01.fra18.cpd20.centerframe -anchor center -expand 0 \
+        -fill none -side right 
+    pack $base.cpd23.01.fra18.cpd20.centerframe.05 \
+        -in $base.cpd23.01.fra18.cpd20.centerframe -anchor center -expand 0 \
+        -fill none -side top 
+    pack $base.cpd23.01.fra18.cpd20.centerframe.05.06 \
+        -in $base.cpd23.01.fra18.cpd20.centerframe.05 -anchor center \
+        -expand 0 -fill none -side top 
+    pack $base.cpd23.01.fra18.cpd20.centerframe.05.07 \
+        -in $base.cpd23.01.fra18.cpd20.centerframe.05 -anchor center \
+        -expand 0 -fill none -side top 
+    pack $base.cpd23.01.fra18.cpd20.downframe \
+        -in $base.cpd23.01.fra18.cpd20 -anchor center -expand 0 -fill none \
+        -side bottom 
+    pack $base.cpd23.01.fra18.cpd21 \
+        -in $base.cpd23.01.fra18 -anchor center -expand 0 -fill none -pady 5 \
+        -side left 
+    pack $base.cpd23.01.fra18.cpd21.upframe \
+        -in $base.cpd23.01.fra18.cpd21 -anchor center -expand 0 -fill none \
+        -side top 
+    pack $base.cpd23.01.fra18.cpd21.centerframe \
+        -in $base.cpd23.01.fra18.cpd21 -anchor center -expand 0 -fill none \
+        -side top 
+    pack $base.cpd23.01.fra18.cpd21.centerframe.leftframe \
+        -in $base.cpd23.01.fra18.cpd21.centerframe -anchor center -expand 0 \
+        -fill none -side left 
+    pack $base.cpd23.01.fra18.cpd21.centerframe.rightframe \
+        -in $base.cpd23.01.fra18.cpd21.centerframe -anchor center -expand 0 \
+        -fill none -side right 
+    pack $base.cpd23.01.fra18.cpd21.centerframe.05 \
+        -in $base.cpd23.01.fra18.cpd21.centerframe -anchor center -expand 0 \
+        -fill none -side top 
+    pack $base.cpd23.01.fra18.cpd21.centerframe.05.06 \
+        -in $base.cpd23.01.fra18.cpd21.centerframe.05 -anchor center \
+        -expand 0 -fill none -side top 
+    pack $base.cpd23.01.fra18.cpd21.centerframe.05.07 \
+        -in $base.cpd23.01.fra18.cpd21.centerframe.05 -anchor center \
+        -expand 0 -fill none -side top 
+    pack $base.cpd23.01.fra18.cpd21.downframe \
+        -in $base.cpd23.01.fra18.cpd21 -anchor center -expand 0 -fill none \
+        -side bottom 
+    pack $base.cpd23.01.fra18.cpd22 \
+        -in $base.cpd23.01.fra18 -anchor center -expand 0 -fill none -padx 5 \
+        -side left 
+    pack $base.cpd23.01.fra18.cpd22.upframe \
+        -in $base.cpd23.01.fra18.cpd22 -anchor center -expand 0 -fill none \
+        -side top 
+    pack $base.cpd23.01.fra18.cpd22.centerframe \
+        -in $base.cpd23.01.fra18.cpd22 -anchor center -expand 0 -fill none \
+        -side top 
+    pack $base.cpd23.01.fra18.cpd22.centerframe.leftframe \
+        -in $base.cpd23.01.fra18.cpd22.centerframe -anchor center -expand 0 \
+        -fill none -side left 
+    pack $base.cpd23.01.fra18.cpd22.centerframe.rightframe \
+        -in $base.cpd23.01.fra18.cpd22.centerframe -anchor center -expand 0 \
+        -fill none -side right 
+    pack $base.cpd23.01.fra18.cpd22.centerframe.05 \
+        -in $base.cpd23.01.fra18.cpd22.centerframe -anchor center -expand 0 \
+        -fill none -side top 
+    pack $base.cpd23.01.fra18.cpd22.centerframe.05.06 \
+        -in $base.cpd23.01.fra18.cpd22.centerframe.05 -anchor center \
+        -expand 0 -fill none -side top 
+    pack $base.cpd23.01.fra18.cpd22.centerframe.05.07 \
+        -in $base.cpd23.01.fra18.cpd22.centerframe.05 -anchor center \
+        -expand 0 -fill none -side top 
+    pack $base.cpd23.01.fra18.cpd22.downframe \
+        -in $base.cpd23.01.fra18.cpd22 -anchor center -expand 0 -fill none \
+        -side bottom 
     pack $base.cpd23.01.cpd24 \
-        -in "$base.cpd23.01" -anchor center -expand 1 -fill both -padx 5 \
+        -in $base.cpd23.01 -anchor center -expand 1 -fill both -padx 5 \
         -side top 
     grid columnconf $base.cpd23.01.cpd24 0 -weight 1
     grid rowconf $base.cpd23.01.cpd24 0 -weight 1
     grid $base.cpd23.01.cpd24.01 \
-        -in "$base.cpd23.01.cpd24" -column 0 -row 1 -columnspan 1 -rowspan 1 \
+        -in $base.cpd23.01.cpd24 -column 0 -row 1 -columnspan 1 -rowspan 1 \
         -sticky ew 
     grid $base.cpd23.01.cpd24.02 \
-        -in "$base.cpd23.01.cpd24" -column 1 -row 0 -columnspan 1 -rowspan 1 \
+        -in $base.cpd23.01.cpd24 -column 1 -row 0 -columnspan 1 -rowspan 1 \
         -sticky ns 
     grid $base.cpd23.01.cpd24.03 \
-        -in "$base.cpd23.01.cpd24" -column 0 -row 0 -columnspan 1 -rowspan 1 \
+        -in $base.cpd23.01.cpd24 -column 0 -row 0 -columnspan 1 -rowspan 1 \
         -sticky nesw 
     place $base.cpd23.02 \
         -x 0 -relx 1 -y 0 -width -1 -relwidth 0.3094 -relheight 1 -anchor ne \
         -bordermode ignore 
     pack $base.cpd23.02.fra25 \
-        -in "$base.cpd23.02" -anchor center -expand 1 -fill both -padx 5 \
+        -in $base.cpd23.02 -anchor center -expand 1 -fill both -padx 5 \
         -side bottom 
     grid columnconf $base.cpd23.02.fra25 0 -weight 1
     grid rowconf $base.cpd23.02.fra25 0 -weight 1
     grid $base.cpd23.02.fra25.01 \
-        -in "$base.cpd23.02.fra25" -column 0 -row 1 -columnspan 1 -rowspan 1 \
+        -in $base.cpd23.02.fra25 -column 0 -row 1 -columnspan 1 -rowspan 1 \
         -sticky ew 
     grid $base.cpd23.02.fra25.02 \
-        -in "$base.cpd23.02.fra25" -column 1 -row 0 -columnspan 1 -rowspan 1 \
+        -in $base.cpd23.02.fra25 -column 1 -row 0 -columnspan 1 -rowspan 1 \
         -sticky ns 
     grid $base.cpd23.02.fra25.03 \
-        -in "$base.cpd23.02.fra25" -column 0 -row 0 -columnspan 1 -rowspan 1 \
+        -in $base.cpd23.02.fra25 -column 0 -row 0 -columnspan 1 -rowspan 1 \
         -sticky nesw 
     pack $base.cpd23.02.fra22 \
-        -in "$base.cpd23.02" -anchor center -expand 0 -fill x -side top 
+        -in $base.cpd23.02 -anchor center -expand 0 -fill x -side top 
     pack $base.cpd23.02.fra22.but23 \
-        -in "$base.cpd23.02.fra22" -anchor center -expand 0 -fill none \
+        -in $base.cpd23.02.fra22 -anchor center -expand 0 -fill none \
         -side left 
     pack $base.cpd23.02.fra22.but24 \
-        -in "$base.cpd23.02.fra22" -anchor center -expand 0 -fill none \
+        -in $base.cpd23.02.fra22 -anchor center -expand 0 -fill none \
         -side left 
     pack $base.cpd23.02.cpd22 \
-        -in "$base.cpd23.02" -anchor center -expand 1 -fill both -padx 5 \
+        -in $base.cpd23.02 -anchor center -expand 1 -fill both -padx 5 \
         -side top 
     grid columnconf $base.cpd23.02.cpd22 0 -weight 1
     grid rowconf $base.cpd23.02.cpd22 0 -weight 1
     grid $base.cpd23.02.cpd22.01 \
-        -in "$base.cpd23.02.cpd22" -column 0 -row 0 -columnspan 1 -rowspan 1 \
+        -in $base.cpd23.02.cpd22 -column 0 -row 0 -columnspan 1 -rowspan 1 \
         -sticky nesw 
     grid $base.cpd23.02.cpd22.02 \
-        -in "$base.cpd23.02.cpd22" -column 0 -row 1 -columnspan 1 -rowspan 1 \
+        -in $base.cpd23.02.cpd22 -column 0 -row 1 -columnspan 1 -rowspan 1 \
         -sticky ew 
     grid $base.cpd23.02.cpd22.03 \
-        -in "$base.cpd23.02.cpd22" -column 1 -row 0 -columnspan 1 -rowspan 1 \
+        -in $base.cpd23.02.cpd22 -column 1 -row 0 -columnspan 1 -rowspan 1 \
         -sticky ns 
     pack $base.cpd23.02.fra23 \
-        -in "$base.cpd23.02" -anchor center -expand 0 -fill x -padx 5 \
-        -pady 10 -side top 
+        -in $base.cpd23.02 -anchor center -expand 0 -fill x -padx 5 -pady 10 \
+        -side top 
     place $base.cpd23.03 \
         -x 0 -relx 0.6906 -y 0 -rely 0.9 -width 10 -height 10 -anchor s \
         -bordermode ignore 
@@ -1931,89 +2653,87 @@ proc vTclWindow.top22 {base {container 0}} {
     # SETTING GEOMETRY
     ###################
     pack $base.lab23 \
-        -in "$base" -anchor center -expand 0 -fill x -side top 
+        -in $base -anchor center -expand 0 -fill x -side top 
     pack $base.ent24 \
-        -in "$base" -anchor center -expand 0 -fill x -side top 
+        -in $base -anchor center -expand 0 -fill x -side top 
     pack $base.fra25 \
-        -in "$base" -anchor center -expand 0 -fill x -pady 5 -side top 
+        -in $base -anchor center -expand 0 -fill x -pady 5 -side top 
     pack $base.fra27 \
-        -in "$base" -anchor center -expand 0 -fill both -side top 
+        -in $base -anchor center -expand 0 -fill both -side top 
     pack $base.fra27.cpd28 \
-        -in "$base.fra27" -anchor center -expand 1 -fill both -side left 
+        -in $base.fra27 -anchor center -expand 1 -fill both -side left 
     grid columnconf $base.fra27.cpd28 0 -weight 1
     grid rowconf $base.fra27.cpd28 0 -weight 1
     grid $base.fra27.cpd28.01 \
-        -in "$base.fra27.cpd28" -column 0 -row 0 -columnspan 1 -rowspan 1 \
+        -in $base.fra27.cpd28 -column 0 -row 0 -columnspan 1 -rowspan 1 \
         -sticky nesw 
     grid $base.fra27.cpd28.02 \
-        -in "$base.fra27.cpd28" -column 0 -row 1 -columnspan 1 -rowspan 1 \
+        -in $base.fra27.cpd28 -column 0 -row 1 -columnspan 1 -rowspan 1 \
         -sticky ew 
     grid $base.fra27.cpd28.03 \
-        -in "$base.fra27.cpd28" -column 1 -row 0 -columnspan 1 -rowspan 1 \
+        -in $base.fra27.cpd28 -column 1 -row 0 -columnspan 1 -rowspan 1 \
         -sticky ns 
     pack $base.fra27.fra29 \
-        -in "$base.fra27" -anchor center -expand 0 -fill y -side right 
+        -in $base.fra27 -anchor center -expand 0 -fill y -side right 
     pack $base.fra27.fra29.fra30 \
-        -in "$base.fra27.fra29" -anchor center -expand 0 -fill none -ipadx 2 \
+        -in $base.fra27.fra29 -anchor center -expand 0 -fill none -ipadx 2 \
         -ipady 2 -side top 
     pack $base.fra27.fra29.fra30.lab34 \
-        -in "$base.fra27.fra29.fra30" -anchor center -expand 0 -fill none \
+        -in $base.fra27.fra29.fra30 -anchor center -expand 0 -fill none \
         -side left 
     pack $base.fra27.fra29.fra30.but31 \
-        -in "$base.fra27.fra29.fra30" -anchor center -expand 0 -fill none \
+        -in $base.fra27.fra29.fra30 -anchor center -expand 0 -fill none \
         -side left 
     pack $base.fra27.fra29.fra30.ent32 \
-        -in "$base.fra27.fra29.fra30" -anchor center -expand 0 -fill none \
+        -in $base.fra27.fra29.fra30 -anchor center -expand 0 -fill none \
         -side left 
     pack $base.fra27.fra29.fra30.but33 \
-        -in "$base.fra27.fra29.fra30" -anchor center -expand 0 -fill none \
+        -in $base.fra27.fra29.fra30 -anchor center -expand 0 -fill none \
         -side left 
     pack $base.fra27.fra29.che35 \
-        -in "$base.fra27.fra29" -anchor center -expand 0 -fill x -side top 
+        -in $base.fra27.fra29 -anchor center -expand 0 -fill x -side top 
     pack $base.fra27.fra29.che37 \
-        -in "$base.fra27.fra29" -anchor center -expand 0 -fill x -side top 
+        -in $base.fra27.fra29 -anchor center -expand 0 -fill x -side top 
     pack $base.fra27.fra29.che38 \
-        -in "$base.fra27.fra29" -anchor center -expand 0 -fill x -side top 
+        -in $base.fra27.fra29 -anchor center -expand 0 -fill x -side top 
     pack $base.fra27.fra29.che39 \
-        -in "$base.fra27.fra29" -anchor center -expand 0 -fill x -side top 
+        -in $base.fra27.fra29 -anchor center -expand 0 -fill x -side top 
     pack $base.fra27.fra29.lab40 \
-        -in "$base.fra27.fra29" -anchor center -expand 0 -fill x -side top 
+        -in $base.fra27.fra29 -anchor center -expand 0 -fill x -side top 
     pack $base.fra27.fra29.rad41 \
-        -in "$base.fra27.fra29" -anchor center -expand 0 -fill x -side top 
+        -in $base.fra27.fra29 -anchor center -expand 0 -fill x -side top 
     pack $base.fra27.fra29.rad42 \
-        -in "$base.fra27.fra29" -anchor center -expand 0 -fill x -side top 
+        -in $base.fra27.fra29 -anchor center -expand 0 -fill x -side top 
     pack $base.fra27.fra29.rad43 \
-        -in "$base.fra27.fra29" -anchor center -expand 0 -fill x -side top 
+        -in $base.fra27.fra29 -anchor center -expand 0 -fill x -side top 
     pack $base.fra27.fra29.lab22 \
-        -in "$base.fra27.fra29" -anchor center -expand 0 -fill x -padx 2 \
+        -in $base.fra27.fra29 -anchor center -expand 0 -fill x -padx 2 \
         -pady 1 -side top 
     pack $base.fra27.fra29.lab23 \
-        -in "$base.fra27.fra29" -anchor center -expand 0 -fill x -padx 2 \
+        -in $base.fra27.fra29 -anchor center -expand 0 -fill x -padx 2 \
         -pady 1 -side top 
     pack $base.fra26 \
-        -in "$base" -anchor center -expand 0 -fill x -pady 5 -side top 
+        -in $base -anchor center -expand 0 -fill x -pady 5 -side top 
     pack $base.cpd44 \
-        -in "$base" -anchor center -expand 1 -fill both -padx 2 -side top 
+        -in $base -anchor center -expand 1 -fill both -padx 2 -side top 
     grid columnconf $base.cpd44 0 -weight 1
     grid rowconf $base.cpd44 0 -weight 1
     grid $base.cpd44.01 \
-        -in "$base.cpd44" -column 0 -row 1 -columnspan 1 -rowspan 1 \
-        -sticky ew 
+        -in $base.cpd44 -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew 
     grid $base.cpd44.02 \
-        -in "$base.cpd44" -column 1 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky ns 
+        -in $base.cpd44 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns 
     grid $base.cpd44.03 \
-        -in "$base.cpd44" -column 0 -row 0 -columnspan 1 -rowspan 1 \
+        -in $base.cpd44 -column 0 -row 0 -columnspan 1 -rowspan 1 \
         -sticky nesw 
     pack $base.fra45 \
-        -in "$base" -anchor center -expand 0 -fill x -pady 5 -side top 
+        -in $base -anchor center -expand 0 -fill x -pady 5 -side top 
     pack $base.fra46 \
-        -in "$base" -anchor center -expand 0 -fill none -pady 2 -side top 
+        -in $base -anchor center -expand 0 -fill none -pady 2 -side top 
     pack $base.fra46.but47 \
-        -in "$base.fra46" -anchor center -expand 0 -fill none -padx 5 -pady 2 \
+        -in $base.fra46 -anchor center -expand 0 -fill none -padx 5 -pady 2 \
         -side left 
     pack $base.fra46.but48 \
-        -in "$base.fra46" -anchor center -expand 0 -fill none -padx 5 -pady 2 \
+        -in $base.fra46 -anchor center -expand 0 -fill none -padx 5 -pady 2 \
         -side left 
 }
 
@@ -2037,6 +2757,58 @@ bind "Accelerators" <Control-Key-s> {
 }
 bind "Accelerators" <Key-F1> {
     AboutVisualText show
+}
+bind "BitmapButtonTop" <Button-1> {
+    ::bitmapbutton::mouse_down %W %X %Y
+}
+bind "BitmapButtonTop" <ButtonRelease-1> {
+    ::bitmapbutton::mouse_up %W %X %Y
+}
+bind "BitmapButtonTop" <FocusIn> {
+    # puts "Bitmapbutton gets focus"
+%W.centerframe.05 configure -relief groove
+}
+bind "BitmapButtonTop" <FocusOut> {
+    # puts "Bitmapbutton loses focus"
+%W.centerframe.05 configure -relief flat
+}
+bind "BitmapButtonTop" <Key-space> {
+    #TODO: your <KeyPress-space> event handler here
+::bitmapbutton::mouse_down %W [winfo rootx %W] [winfo rooty %W]
+}
+bind "BitmapButtonTop" <KeyRelease-space> {
+    #TODO: your <KeyRelease-space> event handler here
+::bitmapbutton::mouse_up %W [winfo rootx %W] [winfo rooty %W]
+}
+bind "BitmapButtonTop" <Motion> {
+    ::bitmapbutton::mouse_inside %W %X %Y
+}
+bind "BitmapButtonSub1" <Button-1> {
+    ::bitmapbutton::mouse_down [::bitmapbutton::get_parent %W] %X %Y
+}
+bind "BitmapButtonSub1" <ButtonRelease-1> {
+    ::bitmapbutton::mouse_up [::bitmapbutton::get_parent %W] %X %Y
+}
+bind "BitmapButtonSub1" <Motion> {
+    ::bitmapbutton::mouse_inside [::bitmapbutton::get_parent %W] %X %Y
+}
+bind "BitmapButtonSub2" <Button-1> {
+    ::bitmapbutton::mouse_down [::bitmapbutton::get_parent %W 2] %X %Y
+}
+bind "BitmapButtonSub2" <ButtonRelease-1> {
+    ::bitmapbutton::mouse_up [::bitmapbutton::get_parent %W 2] %X %Y
+}
+bind "BitmapButtonSub2" <Motion> {
+    ::bitmapbutton::mouse_inside [::bitmapbutton::get_parent %W 2] %X %Y
+}
+bind "BitmapButtonSub3" <Button-1> {
+    ::bitmapbutton::mouse_down [::bitmapbutton::get_parent %W 3] %X %Y
+}
+bind "BitmapButtonSub3" <ButtonRelease-1> {
+    ::bitmapbutton::mouse_up [::bitmapbutton::get_parent %W 3] %X %Y
+}
+bind "BitmapButtonSub3" <Motion> {
+    ::bitmapbutton::mouse_inside [::bitmapbutton::get_parent %W 3] %X %Y
 }
 
 Window show .

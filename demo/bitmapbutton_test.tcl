@@ -483,6 +483,7 @@ proc {::bitmapbutton::set_command} {W cmd} {
 global widget
 
 set N [vTcl:rename $W]
+namespace eval ::${N} {}
 set ::${N}::command $cmd
 }
 

@@ -156,6 +156,7 @@ if {$S == "mouse_down" } {
 global widget
 
 set N [vTcl:rename $W]
+namespace eval ::${N} {}
 set ::${N}::command $cmd
 }} {::bitmapbutton::show_state {W S} {
 global widget
