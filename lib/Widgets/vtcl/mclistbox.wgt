@@ -95,10 +95,14 @@ namespace eval ::vTcl::widgets::vtcl::mclistbox::edit {
         return "Column $index"
     }
 
-    proc itemConfigure {target index} {
+    proc itemConfigure {target index args} {
         set columns [$target column names]
         set column  [lindex $columns $index]
-        return [$target column configure $column]
+        if {$args == ""} {
+            return [$target column configure $column]
+        } else {
+            eval $target column configure $column $args
+        }
     }
 }
 

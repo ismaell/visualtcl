@@ -535,6 +535,10 @@ proc vTclWindow.vTcl.itemEdit {base} {
         -xscrollcommand "$base.cpd37.01.cpd38.02 set" \
         -yscrollcommand "$base.cpd37.01.cpd38.03 set" \
         -listvariable ::${base}::list_items
+    bind $base.cpd37.01.cpd38.01 <<ListboxSelect>> {
+        ::vTcl::itemEdit::selectItem [winfo toplevel %W] \
+            [lindex [%W curselection] 0]
+    }
     scrollbar $base.cpd37.01.cpd38.02 \
         -command "$base.cpd37.01.cpd38.01 xview" -orient horizontal
     scrollbar $base.cpd37.01.cpd38.03 \
@@ -578,7 +582,7 @@ proc vTclWindow.vTcl.itemEdit {base} {
     pack $base.cpd37 \
         -in $base -anchor center -expand 1 -fill both -side top
     place $base.cpd37.01 \
-        -x 0 -y 0 -width -1 -relwidth 0.3588 -relheight 1 -anchor nw \
+        -x 0 -y 0 -width -1 -relwidth 0.5 -relheight 1 -anchor nw \
         -bordermode ignore
     pack $base.cpd37.01.cpd38 \
         -in $base.cpd37.01 -anchor center -expand 1 -fill both -side top
@@ -594,10 +598,10 @@ proc vTclWindow.vTcl.itemEdit {base} {
         -in $base.cpd37.01.cpd38 -column 1 -row 0 -columnspan 1 -rowspan 1 \
         -sticky ns
     place $base.cpd37.02 \
-        -x 0 -relx 1 -y 0 -width -1 -relwidth 0.6412 -relheight 1 -anchor ne \
+        -x 0 -relx 1 -y 0 -width -1 -relwidth 0.5 -relheight 1 -anchor ne \
         -bordermode ignore
     place $base.cpd37.03 \
-        -x 0 -relx 0.3588 -y 0 -rely 0.9 -width 10 -height 10 -anchor s \
+        -x 0 -relx 0.5 -y 0 -rely 0.9 -width 10 -height 10 -anchor s \
         -bordermode ignore
     pack $base.cpd37.02.sw \
         -in $base.cpd37.02 -anchor center -expand 1 -fill both -side top
@@ -623,12 +627,17 @@ namespace eval ::vTcl::itemEdit {
     variable cmds
     variable target
     variable counter
+    variable suffix
+    variable current
     set counter 0
 
     proc edit {target cmds} {
         variable counter
+        variable suffix
+
         incr counter
         set top .vTcl.itemEdit_$counter
+        set suffix($top) $counter
         Window show .vTcl.itemEdit $top
         init $top $target $cmds
     }
@@ -636,35 +645,41 @@ namespace eval ::vTcl::itemEdit {
     proc init {top w cmdsEdit} {
         variable cmds
         variable target
+        variable current
 
         set cmds($top) $cmdsEdit
         set target($top) $w
         set list_items [::$cmds($top)::getItems $target($top)]
-        set current    [lindex $list_items 0]
+        set current($top) [lindex $list_items 0]
         set list_items [lrange $list_items 1 end]
         set ::${top}::list_items $list_items
-        ${top}.ItemsListbox selection set $current
+        ${top}.ItemsListbox selection set $current($top)
         initProperties $top
     }
 
     proc initProperties {top} {
         variable cmds
         variable target
-        variable counter
+        variable suffix
+        variable current
 
-        set current [${top}.ItemsListbox curselection]
-        set properties [::$cmds($top)::itemConfigure $target($top) $current]
+        set properties [::$cmds($top)::itemConfigure $target($top) $current($top)]
 
         ## let's just assume that all subitems have the same properties
         foreach property $properties {
             set option [lindex $property 0]
             set value  [lindex $property 4]
-            set variable ::vTcl::itemEdit::${option}_$counter
+            set variable ::vTcl::itemEdit::${option}_$suffix($top)
             set $variable $value
             set f $::widget(${top},PropertiesFrame).$option
             frame $f
+            set config_cmd "
+               ::$cmds($top)::itemConfigure $target($top) \
+                   \[vTcl:at ::vTcl::itemEdit::current($top)\] \
+                   $option \[vTcl:at $variable\]
+               "
             ::vTcl::ui::attributes::newAttribute \
-                $f $option $variable toto
+                $f $option $variable $config_cmd
             pack $f -side top -fill x -expand 0
         }
 
@@ -675,8 +690,44 @@ namespace eval ::vTcl::itemEdit {
         ${top}.PropertiesCanvas configure -scrollregion [list 0 0 $w $h]
     }
 
+    proc selectItem {top index} {
+        variable cmds
+        variable target
+        variable suffix
+        variable current
+
+        ${top}.ItemsListbox selection clear 0 end
+        ${top}.ItemsListbox selection set $index
+
+        set properties [::$cmds($top)::itemConfigure $target($top) $index]
+        foreach property $properties {
+            set option [lindex $property 0]
+            set value  [lindex $property 4]
+            set variable ::vTcl::itemEdit::${option}_$suffix($top)
+            set $variable $value
+        }
+        set current($top) $index
+    }
+
     proc close {top} {
+        variable cmds
+        variable target
+        variable suffix
+        variable current
+
         destroy $top
+        ## clean up after ourselves
+        set properties [::$cmds($top)::itemConfigure $target($top) $current($top)]
+        foreach property $properties {
+            set option [lindex $property 0]
+            set variable ${option}_$suffix($top)
+            variable $variable
+            unset $variable
+        }
+        unset cmds($top)
+        unset target($top)
+        unset suffix($top)
+        unset current($top)
     }
 
     proc addItem {top} {
@@ -685,17 +736,17 @@ namespace eval ::vTcl::itemEdit {
 
         set added [::$cmds($top)::addItem $target($top)]
         lappend ::${top}::list_items $added
-        ${top}.ItemsListbox selection clear 0 end
-        ${top}.ItemsListbox selection set end
+        set length [llength [vTcl:at ::${top}::list_items]]
         vTcl:setup_bind_tree $target($top)
+        selectItem $top [expr $length - 1]
     }
 
     proc removeItem {top} {
         variable cmds
         variable target
+        variable current
 
-        set current [${top}.ItemsListbox curselection]
-        ::$cmds($top)::removeItem $target($top) [lindex $current 0]
+        ::$cmds($top)::removeItem $target($top) $current($top)
     }
 
     proc moveUpOrDown {top direction} {

@@ -74,10 +74,14 @@ namespace eval ::vTcl::widgets::bwidgets::notebook::edit {
         return "New Page"
     }
 
-    proc itemConfigure {target index} {
+    proc itemConfigure {target index args} {
         set pages [$target pages]
         set page [lindex $pages $index]
-        return [$target itemconfigure $page]
+        if {$args == ""} {
+            return [$target itemconfigure $page]
+        } else {
+            eval $target itemconfigure $page $args
+        }
     }
 }
 

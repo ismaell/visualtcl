@@ -1132,6 +1132,16 @@ proc ::vTcl::MessageBox {args} {
 
 namespace eval ::vTcl::ui::attributes {
 
+    proc show_color {w variable args} {
+        $w configure -bg [vTcl:at $variable]
+    }
+
+    proc select_color {w config_cmd variable} {
+        set initial [::vTcl:at $variable]
+        set $variable [::vTcl:get_color $initial $w]
+        eval $config_cmd
+    }
+
     proc newAttribute {top option variable config_cmd} {
         set class $::vTcl(w,class)
 	if {[info exists ::specialOpts($class,$option,type)]} {
@@ -1179,10 +1189,12 @@ namespace eval ::vTcl::ui::attributes {
                 frame ${base}.f -relief raised \
                     -bg [vTcl:at $variable] -bd 2 -width 20 -height 5
                 bind ${base}.f <ButtonPress> \
-                    "todo: complete code here"
+                    "::vTcl::ui::attributes::select_color ${base}.f [list $config_cmd] $variable"
                 pack ${base}.l -side left -expand 1 -fill x
                 pack ${base}.f -side right -fill y -pady 1 -padx 1
 	        set focusControl ${base}.l
+                trace variable $variable w \
+                    "::vTcl::ui::attributes::show_color ${base}.f $variable"
             }
             command {
                 frame $base
@@ -1228,6 +1240,9 @@ namespace eval ::vTcl::ui::attributes {
                     -textvariable $variable -width 12 -highlightthickness 1
 	    }
         }
+
+        ## When the user presses <Return>, the option is set
+        bind $focusControl <KeyRelease-Return> $config_cmd
 
         grid $label $base -sticky news
         grid columnconf $top 1 -weight 1
