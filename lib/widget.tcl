@@ -214,6 +214,12 @@ proc vTcl:list_widget_tree {target {which ""}} {
 	    continue
 	}
 
+	# don't include unknown widgets
+	set c [winfo class $i]
+	if {! [vTcl:valid_class $c] } {
+	    continue
+	}
+
         append w_tree "[vTcl:list_widget_tree $i $which] "
     }
     return $w_tree
