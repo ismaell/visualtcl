@@ -36,11 +36,17 @@ proc vTcl:lib_bwidget:init {} {
 proc vTcl:widget:lib:lib_bwidget {args} {
     global vTcl
 
+    ## These three widgets are commented out until we find a way
+    ## to distinguish their creation command from Tk's. Otherwise,
+    ## this breaks existing projects by saving widgets with create
+    ## cmds such as "Entry" instead of "entry".
+    #
+    # Button
+    # Entry
+    # Label
+
     set order {
 	ArrowButton
-	Button
-	Entry
-	Label
 	LabelEntry
 	LabelFrame
 	MainFrame

@@ -1,6 +1,11 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Added a few more images for BWidgets.
+    o Removed support for Entry, Label and Button in BWidget until we find
+      a way to distinguish these widgets from Tk widgets. Otherwise, this will
+      break existing projects when they are resaved, by replacing their command
+      from "entry" to "Entry" for example.
     o Added a bunch of options in the preferences to make Luke happy :-)
       - entry background color
       - entry active color

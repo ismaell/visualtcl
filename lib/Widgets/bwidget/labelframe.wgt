@@ -1,7 +1,7 @@
 Class		LabelFrame
 Lib		bwidget
 
-Icon		unknown.gif
+Icon		icon_BwLabelFrame.gif
 TreeLabel	BWidget LabelFrame
 CreateCmd	LabelFrame
 MegaWidget	yes

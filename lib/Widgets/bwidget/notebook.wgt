@@ -1,7 +1,7 @@
 Class		NoteBook
 Lib		bwidget
 
-Icon		icon_tabnotebook.gif
-TreeLabel	BWidget Notebook
+Icon		icon_BwTabnotebook.gif
+TreeLabel	BWidget Tabbed Notebook
 CreateCmd	NoteBook
 MegaWidget	yes

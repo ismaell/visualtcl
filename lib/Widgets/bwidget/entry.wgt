@@ -1,6 +1,10 @@
-Class		Entry
-Lib		bwidget
+## commented out until we figure out how to distinguish the BWidget entry
+## from Tk's entry widget
 
-Icon		icon_entry.gif
-TreeLabel	BWidget Entry
-CreateCmd	Entry
+#Class		Entry
+#Lib		bwidget
+#
+#Icon		icon_entry.gif
+#TreeLabel	BWidget Entry
+#
+#CreateCmd	entry

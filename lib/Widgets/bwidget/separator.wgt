@@ -1,7 +1,7 @@
 Class		Separator
 Lib		bwidget
 
-Icon		unknown.gif
+Icon		icon_BwSeparator.gif
 TreeLabel	BWidget Separator
 CreateCmd	Separator
 MegaWidget	yes

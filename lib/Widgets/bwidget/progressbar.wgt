@@ -1,7 +1,7 @@
 Class		ProgressBar
 Lib		bwidget
 
-Icon		icon_tixMeter.gif
+Icon		icon_BwProgressbar.gif
 TreeLabel	BWidget ProgressBar
 CreateCmd	ProgressBar
 MegaWidget	yes
