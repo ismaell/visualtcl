@@ -1,6 +1,9 @@
 ChangeLog for Visual Tcl:
 
-1.51b4 -> 1.51rc0
+1.51b4 -> 1.51
+    o -command options can have substitution strings:
+      %W will be replaced by the widget path
+      %top will be replaced by the toplevel path
     o Now checks for Tcl/Tk 8.3 version or higher
     o Saves -variable with namespace as $base\::variable instead of .top22::variable
     o Sets default -variable for checkbutton and radiobutton

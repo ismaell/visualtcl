@@ -21,28 +21,6 @@
 ##############################################################################
 #
 
-# @@ change by Christian Gavin
-# procedure not used
-# @@ end_change
-
-# proc vTcl:edit_wincmd {which} {
-#    global vTcl
-#    set target $vTcl(w,widget)
-#    set base ".vTcl.com_${which}_[vTcl:rename $target]"
-#    if {[catch {set cmd [info body vTclWindow($which)$target]}]} {
-#        set cmd ""
-#   }
-#    set cmd [string trim $cmd]
-#    set r [vTcl:get_command "Window ${which}Command for $target" $cmd $base]
-#    if {$r == -1} {
-#        return
-#    } else {
-#        set procname vTclWindow($which)$target
-#        vTcl:list add "{$procname}" vTcl(procs)
-#        proc $procname {args} $r
-#    }
-# }
-
 proc vTcl:set_command {target {option -command} {variable vTcl(w,opt,-command)}} {
     global vTcl
     if {$target == ""} {return}
@@ -50,13 +28,24 @@ proc vTcl:set_command {target {option -command} {variable vTcl(w,opt,-command)}}
 
     if {[catch {set cmd [$target cget $option]}] == 1} { return }
 
+    ## if the command is in the form "vTcl:DoCmdOption target cmd",
+    ## then extracts the command, otherwise use the command as is
+    if {[regexp {vTcl:DoCmdOption [^ ]+ (.*)} $cmd matchAll realCmd]} {
+        lassign $cmd dummy1 dummy2 cmd
+    }
     set r [vTcl:get_command "$option for $target" $cmd $base]
     if {$r == -1} { return }
+    set cmd [string trim $r]
 
-    $target configure $option [string trim $r]
+    ## if the command is non null, replace it by DoCmdOption
+    if {$cmd != ""} {
+        set cmd [list vTcl:DoCmdOption $target $cmd]
+    }
+
+    $target configure $option $cmd
 
     global $variable
-    set $variable [string trim $r]
+    set $variable $cmd
     vTcl:prop:save_opt $target $option $variable
 }
 

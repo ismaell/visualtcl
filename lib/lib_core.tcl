@@ -285,10 +285,9 @@ set vTcl(option,noencase,-yscrollcommand) 1
 set vTcl(option,noencasewhen,-xscrollcommand) vTcl:core:noencasewhen
 set vTcl(option,noencasewhen,-yscrollcommand) vTcl:core:noencasewhen
 
-set vTcl(option,translate,-command) vTcl:core:scrollviewtranslate
+set vTcl(option,translate,-command) vTcl:core:commandtranslate
 set vTcl(option,noencase,-command) 1
-
-set vTcl(option,noencasewhen,-command) vTcl:core:noencasewhenscroll
+set vTcl(option,noencasewhen,-command) vTcl:core:noencasecommandwhen
 
 set vTcl(option,translate,-variable) vTcl:core:variabletranslate
 set vTcl(option,noencase,-variable) 1
@@ -328,26 +327,24 @@ proc vTcl:core:scrolltranslate {value} {
       	return $value
 }
 
-proc vTcl:core:scrollviewtranslate {value} {
+proc vTcl:core:commandtranslate {value} {
 
-	global vTcl
+    global vTcl
 
-	if [regexp {((\.[a-zA-Z0-9_]+)+) xview} $value matchAll path] {
+    if {[regexp {(\.[\.a-zA-Z0-9_]+) (x|y)view} $value matchAll path axis]} {
 
-               	set path [vTcl:base_name $path]
+       	set path [vTcl:base_name $path]
 
-		return "\"$path xview\""
-	} else {
+	return "\"$path ${axis}view\""
 
-		if [regexp {((\.[a-zA-Z0-9_]+)+) yview} $value matchAll path] {
+    } elseif {[regexp {vTcl:DoCmdOption (\.[\.a-zA-Z0-9_]+) (.*)} $value matchAll path cmd]} {
 
-        	       	set path [vTcl:base_name $path]
+        set path [vTcl:base_name $path]
 
-			return "\"$path yview\""
-		}
-	}
+        return "\[list vTcl:DoCmdOption $path $cmd\]"
+    }
 
-      	return $value
+    return $value
 }
 
 proc vTcl:core:noencasewhen {value} {
@@ -360,10 +357,11 @@ proc vTcl:core:noencasewhen {value} {
     return 0
 }
 
-proc vTcl:core:noencasewhenscroll {value} {
+proc vTcl:core:noencasecommandwhen {value} {
 
 	if { [string match {"$base*?view"} $value] ||
-             [string match {"$site*?view"} $value] } {
+             [string match {"$site*?view"} $value] ||
+             [string match {\[list vTcl:DoCmdOption $base*} $value] } {
 		return 1
 	} else {
 		return 0

@@ -17,9 +17,17 @@ Function        "Adjust Size To Children"   vTcl:widget:toplevel:adjust_size
 
 Export          vTcl:DefineAlias
 Export          vTcl:toplevel
+Export          vTcl:DoCmdOption
+
+proc vTcl:DoCmdOption {target cmd} {
+    regsub -all {\%W} $cmd $target cmd
+    regsub -all {\%top} $cmd [winfo toplevel $target] cmd
+
+    uplevel #0 eval $cmd
+}
 
 proc vTcl:toplevel {args} {
-    eval toplevel $args
+    uplevel #0 eval toplevel $args
     set target [lindex $args 0]
     namespace eval ::$target {}
 }

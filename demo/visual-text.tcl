@@ -239,6 +239,13 @@ proc {vTcl:DefineAlias} {target alias widgetProc top_or_alias cmdalias} {
     }
 }
 
+proc {vTcl:DoCmdOption} {target cmd} {
+    regsub -all {\%W} $cmd $target cmd
+    regsub -all {\%top} $cmd [winfo toplevel $target] cmd
+
+    uplevel #0 eval $cmd
+}
+
 proc {vTcl:Toplevel:WidgetProc} {w args} {
     if {[llength $args] == 0} {
         return -code error "wrong # args: should be \"$w option ?arg arg ...?\""
@@ -304,7 +311,7 @@ proc {vTcl:WidgetProc} {w args} {
 }
 
 proc {vTcl:toplevel} {args} {
-    eval toplevel $args
+    uplevel #0 eval toplevel $args
     set target [lindex $args 0]
     namespace eval ::$target {}
 }
@@ -1497,7 +1504,7 @@ proc vTclWindow.top21 {base {container 0}} {
     vTcl:toplevel $base -class Toplevel \
         -menu "$base.m26" 
     wm focusmodel $base passive
-    wm geometry $base 678x575+160+83; update
+    wm geometry $base 678x575+146+51; update
     wm maxsize $base 1009 738
     wm minsize $base 100 1
     wm overrideredirect $base 0
@@ -1763,7 +1770,7 @@ proc vTclWindow.top22 {base {container 0}} {
     vTcl:toplevel $base -class Toplevel
     wm withdraw $base
     wm focusmodel $base passive
-    wm geometry $base 439x473+307+174; update
+    wm geometry $base 439x473+119+158; update
     wm maxsize $base 1009 738
     wm minsize $base 100 1
     wm overrideredirect $base 0
@@ -1805,40 +1812,47 @@ proc vTclWindow.top22 {base {container 0}} {
         -text Size: 
     button $base.fra27.fra29.fra30.but31 \
         \
-        -command {incr ::.top22::font_size_entry -1
-::edit_tag::update_sample $widget(rev,.top22)} \
+        -command [list vTcl:DoCmdOption $base.fra27.fra29.fra30.but31 {incr ::%top::font_size_entry -1
+::edit_tag::update_sample $widget(rev,%top)}] \
         -padx 0 -pady 0 -text < 
     entry $base.fra27.fra29.fra30.ent32 \
         -background white -justify center -state disabled \
         -textvariable "$base\::font_size_entry" -width 3 
     button $base.fra27.fra29.fra30.but33 \
         \
-        -command {incr ::.top22::font_size_entry
-::edit_tag::update_sample $widget(rev,.top22)} \
+        -command [list vTcl:DoCmdOption $base.fra27.fra29.fra30.but33 {incr ::%top::font_size_entry
+::edit_tag::update_sample $widget(rev,%top)}] \
         -padx 0 -pady 0 -text > 
     checkbutton $base.fra27.fra29.che35 \
-        -anchor w -command {::edit_tag::update_sample $widget(rev,.top22)} \
+        -anchor w \
+        -command [list vTcl:DoCmdOption $base.fra27.fra29.che35 {::edit_tag::update_sample $widget(rev,%top)}] \
         -pady 0 -text Bold -variable "$base\::bold_check" 
     checkbutton $base.fra27.fra29.che37 \
-        -anchor w -command {::edit_tag::update_sample $widget(rev,.top22)} \
+        -anchor w \
+        -command [list vTcl:DoCmdOption $base.fra27.fra29.che37 {::edit_tag::update_sample $widget(rev,%top)}] \
         -pady 0 -text Italic -variable "$base\::italic_check" 
     checkbutton $base.fra27.fra29.che38 \
-        -anchor w -command {::edit_tag::update_sample $widget(rev,.top22)} \
+        -anchor w \
+        -command [list vTcl:DoCmdOption $base.fra27.fra29.che38 {::edit_tag::update_sample $widget(rev,%top)}] \
         -pady 0 -text Underline -variable "$base\::underline_check" 
     checkbutton $base.fra27.fra29.che39 \
-        -anchor w -command {::edit_tag::update_sample $widget(rev,.top22)} \
+        -anchor w \
+        -command [list vTcl:DoCmdOption $base.fra27.fra29.che39 {::edit_tag::update_sample $widget(rev,%top)}] \
         -pady 0 -text Overstrike -variable "$base\::overstrike_check" 
     label $base.fra27.fra29.lab40 \
         -anchor w -text Justify 
     radiobutton $base.fra27.fra29.rad41 \
-        -anchor w -command {::edit_tag::update_sample $widget(rev,.top22)} \
+        -anchor w \
+        -command [list vTcl:DoCmdOption $base.fra27.fra29.rad41 {::edit_tag::update_sample $widget(rev,%top)}] \
         -pady 0 -text left -value left -variable "$base\::justify_radio" 
     radiobutton $base.fra27.fra29.rad42 \
-        -anchor w -command {::edit_tag::update_sample $widget(rev,.top22)} \
+        -anchor w \
+        -command [list vTcl:DoCmdOption $base.fra27.fra29.rad42 {::edit_tag::update_sample $widget(rev,%top)}] \
         -padx 1 -pady 0 -text center -value center \
         -variable "$base\::justify_radio" 
     radiobutton $base.fra27.fra29.rad43 \
-        -anchor w -command {::edit_tag::update_sample $widget(rev,.top22)} \
+        -anchor w \
+        -command [list vTcl:DoCmdOption $base.fra27.fra29.rad43 {::edit_tag::update_sample $widget(rev,%top)}] \
         -pady 0 -text right -value right -variable "$base\::justify_radio" 
     label $base.fra27.fra29.lab22 \
         -background white -text Bkgnd 
@@ -1870,10 +1884,13 @@ proc vTclWindow.top22 {base {container 0}} {
     frame $base.fra46 \
         -borderwidth 2 -height 75 -width 125 
     button $base.fra46.but47 \
-        -command {set ::.top22::edit_tag_status "OK"} -text OK -width 8 
+        \
+        -command [list vTcl:DoCmdOption $base.fra46.but47 {set ::%top::edit_tag_status "OK"}] \
+        -text OK -width 8 
     button $base.fra46.but48 \
-        -command {set ::.top22::edit_tag_status "Cancel"} -text Cancel \
-        -width 8 
+        \
+        -command [list vTcl:DoCmdOption $base.fra46.but48 {set ::%top::edit_tag_status "Cancel"}] \
+        -text Cancel -width 8 
     ###################
     # SETTING GEOMETRY
     ###################
