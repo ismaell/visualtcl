@@ -72,8 +72,8 @@ proc vTcl:delete {recipient {w ""}} {
     vTcl:destroy_handles
 
     set top [winfo toplevel $w]
-    # list widget tree without including $w (it's why the "0" parameter)
-    set children [vTcl:widget_tree $w 0]
+    # list widget tree, without widget itself (which comes first in the list)
+    set children [lrange [vTcl:complete_widget_tree $w 0] 1 end]
     set parent [winfo parent $w]
 
     set buffer [vTcl::compounds::createCompound $w temp scrap]
@@ -81,11 +81,13 @@ proc vTcl:delete {recipient {w ""}} {
     set destroy_cmd "destroy"
     foreach child $children {
         append do "vTcl:unset_alias $child; "
+        append do "::vTcl::notify::publish delete_widget $child; "
     }
     if {$classes($class,deleteCmd) != ""} {
         set destroy_cmd $classes($class,deleteCmd)
     }
     append do "vTcl:unset_alias $w; "
+    append do "::vTcl::notify::publish delete_widget $w; "
     append do "vTcl:setup_unbind_widget $w; "
     append do "$destroy_cmd $w; "
     append do "set _cmds \[info commands $w.*\]; "
@@ -520,6 +522,7 @@ proc ::vTcl::findReplace::cancel {} {
     wm withdraw $base
     focus $txtbox
 }
+
 
 
 

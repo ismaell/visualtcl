@@ -728,6 +728,8 @@ namespace eval ::vTcl::itemEdit {
         initProperties $top
         selectItem $top $current($top)
         wm title $top [::$cmds($top)::getTitle $w]
+
+        ::vTcl::notify::subscribe delete_widget $top ::vTcl::itemEdit::widgetDeleted
     }
 
     ## find the superset of all options for all subitems
@@ -851,6 +853,13 @@ namespace eval ::vTcl::itemEdit {
         }
     }
 
+    proc widgetDeleted {top w} {
+        variable target
+        if {$target($top) == $w} {
+            close $top
+        }
+    }
+
     proc close {top} {
         variable cmds
         variable target
@@ -877,6 +886,8 @@ namespace eval ::vTcl::itemEdit {
         unset suffix($top)
         unset current($top)
         unset allOptions($top)
+
+        ::vTcl::notify::unsubscribe delete_widget $top
     }
 
     proc addItem {top} {
@@ -955,5 +966,6 @@ namespace eval ::vTcl::itemEdit {
 	$top.ItemsEditMenuAddDelete entryconfigure 1 -state $state($enabled)
     }
 }
+
 
 
