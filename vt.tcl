@@ -183,7 +183,7 @@ proc vTcl:setup {} {
     set vTcl(LIB_DIR)   [file join $vTcl(VTCL_HOME) lib]
     set vTcl(LIB_WIDG)  [glob -nocomplain [file join $vTcl(LIB_DIR) lib_*.tcl]]
     set vTcl(LIBS)      "globals.tcl about.tcl propmgr.tcl balloon.tcl
-        attrbar.tcl
+        attrbar.tcl bgerror.tcl
         bind.tcl command.tcl color.tcl console.tcl compound.tcl compounds.tcl
         do.tcl dragsize.tcl dump.tcl edit.tcl file.tcl font.tcl handle.tcl
         input.tcl images.tcl menu.tcl misc.tcl name.tcl prefs.tcl proc.tcl tclet.tcl
@@ -417,7 +417,8 @@ proc vTcl:define_bindings {} {
         if {$vTcl(w,widget) == "%W"} {
             vTcl:update_widget_info %W
         }
-        vTcl:place_handles $vTcl(w,widget)
+
+        after idle "vTcl:place_handles \"$vTcl(w,widget)\""
     }
 
     bind Text <Control-Key-c> {tk_textCopy %W}
