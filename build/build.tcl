@@ -27,11 +27,12 @@
 
 ##############################################################################
 
-set version 1.6.0b1
-set bldroot /home/cgavin/vtcl2-0/vtcl
+set version 1.6.0
+set bldroot d:/cygwin/home/cgavin/vtcl
 set bldtmp $bldroot/build/tmp
 
 file delete -force $bldtmp
+file mkdir $bldroot/build
 file mkdir $bldtmp
 
 set copyroot $bldtmp/vtcl-$version/opt/local/vtcl-$version
@@ -61,6 +62,8 @@ file mkdir $copyroot/demo/tutorial
 file mkdir $copyroot/demo/tutorial/core
 file mkdir $copyroot/demo/tutorial/megawidgets
 file mkdir $copyroot/demo/tutorial/megawidgets/imagelist
+file mkdir $copyroot/demo/tutorial/megawidgets/databaseview
+file mkdir $copyroot/demo/tutorial/megawidgets/listviewer
 file mkdir $copyroot/sample
 
 exec cp $bldroot/ChangeLog                                $copyroot
@@ -68,7 +71,6 @@ exec cp $bldroot/LICENSE                                  $copyroot
 exec cp $bldroot/README                                   $copyroot
 exec cp $bldroot/vtclmac                                  $copyroot
 exec cp $bldroot/vtcl.tcl                                 $copyroot
-exec cp $bldroot/vtsetup.tcl                              $copyroot
 exec cp $bldroot/configure                                $copyroot
 eval exec cp [glob $bldroot/lib/*.tcl]                    $copyroot/lib
 eval exec cp [glob $bldroot/lib/ttd/*.tcl]                $copyroot/lib/ttd
@@ -106,6 +108,8 @@ eval exec cp [glob $bldroot/demo/images/*.*]              $copyroot/demo/images
 eval exec cp [glob $bldroot/demo/tutorial/core/*.tcl]     $copyroot/demo/tutorial/core
 eval exec cp [glob $bldroot/demo/tutorial/megawidgets/imagelist/*.tcl]     $copyroot/demo/tutorial/megawidgets/imagelist
 eval exec cp [glob $bldroot/demo/tutorial/megawidgets/imagelist/*.txt]     $copyroot/demo/tutorial/megawidgets/imagelist
+eval exec cp [glob $bldroot/demo/tutorial/megawidgets/databaseview/*.tcl]  $copyroot/demo/tutorial/megawidgets/databaseview
+eval exec cp [glob $bldroot/demo/tutorial/megawidgets/listviewer/*.tcl]     $copyroot/demo/tutorial/megawidgets/listviewer
 eval exec cp [glob $bldroot/sample/*.tcl]                 $copyroot/sample
 
 # temp for the alpha version
@@ -123,4 +127,3 @@ exec tar cf - -C . vtcl-$version | gzip >vtcl-$version.tar.gz
 #file copy -force $bldroot/images/title.gif    /root/rpm/SOURCES
 #
 #exec /bin/rpm -ba /root/rpm/SPECS/vtcl-$version-1.spec
-
