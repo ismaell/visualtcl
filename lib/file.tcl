@@ -20,6 +20,12 @@
 
 ##############################################################################
 #
+#
+# This file has been modified by:
+#   Christian Gavin
+#   Damon Courtney
+#
+##############################################################################
 
 proc vTcl:new {} {
     global vTcl
@@ -296,7 +302,6 @@ proc vTcl:close {} {
     wm title $vTcl(gui,main) "Visual Tcl"
     set vTcl(change) 0
 
-    # @@change by Christian Gavin 3/5/2000
     # refresh widget tree automatically after File Close
     # delete user images (e.g. per project images)
     # delete user fonts (e.g. per project fonts)
@@ -304,10 +309,9 @@ proc vTcl:close {} {
     vTcl:image:remove_user_images
     vTcl:font:remove_user_fonts
     vTcl:prop:clear
+    ::widgets_bindings::init
 
     after idle {vTcl:init_wtree}
-
-    # @@end_change
 }
 
 proc vTcl:save {} {
