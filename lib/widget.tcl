@@ -625,20 +625,14 @@ proc vTcl:auto_place_widget {class {options ""}} {
 
     set created_widget [vTcl:create_widget $class $options $new_widg 0 0]
 
-    # @@change by Christian Gavin 3/5/2000
-    #
     # when new widget is inserted, automatically refresh
     # widget tree
-
     # we do not destroy the handles that were just created
-    # (remember, the handles are used to grab and move a widget
-    # around)
+    # (remember, the handles are used to grab and move a widget around)
 
     after idle "\
         vTcl:init_wtree 0
         vTcl:show_selection_in_tree $created_widget"
-
-    # @@end_change
 
     return $created_widget
 }
@@ -948,9 +942,7 @@ proc vTcl:manager_update {mgr} {
     vTcl:update_top_list
 }
 
-# @@change by Christian Gavin 4/16/2000
 # proc to insert widget in text editor
-# @@end_change
 
 # insert the current widget name (eg. .top30) or alias into
 # given text widget
@@ -980,7 +972,7 @@ proc vTcl:add_functions_to_rc_menu {} {
     }
 }
 
-proc vTcl:new_widget {class button {options ""}} {
+proc vTcl:new_widget {autoplace class button {options ""}} {
     global vTcl classes
     if {$vTcl(mode) == "TEST"} {
         vTcl:error "Inserting widgets is not\nallowed in Test mode."
@@ -989,7 +981,7 @@ proc vTcl:new_widget {class button {options ""}} {
 
     vTcl:raise_last_button $button
 
-    if {$vTcl(pr,autoplace) || $class == "Toplevel" \
+    if {$autoplace || $class == "Toplevel" \
         || $classes($class,autoPlace)} {
         vTcl:status "Status"
         vTcl:rebind_button_1
@@ -1000,7 +992,7 @@ proc vTcl:new_widget {class button {options ""}} {
     # how we came here), but then the button class raises the button
     # again, so we wait until we have some free time
 
-    after 10 "$button configure -relief sunken"
+    after 0 "$button configure -relief sunken"
 
     vTcl:status "Insert $class"
 
@@ -1032,20 +1024,15 @@ proc vTcl:place_widget {class button options rx ry x y} {
 
     set created_widget [vTcl:create_widget $class $options $new_widg $x $y]
 
-    # @@change by Christian Gavin 3/5/2000
-    #
     # when new widget is inserted, automatically refresh
     # widget tree
 
     # we do not destroy the handles that were just created
-    # (remember, the handles are used to grab and move a widget
-    # around)
+    # (remember, the handles are used to grab and move a widget around)
 
     after idle "\
         vTcl:init_wtree 0
         vTcl:show_selection_in_tree $created_widget"
-
-    # @@end_change
 
     return $created_widget
 }
@@ -1177,6 +1164,7 @@ proc vTcl:widget:register_widget_megachildren {w} {
 ###
 proc vTcl:widget:register_widget {w {save_options ""}} {
 
+    global classes
     set opts [$w configure]
 
     vTcl:widget:register_widget_megachildren $w
@@ -1196,10 +1184,30 @@ proc vTcl:widget:register_widget {w {save_options ""}} {
                     variable defaults
                 }
 
+                set defopts $classes([vTcl:get_class $w],defaultValues)
+                set newdefopts ""
+
                 foreach list $opts {
                     lassign $list opt x x def val
-                    set ::widgets::${w}::options($opt) $val
-                    set ::widgets::${w}::defaults($opt) $def
+
+                    # if the option is not saved in the project, we
+                    # want it to take the default value for the most
+                    # common options (on the other hand, some options
+                    # are better off if we use the option database)
+
+                    if {[lsearch -exact $defopts $opt] != -1 &&
+                        ![info exists ::widgets::${w}::save($opt)]} {
+                        set ::widgets::${w}::options($opt) $def
+                        set ::widgets::${w}::defaults($opt) $def
+                        lappend newdefopts $opt $def
+                    } else {
+                        set ::widgets::${w}::options($opt) $val
+                        set ::widgets::${w}::defaults($opt) $def
+                    }
+                }
+
+                if {![lempty $newdefopts]} {
+                    eval $w configure $newdefopts
                 }
 
                 return

@@ -6,6 +6,7 @@ Icon            icon_tixPanedWindow.gif
 TreeLabel       Tix PanedWindow
 DefaultOptions  -orient vertical
 DumpCmd         vTcl:dump:TixPanedWindow
+CompoundCmd     vTcl:compound:tixPanedWindow
 DumpChildren    no
 MegaWidget      yes
 InsertCmd       vTcl:widget:tixPanedWindow:inscmd
@@ -71,5 +72,31 @@ proc vTcl:dump:TixPanedWindow {target basename} {
         set subwidget [$target subwidget $page]
         append result [vTcl:lib_tix:dump_subwidgets $subwidget]
     }
+    return $result
+}
+
+proc vTcl:compound:tixPanedWindow {target} {
+    set result ""
+
+    set entries [$target panes]
+
+    foreach page $entries {
+        set conf [$target paneconfigure $page]
+        foreach c $conf {
+            # Filter the valid options out
+            if [regexp -- {^-(after|allow|at|before|expand|max|min|size)} $c] {
+                lappend validcfg $c
+            }
+        }
+        set pairs [vTcl:conf_to_pairs $validcfg ""]
+        append result "\$target add $page $pairs; "
+    }
+
+    foreach page $entries {
+        set compound [vTcl:create_compound [$target subwidget $page]]
+        append result "vTcl:insert_compound "
+        append result "\[\$target subwidget $page\] [list $compound] pack \{\}; "
+    }
+
     return $result
 }

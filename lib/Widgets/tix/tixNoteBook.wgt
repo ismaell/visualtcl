@@ -4,7 +4,8 @@ Lib             tix
 Class           TixNoteBook
 Icon            icon_tixNoteBook.gif
 TreeLabel       Tix NoteBook
-DumpCmd         vTcl:dump:TixNoteBook
+DumpCmd         vTcl:dump:tixNoteBook
+CompoundCmd     vTcl:compound:tixNoteBook
 DumpChildren    no
 MegaWidget      yes
 InsertCmd       vTcl:widget:tixNoteBook:inscmd
@@ -59,7 +60,7 @@ proc vTcl:widget:tixNotebook:treeChildrenChildsite {target} {
 #
 # per-widget-class dump procedures
 #
-proc vTcl:dump:TixNoteBook {target basename} {
+proc vTcl:dump:tixNoteBook {target basename} {
     global vTcl
     set result [vTcl:dump_widget_opt $target $basename]
     set entries [$target pages]
@@ -73,5 +74,25 @@ proc vTcl:dump:TixNoteBook {target basename} {
         set subwidget [$target subwidget $page]
         append result [vTcl:lib_tix:dump_subwidgets $subwidget]
     }
+    return $result
+}
+
+proc vTcl:compound:tixNoteBook {target} {
+    set result ""
+
+    set entries [$target pages]
+
+    foreach page $entries {
+        set conf [$target pageconfigure $page]
+        set pairs [vTcl:conf_to_pairs $conf ""]
+        append result "\$target add $page $pairs; "
+    }
+
+    foreach page $entries {
+        set compound [vTcl:create_compound [$target subwidget $page]]
+        append result "vTcl:insert_compound "
+        append result "\[\$target subwidget $page\] [list $compound] pack \{\}; "
+    }
+
     return $result
 }

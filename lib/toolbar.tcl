@@ -59,13 +59,11 @@ proc vTcl:toolbar_add {class name image cmd_add} {
     set f [vTcl:new_widget_name tb $base]
     button $f -bd 1 -image $image
 
-    bind $f <ButtonRelease-1> "vTcl:new_widget $class $f \"$cmd_add\""
+    bind $f <ButtonRelease-1> \
+        "vTcl:new_widget \$vTcl(pr,autoplace) $class $f \"$cmd_add\""
 
     bind $f <Shift-ButtonRelease-1> \
-        "set _temp $vTcl(pr,autoplace)
-         set vTcl(pr,autoplace) 1
-         vTcl:new_widget $class $f \"$cmd_add\"
-         set vTcl(pr,autoplace) \$_temp"
+        "vTcl:new_widget 1 $class $f \"$cmd_add\""
 
     vTcl:set_balloon $f $name
     lappend vTcl(tool,list) $f

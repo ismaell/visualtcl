@@ -1,6 +1,9 @@
 ChangeLog for Visual Tcl:
 
 1.51b4 -> 1.51rc0
+    o Common options like -background take their default values on project
+      load unless, of course, the option is saved in the project
+    o Support copy/paste for megawidgets tixPanedWindow and tixNoteBook
     o Megawidgets don't save their internal grid geometry
     o Added necessary compound code to allow copy/paste of megawidgets with
       childsites. Enabled tabnotebook and panedwindow [Iwidgets] with this
