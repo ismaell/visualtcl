@@ -658,9 +658,7 @@ proc vTcl:dump:aliases {target} {
 	append output "set \{widget(child,$alias)\} \"[join $components .]\"\n"
 
 	append output $vTcl(tab)
-	## Find out what command we're aliased to.  Usually vTcl:WidgetProc.
-	set cmd [lindex [interp alias {} $alias] 0]
-	append output "interp alias {} $alias {} $cmd $value\n"
+	append output "interp alias {} $alias {} [interp alias {} $alias]\n"
     }
 
     return "$output\n"
