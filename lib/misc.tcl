@@ -311,17 +311,18 @@ proc vTcl:cmp_sys_menu {} {
     }
 }
 
-proc vTcl:get_children {target} {
-    global vTcl
+proc vTcl:get_children {target {include_megachildren 0}} {
+    global vTcl classes
 
     # @@change by Christian Gavin 3/7/2000
     # mega-widgets children should not be copied
 
-    foreach megawidget $vTcl(megaWidget) {
+    set wdg_class [vTcl:get_class $target]
 
-	    if [string match $megawidget [vTcl:get_class $target]] {
-  	  	return ""
-	    }
+    if {[info exists classes(${wdg_class},megaWidget)]} {
+        if {$classes(${wdg_class},megaWidget) && (!$include_megachildren)} {
+            return ""
+        }
     }
 
     # @@end_change

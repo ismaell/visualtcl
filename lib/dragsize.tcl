@@ -26,14 +26,21 @@ proc vTcl:bind_button_1 {target X Y x y} {
 
     vTcl:set_mouse_coords $X $Y $x $y
 
+    set parent $target
+
+    # megawidget ?
+    if {[info exists ::widgets::${target}::parent]} {
+        set parent [vTcl:at ::widgets::${target}::parent]
+    }
+
     if {[lindex [split %W .] 1] != "vTcl"} {
-        if {$target != "." && [winfo class $target] != "Toplevel"} {
-            vTcl:active_widget $target
+        if {$parent != "." && [winfo class $parent] != "Toplevel"} {
+            vTcl:active_widget $parent
             vTcl:grab $target $X $Y
             set vTcl(cursor,last) [$target cget -cursor]
             $target configure -cursor fleur
         } else {
-            vTcl:active_widget $target
+            vTcl:active_widget $parent
         }
     }
 }
@@ -43,33 +50,40 @@ proc vTcl:bind_button_2 {target X Y x y} {
 
     vTcl:set_mouse_coords $X $Y $x $y
 
-    vTcl:active_widget $target
+    set parent $target
+
+    # megawidget ?
+    if {[info exists ::widgets::${target}::parent]} {
+        set parent [vTcl:at ::widgets::${target}::parent]
+    }
+
+    vTcl:active_widget $parent
 
     if {$vTcl(w,widget) != "." && \
         [winfo class $vTcl(w,widget)] != "Toplevel" && \
         $vTcl(w,widget) != ""} {
-            vTcl:grab $vTcl(w,widget) $X $Y
+            vTcl:grab $target $X $Y
             set vTcl(cursor,last) [$vTcl(w,widget) cget -cursor]
-            $vTcl(w,widget) configure -cursor fleur
+            $target configure -cursor fleur
     }
 }
 
-proc vTcl:bind_motion {x y} {
+proc vTcl:bind_motion {W x y} {
     global vTcl
     if {$vTcl(w,widget) != "." && $vTcl(w,class) != "Toplevel"} {
-        vTcl:grab_motion $vTcl(w,widget) $x $y
+        vTcl:grab_motion $vTcl(w,widget) $W $x $y
     }
 }
 
-proc vTcl:bind_release {X Y x y} {
+proc vTcl:bind_release {W X Y x y} {
     global vTcl
 
     vTcl:set_mouse_coords $X $Y $x $y
 
     if {$vTcl(w,widget) == ""} {return}
-    $vTcl(w,widget) configure -cursor "$vTcl(cursor,last)"
+    $W configure -cursor "$vTcl(cursor,last)"
     vTcl:place_handles $vTcl(w,widget)
-    vTcl:grab_release $vTcl(w,widget)
+    vTcl:grab_release $W
     vTcl:update_widget_info $vTcl(w,widget)
 }
 
@@ -80,21 +94,25 @@ proc vTcl:grab {widget absX absY} {
     set vTcl(w,grabbed) 1
     set vTcl(grab,startX) [vTcl:grid_snap x $absX]
     set vTcl(grab,startY) [vTcl:grid_snap y $absY]
+    puts "grab: $widget"
 }
 
-proc vTcl:grab_motion {widget absX absY} {
+proc vTcl:grab_motion {parent widget absX absY} {
+    # parent designates a megawidget, widget is the
+    # child (if any) beeing dragged
+
     global vTcl
     set vTcl(w,didmove) 1
     # workaround for Tix
     if { $vTcl(w,grabbed) == 0 } { vTcl:grab $widget $absX $absY }
     if { $vTcl(w,manager) == "place" } {
-        place $widget \
+        place $parent \
             -x [vTcl:grid_snap x \
                 [expr {$absX-$vTcl(grab,startX)+$vTcl(w,x)}]] \
             -y [vTcl:grid_snap y \
                 [expr {$absY-$vTcl(grab,startY)+$vTcl(w,y)}]]
     }
-    vTcl:place_handles $widget
+    vTcl:place_handles $parent
 }
 
 proc vTcl:grab_release {widget} {
@@ -105,6 +123,7 @@ proc vTcl:grab_release {widget} {
         set vTcl(undo) [vTcl:dump_widget_quick $vTcl(w,widget)]
         vTcl:passive_push_action $vTcl(undo) $vTcl(redo)
     }
+    puts "grab_release: $widget"
 }
 
 proc vTcl:grab_resize {absX absY handle} {

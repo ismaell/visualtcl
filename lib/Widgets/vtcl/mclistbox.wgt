@@ -5,6 +5,7 @@ CreateCmd     ::mclistbox::mclistbox
 Icon          icon_mclistbox.gif
 Balloon       multicolumn listbox
 DumpChildren  no
+MegaWidget    yes
 Resizable     both
 TreeLabel     Multicolumn Listbox
 AliasPrefix   Mclistbox

@@ -5,6 +5,7 @@ CreateCmd     ::combobox::combobox
 Icon          icon_combobox.gif
 Balloon       combo box
 DumpChildren  no
+MegaWidget    yes
 Resizable     horizontal
 TreeLabel     Combo Box
 AliasPrefix   Combobox

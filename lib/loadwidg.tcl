@@ -83,6 +83,7 @@ proc SetClassArray {} {
 	$tmp(class),createCmd		[vTcl:lower_first $tmp(class)]
 	$tmp(class),resizable		1
 	$tmp(class),dumpChildren	1
+    $tmp(class),megaWidget      0
 	$tmp(class),dumpCmd		vTcl:dump_widget_opt
 	$tmp(class),options		{}
 	$tmp(class),defaultOptions	{}
@@ -174,6 +175,13 @@ proc DumpChildren {val} {
     set num 0
     if {[string tolower $val] == "yes"} { set num 1 }
     set tmp(dumpChildren) $num
+}
+
+proc MegaWidget {val} {
+    global tmp
+    set num 0
+    if {[string tolower $val] == "yes"} { set num 1 }
+    set tmp(megaWidget) $num
 }
 
 proc InsertCmd {name} {

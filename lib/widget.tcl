@@ -202,7 +202,7 @@ proc vTcl:widget_tree {target {include_target 1}} {
     set output ""
     if {$include_target} {
         set output "$target "
-    }    
+    }
     set class [winfo class $target]
     set dumpChildren 1
     if {[info exists classes($class,dumpChildren)]} {
@@ -224,29 +224,35 @@ proc vTcl:widget_tree {target {include_target 1}} {
 #
 # Recurses a widget tree with the option of not ignoring built-ins
 #
-proc vTcl:list_widget_tree {target {which ""} {include_menus 0}} {
+# In the normal case we are not interested by children of megawidgets
+#
+# However, bindings are set for all children, including megawidgets' children
+# so that when a user clicks on a child, the parent megawidget will be
+# selected
+
+proc vTcl:list_widget_tree {target {which ""} {include_menus 0} {include_megachildren 0}} {
     if {$which == ""} {
         if {$target == ".vTcl" || [string range $target 0 4] == ".__tk"} {
             return
         }
     }
     set w_tree "$target "
-    set children [vTcl:get_children $target]
+    set children [vTcl:get_children $target $include_megachildren]
     foreach i $children {
 
-	# don't include temporary windows
-	if {[string match {*#*} $i] &&
-	    (! $include_menus)} {
-	    continue
-	}
+        # don't include temporary windows
+        if {[string match {*#*} $i] &&
+        (! $include_menus)} { continue }
 
-	# Don't include unknown widgets
-	set c [vTcl:get_class $i]
+        # Don't include unknown widgets
+        set c [vTcl:get_class $i]
 
-	if {![vTcl:valid_class $c]} { continue }
+        if {![vTcl:valid_class $c]} { continue }
 
-        append w_tree "[vTcl:list_widget_tree $i $which] "
+        append w_tree \
+            "[vTcl:list_widget_tree $i $which $include_menus $include_megachildren] "
     }
+
     return $w_tree
 }
 
@@ -463,7 +469,7 @@ proc vTcl:new_widget_name {class base} {
 
 proc vTcl:setup_vTcl:bind {target} {
     global vTcl
-    set bindlist [vTcl:list_widget_tree $target all 1]
+    set bindlist [vTcl:list_widget_tree $target all 1 1]
     update idletasks
     foreach i $bindlist {
         if { [lsearch [bindtags $target] vTcl(a)] < 0 } {
@@ -502,7 +508,7 @@ proc vTcl:switch_mode {} {
 proc vTcl:setup_bind_tree {target} {
     global vTcl
     # include special menu windows under X with '#'
-    set bindlist [vTcl:list_widget_tree $target "" 1]
+    set bindlist [vTcl:list_widget_tree $target "" 1 1]
     update idletasks
     foreach i $bindlist {
         vTcl:setup_bind $i
@@ -522,7 +528,7 @@ proc vTcl:setup_unbind_tree {target} {
     vTcl:select_widget .
     vTcl:destroy_handles
     # include special menu windows under X with '#'
-    set bindlist [vTcl:list_widget_tree $target "" 1]
+    set bindlist [vTcl:list_widget_tree $target "" 1 1]
     update idletasks
     foreach i $bindlist {
         vTcl:setup_unbind $i
@@ -1014,22 +1020,51 @@ proc vTcl:widget:get_tree_label {w} {
     return $t
 }
 
+proc vTcl:widget:register_widget_megachildren {w} {
+
+    global classes
+
+    set wdg_class [vTcl:get_class $w]
+
+    # if this is a megawidget, register special information in the
+    # children to allow the megawidget to be manipulated as one unit
+    # when the user clicks on such a child, and such an information is
+    # found, then the parent will be selected instead
+
+    if {[info exists classes(${wdg_class},megaWidget)]} {
+        if {$classes(${wdg_class},megaWidget)} {
+
+            # get all children
+            set children [vTcl:list_widget_tree $w "" 1 1]
+            foreach child $children {
+                namespace eval ::widgets::${child} {
+                    variable parent
+                }
+                set ::widgets::${child}::parent $w
+            }
+        }
+    }
+}
+
 ###
 ## Register a widget and give it a containing namespace to hold data.
 #  save_options lists options that we absolutely want to be saved
 #  (e.g. for menus we want to save -menu, -label at least)
 ###
 proc vTcl:widget:register_widget {w {save_options ""}} {
+
     set opts [$w configure]
 
+    vTcl:widget:register_widget_megachildren $w
+
     if {![catch {namespace children ::widgets} namespaces]} {
-	    if {[lsearch $namespaces ::widgets::${w}] > -1} {
+        if {[lsearch $namespaces ::widgets::${w}] > -1} {
 
             if {! [info exists ::widgets::${w}::options] } {
 
                 # at least, if the widget has already been registered
-    			# (typically just after a "file open" operation), we
-			    # need to create the options and defaults arrays
+                # (typically just after a "file open" operation), we
+                # need to create the options and defaults arrays
 
                 namespace eval ::widgets::${w} {
                     variable options
@@ -1040,11 +1075,11 @@ proc vTcl:widget:register_widget {w {save_options ""}} {
                     lassign $list opt x x def val
                     set ::widgets::${w}::options($opt) $val
                     set ::widgets::${w}::defaults($opt) $def
-	    		}
-			}
+                }
+            }
 
-	        return
-	    }
+            return
+        }
     }
 
     namespace eval ::widgets::${w} {
@@ -1085,24 +1120,3 @@ proc vTcl:widget:register_all_widgets {{w .}} {
     	vTcl:widget:register_widget $w
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

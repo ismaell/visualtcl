@@ -5,6 +5,7 @@ CreateCmd	::progressbar::progressbar
 Icon		icon_progressbar.gif
 Balloon		3d progressbar
 DumpChildren	no
+MegaWidget  yes
 Resizable	horizontal
 TreeLabel	3D Progressbar
 AliasPrefix	Progressbar
