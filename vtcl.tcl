@@ -375,7 +375,7 @@ proc vTclWindow.vTcl {args} {
     $vTcl(gui,rc_menu) add command -label "Set Insert" -command {
 	vTcl:set_insert
     }
-    $vTcl(gui,rc_menu) add command -label "Set Alias" -command {
+    $vTcl(gui,rc_menu) add command -label "Set Alias..." -command {
 	vTcl:set_alias $vTcl(w,widget)
     }
 
@@ -410,7 +410,7 @@ proc vTclWindow.vTcl {args} {
 	vTcl:copy_widgetname
     }
     $vTcl(gui,rc_menu) add separator
-    $vTcl(gui,rc_menu) add command -label "Bindings" -command {
+    $vTcl(gui,rc_menu) add command -label "Bindings..." -command {
         vTcl:show_bindings
     }
 
@@ -726,6 +726,7 @@ proc vTcl:main {argc argv} {
 }
 
 vTcl:main $argc $argv
+
 
 
 

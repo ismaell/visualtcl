@@ -1,6 +1,13 @@
 ChangeLog for Visual Tcl:
 
 1.6.0b1 ->
+    o Megawidgets properties can now be edited by right-clicking and
+      selecting the "Edit Megawidget..." option. Megawidgets properties
+      now saved into project file.
+    o When inserting a compound, if it already exists, preselect the list
+      of procs that go with it.
+    o For creation of megawidgets, added right-click option "Save Megawidget
+      to a File" that creates a compound and saves it into a file.
     o Fixed problem where was not dumping grid geometry for BWidget and
       Itcl notebook pages.
     o Added more tutorial samples.
@@ -991,6 +998,7 @@ ChangeLog for Visual Tcl:
     o And much, much more :)
 
 1.01 released (December 5, 1996)
+
 
 
 
