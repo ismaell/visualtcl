@@ -4,12 +4,13 @@ exec wish "$0" "$@"
 
 if {![info exists vTcl(sourcing)]} {
 
+    package require Tk
     switch $tcl_platform(platform) {
 	windows {
             option add *Button.padY 0
 	}
 	default {
-	    option add *Scrollbar.width 10
+            option add *Scrollbar.width 10
             option add *Scrollbar.highlightThickness 0
             option add *Scrollbar.elementBorderWidth 2
             option add *Scrollbar.borderWidth 2
@@ -156,18 +157,18 @@ proc ::vTcl:Toplevel:WidgetProc {w args} {
         ## If no arguments, returns the path the alias points to
         return $w
     }
-    ## The first argument is a switch, they must be doing a configure.
-    if {[string index $args 0] == "-"} {
-        set command configure
-        ## There's only one argument, must be a cget.
-        if {[llength $args] == 1} {
-            set command cget
-        }
-    } else {
-        set command [lindex $args 0]
-        set args [lrange $args 1 end]
-    }
+    set command [lindex $args 0]
+    set args [lrange $args 1 end]
     switch -- $command {
+        "setvar" {
+            set varname [lindex $args 0]
+            set value [lindex $args 1]
+            if {$value == ""} {
+                return [set ::${w}::${varname}]
+            } else {
+                return [set ::${w}::${varname} $value]
+            }
+        }
         "hide" - "Hide" - "show" - "Show" {
             Window [string tolower $command] $w
         }
@@ -231,21 +232,22 @@ proc vTcl:project:info {} {
     set base .top82
     namespace eval ::widgets::$base {
         set set,origin 1
-        set set,size 1
+        set set,size 0
+        set runvisible 1
     }
-    namespace eval ::widgets::$base.lab83 {
+    namespace eval ::widgets::$base.cpd72 {
         array set save {-text 1}
     }
-    namespace eval ::widgets::$base.lab84 {
+    namespace eval ::widgets::$base.cpd73 {
         array set save {-justify 1 -relief 1 -text 1}
     }
-    namespace eval ::widgets::$base.cpd82 {
+    namespace eval ::widgets::$base.cpd74 {
         array set save {-background 1 -text 1}
     }
-    namespace eval ::widgets::$base.cpd83 {
+    namespace eval ::widgets::$base.cpd75 {
         array set save {-background 1 -justify 1 -text 1}
     }
-    namespace eval ::widgets::$base.lab85 {
+    namespace eval ::widgets::$base.cpd76 {
         array set save {-background 1 -text 1}
     }
     namespace eval ::widgets_bindings {
@@ -289,7 +291,7 @@ proc vTclWindow. {base} {
     # CREATING WIDGETS
     ###################
     wm focusmodel $top passive
-    wm geometry $top 200x200+132+150; update
+    wm geometry $top 200x200+22+25; update
     wm maxsize $top 1284 1006
     wm minsize $top 111 1
     wm overrideredirect $top 0
@@ -320,7 +322,7 @@ proc vTclWindow.top82 {base} {
     ###################
     vTcl:toplevel $top -class Toplevel
     wm focusmodel $top passive
-    wm geometry $top 446x352+103+286; update
+    wm geometry $top +155+235; update
     wm maxsize $top 1284 1006
     wm minsize $top 111 1
     wm overrideredirect $top 0
@@ -332,48 +334,52 @@ proc vTclWindow.top82 {base} {
     vTcl:FireEvent $top <<Create>>
     wm protocol $top WM_DELETE_WINDOW "vTcl:FireEvent $top <<DeleteWindow>>"
 
-    label $top.lab83 \
+    label $top.cpd72 \
         -text {This is a simple label. Right-click, Set Text to edit it.} 
-    vTcl:DefineAlias "$top.lab83" "Label1" vTcl:WidgetProc "Toplevel1" 1
-    label $top.lab84 \
+    vTcl:DefineAlias "$top.cpd72" "Label1" vTcl:WidgetProc "Toplevel1" 1
+    label $top.cpd73 \
         -justify left -relief ridge \
         -text {This is a multiline label.
 
 It can be edited by right-clicking on the label and selecting "Set Multiline Text".} 
-    vTcl:DefineAlias "$top.lab84" "Label2" vTcl:WidgetProc "Toplevel1" 1
-    label $top.cpd82 \
+    vTcl:DefineAlias "$top.cpd73" "Label2" vTcl:WidgetProc "Toplevel1" 1
+    label $top.cpd74 \
         -background #ffffff \
         -text {This is the same multiline label, but this time, it is center justified.
 
 It can be edited by right-clicking on the label and selecting "Set Multiline Text".} 
-    vTcl:DefineAlias "$top.cpd82" "Label3" vTcl:WidgetProc "Toplevel1" 1
-    label $top.cpd83 \
+    vTcl:DefineAlias "$top.cpd74" "Label3" vTcl:WidgetProc "Toplevel1" 1
+    label $top.cpd75 \
         -background #a708ecece489 -justify right \
         -text {This is the same multiline label, but this time, it is right justified.
 
 It can be edited by right-clicking on the label and selecting "Set Multiline Text".} 
-    vTcl:DefineAlias "$top.cpd83" "Label4" vTcl:WidgetProc "Toplevel1" 1
-    label $top.lab85 \
+    vTcl:DefineAlias "$top.cpd75" "Label4" vTcl:WidgetProc "Toplevel1" 1
+    label $top.cpd76 \
         -background #ececd06f9fec \
         -text {Labels can be anchored to their container.
 
 By default, a label is center achored.
 
 Try playing with the "anchor" option in the Attribute Editor.} 
-    vTcl:DefineAlias "$top.lab85" "Label5" vTcl:WidgetProc "Toplevel1" 1
+    vTcl:DefineAlias "$top.cpd76" "Label5" vTcl:WidgetProc "Toplevel1" 1
     ###################
     # SETTING GEOMETRY
     ###################
-    place $top.lab83 \
-        -x 20 -y 15 -anchor nw -bordermode ignore 
-    place $top.lab84 \
-        -x 20 -y 45 -width 407 -height 45 -anchor nw -bordermode ignore 
-    place $top.cpd82 \
-        -x 20 -y 100 -width 407 -height 45 -anchor nw 
-    place $top.cpd83 \
-        -x 20 -y 155 -width 407 -height 45 -anchor nw 
-    place $top.lab85 \
-        -x 20 -y 215 -width 406 -height 116 -anchor nw -bordermode ignore 
+    pack $top.cpd72 \
+        -in $top -anchor center -expand 0 -fill none -padx 5 -pady 5 \
+        -side top 
+    pack $top.cpd73 \
+        -in $top -anchor center -expand 0 -fill none -padx 5 -pady 5 \
+        -side top 
+    pack $top.cpd74 \
+        -in $top -anchor center -expand 0 -fill none -padx 5 -pady 5 \
+        -side top 
+    pack $top.cpd75 \
+        -in $top -anchor center -expand 0 -fill none -padx 5 -pady 5 \
+        -side top 
+    pack $top.cpd76 \
+        -in $top -anchor center -expand 0 -fill x -padx 5 -pady 5 -side top 
 
     vTcl:FireEvent $base <<Ready>>
 }
