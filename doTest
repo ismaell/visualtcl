@@ -1,0 +1,8 @@
+#!/bin/sh
+
+PATH_TO_WISH=/opt/tcltk/bin/wish8.3
+VTCL_HOME=/home/cgavin/vtcl
+export PATH_TO_WISH
+export VTCL_HOME
+rm autotest/result.txt
+exec ${PATH_TO_WISH} ${VTCL_HOME}/vtcl.tcl autotest/test_basic.tcl
