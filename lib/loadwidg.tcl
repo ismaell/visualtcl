@@ -105,6 +105,7 @@ proc SetClassArray {} {
         $tmp(class),treeLabel       $tmp(class)
         $tmp(class),treeChildrenCmd {}
         $tmp(class),deleteCmd       {}
+        $tmp(class),deleteSiteCmd   {}
         $tmp(class),defaultValues   {}
         $tmp(class),dontSaveOptions {}
     "
@@ -243,6 +244,11 @@ proc InsertCmd {name} {
 proc DeleteCmd {name} {
     global tmp
     set tmp(deleteCmd) $name
+}
+
+proc DeleteSiteCmd {name} {
+    global tmp
+    set tmp(deleteSiteCmd) $name
 }
 
 proc DoubleClickCmd {name} {

@@ -1,6 +1,7 @@
 ChangeLog for Visual Tcl:
 
 1.51b4 -> 1.51rc0
+    o Added support for deleting childsites in tabnotebook/notebook [Iwidgets]
     o Added notebook widget for Itcl. Supports copy/paste.
     o Common options like -background take their default values on project
       load unless, of course, the option is saved in the project

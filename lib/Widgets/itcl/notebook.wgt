@@ -6,6 +6,7 @@ Icon		icon_notebook.gif
 DumpChildren	no
 MegaWidget	yes
 InsertCmd	vTcl:widget:notebook:inscmd
+DeleteSiteCmd   vTcl:widget:notebook:deleteSiteCmd
 TagsCmd         vTcl:lib_itcl:tagscmd
 TreeChildrenCmd	{vTcl:widget:notebook:treeChildrenCmd
 		 vTcl:widget:notebook:treeChildrenChildsite}
@@ -18,6 +19,16 @@ proc vTcl:widget:notebook:inscmd {target} {
             $target add -label {Page 2} ;\
             $target add -label {Page 3} ;\
             $target select 0"
+}
+
+proc vTcl:widget:notebook:deleteSiteCmd {target site} {
+
+    set index [lsearch -exact [$target childsite] $site]
+
+    if {$index != -1} {
+        $target delete $index
+        $target select 0
+    }
 }
 
 # All right, I explain it: -2 is the number of levels
