@@ -1,6 +1,7 @@
 ChangeLog for Visual Tcl:
 
 1.51b4 -> 1.51
+    o Added "-listvariable" option for listbox
     o Added "Reload" button to image manager, to reload images modified
       by other programs like image editors.
     o Added <<Ready>> event for toplevels

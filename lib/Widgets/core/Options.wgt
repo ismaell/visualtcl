@@ -64,6 +64,7 @@ NewOption -jump			"jump"			boolean	"0 1"
 NewOption -justify		"justify"		choice \
   "left right center"
 NewOption -labelfont		"label font"		font
+NewOption -listvariable         "list var"              type
 NewOption -menu			"menu"			menu
 NewOption -offvalue		"off value"		type
 NewOption -onvalue		"on value"		type
