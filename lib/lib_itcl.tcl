@@ -55,6 +55,7 @@ proc vTcl:lib_itcl:init {} {
         namespace import iwidgets::buttonbox
         namespace import iwidgets::checkbox
         namespace import iwidgets::radiobox
+        namespace import iwidgets::labeledframe
         namespace import iwidgets::tabnotebook
         namespace import iwidgets::panedwindow
         namespace import iwidgets::scrolledtext
@@ -107,6 +108,7 @@ proc vTcl:widget:lib:lib_itcl {args} {
             namespace import iwidgets::buttonbox
             namespace import iwidgets::checkbox
             namespace import iwidgets::radiobox
+            namespace import iwidgets::labeledframe
             namespace import iwidgets::tabnotebook
             namespace import iwidgets::panedwindow
             namespace import iwidgets::scrolledtext
@@ -128,8 +130,8 @@ proc vTcl:widget:lib:lib_itcl {args} {
 
     set order {Entryfield Spinint Combobox Scrolledlistbox Calendar
                Dateentry Scrolledhtml Toolbar Feedback Optionmenu
-               Hierarchy Buttonbox Checkbox Radiobox Tabnotebook
-               Panedwindow Scrolledtext}
+               Hierarchy Buttonbox Checkbox Radiobox Labeledframe 
+               Tabnotebook Panedwindow Scrolledtext}
 
     vTcl:lib:add_widgets_to_toolbar $order
 
