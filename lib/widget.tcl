@@ -652,7 +652,8 @@ proc vTcl:auto_place_widget {class {options ""}} {
     }
     if { ($vTcl(w,insert) == "." && $class != "Toplevel") ||
          ([winfo exists $vTcl(w,insert)] == 0 && $class != "Toplevel")} {
-        vTcl:dialog "No insertion point set!"
+        tk_messageBox -icon error -message "No insertion point set!" \
+            -title "Error!" -type ok
         return
     }
     set vTcl(mgrs,update) no

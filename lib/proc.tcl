@@ -442,16 +442,18 @@ proc vTcl:proc:edit_cancel {base} {
     	set vTcl(pr,geom_proc) [wm geometry $base]
         destroy $base
     } else {
-        vTcl:dialog "Buffer has changed. Do you\nwish to save the changes?" {Yes No Cancel}
-        switch $vTcl(x_mesg) {
-            No {
+        set result [tk_messageBox -default yes -icon question -message \
+            "Buffer has changed. Do you wish to save the changes?" \
+            -parent $base -title "Save Changes?" -type yesnocancel]
+        switch $result {
+            no {
                 grab release $base
                 destroy $base
             }
-            Yes {
+            yes {
                 vTcl:update_proc $base
             }
-            Cancel {}
+            cancel {}
         }
     }
 }

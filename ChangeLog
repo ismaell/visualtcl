@@ -1,6 +1,7 @@
 ChangeLog for Visual Tcl:
 
 1.51b4 -> 1.51
+    o Replaced vTcl:dialog by tk_messageBox everywhere.
     o Modified demo app Visual Text to support tag names with spaces.
     o Fixed problem when Tcl/Tk 8.3.3 from ActiveState passes a {} parameter
       to the command line causing Visual Tcl to fail on startup

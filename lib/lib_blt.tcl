@@ -45,9 +45,7 @@ proc vTcl:widget:lib:lib_blt {args} {
     vTcl:lib:add_widgets_to_toolbar $order
 
     append vTcl(head,blt,importheader) {
-    # Check if BLT is available
-    if {[lsearch -exact $packageNames BLT] != -1} {
-	package require BLT
-    }
+    # BLT is needed
+    package require BLT
     }
 }

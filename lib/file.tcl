@@ -125,7 +125,8 @@ proc vTcl:source {file} {
 
     vTcl:statbar 20
     if [catch {uplevel #0 [list source $file]} err] {
-        vTcl:dialog "Error Sourcing Project\n$err"
+        tk_messageBox -icon error -message "Error Sourcing Project\n$err" \
+            -title "File Error!"
 	global errorInfo
     }
     vTcl:statbar 35
@@ -260,11 +261,14 @@ proc vTcl:open {{file ""}} {
 proc vTcl:close {} {
     global vTcl widgetNums
     if {$vTcl(change) > 0} {
-        switch [vTcl:dialog "Your application has unsaved changes.\nDo you wish to save?" "Yes No Cancel"] {
-            Yes {
+        set result [tk_messageBox -default yes -icon question -message \
+            "Your application has unsaved changes. Do you wish to save?" \
+            -title "Save Changes?" -type yesnocancel]
+        switch $result {
+            yes {
                 if {[vTcl:save_as] == -1} { return -1 }
             }
-            Cancel {
+            cancel {
                 return -1
             }
         }
@@ -535,7 +539,9 @@ proc vTcl:quit {} {
     }
 
     if {$vTcl(quit)} {
-	if {[vTcl:dialog "Are you sure\nyou want to quit?" "Yes No"] == "No"} {
+	if {[tk_messageBox -default no -icon question -message \
+             "Are you sure you want to quit?" -title "Really Quit?" \
+             -type yesno] == "no"} {
 	    return
 	}
     }

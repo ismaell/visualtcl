@@ -153,16 +153,17 @@ proc vTcl:command:edit_cancel {base} {
         grab release $base
         destroy $base
     } else {
-        vTcl:dialog "Buffer has changed. Do you\nwish to save the changes?" {Yes No Cancel}
-        switch $vTcl(x_mesg) {
-            No {
+        set result [tk_messageBox -icon question -parent $base -default yes \
+        -message "Buffer has changed. Do you wish to save the changes?" \
+        -title "Changed buffer!" -type yesnocancel]
+
+        switch $result {
+            no {
                 grab release $base
                 destroy $base
             }
-            Yes {vTcl:command:edit_save $base}
-            Cancel {}
+            yes {vTcl:command:edit_save $base}
+            cancel {}
         }
     }
 }
-
-

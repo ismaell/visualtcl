@@ -311,7 +311,8 @@ proc vTcl:show_bindings {} {
         Window show .vTcl.bind
         vTcl:get_bind $vTcl(w,widget)
     } else {
-        vTcl:dialog "No widget selected!"
+        tk_messageBox -icon error -message "No widget selected!" \
+            -title "Error!" -type ok
     }
 }
 
@@ -414,63 +415,11 @@ proc vTcl:find_new_tops {} {
 }
 
 proc vTcl:error {mesg} {
-    vTcl:dialog $mesg
+    tk_messageBox -icon error -message $mesg -title "Error!"
 }
 
-proc vTcl:dialog {mesg {options Ok} {root 0}} {
-    global vTcl tcl_platform
-    set vTcl(x_mesg) ""
-    if {$root == 0} {
-        set base .vTcl.message
-    } else {
-        set base .vTcl:message
-    }
-    set sw [winfo screenwidth .]
-    set sh [winfo screenheight .]
-    if {![winfo exists $base]} {
-        toplevel $base -class vTcl
-	wm withdraw $base
-        wm title $base "Visual Tcl Message"
-        wm transient $base .vTcl
-        frame $base.f -bd 4
-        label $base.f.t -bd 0 -relief flat -text $mesg -justify left \
-            -font $vTcl(pr,font_dlg)
-        frame $base.o -bd 1
-        foreach i $options {
-            set n [string tolower $i]
-            button $base.o.$n -text $i -width 8 \
-            -command "
-                set vTcl(x_mesg) $i
-                destroy $base
-            "
-            pack $base.o.$n -side left -expand 1 -padx 5 -pady 1
-        }
-        pack $base.f.t -side top -expand 1 -fill both -ipadx 5 -ipady 5
-        pack $base.f -side top -expand 1 -fill both -padx 2 -pady 2
-        pack $base.o -side top -padx 2 -pady 5
-    }
-    update idletasks
-    set w [winfo reqwidth $base]
-    set h [winfo reqheight $base]
-    set x [expr ($sw - $w)/2]
-    set y [expr ($sh - $h)/2]
-    if {$tcl_platform(platform) != "unix"} {
-        wm deiconify $base
-    }
-    wm geometry $base +$x+$y
-    if {$tcl_platform(platform) == "unix"} {
-        wm deiconify $base
-    }
-    grab $base
-    tkwait window $base
-    grab release $base
-    return $vTcl(x_mesg)
-}
-
-# @@change by Christian Gavin 3/18/2000
 # procedures to manage modal dialog boxes
 # from "Effective Tcl/Tk Programming, by Mark Harrison, Michael McLennan"
-# @@end_change
 
 ##############################################################################
 # MODAL DIALOG BOXES

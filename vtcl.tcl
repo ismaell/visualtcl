@@ -384,6 +384,10 @@ proc vTclWindow.vTcl {args} {
     $vTcl(gui,rc_menu) add command -label "Copy Widgetname" -command {
 	vTcl:copy_widgetname
     }
+    $vTcl(gui,rc_menu) add separator
+    $vTcl(gui,rc_menu) add command -label "Bindings" -command {
+        vTcl:show_bindings
+    }
 
     # MINI-ATTRIBUTE AREA
     vTcl:attrbar

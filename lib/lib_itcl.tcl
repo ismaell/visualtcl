@@ -56,29 +56,23 @@ proc vTcl:widget:lib:lib_itcl {args} {
     vTcl:lib_itcl:setup
 
     append vTcl(head,itcl,importheader) {
-    # Check if Itcl is available
-    if {[lsearch -exact $packageNames Itcl] != -1} {
-	package require Itcl 3.0
-    }
+    # Needs Itcl
+    package require Itcl 3.0
 
-    # Check if Itk is available
-    if {[lsearch -exact $packageNames Itk] != -1} {
-	package require Itk 3.0
-    }
+    # Needs Itk
+    package require Itk 3.0
 
-    # Check if Iwidgets is available
-    if {[lsearch -exact $packageNames Iwidgets] != -1} {
-	package require Iwidgets 3.0
+    # Needs Iwidgets
+    package require Iwidgets 3.0
 
-	switch $tcl_platform(platform) {
-	    windows {
-	    }
-	    default {
-		option add *Scrolledhtml.sbWidth    10
-		option add *Scrolledtext.sbWidth    10
-		option add *Scrolledlistbox.sbWidth 10
-	        option add *Hierarchy.sbWidth       10
-            }
+    switch $tcl_platform(platform) {
+	windows {
+	}
+	default {
+	    option add *Scrolledhtml.sbWidth    10
+	    option add *Scrolledtext.sbWidth    10
+	    option add *Scrolledlistbox.sbWidth 10
+	    option add *Hierarchy.sbWidth       10
         }
     }
     }

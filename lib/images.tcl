@@ -829,6 +829,6 @@ proc vTcl:image:get_manager_position {} {
 proc vTcl:image:external_editor {imageName} {
     global vTcl
     if {[catch {exec "$vTcl(pr,imageeditor)" "$imageName" &}]} {
-        vTcl:error "Could not execute external image editor"
+        vTcl:error "Could not execute external image editor!"
     }
 }
