@@ -92,5 +92,7 @@ proc vTcl:Scrollbar:Attach {} {
     }
 
     $w configure -command "$a $cmd"
+    vTcl:prop:save_opt_value $w -command "$a $cmd"
     $a configure $opt "$w set"
+    vTcl:prop:save_opt_value $a $opt "$w set"
 }

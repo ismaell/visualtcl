@@ -639,6 +639,7 @@ namespace eval ::vTcl::itemEdit {
     variable current
     variable allOptions
     variable enableData
+    variable adding
     set counter 0
 
     proc edit {target cmds} {
@@ -656,9 +657,11 @@ namespace eval ::vTcl::itemEdit {
         variable cmds
         variable target
         variable current
+        variable adding
 
         set cmds($top) $cmdsEdit
         set target($top) $w
+        set adding($top) 0
         set list_items [::$cmds($top)::getItems $target($top)]
         set current($top) [lindex $list_items 0]
         set list_items [lrange $list_items 1 end]
@@ -738,6 +741,10 @@ namespace eval ::vTcl::itemEdit {
         variable current
         variable target
         variable cmds
+        variable adding
+
+        ## when adding items, prevent the trace from being executed
+        if {$adding($top)} {return}
 
         set label [::vTcl:at $variable]
         set ::${top}::list_items [lreplace [::vTcl:at ::${top}::list_items] \
@@ -803,14 +810,17 @@ namespace eval ::vTcl::itemEdit {
     proc addItem {top} {
         variable cmds
         variable target
+        variable adding
 
         set added [::$cmds($top)::addItem $target($top)]
         ## user canceled ?
         if {$added == ""} {return}
+        set adding($top) 1
         lappend ::${top}::list_items $added
         set length [llength [vTcl:at ::${top}::list_items]]
         vTcl:setup_bind_tree $target($top)
         selectItem $top [expr $length - 1]
+        set adding($top) 0
     }
 
     proc removeItem {top} {

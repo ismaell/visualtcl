@@ -1,6 +1,9 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Fixed scrollbar bug, when right-click / Attach to widget
+      wouldn't save the -command and -x/yscrollcommand options into
+      the project.
     o Right-click menu to edit Iwidgets toolbar
     o Added icons for vertical/horizontal panedwindow in IWidgets
     o Set reasonable defaults for scrollbar width/border under Unix
