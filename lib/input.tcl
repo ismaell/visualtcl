@@ -154,3 +154,98 @@ proc vTcl:text_window {base title target} {
     $base.cpd48.03 insert end [$target cget -text]
     focus $base.cpd48.03
 }
+
+namespace eval ::vTcl::input::listboxSelect {
+
+proc select {contents {selectMode single}} {
+    set base .vTcl.listboxSelect
+    if {[winfo exists $base]} {
+        wm deiconify $base; return
+    }
+    set top $base
+
+    ###################
+    # CREATING WIDGETS
+    ###################
+    vTcl:toplevel $top -class Toplevel
+    wm focusmodel $top passive
+    wm withdraw $base
+    wm geometry $top 339x247+158+260; update
+    wm maxsize $top 1284 1006
+    wm minsize $top 111 1
+    wm overrideredirect $top 0
+    wm resizable $top 1 1
+    wm title $top "Select"
+    bindtags $top "$top Toplevel all _TopLevel"
+    vTcl:FireEvent $top <<Create>>
+    wm transient .vTcl.listboxSelect .vTcl
+    wm protocol $top WM_DELETE_WINDOW "set ::${top}::status cancel"
+
+    set ::${top}::listContents $contents
+    set ::${top}::status ""
+
+    frame $top.fra87 \
+        -borderwidth 2 -height 75 -width 125 
+    set site_3_0 $top.fra87
+    label $site_3_0.lab88 \
+        -text {Select item:} 
+    vTcl:DefineAlias "$site_3_0.lab88" "SelectLabel" vTcl:WidgetProc "$top" 1
+    pack $site_3_0.lab88 \
+        -in $site_3_0 -anchor center -expand 0 -fill none -side left 
+    frame $top.fra82 \
+        -borderwidth 2 -height 75 -width 125 
+    set site_3_0 $top.fra82
+    listbox $site_3_0.lis83 \
+        -background white -listvariable "::${top}::listContents" \
+        -selectmode $selectMode
+    vTcl:DefineAlias "$site_3_0.lis83" "SelectListbox" vTcl:WidgetProc "$top" 1
+    pack $site_3_0.lis83 \
+        -in $site_3_0 -anchor center -expand 1 -fill both -padx 2 -side top 
+    frame $top.fra84 \
+        -borderwidth 2 -height 75 -width 125 
+    set site_3_0 $top.fra84
+    button $site_3_0.but85 \
+        -pady 0 -text OK -width 8 -command "set ::${top}::status ok" 
+    vTcl:DefineAlias "$site_3_0.but85" "SelectOK" vTcl:WidgetProc "$top" 1
+    button $site_3_0.but86 \
+        -pady 0 -text Cancel -width 8 -command "set ::${top}::status cancel"
+    vTcl:DefineAlias "$site_3_0.but86" "SelectCancel" vTcl:WidgetProc "$top" 1
+    pack $site_3_0.but85 \
+        -in $site_3_0 -anchor center -expand 0 -fill none -padx 5 -pady 5 \
+        -side left 
+    pack $site_3_0.but86 \
+        -in $site_3_0 -anchor center -expand 0 -fill none -padx 5 -pady 5 \
+        -side right 
+    ###################
+    # SETTING GEOMETRY
+    ###################
+    pack $top.fra87 \
+        -in $top -anchor center -expand 0 -fill x -padx 2 -side top 
+    pack $top.fra82 \
+        -in $top -anchor center -expand 1 -fill both -side top 
+    pack $top.fra84 \
+        -in $top -anchor center -expand 0 -fill none -side top 
+
+    vTcl:FireEvent $base <<Ready>>
+    vTcl:center $base 339 247
+    wm deiconify $base
+
+    grab set $base
+    vwait ::${top}::status
+    grab release $base
+    if {[vTcl:at ::${top}::status] == "cancel"} {
+        destroy $base
+        return ""
+    }
+
+    set result ""
+    set selected [SelectListbox curselection]
+    foreach index $selected {
+        lappend result [SelectListbox get $index]
+    }
+
+    destroy $base
+    return $result
+}
+}
+
