@@ -52,7 +52,27 @@ proc vTcl:toolbar_create {args} {
     lappend vTcl(tool,list) $f
     set vTcl(x,lastButton) $f
     set ${base}::resizing 0
-    bind $base <Configure> vTcl:toolbar_reflow
+    set ${base}::event 0
+    bind $base <Configure> "vTcl:toolbar_configure $base"
+}
+
+proc vTcl:toolbar_configure {base} {
+    set ${base}::resizing 1
+    if {![vTcl:at ${base}::event]} {
+        set ${base}::event 1
+        after 1000 vTcl:toolbar_event $base
+    }
+}
+
+proc vTcl:toolbar_event {base} {
+    # no move for 1 second ?
+    if {[vTcl:at ${base}::resizing] == 0} {
+        vTcl:toolbar_reflow $base
+        after 1000 "set ${base}::event 0"
+    } else {
+        after 1000 vTcl:toolbar_event $base
+    }
+    set ${base}::resizing 0
 }
 
 proc vTcl:toolbar_add {class name image cmd_add} {
@@ -77,19 +97,23 @@ proc vTclWindow.vTcl.toolbar {args} {
     vTcl:toolbar_reflow
 }
 
-proc vTcl:toolbar_reflow {} {
+proc vTcl:toolbar_reflow {{base .vTcl.toolbar}} {
     global vTcl
-    set base .vTcl.toolbar
     set existed [winfo exists $base]
     if {!$existed} { vTcl:toolbar_create }
-    ## avoid recursivity
-    if {[vTcl:at ${base}::resizing]} {
-        return
-    }
-    set ${base}::resizing 1
     wm resizable $base 1 1
     set num [llength [winfo children $base]]
-    set w [expr [winfo width $base] / 22]
+    switch $::tcl_platform(platform) {
+    windows {
+        set itemWidth  23
+        set itemHeight 23
+    }
+    default {
+        set itemWidth  22
+        set itemHeight 22
+    }
+    }
+    set w [expr [winfo width $base] / $itemWidth]
     if {$w == 0} {
         set w $vTcl(toolbar,width)
     }
@@ -118,6 +142,5 @@ proc vTcl:toolbar_reflow {} {
     }
     update
     vTcl:setup_vTcl:bind $base
-    wm geometry $base [expr $w * 22]x[expr $h * 22]
-    set ${base}::resizing 0
+    wm geometry $base [expr $w * $itemWidth]x[expr $h * $itemHeight]
 }

@@ -1268,11 +1268,11 @@ namespace eval ::vTcl::ui::attributes {
                     -highlightthickness 1 -fg black
                 bind ${base}.l <KeyRelease-Return> \
                     "$config_cmd; ${base}.f conf -bg \$$variable"
-                vTcl:special_button ${base}.f -width 2 -highlightthickness 1 -padx 0 -pady 1 \
+                vTcl:special_button ${base}.f -image ellipses -width 12 -padx 0 -pady 1 \
                     -command \
                     "::vTcl::ui::attributes::select_color ${base}.f [list $config_cmd] $variable"
                 pack ${base}.l -side left -expand 1 -fill x
-                pack ${base}.f -side right -fill y -pady 1 -padx 1
+                pack ${base}.f -side right -fill y -pady 0 -padx 1 -ipady 0
 	        set focusControl ${base}.l
                 trace variable $variable w \
                     "::vTcl::ui::attributes::show_color ${base}.f $variable"
