@@ -5,3 +5,5 @@ Icon		icon_tixMeter.gif
 TreeLabel	BWidget ProgressBar
 CreateCmd	ProgressBar
 MegaWidget	yes
+
+SpecialOpt -type	"type"	choice {normal incremental infinite}

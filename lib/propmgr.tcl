@@ -626,6 +626,7 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
     bind $focusControl <KeyRelease-Return> $config_cmd
     bind $focusControl <Key-Up>     "vTcl:propmgr:focusPrev $label"
     bind $focusControl <Key-Down>   "vTcl:propmgr:focusNext $label"
+    bind $focusControl <MouseWheel> "vTcl:propmgr:scrollWheelMouse %D $label"
 
     if {[vTcl:streq $prefix "opt"]} {
 	set saveCheck [checkbutton ${base}_save -pady 0]
@@ -1034,4 +1035,12 @@ proc vTcl:prop:apply_opt {w opt varName extent action {user_param {}}} {
 
     # we are all set
     vTcl:create_handles $vTcl(w,widget)
+}
+
+proc vTcl:propmgr:scrollWheelMouse {delta label} {
+    if {$delta > 0} {
+	vTcl:propmgr:focusPrev $label
+    } else {
+	vTcl:propmgr:focusNext $label
+    }
 }

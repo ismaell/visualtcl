@@ -39,8 +39,10 @@ proc vTcl:widget:lib:lib_bwidget {args} {
     set order {
 	ArrowButton
 	NoteBook
-	Tree
 	ProgressBar
+	ScrollView
+	Separator
+	Tree
     }
 
     vTcl:lib:add_widgets_to_toolbar $order

@@ -5,3 +5,5 @@ Icon		icon_button.gif
 TreeLabel	BWidget ArrowButton
 CreateCmd	ArrowButton
 MegaWidget	yes
+
+SpecialOpt -type	"type"		choice	{button arrow}
