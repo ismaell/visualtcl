@@ -253,6 +253,7 @@ proc vTcl:setup_gui {} {
         option add *vTcl*Scrollbar.borderWidth 2
         option add *Scrollbar.width 10
         option add *vTcl*font {Helvetica 12}
+        option add *ScrolledWindow.size 14
     }
 
     if {$tcl_platform(platform) == "windows"} {

@@ -1,6 +1,15 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Added default scrollbar size of 14 for Linux/Unix users. For some
+      reason when using pack/grid, nice scrollbars with a width of 10
+      having a border width of 2 have a total width of 14. But, using the
+      place manager (which BWidget seems to be using with the scrollbars),
+      the width option encompasses both the width of the draggable bar plus
+      the width of the border. To summarize, scrollbars with of width of 10
+      that are packed or gridded look exactly the same as scrollbars with
+      a width of 14 that are placed (ok, you get it now?).
+    o Removed extraneous option database entries that we define already.
     o Fixed a bug in the system inspector where some windows would not have
       a widget procedure and would not respond to the standard configure
       command. This happens for some special temporary windows created by
