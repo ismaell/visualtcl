@@ -24,4 +24,3 @@ NewOption -browsecmd	 "Browse Cmd" 	 command
 NewOption -multiline	 "Multi Line"  	 boolean  {0 1}
 NewOption -rowtagcommand "Tag Cmd Row" 	 command
 NewOption -coltagcommand "Tag Cmd Col" 	 command
-    
