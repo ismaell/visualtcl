@@ -1,0 +1,6 @@
+Class Optionmenu
+Lib   itcl
+
+Icon icon_optionmenu.gif
+DumpChildren  no
+MegaWidget    yes

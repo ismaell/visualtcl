@@ -1,0 +1,14 @@
+Class		Message
+Lib		core
+
+Icon		icon_message.gif
+DefaultOptions	-text message -width 70
+DoubleClickCmd	vTcl:set_text
+TreeLabel	@vTcl:core:get_widget_tree_label
+
+Function	"Set Text"	vTcl:Message:SetText
+
+proc vTcl:Message:SetText {} {
+    global vTcl
+    vTcl:set_text $vTcl(w,widget)
+}

@@ -1,0 +1,14 @@
+Class Panedwindow
+Lib   itcl
+
+Icon icon_panedwindow.gif
+DumpChildren  no
+MegaWidget    yes
+AdditionalClasses Pane
+
+InsertCmd vTcl:widget:panedwindow:inscmd
+
+proc vTcl:widget:panedwindow:inscmd {target} {
+
+	return "$target add pane1; $target add pane2"
+}

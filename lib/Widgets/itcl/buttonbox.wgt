@@ -1,0 +1,6 @@
+Class Buttonbox
+Lib   itcl
+
+Icon icon_buttonbox.gif
+DumpChildren  no
+MegaWidget    yes

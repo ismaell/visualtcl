@@ -1,0 +1,6 @@
+Class Entryfield
+Lib   itcl
+
+Icon icon_entryfield.gif
+DumpChildren  no
+MegaWidget    yes

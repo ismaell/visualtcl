@@ -31,10 +31,11 @@ proc Window {args} {
     if {$newname == ""} {
         set newname $name
     }
+    if {$name == "."} { wm withdraw $name; return }
     set exists [winfo exists $newname]
     switch $cmd {
         show {
-            if {$exists == "1" && $name != "."} {wm deiconify $name; return}
+	    if {$exists} { wm deiconify $name; return }
             if {[info procs vTclWindow(pre)$name] != ""} {
                 eval "vTclWindow(pre)$name $newname $rest"
             }
@@ -51,4 +52,23 @@ proc Window {args} {
     }
 }
 
+proc vTcl:WidgetProc {w args} {
+    if {[llength $args] == 0} {
+    	return -code error "wrong # args: should be \"$w option ?arg arg ...?\""
+    }
 
+    ## The first argument is a switch, they must be doing a configure.
+    if {[string index $args 0] == "-"} {
+    	set command configure
+
+	## There's only one argument, must be a cget.
+	if {[llength $args] == 1} {
+	    set command cget
+	}
+    } else {
+    	set command [lindex $args 0]
+	set args [lrange $args 1 end]
+    }
+
+    eval $w $command $args
+}

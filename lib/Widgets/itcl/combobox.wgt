@@ -1,0 +1,6 @@
+Class Combobox
+Lib   itcl
+
+Icon icon_combobox.gif
+DumpChildren  no
+MegaWidget    yes

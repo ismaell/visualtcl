@@ -1,0 +1,14 @@
+Class		Label
+Lib		core
+
+Icon		icon_label.gif
+DefaultOptions	-text label -bd 1 -relief raised
+DoubleClickCmd	vTcl:set_label
+TreeLabel	@vTcl:core:get_widget_tree_label
+
+Function	"Set Text"	vTcl:label:setText
+
+proc vTcl:label:setText {} {
+    global vTcl
+    vTcl:set_label $vTcl(w,widget)
+}

@@ -43,17 +43,19 @@ proc vTcl:snarf_string {base} {
 }
 
 proc vTcl:string_window {title base {value ""}} {
+    global vTcl
+
     toplevel $base
     wm transient $base .vTcl
     wm focusmodel $base passive
-    wm geometry $base 225x49+288+216
+    wm geometry $base 225x49+[expr $vTcl(mouse,X)-120]+[expr $vTcl(mouse,Y)-20]
     wm maxsize $base 500 870
     wm minsize $base 225 1
     wm overrideredirect $base 0
     wm resizable $base 1 0
     wm deiconify $base
     wm title $base "$title"
-    entry $base.ent18 \
+    vTcl:entry $base.ent18 \
         -cursor {}  
     pack $base.ent18 \
         -in $base -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 \
@@ -87,4 +89,86 @@ proc vTcl:string_window {title base {value ""}} {
     grab $base
 }
 
+proc vTcl:set_text {target} {
+    global vTcl
+    set base .vTcl.[vTcl:rename $target]
+    vTcl:text_window $base "Set Text" $target
+    tkwait window $base
 
+    ## They closed it without hitting the done button.  Just forget it.
+    if {![info exists vTcl(x,$base)]} { return }
+
+    $target configure -text $vTcl(x,$base)
+    unset vTcl(x,$base)
+    vTcl:create_handles $target
+}
+
+proc vTcl:get_text {base text} {
+    global vTcl
+
+    ## Remove the last character which is a \n the text widget puts in for
+    ## some reason.
+    set string [$text get 0.0 end]
+    set end [expr [string length $string] - 1]
+    set vTcl(x,$base) [string range $string 0 [expr $end - 1]]
+    destroy $base
+}
+
+proc vTcl:text_window {base title target} {
+    global vTcl
+    toplevel $base -class Toplevel
+    wm focusmodel $base passive
+    wm geometry $base 274x289+[expr $vTcl(mouse,X)-130]+[expr $vTcl(mouse,Y)-20]
+    wm maxsize $base 1265 994
+    wm minsize $base 1 1
+    wm overrideredirect $base 0
+    wm resizable $base 1 1
+    wm deiconify $base
+    wm title $base $title
+
+    frame $base.cpd48 \
+        -borderwidth 1 -height 245 -relief raised -width 262 
+    scrollbar $base.cpd48.01 \
+        -command "$base.cpd48.03 xview" -orient horizontal -width 10 
+    scrollbar $base.cpd48.02 \
+        -command "$base.cpd48.03 yview" -width 10 
+    text $base.cpd48.03 \
+        -font -Adobe-Helvetica-Medium-R-Normal-*-*-120-*-*-*-*-*-* -height 1 \
+        -width 8 -xscrollcommand "$base.cpd48.01 set" \
+        -yscrollcommand "$base.cpd48.02 set" 
+
+    frame $base.butfr
+
+    button $base.butfr.but52 -image [vTcl:image:get_image ok.gif] \
+        -command "
+	    vTcl:get_text $base $base.cpd48.03
+	"
+    vTcl:set_balloon $base.butfr.but52 "Save Changes"
+
+    button $base.butfr.but53 -image [vTcl:image:get_image remove.gif] \
+    	-command "destroy $base"
+    vTcl:set_balloon $base.butfr.but53 "Discard Changes"
+
+    bind $base <Key-Escape> "$base.but52 invoke"
+
+    ###################
+    # SETTING GEOMETRY
+    ###################
+    pack $base.butfr -side top -anchor e
+    pack $base.butfr.but53 -side right
+    pack $base.butfr.but52 -side right
+    pack $base.cpd48 -fill both -expand 1
+
+    grid columnconf $base.cpd48 0 -weight 1
+    grid rowconf $base.cpd48 0 -weight 1
+    grid $base.cpd48.01 \
+        -in $base.cpd48 -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew 
+    grid $base.cpd48.02 \
+        -in $base.cpd48 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns 
+    grid $base.cpd48.03 \
+        -in $base.cpd48 -column 0 -row 0 -columnspan 1 -rowspan 1 \
+        -sticky nesw 
+
+    $base.cpd48.03 insert end [$target cget -text]
+    focus $base.cpd48.03
+}

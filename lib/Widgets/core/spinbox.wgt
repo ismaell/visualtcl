@@ -1,0 +1,24 @@
+Class		Spinbox
+Lib		core
+
+Icon		icon_spinint.gif
+DoubleClickCmd	vTcl:set_string
+TreeLabel	Spinbox
+
+NewOption -buttonbackground	"button bg"	color	{}	Colors
+NewOption -buttoncursor		"button cursor" type
+NewOption -buttondownrelief	"down relief"	relief
+NewOption -buttonuprelief	"up relief"	relief
+NewOption -format		"format"	type
+NewOption -from			"from"		type
+NewOption -increment		"increment"	type
+NewOption -readonolybackground	"readonly bg"	color	{}	Colors
+NewOption -to			"to"		type
+NewOption -values		"values"	type
+
+## Options which we want to overwrite for this widget only.
+SpecialOpt -state		"state"		choice \
+  "normal disabled readonly"
+SpecialOpt -validate		"validate"	choice \
+  "none focus focusin focusout key all"
+SpecialOpt -wrap		"wrap"		boolean "0 1"

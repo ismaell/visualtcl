@@ -1,0 +1,17 @@
+Name		tixLabelFrame
+Lib		tix
+
+Class		TixLabelFrame
+Icon		icon_tixLabelFrame.gif
+TreeLabel	Tix LabelFrame
+DefaultOptions	-label "Label"
+DumpCmd		vTcl:dump:TixLabelFrame
+DumpChildren	no
+MegaWidget   yes
+InsertCmd	vTcl:widget:tixLabelFrame:inscmd
+
+proc vTcl:widget:tixLabelFrame:inscmd {target} {
+    return "
+    	$target subwidget frame configure -width 30 -height 20
+    "
+}

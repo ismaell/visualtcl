@@ -24,42 +24,51 @@
 #
 # Initializes this library
 #
+proc vTcl:lib_tix:init {} {
+    global vTcl
+
+    if {[catch {package require Tix} erg]} {
+        lappend vTcl(libNames) {(not detected) Tix Widget Support Library}
+	return 0
+    }
+    lappend vTcl(libNames) {Tix Widget Support Library}
+    return 1
+}
+
 proc vTcl:widget:lib:lib_tix {args} {
     global vTcl
-    #
-    # see if we're running tixWish. if not, return
-    #
-    if {[info command tixNoteBookFrame] == ""} {
-        return
+
+    # Setup required variables
+    vTcl:lib_tix:setup
+
+    set order {
+        TixNoteBook
+        TixLabelFrame
+        TixComboBox
+        TixMeter
+        TixFileEntry
+        TixLabelEntry
+        TixScrolledHList
+        TixScrolledListBox
+        TixSelect
+        TixPanedWindow
+        TixOptionMenu
     }
-	# setup required variables
-	vTcl:lib_tix:setup
-    # add items to toolbar
-    foreach i {
-        tixNoteBook tixLabelFrame tixComboBox tixMeter
-        tixFileEntry tixLabelEntry tixScrolledHList
-        tixScrolledListBox
-        tixSelect
-        tixPanedWindow tixOptionMenu
-    } {
-        set img_file [file join $vTcl(VTCL_HOME) images icon_$i.gif]
-        if {![file exists $img_file]} {
-            set img_file [file join $vTcl(VTCL_HOME) images icon_tix_unknown.gif]
-        }
-        image create photo "ctl_$i" -file $img_file
-        vTcl:toolbar_add $i $i ctl_$i ""
-    }
-    # The Widget Browser needs images for all tix classes.
-    # The images need to be called, e.g. ctl_tixNoteBookFrame.
-    # Don't put these in the toolbar, because they are not commands,
-    # only classes.
-    foreach i {
-        tixNoteBookFrame
-    } {
-        image create photo "ctl_$i" \
-            -file [file join $vTcl(VTCL_HOME) images icon_tix_unknown.gif]
-    }
+
+    vTcl:lib:add_widgets_to_toolbar $order
+
     vTcl:lib_tix:unscrew_option_db
+
+    append vTcl(head,importheader) {
+        # Provoke name search
+        catch {package require foobar}
+        set names [package names]
+
+        # Check if Tix is available
+        if { [lsearch -exact $names Tix] != -1} {
+            package require Tix
+        }
+    }
 }
 
 # Tix has screwed with the option database; reset it back to Tk's
@@ -170,285 +179,18 @@ proc vTcl:lib_tix:new_option {cmd args} {
 proc vTcl:lib_tix:setup {} {
 	global vTcl
 
-	#
-	# Preferences
-	set vTcl(tixPref,dump_colors) 0 ;# if 0, don't save -background, etc.
+    ## Preferences
+    set vTcl(tixPref,dump_colors) 0 ;# if 0, don't save -background, etc.
 
-	#
-	# additional attributes to set on insert
-	#
-	set vTcl(tixComboBox,insert)       ""
-	set vTcl(tixFileEntry,insert)      "-label {FileEntry:} -options {label.anchor e}"
-	set vTcl(tixLabelEntry,insert)     "-label {LabelEntry:} -options {label.anchor e}"
-	set vTcl(tixLabelFrame,insert)     "-label label-me"
-	set vTcl(tixMeter,insert)          ""
-	set vTcl(tixNoteBook,insert)       ""
-	set vTcl(tixOptionMenu,insert)     "-label {OptionMenu: } -options {label.anchor e}"
-	set vTcl(tixPanedWindow,insert)    "-orient vertical"
-	set vTcl(tixPopupMenu,insert)      "-title PopupMenu"
-	set vTcl(tixScrolledHList,insert)  ""
-	set vTcl(tixScrolledListBox,insert) ""
-	set vTcl(tixSelect,insert)         "-radio 1"
+    ## Add to procedure, var, bind regular expressions
+    if {[lempty $vTcl(bind,ignore)]} {
+	append vTcl(bind,ignore) "tix"
+    } else {
+	append vTcl(bind,ignore) "|tix"
+    }
 
-	#
-	# add to procedure, var, bind regular expressions
-	#
-	if {"$vTcl(bind,ignore)" != ""} {
-		append vTcl(bind,ignore) "|tix"
-	} else {
-		append vTcl(bind,ignore) "tix"
-	}
-	append vTcl(proc,ignore) "|tix"
-	append vTcl(var,ignore)  "|tix"
-
-	#
-	# add to valid class list
-	#
-	lappend vTcl(classes) \
-		TixAppContext \
-		TixBalloon \
-		TixButtonBox \
-		TixCObjView \
-		TixCheckList \
-		TixComboBox \
-		TixControl \
-		TixControl \
-		TixDetailList \
-		TixDialogShell \
-		TixDirList \
-		TixDirSelectBox \
-		TixDirSelectDialog \
-		TixDirTree \
-		TixDragDropContext \
-		TixExFileSelectBox \
-		TixExFileSelectDialog \
-		TixFileComboBox \
-		TixFileEntry \
-		TixFileSelectBox \
-		TixFileSelectDialog \
-		TixFloatEntry \
-		TixHList \
-		TixHListHeader \
-		TixIconView \
-		TixLabelEntry \
-		TixLabelFrame \
-		TixLabelWidget \
-		TixListNoteBook \
-		TixMeter \
-		TixMultiView \
-		TixNoteBook \
-		TixNoteBookFrame \
-		TixOptionMenu \
-		TixPanedWindow \
-		TixPopupMenu \
-		TixPrimitive \
-		TixResizeHandle \
-		TixScrolledGrid \
-		TixScrolledHList \
-		TixScrolledListBox \
-		TixScrolledTList \
-		TixScrolledText \
-		TixScrolledWidget \
-		TixScrolledWindow \
-		TixSelect \
-		TixShell \
-		TixSimpleDialog \
-		TixStackWindow \
-		TixStatusBar \
-		TixStdButtonBox \
-		TixStdDialogShell \
-		TixTree \
-		TixVResize \
-		TixVStack \
-		TixVTree
-
-	#
-	# register additional options that might be on Tix widgets,
-	# and the option information that the Attribute Editor needs.
-	#
-	lappend vTcl(opt,list) \
-			-activatecmd \
-			-after \
-			-before \
-			-browsecmd \
-			-buttons \
-			-createcmd \
-			-dynamicgeometry \
-			-editable \
-			-expand \
-			-handleactivebg \
-			-handlebg \
-			-label \
-			-listcmd \
-			-listwidth \
-			-max \
-			-min \
-			-options \
-			-panebd \
-			-panerelief \
-			-postcmd \
-			-raisecmd \
-			-scrollbar \
-			-separatoractivebg \
-			-separatorbg \
-			-size \
-			-spring \
-			-validatecmd
-	# make sure the options appear sorted in the attribute editor
-	#set vTcl(opt,list) [lsort $vTcl(opt,list)]
-	set vTcl(opt,-activatecmd)     { {Activate Cmd}      longname command {} }
-	set vTcl(opt,-after)           { {After}             longname type {} }
-	set vTcl(opt,-allowzero)       { {Allow Zero}        longname choice  {1 0} }
-	set vTcl(opt,-before)          { {Before}            longname type {} }
-	set vTcl(opt,-browsecmd)       { {Browse Cmd}        longname command {} }
-	set vTcl(opt,-buttons)         { {Buttons}           longname type    {} }
-	set vTcl(opt,-createcmd)       { {Create Cmd}        longname command {} }
-	set vTcl(opt,-dynamicgeometry) { {Dynamic Geometry}  longname choice  {1 0} }
-	set vTcl(opt,-editable)        { Editable            longname choice  {0 1} }
-	set vTcl(opt,-expand)          { {Expand}            longname type    {} }
-	set vTcl(opt,-fancy)           { Fancy               longname choice  {0 1} }
-	set vTcl(opt,-handleactivebg)  { {Handle ActiveBg}   longname type    {} }
-	set vTcl(opt,-handlebg)        { {Handle BgColor}    longname type    {} }
-	set vTcl(opt,-history)         { History             longname choice  {false true} }
-	set vTcl(opt,-label)           { Label               longname type    {} }
-	set vTcl(opt,-listcmd)         { {List Cmd}          longname command {} }
-	set vTcl(opt,-listwidth)       { {List Width}        longname type    {} }
-	set vTcl(opt,-max)             { {Maxsize}           longname type    {} }
-	set vTcl(opt,-min)             { {Minsize}           longname type    {} }
-	set vTcl(opt,-options)         { {Options}           longname type    {} }
-	set vTcl(opt,-panebd)          { {Paneborder Width}  longname type    {} }
-	set vTcl(opt,-panerelief)      { {Paneborder Relief} longname choice
-		{sunken raised groove ridge flat} }
-	set vTcl(opt,-postcmd)         { {Post Cmd}          longname command {} }
-	set vTcl(opt,-prunehistory)    { {Prune History}     longname choice  {false true} }
-	set vTcl(opt,-radio)           { Radio               longname choice  {0 1} }
-	set vTcl(opt,-raisecmd)        { {Raise Cmd}         longname command {} }
-	set vTcl(opt,-scrollbar)       { Scrollbar           longname choice  
-		{auto both none x y} }
-	set vTcl(opt,-separatoractivebg) { {Separator ActiveBg} longname type {} }
-	set vTcl(opt,-separatorbg)     { {Separator BgColor} longname type    {} }
-	set vTcl(opt,-size)            { {Size}              longname type    {} }
-	set vTcl(opt,-spring)          { {Spring}            longname choice  {1 0} }
-	set vTcl(opt,-validatecmd)     { {Validate Cmd}      longname command {} }
-
-	#
-	# define dump procedures for widget types
-	#
-	set vTcl(TixComboBox,dump_opt)         vTcl:lib_tix:dump_widget_opt
-	set vTcl(TixFileEntry,dump_opt)        vTcl:dump:TixFileEntry
-	set vTcl(TixLabelEntry,dump_opt)       vTcl:dump:TixLabelEntry
-	set vTcl(TixLabelFrame,dump_opt)       vTcl:dump:TixLabelFrame
-	set vTcl(TixMeter,dump_opt)            vTcl:lib_tix:dump_widget_opt
-	set vTcl(TixNoteBook,dump_opt)         vTcl:dump:TixNoteBook
-	set vTcl(TixOptionMenu,dump_opt)       vTcl:dump:TixOptionMenu
-	set vTcl(TixPanedWindow,dump_opt)      vTcl:dump:TixPanedWindow
-	set vTcl(TixPopupMenu,dump_opt)        vTcl:lib_tix:dump_widget_opt
-	set vTcl(TixScrolledHList,dump_opt)    vTcl:lib_tix:dump_widget_opt
-	set vTcl(TixScrolledListBox,dump_opt)  vTcl:lib_tix:dump_widget_opt
-	set vTcl(TixSelect,dump_opt)           vTcl:dump:TixSelect
-
-	#
-	# define whether or not do dump children of a class
-	#
-	set vTcl(TixComboBox,dump_children)         0
-	set vTcl(TixFileEntry,dump_children)        0
-	set vTcl(TixLabelEntry,dump_children)       0
-	set vTcl(TixLabelFrame,dump_children)       0
-	set vTcl(TixMeter,dump_children)            0
-	set vTcl(TixNoteBook,dump_children)         0
-	set vTcl(TixOptionMenu,dump_children)       0
-	set vTcl(TixPanedWindow,dump_children)      0
-	set vTcl(TixPopupMenu,dump_children)        0
-	set vTcl(TixScrolledHList,dump_children)    0
-	set vTcl(TixScrolledListBox,dump_children)  0
-	set vTcl(TixSelect,dump_children)           0
-}
-
-#
-# individual widget commands executed after insert
-#
-proc vTcl:widget:tixNoteBook:inscmd {target} {
-    # Add two pages to start with.  Unfortunately, additional pages have
-    # to be added manually by the user, and the project re-read into vtcl.
-    return "
-        $target add page1 -label {Page 1};
-        $target add page2 -label {Page 2};
-        $target subwidget page1 configure -width 30 -height 30;
-        $target subwidget page2 configure -width 30 -height 30;
-    "
-}
-
-proc vTcl:widget:tixPanedWindow:inscmd {target} {
-    # Add two pages to start with.  Unfortunately, additional pages have
-    # to be added manually by the user, and the project re-read into vtcl.
-    return "
-        $target add page1
-        $target add page2
-        $target subwidget page1 configure -width 30 -height 30;
-        $target subwidget page2 configure -width 30 -height 30;
-    "
-}
-
-proc vTcl:widget:tixPopupMenu:inscmd {target} {
-    return "
-        $target bind \[winfo toplevel $target\]
-        set menu \[$target subwidget menu\]
-        \$menu add command -label Entry1
-        \$menu add command -label Entry2
-        \$menu add separator
-        \$menu add command -label Entry2
-    "
-}
-
-proc vTcl:widget:tixLabelFrame:inscmd {target} {
-    return "
-        $target subwidget frame configure -width 30 -height 30;
-    "
-}
-
-proc vTcl:widget:tixMeter:inscmd {target} {
-    return "$target configure -value .3"
-}
-
-proc vTcl:widget:tixFileEntry:inscmd {target} {
-    return "
-        $target subwidget frame configure -highlightthickness 2
-    "
-}
-
-proc vTcl:widget:tixOptionMenu:inscmd {target} {
-    # Add two options to start with.  Unfortunately, additional options have
-    # to be added manually by the user, and the project re-read into vtcl.
-    return "
-        $target add command opt1 -label {Option 1}
-        $target add separator sep
-        $target add command opt2 -label {Option 2}
-    "
-}
-
-proc vTcl:widget:tixSelect:inscmd {target} {
-    # Add two buttons to start with.  Unfortunately, additional options have
-    # to be added manually by the user, and the project re-read into vtcl.
-    return "
-        $target add but1 -bitmap warning
-        $target add but2 -bitmap error
-        $target add but3 -bitmap info
-    "
-}
-
-#
-# per-widget action to take upon edit-mode double-click
-#
-proc vTcl:widget:tixNoteBook:dblclick {target} {
-    #puts "called edit-mode double-click on $target"
-}
-
-proc vTcl:widget:tixLabelFrame:dblclick {target} {
-    #puts "called edit-mode double-click on $target"
-}
-
-proc vTcl:widget:tixComboBox:dblclick {target} {
-    #puts "called edit-mode double-click on $target"
+    append vTcl(proc,ignore) "|tix"
+    append vTcl(var,ignore)  "|tix"
 }
 
 #
@@ -625,4 +367,3 @@ proc vTcl:lib_tix:dump_widget_opt {target basename} {
     append result [vTcl:dump_widget_bind $target $basename]
     return $result
 }
-

@@ -23,6 +23,14 @@
 
 proc vTcl:delete_proc {name} {
     global vTcl
+    set result [tk_messageBox -type yesno \
+        -title "Visual Tcl" \
+        -message "Are you sure you want to delete procedure $name ?"]
+
+    if {$result == "no"} {
+        return
+    }
+
     if {$name != ""} {
         rename $name ""
         vTcl:list delete "{$name}" vTcl(procs)
@@ -57,7 +65,7 @@ proc vTcl:show_proc {name} {
         set win .vTcl.proc_[vTcl:rename $name]
         Window show .vTcl.proc $win $name $args $body
     } else {
-        Window show .vTcl.proc .vTcl.proc_new "" "" ""
+        Window show .vTcl.proc .vTcl.proc_new "" "" "global widget\n\n"
     }
 }
 
@@ -76,29 +84,35 @@ proc vTcl:proclist:show {{on ""}} {
 
 proc vTcl:update_proc {base} {
     global vTcl
-    set vTcl(pr,geom_proc) [lindex [split [wm geom $base] +-] 0]
+    set vTcl(pr,geom_proc) [wm geometry $base]
     set name [$base.f2.f8.procname get]
     set args [$base.f2.f9.args get]
     set body [string trim [$base.f3.text get 0.0 end] "\n"]
-    if {$name != ""} {
-        proc $name $args $body
+    if {[lempty $name]} { return }
+    if {[regexp (.*):: $name matchAll context]} {
+
+	# create new namespace if necessary
+	namespace eval ${context} {}
     }
+
+    proc $name $args $body
+
     vTcl:list add "{$name}" vTcl(procs)
     grab release $base
     destroy $base
     vTcl:update_proc_list $name
+    ::vTcl::change
 }
 
 proc vTcl:update_proc_list {{name {}}} {
     global vTcl
-    if { [winfo exists $vTcl(gui,proclist)] == 0 } { return }
+    if {![winfo exists $vTcl(gui,proclist)]} { return }
     $vTcl(gui,proclist).f2.list delete 0 end
     foreach i [lsort $vTcl(procs)] {
-        if {[vTcl:valid_procname $i] == 1} {
-            if {[info body $i] != "" || $i == "main" || $i == "init"} {
-                $vTcl(gui,proclist).f2.list insert end $i
-            }
-        }
+	if {![vTcl:valid_procname $i]} { continue }
+	if {[info body $i] != "" || $i == "main" || $i == "init"} {
+	    $vTcl(gui,proclist).f2.list insert end $i
+	}
     }
     if {$name != ""} {
         set plist [$vTcl(gui,proclist).f2.list get 0 end]
@@ -144,6 +158,12 @@ proc vTcl:ignore_procname_when_saving {name} {
 
 # kc: for backward compatibility
 proc vTcl:valid_procname {name} {
+
+    # include namespace procedures
+    if {[string match *::* $name]} {
+	return 1
+    }
+
     return [expr ![vTcl:ignore_procname_when_saving $name]]
 }
 
@@ -163,17 +183,18 @@ proc vTclWindow.vTcl.proclist {args} {
     wm title $base "Function List"
     wm protocol $base WM_DELETE_WINDOW {vTcl:proclist:show 0}
     frame $base.frame7 \
-        -borderwidth 1 -height 30 -relief sunken -width 30 
+        -borderwidth 1 -height 30 -relief sunken -width 30
     pack $base.frame7 \
         -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 \
-        -side bottom 
+        -side top
     button $base.frame7.button8 \
         -command {vTcl:show_proc ""} \
          -padx 9 \
-        -pady 3 -text Add -width 4 
+        -pady 3 -image [vTcl:image:get_image add.gif]
     pack $base.frame7.button8 \
-        -anchor center -expand 1 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 \
-        -side left 
+        -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 0 -pady 0 \
+        -side left
+    vTcl:set_balloon $base.frame7.button8 "Add a new procedure"
     button $base.frame7.button9 \
         -command {
             set vTcl(x) [.vTcl.proclist.f2.list curselection]
@@ -182,10 +203,11 @@ proc vTclWindow.vTcl.proclist {args} {
             }
         } \
         -padx 9 \
-        -pady 3 -text Edit -width 4 
+        -pady 3 -image [vTcl:image:get_image open.gif]
     pack $base.frame7.button9 \
-        -anchor center -expand 1 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 \
-        -side left 
+        -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 0 -pady 0 \
+        -side left
+    vTcl:set_balloon $base.frame7.button9 "Edit selected procedure"
     button $base.frame7.button10 \
         -command {
             set vTcl(x) [.vTcl.proclist.f2.list curselection]
@@ -194,22 +216,24 @@ proc vTclWindow.vTcl.proclist {args} {
             }
         } \
         -padx 9 \
-        -pady 3 -text Delete -width 4 
+        -pady 3 -image [vTcl:image:get_image remove.gif]
     pack $base.frame7.button10 \
-        -anchor center -expand 1 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 \
-        -side left 
+        -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 \
+        -side left
+    vTcl:set_balloon $base.frame7.button10 "Remove selected procedure"
     button $base.frame7.button11 \
-        -command { vTcl:proclist:show 0 }\
-         -padx 9 -pady 3 -text Done -width 4 
+        -command "wm withdraw $base" \
+        -image [vTcl:image:get_image ok.gif]
     pack $base.frame7.button11 \
-        -anchor center -expand 1 -fill x -side left
+        -expand 0 -side right
+    vTcl:set_balloon $base.frame7.button11 "Close"
     frame $base.f2 \
-        -borderwidth 1 -height 30 -relief sunken -width 30 
+        -borderwidth 1 -height 30 -relief sunken -width 30
     pack $base.f2 \
         -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 0 -pady 0 \
-        -side top 
+        -side top
     listbox $base.f2.list \
-        -yscrollcommand {.vTcl.proclist.f2.sb4  set} 
+        -yscrollcommand {.vTcl.proclist.f2.sb4  set}
     bind $base.f2.list <Double-Button-1> {
         set vTcl(x) [.vTcl.proclist.f2.list curselection]
         if {$vTcl(x) != ""} {
@@ -218,18 +242,20 @@ proc vTclWindow.vTcl.proclist {args} {
     }
     pack $base.f2.list \
         -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 0 -pady 0 \
-        -side left 
+        -side left
     scrollbar $base.f2.sb4 \
-        -borderwidth 1 -command "$base.f2.list yview"
+        -command "$base.f2.list yview"
     pack $base.f2.sb4 \
         -anchor center -expand 0 -fill y -ipadx 0 -ipady 0 -padx 0 -pady 0 \
-        -side right 
+        -side right
 
     wm withdraw $vTcl(gui,proclist)
     vTcl:setup_vTcl:bind $vTcl(gui,proclist)
     catch {wm geometry $vTcl(gui,proclist) $vTcl(geometry,$vTcl(gui,proclist))}
     update idletasks
     wm deiconify $vTcl(gui,proclist)
+
+    vTcl:BindHelp $vTcl(gui,proclist) FunctionList
 }
 
 proc vTclWindow.vTcl.proc {args} {
@@ -252,77 +278,120 @@ proc vTclWindow.vTcl.proc {args} {
     wm deiconify $base
     wm title $base "$title"
     bind $base <Key-Escape> "vTcl:update_proc $base"
-    frame $base.f2 -height 30 -width 30 
+    frame $base.f2 -height 30 -width 30
     pack $base.f2 \
         -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 3 -pady 3 \
-        -side top 
-    frame $base.f2.f8 -height 30 -width 30 
+        -side top
+    frame $base.f2.f8 -height 30 -width 30 -relief flat
     pack $base.f2.f8 \
         -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 0 -pady 0 \
-        -side top 
+        -side top
     label $base.f2.f8.label10 -anchor w  \
-        -relief groove -text Function -width 9 
+        -relief flat -text Function -width 9
     pack $base.f2.f8.label10 \
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 2 -pady 0 \
-        -side left 
-    entry $base.f2.f8.procname \
+        -side left
+    vTcl:entry $base.f2.f8.procname \
         -cursor {}  \
-        -highlightthickness 0 
+        -highlightthickness 0 -bg white
     pack $base.f2.f8.procname \
         -anchor center -expand 1 -fill x -ipadx 0 -ipady 0 -padx 2 -pady 2 \
-        -side left 
+        -side left
     frame $base.f2.f9 \
-        -height 30 -width 30 
+        -height 30 -width 30 -relief flat
     pack $base.f2.f9 \
         -anchor center -expand 0 -fill both -ipadx 0 -ipady 0 -padx 0 -pady 0 \
-        -side top 
+        -side top
     label $base.f2.f9.label12 \
         -anchor w  \
-        -relief groove -text Arguments -width 9 
+        -relief flat -text Arguments -width 9
     pack $base.f2.f9.label12 \
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 2 -pady 0 \
-        -side left 
-    entry $base.f2.f9.args \
+        -side left
+    vTcl:entry $base.f2.f9.args \
         -cursor {}  \
-        -highlightthickness 0 
+        -highlightthickness 0 -bg white
     pack $base.f2.f9.args \
         -anchor center -expand 1 -fill x -ipadx 0 -ipady 0 -padx 2 -pady 2 \
-        -side left 
+        -side left
     frame $base.f3 \
-        -borderwidth 2 -height 30 -relief groove -width 30 
+        -borderwidth 2 -height 30 -relief groove -width 30
     pack $base.f3 \
         -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 3 -pady 3 \
-        -side top 
+        -side top
+
+    # toolbar
+    frame $base.f3.toolbar
+    pack $base.f3.toolbar -side top -anchor nw -fill x
+
+    set butInsert [vTcl:formCompound:add $base.f3.toolbar button \
+        -image [vTcl:image:get_image [file join $vTcl(VTCL_HOME) images edit inswidg.gif] ] \
+        -command "vTcl:insert_widget_in_text $base.f3.text" ]
+    pack configure $butInsert -side left
+    vTcl:set_balloon $butInsert "Insert selected widget command"
+
+    set last [vTcl:formCompound:add $base.f3.toolbar frame -width 5]
+    pack configure $last -side left
+
+    set last [vTcl:formCompound:add $base.f3.toolbar button \
+        -image [vTcl:image:get_image [file join $vTcl(VTCL_HOME) images edit copy.gif] ] \
+        -command "tk_textCopy $base.f3.text"]
+    pack configure $last -side left
+    vTcl:set_balloon $last "Copy selected text to clipboard"
+
+    set last [vTcl:formCompound:add $base.f3.toolbar button \
+        -image [vTcl:image:get_image [file join $vTcl(VTCL_HOME) images edit cut.gif] ]  \
+        -command "tk_textCut $base.f3.text"]
+    pack configure $last -side left
+    vTcl:set_balloon $last "Cut selected text"
+
+    set last [vTcl:formCompound:add $base.f3.toolbar button \
+        -image [vTcl:image:get_image [file join $vTcl(VTCL_HOME) images edit paste.gif] ]  \
+        -command "tk_textPaste $base.f3.text"]
+    pack configure $last -side left
+    vTcl:set_balloon $last "Paste text from clipboard"
+
+    set last [vTcl:formCompound:add $base.f3.toolbar frame -width 5]
+    pack configure $last -side left
+
+    set butFind [vTcl:formCompound:add $base.f3.toolbar button \
+        -image [vTcl:image:get_image [file join $vTcl(VTCL_HOME) images edit search.gif] ] \
+	-command "::vTcl::findReplace::show $base.f3.text"]
+    pack configure $butFind -side left
+    vTcl:set_balloon $butFind "Find/Replace"
+
+    set butCancel [vTcl:formCompound:add $base.f3.toolbar button \
+        -image [vTcl:image:get_image [file join $vTcl(VTCL_HOME) images edit remove.gif] ]  \
+        -command "vTcl:proc:edit_cancel $base"]
+    pack configure $butCancel -side right
+    vTcl:set_balloon $butCancel "Discard changes"
+
+    set butOK [vTcl:formCompound:add $base.f3.toolbar button \
+        -image [vTcl:image:get_image [file join $vTcl(VTCL_HOME) images edit ok.gif] ]  \
+        -command "vTcl:update_proc $base"]
+    pack configure $butOK -side right
+    vTcl:set_balloon $butOK "Save changes"
+
     text $base.f3.text \
         -height 7 -highlightthickness 0 -width 16 \
-        -wrap none -yscrollcommand "$base.f3.scrollbar4 set"
+        -wrap none -yscrollcommand "$base.f3.scrollbar4 set" \
+        -background white
     pack $base.f3.text \
         -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 2 -pady 2 \
-        -side left 
-    bind $base.f3.text <KeyPress> "+set vTcl(proc,[lindex $args 0],chg) 1"
+        -side left
+
+    bind $base.f3.text <KeyPress> "+::vTcl::proc_edit_change $base %K"
+    bind $base.f3.text <Control-Key-i> "$butInsert invoke"
+    bind $base.f3.text <Control-Key-f> "$butFind invoke"
+    bind $base <Destroy> {
+	if {[winfo exists .vTcl.find]} { destroy .vTcl.find }
+    }
+
     scrollbar $base.f3.scrollbar4 \
         -command "$base.f3.text yview"
     pack $base.f3.scrollbar4 \
         -anchor center -expand 0 -fill y -ipadx 0 -ipady 0 -padx 0 -pady 0 \
-        -side left 
-    frame $base.frame14 \
-        -borderwidth 1 -height 30 -relief sunken -width 30 
-    pack $base.frame14 \
-        -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 3 -pady 3 \
-        -side top 
-    button $base.frame14.button15 \
-        -command "vTcl:update_proc $base" \
-        -padx 9 -pady 3 -text OK -width 5 
-    pack $base.frame14.button15 \
-        -anchor center -expand 1 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 \
-        -side left 
-    button $base.frame14.button16 \
-        -command "vTcl:proc:edit_cancel $base" \
-         -padx 9 \
-        -pady 3 -text Cancel -width 5 
-    pack $base.frame14.button16 \
-        -anchor center -expand 1 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 \
-        -side left 
+        -side left
 
     set pname $base.f2.f8.procname
     set pargs $base.f2.f9.args
@@ -336,15 +405,32 @@ proc vTclWindow.vTcl.proc {args} {
     $pbody mark set insert 0.0
     if {$iproc == ""} {
         focus $pname
+        $butOK configure -state disabled
     } else {
         focus $pbody
     }
+
+    # don't allow empty procedure name
+    bind $pname <KeyRelease> "\
+    	if \{\[$pname get\] == \"\"\} \{ \
+    	      $butOK configure -state disabled \
+    	\} else \{ \
+    	      $butOK configure -state normal \
+    	\}"
+
+    # @@change by Christian Gavin 3/19/2000
+    # syntax colouring
+
+    vTcl:syntax_color $base.f3.text
+
+    # @@end_change
 }
 
 proc vTcl:proc:edit_cancel {base} {
     global vTcl
     if {$vTcl(proc,$base,chg) == 0} {
         grab release $base
+    	set vTcl(pr,geom_proc) [wm geometry $base]
         destroy $base
     } else {
         vTcl:dialog "Buffer has changed. Do you\nwish to save the changes?" {Yes No Cancel}
@@ -361,4 +447,20 @@ proc vTcl:proc:edit_cancel {base} {
     }
 }
 
-
+proc ::vTcl::proc_edit_change {w k} {
+    ## We don't want to mark the text as changed when we're just moving around.
+    switch -- $k {
+	"Up"	-
+	"Down"	-
+	"Right"	-
+	"Left"	-
+	"Prior"	-
+	"Next"	-
+	"Home"	-
+	"End"	-
+	"Insert" -
+	"Delete" { return }
+    }
+    global vTcl
+    set vTcl(proc,$w,chg) 1
+}

@@ -1,0 +1,6 @@
+Class Calendar
+Lib   itcl
+
+Icon icon_calendar.gif
+DumpChildren  no
+MegaWidget    yes

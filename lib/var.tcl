@@ -101,98 +101,6 @@ set pos [string first "(" $name]
     }
 }
 
-proc vTclWindow.vTcl.var {args} {
-    global vTcl
-    set base [lindex $args 0]
-    set name [lindex $args 1]
-    set value [lindex $args 2]
-    if {[winfo exists .vTcl.var]} {
-        wm deiconify .vTcl.var; return
-    }
-    toplevel .vTcl.var -class vTcl
-    wm transient .vTcl.var .vTcl
-    wm focusmodel .vTcl.var passive
-    wm geometry .vTcl.var 338x136+276+319
-    wm maxsize .vTcl.var 1137 870
-    wm minsize .vTcl.var 1 1
-    wm overrideredirect .vTcl.var 0
-    wm resizable .vTcl.var 1 1
-    wm deiconify .vTcl.var
-    wm title .vTcl.var "Variable Editor"
-    bind .vTcl.var <Key-Escape> {vTcl:update_var}
-    frame .vTcl.var.fra2 \
-        -height 30 -width 30 
-    pack .vTcl.var.fra2 \
-        -in .vTcl.var -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 \
-        -padx 3 -pady 3 -side top 
-    label .vTcl.var.fra2.lab7 \
-         \
-        -relief groove -text Variable 
-    pack .vTcl.var.fra2.lab7 \
-        -in .vTcl.var.fra2 -anchor center -expand 0 -fill none -ipadx 0 \
-        -ipady 0 -padx 2 -pady 0 -side left 
-    entry .vTcl.var.fra2.ent8 \
-        -cursor {}  \
-        -highlightthickness 0 -textvariable vTcl(var,name) 
-    pack .vTcl.var.fra2.ent8 \
-        -in .vTcl.var.fra2 -anchor center -expand 1 -fill both -ipadx 0 \
-        -ipady 0 -padx 2 -pady 2 -side left 
-    frame .vTcl.var.fra3 \
-        -borderwidth 2 -height 30 -relief groove -width 30 
-    pack .vTcl.var.fra3 \
-        -in .vTcl.var -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 \
-        -padx 3 -pady 3 -side top 
-    text .vTcl.var.fra3.tex10 \
-        -cursor {}  \
-        -height 1 -highlightthickness 0 -width 1 \
-        -yscrollcommand {.vTcl.var.fra3.scr12 set} 
-    pack .vTcl.var.fra3.tex10 \
-        -in .vTcl.var.fra3 -anchor center -expand 1 -fill both -ipadx 0 \
-        -ipady 0 -padx 2 -pady 2 -side left 
-    scrollbar .vTcl.var.fra3.scr12 \
-        -command {.vTcl.var.fra3.tex10 yview}
-    pack .vTcl.var.fra3.scr12 \
-        -in .vTcl.var.fra3 -anchor center -expand 0 -fill y -ipadx 0 -ipady 0 \
-        -padx 0 -pady 0 -side right 
-    frame .vTcl.var.fra4 \
-        -borderwidth 1 -height 30 -relief sunken -width 30 
-    pack .vTcl.var.fra4 \
-        -in .vTcl.var -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 \
-        -padx 3 -pady 3 -side top 
-    button .vTcl.var.fra4.but5 \
-        -command {
-            vTcl:update_var
-        } \
-         -padx 9 \
-        -pady 3 -text OK -width 5 
-    pack .vTcl.var.fra4.but5 \
-        -in .vTcl.var.fra4 -anchor center -expand 1 -fill both -ipadx 0 \
-        -ipady 0 -padx 0 -pady 0 -side left 
-    button .vTcl.var.fra4.but6 \
-        -command {grab release .vTcl.var; destroy .vTcl.var} \
-         -padx 9 \
-        -pady 3 -text Cancel -width 5 
-    pack .vTcl.var.fra4.but6 \
-        -in .vTcl.var.fra4 -anchor center -expand 1 -fill both -ipadx 0 \
-        -ipady 0 -padx 0 -pady 0 -side left 
-
-    set varname $base.fra2.ent8
-    set varvalue $base.fra3.tex10
-    set vTcl(var,name) $name
-    set vTcl(var,value) $value
-
-    $varname delete 0 end
-    $varvalue delete 0.0 end
-    $varname insert end $name
-    $varvalue insert end $value
-
-    if { [lindex $args 1] == "" } {
-        focus $varname
-    } else {
-        focus $varvalue
-    }
-}
-
 proc vTcl:varlist:show {{on ""}} {
     global vTcl
     if {$on == "flip"} { set on [expr - $vTcl(pr,show_var)] }
@@ -206,94 +114,610 @@ proc vTcl:varlist:show {{on ""}} {
     set vTcl(pr,show_var) $on
 }
 
-proc vTclWindow.vTcl.varlist {args} {
-    global vTcl
-    set base .vTcl.varlist
-    if {[winfo exists .vTcl.varlist]} {
-        wm deiconify .vTcl.varlist; return
+namespace eval ::inspector {
+
+    proc {::inspector::contract_node} {listbox index} {
+        upvar #0 ::${listbox}::contents contents
+
+        set content_line [lindex $contents $index]
+        set node_text [$listbox get $index]
+
+        lassign $content_line has_children node_info item_commands level expanded
+        set content_line [list $has_children $node_info $item_commands $level 0]
+
+        regsub -all {\[\-\]} $node_text {[+]} node_text
+        $listbox delete $index
+        $listbox insert $index $node_text
+
+        set contents [lreplace $contents  $index  $index  $content_line]
+
+        # now, remove all children
+        ::inspector::delete_children $listbox [expr $index + 1] [expr $level + 1]
+
+        $listbox selection clear 0 end
+        $listbox selection set $index
+        $listbox activate $index
+        focus $listbox
     }
-    toplevel .vTcl.varlist -class vTcl
-    wm transient .vTcl.varlist .vTcl
-    wm focusmodel .vTcl.varlist passive
-    wm geometry .vTcl.varlist 200x200+714+382
-    wm maxsize .vTcl.varlist 1137 870
-    wm minsize .vTcl.varlist 200 200
-    wm overrideredirect .vTcl.varlist 0
-    wm resizable .vTcl.varlist 1 1
-    wm deiconify .vTcl.varlist
-    wm title .vTcl.varlist "Variables"
-    wm protocol $base WM_DELETE_WINDOW {vTcl:varlist:show 0}
-    bind .vTcl.varlist <Double-Button-1> {
-        set vTcl(x) [.vTcl.varlist.f2.list curselection]
-        if {$vTcl(x) != ""} {
-            vTcl:show_var [.vTcl.varlist.f2.list get $vTcl(x)]
+
+    proc {::inspector::delete_children} {listbox index level} {
+        upvar #0 ::${listbox}::contents contents
+
+        set last [expr [llength $contents] -1]
+
+        set content_line [lindex $contents $index]
+        lassign $content_line has_children node_info item_commands current_level expanded
+
+        while {$current_level >= $level && $index <= $last} {
+
+            set contents [lreplace $contents $index $index]
+            set last [expr [llength $contents] -1]
+            $listbox delete $index
+
+            set content_line [lindex $contents $index]
+            lassign $content_line has_children node_info item_commands current_level expanded
         }
     }
-    frame .vTcl.varlist.frame7 \
-        -borderwidth 1 -height 30 -relief sunken -width 30 
-    pack .vTcl.varlist.frame7 \
-        -in .vTcl.varlist -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 \
-        -padx 0 -pady 0 -side bottom 
-    button .vTcl.varlist.frame7.button8 \
-        -command {vTcl:show_var ""} \
-         -padx 9 \
-        -pady 3 -text Add -width 4 
-    pack .vTcl.varlist.frame7.button8 \
-        -in .vTcl.varlist.frame7 -anchor center -expand 1 -fill x -ipadx 0 \
-        -ipady 0 -padx 0 -pady 0 -side left 
-    button .vTcl.varlist.frame7.button9 \
-        -command {
-            set vTcl(x) [.vTcl.varlist.f2.list curselection]
-            if {$vTcl(x) != ""} {
-                vTcl:show_var [.vTcl.varlist.f2.list get $vTcl(x)]
-            }
-        } \
-         -padx 9 \
-        -pady 3 -text Edit -width 4 
-    pack .vTcl.varlist.frame7.button9 \
-        -in .vTcl.varlist.frame7 -anchor center -expand 1 -fill x -ipadx 0 \
-        -ipady 0 -padx 0 -pady 0 -side left 
-    button .vTcl.varlist.frame7.button10 \
-        -command {
-            set vTcl(x) [.vTcl.varlist.f2.list curselection]
-            if {$vTcl(x) != ""} {
-                vTcl:delete_var [.vTcl.varlist.f2.list get $vTcl(x)]
-                .vTcl.varlist.f2.list delete $vTcl(x)
-            }
-        } \
-         -padx 9 \
-        -pady 3 -text Delete -width 4 
-    pack .vTcl.varlist.frame7.button10 \
-        -in .vTcl.varlist.frame7 -anchor center -expand 1 -fill x -ipadx 0 \
-        -ipady 0 -padx 0 -pady 0 -side left 
-    button .vTcl.varlist.frame7.button11 \
-        -command { vTcl:varlist:show 0 } \
-        -padx 9 -pady 3 -text Done -width 4 
-    pack .vTcl.varlist.frame7.button11 \
-        -in .vTcl.varlist.frame7 -anchor center -expand 1 -fill x -ipadx 0 \
-        -ipady 0 -padx 0 -pady 0 -side left 
-    frame .vTcl.varlist.f2 \
-        -borderwidth 1 -height 30 -relief sunken -width 30 
-    pack .vTcl.varlist.f2 \
-        -in .vTcl.varlist -anchor center -expand 1 -fill both -ipadx 0 \
-        -ipady 0 -padx 0 -pady 0 -side top 
-    listbox .vTcl.varlist.f2.list \
-         \
-        -yscrollcommand {.vTcl.varlist.f2.sb4  set} 
-    pack .vTcl.varlist.f2.list \
-        -in .vTcl.varlist.f2 -anchor center -expand 1 -fill both -ipadx 0 \
-        -ipady 0 -padx 0 -pady 0 -side left 
-    scrollbar .vTcl.varlist.f2.sb4 \
-        -borderwidth 1 -command {.vTcl.varlist.f2.list yview}
-    pack .vTcl.varlist.f2.sb4 \
-        -in .vTcl.varlist.f2 -anchor center -expand 0 -fill y -ipadx 0 \
-        -ipady 0 -padx 0 -pady 0 -side right 
 
-    wm withdraw $vTcl(gui,varlist)
-    vTcl:setup_vTcl:bind $vTcl(gui,varlist)
-    catch {wm geometry $vTcl(gui,varlist) $vTcl(geometry,$vTcl(gui,varlist))}
-    update idletasks
-    wm deiconify $vTcl(gui,varlist)
+    proc {::inspector::expand_array} {listbox node_index node_info level} {
+        global widget
+
+        set children [lsort [array names $node_info]]
+
+        # insert just after the node
+        incr node_index
+        incr level
+
+        foreach child $children {
+
+            set varname $node_info
+            append varname (${child})
+
+            set tmp $node_info
+            regsub -all {\:\:} $tmp @ tmp
+            set short [lindex [split $tmp @] end]
+            append short (${child})
+
+            ::inspector::insert_node $listbox  $node_index  $short  $level  no $varname {{} ::inspector::show_variable}
+
+            incr node_index
+        }
+    }
+
+    proc {::inspector::expand_namespace} {listbox node_index node_info level} {
+        global widget
+
+        set children [lsort [namespace children $node_info]]
+
+        # insert just after the node
+        incr node_index
+        incr level
+
+        ::inspector::insert_node $listbox $node_index Variables $level yes $node_info ::inspector::expand_variables
+        incr node_index
+        ::inspector::insert_node $listbox $node_index Procedures $level yes $node_info ::inspector::expand_procedures
+        incr node_index
+
+        foreach child $children {
+
+            ::inspector::insert_node $listbox  $node_index  $child  $level  yes  $child  ::inspector::expand_namespace
+
+            incr node_index
+        }
+    }
+
+    proc {::inspector::expand_node} {listbox index} {
+        upvar #0 ::${listbox}::contents contents
+
+        set content_line [lindex $contents $index]
+        set node_text [$listbox get $index]
+
+        lassign $content_line has_children node_info item_commands level expanded
+        set content_line [list $has_children $node_info $item_commands $level 1]
+
+        regsub -all {\[\+\]} $node_text {[-]} node_text
+        $listbox delete $index
+        $listbox insert $index $node_text
+
+        set contents [lreplace $contents  $index  $index  $content_line]
+
+        set expand_cmd [lindex $item_commands 0]
+        $expand_cmd $listbox  $index  $node_info  $level
+
+        $listbox selection clear 0 end
+        $listbox selection set $index
+        $listbox activate $index
+        focus $listbox
+    }
+
+    proc {::inspector::expand_procedures} {listbox node_index node_info level} {
+        set children [lsort [info procs ::${node_info}::*]]
+
+        # insert just after the node
+        incr node_index
+        incr level
+
+        foreach child $children {
+
+            set procname $child
+            set tmp $child
+            regsub -all {\:\:} $tmp @ tmp
+            set child [lindex [split $tmp @] end]
+            ::inspector::insert_node $listbox  $node_index  $child  $level  no $procname {{} ::inspector::show_procedure}
+
+            incr node_index
+        }
+    }
+
+    proc {::inspector::expand_variables} {listbox node_index node_info level} {
+        set children [lsort [info vars ::${node_info}::*]]
+
+        # insert just after the node
+        incr node_index
+        incr level
+
+        foreach child $children {
+
+            set varname $child
+            set tmp $child
+            regsub -all {\:\:} $tmp @ tmp
+            set child [lindex [split $tmp @] end]
+
+            # is it an array
+            if { [llength [array names $varname]] != 0 } {
+            ::inspector::insert_node $listbox  $node_index  $child  $level  yes $varname ::inspector::expand_array
+            } else {
+            ::inspector::insert_node $listbox  $node_index  $child  $level  no $varname {{} ::inspector::show_variable}
+            }
+
+            incr node_index
+        }
+    }
+
+    proc {::inspector::init} {listbox} {
+        global widget
+
+        namespace eval ::${listbox} {
+
+            variable contents
+            set contents ""
+        }
+
+        $listbox delete 0 end
+    }
+
+    proc {::inspector::insert_node} {listbox before_index node_text level {has_children no} {node_info {}} {item_commands {}}} {
+        upvar #0 ::${listbox}::contents contents
+
+        set expanded 0
+
+        set content_line  [list $has_children $node_info $item_commands $level $expanded]
+
+        if {$has_children} {
+            set node_text "\[+\] $node_text"
+        }
+
+        for {set i 0} {$i < $level} {incr i} {
+            set node_text "    $node_text"
+        }
+
+        # the contents variable keeps a record of what is inside
+        # the listbox
+        set contents [linsert $contents $before_index $content_line]
+
+        # now we insert text inside the actual listbox
+        $listbox insert $before_index $node_text
+    }
+
+    proc {::inspector::show_procedure} {node_info} {
+        global widget
+
+        InspectorItem delete 0 end
+        InspectorItem insert end $node_info
+
+        InspectorArgumentsLabel configure -state normal
+        InspectorArguments      configure -state normal
+
+        InspectorArguments delete 0 end
+        InspectorArguments insert end [::vTcl:proc:get_args $node_info]
+
+        InspectorValue configure -state normal
+        InspectorValue delete 0.0 end
+        InspectorValue insert end [info body $node_info]
+        InspectorValue configure -state disabled -wrap none
+
+        vTcl:syntax_color $widget(InspectorValue) 0 -1
+    }
+
+    proc {::inspector::show_variable} {node_info} {
+        InspectorItem delete 0 end
+        InspectorItem insert end $node_info
+
+        InspectorArgumentsLabel configure -state disabled
+        InspectorArguments configure -state normal
+        InspectorArguments delete 0 end
+        InspectorArguments configure -state disabled
+
+        InspectorValue configure -state normal
+        InspectorValue delete 0.0 end
+
+        if {[info exists $node_info]} {
+            InspectorValue insert end [vTcl:at $node_info]
+        }
+
+        InspectorValue configure -state disabled -wrap word
+    }
+
+    proc {::inspector::expand_packages} {listbox node_index node_info level} {
+        global widget
+
+        set children [package names]
+
+        # insert just after the node
+        incr node_index
+        incr level
+
+        foreach child $children {
+
+            ::inspector::insert_node $listbox  $node_index  $child  $level  no $child {{} ::inspector::show_package}
+
+            incr node_index
+        }
+    }
+
+    proc {::inspector::show_package} {node_info} {
+        InspectorItem delete 0 end
+        InspectorItem insert end $node_info
+
+        InspectorArgumentsLabel configure -state disabled
+        InspectorArguments configure -state normal
+        InspectorArguments delete 0 end
+        InspectorArguments configure -state disabled
+
+        InspectorValue configure -state normal
+        InspectorValue delete 0.0 end
+
+        set result [catch {package present $node_info}]
+        if {$result == 1} {
+            InspectorValue insert end "Package $node_info not loaded"
+            InspectorValue configure -state disabled
+            return
+        }
+
+        InspectorValue insert end "Package $node_info version "
+        InspectorValue insert end [package present $node_info]
+        InspectorValue configure -state disabled
+    }
+
+    proc {::inspector::expand_windows} {listbox node_index node_info level} {
+        global widget
+
+        # insert just after the node
+        incr node_index
+        incr level
+
+        foreach child "." {
+
+            ::inspector::insert_node $listbox  $node_index  $child  $level  yes $child \
+                {::inspector::expand_widget ::inspector::show_widget}
+
+            incr node_index
+        }
+    }
+
+    proc {::inspector::expand_widget} {listbox node_index node_info level} {
+        global widget
+
+        set children [winfo children $node_info]
+
+        # insert just after the node
+        incr node_index
+        incr level
+
+        foreach child $children {
+
+            ::inspector::insert_node $listbox  $node_index  $child  $level yes $child \
+                {::inspector::expand_widget ::inspector::show_widget}
+            incr node_index
+        }
+
+        ::inspector::insert_node $listbox  $node_index "Bindtags" $level yes $node_info \
+            {::inspector::expand_bindtags}
+        incr node_index
+    }
+
+    proc {::inspector::show_widget} {node_info} {
+        InspectorItem delete 0 end
+        InspectorItem insert end $node_info
+
+        InspectorValue configure -state normal
+        InspectorValue delete 0.0 end
+
+        set options [$node_info configure]
+        foreach option $options {
+            InspectorValue insert end ${option}\n
+        }
+    }
+
+    proc {::inspector::expand_bindtags} {listbox node_index node_info level} {
+
+        set children [bindtags $node_info]
+
+        # insert just after the node
+        incr node_index
+        incr level
+
+        foreach child $children {
+
+            ::inspector::insert_node $listbox  $node_index  $child  $level  yes $child \
+                 {::inspector::expand_bindtag}
+
+            incr node_index
+        }
+    }
+
+    proc {::inspector::expand_bindtag} {listbox node_index node_info level} {
+
+        set children [lsort [bind $node_info]]
+
+        # insert just after the node
+        incr node_index
+        incr level
+
+        foreach child $children {
+
+            ::inspector::insert_node $listbox  $node_index  $child  $level  no "$node_info $child" \
+                 {{} ::inspector::show_bind}
+
+            incr node_index
+        }
+    }
+
+    proc {::inspector::show_bind} {node_info} {
+
+        global widget
+
+        set bindtag [lindex $node_info 0]
+        set binding [lindex $node_info 1]
+
+        set bindcmd [bind $bindtag $binding]
+
+        InspectorItem delete 0 end
+        InspectorItem insert end $node_info
+
+        InspectorValue configure -state normal
+        InspectorValue delete 0.0 end
+        InspectorValue insert end $bindcmd
+
+        vTcl:syntax_color $widget(InspectorValue) 0 -1
+    }
 }
 
+proc vTclWindow.vTcl.inspector {base {container 0}} {
 
+    if {$base == ""} {
+        set base .vTcl.inspector
+    }
+    if {[winfo exists $base] && (!$container)} {
+        wm deiconify $base; return
+    }
+
+    global widget
+    set widget(rev,$base.cpd26.01.cpd27.01) {InspectorListbox}
+    set {widget(InspectorListbox)} "$base.cpd26.01.cpd27.01"
+    set widget(Toplevel1,InspectorListbox) "$base.cpd26.01.cpd27.01"
+    interp alias {} InspectorListbox {} vTcl:WidgetProc $base.cpd26.01.cpd27.01
+    interp alias {} Toplevel1.InspectorListbox {} vTcl:WidgetProc $base.cpd26.01.cpd27.01
+    set widget(rev,$base.cpd26.02.cpd28.03) {InspectorValue}
+    set {widget(InspectorValue)} "$base.cpd26.02.cpd28.03"
+    set widget(Toplevel1,InspectorValue) "$base.cpd26.02.cpd28.03"
+    interp alias {} InspectorValue {} vTcl:WidgetProc $base.cpd26.02.cpd28.03
+    interp alias {} Toplevel1.InspectorValue {} vTcl:WidgetProc $base.cpd26.02.cpd28.03
+    set widget(rev,$base.cpd26.02.ent24) {InspectorItem}
+    set {widget(InspectorItem)} "$base.cpd26.02.ent24"
+    set widget(Toplevel1,InspectorItem) "$base.cpd26.02.ent24"
+    interp alias {} InspectorItem {} vTcl:WidgetProc $base.cpd26.02.ent24
+    interp alias {} Toplevel1.InspectorItem {} vTcl:WidgetProc $base.cpd26.02.ent24
+    set widget(rev,$base.cpd26.02.ent26) {InspectorArguments}
+    set {widget(InspectorArguments)} "$base.cpd26.02.ent26"
+    set widget(Toplevel1,InspectorArguments) "$base.cpd26.02.ent26"
+    interp alias {} InspectorArguments {} vTcl:WidgetProc $base.cpd26.02.ent26
+    interp alias {} Toplevel1.InspectorArguments {} vTcl:WidgetProc $base.cpd26.02.ent26
+    set widget(rev,$base.cpd26.02.lab22) {InspectorItemLabel}
+    set {widget(InspectorItemLabel)} "$base.cpd26.02.lab22"
+    set widget(Toplevel1,InspectorItemLabel) "$base.cpd26.02.lab22"
+    interp alias {} InspectorItemLabel {} vTcl:WidgetProc $base.cpd26.02.lab22
+    interp alias {} Toplevel1.InspectorItemLabel {} vTcl:WidgetProc $base.cpd26.02.lab22
+    set widget(rev,$base.cpd26.02.lab25) {InspectorArgumentsLabel}
+    set {widget(InspectorArgumentsLabel)} "$base.cpd26.02.lab25"
+    set widget(Toplevel1,InspectorArgumentsLabel) "$base.cpd26.02.lab25"
+    interp alias {} InspectorArgumentsLabel {} vTcl:WidgetProc $base.cpd26.02.lab25
+    interp alias {} Toplevel1.InspectorArgumentsLabel {} vTcl:WidgetProc $base.cpd26.02.lab25
+    set widget(rev,$base.cpd26.02.lab27) {InspectorValueLabel}
+    set {widget(InspectorValueLabel)} "$base.cpd26.02.lab27"
+    set widget(Toplevel1,InspectorValueLabel) "$base.cpd26.02.lab27"
+    interp alias {} InspectorValueLabel {} vTcl:WidgetProc $base.cpd26.02.lab27
+    interp alias {} Toplevel1.InspectorValueLabel {} vTcl:WidgetProc $base.cpd26.02.lab27
+
+    ###################
+    # CREATING WIDGETS
+    ###################
+    if {!$container} {
+        toplevel $base -class Toplevel
+        wm focusmodel $base passive
+        wm geometry $base 664x529+218+142; update
+        wm maxsize $base 1009 738
+        wm minsize $base 1 1
+        wm overrideredirect $base 0
+        wm resizable $base 1 1
+        wm deiconify $base
+        wm title $base "System Inspector"
+        wm transient .vTcl.inspector .vTcl
+        wm protocol $base WM_DELETE_WINDOW "Window hide $base"
+    }
+    frame $base.fra23 \
+        -borderwidth 2
+    button $base.fra23.but24 \
+        -image [vTcl:image:get_image "ok.gif"] \
+        -command "Window hide $base"
+    frame $base.cpd26 \
+        -background #000000
+    frame $base.cpd26.01
+    frame $base.cpd26.01.cpd27 \
+        -relief raised
+    listbox $base.cpd26.01.cpd27.01 \
+        -xscrollcommand "$base.cpd26.01.cpd27.02 set" \
+        -yscrollcommand "$base.cpd26.01.cpd27.03 set"
+    bindtags $base.cpd26.01.cpd27.01 "Listbox $base.cpd26.01.cpd27.01 $base all"
+    bind $base.cpd26.01.cpd27.01 <Button-1> {
+        set listbox %W
+        set index [%W index @%x,%y]
+
+        set content_line [lindex [vTcl:at ::%W::contents] $index]
+
+        lassign $content_line has_children  node_info  item_commands  level  expanded
+
+        if {[llength $item_commands] >= 2} {
+
+            set click_cmd [lindex $item_commands 1]
+            $click_cmd $node_info
+        }
+    }
+    bind $base.cpd26.01.cpd27.01 <Double-Button-1> {
+        set listbox %W
+        set index [%W index @%x,%y]
+
+        set content_line [lindex [vTcl:at ::%W::contents] $index]
+
+        lassign $content_line has_children  node_info  item_commands  level  expanded
+
+        if {$has_children && (!$expanded)} {
+
+            ::inspector::expand_node $listbox $index
+        } elseif {$has_children && $expanded} {
+
+            ::inspector::contract_node $listbox $index
+        }
+    }
+    scrollbar $base.cpd26.01.cpd27.02 \
+        -command "$base.cpd26.01.cpd27.01 xview" \
+        -orient horizontal
+    scrollbar $base.cpd26.01.cpd27.03 \
+        -command "$base.cpd26.01.cpd27.01 yview"
+    frame $base.cpd26.01.fra29 \
+        -borderwidth 2
+    button $base.cpd26.01.fra29.but30 \
+        -image [vTcl:image:get_image "refresh.gif"]
+    frame $base.cpd26.02 \
+        -background #dcdcdc -highlightbackground #dcdcdc \
+        -highlightcolor #000000 -width 0
+    label $base.cpd26.02.lab22 \
+        -anchor w  -padx 1 -text Item
+    entry $base.cpd26.02.ent24
+    label $base.cpd26.02.lab25 \
+        -anchor w -padx 1 -text Arguments
+    entry $base.cpd26.02.ent26
+    label $base.cpd26.02.lab27 \
+        -anchor w -padx 1 -text Value
+    frame $base.cpd26.02.cpd28 \
+        -borderwidth 1 -relief raised
+    scrollbar $base.cpd26.02.cpd28.01 \
+        -command "$base.cpd26.02.cpd28.03 xview"  \
+        -orient horizontal
+    scrollbar $base.cpd26.02.cpd28.02 \
+        -command "$base.cpd26.02.cpd28.03 yview"
+    text $base.cpd26.02.cpd28.03 \
+        -background #dcdcdc  \
+        -padx 1 -pady 1 \
+        -xscrollcommand "$base.cpd26.02.cpd28.01 set" \
+        -yscrollcommand "$base.cpd26.02.cpd28.02 set"
+    frame $base.cpd26.03 \
+        -background #ff0000 -borderwidth 2 -height 0 \
+        -highlightbackground #dcdcdc -highlightcolor #000000 -relief raised \
+        -width 0
+    bind $base.cpd26.03 <B1-Motion> {
+        set root [ split %W . ]
+        set nb [ llength $root ]
+        incr nb -1
+        set root [ lreplace $root $nb $nb ]
+        set root [ join $root . ]
+        set width [ winfo width $root ].0
+
+        set val [ expr (%X - [winfo rootx $root]) /$width ]
+
+        if { $val >= 0 && $val <= 1.0 } {
+
+            place $root.01 -relwidth $val
+            place $root.03 -relx $val
+            place $root.02 -relwidth [ expr 1.0 - $val ]
+        }
+    }
+    ###################
+    # SETTING GEOMETRY
+    ###################
+    pack $base.fra23 \
+        -in $base -anchor center -expand 0 -fill x -side top
+    pack $base.fra23.but24 \
+        -in $base.fra23 -anchor center -expand 0 -fill none -side right
+    pack $base.cpd26 \
+        -in $base -anchor center -expand 1 -fill both -side top
+    place $base.cpd26.01 \
+        -x 0 -y 0 -width -1 -relwidth 0.3466 -relheight 1 -anchor nw \
+        -bordermode ignore
+    pack $base.cpd26.01.cpd27 \
+        -in $base.cpd26.01 -anchor center -expand 1 -fill both -side bottom
+    grid columnconf $base.cpd26.01.cpd27 0 -weight 1
+    grid rowconf $base.cpd26.01.cpd27 0 -weight 1
+    grid $base.cpd26.01.cpd27.01 \
+        -in $base.cpd26.01.cpd27 -column 0 -row 0 -columnspan 1 -rowspan 1 \
+        -sticky nesw
+    grid $base.cpd26.01.cpd27.02 \
+        -in $base.cpd26.01.cpd27 -column 0 -row 1 -columnspan 1 -rowspan 1 \
+        -sticky ew
+    grid $base.cpd26.01.cpd27.03 \
+        -in $base.cpd26.01.cpd27 -column 1 -row 0 -columnspan 1 -rowspan 1 \
+        -sticky ns
+    pack $base.cpd26.01.fra29 \
+        -in $base.cpd26.01 -anchor center -expand 0 -fill x -side top
+    pack $base.cpd26.01.fra29.but30 \
+        -in $base.cpd26.01.fra29 -anchor center -expand 0 -fill none \
+        -side left
+    place $base.cpd26.02 \
+        -x 0 -relx 1 -y 0 -width -1 -relwidth 0.6534 -relheight 1 -anchor ne \
+        -bordermode ignore
+    pack $base.cpd26.02.lab22 \
+        -in $base.cpd26.02 -anchor w -expand 0 -fill none -padx 3 -side top
+    pack $base.cpd26.02.ent24 \
+        -in $base.cpd26.02 -anchor center -expand 0 -fill x -padx 3 -side top
+    pack $base.cpd26.02.lab25 \
+        -in $base.cpd26.02 -anchor w -expand 0 -fill none -padx 3 -side top
+    pack $base.cpd26.02.ent26 \
+        -in $base.cpd26.02 -anchor center -expand 0 -fill x -padx 3 -side top
+    pack $base.cpd26.02.lab27 \
+        -in $base.cpd26.02 -anchor w -expand 0 -fill none -padx 3 -side top
+    pack $base.cpd26.02.cpd28 \
+        -in $base.cpd26.02 -anchor center -expand 1 -fill both -padx 3 \
+        -pady 3 -side top
+    grid columnconf $base.cpd26.02.cpd28 0 -weight 1
+    grid rowconf $base.cpd26.02.cpd28 0 -weight 1
+    grid $base.cpd26.02.cpd28.01 \
+        -in $base.cpd26.02.cpd28 -column 0 -row 1 -columnspan 1 -rowspan 1 \
+        -sticky ew
+    grid $base.cpd26.02.cpd28.02 \
+        -in $base.cpd26.02.cpd28 -column 1 -row 0 -columnspan 1 -rowspan 1 \
+        -sticky ns
+    grid $base.cpd26.02.cpd28.03 \
+        -in $base.cpd26.02.cpd28 -column 0 -row 0 -columnspan 1 -rowspan 1 \
+        -sticky nesw
+    place $base.cpd26.03 \
+        -x 0 -relx 0.3466 -y 0 -rely 0.9 -width 10 -height 10 -anchor s \
+        -bordermode ignore
+
+    global vTcl
+    ::inspector::init $widget(InspectorListbox)
+    ::inspector::insert_node $widget(InspectorListbox)  end  "::"  0  yes  "::"  ::inspector::expand_namespace
+    ::inspector::insert_node $widget(InspectorListbox)  end  "Packages"  0  yes  "Packages"  ::inspector::expand_packages
+    ::inspector::insert_node $widget(InspectorListbox)  end  "Windows"  0 yes "Windows" ::inspector::expand_windows
+
+    InspectorValue configure -font $vTcl(pr,font_fixed)
+}

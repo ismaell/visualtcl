@@ -1,24 +1,177 @@
 ChangeLog for Visual Tcl:
 
+1.22   -> 1.51b1
+	o Defined a Tktable widget.
+	o Added a configure script to locate the best WISH shell.
+        o Changed the way libs are loaded
+        o Support for mclistbox and combobox from Bryan Oakley. This time,
+          no additional packages are needed, and when projects are saved, the
+          necessary mclistbox or combobox code is included
+        o Support for Iwidgets and BLT with new widget description mechanism
+        o Megawidgets such as Iwidgets can now be selected/dragged as a whole
+        o Added checkboxes to save only the options the user wants to.
+        o Redone menu editor.
+        o Added MRU to command console. Up/down arrows navigate through
+          previously issued commands.
+        o Added system inspector to view variables, procedures, windows,
+          bindings, namespaces, packages
+        o Completely redone the binding editor. Should be easier to use and
+          less error prone (forgot to click on "update" ?)
+	o Removed "type" as a means of identifying widgets.  Widgets are all
+	  identified by class.
+	o If you iconify/deiconify vTcl, it takes the toplevels with it.
+	o Changed the default color for all vTcl windows to #d9d9d9.
+	o Completely re-wrote the way widgets are defined.
+	o Added widget command aliasing.
+	o Added widget auto-aliasing
+	o Added a pointer icon to the toolbar and continuous widget placement.
+	o Added more options to the right-click menu.
+	o Fixed a bug where clicking a Toplevel window in the widget tree
+	  would cause its manager to change, thereby breaking the project
+	  the next time it was sourced.
+	o When a project is saved, we save the hidden toplevel windows too,
+	  we just don't show them again.  But, the next time we load the
+	  project, they're properly included in the project and on the widget
+	  tree.
+	o Cleaned up the order in which widget selection occurs when a widget
+	  is deleted or cut.
+	o Added a menu option to Restore a project from backup.
+	o revamped Preferences... dialog (cool no?)
+        o added an option in the Preferences... dialog to save all images as
+          inline using Base64. Allows for self contained projects without any
+          dependencies on external images. However, while editing the project,
+          external files are used as usual. When saving the project, external
+          image files are then converted to Base64 and included inside the main
+          file.
+	o if a widget is of an unknown class, just ignore it, instead
+	  of generating an exception
+	o changed the way widget placement is handled.  It is now more like a
+	  traditional GUI builder.  This can be turned off in the preferences
+	  menu.
+	o added support for recent projects in the File menu.
+	o fixed a bug concerning the placement of toplevel windows.
+	o fixed a bug that caused a problem if the console window was killed
+	  through the OS window manager.
+	o added a lot more functions to the right-click menu.
+        o added tutorial.html to doc folder (html version of the tutorial.txt file)
+        o added multiple file support
+        o added option in Preferences dialog for "Single file project" or
+          "Multiple files project"
+        o replaced header path to wish from "wish8.0" to "wish" to accomodate
+          any possible version of Tk (in the ideal world, it should do some
+          version checking, because vTcl is not compatible with versions prior
+          to 8.0)
+        o syntax coloring is done when user moves the cursor inside the
+          current line or types a few typical keys (eg. [] {}, etc.)
+        o fixed "Save Compound..." bug
+	o dump widget aliases inside window procedure in preparation for
+          multiple file support
+
+1.22b1 -> 1.22 (released August 20, 2000)
+        o Fixed root window placer bug
+        o Added "Clear" pulldown menu in command console under Linux
+        o Added modifier pulldown menu in bindings editor
+        o Added right-click popup menu in bindings editor to insert a
+          percent substitution
+        o Scrollbar borderwidth uses default option value
+          (makes the app more consistent looking)
+        o Menus are now dumped relative to their top-level window
+        o Don't display in widget tree temporary menu windows with "#" in
+          their name
+        o Added new menu in attributes bar to edit a submenu
+        o Display menu item titles in widget tree window
+        o Widget tree remembers scrolling position when new widget added or
+          existing widget deleted
+        o If an image is not found while loading a project, then the image is
+          searched for in the project directory
+        o Fixed problem when loading a 1.21 project in 1.22b1 and stock images
+          were not found
+
+1.21 -> 1.22b1 (released August 5, 2000)
+        o When saving -xscrollcommand, -yscrollcommand, and -command options,
+          if options are about scrolling then window path is replaced by
+          $base... id. the path is now relative to the parent window instead of
+          beeing absolute
+        o Centered preferences dialog
+        o Support for combobox package (combobox by Bryan Oakley)
+        o Font manager/Image manager now use default background/foreground
+          colors
+        o Preferences dialog now uses default font
+	o Support for mclistbox (multicolumn listbox) package
+	  mclistbox by Bryan Oakley <oakley@channelpoint.com>
+	o Added dialog box to list Visual Tcl libraries and display their
+	  status (e.g. Itcl/Tk not detected, BLT detected, etc.)
+	o Added Scrolledtext Itcl/Tk Megawidget
+	o in TEST mode users are prevented from selecting widgets in the
+	  widget tree
+	o Font manager and image manager keep their scrolling position
+	  when changing/deleting a font/image
+	o Fixed problem when user tries to resize a packed label or
+	  entryfield using the handles
+	o Filter out Itcl generated procedures on open/save
+	o Added button in toolbar to show/hide the command console
+        o Fixed bug when loading 1.2 project, saving it and reloading it
+          generates error for -font option
+        o Added safeguard in "Preferences" dialog to prevent the user from
+          activating the "Autoload compounds" option without having specified
+          a filename
+        o Added initial syntax coloring for binding editor (thanks Nelson)
+        o Added more descriptive labels in the widget tree window (thanks
+          Eric Taylor)
+	o Added Iwidgets tabnotebook and panedwindow
+	o Added parameters to generated window procedures so that if the
+	  'container' argument is set to 1, the toplevel window is not created;
+	  this allows to fill in childsites for Iwidgets such as tabnotebook or
+	  panedwindow
+	o Fixed bug when adding new procedure with empty name
+
+1.20 -> 1.21 (May 2000)
+	o Added image manager to maintain a database of images and use
+	  them for widgets
+	o Added font manager to maintain a database of fonts and use
+	  them for widgets
+	o Widget tree automatically refreshes whenever needed
+	o Property manager sets a property automatically when user
+	  clicks outside an entry field
+	o Command console now shows standard output, error messages, and
+	  return value resulting from commands; output, error and return
+	  have different colors
+	o Added syntax coloring to procedure/command editor
+	o Added support for Freewrap to generate stand-alone executables
+	  on Linux and Windows platforms
+	o Support for more Iwidgets, including scrolledhtml, calendar,
+	  dateentry, feedback, optionmenu, buttonbox, checkbox, radiobox
+	o Saved projects when run as stand alone automatically detect
+	  the following packages: BLT, Itcl, Itk, Iwidgets and load them
+	o File Open... checks that it is reading a vTcl generated project
+
+1.20 -> 1.2x (November 23, 1999) * version not released *
+    o Root window placer fix (long-standing bug) from Alex Goodyear
+    o Added more comments into the code (ok, still needs work :)
+    o Added sorting to font list
+    o Added font A-Z sub-menus when too many fonts exist
+    o Changed all editable fields to a white background
+    o Widget tree automatically updates when it's open
+
 1.11 -> 1.20 (November 14, 1998)
     o Evaluation optimizations for Tcl/Tk8.0
     o Fix to major toplevel naming bug (Thanks Rick)
     o Additional blt widget support (Thanks Victor)
 
 1.10 -> 1.11 (February 1, 1998)
-    o Changed child windows back to "transient" since tk80 bug
-      fixed in latest release. Removed "intelligent" deiconification.
-    o Root menu now uses Tk8 System menus when available
-    o Many fixes for Macintosh (including startup instructions)
-    o Removed variable inspector
-    o Fixed dialog race condition
-    o vtcl Now accepts spaces (and meta chars) in procedure names
-    o Replaced lib_blt.tcl and lib_itcl.tcl files
-    o vtcl Now saves children of Canvases
-    o Fixed saving of root (tk8) menus
-    o Thanks to Fabien Coutant, Kenn Persinger and Jim Kramer
-      for numerous patches.
-    o Fixed compound menu
+	o Changed child windows back to "transient" since tk80 bug
+	  fixed in latest release. Removed "intelligent" deiconification.
+	o Root menu now uses Tk8 System menus when available
+	o Many fixes for Macintosh (including startup instructions)
+	o Removed variable inspector
+	o Fixed dialog race condition
+	o vtcl Now accepts spaces (and meta chars) in procedure names
+	o Replaced lib_blt.tcl and lib_itcl.tcl files
+	o vtcl Now saves children of Canvases
+	o Fixed saving of root (tk8) menus
+	o Thanks to Fabien Coutant, Kenn Persinger and Jim Kramer
+	  for numerous patches.
+	o Fixed compound menu
 
 1.09 -> 1.10 (May 31, 1997)
     o Added "No clobbering" safeties on functions, vars and menus
@@ -50,7 +203,7 @@ ChangeLog for Visual Tcl:
         * misc.tcl: sort names of user-defined procs
         * dump.tcl: sort names of global variables and bindings
         * dump.tcl: Fixed logic in proc vTcl:dump_widget_bind which prevented
-          bindings from being saved. 
+          bindings from being saved.
         * dump.tcl: Fixed logic in proc vTcl:dump_top which prevented
           toplevels which had never been created from being saved.
 

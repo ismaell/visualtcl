@@ -1,0 +1,11 @@
+Class		Entry
+Lib		core
+
+Icon		icon_entry.gif
+DoubleClickCmd	vTcl:set_textvar
+InsertCmd	vTcl:widget:entry:inscmd
+TreeLabel	@vTcl:core:get_widget_tree_label
+
+proc vTcl:widget:entry:inscmd {target} {
+    return "$target insert end entry"
+}

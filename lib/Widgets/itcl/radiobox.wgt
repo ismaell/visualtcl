@@ -1,0 +1,6 @@
+Class Radiobox
+Lib   itcl
+
+Icon icon_radiobox.gif
+DumpChildren  no
+MegaWidget    yes

@@ -1,0 +1,20 @@
+Class		Button
+Lib		core
+
+Icon		icon_button.gif
+DefaultOptions	-text button
+DoubleClickCmd	vTcl:set_command
+TreeLabel	@vTcl:core:get_widget_tree_label
+
+Function	"Set Text"	vTcl:Button:SetText
+Function	"Set Command"	vTcl:Button:SetCommand
+
+proc vTcl:Button:SetText {} {
+    global vTcl
+    vTcl:set_label $vTcl(w,widget)
+}
+
+proc vTcl:Button:SetCommand {} {
+    global vTcl
+    vTcl:set_command $vTcl(w,widget)
+}

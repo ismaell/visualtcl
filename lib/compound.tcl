@@ -50,22 +50,23 @@ proc vTcl:save_compounds {} {
 
 proc vTcl:load_compounds {{file ""}} {
     global vTcl
-    set file [vTcl:get_file open "Load Compound Library"]
+
+    # @@change by Christian Gavin 3/5/2000
+    # if a file is given in file parameter, use it,
+    # otherwise prompts for a file
+
+    if {$file == ""} {
+	    set file [vTcl:get_file open "Load Compound Library"]
+    }
+
+    # @@end_change
+
     if {$file == ""} {return}
     vTcl:statbar 10
     source $file
     vTcl:statbar 80
     vTcl:cmp_user_menu
     vTcl:statbar 0
-}
-
-proc vTcl:put_compound {compound} {
-    global vTcl
-    set name [vTcl:new_widget_name cpd $vTcl(w,insert)]
-    vTcl:insert_compound $name $compound $vTcl(w,def_mgr)
-    vTcl:setup_bind_tree $name
-    vTcl:active_widget $name
-    vTcl:update_proc_list
 }
 
 proc vTcl:name_replace {name s} {
@@ -76,8 +77,63 @@ proc vTcl:name_replace {name s} {
     return $s
 }
 
+proc vTcl:put_compound {text compound} {
+    global vTcl
+
+    if {$vTcl(pr,autoplace)} {
+	vTcl:auto_place_compound $compound $vTcl(w,def_mgr) {}
+	return
+    }
+
+    vTcl:status "Insert $text"
+
+    # because the bind commands does % substitution
+    regsub -all % $compound %% compound
+
+    bind vTcl(b) <Button-1> \
+    	"vTcl:place_compound [list $compound] $vTcl(w,def_mgr) %X %Y %x %y"
+}
+
+proc vTcl:auto_place_compound {compound gmgr gopt} {
+    global vTcl
+
+    set name [vTcl:new_widget_name cpd $vTcl(w,insert)]
+
+    vTcl:insert_compound $name $compound $gmgr $gopt
+    vTcl:setup_bind_tree $name
+    vTcl:active_widget $name
+    vTcl:update_proc_list
+
+    # @@change by Christian Gavin 3/5/2000
+    #
+    # when new compound inserted into window, automatically
+    # refresh widget tree
+
+    # after idle {vTcl:init_wtree}
+
+    vTcl:init_wtree
+
+    # @@end_change
+}
+
+proc vTcl:place_compound {compound gmgr rx ry x y} {
+    global vTcl
+
+    vTcl:status Status
+
+    vTcl:rebind_button_1
+
+    set vTcl(w,insert) [winfo containing $rx $ry]
+
+    set gopt {}
+    if {$gmgr == "place"} { append gopt "-x $x -y $y" }
+
+    vTcl:auto_place_compound $compound $gmgr $gopt
+}
+
 proc vTcl:insert_compound {name compound {gmgr pack} {gopt ""}} {
     global vTcl
+
     set cpd \{[lindex $compound 0]\}
     set alias [lindex $compound 1]
     set vTcl(cmp,alias) [lsort -decreasing -command vTcl:sort_cmd $alias]
@@ -85,13 +141,16 @@ proc vTcl:insert_compound {name compound {gmgr pack} {gopt ""}} {
     set do "$cmd"
     set undo "destroy $name"
     vTcl:push_action $do $undo
+    lappend vTcl(widgets,[winfo toplevel $name]) $name
+    vTcl:widget:register_all_widgets $name
 }
 
 proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
-    global vTcl widget
+    global vTcl widget classes
+
     set todo ""
     foreach i $compound {
-        set type [string trim [lindex $i 0]]
+        set class [string trim [lindex $i 0]]
         set opts [string trim [lindex $i 1]]
         set mgr  [string trim [lindex $i 2]]
         set mgrt [string trim [lindex $mgr 0]]
@@ -106,17 +165,25 @@ proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
         set cmpdname [string trim [lindex $i 10]]
         set topopt [string trim [lindex $i 11]]
         #
-        # process procs first in case there are dependancies (init)
+        # process procs first in case there are dependencies (init)
         #
         foreach j $proc {
             set nme [lindex $j 0]
             set arg [lindex $j 1]
             set bdy [lindex $j 2]
-            proc $nme $arg $bdy
-            vTcl:list add "{$nme}" vTcl(procs)
-            if {$nme == "${cmpdname}:init"} {
-                eval $nme
+
+            # if the proc name is in a namespace, make sure the
+            # namespace exists
+		if {[string match ::${cmpdname}::* $nme]} {
+                namespace eval ::${cmpdname} [list proc $nme $arg $bdy]
+            } else {
+                proc $nme $arg $bdy
             }
+
+            vTcl:list add "{$nme}" vTcl(procs)
+        }
+        if {[lsearch -exact $vTcl(procs) "::${cmpdname}::init"] >= 0 } {
+            eval ::${cmpdname}::init $name
         }
         if {$mgrt == "wm" || $base == "."} {
             set base $name
@@ -131,12 +198,14 @@ proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
         }
         if {$level > 0} {
             set name "$base$wdgt"
-        } elseif {$type == "toplevel"} {
+        } elseif {$class == "Toplevel"} {
             set vTcl(w,insert) $name
             lappend vTcl(tops) $name
             vTcl:update_top_list
         }
-        append todo "$type $name [vTcl:name_replace $base $opts]; "
+
+        append todo "$classes($class,createCmd) $name "
+	append todo "[vTcl:name_replace $base $opts]; "
         if {$mgrt != "" && $mgrt != "wm"} {
             if {$mgrt == "place" && $mgri == ""} {
                 set mgri "-x 5 -y 5"
@@ -164,9 +233,34 @@ proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
         set index 0
         incr level
         foreach j $bind {
-            set e [lindex $j 0]
-            set c [vTcl:name_replace $base [lindex $j 1]]
-            append todo "bind $name $e \"$c\"; "
+            # see if it is a list of bindtags, a binding for
+            # the target, or a binding for a bindtag (ya follow me?)
+            switch -exact -- [llength $j] {
+                1 {
+                    append todo "bindtags $name [list [vTcl:name_replace $base [lindex $j 0]]]; "
+                }
+
+                2 {
+                    set e [lindex $j 0]
+                    set c [vTcl:name_replace $base [lindex $j 1]]
+                    append todo "bind $name $e \{$c\}; "
+                }
+
+                3 {
+                    set bindtag [lindex $j 0]
+                    set event   [lindex $j 1]
+
+                    if {[lsearch -exact $::widgets_bindings::tagslist $bindtag] == -1} {
+                       lappend ::widgets_bindings::tagslist $bindtag
+                    }
+
+                    append todo "if \{\[bind $bindtag $event] == \"\"\} \{bind $bindtag $event \{[lindex $j 2]\}\}; "
+                }
+
+                default {
+                    oops "Internal error"
+                }
+            }
         }
         foreach j $menu {
             set t [lindex $j 0]
@@ -175,10 +269,12 @@ proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
                 append todo "$name add $t $o; "
             }
         }
-        foreach j $chld {
-            append todo "[vTcl:extract_compound $base $name \{$j\} $level]; "
-            incr index
-        }
+	if {$classes($class,dumpChildren)} {
+	    foreach j $chld {
+	       append todo "[vTcl:extract_compound $base $name \{$j\} $level]; "
+		incr index
+	    }
+	}
         if {$alis != "" && ![llength [array get widget $alis]]} {
             set widget($alis) $name
             set widget(rev,$name) "$alis"
@@ -190,17 +286,21 @@ proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
             set val [lindex $j 3]
             append todo "grid $cmd $name $num $prop $val; "
         }
-        if {[info procs "${cmpdname}:main"] != ""} {
-            eval ${cmpdname}:main
+
+	set next [vTcl:next_widget_name $class]
+    	append todo "vTcl:set_alias $name $next -noupdate; "
+
+        if {[lsearch -exact $vTcl(procs) "::${cmpdname}::main"] >= 0 } {
+            eval ::${cmpdname}::main $name 
         }
     }
+
     return $todo
 }
 
 proc vTcl:create_compound {target {cmpdname ""}} {
     global vTcl
     set vTcl(cmp,alias) ""
-    set vTcl(cmp,index) 0
     set ret [vTcl:gen_compound $target "" $cmpdname]
     lappend ret $vTcl(cmp,alias)
     return $ret
@@ -219,9 +319,17 @@ proc vTcl:gen_compound {target {name ""} {cmpdname ""}} {
     if {![winfo exists $target]} {
         return ""
     }
-    set type [vTcl:get_class $target 1]
-    set opts [vTcl:get_opts [$target conf]]
-    if {$type == "menu"} {
+    set class [vTcl:get_class $target]
+
+    # @@change by Christian Gavin 3/6/2000
+    # rename conf to configure because Iwidgets don't like
+    # conf only
+
+    set opts [vTcl:get_opts [$target configure]]
+
+    # @@end_change
+
+    if {$class == "Menu"} {
         set mnum [$target index end]
         if {$mnum != "none"} {
             for {set i 0} {$i <= $mnum} {incr i} {
@@ -232,22 +340,62 @@ proc vTcl:gen_compound {target {name ""} {cmpdname ""}} {
         }
         set mgrt {}
         set mgri {}
-    } elseif {$type == "toplevel"} {
+    } elseif {$class == "Toplevel"} {
         set mgrt "wm"
         set mgri ""
     } else {
         set mgrt [winfo manager $target]
-        set mgri [vTcl:get_mgropts [$mgrt info $target]]
+
+        # @@debug
+        vTcl:log "gen_compound: mgrt=\"$mgrt\""
+        # @@end_debug
+
+ 	# @@change by Christian Gavin 3/6/2000
+ 	# in Iwidgets, some controls are not yet packed/gridded/placed
+ 	# when they are in edit mode, therefore there is no manager at
+ 	# this time
+
+	if {[lempty $mgrt] || [lempty [info commands $mgrt]]} {
+	    set mgri {}
+        } else {
+	    set mgri [vTcl:get_mgropts [$mgrt info $target]]
+	}
+
+ 	# @@end_change
     }
     lappend mgr $mgrt $mgri
     set blst [bind $target]
     foreach i $blst {
         lappend bind "$i \{[bind $target $i]\}"
     }
-    foreach i [vTcl:get_children $target] {
-        incr vTcl(cmp,index)
-        append chld "[vTcl:gen_compound $i $name.0$vTcl(cmp,index)] "
+
+    # now, are bindtags non-standard ?
+    set bindtags $vTcl(bindtags,$target)
+    if {$bindtags != [::widgets_bindings::get_standard_bindtags $target] } {
+        # append the list of binding tags
+        lappend bind [list $bindtags]
+
+        # keep all bindings definitions with the compound
+        # (even if children define them too)
+        foreach bindtag $bindtags {
+            if {[lsearch -exact $::widgets_bindings::tagslist $bindtag] >= 0} {
+                foreach event [bind $bindtag] {
+                    lappend bind "$bindtag $event \{[bind $bindtag $event]\}"
+                }
+            }
+        }
     }
+
+    foreach i [vTcl:get_children $target] {
+
+      # change cy CGavin to retain children names
+      # while creating a compound
+      set windowpath [split $i .]
+      set lastpath [lindex $windowpath end]
+
+	append chld "[vTcl:gen_compound $i $name.$lastpath] "
+    }
+
     catch {set alias $widget(rev,$target)}
     set pre g
     set gcolumn [lindex [grid size $target] 0]
@@ -267,13 +415,13 @@ proc vTcl:gen_compound {target {name ""} {cmpdname ""}} {
     }
     if {$cmpdname != ""} {
         foreach i $vTcl(procs) {
-            if {[string match ${cmpdname}:* $i]} {
+            if {[string match ::${cmpdname}::* $i]} {
                 lappend proc [list $i [vTcl:proc:get_args $i] [info body $i]]
             }
         }
     }
     set topopt ""
-    if {$type == "toplevel"} {
+    if {$class == "Toplevel"} {
         foreach i $vTcl(attr,tops) {
             set v [wm $i $target]
             if {$v != ""} {
@@ -281,7 +429,7 @@ proc vTcl:gen_compound {target {name ""} {cmpdname ""}} {
             }
         }
     }
-    lappend ret $type $opts $mgr $bind $menu $chld $name $alias $grid $proc $cmpdname $topopt
+    lappend ret $class $opts $mgr $bind $menu $chld $name $alias $grid $proc $cmpdname $topopt
     vTcl:append_alias $target $name
     return \{$ret\}
 }
@@ -316,5 +464,3 @@ proc vTcl:name_compound {t} {
     set vTcl(cmpd:$name) [vTcl:create_compound $t $name]
     vTcl:cmp_user_menu
 }
-
-

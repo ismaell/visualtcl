@@ -21,7 +21,63 @@
 ##############################################################################
 #
 
-proc vTclWindow.vTcl.prefs {{base ""}} {
+proc vTcl:prefs:uninit {base} {
+    catch {destroy $base.tb}
+}
+
+proc vTcl:prefs:init {base} {
+    global vTcl
+
+    # this is to store all variables
+    namespace eval prefs {
+       variable balloon          ""
+       variable getname          ""
+       variable shortname        ""
+       variable fullcfg          ""
+       variable saveglob         ""
+       variable winfocus         ""
+       variable autoplace        ""
+       variable cmdalias         ""
+       variable autoalias        ""
+       variable multiplace       ""
+       variable autoloadcomp     ""
+       variable autoloadcompfile ""
+       variable font_dlg         ""
+       variable font_fixed       ""
+       variable manager          ""
+       variable encase           ""
+       variable projecttype      ""
+       variable imageeditor      ""
+       variable saveimagesinline ""
+       variable projfile         ""
+       variable saveasexecutable ""
+    }
+
+    set prefs::font_dlg [eval font create [font actual $vTcl(pr,font_dlg)]]
+    set prefs::font_fixed [eval font create [font actual $vTcl(pr,font_fixed)]]
+
+    # set the variables for the dialog
+    vTcl:prefs:data_exchange 0
+
+    # destroy the notebook if already existing
+    vTcl:prefs:uninit $base
+    set tb [vTcl:tabnotebook_create $base.tb]
+    pack $tb -fill both -expand 1
+
+    set tb_basics  [vTcl:tabnotebook_page $tb "Basics"]
+    set tb_project [vTcl:tabnotebook_page $tb "Project"]
+    set tb_fonts   [vTcl:tabnotebook_page $tb "Fonts"]
+    set tb_images  [vTcl:tabnotebook_page $tb "Images"]
+
+    vTcl:prefs:basics  $tb_basics
+    vTcl:prefs:project $tb_project
+    vTcl:prefs:fonts   $tb_fonts
+    vTcl:prefs:images  $tb_images
+}
+
+proc vTclWindow.vTcl.prefs {{base ""} {container 0}} {
+    global widget
+
     if {$base == ""} {
         set base .vTcl.prefs
     }
@@ -31,177 +87,380 @@ proc vTclWindow.vTcl.prefs {{base ""}} {
     ###################
     # CREATING WIDGETS
     ###################
-    toplevel $base -class vTcl
-    wm transient $base .vTcl
+    if {!$container} {
+    toplevel $base -class Toplevel \
+    	-background #dcdcdc -highlightbackground #dcdcdc \
+	-highlightcolor #000000
     wm focusmodel $base passive
+    wm withdraw $base
+    wm maxsize $base 1284 1010
+    wm minsize $base 100 1
     wm overrideredirect $base 0
-    wm resizable $base 0 0
-    wm deiconify $base
-    wm title $base "Preferences"
-    frame $base.fra18 \
-        -borderwidth 1 -height 53 -relief sunken -width 125 
-    label $base.fra18.lab32 \
-        -relief raised -text {The Basics} 
-    checkbutton $base.fra18.che33 \
-        -anchor w -highlightthickness 0 -text {Use Balloon Help} \
-        -variable vTcl(pr,balloon) 
-    checkbutton $base.fra18.che34 \
-        -anchor w -highlightthickness 0 -text {Ask for Widget name on insert} \
-        -variable vTcl(pr,getname) 
-    checkbutton $base.fra18.che35 \
-        -anchor w -highlightthickness 0 \
-        -text {Save verbose widget configuration} -variable vTcl(pr,fullcfg) 
-    checkbutton $base.fra18.che36 \
-        -anchor w -highlightthickness 0 -text {Short automatic widget names} \
-        -variable vTcl(pr,shortname) 
-    checkbutton $base.fra18.che37 \
-        -anchor w -highlightthickness 0 -text {Save global variable values} \
-        -variable vTcl(pr,saveglob) 
-    checkbutton $base.fra18.che39 \
-        -anchor w -highlightthickness 0 -text {Window focus selects window} \
-        -variable vTcl(pr,winfocus) 
-    checkbutton $base.fra18.che40 \
-        -anchor w -highlightthickness 0 -text {Window focus selects window} \
-        -variable vTcl(pr,winfocus) 
-    frame $base.fra18.fra17 \
-        -height 5 -relief groove -width 5 
-    frame $base.fra20 \
-        -borderwidth 1 -height 30 -relief sunken -width 30 
-    label $base.fra20.lab22 \
-        -relief raised -text {Font Settings} 
-    label $base.fra20.lab23 \
-        -relief raised -text Dialog -width 7 
-    label $base.fra20.lab24 \
-        -relief raised -text Fixed -width 7 
-    entry $base.fra20.ent25 \
-        -textvariable vTcl(pr,font_dlg) -width 8 
-    entry $base.fra20.ent26 \
-        -textvariable vTcl(pr,font_fixed) -width 8 
-    bind $base.fra20.ent26 <Return> {
-        option add *vTcl*Text*font $vTcl(pr,font_fixed)
+    wm resizable $base 1 1
+    wm title $base "Visual Tcl Preferences"
+    wm protocol $base WM_DELETE_WINDOW "wm withdraw $base"
     }
-    frame $base.fra21 \
-        -borderwidth 1 -height 30 -relief sunken -width 30 
-    label $base.fra21.lab41 \
-        -relief raised -text {Default Manager}
-    radiobutton $base.fra21.rad42 \
-        -anchor w -highlightthickness 0 -text Grid -value grid \
-        -variable vTcl(pr,manager) -width 5 
-    radiobutton $base.fra21.rad43 \
-        -anchor w -highlightthickness 0 -text Pack -value pack \
-        -variable vTcl(pr,manager) -width 5 
-    radiobutton $base.fra21.rad44 \
-        -anchor w -highlightthickness 0 -text Place -value place \
-        -variable vTcl(pr,manager) -width 5 
-    label $base.fra21.lab18 \
-        -relief raised -text {Option Encaps} 
-    radiobutton $base.fra21.rad19 \
-        -anchor w -highlightthickness 0 -text List -value list \
-        -variable vTcl(pr,encase) -width 5 
-    radiobutton $base.fra21.rad20 \
-        -anchor w -highlightthickness 0 -text Braces -value brace \
-        -variable vTcl(pr,encase) -width 5 
-    radiobutton $base.fra21.rad21 \
-        -anchor w -highlightthickness 0 -text Quotes -value quote \
-        -variable vTcl(pr,encase) -width 5 
-    frame $base.fra21.fra20 \
-        -height 5 -width 5 
-    frame $base.fra23 \
-        -borderwidth 1 -height 30 -relief sunken -width 30 
-    button $base.fra23.but18 \
-        -command "wm withdraw $base" -highlightthickness 0 -padx 9 \
-        -pady 3 -text OK 
+    frame $base.fra19 \
+        -background #dcdcdc -borderwidth 2 -height 75 \
+        -highlightbackground #dcdcdc -highlightcolor #000000 -width 125
+    button $base.fra19.but20 \
+        -activebackground #dcdcdc -activeforeground #000000 \
+        -background #dcdcdc \
+        -command "vTcl:prefs:data_exchange 1; wm withdraw $base" \
+        -foreground #000000 -highlightbackground #dcdcdc \
+        -highlightcolor #000000 -padx 9 -text OK -width 8
+    button $base.fra19.but21 \
+        -activebackground #dcdcdc -activeforeground #000000 \
+        -command "wm withdraw $base; vTcl:prefs:data_exchange 0" \
+        -background #dcdcdc -foreground #000000 -highlightbackground #dcdcdc \
+        -highlightcolor #000000 -padx 9 -text Cancel -width 8
     ###################
     # SETTING GEOMETRY
     ###################
-    grid columnconf $base 0 -weight 1
-    grid $base.fra18 \
-        -column 0 -row 0 -columnspan 1 -rowspan 1 -ipadx 5 -padx 5 \
-        -pady 5 -sticky nesw 
-    grid columnconf $base.fra18 0 -weight 1
-    grid rowconf $base.fra18 7 -weight 1
-    grid $base.fra18.lab32 \
-        -column 0 -row 0 -columnspan 1 -rowspan 1 -padx 5 \
-        -pady 5 -sticky nesw 
-    grid $base.fra18.che33 \
-        -column 0 -row 1 -columnspan 1 -rowspan 1 \
-        -sticky nesw 
-    grid $base.fra18.che34 \
-        -column 0 -row 2 -columnspan 1 -rowspan 1 \
-        -sticky nesw 
-    grid $base.fra18.che35 \
-        -column 0 -row 4 -columnspan 1 -rowspan 1 \
-        -sticky nesw 
-    grid $base.fra18.che36 \
-        -column 0 -row 3 -columnspan 1 -rowspan 1 \
-        -sticky nesw 
-    grid $base.fra18.che37 \
-        -column 0 -row 5 -columnspan 1 -rowspan 1 \
-        -sticky nesw 
-    grid $base.fra18.che40 \
-        -column 0 -row 6 -columnspan 1 -rowspan 1 \
-        -sticky nesw 
-    grid $base.fra18.fra17 \
-        -column 0 -row 7 -columnspan 1 -rowspan 1 \
-        -sticky nesw 
-    grid $base.fra20 \
-        -column 0 -row 1 -columnspan 1 -rowspan 1 -ipadx 5 -padx 5 \
-        -pady 5 -sticky nesw 
-    grid columnconf $base.fra20 1 -weight 1
-    grid $base.fra20.lab22 \
-        -column 0 -row 0 -columnspan 2 -rowspan 1 -padx 5 \
-        -pady 5 -sticky nesw 
-    grid $base.fra20.lab23 \
-        -column 0 -row 1 -columnspan 1 -rowspan 1 -padx 5 \
-        -pady 5 -sticky nesw 
-    grid $base.fra20.lab24 \
-        -column 0 -row 2 -columnspan 1 -rowspan 1 -padx 5 \
-        -pady 5 -sticky nesw 
-    grid $base.fra20.ent25 \
-        -column 1 -row 1 -columnspan 1 -rowspan 1 -padx 5 \
-        -sticky ew 
-    grid $base.fra20.ent26 \
-        -column 1 -row 2 -columnspan 1 -rowspan 1 -padx 5 \
-        -sticky ew 
-    grid $base.fra21 \
-        -column 1 -row 0 -columnspan 1 -rowspan 2 -ipadx 5 -padx 5 \
-        -pady 5 -sticky nesw 
-    grid columnconf $base.fra21 0 -weight 1
-    grid rowconf $base.fra21 8 -weight 1
-    grid $base.fra21.lab41 \
-        -column 0 -row 0 -columnspan 1 -rowspan 1 -padx 5 \
-        -pady 5 -sticky nesw 
-    grid $base.fra21.rad42 \
-        -column 0 -row 1 -columnspan 1 -rowspan 1 \
-        -sticky nesw 
-    grid $base.fra21.rad43 \
-        -column 0 -row 2 -columnspan 1 -rowspan 1 \
-        -sticky nesw 
-    grid $base.fra21.rad44 \
-        -column 0 -row 3 -columnspan 1 -rowspan 1 \
-        -sticky nesw 
-    grid $base.fra21.lab18 \
-        -column 0 -row 4 -columnspan 1 -rowspan 1 -padx 5 \
-        -pady 5 -sticky nesw 
-    grid $base.fra21.rad19 \
-        -column 0 -row 5 -columnspan 1 -rowspan 1 \
-        -sticky nesw 
-    grid $base.fra21.rad20 \
-        -column 0 -row 6 -columnspan 1 -rowspan 1 \
-        -sticky nesw 
-    grid $base.fra21.rad21 \
-        -column 0 -row 7 -columnspan 1 -rowspan 1 \
-        -sticky nesw 
-    grid $base.fra21.fra20 \
-        -column 0 -row 8 -columnspan 1 -rowspan 1 \
-        -sticky nesw 
-    grid $base.fra23 \
-        -column 0 -row 2 -columnspan 2 -rowspan 1 -padx 5 -pady 5 \
-        -sticky nesw 
-    grid columnconf $base.fra23 0 -weight 1
-    grid $base.fra23.but18 \
-        -column 0 -row 0 -columnspan 1 -rowspan 1 -padx 3 \
-        -pady 3 -sticky nesw 
+    pack $base.fra19 \
+        -in $base -anchor center -expand 0 -fill none -pady 5 -side bottom
+    pack $base.fra19.but20 \
+        -in $base.fra19 -anchor center -expand 0 -fill none -padx 10 \
+        -side left
+    pack $base.fra19.but21 \
+        -in $base.fra19 -anchor center -expand 0 -fill none -padx 10 \
+        -side right
+
+    vTcl:prefs:init $base
+
+    vTcl:BindHelp $base Preferences
+
+    update
+
+#   let's have Tk determine what size it needs (it works!)
+#
+#    wm geometry $base 450x500
+#    vTcl:center $base 450 500
+
+    vTcl:center $base
+    wm deiconify $base
 }
 
+proc vTclWindow.vTcl.infolibs {{base ""} {container 0}} {
 
+    if {$base == ""} {
+        set base .vTcl.infolibs
+    }
+    if {[winfo exists $base] && (!$container)} {
+        wm deiconify $base; return
+    }
+
+    global vTcl
+
+    # let's keep widget local
+    set widget(libraries_close)         "$base.but40"
+    set widget(libraries_frame_listbox) "$base.cpd39"
+    set widget(libraries_header)        "$base.lab38"
+    set widget(libraries_listbox)       "$base.cpd39.01"
+
+    ###################
+    # CREATING WIDGETS
+    ###################
+    if {!$container} {
+    toplevel $base -class Toplevel
+    wm withdraw $base
+    wm focusmodel $base passive
+    wm transient  $base .vTcl
+    wm maxsize $base 1009 738
+    wm minsize $base 1 1
+    wm overrideredirect $base 0
+    wm resizable $base 1 1
+    wm title $base "Visual Tcl Libraries"
+    }
+    label $base.lab38 \
+        -borderwidth 1 -text {The following libraries are available:}
+    frame $base.cpd39 \
+        -borderwidth 1 -height 30 -relief raised -width 30
+    listbox $base.cpd39.01 \
+        -width 0 -xscrollcommand "$base.cpd39.02 set" \
+        -yscrollcommand "$base.cpd39.03 set"
+    scrollbar $base.cpd39.02 \
+        -command "$base.cpd39.01 xview" -orient horiz
+    scrollbar $base.cpd39.03 \
+        -command "$base.cpd39.01 yview" -orient vert
+    button $base.but40 \
+        -padx 9 -pady 3 -command {wm withdraw .vTcl.infolibs} \
+	-image [vTcl:image:get_image ok.gif]
+    ###################
+    # SETTING GEOMETRY
+    ###################
+    pack $base.but40 \
+        -in $base -anchor center -expand 0 -fill none -side top -anchor e
+    pack $base.lab38 \
+        -in $base -anchor center -expand 0 -fill x -ipadx 1 -side top
+    pack $base.cpd39 \
+        -in $base -anchor center -expand 1 -fill both -side top
+    grid columnconf $base.cpd39 0 -weight 1
+    grid rowconf $base.cpd39 0 -weight 1
+    grid $base.cpd39.01 \
+        -in $base.cpd39 -column 0 -row 0 -columnspan 1 -rowspan 1 \
+        -sticky nesw
+    grid $base.cpd39.02 \
+        -in $base.cpd39 -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew
+    grid $base.cpd39.03 \
+        -in $base.cpd39 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns
+
+    $widget(libraries_listbox) delete 0 end
+
+    foreach name [lsort $vTcl(libNames)] {
+        $widget(libraries_listbox) insert end $name
+    }
+
+    wm geometry $base 446x322
+    vTcl:center $base 446 322
+    wm deiconify $base
+}
+
+proc {vTcl:prefs:data_exchange} {save_and_validate} {
+    global widget vTcl
+
+    # if save_and_validate is set to 0, values are transferred from
+    # the preferences to the dialog (this is typically done when
+    # initializing the dialog)
+
+    # if save_and_validate is set to 1, values are transferred from
+    # the dialog to the preferences (this is typically done when
+    # the user presses the OK button
+
+    vTcl:data_exchange_var vTcl(pr,balloon)          \
+	prefs::balloon          $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,getname)          \
+	prefs::getname          $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,shortname)        \
+	prefs::shortname        $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,fullcfg)          \
+	prefs::fullcfg          $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,saveglob)         \
+	prefs::saveglob         $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,winfocus)         \
+	prefs::winfocus         $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,autoplace)        \
+	prefs::autoplace        $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,autoloadcomp)     \
+	prefs::autoloadcomp     $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,autoloadcompfile) \
+	prefs::autoloadcompfile $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,manager)          \
+	prefs::manager          $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,encase)           \
+	prefs::encase           $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,projecttype)      \
+	prefs::projecttype      $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,imageeditor)      \
+	prefs::imageeditor      $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,saveimagesinline) \
+	prefs::saveimagesinline $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,cmdalias)         \
+	prefs::cmdalias         $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,autoalias)        \
+	prefs::autoalias        $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,multiplace)       \
+	prefs::multiplace       $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,projfile)         \
+    	prefs::projfile         $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,saveasexecutable) \
+        prefs::saveasexecutable $save_and_validate
+
+    if {$save_and_validate} {
+    	set vTcl(pr,font_dlg)   [font configure $prefs::font_dlg]
+	set vTcl(pr,font_fixed) [font configure $prefs::font_fixed]
+    } else {
+        eval font configure $prefs::font_dlg   [font actual $vTcl(pr,font_dlg)]
+	eval font configure $prefs::font_fixed [font actual $vTcl(pr,font_fixed)]
+    }
+}
+
+proc {vTcl:prefs:basics} {tab} {
+
+	vTcl:formCompound:add $tab checkbutton \
+		-text "Use balloon help" \
+		-variable prefs::balloon
+	vTcl:formCompound:add $tab checkbutton \
+		-text "Ask for widget name on insert" \
+		-variable prefs::getname
+	vTcl:formCompound:add $tab checkbutton \
+		-text "Short automatic widget names" \
+		-variable prefs::shortname
+	vTcl:formCompound:add $tab checkbutton \
+		-text "Save verbose widget configuration" \
+		-variable prefs::fullcfg
+	vTcl:formCompound:add $tab checkbutton \
+		-text "Save global variable values" \
+		-variable prefs::saveglob
+	vTcl:formCompound:add $tab checkbutton \
+		-text "Window focus selects window" \
+		-variable prefs::winfocus
+	vTcl:formCompound:add $tab checkbutton \
+		-text "Auto place new widgets" \
+		-variable prefs::autoplace
+	vTcl:formCompound:add $tab checkbutton \
+		-text "Use widget command aliasing" \
+		-variable prefs::cmdalias
+	vTcl:formCompound:add $tab checkbutton \
+		-text "Use auto-aliasing for new widgets" \
+		-variable prefs::autoalias
+	vTcl:formCompound:add $tab checkbutton \
+		-text "Use continuous widget placement" \
+		-variable prefs::multiplace
+	vTcl:formCompound:add $tab checkbutton \
+		-text "Save project info in project file" \
+		-variable prefs::projfile
+	vTcl:formCompound:add $tab checkbutton \
+		-text "Auto load compounds from file:" \
+		-variable prefs::autoloadcomp
+
+	set form_entry [vTcl:formCompound:add $tab frame]
+	pack configure $form_entry -fill x
+
+	set entry [vTcl:formCompound:add $form_entry entry \
+		-textvariable prefs::autoloadcompfile -bg white]
+	pack configure $entry -fill x -padx 5 -side left -expand 1
+
+	set browse_file [vTcl:formCompound:add $form_entry button \
+		-text "Browse..." \
+		-command "vTcl:prefs:browse_file prefs::autoloadcompfile"]
+	pack configure $browse_file -side right
+}
+
+proc {vTcl:prefs:browse_file} {varname} {
+
+	global widget tk_strictMotif
+
+	eval set value $$varname
+	set types {
+	    {{Tcl Files} *.tcl}
+	    {{All Files} * }
+	}
+
+	set tk_strictMotif 0
+	set newfile [tk_getOpenFile -filetypes $types -defaultextension .tcl]
+	set tk_strictMotif 1
+
+	if {$newfile != ""} {
+	   set $varname $newfile
+	}
+}
+
+proc {vTcl:prefs:browse_font} {fontname} {
+    global widget
+
+    set value [font configure $fontname]
+    set newfont [vTcl:font:prompt_user_font_2 $value]
+
+    if {$newfont != ""} {
+	eval font configure $fontname $newfont
+    }
+}
+
+proc {vTcl:prefs:fonts} {tab} {
+
+	global widget
+
+	set last  [vTcl:formCompound:add $tab  label \
+		-text "Dialog font" -background gray -relief raised]
+	pack configure $last -fill x
+
+	set font_frame [vTcl:formCompound:add $tab frame]
+	pack configure $font_frame -fill x
+	set last [vTcl:formCompound:add $font_frame label \
+		-text "ABCDEFGHIJKLMNOPQRSTUVWXYZ\n0123456789" \
+		-justify left -font $prefs::font_dlg]
+	pack configure $last -side left
+	set last [vTcl:formCompound:add $font_frame button \
+		-text "Change..." \
+		-command "vTcl:prefs:browse_font $prefs::font_dlg"]
+	pack configure $last -side right
+
+	vTcl:formCompound:add $tab  label -text ""
+
+	set last  [vTcl:formCompound:add $tab  label \
+		-text "Fixed width font" -background gray -relief raised]
+	pack configure $last -fill x
+
+	set font_frame [vTcl:formCompound:add $tab frame]
+	pack configure $font_frame -fill x
+	set last [vTcl:formCompound:add $font_frame label \
+		-text "ABCDEFGHIJKLMNOPQRSTUVWXYZ\n0123456789" \
+		-justify left -font $prefs::font_fixed]
+	pack configure $last -side left
+	set last [vTcl:formCompound:add $font_frame button \
+		-text "Change..." \
+		-command "vTcl:prefs:browse_font $prefs::font_fixed"]
+	pack configure $last -side right
+}
+
+proc {vTcl:prefs:images} {tab} {
+
+	global widget
+
+	vTcl:formCompound:add $tab label \
+		-text "Editor for images"
+
+	set form_entry [vTcl:formCompound:add $tab frame]
+	pack configure $form_entry -fill x
+
+	set last [vTcl:formCompound:add $form_entry entry  \
+		-textvariable prefs::imageeditor -bg white]
+	pack configure $last -fill x -expand 1 -padx 5 -side left
+
+	set last [vTcl:formCompound:add $form_entry button \
+		-text "Browse..." -command "vTcl:prefs:browse_file prefs::imageeditor"]
+	pack configure $last -side right
+
+	vTcl:formCompound:add $tab checkbutton \
+		-text "Save images as inline" -variable prefs::saveimagesinline
+}
+
+proc {vTcl:prefs:project} {tab} {
+
+	global widget
+
+	set last  [vTcl:formCompound:add $tab  label \
+		-text "Option encaps" -background gray -relief raised]
+	pack configure $last -fill x
+
+	vTcl:formCompound:add $tab radiobutton  \
+		-text "List"   -variable prefs::encase -value list
+	vTcl:formCompound:add $tab radiobutton  \
+		-text "Braces" -variable prefs::encase -value brace
+ 	vTcl:formCompound:add $tab radiobutton  \
+ 		-text "Quotes" -variable prefs::encase -value quote
+
+	#======================================================================
+
+	set last  [vTcl:formCompound:add $tab  label \
+		-text "Project type" -background gray -relief raised]
+	pack configure $last -fill x
+
+	vTcl:formCompound:add $tab radiobutton  \
+		-text "Single file project" -variable prefs::projecttype -value single
+	vTcl:formCompound:add $tab radiobutton  \
+		-text "Multiple file project" -variable prefs::projecttype -value multiple
+
+	#======================================================================
+
+	set last  [vTcl:formCompound:add $tab  label \
+		-text "Default manager" -background gray -relief raised]
+	pack configure $last -fill x
+
+	vTcl:formCompound:add $tab radiobutton  \
+		-text "Grid" -variable prefs::manager -value grid
+	vTcl:formCompound:add $tab radiobutton  \
+		-text "Pack" -variable prefs::manager -value pack
+	vTcl:formCompound:add $tab radiobutton  \
+		-text "Place" -variable prefs::manager -value place
+
+	#======================================================================
+
+	set last  [vTcl:formCompound:add $tab  label \
+		-text "Source file" -background gray -relief raised]
+	pack configure $last -fill x
+
+	vTcl:formCompound:add $tab checkbutton  \
+		-text "Save as executable" -variable prefs::saveasexecutable
+}

@@ -20,36 +20,116 @@
 
 ##############################################################################
 #
+#
+# This file has been modified by:
+#   Christian Gavin
+#   Damon Courtney
+#
+##############################################################################
 
 proc vTcl:new {} {
     global vTcl
     if { [vTcl:close] == -1 } { return }
-    vTcl:new_widget toplevel
+
+    set vTcl(mode) EDIT
+
+    set w [vTcl:auto_place_widget Toplevel]
+    wm geometry $w $vTcl(pr,geom_new)
+
     vTcl:setup_bind_tree .
     vTcl:update_top_list
     vTcl:update_var_list
     vTcl:update_proc_list
     set vTcl(project,name) "unknown.tcl"
     wm title $vTcl(gui,main) "Visual Tcl - $vTcl(project,name)"
+    proc main {argc argv} "
+    	wm protocol $vTcl(w,insert) WM_DELETE_WINDOW {exit}
+
+    "
 }
 
 proc vTcl:file_source {} {
     set file [vTcl:get_file open "Source File"]
     if {$file != ""} {
         vTcl:source $file
+        vTcl:update_proc_list
     }
+}
+
+proc vTcl:is_vtcl_prj {file} {
+    global vTcl
+
+    set fileID [open $file r]
+    set contents [read $fileID]
+    close $fileID
+
+    set found 0
+    set vmajor ""
+    set vminor ""
+
+    foreach line [split $contents \n] {
+	if [regexp {# Visual Tcl v(.?)\.(.?.?) Project} $line \
+	    matchAll vmajor vminor] {
+	    set found 1
+	}
+    }
+
+    if !$found {
+	tk_messageBox -title "Error loading file" \
+	              -message "This is not a vTcl project!" \
+	              -icon error \
+	              -type ok
+
+	return 0
+    }
+
+    set versions [split $vTcl(version) .]
+    set actual_major [lindex $versions 0]
+    set actual_minor [lindex $versions 1]
+
+    if {$vmajor != "" && $vminor != ""} {
+
+    	if {$vmajor > $actual_major ||
+    	    ($vmajor == $actual_major && $vminor > $actual_minor)} {
+		tk_messageBox -title "Error loading file" \
+		              -message "You are trying to load a project created using Visual Tcl v$vmajor.$vminor\n\nPlease update to vTcl $vmajor.$vminor and try again." \
+	              -icon error \
+	              -type ok
+
+	        return 0
+    	}
+    }
+
+    # all right, it's a vtcl project
+    return 1
 }
 
 proc vTcl:source {file} {
     global vTcl
     set vTcl(sourcing) 1
     set ov [uplevel #0 info vars];           vTcl:statbar 15
-    set op [uplevel #0 info procs];          vTcl:statbar 20
-    if {[catch {uplevel #0 [list source $file]} err]} {
+    set op ""
+
+    foreach context [vTcl:namespace_tree] {
+
+        set cop [namespace eval $context {info procs}]
+
+        foreach procname $cop {
+            if {$context == "::"} {
+               lappend op $procname
+            } else {
+               lappend op ${context}::$procname
+            }
+        }
+    }
+
+    vTcl:statbar 20
+    if [catch {uplevel #0 [list source $file]} err] {
         vTcl:dialog "Error Sourcing Project\n$err"
+	global errorInfo
     }
     vTcl:statbar 35
-    
+
     # kc: ignore global vars like "tixSelect";
     # otherwise File->Close breaks tix widgets.
     set nv ""
@@ -60,11 +140,21 @@ proc vTcl:source {file} {
     }
     # kc: ignore global procs like "tixSelect"
     set np ""
-    foreach procname [uplevel #0 info procs] {
-        if {[vTcl:ignore_procname_when_sourcing $procname] == 0} {
-            lappend np $procname
-        }
+    foreach context [vTcl:namespace_tree] {
+
+        set cop [namespace eval $context {info procs}]
+
+        foreach procname $cop {
+            if {[vTcl:ignore_procname_when_sourcing $procname] == 0} {
+               if {$context == "::"} {
+                   lappend np $procname
+               } else {
+                   lappend np ${context}::$procname
+               }
+            }
+       }
     }
+
     vTcl:list add [vTcl:diff_list $ov $nv] vTcl(vars)
     vTcl:list add [vTcl:diff_list $op $np] vTcl(procs)
     vTcl:statbar 45
@@ -78,35 +168,90 @@ proc vTcl:open {{file ""}} {
     if {$file == ""} {
         set file [vTcl:get_file open "Open Project"]
     } else {
-        if {![file exists $file]} {return}
+        if ![file exists $file] {return}
     }
-    if {$file != ""} {
-        set vTcl(file,mode) ""
-        proc exit {args} {}
-        proc init {argc argv} {}
-        proc main {argc argv} {}
-        vTcl:load_lib vtclib.tcl;            vTcl:statbar 10
-        set vTcl(tops) ""
-        set vTcl(vars) ""
-        set vTcl(procs) ""
-        vTcl:source $file;                   vTcl:statbar 55
-        vTcl:list add "init main" vTcl(procs)
-        vTcl:setup_bind_tree .;              vTcl:statbar 65
-        vTcl:update_top_list;                vTcl:statbar 75
-        vTcl:update_var_list;                vTcl:statbar 85
-        vTcl:update_proc_list;               vTcl:statbar 95
-        set vTcl(project,file) $file
-        set vTcl(project,name) [lindex [file split $file] end]
-        wm title .vTcl "Visual Tcl - $vTcl(project,name)"
-        vTcl:status "Done Loading"
-        vTcl:statbar 0
-        set vTcl(newtops) [expr {[llength $vTcl(tops)]} + 1]
-		set vTcl(newtops) [expr [llength $vTcl(tops)] + 1]
+
+    if {![info exists vTcl(rcFiles)]} { set vTcl(rcFiles) {} }
+
+    if {[lempty $file]} { return }
+
+    set vTcl(sourcing) 1
+
+    # only open a Visual Tcl project and nothing else
+    if ![vTcl:is_vtcl_prj $file] {return}
+    
+    vTcl:addRcFile $file
+
+    set vTcl(file,mode) ""
+    proc exit {args} {}
+    proc init {argc argv} {}
+    proc main {argc argv} {}
+    vTcl:load_lib vtclib.tcl;            vTcl:statbar 10
+    set vTcl(tops) ""
+    set vTcl(vars) ""
+    set vTcl(procs) ""
+    vTcl:status "Loading Project"
+    vTcl:source $file;                   vTcl:statbar 55
+
+    # make sure the 'Window' procedure is the latest
+    vTcl:load_lib vtclib.tcl;            vTcl:statbar 60
+
+    vTcl:list add "init main" vTcl(procs)
+    vTcl:status "Setting up bind tree"
+    vTcl:setup_bind_tree .;              vTcl:statbar 65
+    vTcl:status "Updating top list"
+    vTcl:update_top_list;                vTcl:statbar 75
+    vTcl:status "Updating variable list"
+    vTcl:update_var_list;                vTcl:statbar 85
+    vTcl:status "Updating proc list"
+    vTcl:update_proc_list;               vTcl:statbar 90
+    vTcl:status "Updating aliases"
+    vTcl:update_aliases;                 vTcl:statbar 92
+
+    vTcl:status "Loading Project Info";  vTcl:statbar 95
+
+    set vTcl(project,file) $file
+    set vTcl(project,name) [file tail $file]
+
+    ## Determine if there is a multifile project file and source it.
+    set basedir [file dir $file]
+    set multidir [vTcl:dump:get_multifile_project_dir $vTcl(project,name)]
+    set file [file root $vTcl(project,name)].vtp
+
+    if {[file exists [file join $basedir $file]]} {
+    	source [file join $basedir $file]
+    } elseif {[file exists [file join $basedir $multidir $file]]} {
+    	source [file join $basedir $multidir $file]
     }
+
+    ## If there are project settings, load them
+    if {![lempty [info proc vTcl:project:info]]} { vTcl:project:info }
+
+    vTcl:status "Registering widgets"
+    vTcl:widget:register_all_widgets;	 vTcl:statbar 97
+    
+    wm title .vTcl "Visual Tcl - $vTcl(project,name)"
+    vTcl:status "Done Loading"
+    vTcl:statbar 0
+    set vTcl(newtops) [expr [llength $vTcl(tops)] + 1]
+
+    unset vTcl(sourcing)
+
+    # @@change by Christian Gavin 3/5/2000
+    # refresh widget tree automatically after File Open...
+    # refresh image manager and font manager too
+
+    after idle {
+	    vTcl:init_wtree
+	    vTcl:image:refresh_manager
+	    vTcl:font:refresh_manager
+    }
+
+    # @@end_change
 }
 
 proc vTcl:close {} {
-    global vTcl
+    global vTcl widgetNums
     if {$vTcl(change) > 0} {
         switch [vTcl:dialog "Your application has unsaved changes.\nDo you wish to save?" "Yes No Cancel"] {
             Yes {
@@ -119,13 +264,27 @@ proc vTcl:close {} {
             }
         }
     }
+
     set tops [winfo children .]
     foreach i $tops {
-        if {$i != ".vTcl" && $i != ".__tk_filedialog"} {destroy $i}
+        if {$i != ".vTcl" && $i != ".__tk_filedialog"} {
+            # list widget tree without including $i (it's why the "0" parameter)
+            foreach child [vTcl:widget_tree $i 0] {
+                vTcl:unset_alias $child
+                vTcl:setup_unbind $child
+            }
+            vTcl:unset_alias $i
+            destroy $i
+        }
     }
     set vTcl(tops) ""
+    set vTcl(newtops) 1
+    catch {unset widgetNums}
     vTcl:update_top_list
     foreach i $vTcl(vars) {
+        # don't erase aliases, they should be erased when
+        # closing the toplevels
+        if {$i == "widget"} continue
         catch {global $i; unset $i}
     }
     set vTcl(vars) ""
@@ -144,6 +303,18 @@ proc vTcl:close {} {
     set vTcl(w,save) ""
     wm title $vTcl(gui,main) "Visual Tcl"
     set vTcl(change) 0
+
+    # refresh widget tree automatically after File Close
+    # delete user images (e.g. per project images)
+    # delete user fonts (e.g. per project fonts)
+
+    vTcl:image:remove_user_images
+    vTcl:font:remove_user_fonts
+    vTcl:prop:clear
+    ::widgets_bindings::init
+    ::menu_edit::close_all_editors
+
+    after idle {vTcl:init_wtree}
 }
 
 proc vTcl:save {} {
@@ -166,8 +337,53 @@ proc vTcl:save_as {} {
     vTcl:save2 $file
 }
 
+# @@change by Christian Gavin 3/27/00
+# added support for freewrap to generate executables
+# under Linux and Windows
+
+proc vTcl:save_as_binary {} {
+
+    global vTcl env tcl_platform
+
+    set vTcl(save) all
+    set vTcl(w,save) $vTcl(w,widget)
+    set file [vTcl:get_file save "Save Project With Binary"]
+
+    vTcl:save2 $file
+
+    if {[lempty $file]} { return }
+
+    # now comes the magic
+    set filelist [file rootname $file].txt
+
+    set listID [open $filelist w]
+    puts $listID [join [vTcl:image:get_files_list] \n]
+    puts $listID [join [vTcl:dump:get_files_list \
+                          [file dirname $file] \
+                          [file rootname $file] ] \n]
+    close $listID
+    
+    ##
+    # Guess the ostag and look for an appropriate freewrap binary.
+    ##
+    if {[string tolower $tcl_platform(platform)] == "windows"} {
+    	set ostag Windows
+    } else {
+	set ostag [exec $env(VTCL_HOME)/Freewrap/config.guess]
+    }
+
+    # launches freewrap
+    set freewrap $env(VTCL_HOME)/Freewrap/$ostag/bin/freewrap
+    
+    exec $freewrap $file -f $filelist
+}
+
+# @@end_change
+
 proc vTcl:save2 {file} {
     global vTcl env
+    global tcl_platform
+
     if {$file == ""} {
         return -1
     }
@@ -181,24 +397,58 @@ proc vTcl:save2 {file} {
         file rename -force ${file} ${file}.bak
     }
     set output [open $file w]
-    if {[array get env PATH_TO_WISH] != ""} {
-        puts $output "#!$env(PATH_TO_WISH)"
+
+    if {$vTcl(pr,saveasexecutable)} {
+        puts $output "\#!/bin/sh"
+        puts $output "\# the next line restarts using wish\\"
+        puts $output {exec wish "$0" "$@" }
     }
+
+    # header to import libraries
+    # code to load images
+    # code to load fonts
+
+    puts $output "if {!\[info exist vTcl(sourcing)\]} \{"
+    puts $output $vTcl(head,importheader)
+    puts $output "\}"
+
+    ## Gather information about fonts and images.
+    vTcl:dump:widget_fonts_and_images
+
+    vTcl:image:generate_image_stock $output
+    vTcl:image:generate_image_user  $output
+    vTcl:font:generate_font_stock   $output
+    vTcl:font:generate_font_user    $output
+
+    # @@end_change
     puts $output "[subst $vTcl(head,proj)]\n"
+
+    # @@change by Christian Gavin
+    # moved init proc after user procs so that the init
+    # proc can call any user proc
+
     if {$vTcl(save) == "all"} {
-        puts $output $vTcl(head,vars)
-        puts $output [vTcl:save_vars]
         set body [string trim [info body init]]
+	puts $output $vTcl(head,exports)
+	puts $output [vTcl:vtcl_library_procs]
+	puts $output [vTcl:export_procs]
+	puts $output [vTcl:dump:project_info \
+	    [file dirname $file] $vTcl(project,name)]
         puts $output $vTcl(head,procs)
+        puts $output [vTcl:save_procs]
         puts $output "proc init \{argc argv\} \{\n$body\n\}\n"
         puts $output "init \$argc \$argv\n"
-        puts $output [vTcl:save_procs]
         puts $output $vTcl(head,gui)
-        puts $output [vTcl:save_tree .]
+        puts $output [vTcl:save_tree . [file dirname $file] $vTcl(project,name)]
         puts $output "main \$argc \$argv"
     } else {
         puts $output [vTcl:save_tree $vTcl(w,widget)]
     }
+
+    # @@end_change
+
+    vTcl:addRcFile $file
+
     close $output
     vTcl:status "Done Saving"
     set vTcl(file,mode) ""
@@ -209,6 +459,19 @@ proc vTcl:save2 {file} {
         vTcl:create_handles $vTcl(w,save)
     }
     set vTcl(change) 0
+
+    # @@change by Christian Gavin 3/5/2000
+    #
+    # it really annoyed me when I had to set the file as
+    # executable under Linux to be able to run it, so here
+    # we go
+
+    if {$vTcl(pr,saveasexecutable) &&
+        $tcl_platform(platform) == "unix"} {
+    	    file attributes $file -permissions [expr 0755]
+    }
+
+    # @@end_change
 }
 
 proc vTcl:quit {} {
@@ -221,20 +484,27 @@ proc vTcl:quit {} {
     }
     set vTcl(quit) 0
     set vTcl(change) 0
+    if {[winfo exists .vTcl.tip]} {
+       eval [wm protocol .vTcl.tip WM_DELETE_WINDOW]
+    }
     vTcl:save_prefs
     vTcl:exit
 }
 
 proc vTcl:save_prefs {} {
     global vTcl
-    set output ""
+
+    set w $vTcl(gui,main)
+    set pos [vTcl:get_win_position $w]
+    set output "set vTcl(geometry,$w) $vTcl(pr,geom_vTcl)$pos\n"
     set showlist ""
+
+    ## If the window exists but is not visible, we still want to save its
+    ## geometry, just not add it to the showlist.
     foreach i $vTcl(windows) {
         if {[winfo exists $i]} {
-            if {[wm state $i] == "normal"} {
-                append output "set vTcl(geometry,${i}) [wm geometry $i]\n"
-                lappend showlist $i
-            }
+	    append output "set vTcl(geometry,${i}) [wm geometry $i]\n"
+	    if {[vTcl:streq [wm state $i] "normal"]} { lappend showlist $i }
         } else {
             catch {
                 append output "set vTcl(geometry,${i}) $vTcl(geometry,${i})\n"
@@ -245,6 +515,9 @@ proc vTcl:save_prefs {} {
     foreach i [array names vTcl pr,*] {
         append output "set vTcl($i) [list $vTcl($i)]\n"
     }
+
+    if {![info exists vTcl(rcFiles)]} { set vTcl(rcFiles) {} }
+    append output "set vTcl(rcFiles) \[list $vTcl(rcFiles)\]\n"
     catch {
         set file [open $vTcl(CONF_FILE) w]
         puts $file $output
@@ -297,5 +570,25 @@ proc vTcl:get_file {mode {title File} {ext .tcl}} {
     catch {cd [file dirname $file]}
     return $file
 }
+
+proc vTcl:restore {} {
+    global vTcl
+
+    set file $vTcl(project,file)
+
+    if {[lempty $file]} { return }
+
+    set bakFile $file.bak
+    if {![file exists $bakFile]} { return }
+
+    vTcl:close
+    file copy -force -- $bakFile $file
+    vTcl:open $file
+}
+
+
+
+
+
 
 

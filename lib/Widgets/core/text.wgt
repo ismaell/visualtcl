@@ -1,0 +1,11 @@
+Class		Text
+Lib		core
+
+Icon		icon_text.gif
+DoubleClickCmd	vTcl:set_textvar
+InsertCmd	vTcl:widget:text:inscmd
+TreeLabel	Text Widget
+
+proc vTcl:widget:text:inscmd {target} {
+    return "$target insert end text"
+}

@@ -1,0 +1,7 @@
+Name		notebook
+Lib		bwidget
+
+Class		NoteBook
+Icon		icon_tabnotebook.gif
+TreeLabel	"BWidget Notebook"
+CreateCmd	NoteBook

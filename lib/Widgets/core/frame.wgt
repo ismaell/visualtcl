@@ -1,0 +1,6 @@
+Class		Frame
+Lib		core
+
+Icon		icon_frame.gif
+DefaultOptions	-bd 2 -relief groove -width 125 -height 75
+TreeLabel	Frame

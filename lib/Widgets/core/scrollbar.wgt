@@ -1,0 +1,68 @@
+Class		Scrollbar
+
+DoubleClickCmd	vTcl:set_command
+Icon		@vTcl:Scrollbar:GetIcon
+TreeLabel	@vTcl:Scrollbar:GetTreeLabel
+
+Function	"Attach to Widget"	vTcl:Scrollbar:Attach
+
+## Special proc for setting up icons on the toolbar.
+proc vTcl:Scrollbar:ToolBarSetup {} {
+    vTcl:toolbar_add Scrollbar \
+	"vertical scrollbar" \
+	icon_scrollbar_v.gif \
+	"-orient vertical"
+
+    vTcl:toolbar_add Scrollbar \
+    	"horizontal scrollbar" \
+	icon_scrollbar_h.gif \
+	"-orient horizontal"
+}
+
+proc vTcl:Scrollbar:GetIcon {{w ""}} {
+    if {[lempty $w]} { return [list icon_scrollbar_h.gif icon_scrollbar_v.gif] }
+    if {[catch {$w cget -orient} orient]} { return "icon_scrollbar.gif" }
+    if {$orient == "horizontal"} { return "icon_scrollbar_h.gif" }
+    return "icon_scrollbar_v.gif"
+}
+
+proc vTcl:Scrollbar:GetTreeLabel {w} {
+    if {[catch {$w cget -orient} orient]} { return "Scrollbar" }
+    if {$orient == "horizontal"} { return "Horz Scrollbar" }
+    return "Vert Scrollbar"
+}
+
+proc vTcl:Scrollbar:Attach {} {
+    global vTcl widgetSelected
+
+    set w $vTcl(w,widget)
+    set status $vTcl(status)
+
+    catch {unset widgetSelected}
+    vTcl:status "Select a widget to attach scrollbar to"
+    vwait widgetSelected
+
+    ## Widget we're attaching to.
+    set a $vTcl(w,widget)
+
+    vTcl:status $status
+
+    set orient [$w cget -orient]
+
+    if {$orient == "horizontal"} {
+    	set cmd xview
+	set opt -xscrollcommand
+    } else {
+    	set cmd yview
+	set opt -yscrollcommand
+    }
+
+    if {[catch {$a cget $opt}]} {
+    	bell
+	error "Cannot attach scrollbar to that!"
+	return
+    }
+
+    $w configure -command "$a $cmd"
+    $a configure $opt "$w set"
+}

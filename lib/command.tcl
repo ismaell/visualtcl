@@ -21,25 +21,29 @@
 ##############################################################################
 #
 
-proc vTcl:edit_wincmd {which} {
-    global vTcl
-    set target $vTcl(w,widget)
-    set base ".vTcl.com_${which}_[vTcl:rename $target]"
-    if {[catch {set cmd [info body vTclWindow($which)$target]}]} {
-        set cmd ""
-    }
-    set cmd [string trim $cmd]
-    set r [vTcl:get_command "Window ${which}Command for $target" $cmd $base]
-    if {$r == -1} {
-        return
-    } else {
-        set procname vTclWindow($which)$target
-        vTcl:list add "{$procname}" vTcl(procs)
-        proc $procname {args} $r
-    }
-}
+# @@ change by Christian Gavin
+# procedure not used
+# @@ end_change
 
-proc vTcl:set_command {target {option -command}} {
+# proc vTcl:edit_wincmd {which} {
+#    global vTcl
+#    set target $vTcl(w,widget)
+#    set base ".vTcl.com_${which}_[vTcl:rename $target]"
+#    if {[catch {set cmd [info body vTclWindow($which)$target]}]} {
+#        set cmd ""
+#   }
+#    set cmd [string trim $cmd]
+#    set r [vTcl:get_command "Window ${which}Command for $target" $cmd $base]
+#    if {$r == -1} {
+#        return
+#    } else {
+#        set procname vTclWindow($which)$target
+#        vTcl:list add "{$procname}" vTcl(procs)
+#        proc $procname {args} $r
+#    }
+# }
+
+proc vTcl:set_command {target {option -command} {variable ""}} {
     global vTcl
     if {$target == ""} {return}
     set base ".vTcl.com_[vTcl:rename ${target}${option}]"
@@ -50,17 +54,22 @@ proc vTcl:set_command {target {option -command}} {
     if {$r == -1} {
         return
     } else {
-        $target conf $option [string trim $r]
+        $target configure $option [string trim $r]
+		if {$variable != ""} {
+		    global $variable
+		    set $variable [string trim $r]
+		}
     }
 }
 
 proc vTcl:get_command {title initial base} {
     global vTcl
-    if {[winfo exists $base]} {wm deiconify $base; return -1}
+    if {[winfo exists $base]} {wm deiconify $base; raise $base; return -1}
     set vTcl(x,$base) -1
     toplevel $base -class vTcl
     wm transient $base .vTcl
-    wm geometry $base $vTcl(pr,geom_comm)
+    # wm geometry $base $vTcl(pr,geom_comm)
+    wm geometry $base 350x200+[expr $vTcl(mouse,X)-120]+[expr $vTcl(mouse,Y)-20]
     wm resizable $base 1 1
     wm title $base $title
     set vTcl(comm,$base,chg) 0
@@ -68,39 +77,41 @@ proc vTcl:get_command {title initial base} {
         -borderwidth 2 -height 30 -relief groove -width 30 
     pack $base.f \
         -in $base -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 \
-        -padx 3 -pady 3 -side top 
+        -padx 3 -pady 3 -side bottom
     text $base.f.text \
         -height 2 -width 2 -wrap none \
-        -yscrollcommand "$base.f.scrollbar16 set"
+        -yscrollcommand "$base.f.scrollbar16 set" -background white
     pack $base.f.text \
         -in $base.f -anchor center -expand 1 -fill both -ipadx 0 \
         -ipady 0 -padx 0 -pady 0 -side left 
     scrollbar $base.f.scrollbar16 \
-        -borderwidth 1 -command "$base.f.text yview"
+        -command "$base.f.text yview"
     pack $base.f.scrollbar16 \
         -in $base.f -anchor center -expand 0 -fill y -ipadx 0 -ipady 0 \
         -padx 0 -pady 0 -side left 
     frame $base.f21 \
-        -borderwidth 1 -height 30 -relief sunken -width 30 
+        -height 30 -relief flat -width 30 
     pack $base.f21 \
         -in $base -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 \
-        -padx 3 -pady 3 -side top 
-    button $base.f21.button22 \
-        -command "vTcl:command:edit_save $base" \
-        -padx 9 \
-        -pady 3 -text OK -width 5 
-    pack $base.f21.button22 \
-        -in $base.f21 -anchor center -expand 1 -fill x -ipadx 0 -ipady 0 \
-        -padx 0 -pady 0 -side left 
+        -padx 3 -side top 
     button $base.f21.button23 \
         -command "
             vTcl:command:edit_cancel $base
         " \
          -padx 9 \
-        -pady 3 -text Cancel -width 5 
+        -pady 3 -image [vTcl:image:get_image [file join $vTcl(VTCL_HOME) edit remove.gif] ]
     pack $base.f21.button23 \
-        -in $base.f21 -anchor center -expand 1 -fill x -ipadx 0 -ipady 0 \
-        -padx 0 -pady 0 -side left 
+        -in $base.f21 -anchor center -ipadx 0 -ipady 0 \
+        -padx 0 -pady 0 -side right
+    vTcl:set_balloon $base.f21.button23 "Discard changes"
+    button $base.f21.button22 \
+        -command "vTcl:command:edit_save $base" \
+        -padx 9 \
+        -pady 3 -image [vTcl:image:get_image [file join $vTcl(VTCL_HOME) edit ok.gif] ]
+    pack $base.f21.button22 \
+        -in $base.f21 -anchor center -ipadx 0 -ipady 0 \
+        -padx 0 -pady 0 -side right
+    vTcl:set_balloon $base.f21.button22 "Save changes"
     update idletasks
     bind $base <KeyPress> "
         set vTcl(comm,$base,chg) 1
@@ -112,6 +123,14 @@ proc vTcl:get_command {title initial base} {
     $base.f.text delete 0.0 end
     $base.f.text insert end $initial
     focus $base.f.text
+    
+    # @@change by Christian Gavin 3/20/2000
+    # syntax colouring
+    
+    vTcl:syntax_color $base.f.text
+    
+    # @@end_change
+    
     tkwait window $base
     update idletasks
     switch -- $vTcl(x,$base) {
@@ -122,7 +141,8 @@ proc vTcl:get_command {title initial base} {
 
 proc vTcl:command:save_geom {base} {
     global vTcl
-    set vTcl(pr,geom_comm) [lindex [split [wm geom $base] +-] 0]
+    set vTcl(pr,geom_comm) [winfo geometry $base]
+    # set vTcl(pr,geom_comm) [lindex [split [wm geom $base] +-] 0]
 }
 
 proc vTcl:command:edit_save {base} {

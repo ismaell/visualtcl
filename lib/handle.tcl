@@ -39,12 +39,22 @@ proc vTcl:create_handles {target} {
     }
     if { $vTcl(w,manager) == "wm" || $target == "." } { return }
     set vTcl(h,exist) yes
-    set s [expr {$vTcl(h,size)} * 2]
+    set s [expr $vTcl(h,size) * 2]
+    if {![winfo exists $target]} { return }
     set parent [winfo parent $target]
     if { $parent == "." } { set parent "" }
 
-    foreach i { {n top_tee} {s bottom_tee} {e right_tee} {w left_tee} \
-                {nw ul_angle} {ne ur_angle} {sw ll_angle} {se lr_angle} } {
+    set handles {
+    	{n  top_side}
+	{s  bottom_side}
+	{e  right_side}
+	{w  left_side}
+	{nw top_left_corner}
+	{ne top_right_corner}
+	{sw bottom_left_corner}
+	{se bottom_right_corner}
+    }
+    foreach i $handles {
         set a [lindex $i 0]
         set b [lindex $i 1]
         set vTcl(h,$a) "$parent.vTH_${a}"
@@ -67,25 +77,25 @@ proc vTcl:place_handles {target} {
         set x [winfo x $target]
         set y [winfo y $target]
         set w1 [winfo width $target]
-        set w2 [expr {$w1 / 2}]
+        set w2 [expr $w1 / 2]
         set h1 [winfo height $target]
-        set h2 [expr {$h1 / 2}]
+        set h2 [expr $h1 / 2]
         place $vTcl(h,n)  \
-            -x [expr {$x + $w2 - $s}] -y [expr {$y - $s}]   -bordermode ignore
+            -x [expr $x + $w2 - $s] -y [expr $y - $s]       -bordermode ignore
         place $vTcl(h,e)  \
-            -x [expr {$x + $w1 - $s}] -y [expr {$y + $h2 - $s}] -bordermode ignore
+            -x [expr $x + $w1 - $s] -y [expr $y + $h2 - $s] -bordermode ignore
         place $vTcl(h,s)  \
-            -x [expr {$x + $w2 - $s}] -y [expr {$y + $h1 - $s}] -bordermode ignore
+            -x [expr $x + $w2 - $s] -y [expr $y + $h1 - $s] -bordermode ignore
         place $vTcl(h,w)  \
-            -x [expr {$x - $s}]       -y [expr {$y + $h2 - $s}] -bordermode ignore
+            -x [expr $x - $s]       -y [expr $y + $h2 - $s] -bordermode ignore
         place $vTcl(h,nw) \
-            -x [expr {$x - $s}]     -y [expr {$y - $s}]  -bordermode ignore
+            -x [expr $x - $s]       -y [expr $y - $s]       -bordermode ignore
         place $vTcl(h,ne) \
-            -x [expr {$x + $w1 - $s}] -y [expr {$y - $s}]       -bordermode ignore
+            -x [expr $x + $w1 - $s] -y [expr $y - $s]       -bordermode ignore
         place $vTcl(h,se) \
-            -x [expr {$x + $w1 - $s}] -y [expr {$y + $h1 - $s}] -bordermode ignore
+            -x [expr $x + $w1 - $s] -y [expr $y + $h1 - $s] -bordermode ignore
         place $vTcl(h,sw) \
-            -x [expr {$x - $s}] -y [expr {$y + $h1 - $s}] -bordermode ignore
+            -x [expr $x - $s]       -y [expr $y + $h1 - $s] -bordermode ignore
     } else {
         vTcl:create_handles $target
     }

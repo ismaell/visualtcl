@@ -1,0 +1,21 @@
+Name		tixNoteBook
+Lib		tix
+
+Class		TixNoteBook
+Icon		icon_tixNoteBook.gif
+TreeLabel	Tix NoteBook
+DumpCmd		vTcl:dump:TixNoteBook
+DumpChildren	no
+MegaWidget   yes
+InsertCmd	vTcl:widget:tixNoteBook:inscmd
+
+proc vTcl:widget:tixNoteBook:inscmd {target} {
+    # Add two pages to start with.  Unfortunately, additional pages have
+    # to be added manually by the user, and the project re-read into vtcl.
+    return "
+        $target add page1 -label {Page 1};
+        $target add page2 -label {Page 2};
+        $target subwidget page1 configure -width 30 -height 30;
+        $target subwidget page2 configure -width 30 -height 30;
+    "
+}

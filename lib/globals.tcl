@@ -21,9 +21,6 @@
 ##############################################################################
 #
 
-# widget data record format:
-# {type} {name} {alias} {option list} {manager record} {bind record} {child widget list}
-
 # bind record format:
 # { {bindtag} {bind list record} }  ...
 
@@ -49,9 +46,14 @@ set vTcl(change)         0
 set vTcl(console)        0
 set vTcl(cursor,last)    ""
 set vTcl(procs)          "init main"
+set vTcl(state)		 "normal"
 set vTcl(file,base)      [pwd]
 set vTcl(file,mode)      ""
 set vTcl(file,type)      "*.tcl"
+set vTcl(mouse,X)	 0
+set vTcl(mouse,Y)	 0
+set vTcl(mouse,x)	 0
+set vTcl(mouse,y)	 0
 set vTcl(grid,x)         5
 set vTcl(grid,y)         5
 set vTcl(gui,main)       ".vTcl"
@@ -66,7 +68,7 @@ set vTcl(gui,prefs)      "$vTcl(gui,main).prefs"
 set vTcl(gui,rc_menu)    "$vTcl(gui,main).rc"
 set vTcl(gui,varlist)    "$vTcl(gui,main).varlist"
 set vTcl(gui,statbar)    "$vTcl(gui,main).stat.f.bar"
-set vTcl(gui,showlist)   ".vTcl.mgr .vTcl.ae .vTcl.con"
+set vTcl(gui,showlist)   ".vTcl.mgr .vTcl.ae"
 set vTcl(h,exist)        no
 set vTcl(h,size)         3
 set vTcl(hide)           ""
@@ -86,6 +88,8 @@ set vTcl(pr,getname)     0
 set vTcl(pr,geom_on)     1
 set vTcl(pr,geom_comm)   "350x200"
 set vTcl(pr,geom_proc)   "500x400"
+set vTcl(pr,geom_vTcl)	 "565x110"
+set vTcl(pr,geom_new)	 "609x422+220+159"
 set vTcl(pr,info_on)     1
 set vTcl(pr,manager)     place
 set vTcl(pr,shortname)   1
@@ -94,11 +98,24 @@ set vTcl(pr,show_func)   1
 set vTcl(pr,show_var)    -1
 set vTcl(pr,show_top)    -1
 set vTcl(pr,winfocus)    0
+set vTcl(pr,autoplace)	 0
+set vTcl(pr,autoalias)	 1
+set vTcl(pr,multiplace)  0
+set vTcl(pr,cmdalias)    1
+set vTcl(pr,fullcfg)     0
+set vTcl(pr,autoloadcomp) 0
+set vTcl(pr,autoloadcompfile) ""
+set vTcl(pr,projecttype) "single"
+set vTcl(pr,imageeditor) ""
+set vTcl(pr,saveimagesinline) 0
+set vTcl(pr,projfile)    0
+set vTcl(pr,saveasexecutable) 1
+set vTcl(numRcFiles)	 5
 # end preferences
 set vTcl(proc,name)      ""
 set vTcl(proc,args)      ""
 set vTcl(proc,body)      ""
-set vTcl(proc,ignore)    "tcl.*|tk.*|auto_.*|bgerror|\\..*"
+set vTcl(proc,ignore)    "tcl.*|tk.*|auto_.*|vTcl:.*|bgerror|\\..*"
 set vTcl(project,name)   ""
 set vTcl(project,file)   ""
 set vTcl(quit)           1
@@ -119,14 +136,16 @@ set vTcl(w,grabbed)      0
 set vTcl(w,info)         ""
 set vTcl(w,insert)       .
 set vTcl(w,libs)         ""
+set vTcl(w,libsnames)    ""
 set vTcl(w,manager)      ""
 set vTcl(w,mgrs)         "grid pack place wm"
 set vTcl(w,options)      ""
 set vTcl(w,widget)       ""
 set vTcl(winname)        "vTclWindow"
 set vTcl(windows)        ".vTcl.toolbar .vTcl.mgr .vTcl.ae .vTcl.wstat
-                          .vTcl.proclist .vTcl.varlist .vTcl.toplist .vTcl.tree
-                          .vTcl.con .vTcl.prefs .vTcl.about .vTcl.bind"
+                          .vTcl.proclist .vTcl.toplist .vTcl.tree
+                          .vTcl.con .vTcl.prefs .vTcl.about .vTcl.bind .vTcl.imgManager
+                          .vTcl.fontManager .vTcl.inspector"
 set vTcl(newtops)        1
 set vTcl(mode)           "EDIT"
 set vTcl(pwd)            [pwd]
@@ -134,6 +153,13 @@ set vTcl(redo)           ""
 set vTcl(save)           ""
 set vTcl(tab)            "    "
 set vTcl(tab2)           "$vTcl(tab)$vTcl(tab)"
+
+set vTcl(images,stock)   ""
+set vTcl(images,user)    ""
+set vTcl(fonts,stock)    ""
+set vTcl(fonts,user)     ""
+
+set vTcl(reliefs)        "flat groove raised ridge sunken"
 
 set vTcl(cmpd,list)      ""
 set vTcl(syscmpd,list)   ""
@@ -217,183 +243,9 @@ set vTcl(m,wm,maxsize,y)           { {y maxsize}     {}       type    {} {vTcl:w
 set vTcl(m,wm,state)               { state           {}       choice  {iconify deiconify withdraw} {vTcl:wm:conf_state} }
 set vTcl(m,wm,title)               { title           {}       type    {} {vTcl:wm:conf_title} }
 
-set vTcl(m,menubar,list) ""
+set vTcl(m,menebar,list) ""
 set vTcl(m,menubar,extlist) ""
 
-#
-# Widget Attributes
-#
-set vTcl(opt,list) "
-    -background
-    -foreground
-    -activebackground
-    -activeforeground
-    -highlightbackground
-    -highlightcolor
-    -selectcolor
-    -selectbackground
-    -selectforeground
-    -disabledforeground
-    -insertbackground
-    -troughcolor
-
-    -activerelief
-    -relief
-    -sliderrelief
-
-    -bordermode
-    -borderwidth
-    -elementborderwidth
-    -insertborderwidth
-    -selectborderwidth
-    -highlightthickness
-    -padx
-    -pady
-
-    -height
-    -width
-    -orient
-    -insertwidth
-
-    -bitmap
-    -cursor
-    -image
-    -selectimage
-
-    -command
-    -xscrollcommand
-    -yscrollcommand
-
-    -text
-    -textvariable
-    -font
-    -justify
-    -wrap
-    -wraplength
-    -spacing1
-    -spacing2
-    -spacing3
-    -closeenough
-    -underline
-    -aspect
-    -anchor
-    -tabs
-    -insertofftime
-    -insertontime
-
-    -exportselection
-    -indicatoron
-    -label
-    -repeatdelay
-    -repeatinterval
-    -tickinterval
-    -jump
-    -showvalue
-    -resolution
-    -from
-    -to
-
-    -confine
-    -menu
-    -selectmode
-    -setgrid
-
-    -variable
-    -offvalue
-    -onvalue
-    -value
-
-    -screen
-    -show
-    -state
-    -takefocus
-
-    -sliderlength
-    -scrollregion
-    -xscrollincrement
-    -yscrollincrement
-"
-
-set vTcl(opt,-activebackground)    { {active bg}     Colors   color   {} }
-set vTcl(opt,-activeforeground)    { {active fg}     Colors   color   {} }
-set vTcl(opt,-activerelief)        { {active relief} {}       choice  {flat groove raised ridge sunken} }
-set vTcl(opt,-anchor)              { anchor          {}       choice  {n ne e se s sw w nw center} }
-set vTcl(opt,-aspect)              { aspect          {}       type    {} }
-set vTcl(opt,-bd)                  { {borderwidth}   {}       type    {} }
-set vTcl(opt,-borderwidth)         { {borderwidth}   {}       type    {} }
-set vTcl(opt,-bg)                  { background      {}       color   {} }
-set vTcl(opt,-background)          { background      {}       color   {} }
-set vTcl(opt,-bitmap)              { bitmap          {}       type    {} }
-set vTcl(opt,-bordermode)          { {border mode}   {}       choice  {inside ignore outside} }
-set vTcl(opt,-closeenough)         { closeness       {}       type    {} }
-set vTcl(opt,-command)             { command         {}       command {} }
-set vTcl(opt,-confine)             { confine         {}       boolean {0 1} }
-set vTcl(opt,-cursor)              { cursor          {}       type    {} }
-set vTcl(opt,-disabledforeground)  { {disabled fg}   Colors   color   {} }
-set vTcl(opt,-elementborderwidth)  { {element bd}    {}       type    {} }
-set vTcl(opt,-exportselection)     { export          {}       boolean {0 1} }
-set vTcl(opt,-fg)                  { foreground      Colors   color   {} }
-set vTcl(opt,-foreground)          { foreground      Colors   color   {} }
-set vTcl(opt,-font)                { font            {}       type    {} }
-set vTcl(opt,-height)              { height          {}       type    {} }
-set vTcl(opt,-highlightbackground) { {hilight bg}    Colors   color   {} }
-set vTcl(opt,-highlightcolor)      { {hilight color} Colors   color   {} }
-set vTcl(opt,-highlightthickness)  { {hilight bd}    {}       type    {} }
-set vTcl(opt,-image)               { image           {}       type    {} }
-set vTcl(opt,-indicatoron)         { indicator       {}       boolean {0 1} }
-set vTcl(opt,-insertbackground)    { {insert bg}     Colors   color   {} }
-set vTcl(opt,-insertborderwidth)   { {insert bd}     {}       type    {} }
-set vTcl(opt,-insertofftime)       { {insert off time} {}     type    {} }
-set vTcl(opt,-insertontime)        { {insert on time} {}      type    {} }
-set vTcl(opt,-insertwidth)         { {insert wd}     {}       type    {} }
-set vTcl(opt,-jump)                { jump            {}       boolean {0 1} }
-set vTcl(opt,-justify)             { justify         {}       choice  {left right center} }
-set vTcl(opt,-menu)                { menu            {}       menu    {} }
-set vTcl(opt,-offvalue)            { {off value}     {}       type    {} }
-set vTcl(opt,-onvalue)             { {on value}      {}       type    {} }
-set vTcl(opt,-orient)              { orient          {}       choice  {vertical horizontal} }
-set vTcl(opt,-padx)                { {x pad}         {}       type    {} }
-set vTcl(opt,-pady)                { {y pad}         {}       type    {} }
-set vTcl(opt,-relief)              { relief          {}       choice  {flat groove raised ridge sunken} }
-set vTcl(opt,-repeatdelay)         { {repeat delay}  {}       type    {} }
-set vTcl(opt,-repeatinterval)      { {repeat intrvl} {}       type    {} }
-set vTcl(opt,-screen)              { screen          {}       type    {} }
-set vTcl(opt,-scrollregion)        { {scroll region} {}       type    {} }
-set vTcl(opt,-selectbackground)    { {select bg}     Colors   color   {} }
-set vTcl(opt,-selectborderwidth)   { {select bd}     {}       type    {} }
-set vTcl(opt,-selectcolor)         { {select color}  Colors   color   {} }
-set vTcl(opt,-selectforeground)    { {select fg}     Colors   color   {} }
-set vTcl(opt,-selectimage)         { {select image}  {}       type    {} }
-set vTcl(opt,-selectmode)          { {select mode}   {}       type    {} }
-set vTcl(opt,-setgrid)             { {set grid}      {}       boolean {0 1} }
-set vTcl(opt,-show)                { show            {}       type    {} }
-set vTcl(opt,-showvalue)           { {show value}    {}       boolean {0 1} }
-set vTcl(opt,-sliderlength)        { {slider length} {}       type    {} }
-set vTcl(opt,-sliderrelief)        { {slider relief} {}       choice  {flat groove raised ridge sunken} }
-set vTcl(opt,-spacing1)            { spacing1        {}       type    {} }
-set vTcl(opt,-spacing2)            { spacing2        {}       type    {} }
-set vTcl(opt,-spacing3)            { spacing3        {}       type    {} }
-set vTcl(opt,-state)               { state           {}       choice  {normal active disabled} }
-set vTcl(opt,-tabs)                { tabs            {}       type    {} }
-set vTcl(opt,-takefocus)           { {take focus}    {}       type    {} }
-set vTcl(opt,-text)                { text            {}       type    {} }
-set vTcl(opt,-textvariable)        { {text var}      {}       type    {} }
-set vTcl(opt,-tickinterval)        { {tic interval}  {}       type    {} }
-set vTcl(opt,-from)                { {from value}    {}       type    {} }
-set vTcl(opt,-to)                  { {to value}      {}       type    {} }
-set vTcl(opt,-label)               { label           {}       type    {} }
-set vTcl(opt,-resolution)          { resolution      {}       type    {} }
-set vTcl(opt,-troughcolor)         { {trough color}  Colors   color   {} }
-set vTcl(opt,-underline)           { underline       {}       type    {} }
-set vTcl(opt,-value)               { value           {}       type    {} }
-set vTcl(opt,-variable)            { variable        {}       type    {} }
-set vTcl(opt,-width)               { width           {}       type    {} }
-set vTcl(opt,-wrap)                { wrap            {}       choice  {char none word} }
-set vTcl(opt,-wraplength)          { {wrap length}   {}       type    {} }
-set vTcl(opt,-xscrollincrement)    { {x increment}   {}       type    {} }
-set vTcl(opt,-yscrollincrement)    { {y increment}   {}       type    {} }
-set vTcl(opt,-xscrollcommand)      { {x scroll cmd}  {}       command {} }
-set vTcl(opt,-yscrollcommand)      { {y scroll cmd}  {}       command {} }
 
 set vTcl(head,proj) [string trim {
 #############################################################################
@@ -401,9 +253,15 @@ set vTcl(head,proj) [string trim {
 #
 }]
 
-set vTcl(head,vars) [string trim {
+set vTcl(head,projfile) [string trim {
+#############################################################################
+# Visual Tcl v$vTcl(version) Window, part of a multiple files project
+#
+}]
+
+set vTcl(head,exports) [string trim {
 #################################
-# GLOBAL VARIABLES
+# VTCL LIBRARY PROCEDURES
 #
 }]
 
@@ -430,3 +288,40 @@ $vTcl(tab)###################
 "
 
 
+# @@change by Christian Gavin 3/19/2000
+# patterns and colors for syntax colouring
+# @@end_change
+
+set vTcl(syntax,tags) "vTcl:dollar vTcl:bracket vTcl:command vTcl:option vTcl:parenthesis vTcl:window vTcl:string vTcl:comment"
+
+set vTcl(syntax,vTcl:parenthesis)            {\(.+\)}
+set vTcl(syntax,vTcl:parenthesis,configure)  {-foreground #00A000}
+
+set vTcl(syntax,vTcl:dollar)            {\$[a-zA-Z0-9_]+}
+set vTcl(syntax,vTcl:dollar,configure)  {-foreground #00A000}
+
+set vTcl(syntax,vTcl:bracket)           {\[|\]|\{|\}}
+set vTcl(syntax,vTcl:bracket,configure) {-foreground #FF0000}
+
+set vTcl(syntax,vTcl:command)           {[a-zA-Z0-9_:]+}
+set vTcl(syntax,vTcl:command,configure) {-foreground #B000B0}
+set vTcl(syntax,vTcl:command,validate)  vTcl:syntax:iscommand
+
+set vTcl(syntax,vTcl:option)            {\-[a-zA-Z0-9]+}
+set vTcl(syntax,vTcl:option,configure)  {-foreground #0000FF}
+
+set vTcl(syntax,vTcl:comment)		{# [,\. a-zA-Z0-9:=_?()@'/-<>"	]+}
+set vTcl(syntax,vTcl:comment,configure) {-foreground #B0B0B0}
+
+set vTcl(syntax,vTcl:string)		{\"[^\"]*\"}
+set vTcl(syntax,vTcl:string,configure)  {-foreground #00A0A0}
+
+set vTcl(syntax,vTcl:window)            {\.[a-zA-Z0-9_\.]+}
+set vTcl(syntax,vTcl:window,configure)  {-foreground #800060}
+
+proc vTcl:syntax:iscommand {command} {
+    return [ expr { [info command $command] == $command } ]
+}
+
+# special case for -in option
+set vTcl(option,noencase,-in) 1

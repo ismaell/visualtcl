@@ -1,0 +1,6 @@
+Class Feedback
+Lib   itcl
+
+Icon icon_feedback.gif
+DumpChildren  no
+MegaWidget    yes
