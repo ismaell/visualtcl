@@ -86,18 +86,18 @@ proc vTcl:Toplevel:WidgetProc {w args} {
         ## If no arguments, returns the path the alias points to
         return $w
     }
-    ## The first argument is a switch, they must be doing a configure.
-    if {[string index $args 0] == "-"} {
-        set command configure
-        ## There's only one argument, must be a cget.
-        if {[llength $args] == 1} {
-            set command cget
-        }
-    } else {
-        set command [lindex $args 0]
-        set args [lrange $args 1 end]
-    }
+    set command [lindex $args 0]
+    set args [lrange $args 1 end]
     switch -- $command {
+        "setvar" {
+            set varname [lindex $args 0]
+            set value [lindex $args 1]
+            if {$value == ""} {
+                return [set ::${w}::${varname}]
+            } else {
+                return [set ::${w}::${varname} $value]
+            }
+        }
         "hide" - "Hide" - "show" - "Show" {
             Window [string tolower $command] $w
         }
@@ -346,4 +346,5 @@ namespace eval vTcl::widgets::core::toplevel {
 	return $out
     }
 }
+
 
