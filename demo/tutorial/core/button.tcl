@@ -22,6 +22,7 @@ if {![info exists vTcl(sourcing)]} {
 # Visual Tcl v1.60 Project
 #
 
+
 #################################
 # VTCL LIBRARY PROCEDURES
 #
@@ -30,7 +31,7 @@ if {![info exists vTcl(sourcing)]} {
 #############################################################################
 ## Library Procedure:  Window
 
-proc {Window} {args} {
+proc ::Window {args} {
     ## This procedure may be used free of restrictions.
     ##    Exception added by Christian Gavin on 08/08/02.
     ## Other packages and widget toolkits have different licensing requirements.
@@ -69,7 +70,7 @@ proc {Window} {args} {
 #############################################################################
 ## Library Procedure:  vTcl:DefineAlias
 
-proc {vTcl:DefineAlias} {target alias widgetProc top_or_alias cmdalias} {
+proc ::vTcl:DefineAlias {target alias widgetProc top_or_alias cmdalias} {
     ## This procedure may be used free of restrictions.
     ##    Exception added by Christian Gavin on 08/08/02.
     ## Other packages and widget toolkits have different licensing requirements.
@@ -91,7 +92,7 @@ proc {vTcl:DefineAlias} {target alias widgetProc top_or_alias cmdalias} {
 #############################################################################
 ## Library Procedure:  vTcl:DoCmdOption
 
-proc {vTcl:DoCmdOption} {target cmd} {
+proc ::vTcl:DoCmdOption {target cmd} {
     ## This procedure may be used free of restrictions.
     ##    Exception added by Christian Gavin on 08/08/02.
     ## Other packages and widget toolkits have different licensing requirements.
@@ -111,7 +112,7 @@ proc {vTcl:DoCmdOption} {target cmd} {
 #############################################################################
 ## Library Procedure:  vTcl:FireEvent
 
-proc {vTcl:FireEvent} {target event {params {}}} {
+proc ::vTcl:FireEvent {target event {params {}}} {
     ## This procedure may be used free of restrictions.
     ##    Exception added by Christian Gavin on 08/08/02.
     ## Other packages and widget toolkits have different licensing requirements.
@@ -145,7 +146,7 @@ proc {vTcl:FireEvent} {target event {params {}}} {
 #############################################################################
 ## Library Procedure:  vTcl:Toplevel:WidgetProc
 
-proc {vTcl:Toplevel:WidgetProc} {w args} {
+proc ::vTcl:Toplevel:WidgetProc {w args} {
     ## This procedure may be used free of restrictions.
     ##    Exception added by Christian Gavin on 08/08/02.
     ## Other packages and widget toolkits have different licensing requirements.
@@ -185,7 +186,7 @@ proc {vTcl:Toplevel:WidgetProc} {w args} {
 #############################################################################
 ## Library Procedure:  vTcl:WidgetProc
 
-proc {vTcl:WidgetProc} {w args} {
+proc ::vTcl:WidgetProc {w args} {
     ## This procedure may be used free of restrictions.
     ##    Exception added by Christian Gavin on 08/08/02.
     ## Other packages and widget toolkits have different licensing requirements.
@@ -211,7 +212,7 @@ proc {vTcl:WidgetProc} {w args} {
 #############################################################################
 ## Library Procedure:  vTcl:toplevel
 
-proc {vTcl:toplevel} {args} {
+proc ::vTcl:toplevel {args} {
     ## This procedure may be used free of restrictions.
     ##    Exception added by Christian Gavin on 08/08/02.
     ## Other packages and widget toolkits have different licensing requirements.
@@ -227,16 +228,28 @@ proc {vTcl:toplevel} {args} {
 if {[info exists vTcl(sourcing)]} {
 
 proc vTcl:project:info {} {
-    set base .top80
+    set base .top82
     namespace eval ::widgets::$base {
         set set,origin 1
         set set,size 1
     }
-    namespace eval ::widgets::$base.lab81 {
-        array set save {-text 1}
+    namespace eval ::widgets::$base.lab83 {
+        array set save {-anchor 1 -background 1 -justify 1 -text 1}
     }
-    namespace eval ::widgets::$base.but82 {
+    namespace eval ::widgets::$base.but84 {
         array set save {-command 1 -pady 1 -text 1}
+    }
+    namespace eval ::widgets::$base.lab85 {
+        array set save {-anchor 1 -justify 1 -relief 1 -text 1}
+    }
+    namespace eval ::widgets::$base.cpd86 {
+        array set save {-command 1 -pady 1 -text 1}
+    }
+    namespace eval ::widgets::$base.cpd87 {
+        array set save {-anchor 1 -justify 1 -relief 1 -text 1}
+    }
+    namespace eval ::widgets::$base.lab88 {
+        array set save {-background 1 -text 1}
     }
     namespace eval ::widgets_bindings {
         set tagslist _TopLevel
@@ -245,6 +258,9 @@ proc vTcl:project:info {} {
         set procs {
             init
             main
+            doSomething
+        }
+        set compounds {
         }
     }
 }
@@ -256,12 +272,18 @@ proc vTcl:project:info {} {
 #############################################################################
 ## Procedure:  main
 
-proc {main} {argc argv} {}
+proc ::main {argc argv} {}
+#############################################################################
+## Procedure:  doSomething
+
+proc ::doSomething {} {
+tk_messageBox -message "this procedure was executed by a button" -title "Button command"
+}
 
 #############################################################################
 ## Initialization Procedure:  init
 
-proc {init} {argc argv} {}
+proc ::init {argc argv} {}
 
 init $argc $argv
 
@@ -276,17 +298,17 @@ proc vTclWindow. {base} {
     ###################
     # CREATING WIDGETS
     ###################
-    wm focusmodel $base passive
-    wm geometry $base 200x200+132+150; update
-    wm maxsize $base 1284 1006
-    wm minsize $base 111 1
-    wm overrideredirect $base 0
-    wm resizable $base 1 1
-    wm withdraw $base
-    wm title $base "vtcl"
-    bindtags $base "$base Vtcl all"
-    vTcl:FireEvent $base <<Create>>
-    wm protocol $base WM_DELETE_WINDOW "vTcl:FireEvent $base <<DeleteWindow>>"
+    wm focusmodel $top passive
+    wm geometry $top 200x200+154+175; update
+    wm maxsize $top 1284 1006
+    wm minsize $top 111 1
+    wm overrideredirect $top 0
+    wm resizable $top 1 1
+    wm withdraw $top
+    wm title $top "vtcl"
+    bindtags $top "$top Vtcl all"
+    vTcl:FireEvent $top <<Create>>
+    wm protocol $top WM_DELETE_WINDOW "vTcl:FireEvent $top <<DeleteWindow>>"
 
     ###################
     # SETTING GEOMETRY
@@ -295,9 +317,9 @@ proc vTclWindow. {base} {
     vTcl:FireEvent $base <<Ready>>
 }
 
-proc vTclWindow.top80 {base} {
+proc vTclWindow.top82 {base} {
     if {$base == ""} {
-        set base .top80
+        set base .top82
     }
     if {[winfo exists $base]} {
         wm deiconify $base; return
@@ -306,33 +328,70 @@ proc vTclWindow.top80 {base} {
     ###################
     # CREATING WIDGETS
     ###################
-    vTcl:toplevel $base -class Toplevel
-    wm focusmodel $base passive
-    wm geometry $base 260x109+211+322; update
-    wm maxsize $base 1284 1006
-    wm minsize $base 111 1
-    wm overrideredirect $base 0
-    wm resizable $base 1 1
-    wm deiconify $base
-    wm title $base "Simple Toplevel"
-    vTcl:DefineAlias "$base" "Toplevel1" vTcl:Toplevel:WidgetProc "" 1
-    bindtags $base "$base Toplevel all _TopLevel"
-    vTcl:FireEvent $base <<Create>>
-    wm protocol $base WM_DELETE_WINDOW "vTcl:FireEvent $base <<DeleteWindow>>"
+    vTcl:toplevel $top -class Toplevel
+    wm focusmodel $top passive
+    wm geometry $top 509x344+184+292; update
+    wm maxsize $top 1284 1006
+    wm minsize $top 111 1
+    wm overrideredirect $top 0
+    wm resizable $top 1 1
+    wm deiconify $top
+    wm title $top "Button Tutorial"
+    vTcl:DefineAlias "$top" "Toplevel1" vTcl:Toplevel:WidgetProc "" 1
+    bindtags $top "$top Toplevel all _TopLevel"
+    vTcl:FireEvent $top <<Create>>
+    wm protocol $top WM_DELETE_WINDOW "vTcl:FireEvent $top <<DeleteWindow>>"
 
-    label $base.lab81 \
-        -text {This is a simple toplevel.} 
-    vTcl:DefineAlias "$base.lab81" "Label1" vTcl:WidgetProc "Toplevel1" 1
-    button $base.but82 \
-        -command exit -pady 0 -text {Click here to exit} 
-    vTcl:DefineAlias "$base.but82" "Button1" vTcl:WidgetProc "Toplevel1" 1
+    label $top.lab83 \
+        -anchor nw -background #beb9df10ecec -justify left \
+        -text {This sample demonstrates the button widget.
+
+A button widget has 2 important properties.
+
+- its text tells the user what the button will do
+
+- its command, which will be executed when the user presses the button} 
+    vTcl:DefineAlias "$top.lab83" "Label1" vTcl:WidgetProc "Toplevel1" 1
+    button $top.but84 \
+        -command {tk_messageBox -message "You clicked me!" -title "Yeehah!"} \
+        -pady 0 -text {Click me!} 
+    vTcl:DefineAlias "$top.but84" "Button1" vTcl:WidgetProc "Toplevel1" 1
+    label $top.lab85 \
+        -anchor nw -justify left -relief ridge \
+        -text {This widget has the following options:
+
+-text "Click me!"
+-command {tk_messageBox -message "You clicked me!" -title "Yeehah!"}} 
+    vTcl:DefineAlias "$top.lab85" "Label2" vTcl:WidgetProc "Toplevel1" 1
+    button $top.cpd86 \
+        -command doSomething -pady 0 -text {Click me!} 
+    vTcl:DefineAlias "$top.cpd86" "Button2" vTcl:WidgetProc "Toplevel1" 1
+    label $top.cpd87 \
+        -anchor nw -justify left -relief ridge \
+        -text {This widget has the following options:
+
+-text "Click me!"
+-command doSomething} 
+    vTcl:DefineAlias "$top.cpd87" "Label3" vTcl:WidgetProc "Toplevel1" 1
+    label $top.lab88 \
+        -background #ececcaada708 \
+        -text {It is usually better to put a button command in a procedure, if it contains more than one line.} 
+    vTcl:DefineAlias "$top.lab88" "Label4" vTcl:WidgetProc "Toplevel1" 1
     ###################
     # SETTING GEOMETRY
     ###################
-    place $base.lab81 \
-        -x 70 -y 20 -anchor nw -bordermode ignore 
-    place $base.but82 \
-        -x 85 -y 50 -anchor nw -bordermode ignore 
+    place $top.lab83 \
+        -x 15 -y 15 -width 478 -height 109 -anchor nw -bordermode ignore 
+    place $top.but84 \
+        -x 15 -y 155 -width 58 -height 26 -anchor nw -bordermode ignore 
+    place $top.lab85 \
+        -x 85 -y 138 -width 408 -height 69 -anchor nw -bordermode ignore 
+    place $top.cpd86 \
+        -x 15 -y 275 -anchor nw 
+    place $top.cpd87 \
+        -x 85 -y 255 -width 408 -height 68 -anchor nw 
+    place $top.lab88 \
+        -x 15 -y 220 -width 478 -height 24 -anchor nw -bordermode ignore 
 
     vTcl:FireEvent $base <<Ready>>
 }
@@ -351,7 +410,7 @@ bind "_TopLevel" <Destroy> {
 }
 
 Window show .
-Window show .top80
+Window show .top82
 
 main $argc $argv
 
