@@ -1988,151 +1988,151 @@ proc vTclWindow.top21 {base {container 0}} {
         -borderwidth 2 
     frame $base.cpd23.01.fra18.cpd23 \
         -borderwidth 2 -relief raised -takefocus 1 
-    bindtags $base.cpd23.01.fra18.cpd23 "$base.cpd23.01.fra18.cpd23 Frame .top18 all BitmapButtonTop"
+    bindtags $base.cpd23.01.fra18.cpd23 "$base.cpd23.01.fra18.cpd23 Frame $base all BitmapButtonTop"
     frame $base.cpd23.01.fra18.cpd23.upframe \
         -borderwidth 2 -height 3 
-    bindtags $base.cpd23.01.fra18.cpd23.upframe "$base.cpd23.01.fra18.cpd23.upframe Frame .top18 all BitmapButtonSub1"
+    bindtags $base.cpd23.01.fra18.cpd23.upframe "$base.cpd23.01.fra18.cpd23.upframe Frame $base all BitmapButtonSub1"
     frame $base.cpd23.01.fra18.cpd23.centerframe \
         -borderwidth 2 
-    bindtags $base.cpd23.01.fra18.cpd23.centerframe "$base.cpd23.01.fra18.cpd23.centerframe Frame .top18 all BitmapButtonSub1"
+    bindtags $base.cpd23.01.fra18.cpd23.centerframe "$base.cpd23.01.fra18.cpd23.centerframe Frame $base all BitmapButtonSub1"
     frame $base.cpd23.01.fra18.cpd23.centerframe.leftframe \
         -borderwidth 2 -width 3 
-    bindtags $base.cpd23.01.fra18.cpd23.centerframe.leftframe "$base.cpd23.01.fra18.cpd23.centerframe.leftframe Frame .top18 all BitmapButtonSub2"
+    bindtags $base.cpd23.01.fra18.cpd23.centerframe.leftframe "$base.cpd23.01.fra18.cpd23.centerframe.leftframe Frame $base all BitmapButtonSub2"
     frame $base.cpd23.01.fra18.cpd23.centerframe.rightframe \
         -borderwidth 2 -width 2 
-    bindtags $base.cpd23.01.fra18.cpd23.centerframe.rightframe "$base.cpd23.01.fra18.cpd23.centerframe.rightframe Frame .top18 all BitmapButtonSub2"
+    bindtags $base.cpd23.01.fra18.cpd23.centerframe.rightframe "$base.cpd23.01.fra18.cpd23.centerframe.rightframe Frame $base all BitmapButtonSub2"
     frame $base.cpd23.01.fra18.cpd23.centerframe.05 \
-        -borderwidth 1 
-    bindtags $base.cpd23.01.fra18.cpd23.centerframe.05 "$base.cpd23.01.fra18.cpd23.centerframe.05 Frame .top18 all BitmapButtonSub2"
+        -borderwidth 1
+    bindtags $base.cpd23.01.fra18.cpd23.centerframe.05 "$base.cpd23.01.fra18.cpd23.centerframe.05 Frame $base all BitmapButtonSub2"
     label $base.cpd23.01.fra18.cpd23.centerframe.05.06 \
         -borderwidth 0 -height 20 \
         -image [vTcl:image:get_image [file join / home cgavin vtcl images edit save.gif]] \
-        -text label 
-    bindtags $base.cpd23.01.fra18.cpd23.centerframe.05.06 "$base.cpd23.01.fra18.cpd23.centerframe.05.06 Label .top18 all BitmapButtonSub3"
+        -text label
+    bindtags $base.cpd23.01.fra18.cpd23.centerframe.05.06 "$base.cpd23.01.fra18.cpd23.centerframe.05.06 Label $base all BitmapButtonSub3"
     label $base.cpd23.01.fra18.cpd23.centerframe.05.07 \
-        -borderwidth 1 -padx 1 -text Save -width 5 
-    bindtags $base.cpd23.01.fra18.cpd23.centerframe.05.07 "$base.cpd23.01.fra18.cpd23.centerframe.05.07 Label .top18 all BitmapButtonSub3"
+        -borderwidth 1 -padx 1 -text Save -width 5
+    bindtags $base.cpd23.01.fra18.cpd23.centerframe.05.07 "$base.cpd23.01.fra18.cpd23.centerframe.05.07 Label $base all BitmapButtonSub3"
     frame $base.cpd23.01.fra18.cpd23.downframe \
-        -borderwidth 2 -height 2 -relief groove 
-    bindtags $base.cpd23.01.fra18.cpd23.downframe "$base.cpd23.01.fra18.cpd23.downframe Frame .top18 all BitmapButtonSub1"
+        -borderwidth 2 -height 2 -relief groove
+    bindtags $base.cpd23.01.fra18.cpd23.downframe "$base.cpd23.01.fra18.cpd23.downframe Frame $base all BitmapButtonSub1"
     frame $base.cpd23.01.fra18.cpd19 \
-        -borderwidth 2 -relief raised -takefocus 1 
-    bindtags $base.cpd23.01.fra18.cpd19 "$base.cpd23.01.fra18.cpd19 Frame .top18 all BitmapButtonTop"
+        -borderwidth 2 -relief raised -takefocus 1
+    bindtags $base.cpd23.01.fra18.cpd19 "$base.cpd23.01.fra18.cpd19 Frame $base all BitmapButtonTop"
     frame $base.cpd23.01.fra18.cpd19.upframe \
-        -borderwidth 2 -height 3 
-    bindtags $base.cpd23.01.fra18.cpd19.upframe "$base.cpd23.01.fra18.cpd19.upframe Frame .top18 all BitmapButtonSub1"
+        -borderwidth 2 -height 3
+    bindtags $base.cpd23.01.fra18.cpd19.upframe "$base.cpd23.01.fra18.cpd19.upframe Frame $base all BitmapButtonSub1"
     frame $base.cpd23.01.fra18.cpd19.centerframe \
-        -borderwidth 2 
-    bindtags $base.cpd23.01.fra18.cpd19.centerframe "$base.cpd23.01.fra18.cpd19.centerframe Frame .top18 all BitmapButtonSub1"
+        -borderwidth 2
+    bindtags $base.cpd23.01.fra18.cpd19.centerframe "$base.cpd23.01.fra18.cpd19.centerframe Frame $base all BitmapButtonSub1"
     frame $base.cpd23.01.fra18.cpd19.centerframe.leftframe \
-        -borderwidth 2 -width 3 
-    bindtags $base.cpd23.01.fra18.cpd19.centerframe.leftframe "$base.cpd23.01.fra18.cpd19.centerframe.leftframe Frame .top18 all BitmapButtonSub2"
+        -borderwidth 2 -width 3
+    bindtags $base.cpd23.01.fra18.cpd19.centerframe.leftframe "$base.cpd23.01.fra18.cpd19.centerframe.leftframe Frame $base all BitmapButtonSub2"
     frame $base.cpd23.01.fra18.cpd19.centerframe.rightframe \
-        -borderwidth 2 -width 2 
-    bindtags $base.cpd23.01.fra18.cpd19.centerframe.rightframe "$base.cpd23.01.fra18.cpd19.centerframe.rightframe Frame .top18 all BitmapButtonSub2"
+        -borderwidth 2 -width 2
+    bindtags $base.cpd23.01.fra18.cpd19.centerframe.rightframe "$base.cpd23.01.fra18.cpd19.centerframe.rightframe Frame $base all BitmapButtonSub2"
     frame $base.cpd23.01.fra18.cpd19.centerframe.05 \
         -borderwidth 1 
-    bindtags $base.cpd23.01.fra18.cpd19.centerframe.05 "$base.cpd23.01.fra18.cpd19.centerframe.05 Frame .top18 all BitmapButtonSub2"
+    bindtags $base.cpd23.01.fra18.cpd19.centerframe.05 "$base.cpd23.01.fra18.cpd19.centerframe.05 Frame $base all BitmapButtonSub2"
     label $base.cpd23.01.fra18.cpd19.centerframe.05.06 \
         -borderwidth 0 \
         -image [vTcl:image:get_image [file join / home cgavin vtcl images edit new.gif]] \
         -text label 
-    bindtags $base.cpd23.01.fra18.cpd19.centerframe.05.06 "$base.cpd23.01.fra18.cpd19.centerframe.05.06 Label .top18 all BitmapButtonSub3"
+    bindtags $base.cpd23.01.fra18.cpd19.centerframe.05.06 "$base.cpd23.01.fra18.cpd19.centerframe.05.06 Label $base all BitmapButtonSub3"
     label $base.cpd23.01.fra18.cpd19.centerframe.05.07 \
         -borderwidth 1 -padx 1 -pady 1 -text New -width 5 
-    bindtags $base.cpd23.01.fra18.cpd19.centerframe.05.07 "$base.cpd23.01.fra18.cpd19.centerframe.05.07 Label .top18 all BitmapButtonSub3"
+    bindtags $base.cpd23.01.fra18.cpd19.centerframe.05.07 "$base.cpd23.01.fra18.cpd19.centerframe.05.07 Label $base all BitmapButtonSub3"
     frame $base.cpd23.01.fra18.cpd19.downframe \
         -borderwidth 2 -height 2 -relief groove 
-    bindtags $base.cpd23.01.fra18.cpd19.downframe "$base.cpd23.01.fra18.cpd19.downframe Frame .top18 all BitmapButtonSub1"
+    bindtags $base.cpd23.01.fra18.cpd19.downframe "$base.cpd23.01.fra18.cpd19.downframe Frame $base all BitmapButtonSub1"
     frame $base.cpd23.01.fra18.fra24 \
         -borderwidth 2 -width 5 
     frame $base.cpd23.01.fra18.cpd20 \
         -borderwidth 2 -relief raised -takefocus 1 
-    bindtags $base.cpd23.01.fra18.cpd20 "$base.cpd23.01.fra18.cpd20 Frame .top18 all BitmapButtonTop"
+    bindtags $base.cpd23.01.fra18.cpd20 "$base.cpd23.01.fra18.cpd20 Frame $base all BitmapButtonTop"
     frame $base.cpd23.01.fra18.cpd20.upframe \
         -borderwidth 2 -height 3 
-    bindtags $base.cpd23.01.fra18.cpd20.upframe "$base.cpd23.01.fra18.cpd20.upframe Frame .top18 all BitmapButtonSub1"
+    bindtags $base.cpd23.01.fra18.cpd20.upframe "$base.cpd23.01.fra18.cpd20.upframe Frame $base all BitmapButtonSub1"
     frame $base.cpd23.01.fra18.cpd20.centerframe \
         -borderwidth 2 
-    bindtags $base.cpd23.01.fra18.cpd20.centerframe "$base.cpd23.01.fra18.cpd20.centerframe Frame .top18 all BitmapButtonSub1"
+    bindtags $base.cpd23.01.fra18.cpd20.centerframe "$base.cpd23.01.fra18.cpd20.centerframe Frame $base all BitmapButtonSub1"
     frame $base.cpd23.01.fra18.cpd20.centerframe.leftframe \
         -borderwidth 2 -width 3 
-    bindtags $base.cpd23.01.fra18.cpd20.centerframe.leftframe "$base.cpd23.01.fra18.cpd20.centerframe.leftframe Frame .top18 all BitmapButtonSub2"
+    bindtags $base.cpd23.01.fra18.cpd20.centerframe.leftframe "$base.cpd23.01.fra18.cpd20.centerframe.leftframe Frame $base all BitmapButtonSub2"
     frame $base.cpd23.01.fra18.cpd20.centerframe.rightframe \
         -borderwidth 2 -width 2 
-    bindtags $base.cpd23.01.fra18.cpd20.centerframe.rightframe "$base.cpd23.01.fra18.cpd20.centerframe.rightframe Frame .top18 all BitmapButtonSub2"
+    bindtags $base.cpd23.01.fra18.cpd20.centerframe.rightframe "$base.cpd23.01.fra18.cpd20.centerframe.rightframe Frame $base all BitmapButtonSub2"
     frame $base.cpd23.01.fra18.cpd20.centerframe.05 \
         -borderwidth 1 
-    bindtags $base.cpd23.01.fra18.cpd20.centerframe.05 "$base.cpd23.01.fra18.cpd20.centerframe.05 Frame .top18 all BitmapButtonSub2"
+    bindtags $base.cpd23.01.fra18.cpd20.centerframe.05 "$base.cpd23.01.fra18.cpd20.centerframe.05 Frame $base all BitmapButtonSub2"
     label $base.cpd23.01.fra18.cpd20.centerframe.05.06 \
         -borderwidth 0 \
         -image [vTcl:image:get_image [file join / home cgavin vtcl images edit cut.gif]] \
         -text label 
-    bindtags $base.cpd23.01.fra18.cpd20.centerframe.05.06 "$base.cpd23.01.fra18.cpd20.centerframe.05.06 Label .top18 all BitmapButtonSub3"
+    bindtags $base.cpd23.01.fra18.cpd20.centerframe.05.06 "$base.cpd23.01.fra18.cpd20.centerframe.05.06 Label $base all BitmapButtonSub3"
     label $base.cpd23.01.fra18.cpd20.centerframe.05.07 \
         -borderwidth 1 -text Cut -width 5 
-    bindtags $base.cpd23.01.fra18.cpd20.centerframe.05.07 "$base.cpd23.01.fra18.cpd20.centerframe.05.07 Label .top18 all BitmapButtonSub3"
+    bindtags $base.cpd23.01.fra18.cpd20.centerframe.05.07 "$base.cpd23.01.fra18.cpd20.centerframe.05.07 Label $base all BitmapButtonSub3"
     frame $base.cpd23.01.fra18.cpd20.downframe \
         -borderwidth 2 -height 2 -relief groove 
-    bindtags $base.cpd23.01.fra18.cpd20.downframe "$base.cpd23.01.fra18.cpd20.downframe Frame .top18 all BitmapButtonSub1"
+    bindtags $base.cpd23.01.fra18.cpd20.downframe "$base.cpd23.01.fra18.cpd20.downframe Frame $base all BitmapButtonSub1"
     frame $base.cpd23.01.fra18.cpd21 \
         -borderwidth 2 -relief raised -takefocus 1 
-    bindtags $base.cpd23.01.fra18.cpd21 "$base.cpd23.01.fra18.cpd21 Frame .top18 all BitmapButtonTop"
+    bindtags $base.cpd23.01.fra18.cpd21 "$base.cpd23.01.fra18.cpd21 Frame $base all BitmapButtonTop"
     frame $base.cpd23.01.fra18.cpd21.upframe \
         -borderwidth 2 -height 3 
-    bindtags $base.cpd23.01.fra18.cpd21.upframe "$base.cpd23.01.fra18.cpd21.upframe Frame .top18 all BitmapButtonSub1"
+    bindtags $base.cpd23.01.fra18.cpd21.upframe "$base.cpd23.01.fra18.cpd21.upframe Frame $base all BitmapButtonSub1"
     frame $base.cpd23.01.fra18.cpd21.centerframe \
         -borderwidth 2 
-    bindtags $base.cpd23.01.fra18.cpd21.centerframe "$base.cpd23.01.fra18.cpd21.centerframe Frame .top18 all BitmapButtonSub1"
+    bindtags $base.cpd23.01.fra18.cpd21.centerframe "$base.cpd23.01.fra18.cpd21.centerframe Frame $base all BitmapButtonSub1"
     frame $base.cpd23.01.fra18.cpd21.centerframe.leftframe \
         -borderwidth 2 -width 3 
-    bindtags $base.cpd23.01.fra18.cpd21.centerframe.leftframe "$base.cpd23.01.fra18.cpd21.centerframe.leftframe Frame .top18 all BitmapButtonSub2"
+    bindtags $base.cpd23.01.fra18.cpd21.centerframe.leftframe "$base.cpd23.01.fra18.cpd21.centerframe.leftframe Frame $base all BitmapButtonSub2"
     frame $base.cpd23.01.fra18.cpd21.centerframe.rightframe \
         -borderwidth 2 -width 2 
-    bindtags $base.cpd23.01.fra18.cpd21.centerframe.rightframe "$base.cpd23.01.fra18.cpd21.centerframe.rightframe Frame .top18 all BitmapButtonSub2"
+    bindtags $base.cpd23.01.fra18.cpd21.centerframe.rightframe "$base.cpd23.01.fra18.cpd21.centerframe.rightframe Frame $base all BitmapButtonSub2"
     frame $base.cpd23.01.fra18.cpd21.centerframe.05 \
         -borderwidth 1 
-    bindtags $base.cpd23.01.fra18.cpd21.centerframe.05 "$base.cpd23.01.fra18.cpd21.centerframe.05 Frame .top18 all BitmapButtonSub2"
+    bindtags $base.cpd23.01.fra18.cpd21.centerframe.05 "$base.cpd23.01.fra18.cpd21.centerframe.05 Frame $base all BitmapButtonSub2"
     label $base.cpd23.01.fra18.cpd21.centerframe.05.06 \
         -borderwidth 0 \
         -image [vTcl:image:get_image [file join / home cgavin vtcl images edit copy.gif]] \
         -text label 
-    bindtags $base.cpd23.01.fra18.cpd21.centerframe.05.06 "$base.cpd23.01.fra18.cpd21.centerframe.05.06 Label .top18 all BitmapButtonSub3"
+    bindtags $base.cpd23.01.fra18.cpd21.centerframe.05.06 "$base.cpd23.01.fra18.cpd21.centerframe.05.06 Label $base all BitmapButtonSub3"
     label $base.cpd23.01.fra18.cpd21.centerframe.05.07 \
         -borderwidth 1 -padx 1 -pady 1 -text Copy -width 5 
-    bindtags $base.cpd23.01.fra18.cpd21.centerframe.05.07 "$base.cpd23.01.fra18.cpd21.centerframe.05.07 Label .top18 all BitmapButtonSub3"
+    bindtags $base.cpd23.01.fra18.cpd21.centerframe.05.07 "$base.cpd23.01.fra18.cpd21.centerframe.05.07 Label $base all BitmapButtonSub3"
     frame $base.cpd23.01.fra18.cpd21.downframe \
         -borderwidth 2 -height 2 -relief groove 
-    bindtags $base.cpd23.01.fra18.cpd21.downframe "$base.cpd23.01.fra18.cpd21.downframe Frame .top18 all BitmapButtonSub1"
+    bindtags $base.cpd23.01.fra18.cpd21.downframe "$base.cpd23.01.fra18.cpd21.downframe Frame $base all BitmapButtonSub1"
     frame $base.cpd23.01.fra18.cpd22 \
         -borderwidth 2 -relief raised -takefocus 1 
-    bindtags $base.cpd23.01.fra18.cpd22 "$base.cpd23.01.fra18.cpd22 Frame .top18 all BitmapButtonTop"
+    bindtags $base.cpd23.01.fra18.cpd22 "$base.cpd23.01.fra18.cpd22 Frame $base all BitmapButtonTop"
     frame $base.cpd23.01.fra18.cpd22.upframe \
         -borderwidth 2 -height 3 
-    bindtags $base.cpd23.01.fra18.cpd22.upframe "$base.cpd23.01.fra18.cpd22.upframe Frame .top18 all BitmapButtonSub1"
+    bindtags $base.cpd23.01.fra18.cpd22.upframe "$base.cpd23.01.fra18.cpd22.upframe Frame $base all BitmapButtonSub1"
     frame $base.cpd23.01.fra18.cpd22.centerframe \
         -borderwidth 2 
-    bindtags $base.cpd23.01.fra18.cpd22.centerframe "$base.cpd23.01.fra18.cpd22.centerframe Frame .top18 all BitmapButtonSub1"
+    bindtags $base.cpd23.01.fra18.cpd22.centerframe "$base.cpd23.01.fra18.cpd22.centerframe Frame $base all BitmapButtonSub1"
     frame $base.cpd23.01.fra18.cpd22.centerframe.leftframe \
         -borderwidth 2 -width 3 
-    bindtags $base.cpd23.01.fra18.cpd22.centerframe.leftframe "$base.cpd23.01.fra18.cpd22.centerframe.leftframe Frame .top18 all BitmapButtonSub2"
+    bindtags $base.cpd23.01.fra18.cpd22.centerframe.leftframe "$base.cpd23.01.fra18.cpd22.centerframe.leftframe Frame $base all BitmapButtonSub2"
     frame $base.cpd23.01.fra18.cpd22.centerframe.rightframe \
         -borderwidth 2 -width 2 
-    bindtags $base.cpd23.01.fra18.cpd22.centerframe.rightframe "$base.cpd23.01.fra18.cpd22.centerframe.rightframe Frame .top18 all BitmapButtonSub2"
+    bindtags $base.cpd23.01.fra18.cpd22.centerframe.rightframe "$base.cpd23.01.fra18.cpd22.centerframe.rightframe Frame $base all BitmapButtonSub2"
     frame $base.cpd23.01.fra18.cpd22.centerframe.05 \
         -borderwidth 1 
-    bindtags $base.cpd23.01.fra18.cpd22.centerframe.05 "$base.cpd23.01.fra18.cpd22.centerframe.05 Frame .top18 all BitmapButtonSub2"
+    bindtags $base.cpd23.01.fra18.cpd22.centerframe.05 "$base.cpd23.01.fra18.cpd22.centerframe.05 Frame $base all BitmapButtonSub2"
     label $base.cpd23.01.fra18.cpd22.centerframe.05.06 \
         -borderwidth 0 \
         -image [vTcl:image:get_image [file join / home cgavin vtcl images edit paste.gif]] \
         -text label 
-    bindtags $base.cpd23.01.fra18.cpd22.centerframe.05.06 "$base.cpd23.01.fra18.cpd22.centerframe.05.06 Label .top18 all BitmapButtonSub3"
+    bindtags $base.cpd23.01.fra18.cpd22.centerframe.05.06 "$base.cpd23.01.fra18.cpd22.centerframe.05.06 Label $base all BitmapButtonSub3"
     label $base.cpd23.01.fra18.cpd22.centerframe.05.07 \
         -borderwidth 1 -text Paste -width 5 
-    bindtags $base.cpd23.01.fra18.cpd22.centerframe.05.07 "$base.cpd23.01.fra18.cpd22.centerframe.05.07 Label .top18 all BitmapButtonSub3"
+    bindtags $base.cpd23.01.fra18.cpd22.centerframe.05.07 "$base.cpd23.01.fra18.cpd22.centerframe.05.07 Label $base all BitmapButtonSub3"
     frame $base.cpd23.01.fra18.cpd22.downframe \
         -borderwidth 2 -height 2 -relief groove 
-    bindtags $base.cpd23.01.fra18.cpd22.downframe "$base.cpd23.01.fra18.cpd22.downframe Frame .top18 all BitmapButtonSub1"
+    bindtags $base.cpd23.01.fra18.cpd22.downframe "$base.cpd23.01.fra18.cpd22.downframe Frame $base all BitmapButtonSub1"
     frame $base.cpd23.01.cpd24 \
         -borderwidth 1 -height 30 -relief sunken -width 30 
     scrollbar $base.cpd23.01.cpd24.01 \
@@ -2421,7 +2421,7 @@ break
         -side left 
     pack $base.cpd23.01.fra18.cpd22.upframe \
         -in $base.cpd23.01.fra18.cpd22 -anchor center -expand 0 -fill none \
-        -side top 
+        -side top
     pack $base.cpd23.01.fra18.cpd22.centerframe \
         -in $base.cpd23.01.fra18.cpd22 -anchor center -expand 0 -fill none \
         -side top 
