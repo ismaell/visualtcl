@@ -86,7 +86,7 @@ proc vTcl:delete {recipient {w ""}} {
         set destroy_cmd $classes($class,deleteCmd)
     }
     append do "vTcl:unset_alias $w; "
-    append do "vTcl:setup_unbind $w; "
+    append do "vTcl:setup_unbind_widget $w; "
     append do "$destroy_cmd $w; "
     append do "set _cmds \[info commands $w.*\]; "
     append do {foreach _cmd $_cmds {catch {rename $_cmd ""}}}
@@ -520,5 +520,6 @@ proc ::vTcl::findReplace::cancel {} {
     wm withdraw $base
     focus $txtbox
 }
+
 
 
