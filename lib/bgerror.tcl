@@ -33,11 +33,11 @@ namespace eval ::stack_trace {
 
     # this procedure regularizes the stack trace returned in the error info
     #
-    # normally, each level in the call stack is separated by (procedure 
+    # normally, each level in the call stack is separated by (procedure
     # blablah line 3) or ("b" arm line 76) etc.
     #
     # in some instances instead of the stack trace referring to a particular
-    # location in a procedure eg. (procedure blablah line 3) it directly 
+    # location in a procedure eg. (procedure blablah line 3) it directly
     # includes the code; example:
     #
     # invoked from within
@@ -71,7 +71,7 @@ namespace eval ::stack_trace {
     # }
     # "
     #
-    # this makes it easier for the code here to parse the errorinfo; note that 
+    # this makes it easier for the code here to parse the errorinfo; note that
     # code segments are numbered in order to make the code simpler (hey, what
     # don't we do these days)
 
@@ -262,7 +262,7 @@ namespace eval ::stack_trace {
 
         set indices  [$top.$widget(child,stack_trace_callstack) curselection]
 
-        if { [llength $indices] == 0 } return
+        if { [llength $indices] == 0 } {return}
 
         set index [lindex $indices 0]
 
@@ -278,7 +278,7 @@ namespace eval ::stack_trace {
             vTcl:syntax_color $top.$widget(child,stack_trace_details) 0 -1
             ::stack_trace::highlight_details $top $lineno
 
-        } elseif { [string match "(procedure*)" $context] || 
+        } elseif { [string match "(procedure*)" $context] ||
                    [string match "(compiling body of proc*)" $context] } {
 
             regexp {"([^"]+)"} $context matchAll procname
@@ -298,7 +298,7 @@ namespace eval ::stack_trace {
                 ::stack_trace::set_details $top "(no code available)"
             }
 
-        } elseif { [string match "(command bound to event)" $context] || 
+        } elseif { [string match "(command bound to event)" $context] ||
                    [string match {("uplevel" body line 1)} $context] ||
                    [string match {(code segment*)} $context]  ||
                    [string match {(menu invoke)} $context] ||
@@ -466,12 +466,20 @@ namespace eval ::stack_trace {
         ::stack_trace::reset_stack $top
 
         foreach context $stack {
-        ::stack_trace::add_stack $top $context
+            ::stack_trace::add_stack $top $context
         }
 
         # save for future use
         global [vTcl:rename $top.errorInfo]
         set [vTcl:rename $top.errorInfo] $errorInfo
+
+        # show top of stack
+        focus $top.$widget(child,stack_trace_callstack)
+        $top.$widget(child,stack_trace_callstack) selection clear 0 end
+        $top.$widget(child,stack_trace_callstack) selection set 0
+        $top.$widget(child,stack_trace_callstack) activate 0
+
+        ::stack_trace::extract_code $top
     }
 
     proc {::stack_trace::reset_stack} {top} {
@@ -564,6 +572,36 @@ namespace eval ::stack_trace {
         return ""
     }
 
+    proc {::stack_trace::move_level} {top up_or_down} {
+
+        global widget
+        set indices  [$top.$widget(child,stack_trace_callstack) curselection]
+
+        if { [llength $indices] == 0 } return
+
+        set index [lindex $indices 0]
+        set size  [$top.$widget(child,stack_trace_callstack) index end]
+
+        switch $up_or_down {
+            up {
+                if {$index > 0} {
+                    incr index -1
+                }
+            }
+            down {
+                if {$index < $size - 1} {
+                    incr index
+                }
+            }
+        }
+
+        $top.$widget(child,stack_trace_callstack) selection clear 0 end
+        $top.$widget(child,stack_trace_callstack) selection set $index
+        $top.$widget(child,stack_trace_callstack) activate $index
+
+        ::stack_trace::extract_code $top
+    }
+
     variable boxIndex 0
 }
 
@@ -593,83 +631,70 @@ proc vTclWindow.vTcl.stack_trace {base {container 0}} {
     # CREATING WIDGETS
     ###################
     if {!$container} {
-    toplevel $base -class Toplevel \
-        -background #dcdcdc -highlightbackground #dcdcdc \
-        -highlightcolor #000000
-    wm focusmodel $base passive
-    wm geometry $base 585x456+139+158
-    wm minsize $base 1 1
-    wm overrideredirect $base 0
-    wm resizable $base 1 1
-    wm deiconify $base
-    wm title $base "Stack trace"
+        toplevel $base -class Toplevel
+        wm focusmodel $base passive
+        wm geometry $base 575x446+139+158
+        wm minsize $base 1 1
+        wm overrideredirect $base 0
+        wm resizable $base 1 1
+        wm deiconify $base
+        wm title $base "Stack trace"
     }
     frame $base.cpd18 \
-        -background #000000 -height 100 -highlightbackground #dcdcdc \
-        -highlightcolor #000000 -width 200
-    frame $base.cpd18.01 \
-        -background #9900991B99FE -highlightbackground #dcdcdc \
-        -highlightcolor #000000
+        -background #000000 -height 100 -highlightcolor #000000 -width 200
+    frame $base.cpd18.01
     label $base.cpd18.01.lab19 \
         -borderwidth 1 -relief raised \
         -text Error
     frame $base.cpd18.01.cpd20 \
-        -background #dcdcdc -borderwidth 1 -height 30 \
-        -highlightbackground #dcdcdc -highlightcolor #000000 -relief raised \
-        -width 30
+        -borderwidth 1 -height 30 -relief raised -width 30
     scrollbar $base.cpd18.01.cpd20.01 \
-        -command "$base.cpd18.01.cpd20.03 xview" -cursor left_ptr \
-        -orient horiz
+        -command "$base.cpd18.01.cpd20.03 xview" -orient horiz
     scrollbar $base.cpd18.01.cpd20.02 \
-        -command "$base.cpd18.01.cpd20.03 yview" -cursor left_ptr \
-        -orient vert
+        -command "$base.cpd18.01.cpd20.03 yview" -orient vert
     text $base.cpd18.01.cpd20.03 \
         -background #dcdcdc \
         -font [vTcl:font:get_font "vTcl:font8"] \
-        -foreground #000000 -height 1 -highlightbackground #ffffff \
+        -foreground #000000 -highlightbackground #ffffff \
         -highlightcolor #000000 -selectbackground #008080 \
-        -selectforeground #ffffff -width 8 \
+        -selectforeground #ffffff \
         -xscrollcommand "$base.cpd18.01.cpd20.01 set" \
         -yscrollcommand "$base.cpd18.01.cpd20.02 set"
-    frame $base.cpd18.02 \
-        -background #9900991B99FE -highlightbackground #dcdcdc \
-        -highlightcolor #000000
-    frame $base.cpd18.02.cpd21 \
-        -background #000000 -height 100 -highlightbackground #dcdcdc \
-        -highlightcolor #000000 -width 200
-    frame $base.cpd18.02.cpd21.01 \
-        -background #9900991B99FE -highlightbackground #dcdcdc \
-        -highlightcolor #000000
+    frame $base.cpd18.02
+    frame $base.cpd18.02.cpd21 -background #000000
+    frame $base.cpd18.02.cpd21.01
     frame $base.cpd18.02.cpd21.01.cpd22 \
-        -background #dcdcdc -borderwidth 1 -height 30 \
-        -highlightbackground #dcdcdc -highlightcolor #000000 -relief raised \
-        -width 30
+        -borderwidth 1 -height 30 -relief raised -width 30
     listbox $base.cpd18.02.cpd21.01.cpd22.01 \
         -xscrollcommand "$base.cpd18.02.cpd21.01.cpd22.02 set" \
-        -yscrollcommand "$base.cpd18.02.cpd21.01.cpd22.03 set"
-    bind $base.cpd18.02.cpd21.01.cpd22.01 <ButtonRelease-1> {
-        set window %W
-        set components [split $window .]
-        set components [lrange $components 0 2]
-
-        ::stack_trace::extract_code [join $components .]
-    }
+        -yscrollcommand "$base.cpd18.02.cpd21.01.cpd22.03 set" \
+        -background white
+    bindtags $base.cpd18.02.cpd21.01.cpd22.01 \
+        "Listbox $base.cpd18.02.cpd21.01.cpd22.01 $base all"
+    bind $base.cpd18.02.cpd21.01.cpd22.01 <ButtonPress-1> \
+        "focus %W"
+    bind $base.cpd18.02.cpd21.01.cpd22.01 <ButtonRelease-1> \
+        "::stack_trace::extract_code $base"
+    bind $base.cpd18.02.cpd21.01.cpd22.01 <Key-Up> \
+        "::stack_trace::extract_code $base"
+    bind $base.cpd18.02.cpd21.01.cpd22.01 <Key-Down> \
+        "::stack_trace::extract_code $base"
     scrollbar $base.cpd18.02.cpd21.01.cpd22.02 \
-        -command "$base.cpd18.02.cpd21.01.cpd22.01 xview" -cursor left_ptr \
-        -orient horiz
+        -command "$base.cpd18.02.cpd21.01.cpd22.01 xview" -orient horiz
     scrollbar $base.cpd18.02.cpd21.01.cpd22.03 \
-        -command "$base.cpd18.02.cpd21.01.cpd22.01 yview" -cursor left_ptr \
-        -orient vert
-    frame $base.cpd18.02.cpd21.01.fra01 
+        -command "$base.cpd18.02.cpd21.01.cpd22.01 yview" -orient vert
+    frame $base.cpd18.02.cpd21.01.fra01
     button $base.cpd18.02.cpd21.01.fra01.but1 \
         -image icon_message.gif \
         -command "::stack_trace::set_details $base \[vTcl:at [vTcl:rename $base.errorInfo] \]"
     vTcl:set_balloon $base.cpd18.02.cpd21.01.fra01.but1 "Show errorInfo"
     button $base.cpd18.02.cpd21.01.fra01.but2 \
-        -image up -width 20 -height 20
+        -image up -width 20 -height 20 \
+        -command "::stack_trace::move_level $base up"
     vTcl:set_balloon $base.cpd18.02.cpd21.01.fra01.but2 "Up one stack level"
     button $base.cpd18.02.cpd21.01.fra01.but3 \
-        -image down -width 20 -height 20
+        -image down -width 20 -height 20  \
+        -command "::stack_trace::move_level $base down"
     vTcl:set_balloon $base.cpd18.02.cpd21.01.fra01.but3 "Down one stack level"
     frame $base.cpd18.02.cpd21.02 \
         -background #9900991B99FE -highlightbackground #dcdcdc \
@@ -680,10 +705,10 @@ proc vTclWindow.vTcl.stack_trace {base {container 0}} {
         -width 30
     scrollbar $base.cpd18.02.cpd21.02.cpd23.01 \
         -command "$base.cpd18.02.cpd21.02.cpd23.03 xview" -cursor left_ptr \
-        -orient horiz 
+        -orient horiz
     scrollbar $base.cpd18.02.cpd21.02.cpd23.02 \
         -command "$base.cpd18.02.cpd21.02.cpd23.03 yview" -cursor left_ptr \
-        -orient vert 
+        -orient vert
     text $base.cpd18.02.cpd21.02.cpd23.03 \
         -background #dcdcdc -font $vTcl(pr,font_fixed) \
         -foreground #000000 -height 1 -highlightbackground #ffffff \
@@ -850,15 +875,11 @@ proc vTclWindow.vTcl.bgerror {base {container 0}} {
             destroy $base"
     }
     frame $base.fra20 \
-        -background #dcdcdc -borderwidth 2 -height 75 \
-        -highlightbackground #dcdcdc -highlightcolor #000000 -width 125
+        -borderwidth 2
     label $base.fra20.lab21 \
-        -background #dcdcdc -bitmap error -borderwidth 0 -foreground #000000 \
-        -highlightbackground #dcdcdc -highlightcolor #000000 -padx 0 -pady 0 \
-        -relief raised -text label
-    frame $base.fra20.cpd23 \
-        -background #dcdcdc -height 30 -highlightbackground #dcdcdc \
-        -highlightcolor #000000 -width 30
+        -bitmap error -borderwidth 0 \
+        -padx 0 -pady 0 -relief raised -text label
+    frame $base.fra20.cpd23
     scrollbar $base.fra20.cpd23.02 \
         -command "$base.fra20.cpd23.03 yview" -cursor left_ptr \
         -orient vert
@@ -869,8 +890,7 @@ proc vTclWindow.vTcl.bgerror {base {container 0}} {
         -selectforeground #ffffff -width 8 -wrap word \
         -yscrollcommand "$base.fra20.cpd23.02 set"
     frame $base.fra25 \
-        -background #dcdcdc -borderwidth 2 -height 75 \
-        -highlightbackground #dcdcdc -highlightcolor #000000 -width 125
+        -borderwidth 2
     button $base.fra25.but26 \
         -padx 9 -text OK \
         -command "
@@ -952,5 +972,3 @@ proc bgerror {error} {
 
     return -code break
 }
-
-

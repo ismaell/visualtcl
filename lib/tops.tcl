@@ -201,7 +201,8 @@ proc vTclWindow.vTcl.toplist {args} {
         -in .vTcl.toplist -anchor center -expand 1 -fill both -ipadx 0 \
         -ipady 0 -padx 0 -pady 0 -side top 
     listbox .vTcl.toplist.f2.list \
-        -yscrollcommand {.vTcl.toplist.f2.sb4 set} -exportselection 0
+        -yscrollcommand {.vTcl.toplist.f2.sb4 set} -exportselection 0 \
+        -background white
     pack .vTcl.toplist.f2.list \
         -in .vTcl.toplist.f2 -anchor center -expand 1 -fill both -ipadx 0 \
         -ipady 0 -padx 0 -pady 0 -side left 

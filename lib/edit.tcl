@@ -158,7 +158,6 @@ proc ::vTcl::findReplace::window {{newBase ""} {container 0}} {
     if {!$container} {
 	toplevel $base -class Toplevel -cursor {}
 	wm focusmodel $base passive
-	wm geometry $base 450x175+215+102; update
 	wm maxsize $base 1028 753
 	wm minsize $base 104 1
 	wm overrideredirect $base 0
@@ -172,8 +171,8 @@ proc ::vTcl::findReplace::window {{newBase ""} {container 0}} {
         -pady 1 -text {Find what:} -underline 2
     label $base.fra22.labelReplaceWith \
         -pady 1 -text {Replace with:} -underline 1
-    entry $base.fra22.findEnt
-    entry $base.fra22.replaceEnt
+    entry $base.fra22.findEnt -width 40 -background white
+    entry $base.fra22.replaceEnt -width 40 -background white
     button $base.findBut \
         -padx 3m -pady 1 -text {Find Next} \
         -underline 0 -command ::vTcl::findReplace::find

@@ -66,7 +66,7 @@ VTCL_HOME=$VTCL_HOME
 export PATH_TO_WISH
 export VTCL_HOME
 
-exec \${PATH_TO_WISH} \${VTCL_HOME}/vt.tcl \$*
+exec \${PATH_TO_WISH} \${VTCL_HOME}/vtcl.tcl \$*
 EOF
 
 chmod +x $VTCL_HOME/vtcl

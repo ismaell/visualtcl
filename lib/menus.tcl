@@ -849,7 +849,8 @@ proc vTclWindow.vTclMenuEdit {base menu} {
         -borderwidth 1 -height 30 -relief raised -width 30
     listbox $base.cpd24.01.cpd25.01 \
         -xscrollcommand "$base.cpd24.01.cpd25.02 set" \
-        -yscrollcommand "$base.cpd24.01.cpd25.03 set"
+        -yscrollcommand "$base.cpd24.01.cpd25.03 set" \
+        -background white
     bindtags $base.cpd24.01.cpd25.01 \
         "Listbox $base.cpd24.01.cpd25.01 $base all"
     bind $base.cpd24.01.cpd25.01 <Button-1> {
