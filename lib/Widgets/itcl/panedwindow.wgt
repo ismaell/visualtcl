@@ -25,9 +25,10 @@ proc vTcl:widget:panedwindow:inscmd {target} {
 proc vTcl:widget:panedwindow:treeChildrenCmd {target {diff \#-1}} {
 
     set children ""
+    set wantsdiff [expr {$diff != ""}]
 
     foreach site [$target childsite] {
-        foreach child [vTcl:list_widget_tree $site] {
+        foreach child [vTcl:complete_widget_tree $site $wantsdiff] {
             lappend children $child$diff
         }
     }
