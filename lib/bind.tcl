@@ -67,12 +67,12 @@ proc vTclWindow.vTcl.bind {args} {
     set widget(AddTag) $base.cpd21.01.fra22.but27
     set widget(DeleteTag) $base.cpd21.01.fra22.but28
     interp alias {} DeleteTag {} vTcl:WidgetProc $base.cpd21.01.fra22.but28
-    
+
     ###################
     # CREATING WIDGETS
     ###################
     if {!$container} {
-        toplevel $base -class Toplevel
+        toplevel $base -class Toplevel -menu $base.m37
         wm focusmodel $base passive
         wm withdraw $base
         wm geometry $base 660x514+264+138
@@ -84,32 +84,83 @@ proc vTclWindow.vTcl.bind {args} {
         wm title $base "Widget bindings"
         wm transient .vTcl.bind .vTcl
     }
+    menu $base.m37
+    $base.m37 add cascade \
+        -menu "$base.m37.men38" -label Insert
+    $base.m37 add cascade \
+        -menu "$base.m37.men41" -label Move
+    $base.m37 add cascade \
+        -menu "$base.m37.men40" -label Add
+    $base.m37 add cascade \
+        -menu "$base.m37.men39" -label Delete
+    menu $base.m37.men38 -tearoff 0 \
+        -postcommand "vTcl:enable_entries $base.m37.men38 \
+                     \$::widgets_bindings::uistate(AddBinding)"
+    foreach ev {Button-1        Button-2        Button-3
+                ButtonRelease-1 ButtonRelease-2 ButtonRelease-3
+                Motion          Enter           Leave
+                KeyPress        KeyRelease      FocusIn
+                FocusOut} {
+        $base.m37.men38 add command \
+            -command "::widgets_bindings::add_binding <$ev>" \
+            -label $ev
+    }
+    $base.m37.men38 add command \
+        -command {Window show .vTcl.newbind} \
+        -label Advanced...
+    menu $base.m37.men39 -tearoff 0 \
+        -postcommand "$base.m37.men39 entryconfigure 0 -state \
+                     \$::widgets_bindings::uistate(RemoveBinding)
+                      $base.m37.men39 entryconfigure 1 -state \
+                     \$::widgets_bindings::uistate(DeleteTag)"
+    $base.m37.men39 add command \
+        -command ::widgets_bindings::delete_binding \
+        -label Event
+    $base.m37.men39 add command \
+        -command ::widgets_bindings::delete_tag \
+        -label Tag
+    menu $base.m37.men40 -tearoff 0
+    $base.m37.men40 add command \
+        -command {vTcl:Toplevel:WidgetProc .vTcl.newtag ShowModal} \
+        -label Tag...
+    menu $base.m37.men41 -tearoff 0 \
+        -postcommand "$base.m37.men41 entryconfigure 0 -state \
+                     \$::widgets_bindings::uistate(MoveTagUp)
+                      $base.m37.men41 entryconfigure 1 -state \
+                     \$::widgets_bindings::uistate(MoveTagDown)"
+    $base.m37.men41 add command \
+        -command {::widgets_bindings::movetag up} \
+        -label Up
+    $base.m37.men41 add command \
+        -command {::widgets_bindings::movetag down} \
+        -label Down
+
     frame $base.fra22 \
         -borderwidth 2 -height 75 \
-        -width 125 
+        -width 125
     button $base.fra22.but24 \
         -image [vTcl:image:get_image "ok.gif"] \
         -padx 9 -pady 3 -text button -command "Window hide .vTcl.bind"
     vTcl:set_balloon $base.fra22.but24 "Close"
     frame $base.cpd21 \
         -background #000000 -height 100 -highlightbackground #dcdcdc \
-        -highlightcolor #000000 -width 200 
+        -highlightcolor #000000 -width 200
     frame $base.cpd21.01 \
         -background #9900991B99FE -highlightbackground #dcdcdc \
-        -highlightcolor #000000 
+        -highlightcolor #000000
     frame $base.cpd21.01.fra22 \
         -background #dcdcdc -borderwidth 2 -height 75 \
-        -highlightbackground #dcdcdc -highlightcolor #000000 -width 125 
+        -highlightbackground #dcdcdc -highlightcolor #000000 -width 125
     menubutton $base.cpd21.01.fra22.men20 \
         -height 23 \
         -image [vTcl:image:get_image "add.gif"] \
         -menu "$base.cpd21.01.fra22.men20.m" -padx 0 -pady 0 -relief raised \
-        -text menu -width 23 
+        -text menu -width 23
     menu $base.cpd21.01.fra22.men20.m \
         -borderwidth 1 \
-        -tearoff 0 
+        -tearoff 0
     $base.cpd21.01.fra22.men20.m add command \
-        -command {::widgets_bindings::add_binding <Button-1>} -label Button-1 
+        -command {::widgets_bindings::add_binding <Button-1>} -label Button-1
     $base.cpd21.01.fra22.men20.m add command \
         -command {::widgets_bindings::add_binding <Button-2>} -label Button-2
     $base.cpd21.01.fra22.men20.m add command \
@@ -119,7 +170,7 @@ proc vTclWindow.vTcl.bind {args} {
         -label ButtonRelease-1
     $base.cpd21.01.fra22.men20.m add command \
         -command {::widgets_bindings::add_binding <ButtonRelease-2>} \
-        -label ButtonRelease-2 
+        -label ButtonRelease-2
     $base.cpd21.01.fra22.men20.m add command \
         -command {::widgets_bindings::add_binding <ButtonRelease-3>} \
         -label ButtonRelease-3 
@@ -235,14 +286,14 @@ proc vTclWindow.vTcl.bind {args} {
         -label Button1 
     $base.cpd21.01.cpd25.01.menu add command \
         -command {::widgets_bindings::right_click_modifier Button2} \
-        -label Button2 
+        -label Button2
     $base.cpd21.01.cpd25.01.menu add command \
         -command {::widgets_bindings::right_click_modifier Button3} \
-        -label Button3 
+        -label Button3
     scrollbar $base.cpd21.01.cpd25.02 \
         -activebackground #dcdcdc -background #dcdcdc \
         -command "$base.cpd21.01.cpd25.01 xview" \
-        -orient horizontal -troughcolor #dcdcdc  
+        -orient horizontal -troughcolor #dcdcdc
     scrollbar $base.cpd21.01.cpd25.03 \
         -activebackground #dcdcdc -background #dcdcdc \
         -command "$base.cpd21.01.cpd25.01 yview" \
@@ -314,7 +365,7 @@ proc vTclWindow.vTcl.bind {args} {
         set root [ lreplace $root $nb $nb ]
         set root [ join $root . ]
         set width [ winfo width $root ].0
-        
+
         set val [ expr (%X - [winfo rootx $root]) /$width ]
     
         if { $val >= 0 && $val <= 1.0 } {
@@ -330,7 +381,7 @@ proc vTclWindow.vTcl.bind {args} {
     pack $base.fra22 \
         -in $base -anchor center -expand 0 -fill x -side top 
     pack $base.fra22.but24 \
-        -in $base.fra22 -anchor center -expand 0 -fill none -side right 
+        -in $base.fra22 -anchor center -expand 0 -fill none -side right
     pack $base.cpd21 \
         -in $base -anchor center -expand 1 -fill both -side top
     place $base.cpd21.01 \
@@ -368,12 +419,12 @@ proc vTclWindow.vTcl.bind {args} {
         -sticky ew 
     grid $base.cpd21.01.cpd25.03 \
         -in $base.cpd21.01.cpd25 -column 1 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky ns 
+        -sticky ns
     place $base.cpd21.02 \
         -x 0 -relx 1 -y 0 -width -1 -relwidth 0.6319 -relheight 1 -anchor ne \
         -bordermode ignore 
     pack $base.cpd21.02.cpd21 \
-        -in $base.cpd21.02 -anchor center -expand 1 -fill both -side top 
+        -in $base.cpd21.02 -anchor center -expand 1 -fill both -side top
     grid columnconf $base.cpd21.02.cpd21 0 -weight 1
     grid rowconf $base.cpd21.02.cpd21 0 -weight 1
     grid $base.cpd21.02.cpd21.01 \
@@ -397,6 +448,11 @@ proc vTclWindow.vTcl.bind {args} {
     vTcl:set_balloon $widget(DeleteTag)     "Delete tag"
 
     Window hide .vTcl.newbind
+
+    array set ::widgets_bindings::uistate {
+          AddBinding    disabled   RemoveBinding disabled
+          MoveTagUp     disabled   MoveTagDown   disabled
+          DeleteTag     disabled }
 
     ::widgets_bindings::init
 
@@ -587,13 +643,13 @@ proc vTclWindow.vTcl.newbind {base {container 0}} {
     pack $base.fra36.ent38 \
         -in $base.fra36 -anchor center -expand 1 -fill x -side left 
     pack $base.fra39 \
-        -in $base -anchor center -expand 0 -fill none -pady 5 -side top 
+        -in $base -anchor center -expand 0 -fill none -pady 5 -side top
     pack $base.fra39.but40 \
         -in $base.fra39 -anchor center -expand 0 -fill none -padx 10 \
         -side left 
     pack $base.fra39.but41 \
         -in $base.fra39 -anchor center -expand 0 -fill none -padx 10 \
-        -side right 
+        -side right
 
     BindingsModifiers delete 0 end
     foreach modifier {
@@ -947,7 +1003,7 @@ namespace eval ::widgets_bindings {
         if {![::widgets_bindings::is_editable_tag $tag]} return
 
         regexp <(.*)> $event matchAll event_name
-         
+
         # unbind old event first
         bind $tag $event ""
         set ::widgets_bindings::lasttag ""
@@ -955,7 +1011,7 @@ namespace eval ::widgets_bindings {
         
         # rebind new event
         set event [::widgets_bindings::set_modifier_in_event  $event $modifier]
-            
+
         bind $tag $event [TextBindings get 0.0 end]
         
         ::widgets_bindings::fill_bindings $target
@@ -997,54 +1053,62 @@ namespace eval ::widgets_bindings {
         set index [lindex $indices 0]
         
         if {$index == ""} {
-            AddBinding    configure -state disabled
-            RemoveBinding configure -state disabled
-            MoveTagUp     configure -state disabled
-            MoveTagDown   configure -state disabled
-            DeleteTag     configure -state disabled
+            array set ::widgets_bindings::uistate {
+                AddBinding    disabled   RemoveBinding disabled
+                MoveTagUp     disabled   MoveTagDown   disabled
+                DeleteTag     disabled }
+            ::widgets_bindings::set_uistate
             return
         }
-        
+
         set tag ""
         set event ""
-        
+
         ::widgets_bindings::find_tag_event \
             $widget(ListboxBindings) $index tag event
-        
+
         if {[::widgets_bindings::is_editable_tag $tag]} {
-            AddBinding configure -state normal
-            
+            array set ::widgets_bindings::uistate { AddBinding normal }
+
             if {$event == ""} {
-            	DeleteTag configure -state normal
-                RemoveBinding configure -state disabled
+                array set ::widgets_bindings::uistate {
+                    DeleteTag normal RemoveBinding disabled }
             } else {
-                RemoveBinding configure -state normal
-                DeleteTag     configure -state disabled
+                array set ::widgets_bindings::uistate {
+                    RemoveBinding normal DeleteTag disabled }
             }
         } else {
-            AddBinding    configure -state disabled
-            RemoveBinding configure -state disabled
-            DeleteTag     configure -state disabled
+            array set ::widgets_bindings::uistate {
+                AddBinding  disabled  RemoveBinding disabled
+                DeleteTag   disabled }
         }
 
         set target $::widgets_bindings::target
 
         if {$event == ""} {
             if {$index > 0} {
-                MoveTagUp   configure -state normal
+                array set ::widgets_bindings::uistate { MoveTagUp normal }
             } else {
-                MoveTagUp   configure -state disabled
+                array set ::widgets_bindings::uistate { MoveTagUp disabled }
             }
 
             set pos [lsearch -exact $vTcl(bindtags,$target) $tag]
             if {$pos == [expr [llength $vTcl(bindtags,$target)] - 1]} {
-                MoveTagDown configure -state disabled
+                array set ::widgets_bindings::uistate { MoveTagDown disabled }
             } else {
-                MoveTagDown configure -state normal
+                array set ::widgets_bindings::uistate { MoveTagDown normal }
             }
         } else {
-            MoveTagUp   configure -state disabled
-            MoveTagDown configure -state disabled
+            array set ::widgets_bindings::uistate {
+                MoveTagUp   disabled  MoveTagDown disabled }
+        }
+
+        ::widgets_bindings::set_uistate
+    }
+
+    proc {::widgets_bindings::set_uistate} {} {
+        foreach name [array names ::widgets_bindings::uistate] {
+            $name configure -state $::widgets_bindings::uistate($name)
         }
     }
 
@@ -1054,7 +1118,7 @@ namespace eval ::widgets_bindings {
         # before selecting a different binding, make sure we
         # save the current one
         ::widgets_bindings::save_current_binding
-        
+
         # w is the bindings editor window
         # target is the widgets whose bindings we want to edit
         

@@ -216,3 +216,11 @@ proc vTcl:updateRcFileMenu {} {
         incr i
     }
 }
+
+proc vTcl:enable_entries {menu state} {
+    set last [$menu index end]
+    if {$last == "none"} return
+    for {set i 0} {$i <= $last} {incr i} {
+        $menu entryconfigure $i -state $state
+    }
+}
