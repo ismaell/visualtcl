@@ -985,18 +985,6 @@ proc vTcl:update_label {t} {
     }
 }
 
-proc vTcl:set_label {t} {
-    global vTcl
-    if {$t == ""} {return}
-    if [catch {set txt [$t cget -text]}] {
-        return
-    }
-    set label [vTcl:get_string "Setting label for $t" $t $txt]
-    $t conf -text $label
-    vTcl:place_handles $t
-    set vTcl(w,opt,-text) $label
-}
-
 proc vTcl:set_textvar {t} {
     global vTcl
     if {$t == ""} {return}
@@ -1524,7 +1512,20 @@ namespace eval vTcl::widgets {
 
     ## return the list of libraries that have been successfully loaded
     proc loadedLibraries {} {
-        return $::vTcl(w,libs)
+        return $::vTcl(libs)
+    }
+
+    ## verify that the list of libraries passed as parameters are loaded
+    ## returns the missing ones
+    proc verifyLibraries {libraries} {
+        set loaded [loadedLibraries]
+        set result ""
+        foreach library $libraries {
+            if {[lsearch -exact $loaded $library] == -1} {
+                lappend result $library
+            }
+        }
+        return $result
     }
 }
 

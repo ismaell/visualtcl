@@ -635,7 +635,21 @@ namespace eval ::vTcl::compounds {
     ## inserts a compound
     proc putCompound {type compoundName} {
         set spc ${type}::[list $compoundName]
-        set rootclass [vTcl:at ${spc}::class]
+        set rootclass [set ${spc}::class]
+
+        ## if no libs have been specified, we assume the default
+        if {![info exists ${spc}::libraries]} {
+            set ${spc}::libraries core
+        }
+
+        set missingLibs [vTcl::widgets::verifyLibraries [set ${spc}::libraries]]
+        if {![lempty $missingLibs]} {
+            ::vTcl::MessageBox -icon error -message \
+"Cannot insert compound '[join $compoundName]' because the following libraries are not loaded:
+
+[join $missingLibs]" -title "Missing Libraries"
+            return
+        }
 
         if {$::vTcl(pr,autoplace) || $rootclass == "Toplevel"} {
             autoPlaceCompound $type $compoundName wm {}
@@ -747,5 +761,6 @@ namespace eval ::vTcl::compounds {
         namespace delete $spc
     }
 }
+
 
 

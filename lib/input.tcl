@@ -86,6 +86,18 @@ proc vTcl:string_window {title base {value ""}} {
     grab $base
 }
 
+proc vTcl:set_label {t} {
+    global vTcl
+    if {$t == ""} {return}
+    if [catch {set txt [$t cget -text]}] {
+        return
+    }
+    set label [vTcl:get_string "Setting label for $t" $t $txt]
+    $t conf -text $label
+    vTcl:place_handles $t
+    set vTcl(w,opt,-text) $label
+}
+
 proc vTcl:set_text {target} {
     global vTcl
     set base .vTcl.[vTcl:rename $target]
@@ -114,6 +126,7 @@ proc vTcl:get_text {base text} {
 proc vTcl:text_window {base title target} {
     global vTcl
     toplevel $base -class Toplevel
+    wm transient $base .vTcl
     wm focusmodel $base passive
     wm geometry $base 274x289+[expr $vTcl(mouse,X)-130]+[expr $vTcl(mouse,Y)-20]
     wm maxsize $base 1265 994
@@ -263,5 +276,6 @@ proc select {contents title {selectMode single}} {
     return [vTcl:at ::${top}::selectedItems]
 }
 }
+
 
 
