@@ -495,31 +495,34 @@ proc vTclWindow.vTcl.itemEdit {base} {
     wm resizable $base 1 1
     wm title $base "Edit Pages"
     vTcl:FireEvent $base <<Create>>
-    wm protocol $base WM_DELETE_WINDOW "destroy $base"
+    wm protocol $base WM_DELETE_WINDOW "::vTcl::itemEdit::close $base"
+    wm transient $base .vTcl
+
+    ###################
+    # DEFINING ALIASES
+    ###################
+    vTcl:DefineAlias $base.cpd37.01.cpd38.01 ItemsListbox vTcl:WidgetProc $base 1
 
     frame $base.fra34 \
         -width 125
     vTcl:toolbar_button $base.fra34.but35 \
         -image [vTcl:image:get_image add.gif] \
-        -text button
-    bindtags $base.fra34.but35 "$base.fra34.but35 Button $base all _vTclBalloon"
-    bind $base.fra34.but35 <<SetBalloon>> {
-        set ::vTcl::balloon::%W {Add}
-    }
+        -command "::vTcl::itemEdit::addItem $base"
+    vTcl:set_balloon $base.fra34.but35 {Add}
     vTcl:toolbar_button $base.fra34.but36 \
         -image [vTcl:image:get_image remove.gif] \
-        -text button
-    bindtags $base.fra34.but36 "$base.fra34.but36 Button $base all _vTclBalloon"
-    bind $base.fra34.but36 <<SetBalloon>> {
-        set ::vTcl::balloon::%W {Delete}
-    }
+        -command "::vTcl::itemEdit::removeItem $base"
+    vTcl:set_balloon $base.fra34.but36 {Delete}
+    vTcl:toolbar_button $base.fra34.but37 \
+        -image up -command "::vTcl::itemEdit::moveUpOrDown $base up"
+    vTcl:set_balloon $base.fra34.but37 {Move Up}
+    vTcl:toolbar_button $base.fra34.but38 \
+        -image down -command "::vTcl::itemEdit::moveUpOrDown $base down"
+    vTcl:set_balloon $base.fra34.but38 {Move Down}
     vTcl:toolbar_button $base.fra34.but39 \
         -image [vTcl:image:get_image ok.gif] \
-        -command "destroy $base"
-    bindtags $base.fra34.but39 "$base.fra34.but39 Button $base all _vTclBalloon"
-    bind $base.fra34.but39 <<SetBalloon>> {
-        set ::vTcl::balloon::%W {Close}
-    }
+        -command "::vTcl::itemEdit::close $base"
+    vTcl:set_balloon $base.fra34.but39 {Close}
     frame $base.cpd37 \
         -background #000000 -height 100 -width 200
     frame $base.cpd37.01 \
@@ -563,6 +566,10 @@ proc vTclWindow.vTcl.itemEdit {base} {
         -in $base.fra34 -anchor center -expand 0 -fill none -side left
     pack $base.fra34.but36 \
         -in $base.fra34 -anchor center -expand 0 -fill none -side left
+    pack $base.fra34.but37 \
+        -in $base.fra34 -anchor center -expand 0 -fill none -side left
+    pack $base.fra34.but38 \
+        -in $base.fra34 -anchor center -expand 0 -fill none -side left
     pack $base.fra34.but39 \
         -in $base.fra34 -anchor center -expand 0 -fill none -side right
     pack $base.cpd37 \
@@ -598,15 +605,57 @@ proc vTclWindow.vTcl.itemEdit {base} {
 
 namespace eval ::vTcl::itemEdit {
 
+    variable dlgStatus
+    variable cmds
+    variable target
+    set dlgStatus 0
+
     proc edit {target cmds} {
-        Window show .vTcl.itemEdit
-        init .vTcl.itemEdit $target $cmds
+        set top .vTcl.itemEdit
+        Window show $top
+        init $top $target $cmds
+        vTcl:dialog_wait $top ::vTcl::itemEdit::dlgStatus 1
+        destroy $top
     }
 
-    proc init {top target cmds} {
-        set list_items [::${cmds}::get_items $target]
+    proc init {top w cmdsEdit} {
+        variable cmds
+        variable target
+
+        set cmds $cmdsEdit
+        set target $w
+        set list_items [::${cmds}::getItems $target]
         set current [lindex $list_items 0]
         set list_items [lrange $list_items 1 end]
         set ::${top}::list_items $list_items
+        ${top}.ItemsListbox selection set $current
+    }
+
+    proc close {top} {
+        variable dlgStatus
+
+        set dlgStatus 1
+    }
+
+    proc addItem {top} {
+        variable cmds
+        variable target
+
+        set added [::${cmds}::addItem $target]
+        lappend ::${top}::list_items $added
+        ${top}.ItemsListbox selection clear 0 end
+        ${top}.ItemsListbox selection set end
+        vTcl:setup_bind_tree $target
+    }
+
+    proc removeItem {top} {
+        variable cmds
+        variable target
+
+        set current [${top}.ItemsListbox curselection]
+        ::${cmds}::removeItem $target [lindex $current 0]
+    }
+
+    proc moveUpOrDown {top direction} {
     }
 }

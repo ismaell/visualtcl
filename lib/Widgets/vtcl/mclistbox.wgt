@@ -66,7 +66,7 @@ OptionConfigCmd -_mclistbox_columns     editArg    vTcl::widgets::vtcl::mclistbo
 
 namespace eval ::vTcl::widgets::vtcl::mclistbox::edit {
 
-    proc get_items {target} {
+    proc getItems {target} {
         ## first item in the list is the current index
         set names [$target column names]
         set values 0
@@ -75,6 +75,19 @@ namespace eval ::vTcl::widgets::vtcl::mclistbox::edit {
             lappend values $label_opt
         }
         return $values
+    }
+
+    proc addItem {target} {
+        set pages [$target column names]
+        set index 0
+        ## repeat until we find an unused page number
+        while {1} {
+            incr index
+            set newpage "col$index"
+            if {[lsearch -exact $pages $newpage] == -1} break
+        }
+        $target column add $newpage -label "Column $index"
+        return "Column $index"
     }
 }
 

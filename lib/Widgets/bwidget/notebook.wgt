@@ -43,7 +43,7 @@ CompoundCmd     vTcl::widgets::bwidgets::notebook::compoundCmd
 
 namespace eval ::vTcl::widgets::bwidgets::notebook::edit {
 
-    proc get_items {target} {
+    proc getItems {target} {
         ## first item in the list is the current index
         set sites [$target pages]
         set current [$target index [$target raise]]
@@ -52,6 +52,21 @@ namespace eval ::vTcl::widgets::bwidgets::notebook::edit {
             lappend values [$target itemcget $site -text]
         }
         return $values
+    }
+
+    proc addItem {target} {
+        set pages [$target pages]
+        set index 0
+        ## repeat until we find an unused page number
+        while {1} {
+            incr index
+            set newpage "page$index"
+            if {[lsearch -exact $pages $newpage] == -1} break
+        }
+        $target insert end $newpage -text "New Page"
+        $target raise $newpage
+        vTcl:init_wtree
+        return "New Page"
     }
 }
 
