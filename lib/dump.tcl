@@ -234,6 +234,7 @@ proc vTcl:save_tree {target {basedir ""} {project_name ""}} {
 
     vTcl:status "Saving: collecting options"
 
+    append output [vTcl:dump:dump_user_bind]
     append output [vTcl:dump:save_tops]
 
     set vTcl(var_update) "yes"
@@ -458,12 +459,43 @@ proc vTcl:dump_widget_geom {target basename} {
     return $result
 }
 
+proc vTcl:dump:dump_user_bind {} {
+
+    global vTcl
+
+    # are there any user defined tags at all?
+    set tags $::widgets_bindings::tagslist
+    if {$tags == ""} {
+        return ""
+    }
+
+    set result ""
+
+    foreach tag $tags {
+        set bindlist [lsort [bind $tag]]
+        foreach event $bindlist {
+            set command [bind $tag $event]
+            append result "bind $tag $event \{\n"
+            append result "$vTcl(tab)[string trim $command]\n\}\n"
+        }
+    }
+
+    append result "\n"
+    return $result
+}
+
 proc vTcl:dump_widget_bind {target basename} {
     global vTcl
     set result ""
     if {[catch {bindtags $target \{$vTcl(bindtags,$target)\}}]} {
         return ""
     }
+    # well, let's see if we have to save the bindtags
+    if {$vTcl(bindtags,$target) !=
+        [::widgets_bindings::get_standard_bindtags $target]} {
+            append result "$vTcl(tab)bindtags $target \"$vTcl(bindtags,$target)\"\n"
+    }
+
     set bindlist [lsort [bind $target]]
     foreach i $bindlist {
         set command [bind $target $i]
@@ -780,3 +812,4 @@ proc vTcl:dump:project_info {basedir project} {
     close $fp
     return
 }
+

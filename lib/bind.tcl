@@ -63,7 +63,9 @@ proc vTclWindow.vTcl.bind {args} {
     set {widget(child,TextBindings)} "cpd21.02.cpd21.03"
     interp alias {} TextBindings {} vTcl:WidgetProc $base.cpd21.02.cpd21.03
     set widget(MoveTagUp) $base.cpd21.01.fra22.but25
+    interp alias {} MoveTagUp {} vTcl:WidgetProc $base.cpd21.01.fra22.but25
     set widget(MoveTagDown) $base.cpd21.01.fra22.but26
+    interp alias {} MoveTagDown {} vTcl:WidgetProc $base.cpd21.01.fra22.but26
     set widget(AddTag) $base.cpd21.01.fra22.but27
     
     ###################
@@ -680,7 +682,12 @@ proc vTclWindow.vTcl.newtag {base} {
     button $base.fra20.but21 \
         -text OK -width 8 \
         -command {
-            lappend ::widgets_bindings::tagslist $NewBindingTagName
+            if {$NewBindingTagName != ""} {
+                ::widgets_bindings::addtag $NewBindingTagName
+            } else {
+                ::widgets_bindings::addtag \
+                     [ListboxTags get [lindex [ListboxTags curselection] 0] ]
+            }
             Window destroy .vTcl.newtag } \
         -state disabled
     button $base.fra20.but23 \
@@ -711,9 +718,22 @@ proc vTclWindow.vTcl.newtag {base} {
         if {$NewBindingTagName == ""} {
             NewBindingTagOK configure -state disabled
         } else {
+            ListboxTags selection clear 0 end
             NewBindingTagOK configure -state normal
         }
     }
+    bind $base.fra24.ent28 <ButtonRelease-1> {
+        ListboxTags selection clear 0 end
+    }
+    bind $base.fra24.cpd26.01 <ButtonRelease-1> {
+        set indices [ListboxTags curselection]
+        if { [llength $indices] > 0} {
+            NewBindingTagOK configure -state normal
+            set NewBindingTagName \
+                [ListboxTags get [lindex $indices 0] ]
+        }
+    }
+
     ###################
     # SETTING GEOMETRY
     ###################
@@ -762,6 +782,47 @@ namespace eval ::widgets_bindings {
 
     variable tagslist ""
     
+    proc {::widgets_bindings::addtag} {tag} {
+
+        global vTcl widget
+
+        # new tag ?
+        if {[lsearch -exact $::widgets_bindings::tagslist $tag] == -1} {
+            lappend ::widgets_bindings::tagslist $tag
+        }
+
+        set w $widget(BindingsEditor)
+        set n [vTcl:rename $w]
+        eval set target $${n}::target
+
+        # target has tag in its list ?
+        if {[lsearch -exact $vTcl(bindtags,$target) $tag] == -1} {
+            lappend vTcl(bindtags,$target) $tag
+        }
+
+        ::widgets_bindings::fill_bindings $target
+        ::widgets_bindings::select_show_binding $tag ""     
+    }
+
+    proc {::widgets_bindings::is_editable_tag} {tag} {
+
+        global widget
+
+        set w $widget(BindingsEditor)
+        set n [vTcl:rename $w]
+        eval set target $${n}::target
+
+        if {$tag == $target} {
+            return 1
+        }
+
+        if {[lsearch -exact $::widgets_bindings::tagslist $tag] >= 0} {
+            return 1
+        }
+
+        return 0
+    }
+
     proc {::widgets_bindings::add_binding} {event} {
 
         global widget
@@ -772,7 +833,9 @@ namespace eval ::widgets_bindings {
         
         set w $widget(BindingsEditor)
         set n [vTcl:rename $w]
-        eval set index $${n}::lastselected
+
+        set indices [ListboxBindings curselection]
+        set index [lindex $indices 0]
         
         set tag ""
         set tmp_event ""
@@ -782,9 +845,7 @@ namespace eval ::widgets_bindings {
         
         eval set target $${n}::target
         
-        if {$tag != $target} {
-           return
-        }
+        if {![::widgets_bindings::is_editable_tag $tag]} return
         
         # event already bound ?
         set old_code [bind $tag $event]
@@ -804,11 +865,8 @@ namespace eval ::widgets_bindings {
         set event ""
         
         ::widgets_bindings::find_tag_event $l $index tag event
-        
-        set n [vTcl:rename $widget(BindingsEditor)]
-        eval set target $${n}::target
-        
-        if {$tag   == $target && 
+             
+        if {[::widgets_bindings::is_editable_tag $tag] && 
             $event != ""} {
             return 1
         } else {
@@ -824,19 +882,20 @@ namespace eval ::widgets_bindings {
         set n [vTcl:rename $w]
         eval set target $${n}::target
          
-        if {$tag != $target} return
+        if {![::widgets_bindings::is_editable_tag $tag]} return
+
         regexp <(.*)> $event matchAll event_name
          
         # unbind old event first
-        bind $target $event ""
+        bind $tag $event ""
         set ::${n}::lasttag ""
         set ::${n}::lastevent ""
-         
+        
         # rebind new event
         set event [::widgets_bindings::set_modifier_in_event  $event $modifier]
             
-        bind $target $event [TextBindings get 0.0 end]
-         
+        bind $tag $event [TextBindings get 0.0 end]
+        
         ::widgets_bindings::fill_bindings $target
         ::widgets_bindings::select_show_binding $tag $event
     }
@@ -860,13 +919,11 @@ namespace eval ::widgets_bindings {
             $widget(ListboxBindings) $index tag event
         
         eval set target $${n}::target
+
+        if {![::widgets_bindings::is_editable_tag $tag] || 
+            $event == ""} return
         
-        if {$tag != $target ||
-            $event == ""} {
-           return
-        }
-        
-        bind $target $event ""
+        bind $tag $event ""
         set ::${n}::lasttag ""
         set ::${n}::lastevent ""
         
@@ -877,15 +934,14 @@ namespace eval ::widgets_bindings {
 
         global widget
         
-        set w $widget(BindingsEditor)
-        set n [vTcl:rename $w]
-        
         set indices [ListboxBindings curselection]
         set index [lindex $indices 0]
         
         if {$index == ""} {
             AddBinding    configure -state disabled
             RemoveBinding configure -state disabled
+            MoveTagUp     configure -state disabled
+            MoveTagDown   configure -state disabled
             return
         }
         
@@ -895,9 +951,7 @@ namespace eval ::widgets_bindings {
         ::widgets_bindings::find_tag_event \
             $widget(ListboxBindings) $index tag event
         
-        eval set target $${n}::target
-        
-        if {$tag == $target} {
+        if {[::widgets_bindings::is_editable_tag $tag]} {
             AddBinding configure -state normal
             
             if {$event == ""} {
@@ -908,6 +962,14 @@ namespace eval ::widgets_bindings {
         } else {
             AddBinding    configure -state disabled
             RemoveBinding configure -state disabled
+        }
+
+        if {$event == ""} {
+            MoveTagUp   configure -state normal
+            MoveTagDown configure -state normal
+        } else {
+            MoveTagUp   configure -state disabled
+            MoveTagDown configure -state disabled
         }
     }
 
@@ -931,10 +993,12 @@ namespace eval ::widgets_bindings {
         set ::${n}::bindingslist ""
         ListboxBindings delete 0 end
         
+        set ::${n}::target $target
+
         foreach tag $tags {
         
            ListboxBindings insert end $tag
-           if {$tag == $target} {
+           if {[::widgets_bindings::is_editable_tag $tag]} {
                if {$tk_version > 8.2} {
                    ListboxBindings itemconfigure $index  -foreground blue
                }
@@ -947,7 +1011,7 @@ namespace eval ::widgets_bindings {
            foreach event $events {
               
                ListboxBindings insert end "   $event"
-               if {$tag == $target} {
+               if {[::widgets_bindings::is_editable_tag $tag]} {
                    if {$tk_version > 8.2} {
                        ListboxBindings itemconfigure $index  -foreground blue
                    }
@@ -957,9 +1021,7 @@ namespace eval ::widgets_bindings {
                incr index
            }
         }
-        
-        set ::${n}::target $target
-        
+                
         # enable/disable various buttons
         ::widgets_bindings::enable_toolbar_buttons
     }
@@ -989,7 +1051,15 @@ namespace eval ::widgets_bindings {
     proc {::widgets_bindings::init} {} {
         global widget vTcl
 
-	if {![winfo exists .vTcl.bind]} { return }
+        foreach tag $::widgets_bindings::tagslist {
+            foreach event [bind $tag] {
+                bind $tag $event ""
+            }
+        }
+
+        set ::widgets_bindings::tagslist ""
+
+        if {![winfo exists .vTcl.bind]} { return }
                 
         ListboxBindings delete 0 end
 
@@ -1034,9 +1104,7 @@ namespace eval ::widgets_bindings {
         set n [vTcl:rename $w]
         eval set target $${n}::target
         
-        if {$tag != $target} {
-           return
-        }
+        if {![::widgets_bindings::is_editable_tag $tag]} return
         
         ::widgets_bindings::change_binding $tag $event $modifier
     }
@@ -1058,9 +1126,7 @@ namespace eval ::widgets_bindings {
             return
         }
         
-        if {$tag != $target} {
-           return
-        }
+        if {![::widgets_bindings::is_editable_tag $tag]} return
         
         # debug
         # puts "updating: $tag $event"
@@ -1192,9 +1258,9 @@ namespace eval ::widgets_bindings {
         
         set w $widget(BindingsEditor)
         set n [vTcl:rename $w]
-        eval set target $${n}::target
         
-        if {$tag == $target} {
+        if {[::widgets_bindings::is_editable_tag $tag] &&
+            $event != ""} {
             TextBindings configure  -background white -state normal
             vTcl:syntax_color $widget(TextBindings) 0 -1
             
@@ -1256,5 +1322,23 @@ namespace eval ::widgets_bindings {
             }
     	}
     }
-    
+
+    proc {::widgets_bindings::get_standard_bindtags} {target} {
+        # returns the default binding tags for any widget
+        #
+        # for example:
+        #        .top19 => ".top19 Toplevel all"
+        #        
+        #        .top19.but22 => ".top19.but22 Button .top19 all"
+
+        set class [winfo class $target]
+        if {$class == "Toplevel" || $class == "Vt"} {
+            return [list $target $class all]
+        }
+
+        set toplevel [winfo toplevel $target]
+        return [list $target $class $toplevel all]
+    }
+
 } ; # namespace eval
+
