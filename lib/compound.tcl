@@ -431,11 +431,10 @@ proc vTcl:replace {target replace source} {
     return "$before$replace$after"
 }
 
-proc vTcl:name_compound {t} {
+proc vTcl:name_compound {t {name ""}} {
     global vTcl
     if {$t == "" || ![winfo exists $t]} {return ""}
     set ask_name 1
-    set name ""
     while {$ask_name} {
         set name [vTcl:get_string "Name Compound" $t $name]
         if {$name == ""} {return ""}
@@ -921,5 +920,6 @@ namespace eval ::vTcl::compounds {
         namespace delete $spc
     }
 }
+
 
 

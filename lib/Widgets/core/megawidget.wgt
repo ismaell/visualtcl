@@ -134,7 +134,13 @@ proc cgetCmd {w args} {
 
     proc saveCmd {} {
         set w $::vTcl(w,widget)
-        set newName [vTcl:name_compound $w]
+
+        ## has a name been given before?
+        set oldName ""
+        if {[info exists ::widgets::${w}::compoundName]} {
+            set oldName [set ::widgets::${w}::compoundName]
+        }
+        set newName [vTcl:name_compound $w $oldName]
 
         ## user cancelled?
         if {[lempty $newName]} {
@@ -277,6 +283,7 @@ proc cgetCmd {w args} {
         return "MegaWidget widgetProc: $widgetProc"
     }
 }
+
 
 
 
