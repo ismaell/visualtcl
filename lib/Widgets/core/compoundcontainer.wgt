@@ -31,12 +31,45 @@ DefaultValues   -background -highlightbackground -highlightcolor
 TreeLabel	Compound Container
 MegaWidget      yes
 DumpChildren    no
+InsertCmd       vTcl::widgets::core::compoundcontainer::insertCmd
 CreateCmd       vTcl::widgets::core::compoundcontainer::createCmd
 Export          vTcl::widgets::core::compoundcontainer::createCmd
 TreeChildrenCmd	{vTcl::widgets::core::compoundcontainer::treeChildrenCmd
 		       vTcl::widgets::core::compoundcontainer::treeChildrenChildsite}
 
 namespace eval vTcl::widgets::core::compoundcontainer {
+
+    proc insertCmd {target} {
+        set userCmpds [lsort [vTcl::compounds::enumerateCompounds user]]
+        set items ""
+        foreach userCmpd $userCmpds {
+            lappend items [join $userCmpd]
+        }
+
+        ## no compounds available ? duh!
+        if {[lempty $items]} {
+            return
+        }
+
+        ## ask user to select a compound
+        set compoundName [::vTcl::input::listboxSelect::select $items]
+        if {$compoundName == ""} {
+            return
+         }
+
+        set type user
+        set spc ${type}::$compoundName
+        set cmd ""
+        append cmd "::vTcl::compounds::mergeCompoundCode $type $compoundName"
+        append cmd "; [list ::vTcl::compounds::${spc}::compoundCmd] ${target}.cmpd"
+        append cmd "; pack $target.cmpd -fill both -expand 1"
+        append cmd "; ::vTcl:setup_bind_tree $target"
+        append cmd "; ::vTcl:widget:register_all_widgets $target"
+
+        set do "$cmd"
+        set undo "destroy $target.cmpd"
+        vTcl:push_action $do $undo
+    }
 
     proc createCmd {path args} {
         frame $path -class CompoundContainer
@@ -51,3 +84,4 @@ namespace eval vTcl::widgets::core::compoundcontainer {
         return {}
     }
 }
+
