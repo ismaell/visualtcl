@@ -1,17 +1,43 @@
+##############################################################################
+#
+# Visual TCL - A cross-platform application development environment
+#
+# Copyright (C) 2001 Christian Gavin
+#
+# Description file for BLT Tabset
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+##############################################################################
+
 Class		      Tabset
 Lib		      blt
 
 CreateCmd	      ::blt::tabset
-InsertCmd         vTcl::widgets::blt::tabset::insertCmd
+InsertCmd             vTcl::widgets::blt::tabset::insertCmd
 Icon		      icon_tabset.gif
-DefaultOptions    -relief flat -tearoff 0 -tiers 1
-DefaultValues     -background -borderwidth
-ClassOption       -_blt_tabset_pages
+DefaultOptions        -relief flat -tearoff 0 -tiers 1
+DefaultValues         -background -borderwidth
+ClassOption           -_blt_tabset_pages
 MegaWidget  yes
-TreeChildrenCmd	{vTcl::widgets::blt::tabset::treeChildrenCmd
+TreeChildrenCmd	      {vTcl::widgets::blt::tabset::treeChildrenCmd
 		       vTcl::widgets::blt::tabset::treeChildrenChildsite}
-DumpCmd           vTcl::widgets::blt::tabset::dumpCmd
-CompoundCmd       vTcl::widgets::blt::tabset::compoundCmd
+DumpCmd               vTcl::widgets::blt::tabset::dumpCmd
+CompoundCmd           vTcl::widgets::blt::tabset::compoundCmd
+GetImagesCmd          vTcl::widgets::blt::tabset::getImagesCmd
+GetFontsCmd           vTcl::widgets::blt::tabset::getFontsCmd
 
 set vTcl(option,translate,-window) vTcl::widgets::blt::tabset::windowTranslate
 set vTcl(option,noencase,-window) 1
@@ -260,5 +286,29 @@ namespace eval vTcl::widgets::blt::tabset {
     proc select_page {target index} {
         $target invoke $index
         $target activate $index
+    }
+
+    proc getImagesCmd {target} {
+        set result {}
+        set size [$target size]
+        for {set i 0} {$i < $size} {incr i} {
+            set image [$target tab cget [$target get $i] -image]
+            if {$image != ""} {
+                lappend result $image
+            }
+       }
+       return $result
+   }
+
+    proc getFontsCmd {target} {
+        set result {}
+        set size [$target size]
+        for {set i 0} {$i < $size} {incr i} {
+            set font [$target tab cget [$target get $i] -font]
+            if {$font != ""} {
+                lappend result $font
+            }
+       }
+       return $result
     }
 }

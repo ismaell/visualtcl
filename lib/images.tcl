@@ -120,36 +120,33 @@ proc {vTcl:image:create_new_image} {filename
 }
 
 proc {vTcl:image:get_description} {filename} {
-    global vTcl
     set reference [vTcl:rename $filename]
-    return $vTcl(images,$reference,description)
+    return $::vTcl(images,$reference,description)
 }
 
 proc {vTcl:image:get_type} {filename} {
-    global vTcl
     set reference [vTcl:rename $filename]
-    return $vTcl(images,$reference,type)
+    return $::vTcl(images,$reference,type)
 }
 
 proc {vTcl:image:get_image} {filename} {
-    global vTcl
     set reference [vTcl:rename $filename]
 
     # Let's do some checking first
-    if {![info exists vTcl(images,$reference,image)]} {
+    if {![info exists ::vTcl(images,$reference,image)]} {
         # Well, the path may be wrong; in that case check
         # only the filename instead, without the path.
 
         set imageTail [file tail $filename]
 
-        foreach oneFile $vTcl(images,files) {
+        foreach oneFile $::vTcl(images,files) {
             if {[file tail $oneFile] == $imageTail} {
                 set reference [vTcl:rename $oneFile]
                 break
             }
         }
     }
-    return $vTcl(images,$reference,image)
+    return $::vTcl(images,$reference,image)
 }
 
 proc {vTcl:image:init_img_manager} {} {

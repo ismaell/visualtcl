@@ -37,6 +37,8 @@ NewOption -tearoffcommand   "tearoff cmd"   command
 NewOption -title            "title"         type
 
 DeleteCmd  vTcl:Menu:delete_menu
+GetImagesCmd vTcl::widgets::core::menu::getImagesCmd
+GetFontsCmd  vTcl::widgets::core::menu::getFontsCmd
 
 proc vTcl:Menu:delete_menu {m} {
 
@@ -87,5 +89,25 @@ proc vTcl:Menu:delete_menu {m} {
 
     if {$editor != ""} {
         ::menu_edit::refreshes_existing_editor $editor
+    }
+}
+
+namespace eval vTcl::widgets::core::menu {
+
+    proc getImagesCmd {target} {
+        set result {}
+        set size [$target index end]
+        if {[vTcl:streq $size "none"]} { continue }
+        for {set i 0} {$i <= $size} {incr i} {
+	    if {![catch {$target entrycget $i -image} image]} {
+                lappend result $image
+            }
+        }
+        return $result
+    }
+
+    proc getFontsCmd {target} {
+        ## fonts not yet supported in menu editor
+        return {}
     }
 }

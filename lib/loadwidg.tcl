@@ -392,3 +392,11 @@ proc TreeChildrenCmd {val} {
     global tmp
     set tmp(treeChildrenCmd) $val
 }
+
+proc GetImagesCmd {cmd} {
+    set ::classes($::tmp(class),getImagesCmd) $cmd
+}
+
+proc GetFontsCmd {cmd} {
+    set ::classes($::tmp(class),getFontsCmd) $cmd
+}

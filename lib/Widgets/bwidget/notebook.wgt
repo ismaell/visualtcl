@@ -40,6 +40,7 @@ SelectSiteCmd   vTcl::widgets::bwidgets::notebook::selectSiteCmd
 DeleteSiteCmd   vTcl::widgets::bwidgets::notebook::deleteSiteCmd
 DumpCmd         vTcl::widgets::bwidgets::notebook::dumpCmd
 CompoundCmd     vTcl::widgets::bwidgets::notebook::compoundCmd
+GetImagesCmd    vTcl::widgets::bwidgets::notebook::getImagesCmd
 
 ## Tabbed notebook support
 NewOption -_bwidgets_notebook_pages  "pages"  combobox
@@ -67,11 +68,11 @@ namespace eval ::vTcl::widgets::bwidgets::notebook::edit {
 
     proc getItems {target} {
         ## first item in the list is the current index
-        set sites [$target pages]
+        set pages [$target pages]
         set current [$target index [$target raise]]
         set values $current
-        foreach site $sites {
-            lappend values [$target itemcget $site -text]
+        foreach page $pages {
+            lappend values [$target itemcget $page -text]
         }
         return $values
     }
@@ -210,6 +211,18 @@ namespace eval vTcl::widgets::bwidgets::notebook {
             append result "vTcl:insert_compound \$site [list $compound] pack \{\}; "
         }
         append result "\$target raise [lindex $pages 0]; "
+        return $result
+    }
+
+    proc getImagesCmd {target} {
+        set result {}
+        set pages [$target pages]
+        foreach page $pages {
+            set image [$target itemcget $page -image]
+            if {$image != ""} {
+                lappend result $image
+            }
+        }
         return $result
     }
 }

@@ -740,28 +740,26 @@ proc vTcl:dump:gather_widget_info {} {
     foreach child $children {
 	set c [vTcl:get_class $child]
     	lappend vTcl(dump,libraries) $classes($c,lib)
-        foreach type [list stock user] {
-            if {![catch {$child cget -image} image]
-                && [lsearch $vTcl(images,$type) $image] > -1} {
-                lappend vTcl(dump,${type}Images) $image
-            }
-            if {![catch {$child cget -font} font]
-                && [lsearch $vTcl(fonts,$type) $font] > -1} {
-                lappend vTcl(dump,${type}Fonts) $font
-            }
 
-            if {[vTcl:get_class $child] == "Menu"} {
-                set size [$child index end]
-		if {[vTcl:streq $size "none"]} { continue }
-		for {set i 0} {$i <= $size} {incr i} {
-		    if {![catch {$child entrycget $i -image} image]
-			&& [lsearch $vTcl(images,$type) $image] > -1} {
-			lappend vTcl(dump,${type}Images) $image
-		    }
-		}
+        foreach resource {image font} {
+            set used_${resource} {}
+            if {![catch {$child cget -$resource} $resource]} {
+                lappend used_${resource} [vTcl:at $resource]
             }
-        } ; # foreach type [...]
-    }
+            set cmd get[string totitle $resource]sCmd
+            if {[info exists classes($c,$cmd)]} {
+                set used_${resource} \
+                  [concat [vTcl:at used_${resource}] [$classes($c,$cmd) $child]]
+            }
+            foreach type {stock user} {
+                foreach object [vTcl:at used_${resource}] {
+                    if {[lsearch [vTcl:at vTcl(${resource}s,$type)] $object] > -1} {
+                       lappend vTcl(dump,$type[string totitle $resource]s) $object
+                    }
+                }
+            } ; # foreach type ...
+        } ; # foreach resource ...
+    } ; # foreach child ...
 
     foreach var $vars { set vTcl(dump,$var) [vTcl:lrmdups $vTcl(dump,$var)] }
     set vTcl(dump,libraries) [vTcl:lrmdups $vTcl(dump,libraries)]
