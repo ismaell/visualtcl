@@ -146,13 +146,13 @@ proc vTclWindow.vTcl.bind {args} {
         -image [vTcl:image:get_image "/home/cgavin/vtcl/images/edit/remove.gif"] \
         -padx 0 -pady 0 -text button -width 23 
     button $base.cpd21.01.fra22.but25 \
-        -command "tk_messageBox -message {To be implemented}" \
+        -command "::widgets_bindings::movetag up" \
         -height 23 \
         -highlightthickness 0 \
         -image up \
         -padx 0 -pady 0 -text button -width 23 
     button $base.cpd21.01.fra22.but26 \
-        -command "tk_messageBox -message {To be implemented}" \
+        -command "::widgets_bindings::movetag down" \
         -height 23 \
         -highlightthickness 0 \
         -image down \
@@ -774,14 +774,54 @@ proc vTclWindow.vTcl.newtag {base} {
     }
 }
 
-#################################
-# USER DEFINED PROCEDURES
+####################################
+# code to manage the bindings editor
 #
 
 namespace eval ::widgets_bindings {
 
     variable tagslist ""
     
+    proc {::widgets_bindings::movetag} {moveupdown} {
+
+        global vTcl widget
+
+        set indices [ListboxBindings curselection]
+        set index [lindex $indices 0]
+        
+        if {$index == ""} return
+        
+        set tag ""
+        set event ""
+        
+        ::widgets_bindings::find_tag_event \
+            $widget(ListboxBindings) $index tag event
+
+        set w $widget(BindingsEditor)
+        set n [vTcl:rename $w]
+        eval set target $${n}::target
+
+        set tags $vTcl(bindtags,$target)
+
+        # what position is the existing tag at ?
+        set index [lsearch -exact $tags $tag]
+
+        # what new position should it be
+        if {$moveupdown == "down"} {
+            set newindex [expr $index + 1]
+            set oldtag [lindex $tags $newindex]
+            set tags [lreplace $tags $index $newindex $oldtag $tag]
+        } else {
+            set newindex [expr $index - 1]
+            set oldtag [lindex $tags $newindex]
+            set tags [lreplace $tags $newindex $index $tag $oldtag]
+        }
+
+        set vTcl(bindtags,$target) $tags
+        ::widgets_bindings::fill_bindings $target
+        ::widgets_bindings::select_show_binding $tag ""     
+    }
+
     proc {::widgets_bindings::addtag} {tag} {
 
         global vTcl widget
@@ -837,6 +877,10 @@ namespace eval ::widgets_bindings {
         set indices [ListboxBindings curselection]
         set index [lindex $indices 0]
         
+        if {$index == ""} {
+            eval set index \$::${n}::lastselected
+        }
+
         set tag ""
         set tmp_event ""
         
@@ -932,7 +976,7 @@ namespace eval ::widgets_bindings {
 
     proc {::widgets_bindings::enable_toolbar_buttons} {} {
 
-        global widget
+        global widget vTcl
         
         set indices [ListboxBindings curselection]
         set index [lindex $indices 0]
@@ -964,9 +1008,22 @@ namespace eval ::widgets_bindings {
             RemoveBinding configure -state disabled
         }
 
+        set w $widget(BindingsEditor)
+        set n [vTcl:rename $w]
+        eval set target \$::${n}::target
+
         if {$event == ""} {
-            MoveTagUp   configure -state normal
-            MoveTagDown configure -state normal
+            if {$index > 0} {
+                MoveTagUp   configure -state normal
+            } else {
+                MoveTagUp   configure -state disabled
+            }
+            if {[lsearch -exact $vTcl(bindtags,$target) $tag] ==
+                [expr [llength $vTcl(bindtags,$target)] - 1]} {
+                MoveTagDown configure -state disabled
+            } else {
+                MoveTagDown configure -state normal
+            }
         } else {
             MoveTagUp   configure -state disabled
             MoveTagDown configure -state disabled
@@ -1341,4 +1398,5 @@ namespace eval ::widgets_bindings {
     }
 
 } ; # namespace eval
+
 

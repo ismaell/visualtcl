@@ -101,7 +101,6 @@ proc vTcl:auto_place_compound {compound gmgr gopt} {
 
     vTcl:insert_compound $name $compound $gmgr $gopt
     vTcl:setup_bind_tree $name
-    vTcl:widget:register_all_widgets $name
     vTcl:active_widget $name
     vTcl:update_proc_list
 
@@ -143,6 +142,7 @@ proc vTcl:insert_compound {name compound {gmgr pack} {gopt ""}} {
     set undo "destroy $name"
     vTcl:push_action $do $undo
     lappend vTcl(widgets,[winfo toplevel $name]) $name
+    vTcl:widget:register_all_widgets $name
 }
 
 proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {

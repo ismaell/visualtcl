@@ -107,12 +107,12 @@ proc vTclWindow.vTcl.prefs {{base ""} {container 0}} {
         -background #dcdcdc \
         -command "vTcl:prefs:data_exchange 1; wm withdraw $base" \
         -foreground #000000 -highlightbackground #dcdcdc \
-        -highlightcolor #000000 -padx 9 -text OK -width 10
+        -highlightcolor #000000 -padx 9 -text OK -width 8
     button $base.fra19.but21 \
         -activebackground #dcdcdc -activeforeground #000000 \
         -command "wm withdraw $base; vTcl:prefs:data_exchange 0" \
         -background #dcdcdc -foreground #000000 -highlightbackground #dcdcdc \
-        -highlightcolor #000000 -padx 9 -text Cancel -width 10
+        -highlightcolor #000000 -padx 9 -text Cancel -width 8
     ###################
     # SETTING GEOMETRY
     ###################
@@ -129,8 +129,14 @@ proc vTclWindow.vTcl.prefs {{base ""} {container 0}} {
 
     vTcl:BindHelp $base Preferences
 
-    wm geometry $base 450x500
-    vTcl:center $base 450 500
+    update
+
+#   let's have Tk determine what size it needs (it works!)
+#
+#    wm geometry $base 450x500
+#    vTcl:center $base 450 500
+
+    vTcl:center $base
     wm deiconify $base
 }
 

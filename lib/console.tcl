@@ -61,18 +61,18 @@ proc vTclWindow.vTcl.con {args} {
     pack .vTcl.con.fra5.scr8 \
         -anchor center -expand 0 -fill y -ipadx 0 -ipady 0 -padx 0 -pady 0 \
         -side right
-    frame .vTcl.con.fra6 \
-        -height 30 -width 30
+    frame .vTcl.con.fra6
     pack .vTcl.con.fra6 \
-        -anchor center -expand 0 -fill both -ipadx 0 -ipady 0 -padx 0 -pady 0 \
+        -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 \
         -side top
     # @@change by Christian Gavin 3/13/2000
     # button to insert the complete name of the currently selected
     # widget
     button .vTcl.con.fra6.but1 \
-        -text "Insert selected widget name" \
+        -image [vTcl:image:get_image [file join $vTcl(VTCL_HOME) images edit inswidg.gif] ] \
         -command "vTcl:insert_widget_in_text .vTcl.con.fra6.ent10"
-    pack .vTcl.con.fra6.but1 -fill x -side top
+    vTcl:set_balloon .vTcl.con.fra6.but1 "Insert selected widget command"
+    pack .vTcl.con.fra6.but1 -fill x -side left
     # @@end_change
     vTcl:entry .vTcl.con.fra6.ent10 \
         -highlightthickness 0
