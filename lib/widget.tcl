@@ -114,7 +114,7 @@ proc vTcl:show {target} {
             ## don't try to change the manager of childsites or menus !!
             ## only show widgets that are not childsites and have been hidden
 
-            if {[vTcl:Frame:containing_megawidget $target] == "" &&
+            if {[::vTcl::widgets::core::frame::containing_megawidget $target] == "" &&
                 [lsearch -exact {Menu Busy} [vTcl:get_class $target]] == -1} {
                 catch {$vTcl(w,def_mgr) $target $vTcl($vTcl(w,def_mgr),insert)}
             }
@@ -713,15 +713,18 @@ proc vTcl:create_widget {class options new_widg x y} {
 
     set do ""
     set undo ""
+    set insert $vTcl(w,insert)
     if {$vTcl(pr,getname) == 1} {
         if { $vTcl(w,insert) == "." || $class == "Toplevel"} {
             set new_widg ".$new_widg"
+            set insert .
         } else {
             set new_widg "$vTcl(w,insert).$new_widg"
         }
     }
 
     set c $class
+    set p [vTcl:get_class $insert]
 
     append do "$classes($c,createCmd) $new_widg "
     append do "$classes($c,defaultOptions) $options;"
@@ -736,12 +739,15 @@ proc vTcl:create_widget {class options new_widg x y} {
     }
     append do "vTcl:setup_bind_tree $new_widg; "
     append do "vTcl:widget:register_widget $new_widg; "
+    if {[info exists classes($p,insertChildCmd)] &&
+        ![lempty $classes($p,insertChildCmd)]} {
+        append do "$classes($p,insertChildCmd) $insert $new_widg;"
+    }
     append do "vTcl:active_widget $new_widg; "
 
     foreach def $classes($c,defaultValues) {
         append do "vTcl:prop:default_opt $new_widg $def vTcl(w,opt,$def); "
     }
-
     foreach def $classes($c,dontSaveOptions) {
         append do "vTcl:prop:save_or_unsave_opt $new_widg $def vTcl(w,opt,$def) 0; "
     }

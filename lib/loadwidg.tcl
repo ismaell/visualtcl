@@ -400,3 +400,11 @@ proc GetImagesCmd {cmd} {
 proc GetFontsCmd {cmd} {
     set ::classes($::tmp(class),getFontsCmd) $cmd
 }
+
+proc InsertChildCmd {cmd} {
+    set ::classes($::tmp(class),insertChildCmd) $cmd
+}
+
+proc IgnoreProc {args} {
+    eval lappend ::vTcl(proc,ignore) $args
+}

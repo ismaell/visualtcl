@@ -1,0 +1,66 @@
+Class		      ScrolledWindow
+Lib		      bwidget
+
+Icon		      ../lib/Widgets/bwidget/scrolledwindow.gif
+TreeLabel	      BWidget Scrolled Window
+CreateCmd	      ScrolledWindow
+MegaWidget	      yes
+TreeChildrenCmd   {vTcl::widgets::bwidgets::scrolledwindow::treeChildrenCmd
+                   vTcl::widgets::bwidgets::scrolledwindow::treeChildrenChildsite}
+DumpCmd           vTcl::widgets::bwidgets::scrolledwindow::dumpCmd
+IgnoreProc        ::ScrolledWindow::* ScrolledWindow
+InsertChildCmd    vTcl::widgets::bwidgets::scrolledwindow::insertChildCmd
+DeleteCmd         vTcl::widgets::bwidgets::scrolledwindow::deleteCmd
+NewOption -auto     "Auto scroll"    choice   {none horizontal vertical both}
+
+namespace eval ::vTcl::widgets::bwidgets::scrolledwindow {
+
+    proc treeChildrenCmd {target {diff \#-1}} {
+        set children ""
+        set wantsdiff [expr {$diff != ""}]
+
+        foreach site [treeChildrenChildsite $target] {
+            foreach child [::vTcl:complete_widget_tree $site $wantsdiff] {
+                lappend children $child$diff
+            }
+        }
+
+        return $children
+    }
+
+    proc assignWidget {target child} {
+        variable inserted
+        if {![info exists inserted($target)]} {
+            $target setwidget $child
+            set inserted($target) $child
+        }
+    }
+
+    proc treeChildrenChildsite {target} {
+        set site $target._grid.f
+        return $site
+    }
+
+    proc dumpCmd {target basename} {
+        set result [vTcl:dump_widget_opt $target $basename]
+        set child [lindex [winfo children [treeChildrenChildsite $target]] 0]
+        if {$child != ""} {
+            set subbasename [vTcl:base_name $child]
+            append result [vTcl:dump_widget_opt $child $subbasename]
+            append result "$::vTcl(tab)$basename setwidget $subbasename\n"
+        }
+        return $result
+    }
+
+    proc insertChildCmd {target child} {
+        assignWidget $target $child
+    }
+
+    proc deleteCmd {target} {
+        variable inserted
+        if {[info exists inserted($target)]} {
+            unset inserted($target)
+        }
+        destroy $target
+    }
+}

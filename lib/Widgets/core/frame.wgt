@@ -30,74 +30,91 @@ Icon		icon_frame.gif
 DefaultOptions	-bd 2 -relief groove -width 125 -height 75
 DefaultValues   -background -highlightbackground -highlightcolor
 TreeLabel	Frame
-DeleteCmd       vTcl:Frame:delete
-SelectCmd       vTcl:Frame:select
+DeleteCmd       ::vTcl::widgets::core::frame::deleteCmd
+SelectCmd       ::vTcl::widgets::core::frame::selectCmd
+InsertChildCmd  ::vTcl::widgets::core::frame::insertChildCmd
 
-proc vTcl:Frame:containing_megawidget {target} {
+namespace eval ::vTcl::widgets::core::frame {
 
-    global classes
+    proc containing_megawidget {target} {
+        global classes
 
-    set path ""
-    if {[vTcl:WidgetVar [winfo parent $target] parent tmp]} {
-        set path $tmp
+        set path ""
+        if {[vTcl:WidgetVar [winfo parent $target] parent tmp]} {
+            set path $tmp
+        }
+
+        if {$path == ""} {return ""}
+
+        set class [vTcl:get_class $path]
+        if {[info exists classes($class,megaWidget)] &&
+            $classes($class,megaWidget)} {
+
+            # it is a megawidget, ask for its childsites
+            set childsiteCmd [lindex $classes($class,treeChildrenCmd) 1]
+
+            # no childsites in megawidget ? shouldn't happen at this point but...
+            if {$childsiteCmd == ""} {return ""}
+
+            set sites [$childsiteCmd $path]
+
+            # is it a child site of this megawidget ?
+            if {[lsearch -exact $sites $target] != -1} {return $path}
+        }
+
+        # wasn't a megawidget's childsite
+        return ""
     }
 
-    if {$path == ""} {return ""}
+    proc deleteCmd {target} {
+        global classes
 
-    set class [vTcl:get_class $path]
-    if {[info exists classes($class,megaWidget)] &&
-        $classes($class,megaWidget)} {
+        # Let's go up levels until we find a megawidget. If we
+        # find one, we ask for its childsites, and if the frame is
+        # one of them, we ask the megawidget to delete it's childsite
 
-        # it is a megawidget, ask for its childsites
-        set childsiteCmd [lindex $classes($class,treeChildrenCmd) 1]
+        set megawidget [containing_megawidget $target]
 
-        # no childsites in megawidget ? shouldn't happen at this point but...
-        if {$childsiteCmd == ""} {return ""}
+        if {$megawidget == ""} {
+            destroy $target
+            return
+        }
 
-        set sites [$childsiteCmd $path]
-
-        # is it a child site of this megawidget ?
-        if {[lsearch -exact $sites $target] != -1} {return $path}
+        # yes it is a childsite, ask to delete
+        set class [vTcl:get_class $megawidget]
+        if {$classes($class,deleteSiteCmd) != ""} {
+            $classes($class,deleteSiteCmd) $megawidget $target
+        }
     }
 
-    # wasn't a megawidget's childsite
-    return ""
-}
+    proc selectCmd {target} {
+        global classes
 
-proc vTcl:Frame:delete {target} {
+        set megawidget [containing_megawidget $target]
 
-    global classes
+        if {$megawidget == ""} {
+            return
+        }
 
-    # Let's go up levels until we find a megawidget. If we
-    # find one, we ask for its childsites, and if the frame is
-    # one of them, we ask the megawidget to delete it's childsite
-
-    set megawidget [vTcl:Frame:containing_megawidget $target]
-
-    if {$megawidget == ""} {
-        destroy $target
-        return
+        set class [vTcl:get_class $megawidget]
+        if {$classes($class,selectSiteCmd) != ""} {
+            $classes($class,selectSiteCmd) $megawidget $target
+        }
     }
 
-    # yes it is a childsite, ask to delete
-    set class [vTcl:get_class $megawidget]
-    if {$classes($class,deleteSiteCmd) != ""} {
-        $classes($class,deleteSiteCmd) $megawidget $target
-    }
-}
+    proc insertChildCmd {target child} {
+        global classes
 
-proc vTcl:Frame:select {target} {
+        set megawidget [containing_megawidget $target]
 
-    global classes
+        if {$megawidget == ""} {
+            return
+        }
 
-    set megawidget [vTcl:Frame:containing_megawidget $target]
-
-    if {$megawidget == ""} {
-        return
-    }
-
-    set class [vTcl:get_class $megawidget]
-    if {$classes($class,selectSiteCmd) != ""} {
-        $classes($class,selectSiteCmd) $megawidget $target
+        set class [vTcl:get_class $megawidget]
+        if {[info exists classes($class,insertChildCmd)] &&
+            ![lempty $classes($class,insertChildCmd)]} {
+		$classes($class,insertChildCmd) $megawidget $child
+        }
     }
 }

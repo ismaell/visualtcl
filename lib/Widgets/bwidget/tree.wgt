@@ -1,7 +1,8 @@
 Class		Tree
 Lib		bwidget
 
-Icon		icon_tixTree.gif
+Icon		../lib/Widgets/bwidget/tree.gif
 TreeLabel	BWidget Tree
 CreateCmd	Tree
 MegaWidget	yes
+DefaultValues -background

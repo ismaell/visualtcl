@@ -53,12 +53,14 @@ proc vTcl:widget:lib:lib_bwidget {args} {
 	ArrowButton
 	LabelEntry
 	LabelFrame
+        SpinBox
         ComboBox
+        ListBox
 	MainFrame
 	NoteBook
         PanedWindow
 	ProgressBar
-	ScrollView
+	ScrolledWindow
 	Separator
 	TitleFrame
 	Tree

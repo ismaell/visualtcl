@@ -1,0 +1,18 @@
+Class		SpinBox
+Lib		bwidget
+
+Icon		../lib/Widgets/bwidget/spinbox.gif
+TreeLabel	BWidget Spin Box
+CreateCmd	SpinBox
+MegaWidget      yes
+DefaultValues   -background -foreground
+DefaultOptions  -entrybg white -range {0 100 1}
+
+## Reuse insert proc from the entry widget. This proc assigns a
+## default -textvariable to the widget.
+InsertCmd   vTcl:widget:entry:inscmd
+
+NewOption   -range    "range"             type
+
+lappend vTcl(proc,ignore) "::SpinBox::*"
+lappend vTcl(proc,ignore) SpinBox

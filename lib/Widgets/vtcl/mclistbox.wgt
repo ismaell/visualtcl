@@ -173,6 +173,7 @@ namespace eval ::vTcl::widgets::vtcl::mclistbox {
     }
 
     proc insertCmd {target} {
+        $target configure -height 0
         $target column add col1 -label {Column 1}
         $target column add col2 -label {Column 2}
         $target insert end {{line1 col1} {line1 col2}}

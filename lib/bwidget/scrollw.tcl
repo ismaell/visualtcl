@@ -50,7 +50,7 @@ proc ScrolledWindow::create { path args } {
     set bg     [Widget::cget $path -background]
     set sbsize [Widget::cget $path -size]
     set ipad   [Widget::cget $path -ipad]
-    set sw     [frame $path \
+    set sw     [frame $path -class ScrolledWindow \
                     -relief flat -borderwidth 0 -background $bg \
                     -highlightthickness 0 -takefocus 0]
     set grid   [frame $path._grid \
