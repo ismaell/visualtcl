@@ -104,6 +104,7 @@ eval exec cp [glob $bldroot/demo/*.html]                  $copyroot/demo
 eval exec cp $bldroot/demo/README                         $copyroot/demo
 eval exec cp [glob $bldroot/demo/images/*.*]              $copyroot/demo/images
 eval exec cp [glob $bldroot/demo/tutorial/core/*.tcl]     $copyroot/demo/tutorial/core
+eval exec cp [glob $bldroot/demo/tutorial/megawidgets/*.tcl]     $copyroot/demo/tutorial/megawidgets
 eval exec cp [glob $bldroot/demo/tutorial/megawidgets/imagelist/*.tcl]     $copyroot/demo/tutorial/megawidgets/imagelist
 eval exec cp [glob $bldroot/demo/tutorial/megawidgets/imagelist/*.txt]     $copyroot/demo/tutorial/megawidgets/imagelist
 eval exec cp [glob $bldroot/sample/*.tcl]                 $copyroot/sample
