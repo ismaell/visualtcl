@@ -1,6 +1,9 @@
 ChangeLog for Visual Tcl:
 
 1.51b4 -> 1.51rc0
+    o Fixed a few tix bugs: tixFileEntry, tixScrollHList
+    o Added -fillcolor option to tixMeter
+    o Fix cursor bug on insert if clicking too fast
     o Fixed bug where closing menu editor wouldn't save changes
     o Fixed aliases bugs in menu editor
     o Removed a few unused variables in menu editor

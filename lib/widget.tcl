@@ -290,6 +290,8 @@ proc vTcl:list_widget_tree {target {which ""} {include_menus 0} {include_megachi
     set w_tree "$target "
     set children [vTcl:get_children $target $include_megachildren]
     foreach i $children {
+        ## Tix leaves some windows behind
+        if {[string match .tix* $i]} {continue}
 
         # don't include temporary windows
         if {[string match {*#*} $i] &&
@@ -1038,9 +1040,9 @@ proc vTcl:new_widget {autoplace class button {options ""}} {
     vTcl:status "Insert $class"
 
     bind vTcl(b) <Button-1> \
-        "vTcl:place_widget $class $button [list $options] %X %Y %x %y
-         set vTcl(cursor,last) \[%W cget -cursor\]
-         set vTcl(cursor,w) %W"
+        "set vTcl(cursor,last) \[%W cget -cursor\]
+         set vTcl(cursor,w) %W
+         vTcl:place_widget $class $button [list $options] %X %Y %x %y"
 }
 
 proc vTcl:place_widget {class button options rx ry x y} {

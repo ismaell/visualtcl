@@ -93,9 +93,9 @@ proc vTcl:put_compound {text compound} {
     regsub -all % $compound %% compound
 
     bind vTcl(b) <Button-1> \
-    	"vTcl:place_compound [list $compound] $vTcl(w,def_mgr) %X %Y %x %y
-         set vTcl(cursor,last) \[%W cget -cursor\]
-         set vTcl(cursor,w) %W"
+    	"set vTcl(cursor,last) \[%W cget -cursor\]
+         set vTcl(cursor,w) %W
+         vTcl:place_compound [list $compound] $vTcl(w,def_mgr) %X %Y %x %y"
 }
 
 proc vTcl:auto_place_compound {compound gmgr gopt} {

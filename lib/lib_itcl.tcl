@@ -77,8 +77,9 @@ proc vTcl:widget:lib:lib_itcl {args} {
 		option add *Scrolledhtml.sbWidth    10
 		option add *Scrolledtext.sbWidth    10
 		option add *Scrolledlistbox.sbWidth 10
-	    }
-	}
+	        option add *Hierarchy.sbWidth       10
+            }
+        }
     }
     }
 
@@ -133,6 +134,7 @@ proc vTcl:lib_itcl:setup {} {
             option add *Scrolledhtml.sbWidth    10
             option add *Scrolledtext.sbWidth    10
             option add *Scrolledlistbox.sbWidth 10
+            option add *Hierarchy.sbWidth       10
         }
     }
 

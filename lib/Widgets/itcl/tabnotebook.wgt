@@ -13,8 +13,14 @@ TreeChildrenCmd	{vTcl:widget:tabnotebook:treeChildrenCmd
 		 vTcl:widget:tabnotebook:treeChildrenChildsite}
 DumpCmd		vTcl:dump:tabnotebook
 CompoundCmd     vTcl:compound:tabnotebook
+ResizeCmd       vTcl:widget:tabnotebook:resizeCmd
 
 AdditionalClasses Notebook Tabset Page
+
+proc vTcl:widget:tabnotebook:resizeCmd {target w h} {
+    # need to find out why tabnotebook doesn't resize properly in vTcl
+    $target configure -width $w -height $h
+}
 
 proc vTcl:widget:tabnotebook:inscmd {target} {
 

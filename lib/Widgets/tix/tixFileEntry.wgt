@@ -16,3 +16,10 @@ proc vTcl:widget:tixFileEntry:inscmd {target} {
     	$target subwidget frame configure -highlightthickness 2
     "
 }
+
+proc vTcl:dump:TixFileEntry {target basename} {
+    global vTcl
+    set output [vTcl:lib_tix:dump_widget_opt $target $basename]
+    append output "$vTcl(tab)$target subwidget frame configure -highlightthickness 2\n"
+    return $output
+}

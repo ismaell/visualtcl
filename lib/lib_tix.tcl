@@ -187,13 +187,6 @@ proc vTcl:dump:TixLabelEntry {target basename} {
     return $output
 }
 
-proc vTcl:dump:TixFileEntry {target basename} {
-    global vTcl
-    set output [vTcl:lib_tix:dump_widget_opt $target $basename]
-    append output "$target subwidget frame configure -highlightthickness 2\n"
-    return $output
-}
-
 proc vTcl:dump:TixSelect {target basename} {
     global vTcl
     set result [vTcl:lib_tix:dump_widget_opt $target $basename]

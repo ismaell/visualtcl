@@ -11,6 +11,7 @@ NewOption -dynamicgeometry	"dymanic geometry"	longname choice "1 0"
 NewOption -editable		"editable"		longname choice "0 1"
 NewOption -expand		"expand"		longname type
 NewOption -fancy		"fancy"			longname choice "0 1"
+NewOption -fillcolor	        "fill color"		color	{}	Colors
 NewOption -handleactivebg	"handle activebg"	longname type
 NewOption -handlebg		"handle bgcolor"	longname type
 NewOption -history		"history"		longname choice \

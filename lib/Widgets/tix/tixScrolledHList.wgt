@@ -6,4 +6,6 @@ Icon		icon_tixScrolledHList.gif
 TreeLabel	Tix ScrolledHlist
 DumpCmd		vTcl:lib_tix:dump_widget_opt
 DumpChildren	no
-MegaWidget   yes
+MegaWidget      yes
+
+AdditionalClasses  TixHList TixHListHeader
