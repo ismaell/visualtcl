@@ -1137,7 +1137,11 @@ namespace eval ::vTcl::ui::attributes {
 
     proc show_color {w variable args} {
         catch {
-            $w configure -bg [vTcl:at $variable]
+            set color_value [vTcl:at $variable]
+            if {$color_value == ""} {
+                set color_value [[winfo parent $w] cget -background]
+            }
+            $w configure -bg $color_value
         }
     }
 
@@ -1221,8 +1225,7 @@ namespace eval ::vTcl::ui::attributes {
                     -highlightthickness 1 -fg black
                 bind ${base}.l <KeyRelease-Return> \
                     "$config_cmd; ${base}.f conf -bg \$$variable"
-                frame ${base}.f -relief raised \
-                    -bg [vTcl:at $variable] -bd 2 -width 20 -height 5
+                frame ${base}.f -relief raised -bd 2 -width 20 -height 5
                 bind ${base}.f <ButtonPress> \
                     "::vTcl::ui::attributes::select_color ${base}.f [list $config_cmd] $variable"
                 pack ${base}.l -side left -expand 1 -fill x
@@ -1230,6 +1233,7 @@ namespace eval ::vTcl::ui::attributes {
 	        set focusControl ${base}.l
                 trace variable $variable w \
                     "::vTcl::ui::attributes::show_color ${base}.f $variable"
+                ::vTcl::ui::attributes::show_color ${base}.f $variable
             }
             command {
                 frame $base

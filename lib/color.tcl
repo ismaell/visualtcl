@@ -52,8 +52,11 @@ proc vTcl:get_color {color w} {
     global vTcl tk_version
     set oldcolor $color
 
+    if {$color == ""} {
+        set color white
+    }
     set newcolor [SelectColor::menu [winfo toplevel $w].color [list below $w] -color $color]
-    # set newcolor [tk_chooseColor -initialcolor $color]
+
     if {$newcolor != ""} {
         return $newcolor
     } else {

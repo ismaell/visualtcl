@@ -1,6 +1,7 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Added BLT tab set.
     o Added BWidgets paned window.
     o Added a list of choices for the -cursor option.
     o Multicolumn listbox:

@@ -815,9 +815,7 @@ proc vTclWindow.vTcl.bgerror {base} {
     ###################
     # CREATING WIDGETS
     ###################
-    toplevel $base -class Toplevel \
-        -background #dcdcdc -highlightbackground #dcdcdc \
-        -highlightcolor #000000
+    toplevel $base -class Toplevel
     wm focusmodel $base passive
     wm geometry $base 333x248+196+396
     wm maxsize $base 1009 738

@@ -487,7 +487,7 @@ proc vTclWindow.vTcl.itemEdit {base} {
     ###################
     vTcl:toplevel $base -class Toplevel
     wm focusmodel $base passive
-    wm geometry $base 450x343
+    wm geometry $base 490x343
     wm withdraw $base
     wm maxsize $base 1009 738
     wm minsize $base 1 1
@@ -582,7 +582,7 @@ proc vTclWindow.vTcl.itemEdit {base} {
     pack $base.cpd37 \
         -in $base -anchor center -expand 1 -fill both -side top
     place $base.cpd37.01 \
-        -x 0 -y 0 -width -1 -relwidth 0.6 -relheight 1 -anchor nw \
+        -x 0 -y 0 -width -1 -relwidth 0.55 -relheight 1 -anchor nw \
         -bordermode ignore
     pack $base.cpd37.01.cpd38 \
         -in $base.cpd37.01 -anchor center -expand 1 -fill both -side top
@@ -598,10 +598,10 @@ proc vTclWindow.vTcl.itemEdit {base} {
         -in $base.cpd37.01.cpd38 -column 1 -row 0 -columnspan 1 -rowspan 1 \
         -sticky ns
     place $base.cpd37.02 \
-        -x 0 -relx 1 -y 0 -width -1 -relwidth 0.4 -relheight 1 -anchor ne \
+        -x 0 -relx 1 -y 0 -width -1 -relwidth 0.45 -relheight 1 -anchor ne \
         -bordermode ignore
     place $base.cpd37.03 \
-        -x 0 -relx 0.6 -y 0 -rely 0.9 -width 10 -height 10 -anchor s \
+        -x 0 -relx 0.55 -y 0 -rely 0.9 -width 10 -height 10 -anchor s \
         -bordermode ignore
     pack $base.cpd37.02.sw \
         -in $base.cpd37.02 -anchor center -expand 1 -fill both -side top
@@ -616,7 +616,7 @@ proc vTclWindow.vTcl.itemEdit {base} {
     $base.cpd37.02.sw.c create window 0 0 -window $base.cpd37.02.sw.c.f \
         -anchor nw -tag properties
 
-    vTcl:center $base 450 343
+    vTcl:center $base 490 343
     wm deiconify $base
 
     vTcl:FireEvent $base <<Ready>>
