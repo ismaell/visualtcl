@@ -45,6 +45,7 @@ proc vTcl:cut {} {
         vTcl:select_widget $parent
         set vTcl(w,insert) $parent
     }
+	vTcl:init_wtree
 }
 
 proc vTcl:delete {} {
@@ -60,6 +61,7 @@ proc vTcl:delete {} {
     vTcl:push_action $do $undo
     vTcl:select_widget $parent
     set vTcl(w,insert) $parent
+	vTcl:init_wtree
 }
 
 proc vTcl:paste {} {
@@ -73,6 +75,7 @@ proc vTcl:paste {} {
         set undo "destroy $name"
         vTcl:push_action $do $undo
         vTcl:active_widget $name
+		vTcl:init_wtree
     }
 }
 

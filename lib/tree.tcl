@@ -37,6 +37,9 @@ proc vTcl:clear_wtree {} {
 
 proc vTcl:init_wtree {} {
     global vTcl
+	if { [winfo exists .vTcl.tree] == 0 } {
+		return
+	}
     vTcl:destroy_handles
     vTcl:clear_wtree
     set b .vTcl.tree.fra4.can8

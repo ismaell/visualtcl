@@ -485,6 +485,7 @@ proc vTcl:create_widget {type options new_widg} {
     vTcl:push_action $do $undo
     update idletasks
     set vTcl(mgrs,update) yes
+	vTcl:init_wtree
     return $new_widg
 }
 
