@@ -111,7 +111,6 @@ proc vTcl:lib_itcl:setup {} {
     set vTcl(buttonbox,insert)          ""
     set vTcl(checkbox,insert)           ""
     set vTcl(radiobox,insert)           ""
-    set vTcl(tabnotebook,insert)        ""
     set vTcl(panedwindow,insert)        ""
     set vTcl(scrolledtext,insert)       ""
 
@@ -222,4 +221,67 @@ proc vTcl:lib_itcl:config_pages {target var} {
 
 proc vTcl:lib_itcl:select_page {target index} {
     $target select $index
+}
+
+###########################################################
+## Code for editing pages in tabnotebook & notebook widgets
+##
+namespace eval vTcl::widgets::iwidgets::notebooks::edit {
+
+    proc getTitle {target} {
+        return "Edit pages for $target"
+    }
+
+    proc getLabelOption {} {
+        return -label
+    }
+
+    proc getItems {target} {
+        ## first item in the list is the current index
+        set sites [$target childsite]
+        set current [$target index select]
+        if {$current == -1} {
+            set current 0
+        }
+        set values $current
+        for {set i 0} {$i < [llength $sites]} {incr i} {
+            set labelOption [$target pageconfigure $i -label]
+            lappend values [lindex $labelOption 4]
+        }
+        return $values
+    }
+
+    proc addItem {target} {
+        $target add -label "New Page"
+        $target select end
+        vTcl:init_wtree
+        return "New Page"
+    }
+
+    proc removeItem {target index} {
+        $target delete $index
+        vTcl:init_wtree
+    }
+
+    proc itemConfigure {target index args} {
+        if {$args == ""} {
+            set options [$target pageconfigure $index]
+            set result ""
+            ## grrr: why do they return options from the widget here with
+            ##       three items like {-width 15 10} ?? bug!!
+            foreach option $options {
+                ## only return valid options
+                if {[llength $option] == 5} {
+                    lappend result $option
+                }
+            }
+            return $result
+        } else {
+            eval $target pageconfigure $index $args
+        }
+    }
+
+    proc moveUpOrDown {target index direction} {
+        error "Not implemented yet!"
+    }
 }

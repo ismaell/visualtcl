@@ -469,7 +469,7 @@ namespace eval ::menu_edit {
                 vTcl:init_wtree
                 vTcl:active_widget $nmenu
                 foreach def {-activebackground -activeforeground
-                             -background -foreground} {
+                             -background -foreground -font} {
                     vTcl:prop:default_opt $nmenu $def vTcl(w,opt,$def)
                 }
             }
