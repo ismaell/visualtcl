@@ -1047,15 +1047,8 @@ proc vTclWindow.vTclMenuEdit {base menu} {
     bind $base.cpd24.01.cpd25.01 <Button-1> {
         focus %W
     }
-    bind $base.cpd24.01.cpd25.01 <ButtonRelease-1> {
-        ::menu_edit::update_current [winfo toplevel %W]
-
-        set indices [%W curselection]
-        set index [lindex $indices 0]
-
-        if {$index != ""} {
-            ::menu_edit::show_menu [winfo toplevel %W] $index
-        }
+    bind $base.cpd24.01.cpd25.01 <<ListboxSelect>> {
+        ::menu_edit::click_listbox [winfo toplevel %W]
     }
     bind $base.cpd24.01.cpd25.01 <ButtonRelease-3> {
         ::menu_edit::update_current [winfo toplevel %W]
@@ -1070,18 +1063,6 @@ proc vTclWindow.vTclMenuEdit {base menu} {
         }
 
         ::menu_edit::post_context_new_menu [winfo toplevel %W] %X %Y
-    }
-    bind $base.cpd24.01.cpd25.01 <KeyRelease-Down> {
-        ::menu_edit::click_listbox [winfo toplevel %W]
-    }
-    bind $base.cpd24.01.cpd25.01 <KeyRelease-Up> {
-        ::menu_edit::click_listbox [winfo toplevel %W]
-    }
-    bind $base.cpd24.01.cpd25.01 <KeyRelease-Prior> {
-        ::menu_edit::click_listbox [winfo toplevel %W]
-    }
-    bind $base.cpd24.01.cpd25.01 <KeyRelease-Next> {
-        ::menu_edit::click_listbox [winfo toplevel %W]
     }
     menu $base.cpd24.01.cpd25.01.m24 \
         -activeborderwidth 1 -tearoff 0

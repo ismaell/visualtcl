@@ -118,7 +118,8 @@ proc vTcl:update_proc_list {{name {}}} {
         set plist [$vTcl(gui,proclist).f2.list get 0 end]
         set pindx [lsearch $plist $name]
         if {$pindx >= 0} {
-        $vTcl(gui,proclist).f2.list selection set $pindx
+            $vTcl(gui,proclist).f2.list selection set $pindx
+            $vTcl(gui,proclist).f2.list see $pindx
         }
     }
 }

@@ -49,7 +49,7 @@ proc vTcl:create_tclet {target} {
         puts $out $header
 
         ## Gather information about fonts and images.
-        vTcl:dump:widget_fonts_and_images
+        vTcl:dump:gather_widget_info
 
         ## Save only fonts and images we need
         ## All images are saved inline in a tclet
