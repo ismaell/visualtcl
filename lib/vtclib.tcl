@@ -124,6 +124,15 @@ proc vTcl:FireEvent {target event {params {}}} {
     }
 }
 
+## put it back just for backward compatibility, but made it empty
+proc vTcl:WindowsCleanup {} {
+    ::vTcl::MessageBox -title "Warning" -message "vTcl:WindowsCleanup is no more supported.
+You can use the <<DeleteWindow>> virtual event instead.
+
+You should remove any calls to vTcl:WindowsCleanup before saving your project." \
+-type ok -icon warning
+}
+
 #
 # Two utilities:
 #
@@ -169,5 +178,4 @@ proc {info_script} {} {
     }
     return $scriptdir
 }
-
 
