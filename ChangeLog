@@ -1,6 +1,8 @@
 ChangeLog for Visual Tcl:
 
 1.6.0a3 ->
+    o When a childsite is deleted, update any possibly open childsite 
+      editor.
     o Fixed bug saving menubutton.
     o Fixed bug when selecting a menu for the first time before selecting
       a toplevel window.
@@ -971,6 +973,7 @@ ChangeLog for Visual Tcl:
     o And much, much more :)
 
 1.01 released (December 5, 1996)
+
 
 
 
