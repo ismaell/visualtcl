@@ -264,6 +264,10 @@ proc vTcl:setup_gui {} {
         option add *vTcl*font {Helvetica 12}
     }
 
+    if {$tcl_platform(platform) == "windows"} {
+        option add *Button.padY 0
+    }
+
     option add *vTcl*Checkbutton.highlightBackground #d9d9d9
     option add *vTcl*Radiobutton.highlightBackground #d9d9d9
     option add *vTcl*Text*font $vTcl(pr,font_fixed)
