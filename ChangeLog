@@ -1,6 +1,9 @@
 ChangeLog for Visual Tcl:
 
 1.51b3 ->
+    o When a toplevel compound is inserted, do not require the user to click
+      anywhere, because this does not make sense. Instead, insert the compound
+      directly.
     o Fixed copy/paste problem for toplevels.
     o Fixed "ask for widget name on insert" problem for toplevels.
     o When inserting a compound, widgets are registered one at a time as
@@ -10,6 +13,9 @@ ChangeLog for Visual Tcl:
     o When inserting a compound, widgets for which options aren't specified
       take their default values for the most common options like -background,
       -highlightbackground, etc. This reduces the size of saved projects.
+    o Made the "-width" option for scrollbar widgets not saved by default (the
+      user can still override the option by clicking on the checkbox next to the
+      "-width" option)
     o Have the most common options like -background, -activebackground etc.
       take their default value when a widget is created, instead of using the
       value from the options database. This saves space when saving projects, and
@@ -20,11 +26,13 @@ ChangeLog for Visual Tcl:
     o The behavior for aliases in compounds is modified as such:
       - if there are aliases in the compound, define them when compound is inserted
         (so the alias will point to the pasted widget, not the original one, but
-         because vTcl allows aliases existing in several toplevels to be referred
-         to by using MyTop.MyAlias, this is not a problem)
+         because vTcl allows same aliases to exist in several toplevels, this is
+         not a problem)
       - if there are no aliases for subwidgets in the compound, and the
         "Auto Aliasing for New Widgets" option is turned on, then new automatic
         aliases are created
+      - if a compound is pasted into a toplevel with an alias that already exists
+        in the same toplevel, then a new automatic alias is created
     o Added right-click menu in attributes editor to allow setting an option for
       a range of widgets at once, as well as to save/not save options and restore
       the default value for an option
