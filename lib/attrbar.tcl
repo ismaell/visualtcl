@@ -165,25 +165,38 @@ proc vTcl:attrbar_color {target} {
     }
 }
 
+#   vTcl:attrbar:toggle_console
+#
+#   Handle the display and hiding of the console
+#
+#   First, check to see if the variable, "vTcl(attrbar,console_state)" 
+#   even exists.  If not, we need to initialize tkcon for 
+#   this session.
+
 proc vTcl:attrbar:toggle_console {} {
     global vTcl
-
-    if {$vTcl(attrbar,console_state)} {
-    	set vTcl(attrbar,console_state) 0
-    	vTcl:show_console hide
-    	.vTcl.attr.console.console_toggle configure -relief raised
-    } elseif {!$vTcl(attrbar,console_state)} {
+    
+    if {![info exists vTcl(attrbar,console_state)]} {
+	::vTcl::InitTkcon
+	tkcon show
 	set vTcl(attrbar,console_state) 1
-	vTcl:show_console show
-	.vTcl.attr.console.console_toggle configure -relief sunken
+    } elseif {!$vTcl(attrbar,console_state)} {
+    	tkcon show
+    	.vTcl.attr.console.console_toggle configure -relief sunken
+    	set vTcl(attrbar,console_state) 1
+    } elseif {$vTcl(attrbar,console_state)} {
+	tkcon hide
+	.vTcl.attr.console.console_toggle configure -relief raised
+	set vTcl(attrbar,console_state) 0
     }
 }
 
 proc vTcl:attrbar {args} {
     global vTcl tk_version
 
-    set vTcl(attrbar,console_state) \
-        [expr [lsearch -exact $vTcl(gui,showlist) .vTcl.tkcon] != -1]
+    if {[expr [lsearch -exact $vTcl(gui,showlist) .vTcl.tkcon] != -1]} {
+	vTcl:attrbar:toggle_console
+    }
 
     set base .vTcl
     frame .vTcl.attr \
@@ -219,7 +232,7 @@ proc vTcl:attrbar {args} {
     frame .vTcl.attr.console -borderwidth 1 -relief flat
     button .vTcl.attr.console.console_toggle -image tconsole -highlightthickness 0 \
         -command vTcl:attrbar:toggle_console
-    if {$vTcl(attrbar,console_state)} {
+    if {[info exist vTcl(attrbar,console_state)] && $vTcl(attrbar,console_state)} {
     	.vTcl.attr.console.console_toggle configure -relief sunken }
     vTcl:set_balloon .vTcl.attr.console.console_toggle "show/hide console"
     pack .vTcl.attr.console -side left -padx 5
