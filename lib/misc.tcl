@@ -813,8 +813,12 @@ proc vTcl:rebind_button_1 {} {
     bind vTcl(b) <Button-1> {vTcl:bind_button_1 %W %X %Y %x %y}
 }
 
-proc vTcl:lib:add_widgets_to_toolbar {list} {
+proc vTcl:lib:add_widgets_to_toolbar {list {headerLabel {}}} {
     global classes
+
+    if {$headerLabel != ""} {
+        vTcl::toolbar_header $headerLabel
+    }
 
     foreach i $list {
 	if {![info exists classes($i,lib)]} { continue }
@@ -1478,5 +1482,6 @@ namespace eval ::vTcl::ui::attributes {
         }
     }
 }
+
 
 

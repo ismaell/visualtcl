@@ -91,7 +91,7 @@ proc vTcl:widget:lib:lib_itcl {args} {
         ::vTcl::lremove order Panedwindow
     }
 
-    vTcl:lib:add_widgets_to_toolbar $order
+    vTcl:lib:add_widgets_to_toolbar $order {[Incr Widgets]}
 
     lappend vTcl(proc,ignore) "::iwidgets::*"
 
@@ -460,5 +460,6 @@ namespace eval vTcl::widgets::iwidgets::notebooks::edit {
         error "Not implemented yet!"
     }
 }
+
 
 

@@ -38,10 +38,11 @@ proc vTcl:widget:lib:lib_tablelist {args} {
 
     set order { Tablelist }
 
-    vTcl:lib:add_widgets_to_toolbar $order
+    vTcl:lib:add_widgets_to_toolbar $order "Tablelist widget"
 
     append vTcl(head,tablelist,importheader) {
         # tablelist is required
         package require tablelist
     }
 }
+

@@ -35,8 +35,9 @@ proc vTcl:widget:lib:lib_vtcl {args} {
 	Mclistbox
     }
 
-    vTcl:lib:add_widgets_to_toolbar $order
+    vTcl:lib:add_widgets_to_toolbar $order "vTcl misc widgets"
 
     global vTcl
     lappend vTcl(proc,ignore) "::progressbar::Trace*"
 }
+

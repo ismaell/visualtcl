@@ -35,7 +35,7 @@ proc vTcl:widget:lib:lib_table {args} {
 
     set order { Table }
 
-    vTcl:lib:add_widgets_to_toolbar $order
+    vTcl:lib:add_widgets_to_toolbar $order "TkTable widget"
 
     append vTcl(head,TkTable,importheader) {
         # Check if Tktable is available
@@ -44,3 +44,4 @@ proc vTcl:widget:lib:lib_table {args} {
         }
     }
 }
+

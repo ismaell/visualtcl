@@ -87,6 +87,16 @@ proc vTcl:toolbar_add {class name image cmd_add} {
     pack $f.l -side left
 }
 
+namespace eval ::vTcl {
+    proc toolbar_header {header} {
+        if {![winfo exists $.vTcl.toolbar]} { vTcl:toolbar_create }
+        set base [.vTcl.toolbar.sw.sf getframe]
+        set l [vTcl:new_widget_name tb $base]
+        label $l -text $header -anchor w -relief raised -background #cccccc
+        pack $l -side top -fill x
+    }
+}
+
 proc vTclWindow.vTcl.toolbar {args} {
     vTcl:toolbar_reflow
 }
@@ -100,4 +110,5 @@ proc vTcl:toolbar_reflow {{base .vTcl.toolbar}} {
 
     vTcl:setup_vTcl:bind $base
 }
+
 

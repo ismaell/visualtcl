@@ -57,7 +57,7 @@ proc vTcl:widget:lib:lib_core {args} {
 	lappend order Panedwindow
     }
 
-    vTcl:lib:add_widgets_to_toolbar $order
+    vTcl:lib:add_widgets_to_toolbar $order "Standard/vTcl Tcl/Tk Widgets"
 
     append vTcl(head,core,importheader) {
     package require Tk
@@ -991,5 +991,6 @@ namespace eval ::vTcl::itemEdit {
 	$top.ItemsEditMenuAddDelete entryconfigure 1 -state $state($enabled)
     }
 }
+
 
 
