@@ -53,7 +53,6 @@ proc vTcl:widget:lib:lib_bwidget {args} {
         SpinBox
         ComboBox
         ListBox
-	MainFrame
 	NoteBook
         PagesManager
         PanedWindow
