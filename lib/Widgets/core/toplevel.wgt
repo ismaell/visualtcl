@@ -132,6 +132,8 @@ namespace eval vTcl::widgets::core::toplevel {
         bind _TopLevel <<DeleteWindow>> {
             destroy %W; if {$_topcount == 0} {exit}
         }
+
+        ::widgets_bindings::add_tag_to_tagslist _TopLevel
     }
 
     proc insertCmd {target} {
@@ -149,7 +151,6 @@ namespace eval vTcl::widgets::core::toplevel {
         vTcl:update_top_list
         setBindings
         bindtags $target [concat [bindtags $target] _TopLevel]
-        ::widgets_bindings::add_tag_to_tagslist _TopLevel
         vTcl:FireEvent $target <<Create>>
     }
 

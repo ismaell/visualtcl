@@ -88,6 +88,8 @@ proc vTcl:update_top_list {} {
 }
 
 # convert hidden toplevels from a 1.22 project to a 1.51 project
+# also, adds the _TopLevel binding tag if it is missing, so that
+# the project automatically exits when all toplevels have been closed
 proc vTcl:convert_tops {} {
 
     global vTcl
@@ -101,6 +103,12 @@ proc vTcl:convert_tops {} {
             vTcl:show_top $i
             vTcl:hide_top $i
         }
+
+	# convert from 1.51 to 1.6
+	if {[lsearch $::vTcl(bindtags,$i) _TopLevel] == -1} {
+	    vTcl::widgets::core::toplevel::setBindings
+	    lappend ::vTcl(bindtags,$i) _TopLevel
+	}
     }
 }
 
