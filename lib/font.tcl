@@ -441,41 +441,45 @@ proc vTcl:font:create_noborder_fontlist {base} {
     wm minsize $base 1 1
     wm resizable $base 1 1
 
-    ScrolledWindow $base.cpd29 -background #bcbcbc
-    text $base.cpd29.03 \
-        -background white \
-        -foreground #000000 -highlightbackground #f3f3f3 \
-        -highlightcolor #000000 -selectbackground #000080 \
-        -selectforeground #ffffff -state disabled \
-        -cursor left_ptr
-    $base.cpd29 setwidget $base.cpd29.03
+    vTcl::widgets::core::compoundcontainer::createCmd $base.cpd29 \
+        -compoundType internal -compoundClass {Image Listbox} 
+    $base.cpd29 widget configure -mouseover yes -padx 0
+    bind $base.cpd29 <<ListboxSelect>> {
+        vTcl:font:listboxSelect %W
+    }
+
+##    ScrolledWindow $base.cpd29 -background #bcbcbc
+##    text $base.cpd29.03 \
+##        -background white \
+##        -foreground #000000 -highlightbackground #f3f3f3 \
+##        -highlightcolor #000000 -selectbackground #000080 \
+##        -selectforeground #ffffff -state disabled \
+##        -cursor left_ptr
 
     ###################
     # SETTING GEOMETRY
     ###################
     pack $base.cpd29 \
         -in $base -anchor center -expand 1 -fill both -side top
-    pack $base.cpd29.03
 
     vTcl:display_pulldown $base 396 252 \
         "set vTcl(font,noborder_fontlist,font) <cancel>"
 
-    vTcl:font:fill_noborder_font_list $base.cpd29.03
+    vTcl:font:fill_noborder_font_list $base.cpd29
 }
 
-proc vTcl:font:tag_font_list {t tagname object} {
+proc vTcl:font:listboxSelect {l} {
+    set item [$l widget selection get]
+    set text [$l widget itemcget $item -text]
+    set font [$l widget itemcget $item -font]
 
-    $t tag bind $tagname <Enter> \
-        "$t tag configure $tagname -background gray -relief raised -borderwidth 2"
-
-    $t tag bind $tagname <Leave> \
-        "$t tag configure $tagname -background white -relief flat -borderwidth 0"
-
-    ## Change by Nelson 2003/05/03 bug 529307. If we catch ButtonPress
-    ## instead of ButtonRelease, we risk strange things happening with the mouse
-    ## grabbing widgets.
-    $t tag bind $tagname <ButtonRelease-1> \
-        "set vTcl(font,noborder_fontlist,font) $object"
+    if {$text == "New font..."} {
+        set ::vTcl(font,noborder_fontlist,font) <new>
+    } elseif {$text == "Cancel"} {
+        set ::vTcl(font,noborder_fontlist,font) <cancel>
+    } else {
+        set ::vTcl(font,noborder_fontlist,font) $font
+    }
 }
 
 proc {vTcl:font:fill_noborder_font_list} {t} {
@@ -484,38 +488,34 @@ proc {vTcl:font:fill_noborder_font_list} {t} {
     # set a tab on the right side
 
     update
-    $t configure -state normal -tabs "[winfo width $t]p"
-    $t delete 0.0 end
+    $t widget delete [$t widget items]
 
+    set imageTextList {}
     foreach object $vTcl(fonts,objects) {
 
-        $t insert end \
-           "ABDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwyz 0123456789\n" \
-            vTcl:font_list:$object
+        set family [font configure $object -family]
+        set size   [font configure $object -size]
+        set weight [font configure $object -weight]
+        set slant  [font configure $object -slant]
 
-        $t tag configure vTcl:font_list:$object -font $object
-
-        vTcl:font:tag_font_list $t \
-                                vTcl:font_list:$object \
-                                $object
+        ## no image on left side, just a text
+        lappend imageTextList "" "$family $size $weight $slant"
     }
 
-    # add additional item to create a new font
-    $t insert end "\n New font...\t\n\t" vTcl:font_list:new
+    lappend imageTextList "" "New font..."
 
-    vTcl:font:tag_font_list $t \
-                            vTcl:font_list:new \
-                            <new>
+    lappend imageTextList "" "Cancel"
 
-    # cancel
-    $t insert end "\n Cancel\t\n\t" vTcl:font_list:cancel
-    $t tag configure vTcl:font_list:cancel -foreground #ff0000
+    $t widget fill $imageTextList
 
-    vTcl:font:tag_font_list $t \
-                            vTcl:font_list:cancel \
-                            <cancel>
-
-    $t configure -state disabled
+    ## we can now set the font for each item
+    set items [$t widget items]
+    set i 0
+    foreach object $vTcl(fonts,objects) {
+        set item [lindex $items $i]
+        $t widget itemconfigure $item -font $object
+        incr i
+    }
 }
 
 proc vTcl:font:prompt_noborder_fontlist {font} {
@@ -574,6 +574,7 @@ proc vTcl:font:translate {value} {
 
     return $value
 }
+
 
 
 

@@ -777,10 +777,12 @@ set procs {
     ::imagelistbox::setMouseOver
     ::imagelistbox::selectionCmd
     ::imagelistbox::itemsCmd
+    ::imagelistbox::itemconfigureCmd
     ::imagelistbox::itemcgetCmd
     ::imagelistbox::button1
     ::imagelistbox::button1-release
     ::imagelistbox::yviewCmd
+    ::imagelistbox::deleteCmd
 }
 
 
@@ -1061,6 +1063,15 @@ eval [getListbox $w] itemcget $args
 }
 
 #############################################################################
+## Procedure: ::imagelistbox::itemconfigureCmd
+
+namespace eval ::imagelistbox {
+proc itemconfigureCmd {w args} {
+eval [getListbox $w] itemconfigure $args
+}
+}
+
+#############################################################################
 ## Procedure:  ::imagelistbox::button1
 
 namespace eval ::imagelistbox {
@@ -1088,7 +1099,17 @@ proc yviewCmd {w args} {
 eval [getListbox $w] yview $args
 }
 }
+
+#############################################################################
+## Procedure:  ::imagelistbox::deleteCmd
+
+namespace eval ::imagelistbox {
+proc deleteCmd {w args} {
+eval [getListbox $w] delete $args
+}
 }
 
 }
+}
+
 
