@@ -397,7 +397,11 @@ proc vTcl:font:get_key {object} {
 
 proc vTcl:font:get_font {key} {
     global vTcl
-    return $vTcl(fonts,$key,object)
+    if {[info exists vTcl(fonts,$key,object)]} then {
+        return $vTcl(fonts,$key,object)
+    } else {
+        return ""
+    }
 }
 
 proc {vTcl:font:add_font} {font_descr font_type {newkey {}}} {
@@ -413,6 +417,12 @@ proc {vTcl:font:add_font} {font_descr font_type {newkey {}}} {
 
      if {$newkey == ""} {
           set newkey vTcl:font$vTcl(fonts,counter)
+
+          # let's find an unused font key
+          while {[vTcl:font:get_font $newkey] != ""} {
+             incr vTcl(fonts,counter)
+             set newkey vTcl:font$vTcl(fonts,counter)
+          }
      }
 
      set vTcl(fonts,$newfont,type)                      $font_type
@@ -581,6 +591,7 @@ proc vTclWindow.vTcl.fontManager {args} {
     wm focusmodel $base passive
     wm maxsize $base 1009 738
     wm minsize $base 1 1
+    update
     wm overrideredirect $base 0
     wm resizable $base 1 1
     wm title $base "Font manager"
@@ -616,7 +627,7 @@ if {$font_desc != ""} {
         -command "$base.cpd31.03 yview" -cursor left_ptr \
         -orient vert
     text $base.cpd31.03 \
-        -background #bcbcbc -cursor left_ptr \
+        -background white -cursor left_ptr \
         -foreground #000000 -height 1 \
         -state disabled -width 8 -wrap none \
         -xscrollcommand "$base.cpd31.01 set" \
@@ -652,6 +663,7 @@ if {$font_desc != ""} {
 
     vTcl:font:display_fonts $base
     wm protocol $base WM_DELETE_WINDOW "wm withdraw $base"
+    vTcl:setup_vTcl:bind $base
 }
 
 proc vTcl:font:prompt_font_manager {} {
@@ -744,7 +756,7 @@ proc vTcl:font:create_noborder_fontlist {base} {
         -command "$base.cpd29.03 yview" -cursor left_ptr \
         -orient vert
     text $base.cpd29.03 \
-        -background #bcbcbc \
+        -background white \
         -foreground #000000 -highlightbackground #f3f3f3 \
         -highlightcolor #000000 -selectbackground #000080 \
         -selectforeground #ffffff -state disabled \
@@ -771,10 +783,10 @@ proc vTcl:font:create_noborder_fontlist {base} {
 proc vTcl:font:tag_font_list {t tagname object} {
 
     $t tag bind $tagname <Enter> \
-        "$t tag configure $tagname -background white -relief raised -borderwidth 2"
+        "$t tag configure $tagname -background gray -relief raised -borderwidth 2"
 
     $t tag bind $tagname <Leave> \
-        "$t tag configure $tagname -background #bcbcbc -relief flat -borderwidth 0"
+        "$t tag configure $tagname -background white -relief flat -borderwidth 0"
 
     $t tag bind $tagname <ButtonPress-1> \
         "set vTcl(font,noborder_fontlist,font) $object"
@@ -879,8 +891,5 @@ proc vTcl:font:get_manager_position {} {
     global vTcl
     return [lindex [$vTcl(fonts,font_mgr,win).cpd31.03 yview] 0]
 }
-
-
-
 
 

@@ -1,12 +1,17 @@
-Class Tabnotebook
-Lib   itcl
+Class		Tabnotebook
+Lib		itcl
 
-Icon icon_tabnotebook.gif
-DumpChildren  no
-MegaWidget    yes
+CreateCmd	::iwidgets::tabnotebook
+Icon		icon_tabnotebook.gif
+DumpChildren	no
+MegaWidget	yes
+InsertCmd	vTcl:widget:tabnotebook:inscmd
+TreeChildrenCmd	"vTcl:widget:tabnotebook:treeChildrenCmd
+		vTcl:widget:tabnotebook:treeChildrenChildsite"
+DumpCmd		vTcl:dump:tabnotebook
+
+
 AdditionalClasses Notebook Tabset Page
-
-InsertCmd vTcl:widget:tabnotebook:inscmd
 
 proc vTcl:widget:tabnotebook:inscmd {target} {
 
@@ -15,3 +20,48 @@ proc vTcl:widget:tabnotebook:inscmd {target} {
             $target add -label {Page 3} ;\
             $target select 0"
 }
+
+# All right, I explain it: -4 is the number of levels
+# in the window path between the megawidget and its
+# pages (childsites). This is used by the widget tree
+# to skip 4 levels (otherwise it would draw 4 vertical
+# lines)
+
+proc vTcl:widget:tabnotebook:treeChildrenCmd {target {diff \#-4}} {
+
+    set children ""
+    set wantsdiff [expr {$diff != ""}]
+
+    foreach site [$target childsite] {
+        foreach child [vTcl:complete_widget_tree $site $wantsdiff] {
+            lappend children $child$diff
+        }
+    }
+
+    return $children
+}
+
+proc vTcl:widget:tabnotebook:treeChildrenChildsite {target} {
+
+    return [$target childsite]
+}
+
+proc vTcl:dump:tabnotebook {target basename} {
+
+    global vTcl
+    set result [vTcl:dump_widget_opt $target $basename]
+    set entries [$target childsite]
+    set size [llength $entries]
+    for {set i 0} {$i < $size} {incr i} {
+        set conf [$target pageconfigure $i]
+        set pairs [vTcl:conf_to_pairs $conf ""]
+        append result "$vTcl(tab)$basename add \\\n"
+        append result "[vTcl:clean_pairs $pairs]\n"
+    }
+    foreach page $entries {
+        append result [vTcl:lib_itcl:dump_subwidgets $page]
+    }
+    append result "$vTcl(tab)$basename select 0\n"
+    return $result
+}
+

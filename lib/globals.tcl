@@ -69,7 +69,7 @@ set vTcl(gui,rc_menu)    "$vTcl(gui,main).rc"
 set vTcl(gui,varlist)    "$vTcl(gui,main).varlist"
 set vTcl(gui,statbar)    "$vTcl(gui,main).stat.f.bar"
 set vTcl(gui,showlist)   ".vTcl.mgr .vTcl.ae"
-set vTcl(h,exist)        no
+set vTcl(h,exist)        0
 set vTcl(h,size)         3
 set vTcl(hide)           ""
 set vTcl(item_num)       1
@@ -118,7 +118,7 @@ set vTcl(proc,body)      ""
 set vTcl(proc,ignore)    "tcl.*|tk.*|auto_.*|vTcl:.*|bgerror|\\..*"
 set vTcl(project,name)   ""
 set vTcl(project,file)   ""
-set vTcl(quit)           1
+set vTcl(quit)           0
 set vTcl(tool,list)      ""
 set vTcl(tool,last)      ""
 set vTcl(toolbar,width) 2
@@ -158,6 +158,8 @@ set vTcl(images,stock)   ""
 set vTcl(images,user)    ""
 set vTcl(fonts,stock)    ""
 set vTcl(fonts,user)     ""
+
+set vTcl(propmgr,relief) "groove"
 
 set vTcl(reliefs)        "flat groove raised ridge sunken"
 

@@ -1,280 +1,69 @@
 #!/bin/sh
 # the next line restarts using wish\
-exec wish8.0 "$0" "$@"
+exec wish "$0" "$@" 
 if {![info exist vTcl(sourcing)]} {
 
+        # Provoke name search
+        catch {package require foobar}
+        set names [package names]
 
-		# provoke name search
-	        catch {package require foobar}
-	        set names [package names]
+        # Check if Itcl is available
+        if {[lsearch -exact $names Itcl] != -1} {
+            package require Itcl 3.0
+            namespace import itcl::*
+        }
 
-	        # check if BLT is available
-	        if { [lsearch -exact $names BLT] != -1} {
+        # Check if Itk is available
+        if {[lsearch -exact $names Itk] != -1} {
+            package require Itk 3.0
+        }
 
-		   package require BLT
-		   namespace import blt::vector
-		   namespace import blt::graph
-		   namespace import blt::hierbox
-		   namespace import blt::stripchart
-		}
+        # Check if Iwidgets is available
+        if {[lsearch -exact $names Iwidgets] != -1} {
+            package require Iwidgets 3.0
+            namespace import iwidgets::entryfield
+            namespace import iwidgets::spinint
+            namespace import iwidgets::combobox
+            namespace import iwidgets::scrolledlistbox
+            namespace import iwidgets::calendar
+            namespace import iwidgets::dateentry
+            namespace import iwidgets::scrolledhtml
+            namespace import iwidgets::toolbar
+            namespace import iwidgets::feedback
+            namespace import iwidgets::optionmenu
+            namespace import iwidgets::hierarchy
+            namespace import iwidgets::buttonbox
+            namespace import iwidgets::checkbox
+            namespace import iwidgets::radiobox
+            namespace import iwidgets::tabnotebook
+            namespace import iwidgets::panedwindow
+            namespace import iwidgets::scrolledtext
 
-
-		# provoke name search
-	        catch {package require foobar}
-	        set names [package names]
-
-	        # check if Itcl is available
-	        if { [lsearch -exact $names Itcl] != -1} {
-
-		   package require Itcl 3.0
-		   namespace import itcl::* }
-
-		# check if Itk is available
-		if { [lsearch -exact $names Itk] != -1} {
-
-		   package require Itk 3.0 }
-
-		# check if Iwidgets is available
-		if { [lsearch -exact $names Iwidgets] != -1} {
-
-		   package require Iwidgets 3.0
-                   namespace import iwidgets::entryfield
-                   namespace import iwidgets::spinint
-                   namespace import iwidgets::combobox
-                   namespace import iwidgets::scrolledlistbox
-                   namespace import iwidgets::calendar
-                   namespace import iwidgets::dateentry
-                   namespace import iwidgets::scrolledhtml
-                   namespace import iwidgets::toolbar
-                   namespace import iwidgets::feedback
-                   namespace import iwidgets::optionmenu
-                   namespace import iwidgets::hierarchy
-                   namespace import iwidgets::buttonbox
-                   namespace import iwidgets::checkbox
-                   namespace import iwidgets::radiobox
-                   namespace import iwidgets::tabnotebook
-                   namespace import iwidgets::panedwindow
+            switch {$tcl_platform(platform)} {
+                windows {
+                    option add *Scrolledhtml.sbWidth    16
+                    option add *Scrolledtext.sbWidth    16
+                    option add *Scrolledlistbox.sbWidth 16
                 }
-
+                default {
+                    option add *Scrolledhtml.sbWidth    10
+                    option add *Scrolledtext.sbWidth    10
+                    option add *Scrolledlistbox.sbWidth 10
+                }
+            }
+        }
+    
 }
-############################
-# code to load stock images
-
-
-if {![info exist vTcl(sourcing)]} {
-proc vTcl:rename {name} {
-
-    regsub -all "\\." $name "_" ret
-    regsub -all "\\-" $ret "_" ret
-    regsub -all " " $ret "_" ret
-    regsub -all "/" $ret "__" ret
-
-    return [string tolower $ret]
-}
-
-proc vTcl:image:create_new_image {filename description type} {
-
-	global vTcl env
-	set reference [vTcl:rename $filename]
-
-	# image already existing ?
-	if [info exists vTcl(images,files)] {
-
-		set index [lsearch -exact $vTcl(images,files) $filename]
-
-		if {$index != "-1"} {
-			# cool, no more work to do
-			return
-		}
-	}
-
-	# wait a minute... does the file actually exist?
-	if {! [file exists $filename] } {
-
-		set description "file not found!"
-
-		set object [image create bitmap -data {
-		    #define open_width 16
-		    #define open_height 16
-		    static char open_bits[] = {
-			0x7F, 0xFE,
-			0x41, 0x82,
-			0x21, 0x81,
-			0x41, 0x82,
-			0x21, 0x81,
-			0x21, 0x81,
-			0x21, 0x81,
-			0x91, 0x80,
-			0x21, 0x81,
-			0x91, 0x80,
-			0x21, 0x81,
-			0x21, 0x81,
-			0x21, 0x81,
-			0x41, 0x82,
-			0x41, 0x82,
-			0x7F, 0xFE};}]
-
-	} else {
-
-		set object [image create [vTcl:image:get_creation_type $filename] -file $filename]
-	}
-
-	set vTcl(images,$reference,image)       $object
-	set vTcl(images,$reference,description) $description
-	set vTcl(images,$reference,type)        $type
-	set vTcl(images,filename,$object)       $filename
-
-	lappend vTcl(images,files) $filename
-
-	# return image name in case caller might want it
-	return $object
-}
-
-proc vTcl:image:get_image {filename} {
-
-	global vTcl
-	set reference [vTcl:rename $filename]
-
-	return $vTcl(images,$reference,image)
-}
-
-proc vTcl:image:get_creation_type {filename} {
-
-	set ext [file extension $filename]
-	set ext [string tolower $ext]
-
-	switch $ext {
-
-		.ppm -
-		.gif    {return photo}
-		.xbm    {return bitmap}
-
-		default {return photo}
-	}
-}
-
-vTcl:image:create_new_image "/home/work/vtcl_new/images/edit/copy.gif" "" "stock"
-vTcl:image:create_new_image "/home/work/vtcl_new/images/edit/cut.gif" "" "stock"
-vTcl:image:create_new_image "/home/work/vtcl_new/images/edit/paste.gif" "" "stock"
-vTcl:image:create_new_image "/home/work/vtcl_new/images/edit/new.gif" "" "stock"
-vTcl:image:create_new_image "/home/work/vtcl_new/images/edit/open.gif" "" "stock"
-vTcl:image:create_new_image "/home/work/vtcl_new/images/edit/save.gif" "" "stock"
-vTcl:image:create_new_image "/home/work/vtcl_new/images/edit/replace.gif" "" "stock"
-}
-############################
-# code to load user images
-
-############################
-# code to load stock fonts
-
-
-if {![info exist vTcl(sourcing)]} {
-set vTcl(fonts,counter) 0
-proc vTcl:font:add_font {font_descr font_type newkey} {
-
-     global vTcl
-
-     incr vTcl(fonts,counter)
-     set newfont [eval font create $font_descr]
-
-     lappend vTcl(fonts,objects) $newfont
-
-     # each font has its unique key so that when a project is
-     # reloaded, the key is used to find the font description
-
-     if {$newkey == ""} {
-          set newkey vTcl:font$vTcl(fonts,counter)
-     }
-
-     set vTcl(fonts,$newfont,type)                      $font_type
-     set vTcl(fonts,$newfont,key)                       $newkey
-     set vTcl(fonts,$vTcl(fonts,$newfont,key),object)   $newfont
-
-     # in case caller needs it
-     return $newfont
-}
-
-proc vTcl:font:get_font {key} {
-
-	global vTcl
-
-	return $vTcl(fonts,$key,object)
-}
-
-vTcl:font:add_font "-family helvetica -size 12 -weight normal -slant roman -underline 0 -overstrike 0" stock vTcl:font1
-vTcl:font:add_font "-family helvetica -size 12 -weight normal -slant roman -underline 1 -overstrike 0" stock underline
-vTcl:font:add_font "-family courier -size 12 -weight normal -slant roman -underline 0 -overstrike 0" stock vTcl:font3
-vTcl:font:add_font "-family times -size 12 -weight normal -slant roman -underline 0 -overstrike 0" stock vTcl:font4
-vTcl:font:add_font "-family helvetica -size 12 -weight bold -slant roman -underline 0 -overstrike 0" stock vTcl:font5
-vTcl:font:add_font "-family courier -size 12 -weight bold -slant roman -underline 0 -overstrike 0" stock vTcl:font6
-vTcl:font:add_font "-family times -size 12 -weight bold -slant roman -underline 0 -overstrike 0" stock vTcl:font7
-vTcl:font:add_font "-family lucida -size 18 -weight normal -slant roman -underline 0 -overstrike 0" stock vTcl:font8
-vTcl:font:add_font "-family lucida -size 18 -weight normal -slant italic -underline 0 -overstrike 0" stock vTcl:font9
-}
-############################
-# code to load user fonts
-
 #############################################################################
-# Visual Tcl v1.21 Project
+# Visual Tcl v1.51 Project
 #
 
 #################################
-# GLOBAL VARIABLES
-#
-global widget;
-    set widget(pane) {.top36.pan37}
-    set widget(pane1_contents) {.top38}
-    set widget(pane2_contents) {.top41}
-    set widget(rev,.top36.pan37) {pane}
-    set widget(rev,.top38) {pane1_contents}
-    set widget(rev,.top41) {pane2_contents}
-
-#################################
-# USER DEFINED PROCEDURES
+# VTCL LIBRARY PROCEDURES
 #
 
-proc {panedwindow} {pathName args} {
-uplevel ::iwidgets::Panedwindow $pathName $args
-}
-
-proc {scrolledlistbox} {pathName args} {
-uplevel ::iwidgets::Scrolledlistbox $pathName $args
-}
-
-proc {main} {argc argv} {
-global widget
-wm protocol .top36 WM_DELETE_WINDOW {
-	destroy .top36
-	destroy .top38
-	destroy .top41
-	puts [itcl::find objects]
-	exit}
-
-$widget(pane) add pane1
-$widget(pane) add pane2
-
-set pane1 [lindex [$widget(pane) childsite] 0]
-set pane2 [lindex [$widget(pane) childsite] 1]
-
-# fill the paned widget
-vTclWindow.top38 $pane1 1
-vTclWindow.top41 $pane2 1
-
-$widget(pane) fraction 50 50
-
-# add some data in the text widget
-
-$pane1.cpd39.03 insert end [info body main]
-
-# add some data in the listbox
-for {set i 1} {$i <= 10} {incr i} {
-
-    $pane2.scr42 insert end line$i
-}
-}
-
-proc {Window} {args} {
-global vTcl
+proc Window {args} {
+    global vTcl
     set cmd [lindex $args 0]
     set name [lindex $args 1]
     set newname [lindex $args 2]
@@ -283,10 +72,11 @@ global vTcl
     if {$newname == ""} {
         set newname $name
     }
+    if {$name == "."} { wm withdraw $name; return }
     set exists [winfo exists $newname]
     switch $cmd {
         show {
-            if {$exists == "1" && $name != "."} {wm deiconify $name; return}
+	    if {$exists} { wm deiconify $name; return }
             if {[info procs vTclWindow(pre)$name] != ""} {
                 eval "vTclWindow(pre)$name $newname $rest"
             }
@@ -301,6 +91,137 @@ global vTcl
         iconify { if $exists {wm iconify $newname; return} }
         destroy { if $exists {destroy $newname; return} }
     }
+}
+
+if {![info exists vTcl(sourcing)]} {
+proc {vTcl:Toplevel:WidgetProc} {w args} {
+if {[llength $args] == 0} {
+    	return -code error [vTcl:WrongNumArgs "$w option ?arg arg ...?"]
+    }
+
+    ## The first argument is a switch, they must be doing a configure.
+    if {[string index $args 0] == "-"} {
+    	set command configure
+
+	## There's only one argument, must be a cget.
+	if {[llength $args] == 1} {
+	    set command cget
+	}
+    } else {
+    	set command [lindex $args 0]
+	set args [lrange $args 1 end]
+    }
+
+    switch -- $command {
+	"hide" -
+	"Hide" {
+	    Window hide $w
+	}
+
+	"show" -
+	"Show" {
+	    Window show $w
+	}
+
+	"ShowModal" {
+	    Window show $w
+          raise $w
+	    grab $w
+	    tkwait window $w
+	    grab release $w
+	}
+
+    	default {
+	    eval $w $command $args
+	}
+    }
+}
+
+proc {vTcl:WidgetProc} {w args} {
+if {[llength $args] == 0} {
+    	return -code error "wrong # args: should be \"$w option ?arg arg ...?\""
+    }
+
+    ## The first argument is a switch, they must be doing a configure.
+    if {[string index $args 0] == "-"} {
+    	set command configure
+
+	## There's only one argument, must be a cget.
+	if {[llength $args] == 1} {
+	    set command cget
+	}
+    } else {
+    	set command [lindex $args 0]
+	set args [lrange $args 1 end]
+    }
+
+    eval $w $command $args
+}
+}
+
+proc vTcl:project:info {} {
+    namespace eval ::widgets::.top36 {
+        array set save {-background 1 -highlightbackground 1 -highlightcolor 1}
+    }
+    namespace eval ::widgets::.top36.pan37 {
+        array set save {}
+    }
+    namespace eval ::widgets::.top36.pan37.pane0.childsite {
+        array set save {}
+    }
+    namespace eval ::widgets::.top36.pan37.pane0.childsite.lab40 {
+        array set save {-text 1}
+    }
+    namespace eval ::widgets::.top36.pan37.pane0.childsite.cpd39 {
+        array set save {}
+    }
+    namespace eval ::widgets::.top36.pan37.pane0.childsite.cpd39.01 {
+        array set save {-command 1 -orient 1 -width 1}
+    }
+    namespace eval ::widgets::.top36.pan37.pane0.childsite.cpd39.02 {
+        array set save {-command 1 -width 1}
+    }
+    namespace eval ::widgets::.top36.pan37.pane0.childsite.cpd39.03 {
+        array set save {-xscrollcommand 1 -yscrollcommand 1}
+    }
+    namespace eval ::widgets::.top36.pan37.pane1.childsite {
+        array set save {}
+    }
+    namespace eval ::widgets::.top36.pan37.pane1.childsite.scr42 {
+        array set save {-sbwidth 1}
+    }
+    namespace eval ::widgets_bindings {
+        set tagslist {}
+    }
+}
+
+#################################
+# USER DEFINED PROCEDURES
+#
+
+proc {main} {argc argv} {
+global widget
+wm protocol .top36 WM_DELETE_WINDOW {
+	destroy .top36
+	destroy .top38
+	destroy .top41
+	puts [itcl::find objects]
+	exit}
+
+set pane1 [lindex [$widget(pane) childsite] 0]
+set pane2 [lindex [$widget(pane) childsite] 1]
+
+$widget(pane) fraction 50 50
+
+# add some data in the text widget
+
+$pane1.cpd39.03 insert end [info body main]
+
+# add some data in the listbox
+for {set i 1} {$i <= 10} {incr i} {
+
+    $pane2.scr42 insert end line$i
+}
 }
 
 proc init {argc argv} {
@@ -322,13 +243,14 @@ proc vTclWindow. {base {container 0}} {
     ###################
     if {!$container} {
     wm focusmodel $base passive
-    wm geometry $base 1x1+0+0
+    wm geometry $base 1x1+0+0; update
     wm maxsize $base 1009 738
     wm minsize $base 1 1
     wm overrideredirect $base 0
     wm resizable $base 1 1
     wm withdraw $base
     wm title $base "vt.tcl"
+    bindtags $base "$base Vtcl.tcl all"
     }
     ###################
     # SETTING GEOMETRY
@@ -342,15 +264,23 @@ proc vTclWindow.top36 {base {container 0}} {
     if {[winfo exists $base] && (!$container)} {
         wm deiconify $base; return
     }
+
+    global widget
+    set widget(rev,$base.pan37) {pane}
+    set {widget(pane)} "$base.pan37"
+    set widget($base,pane) "$base.pan37"
+    interp alias {} pane {}  $base.pan37
+    interp alias {} $base.pane {}  $base.pan37
+
     ###################
     # CREATING WIDGETS
     ###################
     if {!$container} {
     toplevel $base -class Toplevel \
         -background #bcbcbc -highlightbackground #bcbcbc \
-        -highlightcolor #000000
+        -highlightcolor #000000 
     wm focusmodel $base passive
-    wm geometry $base 318x349+151+159
+    wm geometry $base 318x349+124+118; update
     wm maxsize $base 1009 738
     wm minsize $base 1 1
     wm overrideredirect $base 0
@@ -359,119 +289,56 @@ proc vTclWindow.top36 {base {container 0}} {
     wm title $base "Paned window"
     }
     panedwindow $base.pan37
+    bindtags $base.pan37 "pw-config-::.top36.pan37 itk-delete-.top36.pan37 $base.pan37 Panedwindow $base all"
+    $base.pan37 add pane0 \
+        
+    $base.pan37 add pane1 \
+        
+    label $base.pan37.pane0.childsite.lab40 \
+        -text {This is pane 1!} 
+    pack $base.pan37.pane0.childsite.lab40 \
+        -in $base.pan37.pane0.childsite -anchor center -expand 0 -fill none \
+        -side top 
+    frame $base.pan37.pane0.childsite.cpd39
+    pack $base.pan37.pane0.childsite.cpd39 \
+        -in $base.pan37.pane0.childsite -anchor center -expand 1 -fill both \
+        -side bottom 
+    grid columnconf $base.pan37.pane0.childsite.cpd39 0 -weight 1
+    grid rowconf $base.pan37.pane0.childsite.cpd39 0 -weight 1
+    scrollbar $base.pan37.pane0.childsite.cpd39.01 \
+        -command "$base.pan37.pane0.childsite.cpd39.03 xview" \
+        -orient horizontal -width 10 
+    grid $base.pan37.pane0.childsite.cpd39.01 \
+        -in $base.pan37.pane0.childsite.cpd39 -column 0 -row 1 -columnspan 1 \
+        -rowspan 1 -sticky ew 
+    scrollbar $base.pan37.pane0.childsite.cpd39.02 \
+        -command "$base.pan37.pane0.childsite.cpd39.03 yview" -width 10 
+    grid $base.pan37.pane0.childsite.cpd39.02 \
+        -in $base.pan37.pane0.childsite.cpd39 -column 1 -row 0 -columnspan 1 \
+        -rowspan 1 -sticky ns 
+    text $base.pan37.pane0.childsite.cpd39.03 \
+        -xscrollcommand "$base.pan37.pane0.childsite.cpd39.01 set" \
+        -yscrollcommand "$base.pan37.pane0.childsite.cpd39.02 set" 
+    grid $base.pan37.pane0.childsite.cpd39.03 \
+        -in $base.pan37.pane0.childsite.cpd39 -column 0 -row 0 -columnspan 1 \
+        -rowspan 1 -sticky nesw 
+    scrolledlistbox $base.pan37.pane1.childsite.scr42 \
+        -sbwidth 10 
+    bindtags $base.pan37.pane1.childsite.scr42 "itk-delete-.top36.pan37.pane1.childsite.scr42 $base.pan37.pane1.childsite.scr42 Scrolledlistbox $base all"
+    pack $base.pan37.pane1.childsite.scr42 \
+        -in $base.pan37.pane1.childsite -anchor center -expand 1 -fill both \
+        -side top 
+    grid columnconf $base.pan37.pane1.childsite.scr42 0 -weight 1
+    grid rowconf $base.pan37.pane1.childsite.scr42 2 -weight 1
+    grid rowconf $base.pan37.pane1.childsite.scr42 1 -minsize 2
     ###################
     # SETTING GEOMETRY
     ###################
     pack $base.pan37 \
-        -in $base -anchor center -expand 1 -fill both -side top
-}
-
-proc vTclWindow.top38 {base {container 0}} {
-    if {$base == ""} {
-        set base .top38
-    }
-    if {[winfo exists $base] && (!$container)} {
-        wm deiconify $base; return
-    }
-    ###################
-    # CREATING WIDGETS
-    ###################
-    if {!$container} {
-    toplevel $base -class Toplevel \
-        -background #bcbcbc -cursor left_ptr -highlightbackground #bcbcbc \
-        -highlightcolor #000000
-    wm focusmodel $base passive
-    wm geometry $base 247x181+418+330
-    wm maxsize $base 1009 738
-    wm minsize $base 1 1
-    wm overrideredirect $base 0
-    wm resizable $base 1 1
-    wm deiconify $base
-    wm title $base "New Toplevel 2"
-    }
-    frame $base.cpd39 \
-        -background #bcbcbc -borderwidth 1 -height 30 \
-        -highlightbackground #bcbcbc -highlightcolor #000000 -relief raised \
-        -width 30
-    scrollbar $base.cpd39.01 \
-        -activebackground #bcbcbc -background #bcbcbc \
-        -command "$base.cpd39.03 xview" -cursor left_ptr \
-        -highlightbackground #bcbcbc -highlightcolor #000000 -orient horiz \
-        -troughcolor #bcbcbc -width 10
-    scrollbar $base.cpd39.02 \
-        -activebackground #bcbcbc -background #bcbcbc \
-        -command "$base.cpd39.03 yview" -cursor left_ptr \
-        -highlightbackground #bcbcbc -highlightcolor #000000 -orient vert \
-        -troughcolor #bcbcbc -width 10
-    text $base.cpd39.03 \
-        -background #bcbcbc \
-        -font -Adobe-Helvetica-Medium-R-Normal-*-*-120-*-*-*-*-*-* \
-        -foreground #000000 -height 1 -highlightbackground #f3f3f3 \
-        -highlightcolor #000000 -selectbackground #000080 \
-        -selectforeground #ffffff -width 8 \
-        -xscrollcommand "$base.cpd39.01 set" \
-        -yscrollcommand "$base.cpd39.02 set"
-    label $base.lab40 \
-        -background #bcbcbc -borderwidth 1 \
-        -font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1 \
-        -foreground #000000 -highlightbackground #bcbcbc \
-        -highlightcolor #000000 -text {This is pane 1!}
-    ###################
-    # SETTING GEOMETRY
-    ###################
-    pack $base.cpd39 \
-        -in $base -anchor center -expand 1 -fill both -side bottom
-    grid columnconf $base.cpd39 0 -weight 1
-    grid rowconf $base.cpd39 0 -weight 1
-    grid $base.cpd39.01 \
-        -in $base.cpd39 -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew
-    grid $base.cpd39.02 \
-        -in $base.cpd39 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns
-    grid $base.cpd39.03 \
-        -in $base.cpd39 -column 0 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky nesw
-    pack $base.lab40 \
-        -in $base -anchor center -expand 0 -fill none -side top
-}
-
-proc vTclWindow.top41 {base {container 0}} {
-    if {$base == ""} {
-        set base .top41
-    }
-    if {[winfo exists $base] && (!$container)} {
-        wm deiconify $base; return
-    }
-    ###################
-    # CREATING WIDGETS
-    ###################
-    if {!$container} {
-    toplevel $base -class Toplevel \
-        -background #bcbcbc -highlightbackground #bcbcbc \
-        -highlightcolor #000000
-    wm focusmodel $base passive
-    wm geometry $base 303x186+543+505
-    wm maxsize $base 1009 738
-    wm minsize $base 1 1
-    wm overrideredirect $base 0
-    wm resizable $base 1 1
-    wm deiconify $base
-    wm title $base "New Toplevel 3"
-    }
-    scrolledlistbox $base.scr42 \
-        -labeltext {This is pane 2!} -sbwidth 10
-    ###################
-    # SETTING GEOMETRY
-    ###################
-    pack $base.scr42 \
-        -in $base -anchor center -expand 1 -fill both -side top
-    grid columnconf $base.scr42 0 -weight 1
-    grid rowconf $base.scr42 2 -weight 1
-    grid rowconf $base.scr42 1 -minsize 2
+        -in $base -anchor center -expand 1 -fill both -side top 
 }
 
 Window show .
 Window show .top36
-Window show .top38
-Window show .top41
 
 main $argc $argv

@@ -21,6 +21,15 @@
 ##############################################################################
 #
 
+proc vTcl:portable_filename {filename} {
+
+   set result "\[file join "
+   append result "[file split $filename]"
+   append result "\]"
+
+   return $result
+}
+
 proc vTcl:at {varname} {
     upvar $varname localvar
     return $localvar
@@ -395,6 +404,7 @@ proc vTcl:dialog {mesg {options Ok} {root 0}} {
     set sh [winfo screenheight .]
     if {![winfo exists $base]} {
         toplevel $base -class vTcl
+	wm withdraw $base
         wm title $base "Visual Tcl Message"
         wm transient $base .vTcl
         frame $base.f -bd 2 -relief groove
@@ -414,7 +424,6 @@ proc vTcl:dialog {mesg {options Ok} {root 0}} {
         pack $base.f -side top -expand 1 -fill both -padx 2 -pady 2
         pack $base.o -side top -fill x -padx 2 -pady 2
     }
-    wm withdraw $base
     update idletasks
     set w [winfo reqwidth $base]
     set h [winfo reqheight $base]
@@ -670,7 +679,7 @@ proc vTcl:display_pulldown {base xl yl {close_action ""}} {
 proc vTcl:split_geom {geom} {
     set vars {height width x y}
     foreach var $vars { set $var {} }
-    regexp {([0-9]+)x([0-9]+)\+([0-9]+)\+([0-9]+)} $geom \
+    regexp {([0-9-]+)x([0-9-]+)\+([0-9-]+)\+([0-9-]+)} $geom \
     	trash width height x y
     return [list $width $height $x $y]
 }
@@ -680,7 +689,7 @@ proc vTcl:get_win_position {w} {
     return "+$x+$y"
 }
 
-proc lremove {varName args} {
+proc ::vTcl::lremove {varName args} {
     upvar 1 $varName list
 
     set found 0
@@ -696,7 +705,8 @@ proc lremove {varName args} {
 }
 
 proc lempty {list} {
-    return [expr [llength $list] == 0]
+    if {[catch {expr [llength $list] == 0} res]} { return 0 }
+    return $res
 }
 
 proc lassign {list args} {
@@ -733,8 +743,8 @@ proc vTcl:copy_widgetname {} {
 # }
 
 proc echo {args} {
-    puts stdout [join $args ""]
-    flush stdout
+    ::vTcl::InitTkcon
+    tkcon_puts $args
 }
 
 proc incr0 {varName {num 1}} {
@@ -954,7 +964,7 @@ namespace eval base64 {
 
 proc vTcl:formCompound:add {cpd type args} {
 
-	global widget 
+	global widget
 	set varname [vTcl:rename $cpd]
 
 	global ${varname}_count
@@ -964,7 +974,7 @@ proc vTcl:formCompound:add {cpd type args} {
 	   set ${varname}_count 0
 	}
 
-	eval set count $${varname}_count
+	set count [vTcl:at ${varname}_count]
 
 	if {$type == "entry"} { set type vTcl:entry }
 	set window_name $cpd.i$count
@@ -1220,4 +1230,31 @@ proc vTcl:read_file {file} {
 proc ::vTcl::change {} {
     global vTcl
     set vTcl(change) 1
+}
+
+proc vTcl:show_console {{show show}} {
+    ::vTcl::InitTkcon
+    tkcon $show
+}
+
+proc ::vTcl::InitTkcon {} {
+    if {[catch {winfo exists $::tkcon::PRIV(root)}]} {
+    	::tkcon::Init
+	tkcon title "Visual Tcl"
+    }	
+}
+
+proc vTcl:canvas:see {c item} {
+    lassign [$c cget -scrollregion] foo foo cx cy
+    lassign [$c bbox $item] ix iy
+    set x [expr $ix.0 / $cx]
+    set y [expr $iy.0 / $cy]
+    $c xview moveto $x
+    $c yview moveto $y
+}
+
+proc vTcl:WidgetVar {w varName {newVar ""}} {
+    if {[lempty $newVar]} { set newVar $varName }
+    uplevel 1 "upvar #0 ::widgets::${w}::$varName $newVar"
+    return [info exists ::widgets::${w}::$varName]
 }

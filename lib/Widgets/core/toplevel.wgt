@@ -2,12 +2,20 @@ Class		Toplevel
 Lib		core
 
 Icon		icon_toplevel.gif
-DoubleClickCmd	vTcl:edit_target_menu
+DoubleClickCmd	vTcl:widget:toplevel:dblclkcmd
+
 TreeLabel	@vTcl:core:get_widget_tree_label
 InsertCmd	vTcl:widget:toplevel:inscmd
 WidgetProc	vTcl:Toplevel:WidgetProc
 
 Function	"Set New Toplevel Geometry" vTcl:widget:toplevel:set_new_geom
+
+proc vTcl:widget:toplevel:dblclkcmd {target} {
+    global vTcl
+    set vTcl(w,opt,-menu) [$target cget -menu]
+    vTcl:edit_target_menu $target
+    vTcl:prop:save_opt $target -menu vTcl(w,opt,-menu)
+}
 
 proc vTcl:widget:toplevel:inscmd {target} {
     global vTcl
@@ -33,43 +41,43 @@ proc vTcl:widget:toplevel:set_new_geom {} {
 
 proc vTcl:Toplevel:WidgetProc {w args} {
     if {[llength $args] == 0} {
-    	return -code error [vTcl:WrongNumArgs "$w option ?arg arg ...?"]
+        return -code error "wrong # args: should be \"$w option ?arg arg ...?\""
     }
 
     ## The first argument is a switch, they must be doing a configure.
     if {[string index $args 0] == "-"} {
-    	set command configure
+        set command configure
 
-	## There's only one argument, must be a cget.
-	if {[llength $args] == 1} {
-	    set command cget
-	}
+        ## There's only one argument, must be a cget.
+        if {[llength $args] == 1} {
+            set command cget
+        }
     } else {
-    	set command [lindex $args 0]
-	set args [lrange $args 1 end]
+        set command [lindex $args 0]
+        set args [lrange $args 1 end]
     }
 
     switch -- $command {
-	"hide" -
-	"Hide" {
-	    Window hide $w
-	}
+        "hide" -
+        "Hide" {
+            Window hide $w
+        }
 
-	"show" -
-	"Show" {
-	    Window show $w
-	}
+        "show" -
+        "Show" {
+            Window show $w
+        }
 
-	"ShowModal" {
-	    Window show $w
-          raise $w
-	    grab $w
-	    tkwait window $w
-	    grab release $w
-	}
+        "ShowModal" {
+            Window show $w
+            raise $w
+            grab $w
+            tkwait window $w
+            grab release $w
+        }
 
-    	default {
-	    eval $w $command $args
-	}
+        default {
+            eval $w $command $args
+        }
     }
 }

@@ -23,22 +23,20 @@
 
 proc vTcl:destroy_handles {} {
     global vTcl
-    if { $vTcl(h,exist) == "yes" && [winfo exists $vTcl(h,n)] == 1} {
-        destroy $vTcl(h,n) $vTcl(h,e)
-        destroy $vTcl(h,s) $vTcl(h,w) 
+    if {$vTcl(h,exist) && [winfo exists $vTcl(h,n)]} {
+        destroy $vTcl(h,n)  $vTcl(h,e)
+        destroy $vTcl(h,s)  $vTcl(h,w) 
         destroy $vTcl(h,nw) $vTcl(h,ne)
         destroy $vTcl(h,se) $vTcl(h,sw) 
     }
-    set vTcl(h,exist) no
+    set vTcl(h,exist) 0
 }
 
 proc vTcl:create_handles {target} {
     global vTcl
-    if { $vTcl(h,exist) == "yes" } {
-        vTcl:destroy_handles
-    }
+    if {$vTcl(h,exist)} { vTcl:destroy_handles }
     if { $vTcl(w,manager) == "wm" || $target == "." } { return }
-    set vTcl(h,exist) yes
+    set vTcl(h,exist) 1
     set s [expr $vTcl(h,size) * 2]
     if {![winfo exists $target]} { return }
     set parent [winfo parent $target]
@@ -70,8 +68,8 @@ proc vTcl:create_handles {target} {
 
 proc vTcl:place_handles {target} {
     global vTcl
-    if {$target == ""} {return}
-    if {$vTcl(h,exist) == "yes" && [winfo exists $vTcl(h,n)]} {
+    if {$target == ""} { return }
+    if {$vTcl(h,exist) && [winfo exists $vTcl(h,n)]} {
         update idletasks
         set s $vTcl(h,size)
         set x [winfo x $target]
@@ -100,5 +98,3 @@ proc vTcl:place_handles {target} {
         vTcl:create_handles $target
     }
 }
-
-

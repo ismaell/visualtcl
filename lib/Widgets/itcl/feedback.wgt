@@ -1,6 +1,7 @@
-Class Feedback
-Lib   itcl
+Class		Feedback
+Lib		itcl
 
-Icon icon_feedback.gif
-DumpChildren  no
-MegaWidget    yes
+CreateCmd	::iwidgets::feedback
+Icon		icon_feedback.gif
+DumpChildren	no
+MegaWidget	yes

@@ -49,7 +49,6 @@ NewOption -pady			"y pad"			type
 NewOption -relief		"relief"		relief
 NewOption -repeatdelay		"repeat delay"		type
 NewOption -repeatinterval	"repeat intrvl"		type
-NewOption -screen		"screen"		type
 NewOption -scrollregion		"scroll region"		type
 NewOption -selectbackground	"select bg"		color	{}	Colors
 NewOption -selectborderwidth	"select bd"		type

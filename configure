@@ -27,6 +27,7 @@ DIRS=" `echo $PATH | sed -e 's/:/ /g'` \
 	/bin		\
 	/opt/local/bin	\
 	/opt/bin	\
+    /opt/tcltk/bin
 "
 
 for wish in $WISHES

@@ -21,20 +21,6 @@
 # Architecture by Stewart Allen
 # Implementation by Kenneth H. Cox <kcox@senteinc.com>
 
-#
-# Initializes this library
-#
-proc vTcl:lib_tix:init {} {
-    global vTcl
-
-    if {[catch {package require Tix} erg]} {
-        lappend vTcl(libNames) {(not detected) Tix Widget Support Library}
-	return 0
-    }
-    lappend vTcl(libNames) {Tix Widget Support Library}
-    return 1
-}
-
 proc vTcl:widget:lib:lib_tix {args} {
     global vTcl
 
@@ -57,119 +43,99 @@ proc vTcl:widget:lib:lib_tix {args} {
 
     vTcl:lib:add_widgets_to_toolbar $order
 
-    vTcl:lib_tix:unscrew_option_db
-
-    append vTcl(head,importheader) {
-        # Provoke name search
-        catch {package require foobar}
-        set names [package names]
-
-        # Check if Tix is available
-        if { [lsearch -exact $names Tix] != -1} {
-            package require Tix
-        }
+    append vTcl(head,tix,importheader) {
+    # Check if Tix is available
+    if {[lsearch -exact $packageNames Tix] != -1} {
+	package require Tix
+    }
     }
 }
 
-# Tix has screwed with the option database; reset it back to Tk's
-# defaults.  Otherwise, all widgets will be saved with color/font
-# (-foreground, -background, etc.) options specified.  Then we won't be
-# able to globally override them in the generated app!
+
+##############################################################################
 #
-# A different approach to this problem would be:
-#     1. add "don't save colors" and "don't save fonts" preferences
-#     2. modify vTcl:dump_widget_opt so that it pays attention to them
-#
-# Took some of this code from tk's palette.tcl.
-proc vTcl:lib_tix:unscrew_option_db {args} {
-    checkbutton .c14732
-    entry .e14732
-    scrollbar .s14732
-    text .t14732
-    # this is order dependent (e.g. font should come before Text.font
-    # and Entry.font) so use a list, not an array
-    set l ""
-    lappend l [list activeBackground \
-            [lindex [.c14732 configure -activebackground] 3]]
-    lappend l [list activeForeground \
-            [lindex [.c14732 configure -activeforeground] 3]]
-    lappend l [list background \
-            [lindex [.c14732 configure -background] 3]]
-    lappend l [list disabledForeground \
-            [lindex [.c14732 configure -disabledforeground] 3]]
-    lappend l [list font \
-            [lindex [.c14732 configure -font] 3]]
-    lappend l Entry.[list font \
-            [lindex [.e14732 configure -font] 3]]
-    lappend l Text.[list font \
-            [lindex [.t14732 configure -font] 3]]
-    lappend l [list foreground \
-            [lindex [.c14732 configure -foreground] 3]]
-    lappend l [list highlightBackground \
-            [lindex [.c14732 configure -highlightbackground] 3]]
-    lappend l [list highlightColor \
-            [lindex [.c14732 configure -highlightcolor] 3]]
-    lappend l [list insertBackground \
-            [lindex [.e14732 configure -insertbackground] 3]]
-    lappend l [list selectColor \
-            [lindex [.c14732 configure -selectcolor] 3]]
-    lappend l [list selectBackground \
-            [lindex [.e14732 configure -selectbackground] 3]]
-    lappend l [list selectForeground \
-            [lindex [.e14732 configure -selectforeground] 3]]
-    lappend l [list troughColor \
-            [lindex [.s14732 configure -troughcolor] 3]]
-    destroy .c14732 .e14732 .s14732 .t14732
-    # this causes tix to reset its internal notion of the defaults
-    tix resetoptions TK TK
-    # this reinits the options database back to the defaults we just
-    # queried, using the same priority level as tix used to screw us in
-    # the first place.
-    global tixOption
-    foreach e $l {
-        set option [lindex $e 0]
-        set value  [lindex $e 1]
-        #puts "option add *$option $value $tixOption(prioLevel)"
-        option add *$option $value $tixOption(prioLevel)
+# this modified version of the "option" command ignores all
+# changes to the option database except for "Tix" options
+
+proc vTcl:lib_tix:ignore_option {cmd args} {
+
+    if {"$cmd" != "add"} {
+        return [eval _option $cmd $args]
     }
 
-    # Prevent Tix from screwing us again (Tix calls "option add" when
-    # creating new classes).
-    if {[info procs vTcl:lib_tix:old_option] == ""} {
-        #puts "ABOUT TO RENAME COMMANDS"
-        rename option vTcl:lib_tix:old_option
-        rename vTcl:lib_tix:new_option option
+    set pattern  [lindex $args 0]
+
+    # only add Tix options
+    if [string match *Tix* $pattern] {
+        # puts "option $cmd $args"
+        return [eval _option $cmd $args]
     }
 }
 
+##############################################################################
+#
 # Now I'm _really_ going out of my way to undo the screwing up of the
 # option DB that Tix does.  I rename the "option" command, and interpose
-# my own vTcl:lib_tix:new_option which tones down the damage that Tix
-# does by turning '*TixLabelFrame*Label.font' into
+# my own vTcl:lib_tix:monitor_option which tones down the damage that Tix
+# does by turning
+#
+# '*TixLabelFrame*Label.font'
+#
+# into
+#
 # '*TixLabelFrame.Label.font'
 #
-proc vTcl:lib_tix:new_option {cmd args} {
-    #puts "lib_tix:new_option:$cmd $args:"
+proc vTcl:lib_tix:monitor_option {cmd args} {
+
+    #puts "lib_tix:monitor_option:$cmd $args:"
     if {"$cmd" != "add"} {
-        return [eval vTcl:lib_tix:old_option $cmd $args]
+        return [eval _option $cmd $args]
     }
-    #puts "\tit's an add"
+
+    #puts "option $cmd $args"
+
     set pattern  [lindex $args 0]
     set value    [lindex $args 1]
     set priority [lindex $args 2]
+
     # if this is a Tix option, change all '*'s (except the first) with
     # '.'s otherwise they screw up everything!
     #puts "pattern:$pattern:"
+
     if {[string match {\*Tix*} $pattern]} {
         #puts "\twas: $pattern"
         regsub {(.)\*} $pattern {\1.} pattern
         #puts "\tis:  $pattern"
     }
+
     if {"$priority" == ""} {
-        vTcl:lib_tix:old_option add $pattern $value
+        _option add $pattern $value
     } else {
-        vTcl:lib_tix:old_option add $pattern $value $priority
+        _option add $pattern $value $priority
     }
+}
+
+#
+# Initializes this library
+#
+proc vTcl:lib_tix:init {} {
+    global vTcl
+
+    rename option _option
+    rename vTcl:lib_tix:ignore_option option
+
+    if {[catch {package require Tix} erg]} {
+        lappend vTcl(libNames) {(not detected) Tix Widget Support Library}
+        rename option vTcl:lib_tix:ignore_option
+        rename _option option
+        return 0
+    }
+
+    rename option vTcl:lib_tix:ignore_option
+    rename vTcl:lib_tix:monitor_option option
+
+    lappend vTcl(libNames) {Tix Widget Support Library}
+    return 1
 }
 
 #
@@ -177,62 +143,20 @@ proc vTcl:lib_tix:new_option {cmd args} {
 # install them.
 #
 proc vTcl:lib_tix:setup {} {
-	global vTcl
+    global vTcl
 
     ## Preferences
     set vTcl(tixPref,dump_colors) 0 ;# if 0, don't save -background, etc.
 
     ## Add to procedure, var, bind regular expressions
     if {[lempty $vTcl(bind,ignore)]} {
-	append vTcl(bind,ignore) "tix"
+        append vTcl(bind,ignore) "tix"
     } else {
-	append vTcl(bind,ignore) "|tix"
+        append vTcl(bind,ignore) "|tix"
     }
 
     append vTcl(proc,ignore) "|tix"
     append vTcl(var,ignore)  "|tix"
-}
-
-#
-# per-widget-class dump procedures
-#
-proc vTcl:dump:TixNoteBook {target basename} {
-    global vTcl
-    set result [vTcl:lib_tix:dump_widget_opt $target $basename]
-    set entries [$target pages]
-    foreach page $entries {
-        set conf [$target pageconfigure $page]
-        set pairs [vTcl:conf_to_pairs $conf ""]
-        append result "$vTcl(tab)$basename add $page \\\n"
-        append result "[vTcl:clean_pairs $pairs]\n"
-    }
-    foreach page $entries {
-        set subwidget [$target subwidget $page]
-        append result [vTcl:lib_tix:dump_subwidgets $subwidget]
-    }
-    return $result
-}
-
-proc vTcl:dump:TixPanedWindow {target basename} {
-    global vTcl
-    set result [vTcl:lib_tix:dump_widget_opt $target $basename]
-    set entries [$target panes]
-    foreach page $entries {
-        set conf [$target paneconfigure $page]
-        foreach c $conf { # Filter the valid options out
-            if [regexp -- {^-(after|allow|at|before|expand|max|min|size)} $c] {
-                lappend validcfg $c
-            }
-        }
-        set pairs [vTcl:conf_to_pairs $validcfg ""]
-        append result "$vTcl(tab)$basename add $page \\\n"
-        append result "[vTcl:clean_pairs $pairs]\n"
-    }
-    foreach page $entries {
-        set subwidget [$target subwidget $page]
-        append result [vTcl:lib_tix:dump_subwidgets $subwidget]
-    }
-    return $result
 }
 
 proc vTcl:dump:TixOptionMenu {target basename} {
@@ -255,12 +179,6 @@ proc vTcl:dump:TixOptionMenu {target basename} {
         }
     }
     return $result
-}
-
-proc vTcl:dump:TixLabelFrame {target basename} {
-    set output [vTcl:lib_tix:dump_widget_opt $target $basename]
-    append output [vTcl:lib_tix:dump_subwidgets [$target subwidget frame]]
-    return $output
 }
 
 proc vTcl:dump:TixLabelEntry {target basename} {
@@ -304,7 +222,7 @@ proc vTcl:dump:TixSelect {target basename} {
 # itself (`vTcl:dump:widgets $subwidget' doesn't do the right thing if
 # the grid geometry manager is used to manage children of $subwidget.
 proc vTcl:lib_tix:dump_subwidgets {subwidget} {
-    global vTcl
+    global vTcl classes
     set output ""
     set widget_tree [vTcl:widget_tree $subwidget]
     foreach i $widget_tree {
@@ -312,10 +230,8 @@ proc vTcl:lib_tix:dump_subwidgets {subwidget} {
         # don't try to dump subwidget itself
         if {"$i" != "$subwidget"} {
             set class [vTcl:get_class $i]
-            #puts "kc:dump_subwidgets1:[$vTcl($class,dump_opt) $i $basename]:"
-            append output [$vTcl($class,dump_opt) $i $basename]
+            append output [$classes($class,dumpCmd) $i $basename]
         }
-        #puts "kc:dump_subwidgets2:[vTcl:dump_widget_geom $i $basename]:"
         append output [vTcl:dump_widget_geom $i $basename]
     }
     return $output

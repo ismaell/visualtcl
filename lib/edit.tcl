@@ -21,13 +21,30 @@
 ##############################################################################
 #
 
-proc vTcl:copy {} {
+proc vTcl:entry_or_text {w} {
+    if {$w != "" &&
+        [string match .vTcl* $w] &&
+        ([vTcl:get_class $w] == "Text" ||
+         [vTcl:get_class $w] == "Entry")} then {
+		return 1
+    } else {
+		return 0
+	}
+}
+
+proc vTcl:copy {{w ""}} {
+    # cut/copy/paste handled by text widget only
+    if {[vTcl:entry_or_text $w]} then return
+
     global vTcl
     set vTcl(buffer) [vTcl:create_compound $vTcl(w,widget)]
     set vTcl(buffer,type) [vTcl:lower_first $vTcl(w,class)]
 }
 
-proc vTcl:cut {} {
+proc vTcl:cut {{w ""}} {
+    # cut/copy/paste handled by text widget only
+    if {[vTcl:entry_or_text $w]} then return
+
     global vTcl
     if { $vTcl(w,widget) == "." } { return }
 
@@ -35,8 +52,11 @@ proc vTcl:cut {} {
     vTcl:delete
 }
 
-proc vTcl:delete {} {
-    global vTcl
+proc vTcl:delete {{w ""}} {
+    # cut/copy/paste handled by text widget only
+    if {[vTcl:entry_or_text $w]} then return
+
+    global vTcl classes
     if { $vTcl(w,widget) == "." } { return }
 
     set w $vTcl(w,widget)
@@ -52,19 +72,37 @@ proc vTcl:delete {} {
 
     set buffer [vTcl:create_compound $vTcl(w,widget)]
     set do ""
+    set destroy_cmd "destroy"
     foreach child $children {
-    	append do "vTcl:unset_alias $child; "
+        append do "vTcl:unset_alias $child; "
+    }
+    if {$classes($class,deleteCmd) != ""} {
+        set destroy_cmd $classes($class,deleteCmd)
     }
     append do "vTcl:unset_alias $vTcl(w,widget); "
     append do "vTcl:setup_unbind $vTcl(w,widget); "
-    append do "destroy $vTcl(w,widget)"
+    append do "$destroy_cmd $vTcl(w,widget); "
+    append do "set _cmds \[info commands $vTcl(w,widget).*\]; "
+    append do {foreach _cmd $_cmds {catch {rename $_cmd ""}}}
     set undo "vTcl:insert_compound $vTcl(w,widget) \{$buffer\} $vTcl(w,def_mgr)"
     vTcl:push_action $do $undo
 
     catch {namespace delete ::widgets::$vTcl(w,widget)} error
 
     ## If it's a toplevel window, remove it from the tops list.
-    if {$class == "Toplevel"} { lremove vTcl(tops) $w }
+    if {$class == "Toplevel"} {
+        lremove vTcl(tops) $w
+
+        if {[info procs vTclWindow$w] != ""} {
+            rename vTclWindow$w {}
+        }
+        if {[info procs vTclWindow(pre)$w] != ""} {
+            rename vTclWindow$w {}
+        }
+        if {[info procs vTclWindow(post)$w] != ""} {
+            rename vTclWindow$w {}
+        }
+    }
 
     if {![info exists vTcl(widgets,$top)]} { set vTcl(widgets,$top) {} }
     ## Activate the widget created before this one in the widget order.
@@ -74,9 +112,9 @@ proc vTcl:delete {} {
     eval lremove vTcl(widgets,$top) $w $children
 
     if {$s > 0} {
-	set n [lindex $vTcl(widgets,$top) [expr $s - 1]]
+        set n [lindex $vTcl(widgets,$top) [expr $s - 1]]
     } else {
-    	set n [lindex $vTcl(widgets,$top) end]
+        set n [lindex $vTcl(widgets,$top) end]
     }
 
     if {[lempty $vTcl(widgets,$top)] || ![winfo exists $n]} { set n $parent }
@@ -89,21 +127,24 @@ proc vTcl:delete {} {
     # @@end_change
 
     if {[vTcl:streq $n "."]} {
-    	vTcl:prop:clear
-	return
+        vTcl:prop:clear
+        return
     }
 
     if {[winfo exists $n]} { vTcl:active_widget $n }
 }
 
-proc vTcl:paste {{fromMouse ""}} {
+proc vTcl:paste {{fromMouse ""} {w ""}} {
+    # cut/copy/paste handled by text widget only
+    if {[vTcl:entry_or_text $w]} then return
+
     global vTcl
 
     if {![info exists vTcl(buffer)] || [lempty $vTcl(buffer)]} { return }
 
     set opts {}
     if {$fromMouse == "-mouse" && $vTcl(w,def_mgr) == "place"} {
-    	set opts "-x $vTcl(mouse,x) -y $vTcl(mouse,y)"	
+    	set opts "-x $vTcl(mouse,x) -y $vTcl(mouse,y)"
     }
 
     set name [vTcl:new_widget_name $vTcl(buffer,type) $vTcl(w,insert)]

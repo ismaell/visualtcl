@@ -1,11 +1,65 @@
-Class		Menu
-Lib		core
+Class       Menu
+Lib         core
 
-Icon		icon_menu.gif
-TreeLabel	@vTcl:core:get_menu_label
+Icon        icon_menu.gif
+TreeLabel   @vTcl:core:get_menu_label
 
-NewOption -menuspecial		"menu"			menuspecial
-NewOption -tearoff		"tearoff"		boolean	"0 1"
-NewOption -postcommand		"post cmd"		command
-NewOption -tearoffcommand	"tearoff cmd"		command
-NewOption -title		"title"			type
+NewOption -menuspecial      "menu"          menuspecial
+NewOption -tearoff          "tearoff"       boolean "0 1"
+NewOption -postcommand      "post cmd"      command
+NewOption -tearoffcommand   "tearoff cmd"   command
+NewOption -title            "title"         type
+
+DeleteCmd  vTcl:Menu:delete_menu
+
+proc vTcl:Menu:delete_menu {m} {
+
+    # this will be used later
+    set editor [::menu_edit::is_open_existing_editor $m]
+
+    ::menu_edit::delete_menu_recurse $m
+
+    # well, this is not enough to destroy the menu itself,
+    # we better tell its parent that it's not there as well
+
+    set items [split $m .]
+    set items [lrange $items 0 [expr [llength $items] - 2] ]
+
+    set parent [join $items .]
+
+    # now, let's see if the parent contains the child menu (should)
+
+    set class [vTcl:get_class $parent]
+    if {$class == "Toplevel"} then {
+        # it's a toplevel, just removes its menu
+        $parent configure -menu ""
+
+        # closes any open menu editor for this menu
+        if {$editor != ""} {
+            destroy $editor}
+
+        return
+    }
+
+    if {$class != "Menu"} then return
+
+    set last [$parent index end]
+
+    for {set i 0} {$i <= $last} {incr i} {
+        set mtype [$parent type $i]
+        if {$mtype != "cascade"} then continue
+
+        set submenu [$parent entrycget $i -menu]
+        if {$submenu == $m} then {
+            # this is the one
+            $parent delete $i
+            break
+        }
+    }
+
+    # now, we will refresh any possibly open menu editor
+
+    if {$editor != ""} {
+        ::menu_edit::refreshes_existing_editor $editor
+    }
+}

@@ -1,6 +1,8 @@
-Class Combobox
-Lib   itcl
+Class		Combobox
+Lib		itcl
 
-Icon icon_combobox.gif
-DumpChildren  no
-MegaWidget    yes
+CreateCmd	::iwidgets::combobox
+Icon		icon_incrCombobox.gif
+DumpChildren	no
+MegaWidget	yes
+InsertCmd	vTcl:widget:combobox:inscmd

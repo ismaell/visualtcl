@@ -1,6 +1,7 @@
-Class Calendar
-Lib   itcl
+Class		Calendar
+Lib		itcl
 
-Icon icon_calendar.gif
-DumpChildren  no
-MegaWidget    yes
+CreateCmd	::iwidgets::calendar
+Icon		icon_calendar.gif
+DumpChildren	no
+MegaWidget	yes

@@ -29,6 +29,8 @@ proc vTcl:lib_core:init {} {
 }
 
 proc vTcl:widget:lib:lib_core {args} {
+    global vTcl
+
     set order {
     	Toplevel
 	Message
@@ -51,6 +53,17 @@ proc vTcl:widget:lib:lib_core {args} {
     }
 
     vTcl:lib:add_widgets_to_toolbar $order
+
+    append vTcl(head,core,importheader) {
+    switch $tcl_platform(platform) {
+	windows {
+	    option add *Scrollbar.width 16
+	}
+	default {
+	    option add *Scrollbar.width 10
+	}
+    }
+    }
 }
 
 ####################################################################
@@ -94,7 +107,7 @@ proc vTcl:wm:conf_minmax {target var value} {
 
 proc vTcl:wm:conf_state {target var value} {
     global vTcl
-    wm $vTcl(w,wm,state) $target
+    catch {wm $vTcl(w,wm,state) $target}
 }
 
 proc vTcl:wm:conf_title {target var value} {

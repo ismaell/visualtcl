@@ -61,6 +61,9 @@ proc vTcl:kill_balloon {} {
 
 proc vTcl:balloon {target message} {
     global vTcl
+    # the window may have disappeared
+    if {![winfo exists $target]} return
+
     if {$vTcl(balloon,first) == 1 && $vTcl(pr,balloon) == 1} {
         set vTcl(balloon,first) 2
         set x [expr {[winfo rootx $target] + ([winfo width $target]/2)}]

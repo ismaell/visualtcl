@@ -1,17 +1,43 @@
-Name		tixLabelFrame
-Lib		tix
+Name                tixLabelFrame
+Lib                 tix
 
-Class		TixLabelFrame
-Icon		icon_tixLabelFrame.gif
-TreeLabel	Tix LabelFrame
-DefaultOptions	-label "Label"
-DumpCmd		vTcl:dump:TixLabelFrame
-DumpChildren	no
-MegaWidget   yes
-InsertCmd	vTcl:widget:tixLabelFrame:inscmd
+Class               TixLabelFrame
+Icon                icon_tixLabelFrame.gif
+TreeLabel           Tix LabelFrame
+DefaultOptions      -label "Label"
+DumpCmd             vTcl:dump:TixLabelFrame
+DumpChildren        no
+MegaWidget          yes
+InsertCmd           vTcl:widget:tixLabelFrame:inscmd
+TreeChildrenCmd     "vTcl:widget:tixLabelFrame:treeChildrenCmd \
+                     vTcl:widget:tixLabelFrame:treeChildrenChildsite"
 
 proc vTcl:widget:tixLabelFrame:inscmd {target} {
     return "
-    	$target subwidget frame configure -width 30 -height 20
+        $target subwidget frame configure -width 30 -height 20
     "
 }
+
+proc vTcl:widget:tixLabelFrame:treeChildrenCmd {target {diff \#-1}} {
+
+    set children ""
+    set wantsdiff [expr {$diff != ""}]
+
+    foreach child [vTcl:complete_widget_tree [$target subwidget frame] $wantsdiff] {
+        lappend children $child$diff
+    }
+
+    return $children
+}
+
+proc vTcl:widget:tixLabelFrame:treeChildrenChildsite {target} {
+
+    return [$target subwidget frame]
+}
+
+proc vTcl:dump:TixLabelFrame {target basename} {
+    set output [vTcl:dump_widget_opt $target $basename]
+    append output [vTcl:lib_tix:dump_subwidgets [$target subwidget frame]]
+    return $output
+}
+

@@ -40,10 +40,10 @@ proc vTcl:image:get_creation_type {filename} {
     set ext [string tolower $ext]
 
     switch $ext {
-	.ppm -
-	.gif    {return photo}
-	.xbm    {return bitmap}
-	default {return photo}
+        .ppm -
+        .gif    {return photo}
+        .xbm    {return bitmap}
+        default {return photo}
     }
 }
 
@@ -81,13 +81,13 @@ proc {vTcl:image:create_new_image} {filename
 
     # Does the image already exist?
     if {[info exists vTcl(images,files)]} {
-	if {[lsearch -exact $vTcl(images,files) $filename] > -1} { return }
+        if {[lsearch -exact $vTcl(images,files) $filename] > -1} { return }
     }
 
     if {![info exists vTcl(sourcing)] && [string length $data] > 0} {
-	set object [image create \
-	    [vTcl:image:get_creation_type $filename] \
-	    -data $data]
+        set object [image create \
+            [vTcl:image:get_creation_type $filename] \
+            -data $data]
     } else {
         # Wait a minute... Does the file actually exist?
         if {! [file exists $filename] } {
@@ -138,17 +138,17 @@ proc {vTcl:image:get_image} {filename} {
 
     # Let's do some checking first
     if {![info exists vTcl(images,$reference,image)]} {
-	# Well, the path may be wrong; in that case check
-	# only the filename instead, without the path.
+        # Well, the path may be wrong; in that case check
+        # only the filename instead, without the path.
 
-	set imageTail [file tail $filename]
+        set imageTail [file tail $filename]
 
-	foreach oneFile $vTcl(images,files) {
-	    if {[file tail $oneFile] == $imageTail} {
-		set reference [vTcl:rename $oneFile]
-		break
-	    }
-	}
+        foreach oneFile $vTcl(images,files) {
+            if {[file tail $oneFile] == $imageTail} {
+                set reference [vTcl:rename $oneFile]
+                break
+            }
+        }
     }
     return $vTcl(images,$reference,image)
 }
@@ -162,9 +162,9 @@ proc {vTcl:image:init_img_manager} {} {
     set noeditor 0
 
     if {![info exists vTcl(pr,imageeditor)]} {
-	set noeditor 1
+        set noeditor 1
     } elseif {$vTcl(pr,imageeditor) == ""} {
-	set noeditor 1
+        set noeditor 1
     }
 
     if {$noeditor} {
@@ -367,10 +367,10 @@ proc vTcl:image:replace_image {filename} {
 proc vTcl:image:tag_image_list {t tagname object} {
 
     $t tag bind $tagname <Enter> \
-        "$t tag configure $tagname -relief raised -borderwidth 2"
+        "$t tag configure $tagname -background gray -relief raised -borderwidth 2"
 
     $t tag bind $tagname <Leave> \
-        "$t tag configure $tagname -relief flat -borderwidth 0"
+        "$t tag configure $tagname -background white -relief flat -borderwidth 0"
 
     $t tag bind $tagname <ButtonPress-1> \
         "set vTcl(images,selector_dlg,current) $object"
@@ -454,7 +454,7 @@ proc vTcl:image:create_selector_dlg {base} {
         -command "$base.cpd29.03 yview" -cursor left_ptr \
         -orient vert
     text $base.cpd29.03 \
-        -background #bcbcbc \
+        -background white \
         -foreground #000000 -highlightbackground #f3f3f3 \
         -highlightcolor #000000 -selectbackground #000080 \
         -selectforeground #ffffff -state disabled \
@@ -557,7 +557,7 @@ proc vTcl:image:dump_create_image {image} {
     }
 
     set result [list \
-                   $image \
+                   [vTcl:portable_filename $image] \
                    [vTcl:image:get_description $image] \
                    [vTcl:image:get_type $image] \
                    $inline]
@@ -578,9 +578,10 @@ proc vTcl:image:dump_create_image_footer {} {
 
     set result ""
     append result "\n$vTcl(tab)$vTcl(tab)$vTcl(tab)\} \{\n"
+    append result "$vTcl(tab)eval set _file \[lindex \$img 0\]\n"
     append result "$vTcl(tab)vTcl:image:create_new_image\\\n"
     append result "$vTcl(tab)$vTcl(tab)"
-    append result "\[lindex \$img 0\] \[lindex \$img 1\] "
+    append result "\$_file \[lindex \$img 1\] "
     append result "\[lindex \$img 2\] \[lindex \$img 3\]\n"
     append result "\}\n"
 }
@@ -700,6 +701,7 @@ proc vTclWindow.vTcl.imgManager {args} {
     wm focusmodel $base passive
     wm maxsize $base 1009 738
     wm minsize $base 1 1
+    update
     wm overrideredirect $base 0
     wm resizable $base 1 1
     wm title $base "Image manager"
@@ -717,7 +719,7 @@ proc vTclWindow.vTcl.imgManager {args} {
         -command "$base.cpd29.03 yview" -cursor left_ptr \
         -orient vert
     text $base.cpd29.03 \
-        -background #bcbcbc -cursor left_ptr \
+        -background white -cursor left_ptr \
         -height 1 \
         -state disabled -tabs {0.2i 3i 3.75i} \
         -width 8 -wrap none -xscrollcommand "$base.cpd29.01 set" \
@@ -757,6 +759,7 @@ proc vTclWindow.vTcl.imgManager {args} {
     wm deiconify $base
 
     vTcl:image:init_img_manager
+    vTcl:setup_vTcl:bind $base
 }
 
 proc vTcl:image:prompt_image_manager {} {
@@ -784,19 +787,22 @@ proc vTcl:image:translate {value} {
     global vTcl
 
     if [info exists vTcl(images,filename,$value)] {
-	set value "\[vTcl:image:get_image \"$vTcl(images,filename,$value)\"\]"
+        set newvalue "\[vTcl:image:get_image "
+        append newvalue "[vTcl:portable_filename $vTcl(images,filename,$value)]\]"
+        return $newvalue
+    } else {
+        return $value
     }
-    return $value
 }
 
 proc vTcl:image:refresh_manager {{position 0.0}} {
     global vTcl
 
     if [info exists vTcl(images,manager_dlg,win)] {
-	if [winfo exists $vTcl(images,manager_dlg,win)] {
-	    vTcl:image:init_img_manager
-	    $vTcl(images,manager_dlg,win).cpd29.03 yview moveto $position
-	}
+        if [winfo exists $vTcl(images,manager_dlg,win)] {
+            vTcl:image:init_img_manager
+            $vTcl(images,manager_dlg,win).cpd29.03 yview moveto $position
+        }
     }
 }
 
@@ -808,24 +814,6 @@ proc vTcl:image:get_manager_position {} {
 proc vTcl:image:external_editor {imageName} {
     global vTcl
     if {[catch {exec "$vTcl(pr,imageeditor)" "$imageName" &}]} {
-    	vTcl:error "Could not execute external image editor"
+        vTcl:error "Could not execute external image editor"
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

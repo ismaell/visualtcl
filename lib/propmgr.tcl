@@ -96,6 +96,7 @@ proc vTclWindow.vTcl.ae {args} {
     wm geometry $ae 206x325
     wm resizable $ae 1 1
     wm transient $vTcl(gui,ae) .vTcl
+    wm overrideredirect $ae 0
 
     canvas $ae.c -yscrollcommand "$ae.sv set" \
         -xscrollcommand "$ae.sh set" -highlightthickness 0
@@ -186,8 +187,9 @@ proc vTclWindow.vTcl.ae {args} {
 
 proc vTcl:prop:recalc_canvas {} {
     global vTcl
+
     set ae $vTcl(gui,ae)
-    if {![winfo exists $ae]} {return}
+    if {![winfo exists $ae]} { return }
 
     set f1 $ae.c.f1                              ; # Widget Info Frame
     set f2 $ae.c.f2                              ; # Widget Attribute Frame
@@ -204,6 +206,12 @@ proc vTcl:prop:recalc_canvas {} {
                 [winfo height $f3] ]
     $ae.c configure -scrollregion "0 0 $w $h"
     wm minsize .vTcl.ae $w 200
+
+    set vTcl(propmgr,frame,$f1) 0
+    lassign [vTcl:split_geom [winfo geometry $f1]] x y
+    set vTcl(propmgr,frame,$f2) $y
+    lassign [vTcl:split_geom [winfo geometry $f2]] x y
+    set vTcl(propmgr,frame,$f3) $y
 }
 
 proc vTcl:focus_out_cmd {option} {
@@ -211,13 +219,15 @@ proc vTcl:focus_out_cmd {option} {
     if {$vTcl(mode) == "TEST"} return
 
     if {$vTcl(w,last_widget_in) != "" && $vTcl(w,last_value) != ""} {
-	set back_last_widget_in $vTcl(w,last_widget_in)
-	set back_last_value $vTcl(w,last_value)
+	set w $vTcl(w,last_widget_in)
+	set val $vTcl(w,last_value)
 
 	set vTcl(w,last_widget_in) ""
 	set vTcl(w,last_value)     ""
 
-	$back_last_widget_in configure $option $back_last_value
+	$w configure $option $val
+	vTcl:prop:save_opt $w $option ::widgets::${w}::save($option)
+	vTcl:place_handles $vTcl(w,widget)
     } else {
 	vTcl:log "oops:$vTcl(w,widget),$vTcl(w,last_widget_in)!"
     }
@@ -306,6 +316,8 @@ proc vTcl:prop:update_attr {} {
 
 	# special stuff to edit menu items (cascaded items)
 	if {$vTcl(w,class) == "Menu"} {
+        global dummy
+        set dummy ""
 	    vTcl:prop:new_attr $top -menuspecial dummy "" opt ""
 	}
     }
@@ -348,7 +360,7 @@ proc vTcl:prop:update_attr {} {
 		}
 		append config_cmd ";vTcl:place_handles \$vTcl(w,widget)"
 		vTcl:prop:new_attr $top $i $variable $config_cmd m,$mgr \
-		    $focus_out_cmd
+		    $focus_out_cmd -geomOpt
 	    }
 	}
     }
@@ -358,34 +370,39 @@ proc vTcl:prop:update_attr {} {
     vTcl:prop:update_saves $vTcl(w,widget)
 }
 
-proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
-    global vTcl $variable options specialOpts
+proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
+			{isGeomOpt ""}} {
+    global vTcl $variable options specialOpts propmgrLabels
+
     set base $top.t${option}
-    # hack for Tix
-    if {[ winfo exists $top.$option ] == 1} { return }
+
+    # Hack for Tix
+    if {[winfo exists $top.$option]} { return }
 
     if {$prefix == "opt"} {
 	if {[info exists specialOpts($option,type)]} {
-	    set text $specialOpts($option,text)
-	    set type $specialOpts($option,type)
+	    set text    $specialOpts($option,text)
+	    set type    $specialOpts($option,type)
 	    set choices $specialOpts($option,choices)
 	} else {
-	    set text $options($option,text)
-	    set type $options($option,type)
+	    set text    $options($option,text)
+	    set type    $options($option,type)
 	    set choices $options($option,choices)
 	}
     } else {
-    	set text [lindex $vTcl($prefix,$option) 0]
-	set type [lindex $vTcl($prefix,$option) 2]
+    	set text    [lindex $vTcl($prefix,$option) 0]
+	set type    [lindex $vTcl($prefix,$option) 2]
 	set choices [lindex $vTcl($prefix,$option) 3]
     }
 
     if {[vTcl:streq $type "relief"]} {
-	set type choice
+	set type    choice
     	set choices $vTcl(reliefs)
     }
 
-    label $top.$option -text $text -anchor w -width 11 -fg black
+    set label $top.$option
+    label $label -text $text -anchor w -width 11 -fg black \
+    	-relief $vTcl(propmgr,relief)
 
     # @@change by Christian Gavin 3/10/2000
     # added font browser for individual properties
@@ -417,19 +434,32 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
                     "set $variable $i; $config_cmd; "
             }
             button ${base}.f -relief raised -bd 1 -image file_down \
-                -height 5 -command "tkMbPost ${base}.l"
+                -height 5 -command "
+		    focus $base.l
+		    vTcl:propmgr:select_attr $top $option
+		    tkMbPost ${base}.l
+		"
             pack ${base}.l -side left -expand 1 -fill x
             pack ${base}.f -side right -fill y -pady 1 -padx 1
+
+	    bind $base.l <Button-1> "
+	    	focus $base.l
+		vTcl:propmgr:select_attr $top $option
+	    "
+
+	    set focusControl ${base}.l
         }
         menu {
             button $base \
                 -text "<click to edit>" -relief sunken -bd 1 -width 12 \
                 -highlightthickness 1 -fg black -padx 0 -pady 1 \
                 -command "
+		    focus $base
+		    vTcl:propmgr:select_attr $top $option
                     set current \$vTcl(w,widget)
-                    vTcl:edit_target_menu $\current
-                    set $variable \[$\current cget -menu\]
-                    vTcl:prop:save_opt $\current $option $variable
+                    vTcl:edit_target_menu \$current
+                    set $variable \[\$current cget -menu\]
+                    vTcl:prop:save_opt \$current $option $variable
                 " -anchor w
         }
 	menuspecial {
@@ -437,6 +467,7 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
                 -text "<click to edit>" -relief sunken -bd 1 -width 12 \
                 -highlightthickness 1 -fg black -padx 0 -pady 1 \
                 -command "
+		    vTcl:propmgr:select_attr $top $option
                     set current \$vTcl(w,widget)
                     vTcl:edit_menu \$current
                     vTcl:prop:save_opt \$current $option $variable
@@ -453,11 +484,13 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
                 -bg [subst $$variable] -width 20 -height 5
             bind ${base}.f <ButtonPress> \
                 "
+		vTcl:propmgr:select_attr $top $option
 		vTcl:show_color $top.t${option}.f $option $variable
 		vTcl:prop:save_opt \$vTcl(w,widget) $option $variable
 		"
             pack ${base}.l -side left -expand 1 -fill x
             pack ${base}.f -side right -fill y -pady 1 -padx 1
+	    set focusControl ${base}.l
         }
         command {
             frame $base
@@ -473,14 +506,12 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
 		"
 	    }
 
-            bind ${base}.l <KeyRelease-Return> $config_cmd
-	    bind ${base}.l <FocusOut> $config_cmd
             button ${base}.f \
                 -image ellipses -bd 1 -width 12 \
                 -highlightthickness 1 -fg black -padx 0 -pady 1 \
                 -command "
-		vTcl:set_command \$vTcl(w,widget) $option $variable
-		vTcl:prop:save_opt \$vTcl(w,widget) $option $variable
+		    vTcl:propmgr:select_attr $top $option
+		    vTcl:set_command \$vTcl(w,widget) $option $variable
 		"
             pack ${base}.l -side left -expand 1 -fill x
             pack ${base}.f -side right -fill y -pady 1 -padx 1
@@ -491,34 +522,34 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
             vTcl:entry ${base}.l -relief sunken -bd 1 \
                 -textvariable $variable -width 8 \
                 -highlightthickness 1 -fg black -bg white
-            bind ${base}.l <KeyRelease-Return> "$config_cmd"
-	    bind ${base}.l <FocusOut> $config_cmd
             button ${base}.f \
                 -image ellipses -bd 1 -width 12 \
                 -highlightthickness 1 -fg black -padx 0 -pady 1 \
                 -command "
+		vTcl:propmgr:select_attr $top $option
 		vTcl:font:prompt_user_font \$vTcl(w,widget) $option
 		vTcl:prop:save_opt \$vTcl(w,widget) $option $variable
 		"
             pack ${base}.l -side left -expand 1 -fill x
             pack ${base}.f -side right -fill y -pady 1 -padx 1
+	    set focusControl ${base}.l
         }
         image {
             frame $base
             vTcl:entry ${base}.l -relief sunken -bd 1 \
                 -textvariable $variable -width 8 \
                 -highlightthickness 1 -fg black -bg white
-            bind ${base}.l <KeyRelease-Return> "$config_cmd"
-	    bind ${base}.l <FocusOut> $config_cmd
             button ${base}.f \
                 -image ellipses -bd 1 -width 12 \
                 -highlightthickness 1 -fg black -padx 0 -pady 1 \
                 -command "
+		vTcl:propmgr:select_attr $top $option
 		vTcl:prompt_user_image \$vTcl(w,widget) $option
 		vTcl:prop:save_opt \$vTcl(w,widget) $option $variable
 		"
             pack ${base}.l -side left -expand 1 -fill x
             pack ${base}.f -side right -fill y -pady 1 -padx 1
+	    set focusControl ${base}.l
         }
         default {
             vTcl:entry $base \
@@ -536,26 +567,47 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
     }
     # @@end_change
 
-    bind $base <KeyRelease-Return> $config_cmd
-    bind $base <FocusOut> $config_cmd
+    ## Append the label to the list for this widget and add the focusControl
+    ## to the lookup table.  This is used when scrolling through the property
+    ## manager with the directional keys.  We don't want to append geometry
+    ## options, we just handle them later.
+    set c [vTcl:get_class $vTcl(w,widget)]
+    if {[lempty $isGeomOpt]} {
+	lappend vTcl(propmgr,labels,$c) $label
+    } else {
+	lappend vTcl(propmgr,labels,$vTcl(w,manager)) $label
+    }
+    set propmgrLabels($label) $focusControl
 
-    # @@change by Christian Gavin 3/12/2000
-    # tries to activate changes when the user clicks outside an option
+    ## If they click the label, select the focus control.
+    bind $label <Button-1> "focus $focusControl"
+    bind $label <Enter> "
+	if {\[vTcl:streq \[$label cget -relief] $vTcl(propmgr,relief)]} {
+	    $label configure -relief raised
+	} 
+    "
+    bind $label <Leave> "
+	if {\[vTcl:streq \[$label cget -relief] raised]} {
+	    $label configure -relief $vTcl(propmgr,relief)
+	}
+    "
 
-    # vTcl:log "widget: $vTcl(w,widget)"
-    # vTcl:log "config_cmd: $config_cmd"
-    # vTcl:log "focus_out_cmd: $focus_out_cmd"
+    set focus_in_cmd "vTcl:propmgr:select_attr $top $option"
 
-    set focus_in_cmd "vTcl:log in:\$vTcl(w,widget),\$vTcl(w,last_widget_in)"
-    # vTcl:log "focus_in_cmd: $focus_in_cmd"
+    ## Don't change if the user presses a directional key.
+    set key_release_cmd "
+	if {%k < 37 || %k > 40} {
+	    set vTcl(w,last_widget_in) \$vTcl(w,widget)
+	    set vTcl(w,last_value) \$$variable
+	}
+    "
 
-    bind $focusControl <FocusIn> $focus_in_cmd
-
-    bind $focusControl <FocusOut> "vTcl:log \"out:(\$vTcl(w,widget)),\$vTcl(w,last_widget_in), value:\$vTcl(w,last_value)\";$focus_out_cmd"
-
-    bind $focusControl <KeyRelease> "vTcl:log \"type: \$vTcl(w,widget)\"; set vTcl(w,last_widget_in) \$vTcl(w,widget); set vTcl(w,last_value) \$$variable"
-
-    # @@end_change
+    bind $focusControl <FocusIn>    $focus_in_cmd
+    bind $focusControl <FocusOut>   $focus_out_cmd
+    bind $focusControl <KeyRelease> $key_release_cmd
+    bind $focusControl <KeyRelease-Return> $config_cmd
+    bind $focusControl <Key-Up>     "vTcl:propmgr:focusPrev $label"
+    bind $focusControl <Key-Down>   "vTcl:propmgr:focusNext $label"
 
     if {[vTcl:streq $prefix "opt"]} {
     	set saveCheck [checkbutton ${base}_save -pady 0]
@@ -569,16 +621,18 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
 proc vTcl:prop:clear {} {
     global vTcl
 
+    if {![winfo exists $vTcl(gui,ae)]} return
+
     if {![winfo exists $vTcl(gui,ae).c]} {
-	frame $vTcl(gui,ae).c
-	pack $vTcl(gui,ae).c
+        frame $vTcl(gui,ae).c
+        pack $vTcl(gui,ae).c
     }
     foreach fr {f2 f3} {
-	set fr $vTcl(gui,ae).c.$fr
-	if {![winfo exists $fr]} {
-	    frame $fr
-	    pack $fr -side top -expand 1 -fill both
-	}
+        set fr $vTcl(gui,ae).c.$fr
+        if {![winfo exists $fr]} {
+            frame $fr
+            pack $fr -side top -expand 1 -fill both
+        }
     }
 
     ## Destroy and rebuild the Attributes frame
@@ -625,8 +679,8 @@ proc vTcl:prop:save_opt {w opt varName} {
     if {[vTcl:streq $w "."]} { return }
 
     upvar #0 $varName var
-    upvar #0 ::widgets::${w}::options options
-    upvar #0 ::widgets::${w}::defaults defaults
+    vTcl:WidgetVar $w options
+    vTcl:WidgetVar $w defaults
 
     if {![info exists options($opt)]} { return }
     if {[vTcl:streq $options($opt) $var]} { return }
@@ -639,4 +693,62 @@ proc vTcl:prop:save_opt {w opt varName} {
 	set ::widgets::${w}::save($opt) 1
     }
     ::vTcl::change
+}
+
+proc vTcl:propmgr:select_attr {top opt} {
+    global vTcl
+    vTcl:propmgr:deselect_attr
+    $top.$opt configure -relief sunken
+    set vTcl(propmgr,lastAttr) [list $top $opt]
+    set vTcl(propmgr,opt) $opt
+}
+
+proc vTcl:propmgr:deselect_attr {} {
+    global vTcl
+    if {![info exists vTcl(propmgr,lastAttr)]} { return }
+    [join $vTcl(propmgr,lastAttr) .] configure -relief $vTcl(propmgr,relief)
+    unset vTcl(propmgr,lastAttr)
+}
+
+proc vTcl:propmgr:focusOnLabel {w dir} {
+    global vTcl propmgrLabels
+
+    set m $vTcl(w,manager)
+    set c [vTcl:get_class $vTcl(w,widget)]
+    set list [concat $vTcl(propmgr,labels,$c) $vTcl(propmgr,labels,$m)]
+
+    set ind [lsearch $list $w]
+    incr ind $dir
+
+    if {$ind < 0} { return }
+
+    set next [lindex $list $ind]
+
+    if {[lempty $next]} { return }
+
+    ## We want to set the focus to the focusControl, but we want the canvas
+    ## to scroll to the label of the focusControl.
+    focus $propmgrLabels($next)
+    vTcl:propmgr:scrolltolabel $vTcl(gui,ae).c $next
+}
+
+proc vTcl:propmgr:focusPrev {w} {
+    vTcl:propmgr:focusOnLabel $w -1
+}
+
+proc vTcl:propmgr:focusNext {w} {
+    vTcl:propmgr:focusOnLabel $w 1
+}
+
+proc vTcl:propmgr:scrolltolabel {c w} {
+    global vTcl
+    set split [split $w .]
+    set split [lrange $split 0 4]
+    set frame [join $split .]
+    lassign [$c cget -scrollregion] foo foo cx cy
+    lassign [vTcl:split_geom [winfo geometry $w]] foo foo ix iy
+    set x [expr $ix.0 / $cx]
+    set y [expr ($iy.0 + $vTcl(propmgr,frame,$frame)) / $cy]
+    $c xview moveto $x
+    $c yview moveto $y
 }

@@ -67,6 +67,72 @@ proc vTcl:clear_wtree {} {
     $b configure -scrollregion "0 0 0 0"
 }
 
+proc vTcl:left_click_tree {cmd i b j} {
+
+    global vTcl
+
+    if {$vTcl(mode) == "TEST"} return
+
+    $cmd $i
+    vTcl:active_widget $i
+    vTcl:show_selection $b.$j $i
+}
+
+proc vTcl:right_click_tree {i X Y x y} {
+
+    global vTcl
+
+    if {$vTcl(mode) == "TEST"} return
+
+    vTcl:active_widget $i
+    vTcl:set_mouse_coords $X $Y $x $y
+    $vTcl(gui,rc_menu) post $X $Y
+    grab $vTcl(gui,rc_menu)
+    bind $vTcl(gui,rc_menu) <ButtonRelease> {
+        grab release $vTcl(gui,rc_menu)
+        $vTcl(gui,rc_menu) unpost
+    }
+}
+
+# returns the number of levels to offset for a megawidget
+#
+# the parameter is prearranged as a list whose first
+# parameter is the widget and the remainder is a list
+# of offsets
+#
+# (for example "{.top35 .tab36} -4" will return -4
+#  but         "{.top35 .tab36 ... .tab35} -4 -4" returns -8
+
+proc vTcl:get_tree_diff {path} {
+    if {[llength $path] == 1} {return ""}
+
+    set size [llength $path]
+    set diff 0
+    for {set i 1} {$i < $size} {incr i} {
+        set diff [incr diff [lindex $path $i]]
+    }
+
+    return $diff
+}
+
+# counts the number of children without menu items
+proc vTcl:count_children {w} {
+    set children [vTcl:get_children $w]
+
+    # special menu items have .# in their path
+    if {[string first .\# $children] == -1} {
+        return [llength $children]
+    }
+
+    # so let's count 'em
+    set count 0
+    foreach child $children {
+        if {![string match *.\#* $child]} {incr count}
+    }
+
+    return $count
+}
+
 proc vTcl:init_wtree {{wants_destroy_handles 1}} {
     global vTcl widgets classes
 
@@ -83,84 +149,93 @@ proc vTcl:init_wtree {{wants_destroy_handles 1}} {
 
     vTcl:clear_wtree
     set y 10
-    set tree [vTcl:list_widget_tree .]
-    foreach i $tree {
+    set tree [vTcl:complete_widget_tree]
+    foreach ii $tree {
+        set ii   [split $ii \#]
+        set i    [lindex $ii 0]
+        set diff [vTcl:get_tree_diff $ii]
         if {$i == "."} {
             set depth 1
         } else {
             set depth [llength [split $i "."]]
         }
+        if {$diff!=""} {set depth [expr $depth + $diff]}
+        set depth_minus_one [expr $depth - 1]
         set x [expr $depth * 30 - 15]
         set x2 [expr $x + 40]
         set y2 [expr $y + 15]
         set j [vTcl:rename $i]
         if {$i == "."} {
             set c vTclRoot
-	    set t "Visual Tcl"
+            set t "Visual Tcl"
         } else {
-	    set c [vTcl:get_class $i 1]
-	    set t {}
+            set c [vTcl:get_class $i]
+            set t {}
         }
-        if {![winfo exists $b.$j]} {
-            set l($depth) [llength [vTcl:get_children $i]]
-            if {$i == "."} {
-                incr l($depth) -1
+        if {[winfo exists $b.$j]} {
+            $b coords $b.$j $x $y
+            incr y 30
+            continue
+        }
+
+        if {$i != "." && $classes(${c},megaWidget)} {
+            set childSites [lindex $classes($c,treeChildrenCmd) 1]
+            if {$childSites != ""} {
+                set l($depth) [llength [$childSites $i]]
+            } else {
+                set l($depth) 0
             }
+        } else {
+            set l($depth) [vTcl:count_children $i]
+        }
+        if {$i == "."} {
+            incr l($depth) -1
+        }
+        if {$depth > 1} {
+            if {[info exists l($depth_minus_one)]} {
+                incr l($depth_minus_one) -1
+            } else {
+                set l($depth_minus_one) 1
+            }
+        }
+        set cmd vTcl:show
+        if {$c == "Toplevel" || $c == "vTclRoot"} { set cmd vTcl:show_top }
+        set left_click_cmd  "vTcl:left_click_tree $cmd $i $b $j"
+        set right_click_cmd "vTcl:right_click_tree $i %X %Y %x %y"
+        button $b.$j -image [vTcl:widget:get_image $i] -command $left_click_cmd
+        bind $b.$j <ButtonRelease-3> $right_click_cmd
+        vTcl:set_balloon $b.$j $i
+        $b create window $x $y -window $b.$j -anchor nw -tags $b.$j
+        if {[lempty $t]} { set t [vTcl:widget:get_tree_label $i] }
+        set t [$b create text $x2 $y2 -text $t -anchor w \
+            -tags "TEXT TEXT$b.$j"]
+        $b bind TEXT$b.$j <ButtonPress-1> $left_click_cmd
+        $b bind TEXT$b.$j <ButtonRelease-3> $right_click_cmd
+        set size [lindex [$b bbox $t] 2]
+        if {$size > $vTcl(tree,width)} { set vTcl(tree,width) $size }
+
+        set d2 $depth_minus_one
+        for {set k 1} {$k <= $d2} {incr k} {
+            if {![info exists l($k)]} {set l($k) 1}
             if {$depth > 1} {
-                incr l([expr $depth - 1]) -1
-            }
-	    set cmd vTcl:show
-	    if {$c == "Toplevel" || $c == "vTclRoot"} { set cmd vTcl:show_top }
-            button $b.$j -image [vTcl:widget:get_image $i] -command "
-                if \{\$vTcl(mode) == \"EDIT\"\} \{
-                	$cmd $i
-                	vTcl:active_widget $i
-                	vTcl:show_selection $b.$j $i
-                \}
-            "
-            bind $b.$j <ButtonRelease-3> "
-                vTcl:active_widget $i
-                vTcl:set_mouse_coords %X %Y %x %y
-                $vTcl(gui,rc_menu) post %X %Y
-                grab $vTcl(gui,rc_menu)
-                bind $vTcl(gui,rc_menu) <ButtonRelease> {
-                    grab release $vTcl(gui,rc_menu)
-                     $vTcl(gui,rc_menu) unpost
-                }"
-            vTcl:set_balloon $b.$j $i
-            $b create window $x $y -window $b.$j -anchor nw -tags $b.$j
-
-	    if {[lempty $t]} { set t [vTcl:widget:get_tree_label $i] }
-
-            set t [$b create text $x2 $y2 -text $t -anchor w \
-		    -tags "TEXT TEXT$b.$j"]
-
-	    set size [lindex [$b bbox $t] 2]
-	    if {$size > $vTcl(tree,width)} { set vTcl(tree,width) $size }
-
-            set d2 [expr $depth - 1]
-            for {set k 1} {$k <= $d2} {incr k} {
-                if {$depth > 1} {
-                    set xx2 [expr $k * 30 + 15]
-                    set xx1 [expr $k * 30]
-                    set yy1 [expr $y + 30]
-                    set yy2 [expr $y + 30 - 15]
-                    if {$k == $d2} {
-                        if {$l($k) > 0} {
-                            $b create line $xx1 $y $xx1 $yy1 -tags LINE
-                            $b create line $xx1 $yy2 $xx2 $yy2 -tags LINE
-                        } else {
-                            $b create line $xx1 $y $xx1 $yy2 -tags LINE
-                            $b create line $xx1 $yy2 $xx2 $yy2 -tags LINE
-                        }
-                    } elseif {$l($k) > 0} {
+                set xx2 [expr $k * 30 + 15]
+                set xx1 [expr $k * 30]
+                set yy1 [expr $y + 30]
+                set yy2 [expr $y + 30 - 15]
+                if {$k == $d2} {
+                    if {$l($k) > 0} {
                         $b create line $xx1 $y $xx1 $yy1 -tags LINE
+                        $b create line $xx1 $yy2 $xx2 $yy2  -tags LINE
+                    } else {
+                        $b create line $xx1 $y $xx1 $yy2 -tags LINE
+                        $b create line $xx1 $yy2 $xx2 $yy2 -tags LINE
                     }
+                } elseif {$l($k) > 0} {
+                    $b create line $xx1 $y $xx1 $yy1 -tags LINE
                 }
             }
-        } else {
-            $b coords $b.$j $x $y
         }
+
         incr y 30
     }
     $b configure -scrollregion "0 0 [expr $vTcl(tree,width) + 30] $y"
@@ -237,3 +312,5 @@ proc vTclWindow.vTcl.tree {args} {
     vTcl:setup_vTcl:bind $base
     vTcl:BindHelp $base WidgetTree
 }
+
+

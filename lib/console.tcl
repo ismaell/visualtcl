@@ -22,12 +22,11 @@
 #
 
 proc vTcl:show_console {{show show}} {
-    global vTcl tcl_platform
-    if {$vTcl(console) == 1} {
-        console $show
-    } else {
-        Window $show .vTcl.con
-    }
+    if {[catch {winfo exists $::tkcon::PRIV(root)}]} {
+    	::tkcon::Init
+	tkcon title "Visual Tcl"
+    }	
+    tkcon $show
 }
 
 namespace eval ::console {
@@ -175,6 +174,8 @@ proc vTclWindow.vTcl.con {args} {
     .vTcl.con.fra5.tex7 tag configure vTcl:error -foreground #B00000
     .vTcl.con.fra5.tex7 tag configure vTcl:return_value -foreground #0000B0
     # @@end_change
+
+    vTcl:setup_vTcl:bind $base
 }
 
 proc vTcl:console:get_output {{display 1}} {

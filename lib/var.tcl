@@ -437,6 +437,7 @@ namespace eval ::inspector {
         foreach option $options {
             InspectorValue insert end ${option}\n
         }
+        InspectorValue configure -state disabled
     }
 
     proc {::inspector::expand_bindtags} {listbox node_index node_info level} {
@@ -490,6 +491,7 @@ namespace eval ::inspector {
         InspectorValue insert end $bindcmd
 
         vTcl:syntax_color $widget(InspectorValue) 0 -1
+        InspectorValue configure -state disabled
     }
 }
 
@@ -545,14 +547,15 @@ proc vTclWindow.vTcl.inspector {base {container 0}} {
     if {!$container} {
         toplevel $base -class Toplevel
         wm focusmodel $base passive
-        wm geometry $base 664x529+218+142; update
-        wm maxsize $base 1009 738
+        wm transient .vTcl.inspector .vTcl
+        wm withdraw $base
+        wm geometry $base 550x400
+        wm maxsize $base 1600 1200
         wm minsize $base 1 1
         wm overrideredirect $base 0
         wm resizable $base 1 1
         wm deiconify $base
         wm title $base "System Inspector"
-        wm transient .vTcl.inspector .vTcl
         wm protocol $base WM_DELETE_WINDOW "Window hide $base"
     }
     frame $base.fra23 \
@@ -608,9 +611,7 @@ proc vTclWindow.vTcl.inspector {base {container 0}} {
         -borderwidth 2
     button $base.cpd26.01.fra29.but30 \
         -image [vTcl:image:get_image "refresh.gif"]
-    frame $base.cpd26.02 \
-        -background #dcdcdc -highlightbackground #dcdcdc \
-        -highlightcolor #000000 -width 0
+    frame $base.cpd26.02
     label $base.cpd26.02.lab22 \
         -anchor w  -padx 1 -text Item
     entry $base.cpd26.02.ent24
@@ -720,4 +721,9 @@ proc vTclWindow.vTcl.inspector {base {container 0}} {
     ::inspector::insert_node $widget(InspectorListbox)  end  "Windows"  0 yes "Windows" ::inspector::expand_windows
 
     InspectorValue configure -font $vTcl(pr,font_fixed)
+
+    catch {wm geometry $base $vTcl(geometry,$base)}
+    wm deiconify $base
+
+    vTcl:setup_vTcl:bind $base
 }

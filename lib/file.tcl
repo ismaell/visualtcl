@@ -34,7 +34,9 @@ proc vTcl:new {} {
     set vTcl(mode) EDIT
 
     set w [vTcl:auto_place_widget Toplevel]
-    wm geometry $w $vTcl(pr,geom_new)
+    if {$w != ""} {
+        wm geometry $w $vTcl(pr,geom_new)
+    }
 
     vTcl:setup_bind_tree .
     vTcl:update_top_list
@@ -42,10 +44,9 @@ proc vTcl:new {} {
     vTcl:update_proc_list
     set vTcl(project,name) "unknown.tcl"
     wm title $vTcl(gui,main) "Visual Tcl - $vTcl(project,name)"
-    proc main {argc argv} "
-    	wm protocol $vTcl(w,insert) WM_DELETE_WINDOW {exit}
-
-    "
+    if {$w != ""} {
+        proc main {argc argv} "wm protocol $vTcl(w,insert) WM_DELETE_WINDOW {exit}\n"
+    }
 }
 
 proc vTcl:file_source {} {
@@ -145,7 +146,8 @@ proc vTcl:source {file} {
         set cop [namespace eval $context {info procs}]
 
         foreach procname $cop {
-            if {[vTcl:ignore_procname_when_sourcing $procname] == 0} {
+            if {[vTcl:ignore_procname_when_sourcing $procname] == 0 &&
+                [vTcl:ignore_procname_when_sourcing ${context}::$procname] == 0} {
                if {$context == "::"} {
                    lappend np $procname
                } else {
@@ -255,9 +257,7 @@ proc vTcl:close {} {
     if {$vTcl(change) > 0} {
         switch [vTcl:dialog "Your application has unsaved changes.\nDo you wish to save?" "Yes No Cancel"] {
             Yes {
-                if {[vTcl:save_as] == -1} {
-                    return -1
-                }
+                if {[vTcl:save_as] == -1} { return -1 }
             }
             Cancel {
                 return -1
@@ -275,6 +275,10 @@ proc vTcl:close {} {
             }
             vTcl:unset_alias $i
             destroy $i
+
+            # this is clean up for leftover widget commands
+            set _cmds [info commands $i.*]
+            foreach _cmd $_cmds {catch {rename $_cmd ""}}
         }
     }
     set vTcl(tops) ""
@@ -303,6 +307,7 @@ proc vTcl:close {} {
     set vTcl(w,save) ""
     wm title $vTcl(gui,main) "Visual Tcl"
     set vTcl(change) 0
+    set vTcl(quit) 0
 
     # refresh widget tree automatically after File Close
     # delete user images (e.g. per project images)
@@ -342,19 +347,24 @@ proc vTcl:save_as {} {
 # under Linux and Windows
 
 proc vTcl:save_as_binary {} {
-
     global vTcl env tcl_platform
 
     set vTcl(save) all
     set vTcl(w,save) $vTcl(w,widget)
     set file [vTcl:get_file save "Save Project With Binary"]
 
+    update
+
     vTcl:save2 $file
 
     if {[lempty $file]} { return }
 
-    # now comes the magic
-    set filelist [file rootname $file].txt
+    update
+
+    vTcl:status "Creating binary..."
+
+    # Now comes the magic.
+    set filelist [file rootname $file].fwp
 
     set listID [open $filelist w]
     puts $listID [join [vTcl:image:get_files_list] \n]
@@ -364,18 +374,20 @@ proc vTcl:save_as_binary {} {
     close $listID
     
     ##
-    # Guess the ostag and look for an appropriate freewrap binary.
+    ## Guess the ostag and look for an appropriate freewrap binary.
     ##
     if {[string tolower $tcl_platform(platform)] == "windows"} {
-    	set ostag Windows
+	set freewrap [file join $env(VTCL_HOME) Freewrap Windows freewrap]
     } else {
 	set ostag [exec $env(VTCL_HOME)/Freewrap/config.guess]
+	set freewrap [file join $env(VTCL_HOME) Freewrap $ostag bin freewrap]
     }
 
-    # launches freewrap
-    set freewrap $env(VTCL_HOME)/Freewrap/$ostag/bin/freewrap
-    
     exec $freewrap $file -f $filelist
+
+    file delete -force $filelist
+
+    vTcl:status "Binary Done"
 }
 
 # @@end_change
@@ -388,7 +400,7 @@ proc vTcl:save2 {file} {
         return -1
     }
     vTcl:destroy_handles
-	vTcl:setup_bind_tree .
+    vTcl:setup_bind_tree .
 
     set vTcl(project,name) [lindex [file split $file] end]
     set vTcl(project,file) $file
@@ -404,19 +416,43 @@ proc vTcl:save2 {file} {
         puts $output {exec wish "$0" "$@" }
     }
 
-    # header to import libraries
-    # code to load images
-    # code to load fonts
+    ## Gather information about the widgets.
+    vTcl:dump:gather_widget_info
 
-    puts $output "if {!\[info exist vTcl(sourcing)\]} \{"
-    puts $output $vTcl(head,importheader)
-    puts $output "\}"
+    ## Header to import libraries
+    ## If any of the widgets use an external library, we need to dump the
+    ## importheader for each library.  If all the widgets are core or don't
+    ## use an external library, don't dump anything.
+    if {![lempty $vTcl(dump,libraries)]} {
+	## If we have any library other than the core libraries, invoke
+	## a package name search in the headers.
+	set namesearch 0
+	foreach lib $vTcl(dump,libraries) {
+	    if {[vTcl:streq $lib "core"] \
+	    	|| [vTcl:streq $lib "vtcl"] \
+		|| [vTcl:streq $lib "user"]} { continue }
+	    set namesearch 1
+	}
 
-    ## Gather information about fonts and images.
-    vTcl:dump:widget_fonts_and_images
+	vTcl:dump:not_sourcing_header out
+	if {$namesearch} {
+	    append out "\n$vTcl(tab)# Provoke name search\n"
+	    append out "$vTcl(tab)catch {package require bogus-package-name}\n"
+	    append out "$vTcl(tab)set packageNames \[package names\]\n"
+	}
+	foreach lib $vTcl(dump,libraries) {
+	    if {![info exists vTcl(head,$lib,importheader)]} { continue }
+	    append out $vTcl(head,$lib,importheader)
+	}
+	vTcl:dump:sourcing_footer out
+	puts $output $out
+    }
 
+    ## Code to load images
     vTcl:image:generate_image_stock $output
     vTcl:image:generate_image_user  $output
+
+    ## Code to load fonts
     vTcl:font:generate_font_stock   $output
     vTcl:font:generate_font_user    $output
 
@@ -476,14 +512,19 @@ proc vTcl:save2 {file} {
 
 proc vTcl:quit {} {
     global vTcl
-    if {[vTcl:close] == -1} {return}
-    if {$vTcl(quit)} {
-        if {[vTcl:dialog "Are you sure\nyou want to quit?" "Yes No"] == "No"} {
-            return
-        }
+    set vTcl(quit) 1
+
+    ## If the project has changed, close it before exiting.
+    if {$vTcl(change)} {
+	if {[vTcl:close] == -1} { return }
     }
-    set vTcl(quit) 0
-    set vTcl(change) 0
+
+    if {$vTcl(quit)} {
+	if {[vTcl:dialog "Are you sure\nyou want to quit?" "Yes No"] == "No"} {
+	    return
+	}
+    }
+
     if {[winfo exists .vTcl.tip]} {
        eval [wm protocol .vTcl.tip WM_DELETE_WINDOW]
     }
@@ -561,9 +602,14 @@ proc vTcl:get_file {mode {title File} {ext .tcl}} {
             if {$initname == ""} {
                 set initname "unknown.tcl"
             }
-            set file [tk_getSaveFile -defaultextension $ext \
-                -initialdir [pwd] -filetypes $types \
-                -initialfile $initname]
+            if {$tcl_platform(platform) == "macintosh"} then {
+                set file [tk_getSaveFile -defaultextension $ext \
+                    -initialdir [pwd] -initialfile $initname]
+            } else {
+                set file [tk_getSaveFile -defaultextension $ext \
+                    -initialdir [pwd] -filetypes $types \
+                    -initialfile $initname]
+            }
         }
     }
     set tk_strictMotif 1
@@ -585,10 +631,3 @@ proc vTcl:restore {} {
     file copy -force -- $bakFile $file
     vTcl:open $file
 }
-
-
-
-
-
-
-

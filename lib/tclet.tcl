@@ -23,7 +23,8 @@
 
 proc vTcl:create_tclet {target} {
     global vTcl
-    if {[vTcl:get_class $target] != "Toplevel"} {
+    if {$target == "" ||
+        [vTcl:get_class $target] != "Toplevel"} {
         vTcl:error "You must select a Toplevel\nWindow as the Tclet base"
         return
     }
@@ -38,6 +39,30 @@ proc vTcl:create_tclet {target} {
             return
         }
         set body [string trim [info body init]]              ;vTcl:statbar 20
+
+        ## Let's give some clue about who might well have generated
+        ## this tclet
+        set header "#############################################################################
+# Visual Tcl v$vTcl(version) Tclet
+#
+"
+        puts $out $header
+
+        ## Gather information about fonts and images.
+        vTcl:dump:widget_fonts_and_images
+
+        ## Save only fonts and images we need
+        ## All images are saved inline in a tclet
+        set old $vTcl(pr,saveimagesinline)
+        set vTcl(pr,saveimagesinline) 1
+
+        vTcl:image:generate_image_stock $out
+        vTcl:image:generate_image_user  $out
+        vTcl:font:generate_font_stock   $out
+        vTcl:font:generate_font_user    $out
+
+        set vTcl(pr,saveimagesinline) $old
+
         puts $out $vTcl(head,procs)                          ;vTcl:statbar 25
         puts $out "proc init \{argc argv\} \{\n$body\n\}\n"  ;vTcl:statbar 30
         puts $out "init \$argc \$argv\n"                     ;vTcl:statbar 35
@@ -47,6 +72,38 @@ proc vTcl:create_tclet {target} {
         puts $out "main \$argc \$argv"                       ;vTcl:statbar 95
         close $out                                           ;vTcl:statbar 0
     }
+}
+
+proc vTcl:tclet:translate_options {opts} {
+    global vTcl
+
+    set ret {}
+    set index 0
+    foreach i $opts {
+        if {$index % 2 == 0} then {
+            set opt $i
+            incr index
+            continue
+        }
+        # this option is unknown to the tcl plugin
+        if {$opt == "-activebackground" ||
+            $opt == "-activeforeground"} then {
+            incr index
+            continue
+        }
+        set val $i
+        if {[vTcl:streq $opt "-class"]} then {
+            incr index
+            continue
+        }
+        if {[info exists vTcl(option,translate,$opt)]} then {
+            set val [$vTcl(option,translate,$opt) $val]
+        }
+
+        lappend ret $opt $val
+        incr index
+    }
+    return $ret
 }
 
 proc vTcl:tclet_from_cmpd {base name compound {level 0}} {
@@ -74,8 +131,10 @@ proc vTcl:tclet_from_cmpd {base name compound {level 0}} {
         if {$level > 0} {
             set name "$base$wdgt"
         }
+        #puts $opts
         if {$class != "Toplevel"} {
-	    append todo "$classes($class,createCmd) $name \\\n"
+            set opts [vTcl:tclet:translate_options $opts]
+            append todo "$classes($class,createCmd) $name \\\n"
             append todo "[vTcl:clean_pairs [vTcl:name_replace $base $opts] 4]\n"
         }
         if {$mgrt != "" && $mgrt != "wm" && $name != " "} {

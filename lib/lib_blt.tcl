@@ -25,13 +25,7 @@
 proc vTcl:lib_blt:init {} {
     global vTcl
 
-    if {[catch {
-	package require BLT
-        namespace import blt::vector
-        namespace import blt::graph
-        namespace import blt::hierbox
-        namespace import blt::stripchart
-    } error]} {
+    if {[catch {package require BLT} error]} {
         lappend vTcl(libNames) {(not detected) BLT Widgets Support Library}
 	return 0
     }
@@ -50,18 +44,10 @@ proc vTcl:widget:lib:lib_blt {args} {
 
     vTcl:lib:add_widgets_to_toolbar $order
 
-    append vTcl(head,importheader) {
-        # Provoke name search
-        catch {package require foobar}
-        set names [package names]
-
-        # Check if BLT is available
-        if {[lsearch -exact $names BLT] != -1} {
-            package require BLT
-            namespace import blt::vector
-            namespace import blt::graph
-            namespace import blt::hierbox
-            namespace import blt::stripchart
-        }
+    append vTcl(head,blt,importheader) {
+    # Check if BLT is available
+    if {[lsearch -exact $packageNames BLT] != -1} {
+	package require BLT
+    }
     }
 }

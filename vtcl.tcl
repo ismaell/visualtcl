@@ -1,4 +1,7 @@
-#!/usr/bin/wish -f
+#!/bin/sh
+# the next line restarts using wish\
+exec wish "$0" "$@"
+
 ##############################################################################
 #
 # Visual TCL - A cross-platform application development environment
@@ -23,27 +26,6 @@
 #
 
 set vTcl(sourcing) 0
-
-# under Windows we are using the standard wish console
-
-if {$tcl_platform(platform) != "windows"} {
-
-	rename puts vTcl:puts
-
-	proc puts {args} {
-	    global vTcl
-
-	    if { [llength $args] > 1 } {
-		eval vTcl:puts $args
-	    } else {
-		eval vTcl:puts $vTcl(LOG_FD_W) $args
-		flush $vTcl(LOG_FD_W)
-
-		# refresh the command console if visible
-		vTcl:console:get_output
-	    }
-        }
-}
 
 proc vTcl:log {msg} {
     return
@@ -169,16 +151,8 @@ proc vTcl:load_libs {} {
 proc vTcl:setup {} {
     global tk_strictMotif env vTcl tcl_platform __vtlog
 
-    # @@change by Christian Gavin 3/7/2000
-    # support for Itcl mega widgets
-    set vTcl(megaWidget) ""
-    set vTcl(head,importheader) ""
-    # @@end_change
-
-    # @@change by Christian Gavin 3/14/2000
-    # text widget children should not be saved/seen
-    lappend vTcl(megaWidget) Text
     set vTcl(version)   1.51
+
     if {$env(VTCL_HOME) == ""} {
         set vTcl(VTCL_HOME) [pwd]
     } else {
@@ -186,24 +160,32 @@ proc vTcl:setup {} {
     }
 
     if {$env(HOME) == ""} {
-        set vTcl(CONF_FILE) [file join $env(VTCL_HOME) .vtclrc]
-        set vTcl(LIB_FILE)  [file join $env(VTCL_HOME) .vtcllibs]
-        set vTcl(LOG_FILE)  [file join $env(VTCL_HOME) .vtclog]
+        set vTcl(CONF_FILE) [file join $vTcl(VTCL_HOME) .vtclrc]
+        set vTcl(LIB_FILE)  [file join $vTcl(VTCL_HOME) .vtcllibs]
+        set vTcl(LOG_FILE)  [file join $vTcl(VTCL_HOME) .vtclog]
     } else {
         set vTcl(CONF_FILE) [file join $env(HOME) .vtclrc]
         set vTcl(LIB_FILE)  [file join $env(HOME) .vtcllibs]
         set vTcl(LOG_FILE)  [file join $env(HOME) .vtclog]
     }
 
-    set vTcl(LOG_FD_W)  [open $vTcl(LOG_FILE) "w"]
-    set vTcl(LOG_FD_R)  [open $vTcl(LOG_FILE) "r"]
-    fconfigure $vTcl(LOG_FD_R) -buffering line
+    ## If we can't open the log files in HOME, try in the vTcl directory.
+    if {[catch {open $vTcl(LOG_FILE) "w"} vTcl(LOG_FD_W)] \
+    	|| [catch {open $vTcl(LOG_FILE) "r"} vTcl(LOG_FD_R)]} {
+        set vTcl(CONF_FILE) [file join $vTcl(VTCL_HOME) .vtclrc]
+        set vTcl(LIB_FILE)  [file join $vTcl(VTCL_HOME) .vtcllibs]
+        set vTcl(LOG_FILE)  [file join $vTcl(VTCL_HOME) .vtclog]
+    	catch {open $vTcl(LOG_FILE) "w"} vTcl(LOG_FD_W)
+    	catch {open $vTcl(LOG_FILE) "r"} vTcl(LOG_FD_R)
+    }	
+	
+    catch {fconfigure $vTcl(LOG_FD_R) -buffering line}
 
     set vTcl(LIB_DIR)   [file join $vTcl(VTCL_HOME) lib]
     set vTcl(LIB_WIDG)  [glob -nocomplain [file join $vTcl(LIB_DIR) lib_*.tcl]]
     set vTcl(LIBS)      "globals.tcl about.tcl propmgr.tcl balloon.tcl
         		attrbar.tcl bgerror.tcl bind.tcl command.tcl color.tcl
-			console.tcl compound.tcl compounds.tcl do.tcl
+			tkcon.tcl compound.tcl compounds.tcl do.tcl
 			dragsize.tcl dump.tcl edit.tcl file.tcl font.tcl
 			handle.tcl input.tcl images.tcl loadwidg.tcl menu.tcl
 			misc.tcl name.tcl prefs.tcl proc.tcl tclet.tcl
@@ -239,11 +221,18 @@ proc vTcl:setup {} {
 }
 
 proc vTcl:setup_meta {} {
-    global vTcl
+    global vTcl tcl_platform
     rename exit vTcl:exit
     proc exit {args} {}
     proc init {argc argv} {}
     proc main {argc argv} {}
+
+    if {[vTcl:streq $tcl_platform(platform) "windows"]} {
+    	proc main {argc argv} {
+## This will clean up and call exit properly on Windows.
+vTcl:WindowsCleanup
+	}
+    }
 
     vTcl:proclist:show $vTcl(pr,show_func)
     vTcl:varlist:show  $vTcl(pr,show_var)
@@ -282,6 +271,7 @@ proc vTcl:setup_gui {} {
     option add *vTcl*Text*font $vTcl(pr,font_fixed)
 
     option add *vTcl*background #d9d9d9
+    option add *vTcl*Listbox.background #ffffff
 
     vTcl:setup_bind_tree .
     vTcl:load_images
@@ -312,7 +302,7 @@ proc vTclWindow.vTcl {args} {
     wm command $vTcl(gui,main) "$vTcl(VTCL_HOME)/vtcl"
     wm iconname $vTcl(gui,main) "Visual Tcl"
     if {$tcl_platform(platform) == "macintosh"} {
-        wm geometry $vTcl(gui,main) $vTcl(pr,geom_vTcl)+0+20
+        wm geometry $vTcl(gui,main) +0+20
     } else {
          wm geometry $vTcl(gui,main) +0+0
     }
@@ -421,7 +411,7 @@ proc vTclWindow.vTcl {args} {
 
     ## Create a hidden entry widget that holds the name of the current widget.
     ## We use this for copying the widget name and using it globally.
-    entry .vTcl.widgetname -textvar fakeClipboard
+    entry .vTcl.widgetname -textvariable vTcl(fakeClipboard)
 }
 
 proc vTcl:vtcl:remap {w} {
@@ -454,16 +444,16 @@ proc vTcl:define_bindings {} {
     foreach i {a b} {
         bind vTcl($i) <Control-z>  { vTcl:pop_action }
         bind vTcl($i) <Control-r>  { vTcl:redo_action }
-        bind vTcl($i) <Control-x>  { vTcl:cut }
-        bind vTcl($i) <Control-c>  { vTcl:copy }
-        bind vTcl($i) <Control-v>  { vTcl:paste }
+        bind vTcl($i) <Control-x>  { vTcl:cut %W }
+        bind vTcl($i) <Control-c>  { vTcl:copy %W }
+        bind vTcl($i) <Control-v>  { vTcl:paste {} %W }
         bind vTcl($i) <Control-q>  { vTcl:quit }
         bind vTcl($i) <Control-n>  { vTcl:new }
         bind vTcl($i) <Control-o>  { vTcl:open }
         bind vTcl($i) <Control-s>  { vTcl:save }
         bind vTcl($i) <Control-w>  { vTcl:close }
 	bind vTcl($i) <Control-h>  { vTcl:hide }
-        bind vTcl($i) <Key-Delete> { vTcl:delete }
+        bind vTcl($i) <Key-Delete> { vTcl:delete %W }
         bind vTcl($i) <Alt-a>      { vTcl:set_alias $vTcl(w,widget) }
         bind vTcl($i) <Alt-f>      { vTcl:proclist:show flip }
         bind vTcl($i) <Alt-v>      { vTcl:varlist:show flip }
@@ -588,7 +578,7 @@ proc vTcl:define_bindings {} {
     }
 
     bind vTcl(b) <Alt-h> {
-        if { $vTcl(h,exist) == "yes" } {
+        if {$vTcl(h,exist)} {
             vTcl:destroy_handles
         } else {
             vTcl:create_handles $vTcl(w,widget)
@@ -619,7 +609,7 @@ proc vTcl:main {argc argv} {
 
         proc glob {args} {
 
-            global vTcl            
+            global vTcl
             set index 0
             if {[lindex $args 0] == "-nocomplain"} {
                 incr index
@@ -627,7 +617,7 @@ proc vTcl:main {argc argv} {
 
             set pattern [lindex $args $index]
             set result ""
-        
+
             foreach wrapped $vTcl(wrapped) {
                 if [string match $pattern $wrapped] {
                     lappend result $wrapped
@@ -645,21 +635,17 @@ proc vTcl:main {argc argv} {
     catch {package require Unsafe} ; #for running in Netscape
     catch {package require dde}    ; #for windows
     catch {package require Tk}     ; #for dynamic loading tk
-    if {$tcl_version < 7.6} {
+    if {$tcl_version < 8.0} {
         wm deiconify .
         wm title . "Time to upgrade"
         frame .f -relief groove -bd 2
         pack .f -expand 1 -fill both -padx 2 -pady 2
         label .f.l1 -text "This version of Tk is too old..."
-        label .f.l2 -text "Tcl7.6 and Tk4.2 or newer required"
+        label .f.l2 -text "Tcl8.0 and Tk8.0 or newer required"
         button .f.b -text "Bummer!" -command {exit}
         pack .f.l1 .f.l2 -side top -padx 5
         pack .f.b -side top -pady 5
     } else {
-        if {[info commands console] == "console"} {
-            console title "Visual Tcl"
-            console hide
-        }
         if {$tcl_platform(platform) == "macintosh"} {
             set vTcl(VTCL_HOME) $env(HOME)
         }
@@ -689,9 +675,6 @@ proc vTcl:main {argc argv} {
                 vTcl:open [file join [pwd] $file]
             }
         }
-        if {[info commands console] == "console"} {
-            set vTcl(console) 1
-        }
 
 	# @@change by Christian Gavin 3/5/2000
 	# autoloading of compounds if "Preferences" options enabled
@@ -716,6 +699,3 @@ proc vTcl:main {argc argv} {
 }
 
 vTcl:main $argc $argv
-
-
-

@@ -2,7 +2,7 @@
 #
 # loadwidg.tcl - procedures to load widget configuration files
 #
-# Copyright (C) 1996-1998 Damon Courtney
+# Copyright (C) 2000-2001 Damon Courtney
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -25,9 +25,9 @@ proc vTcl:LoadWidgets {dir} {
     global vTcl tmp
 
     set lib [file tail $dir]
-    foreach file [lsort [glob -nocomplain $dir/*.wgt]] {
-	set tmp(lib) $lib
-	vTcl:LoadWidget $tmp(lib) $file
+    foreach file [lsort [glob -nocomplain [file join $dir *.wgt]]] {
+        set tmp(lib) $lib
+        vTcl:LoadWidget $tmp(lib) $file
     }
 
     set vTcl(libs) [vTcl:lrmdups $vTcl(libs)]
@@ -39,7 +39,7 @@ proc vTcl:LoadWidgets {dir} {
 
 proc vTcl:LoadWidget {lib file} {
     global tmp vTcl classes
-    
+
     set file [file tail $file]
     set file [file join $vTcl(VTCL_HOME) lib Widgets $lib $file]
 
@@ -49,14 +49,14 @@ proc vTcl:LoadWidget {lib file} {
     uplevel #0 source [list $file]
 
     if {[info exists tmp(isSuperClass)]} {
-	if {![info exists tmp(typeCmd)]} {
-	    return -code error "Must specify a TypeCmd in a super class"
-	}
+        if {![info exists tmp(typeCmd)]} {
+            return -code error "Must specify a TypeCmd in a super class"
+        }
 
-	SetClassArray
+        SetClassArray
 
-    	if {![info exists tmp(superClass)]} { unset tmp }
-    	return
+        if {![info exists tmp(superClass)]} { unset tmp }
+        return
     }
 
     if {![info exists tmp(class)]} { unset tmp; return }
@@ -64,8 +64,8 @@ proc vTcl:LoadWidget {lib file} {
     SetClassArray
 
     if {[info exists tmp(isSuperClass)] && $tmp(isSuperClass)} {
-	unset tmp
-    	return
+        unset tmp
+        return
     }
 
     lappend vTcl(libs) $tmp(lib)
@@ -79,34 +79,36 @@ proc SetClassArray {} {
     global vTcl tmp classes
 
     array set classes "
-	$tmp(class),lib			vtcl
-	$tmp(class),createCmd		[vTcl:lower_first $tmp(class)]
-	$tmp(class),resizable		1
-	$tmp(class),dumpChildren	1
-    $tmp(class),megaWidget      0
-	$tmp(class),dumpCmd		vTcl:dump_widget_opt
-	$tmp(class),options		{}
-	$tmp(class),defaultOptions	{}
-	$tmp(class),insertCmd		{}
-	$tmp(class),dblClickCmd		{}
-	$tmp(class),exportCmds		{}
-	$tmp(class),functionCmds	{}
-	$tmp(class),functionText	{}
-	$tmp(class),typeCmd		{}
-	$tmp(class),aliasPrefix		$tmp(class)
-	$tmp(class),widgetProc		vTcl:WidgetProc
-	$tmp(class),resizeCmd		vTcl:adjust_widget_size
-	$tmp(class),icon		icon_[vTcl:lower_first $tmp(class)].gif
-	$tmp(class),balloon		[string tolower $tmp(class)]
-	$tmp(class),addOptions		{}
-	$tmp(class),autoPlace		0
-	$tmp(class),treeLabel		$tmp(class)
+        $tmp(class),lib             vtcl
+        $tmp(class),createCmd       [vTcl:lower_first $tmp(class)]
+        $tmp(class),resizable       1
+        $tmp(class),dumpChildren    1
+        $tmp(class),megaWidget      0
+        $tmp(class),dumpCmd         vTcl:dump_widget_opt
+        $tmp(class),options         {}
+        $tmp(class),defaultOptions  {}
+        $tmp(class),insertCmd       {}
+        $tmp(class),dblClickCmd     {}
+        $tmp(class),exportCmds      {}
+        $tmp(class),functionCmds    {}
+        $tmp(class),functionText    {}
+        $tmp(class),typeCmd         {}
+        $tmp(class),aliasPrefix     $tmp(class)
+        $tmp(class),widgetProc      vTcl:WidgetProc
+        $tmp(class),resizeCmd       vTcl:adjust_widget_size
+        $tmp(class),icon            icon_[vTcl:lower_first $tmp(class)].gif
+        $tmp(class),balloon         [string tolower $tmp(class)]
+        $tmp(class),addOptions      {}
+        $tmp(class),autoPlace       0
+        $tmp(class),treeLabel       $tmp(class)
+        $tmp(class),treeChildrenCmd {}
+        $tmp(class),deleteCmd       {}
     "
 
     foreach elem [array names classes $tmp(class),*] {
-	lassign [split $elem ,] name var
-    	if {![info exists tmp($var)]} { continue }
-	set classes($elem) $tmp($var)
+        lassign [split $elem ,] name var
+        if {![info exists tmp($var)]} { continue }
+        set classes($elem) $tmp($var)
     }
 
     if {[info exists tmp(icon)]} {
@@ -214,6 +216,11 @@ proc InsertCmd {name} {
     set tmp(insertCmd) $name
 }
 
+proc DeleteCmd {name} {
+    global tmp
+    set tmp(deleteCmd) $name
+}
+
 proc DoubleClickCmd {name} {
     global tmp
     set tmp(dblClickCmd) $name
@@ -246,7 +253,7 @@ proc Function {name command} {
 }
 
 proc SuperClass {val} {
-    global tmp 
+    global tmp
     set tmp(superClass) $val
     vTcl:LoadWidget $tmp(lib) $val
     unset tmp(isSuperClass)
@@ -311,4 +318,9 @@ proc AdditionalClasses {args} {
     foreach arg $args {
         lappend vTcl(classes) $arg
     }
+}
+
+proc TreeChildrenCmd {val} {
+    global tmp
+    set tmp(treeChildrenCmd) $val
 }

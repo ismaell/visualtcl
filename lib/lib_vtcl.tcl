@@ -31,7 +31,7 @@ proc vTcl:lib_vtcl:init {} {
 proc vTcl:widget:lib:lib_vtcl {args} {
     set order {
 	Progressbar1
-	Combobox
+	Combobox2
 	Mclistbox
     }
 

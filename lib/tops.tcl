@@ -41,25 +41,22 @@ proc vTcl:destroy_top {target} {
         return 0
     }
 
-    if [winfo exists $target] {
-        if {[vTcl:get_class $target] == "Toplevel"} {
-            destroy $target
-        }
-    }
-    if {[info procs vTclWindow$target] != ""} {
-        rename vTclWindow$target {}
-    }
-    if {[info procs vTclWindow(pre)$target] != ""} {
-        rename vTclWindow$target {}
-    }
-    if {[info procs vTclWindow(post)$target] != ""} {
-        rename vTclWindow$target {}
-    }
-    set x [lsearch $vTcl(tops) $target]
-    if {$x >= 0} {
-        set vTcl(tops) [lreplace $vTcl(tops) $x $x]
-    }
+    vTcl:select_widget $target
+    vTcl:delete
 
+#    if [winfo exists $target] {
+#        if {[vTcl:get_class $target] == "Toplevel"} {
+#            if {$vTcl(w,toplevel) == $target} {
+#                 vTcl:select_widget .
+#             }
+#            destroy $target
+#        }
+#    }
+#    set x [lsearch $vTcl(tops) $target]
+#    if {$x >= 0} {
+#        set vTcl(tops) [lreplace $vTcl(tops) $x $x]
+#    }
+#
     return 1
 }
 
@@ -75,9 +72,13 @@ proc vTcl:show_top {target} {
         Window show $target
         wm deiconify $target
         raise $target
+        vTcl:widget:register_all_widgets $target
         vTcl:setup_bind_tree $target
         vTcl:update_top_list
+        vTcl:init_wtree
     }
+    vTcl:select_widget $target
+    vTcl:destroy_handles
 }
 
 proc vTcl:hide_top {target} {
@@ -85,6 +86,7 @@ proc vTcl:hide_top {target} {
     if [winfo exists $target] {
         if {[vTcl:get_class $target] == "Toplevel"} {
             wm withdraw $target
+            vTcl:select_widget .
         }
     }
 }
@@ -101,6 +103,16 @@ proc vTcl:update_top_list {} {
             .vTcl.toplist.f2.list insert end $n
             set vTcl(tops,$index) $i
             incr index
+        }
+        foreach i $vTcl(tops) {
+            if {![winfo exists $i]} {
+                # this is to convert 1.22 projects to 1.51
+                # 1.51 hidden toplevels exists but are hidden
+                # 1.2x hidden toplevels don't exist at all except
+                # their proc
+                vTcl:show_top $i
+                vTcl:hide_top $i
+            }
         }
     }
 }
@@ -217,3 +229,6 @@ proc vTclWindow.vTcl.toplist {args} {
     update idletasks
     wm deiconify .vTcl.toplist
 }
+
+
+

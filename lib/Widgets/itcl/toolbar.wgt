@@ -1,6 +1,7 @@
-Class Toolbar
-Lib   itcl
+Class		Toolbar
+Lib		itcl
 
-Icon icon_toolbar.gif
-DumpChildren  no
-MegaWidget    yes
+CreateCmd	::iwidgets::toolbar
+Icon		icon_toolbar.gif
+DumpChildren	no
+MegaWidget	yes

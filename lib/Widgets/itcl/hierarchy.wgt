@@ -1,6 +1,7 @@
-Class Hierarchy
-Lib   itcl
+Class		Hierarchy
+Lib		itcl
 
-Icon icon_hierarchy.gif
-DumpChildren  no
-MegaWidget    yes
+CreateCmd	::iwidgets::hierarchy
+Icon		icon_hierarchy.gif
+DumpChildren	no
+MegaWidget	yes

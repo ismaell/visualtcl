@@ -1,6 +1,29 @@
-Class Checkbox
-Lib   itcl
+Class		Checkbox
+Lib		itcl
 
-Icon icon_checkbox.gif
-DumpChildren  no
-MegaWidget    yes
+CreateCmd	::iwidgets::checkbox
+Icon		icon_checkbox.gif
+DumpChildren	no
+MegaWidget	yes
+DumpCmd		vTcl:dump:checkbox
+InsertCmd	vTcl:widget:checkbox:inscmd
+DefaultOptions	-labeltext "Checkbox"
+
+proc vTcl:dump:checkbox {target basename} {
+    global vTcl
+
+    set result [vTcl:dump_widget_opt $target $basename]
+    set last -1
+    catch {set last [$target index end]}
+
+    for {set i 0} {$i <= $last} {incr i} {
+        set conf [$target buttonconfigure $i]
+        set pairs [vTcl:get_opts_special $conf $target \
+            "-text -variable"]
+
+        append result "$vTcl(tab)$basename add chk$i \\\n"
+        append result "[vTcl:clean_pairs $pairs]\n"
+    }
+
+    return $result
+}

@@ -40,13 +40,9 @@ proc vTcl:widget:lib:lib_table {args} {
     vTcl:lib:add_widgets_to_toolbar $order
 
     append vTcl(head,importheader) {
-        # Provoke name search
-        catch {package require foobar}
-        set names [package names]
-
-        # Check if Tktable is available
-        if { [lsearch -exact $names Tktable] != -1} {
-            package require Tktable
-        }
+    # Check if Tktable is available
+    if {[lsearch -exact $packageNames Tktable] != -1} {
+	package require Tktable
+    }
     }
 }

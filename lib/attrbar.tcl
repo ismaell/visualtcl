@@ -1,4 +1,4 @@
-#############################################################################
+##############################################################################
 #
 # attrbar.tcl - attribute icon bar under menus
 #
@@ -162,21 +162,16 @@ proc vTcl:attrbar_color {target} {
 }
 
 proc vTcl:attrbar:toggle_console {} {
-
     global vTcl
 
-    if {$vTcl(attrbar,console_state) == 1} {
+    if {$vTcl(attrbar,console_state)} {
     	set vTcl(attrbar,console_state) 0
     	vTcl:show_console hide
     	.vTcl.attr.console.console_toggle configure -relief raised
-
-    } else {
-
-        if {$vTcl(attrbar,console_state) == 0} {
-            set vTcl(attrbar,console_state) 1
-    	    vTcl:show_console show
-    	    .vTcl.attr.console.console_toggle configure -relief sunken
-    	}
+    } elseif {!$vTcl(attrbar,console_state)} {
+	set vTcl(attrbar,console_state) 1
+	vTcl:show_console show
+	.vTcl.attr.console.console_toggle configure -relief sunken
     }
 }
 

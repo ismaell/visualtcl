@@ -22,40 +22,40 @@
 #
 
 set vTcl(menu,file) {
-    {New              Ctrl+N       vTcl:new                   }
+    {&New             Ctrl+N       vTcl:new                   }
     {separator        {}           {}                         }
-    {Open...          Ctrl+O       vTcl:open                  }
-    {Save             Ctrl+S       vTcl:save                  }
-    {{Save As...}     {}           vTcl:save_as               }
-    {{Save As With Binary...} {}   vTcl:save_as_binary        }
-    {Close            Ctrl+W       vTcl:close                 }
-    {{Restore from Backup} {}      vTcl:restore               }
+    {&Open...         Ctrl+O       vTcl:open                  }
+    {&Save            Ctrl+S       vTcl:save                  }
+    {{Save &As...}    {}           vTcl:save_as               }
+    {{Save As With &Binary...} {}  vTcl:save_as_binary        }
+    {&Close           Ctrl+W       vTcl:close                 }
+    {{Restore &from Backup} {}     vTcl:restore               }
     {separator        {}           {}                         }
-    {@vTcl:initRcFileMenu				      }
-    {separator	      {}           {}                         }
-    {Source...        {}           vTcl:file_source           }
-    {Preferences...   {}           vTclWindow.vTcl.prefs      }
+    {@vTcl:initRcFileMenu}
     {separator        {}           {}                         }
-    {Quit             Ctrl+Q       vTcl:quit                  }
+    {Sou&rce...       {}           vTcl:file_source           }
+    {&Preferences...  {}           vTclWindow.vTcl.prefs      }
+    {separator        {}           {}                         }
+    {&Quit            Ctrl+Q       vTcl:quit                  }
 }
 
 set vTcl(menu,edit) {
-    {Undo             Ctrl+Z       vTcl:pop_action            }
-    {Redo             Ctrl+R       vTcl:redo_action           }
+    {&Undo            Ctrl+Z       vTcl:pop_action            }
+    {&Redo            Ctrl+R       vTcl:redo_action           }
     {separator        {}           {}                         }
-    {Cut              Ctrl+X       vTcl:cut                   }
-    {Copy             Ctrl+C       vTcl:copy                  }
-    {Paste            Ctrl+V       vTcl:paste                 }
+    {Cu&t             Ctrl+X       vTcl:cut                   }
+    {&Copy            Ctrl+C       vTcl:copy                  }
+    {&Paste           Ctrl+V       vTcl:paste                 }
     {separator        {}           {}                         }
-    {Delete           {Del}        vTcl:delete                }
+    {&Delete          {Del}        vTcl:delete                }
     {separator        {}           {}                         }
-    {Images...        {}           vTcl:image:prompt_image_manager }
-    {Fonts...         {}           vTcl:font:prompt_font_manager   }
+    {&Images...       {}           vTcl:image:prompt_image_manager }
+    {&Fonts...        {}           vTcl:font:prompt_font_manager   }
 }
 
 set vTcl(menu,mode) {
-    {{Test Mode}      Alt+T        {vTcl:setup_unbind_tree .} }
-    {{Edit Mode}      Alt+E        {vTcl:setup_bind_tree .}   }
+    {{&Test Mode}     Alt+T        {vTcl:setup_unbind_tree .} }
+    {{&Edit Mode}     Alt+E        {vTcl:setup_bind_tree .}   }
 }
 
 set vTcl(menu,system) {
@@ -70,58 +70,58 @@ set vTcl(menu,insert) {
 }
 
 set vTcl(menu,compound) {
-    {Create           Alt+C         {vTcl:name_compound $vTcl(w,widget)} }
+    {&Create...       Alt+C         {vTcl:name_compound $vTcl(w,widget)} }
     {Insert           {menu insert} {}                         }
     {separator        {}            {}                         }
-    {{Save Compounds...} {}            vTcl:save_compounds        }
-    {{Load Compounds...} {}            vTcl:load_compounds        }
+    {{&Save Compounds...} {}        vTcl:save_compounds        }
+    {{&Load Compounds...} {}        vTcl:load_compounds        }
     {separator        {}            {}                         }
-    {{Save as Tclet}  {}            {vTcl:create_tclet $vTcl(w,widget)}  }
+    {{Save as &Tclet} {}            {vTcl:create_tclet $vTcl(w,widget)}  }
 }
 
 set vTcl(menu,options) {
-    {{Set Insert}      Alt+I        vTcl:set_insert            }
-    {{Set Alias}       Alt+A        {vTcl:set_alias $vTcl(w,widget)}     }
+    {{Set &Insert}     Alt+I        vTcl:set_insert            }
+    {{Set &Alias}      Alt+A        {vTcl:set_alias $vTcl(w,widget)}     }
     {separator         {}           {}                         }
-    {{Select Toplevel} {}           vTcl:select_toplevel       }
-    {{Select Parent}   {}           vTcl:select_parent         }
+    {{Select &Toplevel} {}          vTcl:select_toplevel       }
+    {{Select Pa&rent}  {}           vTcl:select_parent         }
     {separator         {}           {}                         }
-    {Bindings          Alt+B        vTcl:show_bindings         }
-    {Properties        Alt+P        {vTcl:properties $vTcl(w,widget)}    }
+    {&Bindings         Alt+B        vTcl:show_bindings         }
+    {&Properties       Alt+P        {vTcl:properties $vTcl(w,widget)}    }
     {separator         {}           {}                         }
-    {Hide              {}           vTcl:hide                  }
+    {&Hide             {}           vTcl:hide                  }
 }
 
 #    {Project             {}        vTcl:project:show          }
 set vTcl(menu,window) {
-    {{Attribute Editor}  {}         vTcl:show_propmgr          }
-    {{Function List}     {}         {vTcl:proclist:show 1}     }
-    {{Window List}       {}         {vTcl:toplist:show 1}      }
-    {separator           {}         {}                         }
-    {{Command Console}   {}         vTcl:show_console          }
-    {{Widget Tree}       Alt+W      vTcl:show_wtree            }
-    {{System Inspector}  {}         {Window show .vTcl.inspector} }
-    {separator           {}         {}                         }
-    {{Save Window Locations} {}     vTcl:save_prefs            }
+    {{&Attribute Editor}  {}         vTcl:show_propmgr          }
+    {{&Function List}     {}         {vTcl:proclist:show 1}     }
+    {{&Window List}       {}         {vTcl:toplist:show 1}      }
+    {separator            {}         {}                         }
+    {{&Command Console}   {}         vTcl:show_console          }
+    {{Widget &Tree}       Alt+W      vTcl:show_wtree            }
+    {{System &Inspector}  {}         {Window show .vTcl.inspector} }
+    {separator            {}         {}                         }
+    {{&Save Window Locations} {}     vTcl:save_prefs            }
 }
 
 set vTcl(menu,help) {
-    {{About Visual Tcl...}  {}         vTclWindow.vTcl.about      }
-    {{Libraries...}         {}         vTclWindow.vTcl.infolibs   }
-    {{Index of Help...}     {}         vTclWindow.vTcl.help       }
+    {{&About Visual Tcl...} {}         vTclWindow.vTcl.about      }
+    {{&Libraries...}        {}         vTclWindow.vTcl.infolibs   }
+    {{Index of &Help...}    {}         vTclWindow.vTcl.help       }
     {separator              {}         {}                         }
-    {{Tip of the day...}    {}         {Window show .vTcl.tip}    }
+    {{&Tip of the day...}   {}         {Window show .vTcl.tip}    }
 }
 
 proc vTcl:menu:insert {menu name {root ""}} {
     global vTcl tcl_version
-    if {$tcl_version >= 8} {
+    if {$tcl_version >= 8} then {
         set tab ""
     } else {
         set tab "\t"
     }
-    if {$root != ""} {
-        if {![winfo exists $root]} {
+    if {$root != ""} then {
+        if {![winfo exists $root]} then {
             menu $root
         }
         $root add cascade -label [vTcl:upper_first $name] -menu $menu
@@ -131,16 +131,23 @@ proc vTcl:menu:insert {menu name {root ""}} {
     foreach item $vTcl(menu,$name) {
         set txt [lindex $item 0]
         set acc [lindex $item 1]
-        if {[llength $acc] > 1} {
+        if {[llength $acc] > 1} then {
             vTcl:menu:insert $menu.[lindex $acc 1] [lindex $acc 1] $menu
         } else {
             set cmd [lindex $item 2]
-            if {$txt == "separator"} {
+            if {$txt == "separator"} then {
                 $menu add separator
-	    } elseif {[string index $txt 0] == "@"} {
-	    	eval [string range $item 1 end]
+            } elseif {[string index $txt 0] == "@"} {
+                eval [string range $item 1 end]
             } else {
-                $menu add command -label $txt$tab -accel $acc -command $cmd
+                set ampersand [string first & $txt]
+                if {$ampersand != -1} then {
+                    regsub -all & $txt "" txt
+                    $menu add command -label $txt$tab -accel $acc -command $cmd \
+                        -underline $ampersand
+                } else {
+                    $menu add command -label $txt$tab -accel $acc -command $cmd
+                }
                 set vTcl(menu,$name,widget) $menu
             }
         }
@@ -150,10 +157,10 @@ proc vTcl:menu:insert {menu name {root ""}} {
 proc vTcl:initRcFileMenu {} {
     global vTcl
 
-    if {[info tclversion] >= 8} {
-	set base .vTcl.m.file
+    if {[info tclversion] >= 8} then {
+        set base .vTcl.m.file
     } else {
-	set base $vTcl(gui,main).menu
+        set base $vTcl(gui,main).menu
     }
 
     set w [menu $base.projects -tearoff 0]
@@ -166,8 +173,8 @@ proc vTcl:initRcFileMenu {} {
 proc vTcl:addRcFile {file} {
     global vTcl
 
-    if {[file pathtype $file] != "absolute"} {
-    	set file [file join [pwd] $file]
+    if {[file pathtype $file] != "absolute"} then {
+        set file [file join [pwd] $file]
     }
 
     lremove vTcl(rcFiles) $file
@@ -180,17 +187,20 @@ proc vTcl:updateRcFileMenu {} {
 
     if {![info exists vTcl(rcFiles)]} { set vTcl(rcFiles) {} }
 
+    ## Remove duplicate entries in the file list.
+    set vTcl(rcFiles) [vTcl:lrmdups $vTcl(rcFiles)]
+
     if {[info tclversion] >= 8} {
-	set w .vTcl.m.file.projects
+        set w .vTcl.m.file.projects
     } else {
-	set w $vTcl(gui,main).menu.projects
+        set w $vTcl(gui,main).menu.projects
     }
 
     $w delete 0 end
 
     foreach file $vTcl(rcFiles) {
-    	if {[file exists $file]} { continue }
-	lremove vTcl(rcFiles) $file
+        if {[file exists $file]} then { continue }
+        lremove vTcl(rcFiles) $file
     }
 
     ##
@@ -200,10 +210,18 @@ proc vTcl:updateRcFileMenu {} {
 
     set i 1
     foreach file $vTcl(rcFiles) {
-	$w insert end command \
-	    -label "$i $file" \
-	    -command "vTcl:open [list $file]" \
-	    -underline 0
-	incr i
+        $w insert end command \
+            -label "$i $file" \
+            -command "vTcl:open [list $file]" \
+            -underline 0
+        incr i
+    }
+}
+
+proc vTcl:enable_entries {menu state} {
+    set last [$menu index end]
+    if {$last == "none"} return
+    for {set i 0} {$i <= $last} {incr i} {
+        $menu entryconfigure $i -state $state
     }
 }
