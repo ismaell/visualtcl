@@ -222,12 +222,13 @@ proc vTcl:prop:recalc_canvas {} {
     set vTcl(propmgr,frame,$f3) [expr $h + $h2]
 }
 
-proc vTcl:key_release_cmd {k w config_cmd} {
+proc vTcl:key_release_cmd {k config_cmd target option variable args} {
+    global vTcl
 
     ## Don't change if the user presses a directional key.
     if {$k < 37 || $k > 40} {
-        puts $config_cmd
-        set ::vTcl::config($w) $config_cmd
+        set value [vTcl:at $variable]
+        set ::vTcl::config($target) [list $config_cmd $target $option $variable $value $args]
     }
 }
 
@@ -240,12 +241,60 @@ proc vTcl:focus_out_cmd {} {
             continue
         }
         catch {
-            eval $::vTcl::config($w)
+            lassign $::vTcl::config($w) config_cmd target option variable value args
+            $config_cmd $target $option $variable $value $args
         }
         unset ::vTcl::config($w)
     }
 
     vTcl:place_handles $::vTcl(w,widget)
+}
+
+proc vTcl:prop:config_cmd {target option variable value args} {
+    global vTcl
+    if {$value == ""} {
+        $target configure $option [vTcl:at $variable]
+        vTcl:prop:save_opt $target $option $variable
+        vTcl:place_handles $target
+    } else {
+        $target configure $option $value
+        vTcl:prop:save_opt_value $target $option $value
+    }
+}
+
+proc vTcl:prop:spec_config_cmd {target option variable value args} {
+    global vTcl
+    set cmd $args
+    if {$value == ""} {
+        $cmd $target [vTcl:at $variable]
+        vTcl:prop:save_opt $target $option $variable
+        vTcl:place_handles $target
+    } else {
+        $cmd $target $value
+        vTcl:prop:save_opt_value $target $option $value
+    }
+}
+
+proc vTcl:prop:geom_config_mgr {target option variable value args} {
+    global vTcl
+    set mgr $args
+    if {$value == ""} {
+        $mgr configure $target $option [vTcl:at $variable]
+        vTcl:place_handles $target
+    } else {
+        $mgr configure $target $option $value
+    }
+}
+
+proc vTcl:prop:geom_config_cmd {target option variable value args} {
+    global vTcl
+    set cmd $args
+    if {$value == ""} {
+        $cmd $target $option [vTcl:at $variable]
+        vTcl:place_handles $target
+    } else {
+        $cmd $target $option $value
+    }
 }
 
 proc vTcl:prop:update_attr {} {
@@ -297,23 +346,22 @@ proc vTcl:prop:update_attr {} {
             }
             if {[lsearch $vTcl(w,optlist) $i] < 0} { continue }
 	    set variable "vTcl(w,opt,$i)"
-	    set config_cmd "\$vTcl(w,widget) configure $i \[list \[vTcl:at $variable\]\]; "
 
-	    vTcl:prop:new_attr $top $i $variable $config_cmd opt
+	    vTcl:prop:new_attr $top $i $variable vTcl:prop:config_cmd "" opt
         }
 
 	## special stuff to edit menu items (cascaded items)
 	if {$vTcl(w,class) == "Menu"} {
         global dummy
         set dummy ""
-	    vTcl:prop:new_attr $top -menuspecial dummy "" opt ""
+	    vTcl:prop:new_attr $top -menuspecial dummy "" "" opt ""
 	}
 
         ## special options support
         if {[info exist ::classoption($vTcl(w,class))]} {
             foreach spec_opt $::classoption($vTcl(w,class)) {
-                set config_cmd "$::configcmd($spec_opt,config) \$vTcl(w,widget) vTcl(w,opt,$spec_opt)"
-                vTcl:prop:new_attr $top $spec_opt vTcl(w,opt,$spec_opt) $config_cmd opt ""
+                vTcl:prop:new_attr $top $spec_opt vTcl(w,opt,$spec_opt) \
+                    vTcl:prop:spec_config_cmd $::configcmd($spec_opt,config) opt
             }
         }
     }
@@ -348,11 +396,10 @@ proc vTcl:prop:update_attr {} {
 		set cmd [lindex $vTcl(m,$mgr,$i) 4]
 
 		if {$cmd == ""} {
-		    set config_cmd "$mgr conf \$vTcl(w,widget) $i \[list \[vTcl:at $variable\]\]"
+                vTcl:prop:new_attr $top $i $variable vTcl:prop:geom_config_mgr $mgr m,$mgr -geomOpt
 		} else {
-		    set config_cmd "$cmd \$vTcl(w,widget) $i \[list \[vTcl:at $variable\]\]"
-                }
-		vTcl:prop:new_attr $top $i $variable $config_cmd m,$mgr -geomOpt
+                vTcl:prop:new_attr $top $i $variable vTcl:prop:geom_config_cmd $cmd m,$mgr -geomOpt
+            }
 	    }
 	}
     }
@@ -405,7 +452,7 @@ proc vTcl:prop:choice_select {w var} {
     }
 }
 
-proc vTcl:prop:new_attr {top option variable config_cmd prefix {isGeomOpt ""}} {
+proc vTcl:prop:new_attr {top option variable config_cmd config_args prefix {isGeomOpt ""}} {
     global vTcl $variable options specialOpts propmgrLabels
 
     set base $top.t${option}
@@ -446,19 +493,15 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix {isGeomOpt ""}} {
 
     set focusControl $base
 
-    set apply_cmd $config_cmd
-    append apply_cmd "; vTcl:prop:save_opt \$vTcl(w,widget) $option $variable"
-    append config_cmd "; vTcl:place_handles \$vTcl(w,widget); vTcl:prop:save_opt \$vTcl(w,widget) $option $variable"
-
     switch $type {
         boolean {
             frame $base
             radiobutton ${base}.y \
                 -variable $variable -value 1 -text "Yes" -relief sunken  \
-                -command "$config_cmd" -padx 0 -pady 1
+                -command "$config_cmd \$vTcl(w,widget) $option $variable {} $config_args" -padx 0 -pady 1
             radiobutton ${base}.n \
                 -variable $variable -value 0 -text "No" -relief sunken  \
-                -command "$config_cmd" -padx 0 -pady 1
+                -command "$config_cmd \$vTcl(w,widget) $option $variable {} $config_args" -padx 0 -pady 1
             pack ${base}.y ${base}.n -side left -expand 1 -fill both
         }
         combobox {
@@ -478,7 +521,8 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix {isGeomOpt ""}} {
         }
         choice {
             ComboBox ${base} -editable 0 -width 12 -values $choices \
-                -modifycmd "vTcl:prop:choice_select ${base} $variable; $config_cmd"
+                -modifycmd "vTcl:prop:choice_select ${base} $variable
+			  $config_cmd \$vTcl(w,widget) $option $variable {} $config_args"
             trace variable ::$variable w "vTcl:prop:choice_update ${base} $variable"
             vTcl:prop:choice_update ${base} $variable
         }
@@ -512,7 +556,8 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix {isGeomOpt ""}} {
                 -textvariable $variable -width 8 \
                 -highlightthickness 1 -fg black
             bind ${base}.l <KeyRelease-Return> \
-                "$config_cmd; ${base}.f conf -bg \$$variable"
+                "$config_cmd \$vTcl(w,widget) $option $variable {} $config_args
+                 ${base}.f conf -bg \$$variable"
             frame ${base}.f -relief raised \
                 -bg [subst $$variable] -bd 2 -width 20 -height 5
             bind ${base}.f <ButtonPress> \
@@ -629,8 +674,10 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix {isGeomOpt ""}} {
 
     bind $focusControl <FocusIn>    "vTcl:propmgr:select_attr $top $option"
     bind $focusControl <FocusOut>   vTcl:focus_out_cmd
-    bind $focusControl <KeyRelease> "vTcl:key_release_cmd %k \$vTcl(w,widget) \[subst [list $apply_cmd]\]"
-    bind $focusControl <KeyRelease-Return> $config_cmd
+    bind $focusControl <KeyRelease> \
+        "vTcl:key_release_cmd %k $config_cmd \$vTcl(w,widget) $option $variable $config_args"
+    bind $focusControl <KeyRelease-Return> \
+        "$config_cmd \$vTcl(w,widget) $option $variable {} $config_args"
     bind $focusControl <Key-Up>     "vTcl:propmgr:focusPrev $label"
     bind $focusControl <Key-Down>   "vTcl:propmgr:focusNext $label"
     bind $focusControl <MouseWheel> "vTcl:propmgr:scrollWheelMouse %D $label"
@@ -743,6 +790,26 @@ proc vTcl:prop:save_opt {w opt varName} {
     if {[vTcl:streq $options($opt) $var]} { return }
 
     set options($opt) $var
+
+    if {$options($opt) == $defaults($opt)} {
+	set save($opt) 0
+    } else {
+	set save($opt) 1
+    }
+    ::vTcl::change
+}
+
+proc vTcl:prop:save_opt_value {w opt value} {
+    if {[vTcl:streq $w "."]} { return }
+
+    vTcl:WidgetVar $w options
+    vTcl:WidgetVar $w defaults
+    vTcl:WidgetVar $w save
+
+    if {![info exists options($opt)]} { return }
+    if {[vTcl:streq $options($opt) $value]} { return }
+
+    set options($opt) $value
 
     if {$options($opt) == $defaults($opt)} {
 	set save($opt) 0

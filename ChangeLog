@@ -1,6 +1,7 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Added a list of choices for the -cursor option.
     o Multicolumn listbox:
       - fix for -labelrelief option
       - dump columns into project

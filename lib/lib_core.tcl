@@ -85,9 +85,9 @@ proc vTcl:update_balloon {target var} {
     set ::$var [vTcl:get_balloon $target]
 }
 
-proc vTcl:config_balloon {target var} {
+proc vTcl:config_balloon {target value} {
     set old [vTcl:get_balloon $target]
-    set new [vTcl:at ::$var]
+    set new $value
     if {$old == "" && $new == ""} {
         return
     }
@@ -211,7 +211,7 @@ proc vTcl:edit_target_menu {target} {
         vTcl:setup_vTcl:bind $menu
         $target conf -menu $menu
         foreach def {-activebackground -activeforeground
-                     -background -foreground} {
+                     -background -foreground -font} {
             vTcl:prop:default_opt $menu $def vTcl(w,opt,$def)
         }
     }

@@ -38,7 +38,7 @@ proc vTcl:restore_cursor {target} {
     global vTcl
 
     ## only restore cursor once
-    if {$vTcl(cursor,w) != ""} {
+    if {$vTcl(cursor,w) != "" && [winfo exists $vTcl(cursor,w)]} {
         #puts "Restore cursor: $vTcl(cursor,w) $vTcl(cursor,last)"
         $vTcl(cursor,w) configure -cursor $vTcl(cursor,last)
     }
