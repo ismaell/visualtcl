@@ -30,88 +30,93 @@ CreateCmd	::iwidgets::buttonbox
 Icon		icon_buttonbox.gif
 DumpChildren	no
 MegaWidget	yes
-InsertCmd	vTcl:widget:buttonbox:inscmd
-TagsCmd         vTcl:widget:buttonbox:tagscmd
-DumpCmd		vTcl:dump:buttonbox
-CompoundCmd     vTcl:compound:buttonbox
+InsertCmd	vTcl::widgets::iwidgets::buttonbox::insertCmd
+TagsCmd         vTcl::widgets::iwidgets::buttonbox::tagsCmd
+DumpCmd		vTcl::widgets::iwidgets::buttonbox::dumpCmd
+CompoundCmd     vTcl::widgets::iwidgets::buttonbox::compoundCmd
 DefaultOptions	-padx 0 -pady 0
 ClassOption     -_itcl_radiocheckboxes
 GetImagesCmd    vTcl::widgets::iwidgets::boxes::getImagesCmd
 GetFontsCmd     vTcl::widgets::iwidgets::boxes::getFontsCmd
 
+Function    "Edit..."   vTcl::widgets::iwidgets::buttonbox::editCmd
+
 AdditionalClasses Pushbutton
 
-proc vTcl:compound:buttonbox {target} {
+namespace eval vTcl::widgets::iwidgets::buttonbox {
 
-    set result ""
-    set last -1
-    catch {set last [$target index end]}
-
-    for {set i 0} {$i <= $last} {incr i} {
-        set conf [$target buttonconfigure $i]
-        set pairs [vTcl:conf_to_pairs $conf ""]
-
-        append result "\$target add but$i $pairs\n"
+    proc editCmd {} {
+        vTcl::itemEdit::edit $::vTcl(w,widget) vTcl::widgets::iwidgets::boxes::edit
     }
 
-    return $result
-}
+    proc compoundCmd {target} {
+        set result ""
+        set last -1
+        catch {set last [$target index end]}
 
-proc vTcl:dump:buttonbox {target basename} {
+        for {set i 0} {$i <= $last} {incr i} {
+            set conf [$target buttonconfigure $i]
+            set pairs [vTcl:conf_to_pairs $conf ""]
 
-    global vTcl
-    set result [vTcl:dump_widget_opt $target $basename]
-    set last -1
-    catch {set last [$target index end]}
+            append result "\$target add but$i $pairs\n"
+        }
 
-    for {set i 0} {$i <= $last} {incr i} {
-        set conf [$target buttonconfigure $i]
-        set pairs [vTcl:get_subopts_special $conf $target]
-
-        append result "$vTcl(tab)$basename add but$i \\\n"
-        append result "[vTcl:clean_pairs $pairs]\n"
+        return $result
     }
 
-    return $result
-}
+    proc dumpCmd {target basename} {
+        global vTcl
+        set result [vTcl:dump_widget_opt $target $basename]
+        set last -1
+        catch {set last [$target index end]}
 
-proc vTcl:widget:buttonbox:inscmd {target} {
+        for {set i 0} {$i <= $last} {incr i} {
+            set conf [$target buttonconfigure $i]
+            set pairs [vTcl:get_subopts_special $conf $target]
 
-    $target add ok     -text OK
-    $target add cancel -text Cancel
-    $target add help   -text Help
+            append result "$vTcl(tab)$basename add but$i \\\n"
+            append result "[vTcl:clean_pairs $pairs]\n"
+        }
 
-    vTcl::widgets::iwidgets::boxes::setDefaultValues $target \
-        {-activebackground -activeforeground
-         -background -disabledforeground
-         -font -foreground -highlightbackground
-         -highlightcolor -highlightthickness}
-}
-
-proc vTcl:widget:buttonbox:tagscmd {target} {
-
-    global vTcl
-
-    # workaround for special binding tags in IWidgets
-    set tags $vTcl(bindtags,$target)
-    set special1 [lsearch -glob $tags bbox-config]
-    set special2 [lsearch -glob $tags bbox-map]
-    set special3 [lsearch -glob $tags itk-delete-*]
-
-    set class [winfo class $target]
-    set toplevel [winfo toplevel $target]
-    set result ""
-
-    if {$special1 != -1} {
-        lappend result [lindex $tags $special1]
-    }
-    if {$special2 != -1} {
-        lappend result [lindex $tags $special2]
-    }
-    if {$special3 != -1} {
-        lappend result [lindex $tags $special3]
+        return $result
     }
 
-    lappend result $target $class $toplevel all
-    return $result
+    proc insertCmd {target} {
+        $target add ok     -text OK
+        $target add cancel -text Cancel
+        $target add help   -text Help
+
+        vTcl::widgets::iwidgets::boxes::setDefaultValues $target \
+            {-activebackground -activeforeground
+            -background -disabledforeground
+            -font -foreground -highlightbackground
+            -highlightcolor -highlightthickness}
+    }
+
+    proc tagsCmd {target} {
+        global vTcl
+
+        # workaround for special binding tags in IWidgets
+        set tags $vTcl(bindtags,$target)
+        set special1 [lsearch -glob $tags bbox-config]
+        set special2 [lsearch -glob $tags bbox-map]
+        set special3 [lsearch -glob $tags itk-delete-*]
+
+        set class [winfo class $target]
+        set toplevel [winfo toplevel $target]
+        set result ""
+
+        if {$special1 != -1} {
+            lappend result [lindex $tags $special1]
+        }
+        if {$special2 != -1} {
+            lappend result [lindex $tags $special2]
+        }
+        if {$special3 != -1} {
+            lappend result [lindex $tags $special3]
+        }
+
+        lappend result $target $class $toplevel all
+        return $result
+    }
 }

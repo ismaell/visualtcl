@@ -795,11 +795,14 @@ proc vTcl:dump:make_relative_paths {widget} {
         set sites [$childsiteCmd $path]
         }
 
-        ## let's see what we can do to subsitute absolute paths
+        ## let's see what we can do to substitute absolute paths
         set index 0
         foreach site $sites {
+            if {(![string match $site $widget]) && (![string match $site.* $widget])} {
+	        incr index; continue
+            }
+
             set first [string first $site $widget]
-            if {$first == -1} {incr index; continue}
 
             ## all right, let's replace!
             set length [string length $site]

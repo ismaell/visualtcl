@@ -30,9 +30,9 @@ CreateCmd	::iwidgets::checkbox
 Icon		icon_checkbox.gif
 DumpChildren	no
 MegaWidget	yes
-DumpCmd		vTcl:dump:checkbox
-CompoundCmd     vTcl:compound:checkbox
-InsertCmd	vTcl:widget:checkbox:inscmd
+DumpCmd		vTcl::widgets::iwidgets::checkbox::dumpCmd
+CompoundCmd     vTcl::widgets::iwidgets::checkbox::compoundCmd
+InsertCmd	vTcl::widgets::iwidgets::checkbox::insertCmd
 TagsCmd         vTcl:lib_itcl:tagscmd
 DefaultOptions	-labeltext "Checkbox"
 DefaultValues   -background -font
@@ -40,49 +40,55 @@ ClassOption     -_itcl_radiocheckboxes
 GetImagesCmd    vTcl::widgets::iwidgets::boxes::getImagesCmd
 GetFontsCmd     vTcl::widgets::iwidgets::boxes::getFontsCmd
 
-proc vTcl:compound:checkbox {target} {
+Function    "Edit..."   vTcl::widgets::iwidgets::checkbox::editCmd
 
-    set result ""
-    set last -1
-    catch {set last [$target index end]}
+namespace eval vTcl::widgets::iwidgets::checkbox {
 
-    for {set i 0} {$i <= $last} {incr i} {
-        set conf [$target buttonconfigure $i]
-        set pairs [vTcl:conf_to_pairs $conf ""]
-
-        append result "\$target add but$i $pairs\n"
+    proc editCmd {} {
+        vTcl::itemEdit::edit $::vTcl(w,widget) vTcl::widgets::iwidgets::boxes::edit
     }
 
-    return $result
-}
+    proc compoundCmd {target} {
+        set result ""
+        set last -1
+        catch {set last [$target index end]}
 
-proc vTcl:dump:checkbox {target basename} {
-    global vTcl
+        for {set i 0} {$i <= $last} {incr i} {
+            set conf [$target buttonconfigure $i]
+            set pairs [vTcl:conf_to_pairs $conf ""]
 
-    set result [vTcl:dump_widget_opt $target $basename]
-    set last -1
-    catch {set last [$target index end]}
+            append result "\$target add but$i $pairs\n"
+        }
 
-    for {set i 0} {$i <= $last} {incr i} {
-        set conf [$target buttonconfigure $i]
-        set pairs [vTcl:get_subopts_special $conf $target]
-
-        append result "$vTcl(tab)$basename add chk$i \\\n"
-        append result "[vTcl:clean_pairs $pairs]\n"
+        return $result
     }
 
-    return $result
-}
+    proc dumpCmd {target basename} {
+        global vTcl
+        set result [vTcl:dump_widget_opt $target $basename]
+        set last -1
+        catch {set last [$target index end]}
 
-proc vTcl:widget:checkbox:inscmd {target} {
+        for {set i 0} {$i <= $last} {incr i} {
+            set conf [$target buttonconfigure $i]
+            set pairs [vTcl:get_subopts_special $conf $target]
 
-    $target add check1   -text {Check 1}
-    $target add check2   -text {Check 2}
-    $target add check3   -text {Check 3}
+            append result "$vTcl(tab)$basename add chk$i \\\n"
+            append result "[vTcl:clean_pairs $pairs]\n"
+        }
 
-    vTcl::widgets::iwidgets::boxes::setDefaultValues $target \
-        {-activebackground -activeforeground
-         -background -disabledforeground
-         -font -foreground -highlightbackground
-         -highlightcolor -highlightthickness -selectcolor}
+        return $result
+    }
+
+    proc insertCmd {target} {
+        $target add check1   -text {Check 1}
+        $target add check2   -text {Check 2}
+        $target add check3   -text {Check 3}
+
+        vTcl::widgets::iwidgets::boxes::setDefaultValues $target \
+            {-activebackground -activeforeground
+             -background -disabledforeground
+             -font -foreground -highlightbackground
+             -highlightcolor -highlightthickness -selectcolor}
+    }
 }

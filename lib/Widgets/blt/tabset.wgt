@@ -74,6 +74,9 @@ OptionConfigCmd -_blt_tabset_pages     select     vTcl::widgets::blt::tabset::se
 OptionConfigCmd -_blt_tabset_pages     edit       vTcl::itemEdit::edit
 OptionConfigCmd -_blt_tabset_pages     editArg    vTcl::widgets::blt::tabset::edit
 
+## Right-click menu
+Function        "Edit pages..."         ::vTcl::widgets::blt::tabset::editCmd
+
 namespace eval vTcl::widgets::blt::tabset::edit {
 
     proc getTitle {target} {
@@ -108,12 +111,17 @@ namespace eval vTcl::widgets::blt::tabset::edit {
             set newpage "page$index"
             if {[lsearch -exact $pages $newpage] == -1} break
         }
-        frame $target.f$index
-        vTcl:widget:register_widget $target.f$index
+	## repeat until we find an unused frame number
+	set findex $index
+	while {[winfo exists $target.f$findex]} {
+	    incr findex
+	}
+        frame $target.f$findex
+        vTcl:widget:register_widget $target.f$findex
         foreach def {-background -highlightbackground -highlightcolor} {
-            vTcl:prop:default_opt $target.f$index $def vTcl(w,opt,$def)
+            vTcl:prop:default_opt $target.f$findex $def vTcl(w,opt,$def)
         }
-        $target insert end $newpage -text "Page $index" -window $target.f$index -fill both
+        $target insert end $newpage -text "Page $index" -window $target.f$findex -fill both
         $target invoke [expr [$target size] - 1]
         vTcl:init_wtree
         return "Page $index"
@@ -183,6 +191,10 @@ namespace eval vTcl::widgets::blt::tabset::edit {
 
 namespace eval vTcl::widgets::blt::tabset {
 
+    proc editCmd {} {
+        vTcl::itemEdit::edit $::vTcl(w,widget) vTcl::widgets::blt::tabset::edit
+    }
+
     proc insertCmd {target} {
         frame $target.f1
         $target insert end page1 -text "Page 1" -window $target.f1 -fill both
@@ -234,7 +246,7 @@ namespace eval vTcl::widgets::blt::tabset {
             ## now add the tab
             set conf [$target tab configure [$target get $i]]
             set pairs [vTcl:get_subopts_special $conf $target]
-            append result "$::vTcl(tab)$basename insert end page$i \\\n"
+            append result "$::vTcl(tab)$basename insert end page[expr $i + 1] \\\n"
             append result "[vTcl:clean_pairs $pairs]\n"
         }
         for {set i 0} {$i < $size} {incr i} {

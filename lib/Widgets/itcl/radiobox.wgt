@@ -30,9 +30,9 @@ CreateCmd	::iwidgets::radiobox
 Icon		icon_radiobox.gif
 DumpChildren	no
 MegaWidget	yes
-DumpCmd		vTcl:dump:radiobox
-CompoundCmd     vTcl:compound:radiobox
-InsertCmd	vTcl:widget:radiobox:inscmd
+DumpCmd		vTcl::widgets::iwidgets::radiobox::dumpCmd
+CompoundCmd     vTcl::widgets::iwidgets::radiobox::compoundCmd
+InsertCmd	vTcl::widgets::iwidgets::radiobox::insertCmd
 TagsCmd         vTcl:lib_itcl:tagscmd
 DefaultOptions	-labeltext "Radiobox"
 DefaultValues   -background -font
@@ -40,49 +40,55 @@ ClassOption     -_itcl_radiocheckboxes
 GetImagesCmd    vTcl::widgets::iwidgets::boxes::getImagesCmd
 GetFontsCmd     vTcl::widgets::iwidgets::boxes::getFontsCmd
 
-proc vTcl:compound:radiobox {target} {
+Function    "Edit..."   vTcl::widgets::iwidgets::radiobox::editCmd
 
-    set result ""
-    set last -1
-    catch {set last [$target index end]}
+namespace eval vTcl::widgets::iwidgets::radiobox {
 
-    for {set i 0} {$i <= $last} {incr i} {
-        set conf [$target buttonconfigure $i]
-        set pairs [vTcl:conf_to_pairs $conf ""]
-
-        append result "\$target add but$i $pairs\n"
+    proc editCmd {} {
+        vTcl::itemEdit::edit $::vTcl(w,widget) vTcl::widgets::iwidgets::boxes::edit
     }
 
-    return $result
-}
+    proc compoundCmd {target} {
+        set result ""
+        set last -1
+        catch {set last [$target index end]}
 
-proc vTcl:dump:radiobox {target basename} {
+        for {set i 0} {$i <= $last} {incr i} {
+            set conf [$target buttonconfigure $i]
+            set pairs [vTcl:conf_to_pairs $conf ""]
 
-    global vTcl
-    set result [vTcl:dump_widget_opt $target $basename]
-    set last -1
-    catch {set last [$target index end]}
+            append result "\$target add but$i $pairs\n"
+        }
 
-    for {set i 0} {$i <= $last} {incr i} {
-        set conf [$target buttonconfigure $i]
-        set pairs [vTcl:get_subopts_special $conf $target]
-
-        append result "$vTcl(tab)$basename add rad$i \\\n"
-        append result "[vTcl:clean_pairs $pairs]\n"
+        return $result
     }
 
-    return $result
-}
+    proc dumpCmd {target basename} {
+        global vTcl
+        set result [vTcl:dump_widget_opt $target $basename]
+        set last -1
+        catch {set last [$target index end]}
 
-proc vTcl:widget:radiobox:inscmd {target} {
+        for {set i 0} {$i <= $last} {incr i} {
+            set conf [$target buttonconfigure $i]
+            set pairs [vTcl:get_subopts_special $conf $target]
 
-    $target add radio1   -text {Radio 1}
-    $target add radio2   -text {Radio 2}
-    $target add radio3   -text {Radio 3}
+            append result "$vTcl(tab)$basename add rad$i \\\n"
+            append result "[vTcl:clean_pairs $pairs]\n"
+        }
 
-    vTcl::widgets::iwidgets::boxes::setDefaultValues $target \
-        {-activebackground -activeforeground
-         -background -disabledforeground
-         -font -foreground -highlightbackground
-         -highlightcolor -highlightthickness -selectcolor}
+        return $result
+    }
+
+    proc insertCmd {target} {
+        $target add radio1   -text {Radio 1}
+        $target add radio2   -text {Radio 2}
+        $target add radio3   -text {Radio 3}
+
+        vTcl::widgets::iwidgets::boxes::setDefaultValues $target \
+            {-activebackground -activeforeground
+             -background -disabledforeground
+             -font -foreground -highlightbackground
+             -highlightcolor -highlightthickness -selectcolor}
+    }
 }
