@@ -539,8 +539,8 @@ proc vTcl:setup_bind {target} {
 proc vTcl:switch_mode {} {
     global vTcl
     if {$vTcl(mode) == "EDIT"} {
-        vTcl:setup_unbind_tree .
     	vTcl:propmgr:deselect_attr
+        vTcl:setup_unbind_tree .
     } else {
         vTcl:setup_bind_tree .
     }
