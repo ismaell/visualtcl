@@ -207,12 +207,3 @@ proc vTcl:updateRcFileMenu {} {
 	incr i
     }
 }
-
-
-
-
-
-
-
-
-

@@ -609,6 +609,7 @@ proc vTcl:create_widget {class options new_widg x y} {
     }
 
     set c $class
+
     append do "$classes($c,createCmd) $new_widg "
     append do "$classes($c,defaultOptions) $options;"
 

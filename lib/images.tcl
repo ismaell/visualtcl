@@ -280,6 +280,7 @@ proc {vTcl:image:init_stock} {} {
 	show
 	hide
 	refresh
+	search
     }
 
     foreach file $images {

@@ -59,7 +59,7 @@
        Other zip programs fail to preserve long file names and nested
        directory structures.
 
-    o  If you wish to create "shortcuts" to the vt.tcl icon, make sure
+    o  If you wish to create "shortcuts" to the vtcl.tcl icon, make sure
        you edit the "startup directory" to the base installation directory
        for Visual Tcl.
 

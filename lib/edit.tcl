@@ -125,9 +125,279 @@ proc vTcl:paste {{fromMouse ""}} {
     vTcl:active_widget $name
 }
 
+namespace eval ::findReplace {
+    variable base	.find
+    variable txtbox	""
+    variable count	0
+
+    variable case	1
+    variable wild	0
+    variable regexp	0
+    variable dir	down
+
+    variable index	0.0
+    variable selFirst	0.0
+    variable selLast	0.0
+    variable origInd	0.0
+}
+
+proc ::findReplace::window {{newBase ""} {container 0}} {
+    variable base
+
+    if {[llength $newBase] > 0} { set base $newBase }
+    if {[winfo exists $base] && (!$container)} { wm deiconify $base; return }
+
+    ###################
+    # CREATING WIDGETS
+    ###################
+    if {!$container} {
+	toplevel $base -class Toplevel -cursor {} 
+	wm focusmodel $base passive
+	wm geometry $base 450x163+215+102; update
+	wm maxsize $base 1028 753
+	wm minsize $base 104 1
+	wm overrideredirect $base 0
+	wm resizable $base 0 0
+	wm deiconify $base
+	wm title $base "Find and Replace"
+    }
+    label $base.lab23 \
+        -anchor w -borderwidth 1 -height 0 -text {Find what:} -underline 2 \
+        -width 61 
+    label $base.lab24 \
+        -borderwidth 1 -text {Replace with:} -underline 1
+    entry $base.findEnt \
+        -width 256 
+    entry $base.replaceEnt \
+        -width 256 
+    button $base.findBut \
+        -height 23 -text {Find Next} -width 90 -command ::findReplace::find -underline 0
+    button $base.cancelBut \
+        -height 23 -text Cancel -width 90 -command ::findReplace::cancel -underline 0
+    button $base.replaceBut \
+        -height 23 -text Replace -width 90 -command ::findReplace::replace -underline 0
+    button $base.replaceAllBut \
+        -height 23 -text {Replace All} -width 90 -command ::findReplace::replaceAll \
+	-underline 8
+    checkbutton $base.caseCheck \
+        -anchor w -height 17 -text {Match case} -variable che32 -width 88 \
+	-variable ::findReplace::case -underline 0
+    checkbutton $base.wildCheck \
+        -anchor w -height 17 -text {Use wildcards} -variable che33 -width 98 \
+	-variable ::findReplace::wild -underline 4
+    checkbutton $base.regexpCheck \
+        -anchor w -height 17 -text {Regular expression} -variable che34 -width 123 \
+	-variable ::findReplace::regexp -underline 2
+    frame $base.fra22 \
+        -borderwidth 2 -height 35 -relief groove -width 110 
+    radiobutton $base.fra22.upRadio \
+        -height 17 -text Up -underline 0 -value up \
+        -variable ::findReplace::dir -width 41 
+    radiobutton $base.fra22.downRadio \
+        -height 17 -text Down -underline 0 -value down \
+        -variable ::findReplace::dir -width 51 
+    label $base.lab25 \
+        -borderwidth 1 -height 0 -padx 1 -text Direction -width 46 
+
+    focus $base.findEnt
+
+    bind $base <Key-Escape> "::findReplace::cancel"
+
+    bind $base.findEnt <Key-Return> "::findReplace::find"
+    bind $base.replaceEnt <Key-Return> "::findReplace::replace"
+
+    bind $base <Alt-f> "focus $base.findEnt"
+    bind $base <Alt-e> "focus $base.replaceEnt"
+    bind $base <Alt-n> "$base.findBut invoke"
+    bind $base <Alt-c> "$base.cancelBut invoke"
+    bind $base <Alt-r> "$base.replaceBut invoke"
+    bind $base <Alt-a> "$base.replaceAllBut invoke"
+    bind $base <Alt-m> "$base.caseCheck invoke"
+    bind $base <Alt-w> "$base.wildCheck invoke"
+    bind $base <Alt-g> "$base.regexpCheck invoke"
+    bind $base <Alt-u> "$base.fra22.upRadio invoke"
+    bind $base <Alt-d> "$base.fra22.downRadio invoke"
+
+    ###################
+    # SETTING GEOMETRY
+    ###################
+    place $base.lab23 \
+        -x 5 -y 10 -width 70 -height 17 -anchor nw -bordermode ignore 
+    place $base.lab24 \
+        -x 5 -y 60 -width 70 -anchor nw -bordermode ignore 
+    place $base.findEnt \
+        -x 85 -y 6 -width 256 -height 19 -anchor nw -bordermode ignore 
+    place $base.replaceEnt \
+        -x 85 -y 58 -width 256 -height 19 -anchor nw -bordermode ignore 
+    place $base.findBut \
+        -x 355 -y 5 -width 90 -height 23 -anchor nw -bordermode ignore 
+    place $base.cancelBut \
+        -x 355 -y 30 -width 90 -height 23 -anchor nw -bordermode ignore 
+    place $base.replaceBut \
+        -x 355 -y 55 -width 90 -height 23 -anchor nw -bordermode ignore 
+    place $base.replaceAllBut \
+        -x 355 -y 80 -width 90 -height 23 -anchor nw -bordermode ignore 
+    place $base.caseCheck \
+        -x 0 -y 100 -width 125 -height 17 -anchor nw -bordermode ignore 
+    place $base.wildCheck \
+        -x 0 -y 120 -width 125 -height 17 -anchor nw -bordermode ignore 
+    place $base.regexpCheck \
+        -x 0 -y 140 -width 125 -height 17 -anchor nw -bordermode ignore 
+    place $base.fra22 \
+        -x 230 -y 85 -width 112 -height 35 -anchor nw -bordermode ignore 
+    place $base.fra22.upRadio \
+        -x 5 -y 10 -width 41 -height 17 -anchor nw -bordermode ignore 
+    place $base.fra22.downRadio \
+        -x 50 -y 10 -width 51 -height 17 -anchor nw -bordermode ignore 
+    place $base.lab25 \
+        -x 235 -y 79 -width 46 -height 12 -anchor nw -bordermode ignore 
+}
+
+proc ::findReplace::show {textWidget} {
+    variable base
+    variable txtbox  $textWidget
+    variable index   0.0
+    variable origInd [$txtbox index current]
+
+    ## Bind the F3 key so the user can continue to find the next entry.
+    bind $txtbox <Key-F3> "::findReplace::find"
+
+    window
+}
+
+proc ::findReplace::find {{replace 0}} {
+    variable base
+    variable txtbox
+    variable dir
+    variable count
+    variable index
+    variable case
+    variable wild
+    variable regexp
+    variable selFirst
+    variable selLast
+
+    if {!$case}  { lappend switches -nocase }
+    if {!$wild}  { lappend switches -exact  }
+    if {$regexp} { lappend switches -regexp }
+
+    set up 0
+    set stop end
+    set start top
+    if {[string compare $dir "up"] == 0 } {
+	set up 1
+	lappend switches -backward
+	set stop 0.0
+	set start bottom
+    }
+
+    lappend switches -count ::findReplace::count --
+
+    set text [$base.findEnt get]
+    if {[llength $text] == 0} { return }
+
+    set i [eval $txtbox search $switches $text $index $stop]
+    if {[llength $i] == 0} {
+	if {!$replace} {
+	    set x [tk_messageBox -title "No match" -parent $base -type yesno \
+		-message "   Cannot find \"$text\"\nSearch again from the $start?"]
+	    if {[string compare $x "yes"] == 0} {
+		set index 0.0
+		if {$up} { set index end }
+		::findReplace::find
+	    }
+	}
+	return -1
+    }
 
 
+    set selFirst $i
+    set selLast [$txtbox index "$i + $count chars"]
+    set index $selLast
+    if {$up} { set index $selFirst }
 
+    if {!$replace} {
+	$txtbox tag remove sel 0.0 end
+	$txtbox tag add sel $i "$i + $count chars"
+	$txtbox see $i
+	focus $txtbox
+    }
 
+    return $i
+}
 
+proc ::findReplace::replace {} {
+    variable base
+    variable txtbox
+    variable index
+    variable dir
+    variable selFirst
+    variable selLast
+    variable origInd
 
+    set text [$base.replaceEnt get]
+
+    while {[::findReplace::find 1] > -1} {
+	set ln [lindex [split $selFirst .] 0]
+	$txtbox see $selFirst
+	set x [tk_dialog .__replace__ "Match found" \
+	    "Match found on line $ln\nReplace this instance?" {} 0 Yes No Cancel]
+
+	switch $x {
+	    "-1" -
+	    "1"  { continue }
+	    "2"  { break }
+	}
+	$txtbox delete $selFirst $selLast
+	$txtbox insert $selFirst $text
+    }
+
+    set index 0.0
+    set start top
+    if {[string compare $dir "up"]} {
+	set index end
+	set start bottom
+    }
+
+    set text [$base.findEnt get]
+    set x [tk_messageBox -title "No match found" -parent $base -type yesno \
+	-message "   Cannot find \"$text\"\nSearch again from the $start?"]
+
+    if {[vTcl:streq $x "yes"]} { ::findReplace::replace }
+
+    $txtbox tag remove sel 0.0 end
+    $txtbox see $origInd
+    focus $txtbox
+}
+
+proc ::findReplace::replaceAll {} {
+    variable base
+    variable txtbox
+    variable dir
+    variable index
+    variable selFirst
+    variable selLast
+    variable origInd
+
+    set text [$base.replaceEnt get]
+
+    while {[::findReplace::find 1] > -1} {
+	$txtbox delete $selFirst $selLast
+	$txtbox insert $selFirst $text
+    }
+
+    set index 0.0
+    if {[string compare $dir "up"] == 0 } { set index end }
+
+    $txtbox tag remove sel 0.0 end
+    $txtbox see $origInd
+    focus $txtbox
+}
+
+proc ::findReplace::cancel {} {
+    variable base
+    variable txtbox
+
+    wm withdraw $base
+    focus $txtbox
+}

@@ -354,6 +354,15 @@ proc vTclWindow.vTcl.proc {args} {
     pack configure $last -side left
     vTcl:set_balloon $last "Paste text from clipboard"
 
+    set last [vTcl:formCompound:add $base.f3.toolbar frame -width 5]
+    pack configure $last -side left
+
+    set butFind [vTcl:formCompound:add $base.f3.toolbar button \
+        -image [vTcl:image:get_image [file join $vTcl(VTCL_HOME) images edit search.gif] ] \
+	-command "::findReplace::show $base.f3.text"]
+    pack configure $butFind -side left
+    vTcl:set_balloon $butFind "Find/Replace"
+
     set butCancel [vTcl:formCompound:add $base.f3.toolbar button \
         -image [vTcl:image:get_image [file join $vTcl(VTCL_HOME) images edit remove.gif] ]  \
         -command "vTcl:proc:edit_cancel $base"]
@@ -373,8 +382,14 @@ proc vTclWindow.vTcl.proc {args} {
     pack $base.f3.text \
         -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 2 -pady 2 \
         -side left
+
     bind $base.f3.text <KeyPress> "+set vTcl(proc,[lindex $args 0],chg) 1"
     bind $base.f3.text <Control-Key-i> "$butInsert invoke"
+    bind $base.f3.text <Control-Key-f> "$butFind invoke"
+    bind $base <Destroy> {
+	if {[winfo exists .vTcl.find]} { destroy .vTcl.find }
+    }
+
     scrollbar $base.f3.scrollbar4 \
         -command "$base.f3.text yview"
     pack $base.f3.scrollbar4 \

@@ -356,46 +356,46 @@ proc vTclWindow.vTcl {args} {
     set vTcl(gui,rc_widget_menu) .vTcl.menu_rc.widgets
     menu $vTcl(gui,rc_widget_menu) -tearoff 0
 
-	$vTcl(gui,rc_menu) add cascade -label "Widget" \
-	    -menu $vTcl(gui,rc_widget_menu)
+    $vTcl(gui,rc_menu) add cascade -label "Widget" \
+	-menu $vTcl(gui,rc_widget_menu)
 
-        $vTcl(gui,rc_menu) add command -label "Set Insert" -command {
-            vTcl:set_insert
-        }
-	$vTcl(gui,rc_menu) add command -label "Set Alias" -command {
-	    vTcl:set_alias $vTcl(w,widget)
-	}
+    $vTcl(gui,rc_menu) add command -label "Set Insert" -command {
+	vTcl:set_insert
+    }
+    $vTcl(gui,rc_menu) add command -label "Set Alias" -command {
+	vTcl:set_alias $vTcl(w,widget)
+    }
 
-        $vTcl(gui,rc_menu) add separator
-        $vTcl(gui,rc_menu) add command -label "Select Toplevel" -command {
-            vTcl:select_toplevel
-        }
-        $vTcl(gui,rc_menu) add command -label "Select Parent" -command {
-            vTcl:select_parent
-        }
-        $vTcl(gui,rc_menu) add separator
+    $vTcl(gui,rc_menu) add separator
+    $vTcl(gui,rc_menu) add command -label "Select Toplevel" -command {
+	vTcl:select_toplevel
+    }
+    $vTcl(gui,rc_menu) add command -label "Select Parent" -command {
+	vTcl:select_parent
+    }
+    $vTcl(gui,rc_menu) add separator
 
-	$vTcl(gui,rc_menu) add comm -label "Cut" -comm {
-	    vTcl:cut
-	} -accel "Ctrl+X"
-	$vTcl(gui,rc_menu) add comm -label "Copy" -comm {
-	    vTcl:copy
-	} -accel "Ctrl+C"
-	$vTcl(gui,rc_menu) add comm -label "Paste" -comm {
-	    vTcl:paste -mouse
-	} -accel "Ctrl+V"
-	$vTcl(gui,rc_menu) add comm -label "Delete" -comm {
-	    vTcl:delete
-	} -accel "Del"
+    $vTcl(gui,rc_menu) add comm -label "Cut" -comm {
+	vTcl:cut
+    } -accel "Ctrl+X"
+    $vTcl(gui,rc_menu) add comm -label "Copy" -comm {
+	vTcl:copy
+    } -accel "Ctrl+C"
+    $vTcl(gui,rc_menu) add comm -label "Paste" -comm {
+	vTcl:paste -mouse
+    } -accel "Ctrl+V"
+    $vTcl(gui,rc_menu) add comm -label "Delete" -comm {
+	vTcl:delete
+    } -accel "Del"
 
-        $vTcl(gui,rc_menu) add separator
+    $vTcl(gui,rc_menu) add separator
 
-        $vTcl(gui,rc_menu) add comm -label "Hide" -comm {
-            vTcl:hide
-        } -accel "Ctrl+H"
-	$vTcl(gui,rc_menu) add command -label "Copy Widgetname" -command {
-	    vTcl:copy_widgetname
-	}
+    $vTcl(gui,rc_menu) add comm -label "Hide" -comm {
+	vTcl:hide
+    } -accel "Ctrl+H"
+    $vTcl(gui,rc_menu) add command -label "Copy Widgetname" -command {
+	vTcl:copy_widgetname
+    }
 
     # MINI-ATTRIBUTE AREA
     vTcl:attrbar
