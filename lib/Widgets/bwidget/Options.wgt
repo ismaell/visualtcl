@@ -34,6 +34,8 @@ NewOption -clean		"clean"			choice	{0 1 2}
 NewOption -constrainedheight	"const height"		text
 NewOption -constrainedwidth	"const width"		text
 NewOption -default		"default"		text
+NewOption -deltax             "delta x"		text
+NewOption -deltay             "delta y"		text
 NewOption -dir			"direction"		choice	\
   {top bottom left right}
 NewOption -disarmcommand	"disarm cmd"		command
@@ -64,3 +66,4 @@ NewOption -side			"side"			choice	\
   {top bottom left right}
 NewOption -spacing		"spacing"		text
 NewOption -type			"type"			text
+
