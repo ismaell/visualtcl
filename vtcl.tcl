@@ -269,6 +269,8 @@ proc vTcl:setup_gui {} {
         option add *vTcl*Scrollbar.width 16
     }
 
+    option add *vTcl*Checkbutton.highlightBackground #d9d9d9
+    option add *vTcl*Radiobutton.highlightBackground #d9d9d9
     option add *vTcl*Text*font $vTcl(pr,font_fixed)
 
     option add *vTcl*background #d9d9d9
