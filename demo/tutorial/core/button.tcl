@@ -4,12 +4,13 @@ exec wish "$0" "$@"
 
 if {![info exists vTcl(sourcing)]} {
 
+    package require Tk
     switch $tcl_platform(platform) {
 	windows {
             option add *Button.padY 0
 	}
 	default {
-	    option add *Scrollbar.width 10
+            option add *Scrollbar.width 10
             option add *Scrollbar.highlightThickness 0
             option add *Scrollbar.elementBorderWidth 2
             option add *Scrollbar.borderWidth 2
@@ -156,18 +157,18 @@ proc ::vTcl:Toplevel:WidgetProc {w args} {
         ## If no arguments, returns the path the alias points to
         return $w
     }
-    ## The first argument is a switch, they must be doing a configure.
-    if {[string index $args 0] == "-"} {
-        set command configure
-        ## There's only one argument, must be a cget.
-        if {[llength $args] == 1} {
-            set command cget
-        }
-    } else {
-        set command [lindex $args 0]
-        set args [lrange $args 1 end]
-    }
+    set command [lindex $args 0]
+    set args [lrange $args 1 end]
     switch -- $command {
+        "setvar" {
+            set varname [lindex $args 0]
+            set value [lindex $args 1]
+            if {$value == ""} {
+                return [set ::${w}::${varname}]
+            } else {
+                return [set ::${w}::${varname} $value]
+            }
+        }
         "hide" - "Hide" - "show" - "Show" {
             Window [string tolower $command] $w
         }
@@ -231,25 +232,34 @@ proc vTcl:project:info {} {
     set base .top82
     namespace eval ::widgets::$base {
         set set,origin 1
-        set set,size 1
+        set set,size 0
+        set runvisible 1
     }
-    namespace eval ::widgets::$base.lab83 {
+    namespace eval ::widgets::$base.cpd72 {
         array set save {-anchor 1 -background 1 -justify 1 -text 1}
     }
-    namespace eval ::widgets::$base.but84 {
+    namespace eval ::widgets::$base.fra73 {
+        array set save {-borderwidth 1 -height 1 -width 1}
+    }
+    set site_3_0 $base.fra73
+    namespace eval ::widgets::$site_3_0.cpd74 {
         array set save {-command 1 -pady 1 -text 1}
     }
-    namespace eval ::widgets::$base.lab85 {
+    namespace eval ::widgets::$site_3_0.cpd75 {
         array set save {-anchor 1 -justify 1 -relief 1 -text 1}
     }
-    namespace eval ::widgets::$base.cpd86 {
-        array set save {-command 1 -pady 1 -text 1}
-    }
-    namespace eval ::widgets::$base.cpd87 {
-        array set save {-anchor 1 -justify 1 -relief 1 -text 1}
-    }
-    namespace eval ::widgets::$base.lab88 {
+    namespace eval ::widgets::$base.cpd76 {
         array set save {-background 1 -text 1}
+    }
+    namespace eval ::widgets::$base.fra77 {
+        array set save {-borderwidth 1 -height 1 -width 1}
+    }
+    set site_3_0 $base.fra77
+    namespace eval ::widgets::$site_3_0.cpd79 {
+        array set save {-anchor 1 -justify 1 -relief 1 -text 1}
+    }
+    namespace eval ::widgets::$site_3_0.cpd78 {
+        array set save {-command 1 -pady 1 -text 1}
     }
     namespace eval ::widgets_bindings {
         set tagslist _TopLevel
@@ -299,7 +309,7 @@ proc vTclWindow. {base} {
     # CREATING WIDGETS
     ###################
     wm focusmodel $top passive
-    wm geometry $top 200x200+154+175; update
+    wm geometry $top 200x200+132+150; update
     wm maxsize $top 1284 1006
     wm minsize $top 111 1
     wm overrideredirect $top 0
@@ -330,7 +340,7 @@ proc vTclWindow.top82 {base} {
     ###################
     vTcl:toplevel $top -class Toplevel
     wm focusmodel $top passive
-    wm geometry $top 509x344+184+292; update
+    wm geometry $top +184+292; update
     wm maxsize $top 1284 1006
     wm minsize $top 111 1
     wm overrideredirect $top 0
@@ -342,7 +352,7 @@ proc vTclWindow.top82 {base} {
     vTcl:FireEvent $top <<Create>>
     wm protocol $top WM_DELETE_WINDOW "vTcl:FireEvent $top <<DeleteWindow>>"
 
-    label $top.lab83 \
+    label $top.cpd72 \
         -anchor nw -background #beb9df10ecec -justify left \
         -text {This sample demonstrates the button widget.
 
@@ -351,47 +361,65 @@ A button widget has 2 important properties.
 - its text tells the user what the button will do
 
 - its command, which will be executed when the user presses the button} 
-    vTcl:DefineAlias "$top.lab83" "Label1" vTcl:WidgetProc "Toplevel1" 1
-    button $top.but84 \
+    vTcl:DefineAlias "$top.cpd72" "Label1" vTcl:WidgetProc "Toplevel1" 1
+    frame $top.fra73 \
+        -borderwidth 2 -height 75 -width 125 
+    vTcl:DefineAlias "$top.fra73" "Frame1" vTcl:WidgetProc "Toplevel1" 1
+    set site_3_0 $top.fra73
+    button $site_3_0.cpd74 \
         -command {tk_messageBox -message "You clicked me!" -title "Yeehah!"} \
         -pady 0 -text {Click me!} 
-    vTcl:DefineAlias "$top.but84" "Button1" vTcl:WidgetProc "Toplevel1" 1
-    label $top.lab85 \
+    vTcl:DefineAlias "$site_3_0.cpd74" "Button1" vTcl:WidgetProc "Toplevel1" 1
+    label $site_3_0.cpd75 \
         -anchor nw -justify left -relief ridge \
         -text {This widget has the following options:
 
 -text "Click me!"
 -command {tk_messageBox -message "You clicked me!" -title "Yeehah!"}} 
-    vTcl:DefineAlias "$top.lab85" "Label2" vTcl:WidgetProc "Toplevel1" 1
-    button $top.cpd86 \
-        -command doSomething -pady 0 -text {Click me!} 
-    vTcl:DefineAlias "$top.cpd86" "Button2" vTcl:WidgetProc "Toplevel1" 1
-    label $top.cpd87 \
+    vTcl:DefineAlias "$site_3_0.cpd75" "Label2" vTcl:WidgetProc "Toplevel1" 1
+    pack $site_3_0.cpd74 \
+        -in $site_3_0 -anchor center -expand 0 -fill none -padx 5 -pady 5 \
+        -side left 
+    pack $site_3_0.cpd75 \
+        -in $site_3_0 -anchor center -expand 1 -fill none -ipadx 5 -ipady 5 \
+        -padx 5 -pady 5 -side right 
+    label $top.cpd76 \
+        -background #ececcaada708 \
+        -text {It is usually better to put a button command in a procedure, if it contains more than one line.} 
+    vTcl:DefineAlias "$top.cpd76" "Label4" vTcl:WidgetProc "Toplevel1" 1
+    frame $top.fra77 \
+        -borderwidth 2 -height 75 -width 125 
+    vTcl:DefineAlias "$top.fra77" "Frame2" vTcl:WidgetProc "Toplevel1" 1
+    set site_3_0 $top.fra77
+    label $site_3_0.cpd79 \
         -anchor nw -justify left -relief ridge \
         -text {This widget has the following options:
 
 -text "Click me!"
 -command doSomething} 
-    vTcl:DefineAlias "$top.cpd87" "Label3" vTcl:WidgetProc "Toplevel1" 1
-    label $top.lab88 \
-        -background #ececcaada708 \
-        -text {It is usually better to put a button command in a procedure, if it contains more than one line.} 
-    vTcl:DefineAlias "$top.lab88" "Label4" vTcl:WidgetProc "Toplevel1" 1
+    vTcl:DefineAlias "$site_3_0.cpd79" "Label3" vTcl:WidgetProc "Toplevel1" 1
+    button $site_3_0.cpd78 \
+        -command doSomething -pady 0 -text {Click me!} 
+    vTcl:DefineAlias "$site_3_0.cpd78" "Button2" vTcl:WidgetProc "Toplevel1" 1
+    pack $site_3_0.cpd79 \
+        -in $site_3_0 -anchor center -expand 1 -fill none -ipadx 5 -ipady 5 \
+        -padx 5 -pady 5 -side right 
+    pack $site_3_0.cpd78 \
+        -in $site_3_0 -anchor center -expand 0 -fill none -padx 5 -pady 5 \
+        -side left 
     ###################
     # SETTING GEOMETRY
     ###################
-    place $top.lab83 \
-        -x 15 -y 15 -width 478 -height 109 -anchor nw -bordermode ignore 
-    place $top.but84 \
-        -x 15 -y 155 -width 58 -height 26 -anchor nw -bordermode ignore 
-    place $top.lab85 \
-        -x 85 -y 138 -width 408 -height 69 -anchor nw -bordermode ignore 
-    place $top.cpd86 \
-        -x 15 -y 275 -anchor nw 
-    place $top.cpd87 \
-        -x 85 -y 255 -width 408 -height 68 -anchor nw 
-    place $top.lab88 \
-        -x 15 -y 220 -width 478 -height 24 -anchor nw -bordermode ignore 
+    pack $top.cpd72 \
+        -in $top -anchor center -expand 0 -fill x -ipadx 5 -ipady 5 -padx 5 \
+        -pady 5 -side top 
+    pack $top.fra73 \
+        -in $top -anchor center -expand 0 -fill x -side top 
+    pack $top.cpd76 \
+        -in $top -anchor center -expand 0 -fill x -ipadx 5 -ipady 5 -padx 5 \
+        -pady 5 -side top 
+    pack $top.fra77 \
+        -in $top -anchor center -expand 0 -fill x -side top 
 
     vTcl:FireEvent $base <<Ready>>
 }
