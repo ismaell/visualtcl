@@ -798,6 +798,7 @@ namespace eval ::vTcl::compounds {
         set cmd ""
         append cmd "vTcl::compounds::mergeCompoundCode $type [list $compoundName] 1"
         append cmd "; [list vTcl::compounds::${spc}::compoundCmd] $target"
+        append cmd "; [list vTcl::compounds::${spc}::infoCmd] $target"
         if {$gmgr != "wm"} {
             append cmd "; eval $gmgr $target $gopt"
         } else {
@@ -810,6 +811,26 @@ namespace eval ::vTcl::compounds {
         set do "$cmd"
         set undo "destroy $target"
         vTcl:push_action $do $undo
+        lappend ::vTcl(widgets,[winfo toplevel $target]) $target
+    }
+
+    proc insertCompoundDirect {target type compoundName {gmgr pack} {gopt ""}} {
+        set spc ${type}::[list $compoundName]
+        vTcl::compounds::mergeCompoundCode $type $compoundName 1
+        vTcl::compounds::${spc}::compoundCmd $target
+        vTcl::compounds::${spc}::infoCmd $target
+        if {[vTcl:at ${spc}::class] == "Toplevel"} {
+            set gmgr wm
+            set gopt ""
+        }
+        if {$gmgr != "wm"} {
+            eval $gmgr $target $gopt
+        } else {
+            lappend ::vTcl(tops) $target
+            vTcl:update_top_list
+        }
+        vTcl:setup_bind_tree $target
+        vTcl:widget:register_all_widgets $target        
         lappend ::vTcl(widgets,[winfo toplevel $target]) $target
     }
 
@@ -830,6 +851,11 @@ namespace eval ::vTcl::compounds {
     proc getClass {type compoundName} {
         set spc ${type}::[list $compoundName]
         return [vTcl:at ${spc}::class]
+    }
+
+    proc deleteCompound {type compoundName} {
+        set spc ${type}::[list $compoundName]
+        namespace delete $spc
     }
 }
 

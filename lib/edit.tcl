@@ -76,7 +76,7 @@ proc vTcl:delete {recipient {w ""}} {
     set children [vTcl:widget_tree $w 0]
     set parent [winfo parent $w]
 
-    set buffer [vTcl:create_compound $w]
+    set buffer [vTcl::compounds::createCompound $w temp scrap]
     set do ""
     set destroy_cmd "destroy"
     foreach child $children {
@@ -90,7 +90,13 @@ proc vTcl:delete {recipient {w ""}} {
     append do "$destroy_cmd $w; "
     append do "set _cmds \[info commands $w.*\]; "
     append do {foreach _cmd $_cmds {catch {rename $_cmd ""}}}
-    set undo "vTcl:insert_compound $w \{$buffer\} $vTcl(w,def_mgr)"
+    set opts ""
+    if {[winfo manager $w] != "wm"} {
+        set opts [[winfo manager $w] info $w]
+    }
+    set undo "$buffer; ::vTcl::compounds::insertCompoundDirect $w temp scrap $vTcl(w,def_mgr) [list $opts]; "
+    append undo "::vTcl::compounds::deleteCompound temp scrap; "
+    append undo "vTcl:init_wtree; vTcl:select_widget $w; vTcl:active_widget $w"
     vTcl:push_action $do $undo
 
     ## Destroy the widget namespace, as well as the namespaces of
@@ -514,4 +520,5 @@ proc ::vTcl::findReplace::cancel {} {
     wm withdraw $base
     focus $txtbox
 }
+
 

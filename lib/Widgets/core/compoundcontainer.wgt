@@ -166,6 +166,7 @@ namespace eval vTcl::widgets::core::compoundcontainer {
             ::vTcl::compounds::${spc}::bindtagsCmd
         }
         ::vTcl::compounds::${spc}::compoundCmd ${target}.cmpd
+        ::vTcl::compounds::${spc}::infoCmd ${target}.cmpd
         pack $target.cmpd -fill both -expand 1
 
         ## register some info about ourself
@@ -209,4 +210,5 @@ namespace eval vTcl::widgets::core::compoundcontainer {
         return "Compound Container: [join $compoundClass]"
     }
 }
+
 
