@@ -138,8 +138,13 @@ proc vTcl:wm:enable_geom {} {
     global vTcl
     # Enable/disable UI elements
     array set state {0 disabled 1 normal}
-    set origin_state $state($vTcl(w,wm,set,origin))
-    set size_state   $state($vTcl(w,wm,set,size))
+    if {$vTcl(w,class) == "Menu"} {
+        set origin_state disabled
+        set size_state   disabled
+    } else {
+        set origin_state $state($vTcl(w,wm,set,origin))
+        set size_state   $state($vTcl(w,wm,set,size))
+    }
 
     vTcl:prop:enable_manager_entry geometry,x $origin_state
     vTcl:prop:enable_manager_entry geometry,y $origin_state
