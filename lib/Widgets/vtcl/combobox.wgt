@@ -64,6 +64,8 @@ Export ::combobox2::GetBoolean
 Export ::combobox2::convert
 Export ::combobox2::Canonize
 Export ::combobox2::HumanizeList
+Export ::combobox2::tkTabToWindow
+Export ::combobox2::tkCancelRepeat
 
 proc __combobox2_Setup {} {
 
@@ -335,6 +337,25 @@ proc ::combobox2::Init {} {
     SetClassBindings
 }
 
+## these procs were moved to the tk namespace in 8.4
+proc ::combobox2::tkTabToWindow {w} {
+    global tk_version
+    if {$tk_version >= 8.4} {
+        ::tk::TabToWindow $w
+    } else {
+        ::tkTabToWindow $w
+    }
+}
+
+proc ::combobox2::tkCancelRepeat {} {
+    global tk_version
+    if {$tk_version >= 8.4} {
+        ::tk::CancelRepeat
+    } else {
+        ::tkCancelRepeat
+    }
+}
+
 # ::combobox2::SetClassBindings --
 #
 #    Sets up the default bindings for the widget class
@@ -372,7 +393,7 @@ proc ::combobox2::SetClassBindings {} {
     # this helps (but doesn't fully solve) focus issues. The general
     # idea is, whenever the frame gets focus it gets passed on to
     # the entry widget
-    bind Combobox2 <FocusIn> {tkTabToWindow [::combobox2::convert %W -W].entry}
+    bind Combobox2 <FocusIn> {::combobox2::tkTabToWindow [::combobox2::convert %W -W].entry}
 
     # this closes the listbox if we get hidden
     bind Combobox2 <Unmap> {[::combobox2::convert %W -W] close}
@@ -420,9 +441,9 @@ proc ::combobox2::SetBindings {w} {
     # on the frame rather than the entry. I
 
     bind $widgets(entry) <Tab> \
-	    "tkTabToWindow \[tk_focusNext $widgets(entry)\]; break"
+	    "::combobox2::tkTabToWindow \[tk_focusNext $widgets(entry)\]; break"
     bind $widgets(entry) <Shift-Tab> \
-	    "tkTabToWindow \[tk_focusPrev $widgets(this)\]; break"
+	    "::combobox2::tkTabToWindow \[tk_focusPrev $widgets(this)\]; break"
     
     # this makes our "button" (which is actually a label)
     # do the right thing
@@ -2079,3 +2100,4 @@ proc ::combobox2::HumanizeList {list} {
 }
 
 # end of combobox.tcl
+
