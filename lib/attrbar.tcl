@@ -23,11 +23,25 @@
 
 proc vTcl:fill_font_menu {menu} {
     global vTcl
-    set fams [font families]
-    foreach i $fams {
-        $menu add radiobutton -label $i -variable vTcl(w,font) \
-        -value $i -command "vTcl:set_font base \$vTcl(w,widget) \{$i\}"
-    }
+    set fams [lsort [font families]]
+	if { [llength $fams] > 26 } {
+		foreach i "a b c d e f g h i j k l m n o p q r s t u v w x y z" {
+			set submenu "$menu.$i"
+			menu $submenu -tearoff 0
+			$menu add cascade -label $i -menu $submenu
+			foreach x $fams {
+				if { [string first $i [string tolower $x]] == 0 } {
+					$submenu add radiobutton -label $x -variable vTcl(w,font) \
+					-value $x -command "vTcl:set_font base \$vTcl(w,widget) \{$x\}"
+				}
+			}
+		}
+	} else {
+		foreach i $fams {
+			$menu add radiobutton -label $i -variable vTcl(w,font) \
+			-value $i -command "vTcl:set_font base \$vTcl(w,widget) \{$i\}"
+		}
+	}
 }
 
 proc vTcl:fill_fontsize_menu {menu} {
