@@ -425,6 +425,7 @@ proc vTclWindow.vTcl.newbind {base {container 0}} {
     if {!$container} {
         toplevel $base -class Toplevel
         wm focusmodel $base passive
+        wm withdraw $base
         wm geometry $base 541x457+418+226
         update
         wm maxsize $base 1284 1010
@@ -551,12 +552,12 @@ proc vTclWindow.vTcl.newbind {base {container 0}} {
              }
          } \
         -foreground #000000 -highlightbackground #dcdcdc \
-        -highlightcolor #000000 -padx 9 -pady 3 -text Add -width 8 
+        -highlightcolor #000000 -padx 9 -text Add -width 8 
     button $base.fra39.but41 \
         -activebackground #dcdcdc -activeforeground #000000 \
         -background #dcdcdc -command {BindingsInsert hide} \
         -foreground #000000 -highlightbackground #dcdcdc \
-        -highlightcolor #000000 -padx 9 -pady 3 -text Cancel -width 8 
+        -highlightcolor #000000 -padx 9 -text Cancel -width 8 
     ###################
     # SETTING GEOMETRY
     ###################
@@ -636,6 +637,7 @@ proc vTclWindow.vTcl.newbind {base {container 0}} {
     foreach event [event info] {
     	BindingsEvents insert end $event
     }
+    wm deiconify $base
 }
 
 proc vTclWindow.vTcl.newtag {base} {
@@ -857,7 +859,7 @@ namespace eval ::widgets_bindings {
         set vTcl(bindtags,$target) $tags
         ::widgets_bindings::fill_bindings $target
         ::widgets_bindings::select_show_binding $tag ""     
-    	::widgets_bindings::enable_toolbar_buttons
+        ::widgets_bindings::enable_toolbar_buttons
     }
 
     proc {::widgets_bindings::addtag} {tag} {
@@ -880,7 +882,7 @@ namespace eval ::widgets_bindings {
 
         ::widgets_bindings::fill_bindings $target
         ::widgets_bindings::select_show_binding $tag ""     
-    	::widgets_bindings::enable_toolbar_buttons
+        ::widgets_bindings::enable_toolbar_buttons
     }
 
     proc {::widgets_bindings::is_editable_tag} {tag} {
@@ -938,7 +940,7 @@ namespace eval ::widgets_bindings {
         
         ::widgets_bindings::fill_bindings $target
         ::widgets_bindings::select_show_binding $tag $event     
-    	::widgets_bindings::enable_toolbar_buttons
+        ::widgets_bindings::enable_toolbar_buttons
     }
 
     proc {::widgets_bindings::can_change_modifier} {l index} {
@@ -1439,3 +1441,7 @@ namespace eval ::widgets_bindings {
     }
 
 } ; # namespace eval
+
+
+
+
