@@ -68,6 +68,38 @@ proc vTcl:special_button {path args} {
     bindtags $path [concat [bindtags $path] _${path}_release]
 }
 
+# radiobutton that accepts a boolean value for the variable
+# "on"  can be 1, yes, true
+# "off" can be 0, no,  false
+proc vTcl:boolean_radio {path args} {
+    eval radiobutton $path $args
+    set var [$path cget -variable]
+    set com [$path cget -command]
+    $path configure -variable "_$var" -command "set $var \$_$var; $com"
+
+    ## configure initial value
+    vTcl:boolean_radio_get $var _$var
+
+    ## use the new variable for setting the old one
+    trace variable $var w "vTcl:boolean_radio_get $var _$var"
+}
+
+proc vTcl:boolean_radio_get {var old_var args} {
+    upvar #0 $var vari
+    upvar #0 $old_var old_vari
+    set value(1)     1
+    set value(yes)   1
+    set value(true)  1
+    set value(on)    1
+    set value(0)     0
+    set value(no)    0
+    set value(false) 0
+    set value(off)   0
+    set value($)     0
+    set val $vari
+    set old_vari $value($val)
+}
+
 proc vTcl:portable_filename {filename} {
     set result "\[file join "
     append result "[file split $filename]"

@@ -27,29 +27,43 @@ Class		Checkbutton
 Lib		core
 
 Icon		icon_checkbutton.gif
-InsertCmd       vTcl:widget:checkbutton:inscmd
+InsertCmd       vTcl::widgets::core::checkbutton::insertCmd
 DefaultOptions	-text check
 DefaultValues   -activebackground -activeforeground -activeborderwidth \
                 -background -foreground -highlightbackground -highlightcolor
 DoubleClickCmd	vTcl:set_command
-TreeLabel	@vTcl:core:get_widget_tree_label
+TreeLabel	@vTcl::widgets::core::checkbutton::getWidgetTreeLabel
 
-Function        "Set Variable" vTcl:widget:checkbutton:SetVariable
+Function        "Set Variable" vTcl::widgets::core::checkbutton::setVariable
 
-proc vTcl:widget:checkbutton:SetVariable {} {
+namespace eval vTcl::widgets::core::checkbutton {
 
-    global vTcl
-
-    vTcl:core:set_option $vTcl(w,widget)\
+    proc setVariable {} {
+    	global vTcl
+    	vTcl:core:set_option $vTcl(w,widget)\
                          -variable \
                          "Variable for $vTcl(w,widget)"
-}
+    }
 
-proc vTcl:widget:checkbutton:inscmd {target} {
-    set last [lindex [split $target .] end]
-    set last [vTcl:rename $last]
+    proc insertCmd {target} {
+    	set last [lindex [split $target .] end]
+    	set last [vTcl:rename $last]
 
-    global [$target cget -variable]
-    unset  [$target cget -variable]
-    $target configure -variable "[winfo toplevel $target]::$last"
+    	global [$target cget -variable]
+    	unset  [$target cget -variable]
+    	$target configure -variable "[winfo toplevel $target]::$last"
+    }
+
+    proc getWidgetTreeLabel {target} {
+	set ttt1 [$target cget -text]
+	set ttt2 [$target cget -variable]
+	set ttt3 [$target cget -onvalue]
+        set ttt4 [$target cget -offvalue]
+
+	if {$ttt2 == ""} {
+	    return "CB: $ttt1"
+	} else {
+	    return "CB: $ttt1 var=$ttt2\(on=$ttt3,off=$ttt4\)"
+	}
+    }
 }

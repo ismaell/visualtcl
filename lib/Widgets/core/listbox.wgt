@@ -26,20 +26,29 @@
 Class		Listbox
 Lib		core
 
-TreeLabel	@vTcl:core:get_widget_tree_label
+TreeLabel	@vTcl::widgets::core::listbox::getWidgetTreeLabel
 Icon		icon_listbox.gif
 DoubleClickCmd	vTcl:set_list
-InsertCmd	vTcl:widget:listbox:inscmd
+InsertCmd	vTcl::widgets::core::listbox::insertCmd
 DefaultValues   -foreground \
                 -highlightbackground -highlightcolor \
                 -selectbackground -selectforeground -font
 DefaultOptions  -background white
 ClassOption     -_tooltip
 
-proc vTcl:widget:listbox:inscmd {target} {
-    set last [lindex [split $target .] end]
-    set last [vTcl:rename $last]
-    set name ::[winfo toplevel $target]::$last
-    set $name "listbox"
-    $target configure -listvariable $name
+namespace eval vTcl::widgets::core::listbox {
+
+    proc insertCmd {target} {
+    	set last [lindex [split $target .] end]
+    	set last [vTcl:rename $last]
+    	set name ::[winfo toplevel $target]::$last
+    	set $name "listbox"
+    	$target configure -listvariable $name
+    }
+
+    proc getWidgetTreeLabel {target} {
+        set val [$target cget -listvariable]
+	if {[lempty $val]} { set val NONE }
+	return "Listbox VAR: $val"
+    }
 }

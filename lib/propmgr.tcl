@@ -503,10 +503,10 @@ proc vTcl:prop:new_attr {top option variable config_cmd config_args prefix {isGe
     switch $type {
         boolean {
             frame $base
-            radiobutton ${base}.y \
+            vTcl:boolean_radio ${base}.y \
                 -variable $variable -value 1 -text "Yes" -relief sunken  \
                 -command "$config_cmd \$vTcl(w,widget) $option $variable {} $config_args" -padx 0 -pady 1
-            radiobutton ${base}.n \
+            vTcl:boolean_radio ${base}.n \
                 -variable $variable -value 0 -text "No" -relief sunken  \
                 -command "$config_cmd \$vTcl(w,widget) $option $variable {} $config_args" -padx 0 -pady 1
             pack ${base}.y ${base}.n -side left -expand 1 -fill both

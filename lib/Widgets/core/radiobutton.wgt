@@ -27,37 +27,47 @@ Class		Radiobutton
 Lib		core
 
 Icon		icon_radiobutton.gif
-InsertCmd       vTcl:widget:radiobutton:inscmd
+InsertCmd       vTcl::widgets::core::radiobutton::insertCmd
 DefaultOptions	-text radio
 DefaultValues   -activebackground -activeforeground -activeborderwidth \
                 -background -foreground -highlightbackground -highlightcolor
 DoubleClickCmd	vTcl:set_command
-TreeLabel	@vTcl:core:get_widget_tree_label
+TreeLabel	@vTcl::widgets::core::radiobutton::getWidgetTreeLabel
 
-Function        "Set Variable" vTcl:widget:radiobutton:SetVariable
-Function        "Set Value"    vTcl:widget:radiobutton:SetValue
+Function        "Set Variable" vTcl::widgets::core::radiobutton::setVariable
+Function        "Set Value"    vTcl::widgets::core::radiobutton::setValue
 
-proc vTcl:widget:radiobutton:SetVariable {} {
+namespace eval vTcl::widgets::core::radiobutton {
 
-    global vTcl
-
-    vTcl:core:set_option $vTcl(w,widget)\
+    proc setVariable {} {
+    	global vTcl
+    	vTcl:core:set_option $vTcl(w,widget)\
                          -variable \
                          "Variable for $vTcl(w,widget)"
-}
+    }
 
-proc vTcl:widget:radiobutton:SetValue {} {
-
-    global vTcl
-
-    vTcl:core:set_option $vTcl(w,widget)\
+    proc setValue {} {
+	global vTcl
+	vTcl:core:set_option $vTcl(w,widget)\
                          -value \
                          "Value for $vTcl(w,widget)"
-}
+    }
 
-proc vTcl:widget:radiobutton:inscmd {target} {
+    proc insertCmd {target} {
+        global [$target cget -variable]
+        unset  [$target cget -variable]
+        $target configure -variable "[winfo toplevel $target]::selectedButton"
+    }
 
-    global [$target cget -variable]
-    unset  [$target cget -variable]
-    $target configure -variable "[winfo toplevel $target]::selectedButton"
+    proc getWidgetTreeLabel {target} {
+        set ttt1 [$target cget -text]
+	set ttt2 [$target cget -variable]
+	set ttt3 [$target cget -value]
+
+	if {$ttt2 == ""} {
+	    return "RB: $ttt1"
+	} else {
+	    return "RB: $ttt1 var=$ttt2\(val=$ttt3\)"
+	}
+    }
 }

@@ -282,34 +282,6 @@ proc vTcl:core:get_widget_tree_label {target} {
 
     switch [string tolower $class] {
 	toplevel { set t [wm title $target] }
-	radiobutton {
-	    set ttt1 [$target cget -text]
-	    set ttt2 [$target cget -variable]
-	    set ttt3 [$target cget -value]
-
-	    if {$ttt2 == ""} {
-		set t "RB: $ttt1"
-	    } else {
-		set t "RB: $ttt1 var=$ttt2\(val=$ttt3\)"
-	    }
-	}
-	checkbutton {
-	    set ttt1 [$target cget -text]
-	    set ttt2 [$target cget -variable]
-	    set ttt3 [$target cget -onvalue]
-	    set ttt4 [$target cget -offvalue]
-
-	    if {$ttt2 == ""} {
-		set t "CB: $ttt1"
-	    } else {
-		set t "CB: $ttt1 var=$ttt2\(on=$ttt3,off=$ttt4\)"
-	    }
-	}
-	listbox {
-	    set val [$target cget -listvariable]
-	    if {[lempty $val]} { set val NONE }
-	    set t "Listbox VAR: $val"
-	}
 
 	message    -
 	menubutton { set t [$target cget -text] }
