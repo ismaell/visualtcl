@@ -223,7 +223,7 @@ proc vTclWindow.vTcl.proclist {args} {
         -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 0 -pady 0 \
         -side left 
     scrollbar $base.f2.sb4 \
-        -borderwidth 1 -command "$base.f2.list yview"
+        -command "$base.f2.list yview"
     pack $base.f2.sb4 \
         -anchor center -expand 0 -fill y -ipadx 0 -ipady 0 -padx 0 -pady 0 \
         -side right 
@@ -320,7 +320,7 @@ proc vTclWindow.vTcl.proc {args} {
         -anchor center -expand 0 -fill y -ipadx 0 -ipady 0 -padx 0 -pady 0 \
         -side left 
     frame $base.frame14 \
-        -borderwidth 1 -height 30 -relief sunken -width 30 
+        -borderwidth 1 -height 30 -relief sunken -width 30
     pack $base.frame14 \
         -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 3 -pady 3 \
         -side top 

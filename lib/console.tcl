@@ -45,23 +45,23 @@ proc vTclWindow.vTcl.con {args} {
     wm minsize .vTcl.con 375 80
     wm title .vTcl.con "Command Console"
     frame .vTcl.con.fra5 \
-        -height 30 -width 30 
+        -height 30 -width 30
     pack .vTcl.con.fra5 \
         -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 2 -pady 2 \
-        -side top 
+        -side top
     text .vTcl.con.fra5.tex7 \
         -highlightthickness 0 -state disabled -width 50 -height 6 \
-        -yscrollcommand {.vTcl.con.fra5.scr8 set} 
+        -yscrollcommand {.vTcl.con.fra5.scr8 set}
     pack .vTcl.con.fra5.tex7 \
         -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 0 -pady 0 \
-        -side left 
+        -side left
     scrollbar .vTcl.con.fra5.scr8 \
         -command {.vTcl.con.fra5.tex7 yview} -highlightthickness 0
     pack .vTcl.con.fra5.scr8 \
         -anchor center -expand 0 -fill y -ipadx 0 -ipady 0 -padx 0 -pady 0 \
-        -side right 
+        -side right
     frame .vTcl.con.fra6 \
-        -height 30 -width 30 
+        -height 30 -width 30
     pack .vTcl.con.fra6 \
         -anchor center -expand 0 -fill both -ipadx 0 -ipady 0 -padx 0 -pady 0 \
         -side top
@@ -72,22 +72,30 @@ proc vTclWindow.vTcl.con {args} {
         -text "Insert selected widget name" \
         -command "vTcl:insert_widget_in_text .vTcl.con.fra6.ent10"
     pack .vTcl.con.fra6.but1 -fill x -side top
-    # @@end_change 
+    # @@end_change
     entry .vTcl.con.fra6.ent10 \
-        -highlightthickness 0 
+        -highlightthickness 0
     pack .vTcl.con.fra6.ent10 \
         -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 2 -pady 2 \
-        -side top 
+        -side top
+    menu .vTcl.con.fra5.tex7.menu -tearoff 0
+    .vTcl.con.fra5.tex7.menu add command -label "Clear" \
+         -command {.vTcl.con.fra5.tex7 conf -state normal
+                   .vTcl.con.fra5.tex7 delete 0.0 end
+                   .vTcl.con.fra5.tex7 conf -state disabled}
+    bind .vTcl.con.fra5.tex7 <ButtonPress-3> {
+        tk_popup .vTcl.con.fra5.tex7.menu %X %Y
+    }
     bind .vTcl.con.fra6.ent10 <Key-Return> {
         .vTcl.con.fra5.tex7 conf -state normal
         .vTcl.con.fra5.tex7 insert end "\n[.vTcl.con.fra6.ent10 get]" vTcl:bold
         .vTcl.con.fra5.tex7 conf -state disabled
-        
+
         set caught [expr [catch [.vTcl.con.fra6.ent10 get] vTcl(err)] == 1]
 
 	# not needed, since the redefined "puts" command calls this function
         # vTcl:console:get_output
-        
+
         .vTcl.con.fra5.tex7 conf -state normal
 
         if {$caught} {
@@ -101,7 +109,7 @@ proc vTclWindow.vTcl.con {args} {
         .vTcl.con.fra6.ent10 delete 0 end
     }
     catch {wm geometry .vTcl.con $vTcl(geometry,.vTcl.con)}
-    
+
     .vTcl.con.fra5.tex7 tag configure vTcl:bold \
         -font -*-helvetica-bold-r-normal--*-120-*
 
@@ -117,7 +125,7 @@ proc vTcl:console:get_output {{display 1}} {
     if {! [winfo exists .vTcl.con]} {
     	return
     }
-    
+
     set contents [read $vTcl(LOG_FD_R)]
     if {$contents != "" && $display} {
 

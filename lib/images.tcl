@@ -453,7 +453,7 @@ proc vTcl:image:create_selector_dlg {base} {
         -highlightbackground #bcbcbc -highlightcolor #000000 -relief raised \
         -width 30
     scrollbar $base.cpd29.02 \
-        -activebackground #bcbcbc -background #bcbcbc -borderwidth 1 \
+        -activebackground #bcbcbc -background #bcbcbc \
         -command "$base.cpd29.03 yview" -cursor left_ptr \
         -highlightbackground #bcbcbc -highlightcolor #000000 -orient vert \
         -troughcolor #bcbcbc
@@ -663,11 +663,9 @@ proc vTclWindow.vTcl.imgManager {args} {
         -relief raised \
         -width 30
     scrollbar $base.cpd29.01 \
-        -borderwidth 1 \
         -command "$base.cpd29.03 xview" -cursor left_ptr \
         -orient horiz
     scrollbar $base.cpd29.02 \
-        -borderwidth 1 \
         -command "$base.cpd29.03 yview" -cursor left_ptr \
         -orient vert
     text $base.cpd29.03 \

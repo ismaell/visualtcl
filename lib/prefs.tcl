@@ -371,9 +371,9 @@ proc vTclWindow.vTcl.infolibs {{base ""} {container 0}} {
         -width 0 -xscrollcommand "$base.cpd39.02 set" \
         -yscrollcommand "$base.cpd39.03 set"
     scrollbar $base.cpd39.02 \
-        -borderwidth 1 -command "$base.cpd39.01 xview" -orient horiz
+        -command "$base.cpd39.01 xview" -orient horiz
     scrollbar $base.cpd39.03 \
-        -borderwidth 1 -command "$base.cpd39.01 yview" -orient vert
+        -command "$base.cpd39.01 yview" -orient vert
     button $base.but40 \
         -padx 9 -pady 3 -text Close -command {wm withdraw .vTcl.infolibs}
     ###################

@@ -1,9 +1,16 @@
 ChangeLog for Visual Tcl:
 
 1.22b1 ->
+        o Added "Clear" pulldown menu in command console under Linux
+        o Added modifier pulldown menu in bindings editor
+        o Added right-click popup menu in bindings editor to insert a
+          percent substitution
+        o Scrollbar borderwidth uses default option value
+          (makes the app more consistent looking)
         o Menus are now dumped relative to their top-level window
         o Don't display in widget tree temporary menu windows with "#" in
           their name
+        o Added new menu in attributes bar to edit a submenu
         o Display menu item titles in widget tree window
         o Widget tree remembers scrolling position when new widget added or
           existing widget deleted

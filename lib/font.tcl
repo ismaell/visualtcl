@@ -179,11 +179,9 @@ proc vTcl:font:get_font_dlg {base font_desc} {
     bind $base.fra28.cpd29.01 <Button-1> \
     	"vTcl:font:font_select_family $base %W %y"
     scrollbar $base.fra28.cpd29.02 \
-        -borderwidth 1 \
         -command "$base.fra28.cpd29.01 xview" -cursor left_ptr \
         -orient horiz
     scrollbar $base.fra28.cpd29.03 \
-        -borderwidth 1 \
         -command "$base.fra28.cpd29.01 yview" -cursor left_ptr \
         -orient vert
     label $base.fra28.lab30 \
@@ -238,11 +236,9 @@ proc vTcl:font:get_font_dlg {base font_desc} {
         -borderwidth 1 \
         -relief raised -width 50
     scrollbar $base.cpd43.01 \
-        -borderwidth 1 \
         -command "$base.cpd43.03 xview" -cursor left_ptr \
         -orient horiz
     scrollbar $base.cpd43.02 \
-        -borderwidth 1 \
         -command "$base.cpd43.03 yview" -cursor left_ptr \
         -orient vert
     text $base.cpd43.03 \
@@ -625,11 +621,9 @@ if {$font_desc != ""} {
         -relief raised \
         -width 30
     scrollbar $base.cpd31.01 \
-        -borderwidth 1 \
         -command "$base.cpd31.03 xview" -cursor left_ptr \
         -orient horiz
     scrollbar $base.cpd31.02 \
-        -borderwidth 1 \
         -command "$base.cpd31.03 yview" -cursor left_ptr \
         -orient vert
     text $base.cpd31.03 \
@@ -758,7 +752,7 @@ proc vTcl:font:create_noborder_fontlist {base} {
         -highlightbackground #bcbcbc -highlightcolor #000000 -relief raised \
         -width 30
     scrollbar $base.cpd29.02 \
-        -activebackground #bcbcbc -background #bcbcbc -borderwidth 1 \
+        -activebackground #bcbcbc -background #bcbcbc \
         -command "$base.cpd29.03 yview" -cursor left_ptr \
         -highlightbackground #bcbcbc -highlightcolor #000000 -orient vert \
         -troughcolor #bcbcbc

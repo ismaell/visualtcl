@@ -80,7 +80,7 @@ proc vTcl:get_command {title initial base} {
         -in $base.f -anchor center -expand 1 -fill both -ipadx 0 \
         -ipady 0 -padx 0 -pady 0 -side left 
     scrollbar $base.f.scrollbar16 \
-        -borderwidth 1 -command "$base.f.text yview"
+        -command "$base.f.text yview"
     pack $base.f.scrollbar16 \
         -in $base.f -anchor center -expand 0 -fill y -ipadx 0 -ipady 0 \
         -padx 0 -pady 0 -side left 

@@ -577,7 +577,7 @@ proc vTcl:edit_menu {target} {
         vTcl:menu_item_update $base $target -1
     "
     scrollbar $base.fra19.scr36 \
-        -borderwidth 1 -command "$base.fra19.lis35 yview" \
+        -command "$base.fra19.lis35 yview" \
         -highlightthickness 0 -width 10
     pack $base.fra19.scr36 \
         -anchor center -expand 0 -fill y -ipadx 0 -ipady 0 -padx 0 -pady 0 \
