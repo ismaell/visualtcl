@@ -655,7 +655,18 @@ proc vTcl:restore {} {
     if {[lempty $file]} { return }
 
     set bakFile $file.bak
-    if {![file exists $bakFile]} { return }
+    if {![file exists $bakFile]} {
+        # change by Nelson 20030227
+        # Provides the user feedback about no $file.bak existance
+        # and potential reason why one might not exist.
+
+        ::vTcl::MessageBox -icon error -message \
+        "A backup file $bakFile does not exist! Backup files are
+only created upon save operations beyond the original creation of the file." \
+        -title "Restore Error!" -type ok
+
+        return
+    }
 
     vTcl:close
     file copy -force -- $bakFile $file
@@ -730,6 +741,7 @@ namespace eval vTcl::project {
         return [lsort -unique $result]
     }
 }
+
 
 
 
