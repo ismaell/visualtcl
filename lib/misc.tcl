@@ -50,7 +50,7 @@ proc vTcl:load_images {} {
     foreach i {fg bg mgr_grid mgr_pack mgr_place
                 rel_groove rel_ridge rel_raised rel_sunken justify
                 relief border ellipses anchor fontbase fontsize fontstyle
-                tconsole} {
+                tconsole up down} {
         image create photo "$i" \
             -file [file join $vTcl(VTCL_HOME) images $i.gif]
     }
@@ -289,6 +289,7 @@ proc vTcl:rename {name} {
     regsub -all "\\-" $ret "_" ret
     regsub -all " " $ret "_" ret
     regsub -all "/" $ret "__" ret
+    regsub -all "::" $ret "__" ret
 
     return [string tolower $ret]
 }
@@ -823,7 +824,7 @@ proc vTcl:raise_last_button {newButton} {
 # namespace'ing and bugs from Parand Tony Darugar
 # (tdarugar@binevolve.com)
 #
-# $Id: misc.tcl,v 1.16 2000/10/21 22:01:45 cgavin Exp $
+# $Id: misc.tcl,v 1.17 2000/10/24 02:45:02 cgavin Exp $
 # -------------------------------------------------------------------
 
 namespace eval base64 {
@@ -1181,25 +1182,3 @@ proc vTcl:tabnotebook_refresh {win} {
 
 vTcl:notebook_init
 vTcl:tabnotebook_init
-
-proc vTcl:safe_encode_string {s} {
-
-	regsub -all \" $s %quote s
-      regsub -all {\[} $s %leftbracket s
-      regsub -all {\]} $s %rightbracket s
-      regsub -all \{ $s %leftbrace s
-      regsub -all \} $s %rightbrace s
-
-	return $s
-}
-
-proc vTcl:safe_decode_string {s} {
-
-	regsub -all %quote $s \" s
-      regsub -all %leftbracket $s {[} s
-      regsub -all %rightbracket $s {]} s
-      regsub -all %leftbrace $s \{ s
-      regsub -all %rightbrace $s \} s
-
-	return $s
-}

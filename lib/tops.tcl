@@ -186,6 +186,13 @@ proc vTclWindow.vTcl.toplist {args} {
         -in .vTcl.toplist.frame7 -anchor center -expand 0 -fill none -ipadx 0 \
         -ipady 0 -padx 0 -pady 0 -side left 
     vTcl:set_balloon .vTcl.toplist.frame7.button10 "Delete toplevel window"
+    button $base.frame7.button11 \
+        -command "wm withdraw $base" \
+        -image [vTcl:image:get_image ok.gif]
+    pack $base.frame7.button11 \
+        -expand 0 -side right
+    vTcl:set_balloon $base.frame7.button11 "Close"
+
     frame .vTcl.toplist.f2 \
         -borderwidth 1 -height 30 -relief sunken -width 30 
     pack .vTcl.toplist.f2 \

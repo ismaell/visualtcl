@@ -26,6 +26,9 @@ proc vTcl:prefs:uninit {base} {
 }
 
 proc vTcl:prefs:init {base} {
+
+    global vTcl
+
     # this is to store all variables
     namespace eval prefs {
        variable balloon          ""
@@ -48,6 +51,9 @@ proc vTcl:prefs:init {base} {
        variable imageeditor      ""
        variable saveimagesinline ""
     }
+
+    set prefs::font_dlg   [eval font create [font actual $vTcl(pr,font_dlg)] ]
+    set prefs::font_fixed [eval font create [font actual $vTcl(pr,font_fixed)] ]
 
     # set the variables for the dialog
     vTcl:prefs:data_exchange 0
@@ -202,7 +208,7 @@ proc vTclWindow.vTcl.infolibs {{base ""} {container 0}} {
 
 proc {vTcl:prefs:data_exchange} {save_and_validate} {
 
-	global widget
+	global widget vTcl
 
 	# if save_and_validate is set to 0, values are transferred from
 	# the preferences to the dialog (this is typically done when
@@ -230,10 +236,6 @@ proc {vTcl:prefs:data_exchange} {save_and_validate} {
 		prefs::autoloadcomp     $save_and_validate
 	vTcl:data_exchange_var vTcl(pr,autoloadcompfile) \
 		prefs::autoloadcompfile $save_and_validate
-	vTcl:data_exchange_var vTcl(pr,font_dlg)         \
-		prefs::font_dlg         $save_and_validate
-	vTcl:data_exchange_var vTcl(pr,font_fixed)       \
-		prefs::font_fixed       $save_and_validate
 	vTcl:data_exchange_var vTcl(pr,manager)          \
 		prefs::manager          $save_and_validate
 	vTcl:data_exchange_var vTcl(pr,encase)           \
@@ -250,6 +252,17 @@ proc {vTcl:prefs:data_exchange} {save_and_validate} {
 		prefs::autoalias        $save_and_validate
 	vTcl:data_exchange_var vTcl(pr,multiplace)        \
 		prefs::multiplace        $save_and_validate
+
+    if {$save_and_validate} {
+
+        set vTcl(pr,font_dlg)   [font configure $prefs::font_dlg]
+        set vTcl(pr,font_fixed) [font configure $prefs::font_fixed]
+
+    } else {
+
+	  eval font configure $prefs::font_dlg   [font actual $vTcl(pr,font_dlg)]
+        eval font configure $prefs::font_fixed [font actual $vTcl(pr,font_fixed)]
+    }
 }
 
 proc {vTcl:prefs:basics} {tab} {
@@ -320,17 +333,16 @@ proc {vTcl:prefs:browse_file} {varname} {
 	}
 }
 
-proc {vTcl:prefs:browse_font} {varname feedback_window} {
+proc {vTcl:prefs:browse_font} {fontname} {
 
 	global widget
 
-	eval set value $$varname
+	set value [font configure $fontname]
 	set newfont [vTcl:font:prompt_user_font_2 $value]
 
 	if {$newfont != ""} {
 
-	    set $varname $newfont
-	    $feedback_window configure -font $newfont
+           eval font configure $fontname $newfont
 	}
 }
 
@@ -350,7 +362,7 @@ proc {vTcl:prefs:fonts} {tab} {
 	pack configure $last -side left
 	set last [vTcl:formCompound:add $font_frame button \
 		-text "Change..." \
-		-command "vTcl:prefs:browse_font prefs::font_dlg $last"]
+		-command "vTcl:prefs:browse_font $prefs::font_dlg"]
 	pack configure $last -side right
 
 	vTcl:formCompound:add $tab  label -text ""
@@ -367,7 +379,7 @@ proc {vTcl:prefs:fonts} {tab} {
 	pack configure $last -side left
 	set last [vTcl:formCompound:add $font_frame button \
 		-text "Change..." \
-		-command "vTcl:prefs:browse_font prefs::font_fixed $last"]
+		-command "vTcl:prefs:browse_font $prefs::font_fixed"]
 	pack configure $last -side right
 }
 

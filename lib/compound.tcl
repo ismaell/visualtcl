@@ -229,7 +229,7 @@ proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
         foreach j $bind {
             set e [lindex $j 0]
             set c [vTcl:name_replace $base [lindex $j 1]]
-            append todo "bind $name $e \"$c\"; "
+            append todo "bind $name $e \{$c\}; "
         }
         foreach j $menu {
             set t [lindex $j 0]

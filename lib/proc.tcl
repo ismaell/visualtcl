@@ -225,6 +225,12 @@ proc vTclWindow.vTcl.proclist {args} {
         -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 \
         -side left
     vTcl:set_balloon $base.frame7.button10 "Remove selected procedure"
+    button $base.frame7.button11 \
+        -command "wm withdraw $base" \
+        -image [vTcl:image:get_image ok.gif]
+    pack $base.frame7.button11 \
+        -expand 0 -side right
+    vTcl:set_balloon $base.frame7.button11 "Close"
     frame $base.f2 \
         -borderwidth 1 -height 30 -relief sunken -width 30
     pack $base.f2 \
@@ -316,14 +322,48 @@ proc vTclWindow.vTcl.proc {args} {
         -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 3 -pady 3 \
         -side top
 
-    # @@change by Christian Gavin 3/13/2000
-    # button to insert the complete name of the currently selected
-    # widget
-    button $base.f3.butInsert \
-        -text "Insert selected widget name" \
-        -command "vTcl:insert_widget_in_text $base.f3.text"
-    pack $base.f3.butInsert -fill x -side top
-    # @@end_change
+    # toolbar
+    frame $base.f3.toolbar
+    pack $base.f3.toolbar -side top -anchor nw -fill x
+
+    set butInsert [vTcl:formCompound:add $base.f3.toolbar button \
+        -image [vTcl:image:get_image [file join $vTcl(VTCL_HOME) images edit inswidg.gif] ] \
+        -command "vTcl:insert_widget_in_text $base.f3.text" ]
+    pack configure $butInsert -side left
+    vTcl:set_balloon $butInsert "Insert selected widget command"
+
+    set last [vTcl:formCompound:add $base.f3.toolbar frame -width 5]
+    pack configure $last -side left
+
+    set last [vTcl:formCompound:add $base.f3.toolbar button \
+        -image [vTcl:image:get_image [file join $vTcl(VTCL_HOME) images edit copy.gif] ] \
+        -command "tk_textCopy $base.f3.text"]
+    pack configure $last -side left
+    vTcl:set_balloon $last "Copy selected text to clipboard"
+
+    set last [vTcl:formCompound:add $base.f3.toolbar button \
+        -image [vTcl:image:get_image [file join $vTcl(VTCL_HOME) images edit cut.gif] ]  \
+        -command "tk_textCut $base.f3.text"]
+    pack configure $last -side left
+    vTcl:set_balloon $last "Cut selected text"
+
+    set last [vTcl:formCompound:add $base.f3.toolbar button \
+        -image [vTcl:image:get_image [file join $vTcl(VTCL_HOME) images edit paste.gif] ]  \
+        -command "tk_textPaste $base.f3.text"]
+    pack configure $last -side left
+    vTcl:set_balloon $last "Paste text from clipboard"
+
+    set butCancel [vTcl:formCompound:add $base.f3.toolbar button \
+        -image [vTcl:image:get_image [file join $vTcl(VTCL_HOME) images edit remove.gif] ]  \
+        -command "vTcl:proc:edit_cancel $base"]
+    pack configure $butCancel -side right
+    vTcl:set_balloon $butCancel "Discard changes"
+
+    set butOK [vTcl:formCompound:add $base.f3.toolbar button \
+        -image [vTcl:image:get_image [file join $vTcl(VTCL_HOME) images edit ok.gif] ]  \
+        -command "vTcl:update_proc $base"]
+    pack configure $butOK -side right
+    vTcl:set_balloon $butOK "Save changes"
 
     text $base.f3.text \
         -height 7 -highlightthickness 0 -width 16 \
@@ -333,29 +373,11 @@ proc vTclWindow.vTcl.proc {args} {
         -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 2 -pady 2 \
         -side left
     bind $base.f3.text <KeyPress> "+set vTcl(proc,[lindex $args 0],chg) 1"
-    bind $base.f3.text <Alt-Key-i> "$base.f3.butInsert invoke"
+    bind $base.f3.text <Alt-Key-i> "$butInsert invoke"
     scrollbar $base.f3.scrollbar4 \
         -command "$base.f3.text yview"
     pack $base.f3.scrollbar4 \
         -anchor center -expand 0 -fill y -ipadx 0 -ipady 0 -padx 0 -pady 0 \
-        -side left
-    frame $base.frame14 \
-        -borderwidth 1 -height 30 -relief sunken -width 30
-    pack $base.frame14 \
-        -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 3 -pady 3 \
-        -side top
-    button $base.frame14.button15 \
-        -command "vTcl:update_proc $base" \
-        -padx 9 -pady 3 -text OK -width 5
-    pack $base.frame14.button15 \
-        -anchor center -expand 1 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 \
-        -side left
-    button $base.frame14.button16 \
-        -command "vTcl:proc:edit_cancel $base" \
-         -padx 9 \
-        -pady 3 -text Cancel -width 5
-    pack $base.frame14.button16 \
-        -anchor center -expand 1 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 \
         -side left
 
     set pname $base.f2.f8.procname
@@ -370,7 +392,7 @@ proc vTclWindow.vTcl.proc {args} {
     $pbody mark set insert 0.0
     if {$iproc == ""} {
         focus $pname
-        $base.frame14.button15 configure -state disabled
+        $butOK configure -state disabled
     } else {
         focus $pbody
     }
@@ -378,9 +400,9 @@ proc vTclWindow.vTcl.proc {args} {
     # don't allow empty procedure name
     bind $pname <KeyRelease> "\
     	if \{\[$pname get\] == \"\"\} \{ \
-    	      $base.frame14.button15 configure -state disabled \
+    	      $butOK configure -state disabled \
     	\} else \{ \
-    	      $base.frame14.button15 configure -state normal \
+    	      $butOK configure -state normal \
     	\}"
 
     # @@change by Christian Gavin 3/19/2000

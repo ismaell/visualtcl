@@ -277,8 +277,10 @@ proc {vTcl:image:init_stock} {} {
     set images {
     	copy
 	cut
+      inswidg
 	paste
 	new
+      ok
 	open
 	save
 	replace

@@ -171,7 +171,9 @@ namespace eval ::stack_trace {
 
         } elseif { [string match "(command bound to event)" $context] || 
                    [string match {("uplevel" body line 1)} $context] ||
-                   [string match {(code segment*)} $context] } {
+                   [string match {(code segment*)} $context] ||
+                   [string match {(menu invoke)} $context]  ||
+                   [string match {("after" script)} $context] } {
 
             set statement \
                [::stack_trace::get_code_snippet_from_error_info \
@@ -195,53 +197,48 @@ namespace eval ::stack_trace {
                 return ""
             }
 
-	} else {
+        } elseif [string match "(*arm line *)" $context] {
 
-            if [string match "(*arm line *)" $context] {
+            set statement \
+                [::stack_trace::get_statement_at_level \
+                $top [expr $index + 1] ]
 
-                set statement \
-                    [::stack_trace::get_statement_at_level \
-                    $top [expr $index + 1] ]
+            if {$statement != ""} {
 
-                if {$statement != ""} {
+                set armindex [lindex [string range $context 1 end] 0]
+                set arms     [::stack_trace::get_switch_arms $statement]
+                set arm      [::stack_trace::get_switch_arm $arms $armindex]
 
-                    set armindex [lindex [string range $context 1 end] 0]
-                    set arms     [::stack_trace::get_switch_arms $statement]
-                    set arm      [::stack_trace::get_switch_arm $arms $armindex]
+                regexp {([0-9]+)} [lindex $context 3] matchAll lineno
 
-                    regexp {([0-9]+)} [lindex $context 3] matchAll lineno
-
-                    return [::stack_trace::get_bloc_instruction $arm $lineno]
-
-                } else {
-
-                    return ""
-                }
+                return [::stack_trace::get_bloc_instruction $arm $lineno]
 
             } else {
 
-                if [string match {("if" then script line *)} $context] {
-
-                    set statement \
-                        [::stack_trace::get_statement_at_level \
-                        $top [expr $index + 1] ]
-
-                    if {$statement != ""} {
-
-                        regexp {([0-9]+)} [lindex $context 4] matchAll lineno
-
-                        return [::stack_trace::get_bloc_instruction $statement $lineno]
-
-                    } else {
-
-                        return ""
-                    }
-
-                } else {
-
-                    return ""
-                }
+                return ""
             }
+
+        } elseif { [string match {("if" then script line *)} $context] ||
+                   [string match {("eval" body line *)} $context] } {
+
+            set statement \
+                [::stack_trace::get_statement_at_level \
+                $top [expr $index + 1] ]
+
+            if {$statement != ""} {
+
+                regexp {line ([0-9]+)} $context matchAll lineno
+
+                return [::stack_trace::get_bloc_instruction $statement $lineno]
+
+            } else {
+
+                return ""
+            }
+
+        } else {
+
+            return ""
         }
     }
 
@@ -291,7 +288,9 @@ namespace eval ::stack_trace {
 
         } elseif { [string match "(command bound to event)" $context] || 
                    [string match {("uplevel" body line 1)} $context] ||
-                   [string match {(code segment*)} $context] } {
+                   [string match {(code segment*)} $context]  ||
+                   [string match {(menu invoke)} $context] ||
+                   [string match {("after" script)} $context] } {
 
             set statement \
                   [::stack_trace::get_code_snippet_from_error_info \
@@ -300,63 +299,58 @@ namespace eval ::stack_trace {
             ::stack_trace::set_details $top $statement
             vTcl:syntax_color $top.$widget(child,stack_trace_details)  0 -1
 
-        } else {
+        } elseif [string match "(*arm line *)" $context] {
 
-            if [string match "(*arm line *)" $context] {
+            set statement \
+                [::stack_trace::get_statement_at_level $top [expr $index + 1] ]
 
-                set statement \
-                    [::stack_trace::get_statement_at_level $top [expr $index + 1] ]
+            if {$statement != ""} {
 
-                if {$statement != ""} {
+                set armindex [lindex [string range $context 1 end] 0]
+                set arms     [::stack_trace::get_switch_arms $statement]
+                set arm      [::stack_trace::get_switch_arm $arms $armindex]
 
-                    set armindex [lindex [string range $context 1 end] 0]
-                    set arms     [::stack_trace::get_switch_arms $statement]
-                    set arm      [::stack_trace::get_switch_arm $arms $armindex]
+                regexp {([0-9]+)} [lindex $context 3] matchAll lineno
 
-                    regexp {([0-9]+)} [lindex $context 3] matchAll lineno
-
-                    ::stack_trace::set_details $top $arm
-                    vTcl:syntax_color $top.$widget(child,stack_trace_details)  0 -1
-                    ::stack_trace::highlight_details $top $lineno
-
-                } else {
-
-                    ::stack_trace::set_details $top "(no code available)"
-                }
+                ::stack_trace::set_details $top $arm
+                vTcl:syntax_color $top.$widget(child,stack_trace_details)  0 -1
+                ::stack_trace::highlight_details $top $lineno
 
             } else {
 
-                if [string match {("if" then script line *)} $context] {
-
-	              set statement \
-                          [::stack_trace::get_statement_at_level $top [expr $index + 1] ]
-
-	              if {$statement != ""} {
-
-	                  regexp {([0-9]+)} [lindex $context 4] matchAll lineno
-
-                          ::stack_trace::set_details $top $statement
-                          vTcl:syntax_color $top.$widget(child,stack_trace_details)  0 -1
-                          ::stack_trace::highlight_details $top $lineno
-
-                      } else {
-
-                          ::stack_trace::set_details $top "(no code available)"
-                      }
-
-                } elseif [string match {("if" test expression)} $context] {
-
-	              set statement \
-                          [::stack_trace::get_statement_at_level $top [expr $index + 1] ]
-
-                          ::stack_trace::set_details $top $statement
-                          vTcl:syntax_color $top.$widget(child,stack_trace_details)  0 -1
-                          ::stack_trace::highlight_details $top 1
-
-                } else {
-                    ::stack_trace::set_details $top "(no code available)"
-                }
+                 ::stack_trace::set_details $top "(no code available)"
             }
+
+        } elseif { [string match {("if" then script line *)} $context]  ||
+                   [string match {("eval" body line *)} $context] } {
+
+            set statement \
+                [::stack_trace::get_statement_at_level $top [expr $index + 1] ]
+
+	      if {$statement != ""} {
+
+	          regexp {line ([0-9]+)} $context matchAll lineno
+
+                ::stack_trace::set_details $top $statement
+                vTcl:syntax_color $top.$widget(child,stack_trace_details)  0 -1
+                ::stack_trace::highlight_details $top $lineno
+
+            } else {
+
+                ::stack_trace::set_details $top "(no code available)"
+            }
+
+        } elseif [string match {("if" test expression)} $context] {
+
+	      set statement \
+                [::stack_trace::get_statement_at_level $top [expr $index + 1] ]
+
+            ::stack_trace::set_details $top $statement
+            vTcl:syntax_color $top.$widget(child,stack_trace_details)  0 -1
+            ::stack_trace::highlight_details $top 1
+
+        } else {
+            ::stack_trace::set_details $top "(no code available)"
         }
     }
 
@@ -591,7 +585,6 @@ proc vTclWindow.vTcl.stack_trace {base {container 0}} {
         -highlightcolor #000000
     wm focusmodel $base passive
     wm geometry $base 585x456+139+158
-    wm maxsize $base 1009 738
     wm minsize $base 1 1
     wm overrideredirect $base 0
     wm resizable $base 1 1

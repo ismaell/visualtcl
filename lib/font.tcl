@@ -69,7 +69,7 @@ proc vTcl:font:init_fontselect {base} {
     global vTcl widget
 
     $widget($base.text) delete 1.0 end
-    $widget($base.text) insert 1.0 "abcdefghijklmnopqrstuvxwyz 0123456789"
+    $widget($base.text) insert 1.0 "abcdefghijklmnopqrstuvxwyz\n0123456789"
 
     trace variable vTcl(x,$base,weight)     w "vTcl:font:update_font"
     trace variable vTcl(x,$base,slant)      w "vTcl:font:update_font"
@@ -157,11 +157,11 @@ proc vTcl:font:get_font_dlg {base font_desc} {
     wm resizable $base 1 1
     wm title $base "Font selector"
     frame $base.fra28 \
-        -borderwidth 2 -height 75 \
-        -relief groove \
+        -height 75 \
+        -relief flat \
         -width 125
     frame $base.fra28.cpd29 \
-        -borderwidth 1 \
+        -borderwidth 2 \
         -relief raised -width 30
     listbox $base.fra28.cpd29.01 \
         -xscrollcommand "$base.fra28.cpd29.02 set" \
@@ -215,16 +215,16 @@ proc vTcl:font:get_font_dlg {base font_desc} {
         -borderwidth 1
     button $base.fra28.but32 \
         -command "incr vTcl(x,$base,size)" \
-        -padx 2 -pady 0 -text +
+        -padx 2 -pady 0 -image up
     button $base.fra28.but33 \
         -command "incr vTcl(x,$base,size) -1" \
-        -padx 2 -pady 0 -text -
+        -padx 2 -pady 0 -image down
     label $base.lab41 \
         -borderwidth 1 \
         -text Sample
     frame $base.cpd43 \
-        -borderwidth 1 \
-        -relief raised -width 50
+        -borderwidth 0 \
+        -relief flat -width 50
     scrollbar $base.cpd43.01 \
         -command "$base.cpd43.03 xview" -cursor left_ptr \
         -orient horiz
@@ -238,14 +238,12 @@ proc vTcl:font:get_font_dlg {base font_desc} {
         -xscrollcommand "$base.cpd43.01 set" \
         -yscrollcommand "$base.cpd43.02 set"
     frame $base.fra27 \
-        -borderwidth 2 -height 75 \
-        -relief groove \
-        -width 125
+        -relief flat
     button $base.fra27.but28 \
-        -padx 9 -pady 3 -text OK \
+        -padx 9 -text OK -width 6 \
         -command "vTcl:font:button_ok $base"
     button $base.fra27.but29 \
-        -padx 9 -pady 3 -text Cancel \
+        -padx 9 -text Cancel -width 6 \
         -command "vTcl:font:button_cancel $base"
     ###################
     # SETTING GEOMETRY
@@ -310,11 +308,11 @@ proc vTcl:font:get_font_dlg {base font_desc} {
         -in $base.cpd43 -column 0 -row 0 -columnspan 1 -rowspan 1 \
         -sticky nesw
     pack $base.fra27 \
-        -in $base -anchor center -expand 0 -fill x -side top
+        -in $base -anchor center -side top -pady 2
     pack $base.fra27.but28 \
-        -in $base.fra27 -anchor center -expand 1 -fill x -side left
+        -in $base.fra27 -anchor center -padx 10 -pady 5 -side left
     pack $base.fra27.but29 \
-        -in $base.fra27 -anchor center -expand 1 -fill x -side right
+        -in $base.fra27 -anchor center -padx 10 -pady 5 -side right
 
     vTcl:font:fill_fonts $base
     vTcl:font:init_fontselect $base
