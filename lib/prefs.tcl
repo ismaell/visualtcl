@@ -195,25 +195,29 @@ proc {vTcl:prefs:data_exchange} {save_and_validate} {
     	prefs::projfile         $save_and_validate
     vTcl:data_exchange_var vTcl(pr,saveasexecutable) \
         prefs::saveasexecutable $save_and_validate
-    vTcl:data_exchange_var vTcl(pr,bgcolor) \
+    vTcl:data_exchange_var vTcl(pr,bgcolor)          \
         prefs::bgcolor $save_and_validate
-    vTcl:data_exchange_var vTcl(pr,entrybgcolor) \
+    vTcl:data_exchange_var vTcl(pr,entrybgcolor)     \
         prefs::entrybgcolor $save_and_validate
     vTcl:data_exchange_var vTcl(pr,entryactivecolor) \
         prefs::entryactivecolor $save_and_validate
-    vTcl:data_exchange_var vTcl(pr,listboxbgcolor) \
+    vTcl:data_exchange_var vTcl(pr,listboxbgcolor)   \
         prefs::listboxbgcolor $save_and_validate
-    vTcl:data_exchange_var vTcl(pr,treehighlight) \
+    vTcl:data_exchange_var vTcl(pr,treehighlight)    \
         prefs::treehighlight $save_and_validate
-    vTcl:data_exchange_var vTcl(pr,texteditor) \
+    vTcl:data_exchange_var vTcl(pr,texteditor)       \
         prefs::texteditor $save_and_validate
 
     if {$save_and_validate} {
-    	set vTcl(pr,font_dlg)   [font configure $prefs::font_dlg]
-	set vTcl(pr,font_fixed) [font configure $prefs::font_fixed]
+        set vTcl(pr,font_dlg)   [font configure $prefs::font_dlg]
+        set vTcl(pr,font_fixed) [font configure $prefs::font_fixed]
+
+        vTcl:prefs:saveLibs
     } else {
         eval font configure $prefs::font_dlg   [font actual $vTcl(pr,font_dlg)]
-	eval font configure $prefs::font_fixed [font actual $vTcl(pr,font_fixed)]
+        eval font configure $prefs::font_fixed [font actual $vTcl(pr,font_fixed)]
+
+        vTcl:prefs:fillLibs
     }
 }
 
@@ -495,18 +499,51 @@ proc vTcl:prefs:libs {tab} {
     set last [vTcl:formCompound:add $tab listbox -background white -selectmode multiple]
     pack configure $last -fill both -expand 1 -pady 5
 
+    set ::prefs::libsListbox $last
+    vTcl:prefs:fillLibs
+}
+
+proc vTcl:prefs:fillLibs {} {
+
+    ## not yet initialized?
+    if {![info exists ::prefs::libsListbox]} {
+        return
+    }
+
     set libs [glob -nocomplain [file join $::vTcl(VTCL_HOME) lib lib*.tcl]]
     set i 0
-    foreach load $::vTcl::toload {
+    foreach load [::vTcl::project::getLibrariesToLoad] {
         lappend toload [file tail $load]
     }
+    set listbox [set ::prefs::libsListbox]
+    $listbox delete 0 end
     foreach lib $libs {
         set item [file tail $lib]
-	$last insert end $item
-	if {[lsearch -exact $toload $item] != -1} {
-	    $last selection set $i
-	}
-	incr i
+        $listbox insert end $item
+        if {[lsearch -exact $toload $item] != -1} {
+            $listbox selection set $i
+        }
+        incr i
+    }
+}
+
+proc vTcl:prefs:saveLibs {} {
+    set listbox [set ::prefs::libsListbox]
+    set indices [$listbox curselection]
+
+    set libs ""
+    foreach index $indices {
+        lappend libs [$listbox get $index]
+    }
+
+    set before [::vTcl::project::getLibrariesToLoad]
+    ::vTcl::project::setLibrariesToLoad $libs
+    set after [::vTcl::project::getLibrariesToLoad]
+
+    if {$before != $after} {
+        ::vTcl::MessageBox -icon info \
+        -message "Library changes will be valid the next time you start vTcl." \
+            -title "Information" -type ok
     }
 }
 

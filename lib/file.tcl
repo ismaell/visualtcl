@@ -857,6 +857,24 @@ namespace eval vTcl::project {
 
         return [lsort -unique $result]
     }
-}
 
+    ## returns the list of requested libraries
+    proc getLibrariesToLoad {} {
+    	  set ::vTcl::toload ""
+        if {[info exists ::vTcl(pr,loadlibs)]} {
+            foreach lib $::vTcl(pr,loadlibs) {
+                lappend ::vTcl::toload [file join $::vTcl(LIB_DIR) $lib]
+            }
+        } else {
+            set ::vTcl::toload $::vTcl(LIB_WIDG)
+        }
+
+        return $::vTcl::toload
+    }
+
+    ## sets the list of request libraries (each lib is filename without path)
+    proc setLibrariesToLoad {libs} {
+        set ::vTcl(pr,loadlibs) $libs
+    }
+}
 

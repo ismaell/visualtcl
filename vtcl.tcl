@@ -102,35 +102,22 @@ proc vTcl:load_widgets {} {
 
     vTcl:splash_status "Loading widgets"
 
-    # ok, by default, we enable all the libraries to be loaded
-    # now let's check for a .vtcllibs file that tells us what the
-    # user wants to load (which can significantly reduce startup time)
-
-    if {[file exists $vTcl(LIB_FILE)]} {
-    	set ::vTcl::toload ""
-    	set inID [open $vTcl(LIB_FILE) r]
-    	set contents [split [read $inID] \n]
-    	close $inID
-
-    	foreach content $contents {
-	    if { [string trim $content] == ""} continue
-	    lappend ::vTcl::toload [file join $vTcl(LIB_DIR) $content]
-    	}
-    } else {
-	set ::vTcl::toload $vTcl(LIB_WIDG)
-    }
+    ## Query for the list of libs to load. Either from prefs or defaults
+    ## to all available libraries.
+    set toload [vTcl::project::getLibrariesToLoad]
 
     ## Make sure lib_core loads before all other widget libraries.
-    ::vTcl::lremove ::vTcl::toload *lib_core.tcl
-    set ::vTcl::toload [linsert $::vTcl::toload 0 lib_core.tcl]
+    ::vTcl::lremove toload *lib_core.tcl
+    set toload [linsert $toload 0 lib_core.tcl]
 
-    foreach i $::vTcl::toload {
+    foreach i $toload {
         set lib [lindex [split [file root $i] _] end]
         if {[vTcl:load_lib $i]} {
             set libname [lindex [split [lindex [file split $i] end] .] 0]
-	    ## If we don't have the library, don't load the widgets for it.
+        
+            ## If we don't have the library, don't load the widgets for it.
             if {![vTcl:$libname:init]} { continue }
-	    lappend vTcl(w,libs) $libname
+            lappend vTcl(w,libs) $libname
             vTcl:LoadWidgets [file join $vTcl(VTCL_HOME) lib Widgets $lib]
         }
     }
@@ -199,13 +186,15 @@ proc vTcl:setup {} {
     vTcl:splash
     vTcl:load_libs $LIBS
 
-    ::vTcl::load_bwidgets
-    vTcl:load_widgets
-    ::vTcl::load_bwidgets
+    ## load preferences
     if {[file exists $vTcl(CONF_FILE)]} {
         catch {uplevel #0 [list source $vTcl(CONF_FILE)]}
         catch {set vTcl(w,def_mgr) $vTcl(pr,manager)}
     }
+
+    ::vTcl::load_bwidgets
+    vTcl:load_widgets
+    ::vTcl::load_bwidgets
 
     # initializes the stock images database
     vTcl:image:init_stock
@@ -726,6 +715,7 @@ proc vTcl:main {argc argv} {
 }
 
 vTcl:main $argc $argv
+
 
 
 
