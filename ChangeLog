@@ -1,6 +1,10 @@
 ChangeLog for Visual Tcl:
 
 1.6.0a3 ->
+    o Fixed bug saving menubutton.
+    o Fixed bug when selecting a menu for the first time before selecting
+      a toplevel window.
+    o Added Set Multiline Text option for labels.
     o When a compound is created, it stores which libraries it is using
       (eg. tablelist, BLT, itcl, tix, ...).
     o Converted compounds to new system with namespaces.
@@ -967,6 +971,7 @@ ChangeLog for Visual Tcl:
     o And much, much more :)
 
 1.01 released (December 5, 1996)
+
 
 
 
