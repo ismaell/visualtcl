@@ -295,9 +295,9 @@ proc vTcl:right_click {widget X Y x y} {
 
     vTcl:active_widget $parent
     $vTcl(gui,rc_menu) post $X $Y
-    grab $vTcl(gui,rc_menu)
+    # grab $vTcl(gui,rc_menu)
     bind $vTcl(gui,rc_menu) <ButtonRelease> {
-        grab release $vTcl(gui,rc_menu)
+        # grab release $vTcl(gui,rc_menu)
 	vTcl:set_mouse_coords %X %Y %x %y
         $vTcl(gui,rc_menu) unpost
     }
