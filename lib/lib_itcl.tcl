@@ -29,10 +29,10 @@
 #   added support for new image/font managers
 #   made sure children are not dumped and not viewed in the widget tree
 #
-
 #
 # Initializes this library
 #
+
 proc vTcl:lib_itcl:init {} {
     global vTcl
 
@@ -86,26 +86,10 @@ proc vTcl:widget:lib:lib_itcl {args} {
     }
     }
 
-    set order {
-    	Entryfield
-	Spinint
-	Combobox
-	Scrolledlistbox
-	Calendar
-	Dateentry
-	Scrolledhtml
-	Toolbar
-	Feedback
-	Optionmenu
-	Hierarchy
-	Buttonbox
-	Checkbox
-	Radiobox
-	Labeledframe 
-	Tabnotebook
-	Panedwindow
-	Scrolledtext
-    }
+    set order {Entryfield Spinint Combobox Scrolledlistbox Calendar
+               Dateentry Scrolledhtml Toolbar Feedback Optionmenu
+               Hierarchy Buttonbox Checkbox Radiobox Labeledframe 
+               Tabnotebook Panedwindow Scrolledtext}
 
     vTcl:lib:add_widgets_to_toolbar $order
 
@@ -118,6 +102,27 @@ proc vTcl:widget:lib:lib_itcl {args} {
 
 proc vTcl:lib_itcl:setup {} {
     global vTcl tcl_platform
+
+    #
+    # additional attributes to set on insert
+    #
+    set vTcl(scrolledlistbox,insert)    "-labeltext {Label:} "
+    set vTcl(combobox,insert)           "-labeltext {Label:} "
+    set vTcl(entryfield,insert)         "-labeltext {Label:} "
+    set vTcl(spinint,insert)            "-labeltext {Label:} -range {0 10} -step 1"
+    set vTcl(calendar,insert)           ""
+    set vTcl(dateentry,insert)	        "-labeltext {Selected date:}"
+    set vTcl(scrolledhtml,insert)       ""
+    set vTcl(toolbar,insert)            ""
+    set vTcl(feedback,insert)           "-labeltext {Percent complete:}"
+    set vTcl(optionmenu,insert)         "-labeltext {Select option:}"
+    set vTcl(hierarchy,insert)          ""
+    set vTcl(buttonbox,insert)          ""
+    set vTcl(checkbox,insert)           ""
+    set vTcl(radiobox,insert)           ""
+    set vTcl(tabnotebook,insert)        ""
+    set vTcl(panedwindow,insert)        ""
+    set vTcl(scrolledtext,insert)       ""
 
     set vTcl(option,translate,-textfont) vTcl:font:translate
     set vTcl(option,noencase,-textfont) 1
@@ -154,6 +159,66 @@ proc vTcl:lib_itcl:setup {} {
     # see save_option proc below for resolution
 }
 
+#
+# individual widget commands executed after insert
+#
+
+proc vTcl:widget:toolbar:inscmd {target} {
+
+    global env
+
+    return "$target add button open \
+        -balloonstr \"Open\" \
+        -image [vTcl:image:get_image $env(VTCL_HOME)/images/edit/open.gif] \
+        -command {tk_messageBox -message {TODO: Command handler here!}}"
+}
+
+proc vTcl:widget:optionmenu:inscmd {target} {
+
+    return "$target insert 0 {Choice 1} {Choice 2} {Choice 3}"
+}
+
+proc vTcl:widget:buttonbox:inscmd {target} {
+
+    return "$target add ok     -text OK ;\
+            $target add cancel -text Cancel ;\
+            $target add help   -text Help"
+}
+
+proc vTcl:widget:checkbox:inscmd {target} {
+
+    return "$target add check1   -text {Check 1} ;\
+            $target add check2   -text {Check 2} ;\
+            $target add check3   -text {Check 3}"
+}
+
+proc vTcl:widget:radiobox:inscmd {target} {
+
+    return "$target add radio1   -text {Radio 1} ;\
+            $target add radio2   -text {Radio 2} ;\
+            $target add radio3   -text {Radio 3}"
+}
+
+proc vTcl:widget:tabnotebook:inscmd {target} {
+
+    return "$target add -label {Page 1} ;\
+            $target add -label {Page 2} ;\
+            $target add -label {Page 3} ;\
+            $target select 0"
+}
+
+proc vTcl:widget:panedwindow:inscmd {target} {
+
+    return "$target add pane1; $target add pane2"
+}
+
+proc vTcl:widget:combobox:inscmd {target} {
+
+    return "$target insert list end {Item 1}; \
+            $target insert list end {Item 2}; \
+            $target insert list end {Item 3}"
+}
+
 # Utility proc.  Dump a megawidget's children, but not those that are
 # part of the megawidget itself.  Differs from vTcl:dump:widgets in that
 # it dumps the geometry of $subwidget, but it doesn't dump $subwidget
@@ -178,3 +243,5 @@ proc vTcl:lib_itcl:dump_subwidgets {subwidget} {
     append output $geometry
     return $output
 }
+
+

@@ -7,5 +7,5 @@ InsertCmd	vTcl:widget:entry:inscmd
 TreeLabel	@vTcl:core:get_widget_tree_label
 
 proc vTcl:widget:entry:inscmd {target} {
-    $target insert end entry
+    return "$target insert end entry"
 }

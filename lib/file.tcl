@@ -559,13 +559,10 @@ proc vTcl:save_prefs {} {
 
     if {![info exists vTcl(rcFiles)]} { set vTcl(rcFiles) {} }
     append output "set vTcl(rcFiles) \[list $vTcl(rcFiles)\]\n"
-    if {[catch {open $vTcl(CONF_FILE) w} fp]} {
-    	set vTcl(CONF_FILE) [file join $vTcl(VTCL_HOME) .vtclrc]
-	catch {open $vTcl(CONF_FILE) w} fp
-    }
     catch {
-        puts $fp $output
-        close $fp
+        set file [open $vTcl(CONF_FILE) w]
+        puts $file $output
+        close $file
     }
 }
 

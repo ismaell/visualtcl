@@ -779,7 +779,8 @@ proc vTcl:lib:add_widgets_to_toolbar {list} {
 	    vTcl:$i:ToolBarSetup
 	    continue
 	}
-	vTcl:toolbar_add $i $classes($i,balloon) $classes($i,icon)
+	vTcl:toolbar_add $i $classes($i,balloon) \
+	    $classes($i,icon) $classes($i,addOptions)
     }
 }
 

@@ -14,10 +14,12 @@ TreeChildrenCmd     "vTcl:widget:tixNotebook:treeChildrenCmd \
 proc vTcl:widget:tixNoteBook:inscmd {target} {
     # Add two pages to start with.  Unfortunately, additional pages have
     # to be added manually by the user, and the project re-read into vtcl.
-    $target add page1 -label {Page 1};
-    $target add page2 -label {Page 2};
-    $target subwidget page1 configure -width 30 -height 30;
-    $target subwidget page2 configure -width 30 -height 30;
+    return "
+        $target add page1 -label {Page 1};
+        $target add page2 -label {Page 2};
+        $target subwidget page1 configure -width 30 -height 30;
+        $target subwidget page2 configure -width 30 -height 30;
+    "
 }
 
 # All right, I explain it: -1 is the number of levels

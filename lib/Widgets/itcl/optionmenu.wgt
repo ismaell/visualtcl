@@ -5,9 +5,3 @@ CreateCmd	::iwidgets::optionmenu
 Icon		icon_optionmenu.gif
 DumpChildren	no
 MegaWidget	yes
-InsertCmd	vTcl:widget:inscmd:optionmenu
-
-proc vTcl:widget:inscmd:optionmenu {target} {
-    $target configure -labeltext "Select option:"
-    $target insert 0 {Choice 1} {Choice 2} {Choice 3}
-}

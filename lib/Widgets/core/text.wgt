@@ -7,5 +7,5 @@ InsertCmd	vTcl:widget:text:inscmd
 TreeLabel	Text Widget
 
 proc vTcl:widget:text:inscmd {target} {
-    $target insert end text
+    return "$target insert end text"
 }

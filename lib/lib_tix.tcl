@@ -21,29 +21,6 @@
 # Architecture by Stewart Allen
 # Implementation by Kenneth H. Cox <kcox@senteinc.com>
 
-#
-# Initializes this library
-#
-proc vTcl:lib_tix:init {} {
-    global vTcl
-
-    rename option _option
-    rename vTcl:lib_tix:ignore_option option
-
-    if {[catch {package require Tix} erg]} {
-        lappend vTcl(libNames) {(not detected) Tix Widget Support Library}
-        rename option vTcl:lib_tix:ignore_option
-        rename _option option
-        return 0
-    }
-
-    rename option vTcl:lib_tix:ignore_option
-    rename vTcl:lib_tix:monitor_option option
-
-    lappend vTcl(libNames) {Tix Widget Support Library}
-    return 1
-}
-
 proc vTcl:widget:lib:lib_tix {args} {
     global vTcl
 
@@ -136,6 +113,29 @@ proc vTcl:lib_tix:monitor_option {cmd args} {
     } else {
         _option add $pattern $value $priority
     }
+}
+
+#
+# Initializes this library
+#
+proc vTcl:lib_tix:init {} {
+    global vTcl
+
+    rename option _option
+    rename vTcl:lib_tix:ignore_option option
+
+    if {[catch {package require Tix} erg]} {
+        lappend vTcl(libNames) {(not detected) Tix Widget Support Library}
+        rename option vTcl:lib_tix:ignore_option
+        rename _option option
+        return 0
+    }
+
+    rename option vTcl:lib_tix:ignore_option
+    rename vTcl:lib_tix:monitor_option option
+
+    lappend vTcl(libNames) {Tix Widget Support Library}
+    return 1
 }
 
 #

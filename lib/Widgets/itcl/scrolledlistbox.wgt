@@ -5,8 +5,3 @@ CreateCmd	::iwidgets::scrolledlistbox
 Icon		icon_scrolledlistbox.gif
 DumpChildren	no
 MegaWidget	yes
-InsertCmd	vTcl:widget:scrolledlistbox:inscmd
-
-proc vTcl:widget:scrolledlistbox:inscmd {target} {
-    $target configure -labeltext "Label:"
-}
