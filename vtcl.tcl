@@ -155,7 +155,7 @@ proc ::vTcl::load_bwidgets {} {
 proc vTcl:setup {} {
     global tk_strictMotif env vTcl tcl_platform __vtlog
 
-    set vTcl(version)   1.51
+    set vTcl(version)   1.60
 
     if {$env(VTCL_HOME) == ""} {
         set vTcl(VTCL_HOME) [pwd]
