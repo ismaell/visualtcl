@@ -369,13 +369,16 @@ namespace eval ::vTcl::news {
 	    -cursor arrow
 	::vTcl::OkButton $base.b -anchor center -command "Window hide $base"
 
+	label $base.l -anchor w
+
 	###################
 	# SETTING GEOMETRY
 	###################
 	pack $base.b \
 	    -in $base -anchor e -expand 0 -fill none -side top 
+	pack $base.l -side bottom -fill x
 	pack $base.f \
-	    -in $base -anchor center -expand 1 -fill both -side bottom 
+	    -in $base -anchor center -expand 1 -fill both -side top
 	grid columnconf $base.f 0 -weight 1
 	grid rowconf $base.f 0 -weight 1
 	grid $base.f.hs \
@@ -415,6 +418,8 @@ namespace eval ::vTcl::news {
 		    	-background white -foreground blue -font link \
 			-cursor hand1]
 		    bind $l <Button-1> "exec [::vTcl::web_browser] $link &"
+		    bind $l <Enter> "$base.l configure -text $link"
+		    bind $l <Leave> "$base.l configure -text {}"
 		    $base.f.t window create end -window $l
 		    $base.f.t insert end \n
 		}
