@@ -623,6 +623,8 @@ proc vTcl:prop:clear {} {
 
     if {![winfo exists $vTcl(gui,ae)]} return
 
+    vTcl:propmgr:deselect_attr
+
     if {![winfo exists $vTcl(gui,ae).c]} {
         frame $vTcl(gui,ae).c
         pack $vTcl(gui,ae).c

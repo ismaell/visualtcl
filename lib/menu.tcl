@@ -111,6 +111,7 @@ set vTcl(menu,help) {
     {{Index of &Help...}    {}         vTclWindow.vTcl.help       }
     {separator              {}         {}                         }
     {{&Tip of the day...}   {}         {Window show .vTcl.tip}    }
+    {{Visual Tcl &News}     {}         {::vTcl::news::get_news}   }
 }
 
 proc vTcl:menu:insert {menu name {root ""}} {

@@ -61,5 +61,3 @@ proc vTcl:redo_action {} {
         vTcl:dialog "Nothing to redo!"
     }
 }
-
-

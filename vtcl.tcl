@@ -622,45 +622,47 @@ proc vTcl:main {argc argv} {
         button .f.b -text "Bummer!" -command {exit}
         pack .f.l1 .f.l2 -side top -padx 5
         pack .f.b -side top -pady 5
-    } else {
-        if {$tcl_platform(platform) == "macintosh"} {
-            set vTcl(VTCL_HOME) $env(HOME)
-        }
-        if {![info exists env(VTCL_HOME)]} {
-            set home [file dirname [info script]]
-            switch [file pathtype $home] {
-                absolute {set env(VTCL_HOME) $home}
-                relative {set env(VTCL_HOME) [file join [pwd] $home]}
-                volumerelative {
-                    set curdir [pwd]
-                    cd $home
-                    set env(VTCL_HOME) [file join [pwd] [file dirname \
-                        [file join [lrange [file split $home] 1 end]]]]
-                    cd $curdir
-                }
-            }
-        }
-        if {![file isdir $env(VTCL_HOME)]} { set vTcl(VTCL_HOME) [pwd] }
-        vTcl:setup
-        if {$argc > 0} {
-	    set file [lindex $argv end]
-            if {[file exists $file]} {
-                vTcl:open $file
-            } elseif {[file exists [file join [pwd] $file]]} {
-                vTcl:open [file join [pwd] $file]
-            }
-        }
-
-	# @@change by Christian Gavin 3/5/2000
-	# autoloading of compounds if "Preferences" options enabled
-
-	if [info exists vTcl(pr,autoloadcomp)] {
-	    if {$vTcl(pr,autoloadcomp)} {
-		vTcl:load_compounds $vTcl(pr,autoloadcompfile)
-	    }
-        }
-        # @@end_change
+	return
     }
+
+    if {$tcl_platform(platform) == "macintosh"} {
+	set vTcl(VTCL_HOME) $env(HOME)
+    }
+
+    if {![info exists env(VTCL_HOME)]} {
+	set home [file dirname [info script]]
+	switch [file pathtype $home] {
+	    absolute {set env(VTCL_HOME) $home}
+	    relative {set env(VTCL_HOME) [file join [pwd] $home]}
+	    volumerelative {
+		set curdir [pwd]
+		cd $home
+		set env(VTCL_HOME) [file join [pwd] [file dirname \
+		    [file join [lrange [file split $home] 1 end]]]]
+		cd $curdir
+	    }
+	}
+    }
+    if {![file isdir $env(VTCL_HOME)]} { set vTcl(VTCL_HOME) [pwd] }
+    vTcl:setup
+    if {$argc > 0} {
+	set file [lindex $argv end]
+	if {[file exists $file]} {
+	    vTcl:open $file
+	} elseif {[file exists [file join [pwd] $file]]} {
+	    vTcl:open [file join [pwd] $file]
+	}
+    }
+
+    # @@change by Christian Gavin 3/5/2000
+    # autoloading of compounds if "Preferences" options enabled
+
+    if [info exists vTcl(pr,autoloadcomp)] {
+	if {$vTcl(pr,autoloadcomp)} {
+	    vTcl:load_compounds $vTcl(pr,autoloadcompfile)
+	}
+    }
+    # @@end_change
 
     vTcl:splash_status "              vTcl Loaded" -nodots
     after 1000 "destroy .x"
@@ -668,6 +670,8 @@ proc vTcl:main {argc argv} {
     if {[info exists vTcl(pr,dontshowtips)]} {
         if {!$vTcl(pr,dontshowtips) } { Window show .vTcl.tip }
     }
+
+    after 5000 ::vTcl::news::get_news
 }
 
 vTcl:main $argc $argv

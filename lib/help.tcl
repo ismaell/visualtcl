@@ -300,3 +300,128 @@ namespace eval ::tip {
         return [lindex $Tips $Index]
     }
 }
+
+namespace eval ::vTcl::news {
+    variable http	""
+    variable URL	"http://www.unreality.com/vtcl/news.txt"
+
+    proc ::vTcl::news::Init {} {
+	variable http
+        if {[catch {package require http} error]} { return 0 }
+
+	set http ::http::geturl
+	if {$error < 2.3} { set http http_get }
+	return 1
+    }
+
+    proc ::vTcl::news::get_news {} {
+	variable http
+	variable URL
+
+    	if {![::vTcl::news::Init]} { return }
+
+	if {[catch {$http $URL -timeout 30000} token]} { return }
+	upvar #0 $token state
+
+	## If we didn't get the file successfully, bail out.
+	if {[lindex $state(http) 1] != 200} { return }
+
+	::vTcl::news::display_news $state(body)
+    }
+
+    proc ::vTcl::news::display_news {string} {
+	set base .vTcl.news
+
+	if {[winfo exists $base]} {
+	    ::vTcl::news::parse_news $base $string
+	    wm deiconify $base
+	    return
+	}
+
+	###################
+	# CREATING WIDGETS
+	###################
+	toplevel $base -class Toplevel
+	wm transient $base .vTcl
+	wm withdraw $base
+	wm focusmodel $base passive
+	wm geometry $base 494x257+214+102; update
+	wm maxsize $base 1028 753
+	wm minsize $base 104 1
+	wm overrideredirect $base 0
+	wm resizable $base 0 0
+	vTcl:center $base 494 257
+	wm deiconify $base
+	wm title $base "Visual Tcl News"
+
+	frame $base.f \
+	    -borderwidth 1 -height 78 -relief raised -width 75 
+	scrollbar $base.f.hs \
+	    -command "$base.f.t xview" -orient horizontal
+	scrollbar $base.f.vs \
+	    -command "$base.f.t yview" -orient vertical
+	text $base.f.t -background white -wrap none \
+	    -xscrollcommand "$base.f.hs set" \
+	    -yscrollcommand "$base.f.vs set" \
+	    -cursor arrow
+	button $base.b \
+	    -anchor center \
+	    -image [vTcl:image:get_image ok.gif] \
+	    -command "
+		wm withdraw $base
+	    "
+
+	###################
+	# SETTING GEOMETRY
+	###################
+	pack $base.b \
+	    -in $base -anchor e -expand 0 -fill none -side top 
+	pack $base.f \
+	    -in $base -anchor center -expand 1 -fill both -side bottom 
+	grid columnconf $base.f 0 -weight 1
+	grid rowconf $base.f 0 -weight 1
+	grid $base.f.hs \
+	    -in $base.f -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew
+	grid $base.f.vs \
+	    -in $base.f -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns
+	grid $base.f.t \
+	    -in $base.f -column 0 -row 0 -columnspan 1 -rowspan 1 -sticky nesw 
+
+	wm protocol $base WM_DELETE_WINDOW "$base.b invoke"
+
+	font create link -family Arial -size 10 -underline 1
+
+	::vTcl::news::parse_news $base $string
+    }
+
+    proc ::vTcl::news::parse_news {base string} {
+	global env
+
+	foreach child \[$base.f.t window names] { destroy \$child }
+
+	$base.f.t configure -state normal
+	$base.f.t delete 0.0 end
+
+	set lines [split [string trim $string] \n]
+	set  i 0
+	foreach line $lines {
+	    if {[lempty $line]} { continue }
+	    if {[string index $line 0] == "#"} { continue }
+	    lassign $line command date text link
+	    set text "$date - $text"
+	    
+	    incr i
+	    switch -- $command {
+	    	"News"	{
+		    set l [label $base.f.t.link$i -text $text \
+		    	-background white -foreground blue -font link \
+			-cursor hand1]
+		    bind $l <Button-1> "exec [::vTcl::web_browser] $link &"
+		    $base.f.t window create $i.0 -window $l
+		    $base.f.t insert end \n
+		}
+	    }
+	}
+	$base.f.t configure -state disabled
+    }
+}

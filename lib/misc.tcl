@@ -1239,6 +1239,8 @@ proc vTcl:show_console {{show show}} {
 proc ::vTcl::InitTkcon {} {
     if {[catch {winfo exists $::tkcon::PRIV(root)}]} {
     	::tkcon::Init
+	## Attach ourselves to the main vTcl interp.
+	::tkcon::Attach Main slave
 	tkcon title "Visual Tcl"
     }	
 }
@@ -1256,4 +1258,22 @@ proc vTcl:WidgetVar {w varName {newVar ""}} {
     if {[lempty $newVar]} { set newVar $varName }
     uplevel 1 "upvar #0 ::widgets::${w}::$varName $newVar"
     return [info exists ::widgets::${w}::$varName]
+}
+
+proc ::vTcl::web_browser {} {
+    global env tcl_platform
+
+    if {$tcl_platform(platform) == "windows"} {
+    	foreach elem [array names env] {
+	    if {[string tolower $elem] == "comspec"} {
+		regsub -all {\\} $env($elem) {\\\\} comspec
+	    	return "$comspec /c start"
+	    }
+	}
+    }
+
+    foreach path [split $env(PATH) :] {
+    	if {![file executable [file join $path netscape]]} { continue }
+	return [file join $path netscape]
+    }
 }
