@@ -231,15 +231,19 @@ proc vTcl:key_release_cmd {W k} {
 }
 
 proc vTcl:focus_out_cmd {} {
+    global vTcl
 
     set names [array names ::vTcl::config]
     foreach w $names {
         if {![winfo exists $w]} {
             continue
         }
+        set old $vTcl(w,widget)
         catch {
-            uplevel #0 $::vTcl::config($w)
+            set vTcl(w,widget) $w
+            eval $::vTcl::config($w)
         }
+        set vTcl(w,widget) $old
         unset ::vTcl::config($w)
     }
 
