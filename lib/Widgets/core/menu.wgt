@@ -36,63 +36,63 @@ NewOption -postcommand      "post cmd"      command
 NewOption -tearoffcommand   "tearoff cmd"   command
 NewOption -title            "title"         type
 
-DeleteCmd  vTcl:Menu:delete_menu
-GetImagesCmd vTcl::widgets::core::menu::getImagesCmd
-GetFontsCmd  vTcl::widgets::core::menu::getFontsCmd
-
-proc vTcl:Menu:delete_menu {m} {
-
-    # this will be used later
-    set editor [::menu_edit::is_open_existing_editor $m]
-
-    ::menu_edit::delete_menu_recurse $m
-
-    # well, this is not enough to destroy the menu itself,
-    # we better tell its parent that it's not there as well
-
-    set items [split $m .]
-    set items [lrange $items 0 [expr [llength $items] - 2] ]
-
-    set parent [join $items .]
-
-    # now, let's see if the parent contains the child menu (should)
-
-    set class [vTcl:get_class $parent]
-    if {$class == "Toplevel"} then {
-        # it's a toplevel, just removes its menu
-        $parent configure -menu ""
-
-        # closes any open menu editor for this menu
-        if {$editor != ""} {
-            destroy $editor}
-
-        return
-    }
-
-    if {$class != "Menu"} then return
-
-    set last [$parent index end]
-
-    for {set i 0} {$i <= $last} {incr i} {
-        set mtype [$parent type $i]
-        if {$mtype != "cascade"} then continue
-
-        set submenu [$parent entrycget $i -menu]
-        if {$submenu == $m} then {
-            # this is the one
-            $parent delete $i
-            break
-        }
-    }
-
-    # now, we will refresh any possibly open menu editor
-
-    if {$editor != ""} {
-        ::menu_edit::refreshes_existing_editor $editor
-    }
-}
+DumpCmd       vTcl::widgets::core::menu::dumpCmd
+DeleteCmd     vTcl::widgets::core::menu::deleteMenu
+GetImagesCmd  vTcl::widgets::core::menu::getImagesCmd
+GetFontsCmd   vTcl::widgets::core::menu::getFontsCmd
 
 namespace eval vTcl::widgets::core::menu {
+
+    proc deleteMenu {m} {
+        # this will be used later
+        set editor [::menu_edit::is_open_existing_editor $m]
+
+        ::menu_edit::delete_menu_recurse $m
+
+        # well, this is not enough to destroy the menu itself,
+        # we better tell its parent that it's not there as well
+
+        set items [split $m .]
+        set items [lrange $items 0 [expr [llength $items] - 2] ]
+
+        set parent [join $items .]
+
+        # now, let's see if the parent contains the child menu (should)
+
+        set class [vTcl:get_class $parent]
+        if {$class == "Toplevel"} then {
+                # it's a toplevel, just removes its menu
+                $parent configure -menu ""
+
+                # closes any open menu editor for this menu
+                if {$editor != ""} {
+                destroy $editor}
+
+                return
+        }
+
+        if {$class != "Menu"} then return
+
+        set last [$parent index end]
+
+        for {set i 0} {$i <= $last} {incr i} {
+                set mtype [$parent type $i]
+                if {$mtype != "cascade"} then continue
+
+                set submenu [$parent entrycget $i -menu]
+                if {$submenu == $m} then {
+                # this is the one
+                $parent delete $i
+                break
+                }
+        }
+
+        # now, we will refresh any possibly open menu editor
+
+        if {$editor != ""} {
+                ::menu_edit::refreshes_existing_editor $editor
+        }
+    }
 
     proc getImagesCmd {target} {
         set result {}
@@ -109,5 +109,37 @@ namespace eval vTcl::widgets::core::menu {
     proc getFontsCmd {target} {
         ## fonts not yet supported in menu editor
         return {}
+    }
+
+    proc dumpCmd {target basename} {
+        ## discard temporary items
+        if {[string first .# $target] >= 0} {
+            return ""
+        }
+        global vTcl
+        set entries [$target index end]
+        if {$entries == "none"} {return}
+
+        ## first dump the menu widget
+        set result [vTcl:dump_widget_opt $target $basename]
+
+        ## then all its submenus
+        for {set index 0} {$index <= $entries} {incr index} {
+            set conf [$target entryconf $index]
+            set type [$target type $index]
+            switch $type {
+                tearoff {}
+                separator {
+                    append result "$vTcl(tab)$basename add separator\n"
+                }
+                default {
+                    # to allow option translation
+                    set pairs [vTcl:get_subopts_special $conf $target]
+                    append result "$vTcl(tab)$basename add $type \\\n"
+                    append result "[vTcl:clean_pairs $pairs]\n"
+                }
+            }
+        }
+        return $result
     }
 }

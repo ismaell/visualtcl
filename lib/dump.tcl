@@ -327,11 +327,10 @@ proc vTcl:dump_widget_opt {target basename} {
     set class [vTcl:get_class $target]
     set opt [$target configure]
 
-    ## Let's be safe and force wm for toplevel windows.  Just incase...
+    ## Let's be safe and force wm for toplevel windows.  Just in case...
     if {$class == "Toplevel"} { set mgr wm }
 
     if {$target != "."} {
-        if {$class == "Menu" && [string first .# $target] >= 0} { return }
         set result "$vTcl(tab)$classes($class,createCmd) "
         append result "$basename"
 
@@ -362,19 +361,11 @@ proc vTcl:dump_widget_opt {target basename} {
         }
     }
     if {$mgr == "wm"} then {
-        if {$class == "Menu"} then {
-            append result [vTcl:dump_menu_widget $target $basename]
-        } else {
+        if {$class == "Toplevel"} then {
             append result [vTcl:dump_top_widget $target $basename]
         }
     } elseif {$mgr == "menubar"} then {
         return ""
-    } elseif {$mgr == "place" && $class == "Menu"} then {
-
-        # this is a weird bug where the window manager switches
-        # from 'wm' to 'place' for a menu, so we need to save the
-        # menu anyway
-        append result [vTcl:dump_menu_widget $target $basename]
     }
 
     append result [vTcl:dump_widget_bind $target $basename]
@@ -510,34 +501,6 @@ proc vTcl:dump_widget_bind {target basename} {
         }
     }
     bindtags $target vTcl(b)
-    return $result
-}
-
-proc vTcl:dump_menu_widget {target basename} {
-    global vTcl tk_version
-    set entries [$target index end]
-    if {$entries == "none"} {return}
-    set result ""
-    for {set index 0} {$index <= $entries} {incr index} {
-        set conf [$target entryconf $index]
-        set type [$target type $index]
-        switch $type {
-            tearoff {}
-            separator {
-                append result "$vTcl(tab)$basename add separator\n"
-            }
-            default {
-                # set pairs [vTcl:conf_to_pairs $conf ""]
-
-                # to allow option translation
-                set pairs [vTcl:get_opts_special $conf $target \
-                    "-menu -label -image -command -tearoff -accelerator -value -onvalue -offvalue -variable"]
-
-                append result "$vTcl(tab)$basename add $type \\\n"
-                append result "[vTcl:clean_pairs $pairs]\n"
-            }
-        }
-    }
     return $result
 }
 

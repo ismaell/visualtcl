@@ -8,11 +8,105 @@ DumpCmd         vTcl:dump:tixNoteBook
 CompoundCmd     vTcl:compound:tixNoteBook
 DumpChildren    no
 MegaWidget      yes
+DefaultValues   -background
 InsertCmd       vTcl:widget:tixNoteBook:inscmd
 DeleteSiteCmd   vTcl:widget:tixNotebook:deleteSiteCmd
 SelectSiteCmd   vTcl:widget:tixNotebook:selectSiteCmd
 TreeChildrenCmd     "vTcl:widget:tixNotebook:treeChildrenCmd \
                      vTcl:widget:tixNotebook:treeChildrenChildsite"
+
+## Tabbed notebook support
+NewOption -_tix_notebook_pages  "pages"  combobox
+ClassOption -_tix_notebook_pages
+OptionConfigCmd -_tix_notebook_pages     config     vTcl::widgets::tix::notebook::config_pages
+OptionConfigCmd -_tix_notebook_pages     update     vTcl::widgets::tix::notebook::update_pages
+OptionConfigCmd -_tix_notebook_pages     get        vTcl::widgets::tix::notebook::get_pages
+OptionConfigCmd -_tix_notebook_pages     select     vTcl::widgets::tix::notebook::select_page
+OptionConfigCmd -_tix_notebook_pages     edit       vTcl::itemEdit::edit
+OptionConfigCmd -_tix_notebook_pages     editArg    vTcl::widgets::tix::notebook::edit
+
+namespace eval vTcl::widgets::tix::notebook::edit {
+
+    proc getTitle {target} {
+        return "Edit pages for $target"
+    }
+
+    proc getLabelOption {} {
+        return -label
+    }
+
+    proc getItems {target} {
+        ## first item in the list is the current index
+        set pages [$target pages]
+        set current [lsearch -exact $pages [$target raised]]
+        set values $current
+        foreach page $pages {
+            lappend values [$target pagecget $page -label]
+        }
+        return $values
+    }
+
+    proc addItem {target} {
+        set index 0
+        set pages [$target pages]
+        ## repeat until we find an unused page number
+        while {1} {
+            incr index
+            set newpage "page$index"
+            if {[lsearch -exact $pages $newpage] == -1} break
+        }
+        $target add $newpage -label "Page $index"
+        $target raise $newpage
+        vTcl:init_wtree
+        return "Page $index"
+    }
+
+    proc removeItem {target index} {
+        error "Not implemented"
+    }
+
+    proc itemConfigure {target index args} {
+        set pages [$target pages]
+        set page [lindex $pages $index]
+        if {$args == ""} {
+            return [$target pageconfigure $page]
+        } else {
+            eval $target pageconfigure $page $args
+        }
+    }
+
+    proc moveUpOrDown {target index direction} {
+        error "Not implemented"
+    }
+}
+
+namespace eval vTcl::widgets::tix::notebook {
+
+    proc update_pages {target var} {
+        ## there is a trace on var to update the combobox
+        ## first item in the list is the current index
+        set pages [$target pages]
+        set current [lsearch -exact $pages [$target raised]]
+        set values $current
+        foreach page $pages {
+            lappend values [$target pagecget $page -label]
+        }
+
+        ## this will trigger the trace
+        set ::$var $values
+   }
+
+    proc config_pages {target var} {
+    }
+
+    proc get_pages {target} {
+    }
+
+    proc select_page {target index} {
+        set pages [$target pages]
+        $target raise [lindex $pages $index]
+    }
+}
 
 proc vTcl:widget:tixNoteBook:inscmd {target} {
     # Add three pages to start with.  Unfortunately, additional pages have

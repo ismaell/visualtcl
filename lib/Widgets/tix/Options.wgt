@@ -6,7 +6,7 @@ NewOption -allowzero		"allow zero"		longname choice "1 0"
 NewOption -before		"before"		longname type
 NewOption -browsecmd		"browse cmd"		longname command
 NewOption -buttons		"buttons"		longname type
-NewOption -createcmd		"create cmd"		longname type
+NewOption -createcmd		"create cmd"		command
 NewOption -dynamicgeometry	"dymanic geometry"	longname choice "1 0"
 NewOption -editable		"editable"		longname choice "0 1"
 NewOption -expand		"expand"		longname type
@@ -29,7 +29,7 @@ NewOption -postcmd		"post cmd"		longname command
 NewOption -prunehistory		"prune history"		longname choice \
   "false true"
 NewOption -radio		"radio"			longname choice "0 1"
-NewOption -raisecmd		"raise cmd"		longname command
+NewOption -raisecmd		"raise cmd"		command
 NewOption -scrollbar		"scrollbar"		longname choice \
   "auto both none x y"
 NewOption -separatoractivebg	"separator activebg"	longname type
