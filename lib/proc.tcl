@@ -133,11 +133,12 @@ proc vTcl:update_proc_list {{name {}}} {
 #
 proc vTcl:ignore_procname_when_sourcing {name} {
     global vTcl
-    if [regexp "^($vTcl(proc,ignore))" $name] {
-        return 1
-    } else {
-        return 0
-    }
+	foreach ignore $vTcl(proc,ignore) {
+	    if {[string match $ignore $name]} {
+		    return 1
+		}
+	}
+    return 0
 }
 
 # kc: during File->Save, determine if proc $name should be saved.  Used
@@ -149,7 +150,7 @@ proc vTcl:ignore_procname_when_sourcing {name} {
 proc vTcl:ignore_procname_when_saving {name} {
     global vTcl
     set len [expr [string length $vTcl(winname)] - 1]
-    if {[regexp "^($vTcl(proc,ignore))" $name] \
+    if {[vTcl:ignore_procname_when_sourcing $name] \
             || ([string range $name 0 $len] == "$vTcl(winname)")} {
         return 1
     } else {

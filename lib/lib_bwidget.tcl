@@ -73,15 +73,17 @@ proc vTcl:widget:lib:lib_bwidget {args} {
     }
 
     ## Commands to ignore
-    append vTcl(proc,ignore) "|::ArrowButton::.*"
-    append vTcl(proc,ignore) "|::DynamicHelp::.*"
-    append vTcl(proc,ignore) "|::NoteBook::.*"
-    append vTcl(proc,ignore) "|::ComboBox::.*"
-    append vTcl(proc,ignore) "|::DragSite::.*"
-    append vTcl(proc,ignore) "|::DropSite::.*"
-    append vTcl(proc,ignore) "|::Entry::.*"
-    append vTcl(proc,ignore) "|::PanedWindow::.*"
-    append vTcl(proc,ignore) "|ArrowButton|NoteBook|ComboBox|Entry|PanedWindow"
+    lappend vTcl(proc,ignore) "::ArrowButton::*"
+    lappend vTcl(proc,ignore) "::DynamicHelp::*"
+    lappend vTcl(proc,ignore) "::NoteBook::*"
+    lappend vTcl(proc,ignore) "::ComboBox::*"
+    lappend vTcl(proc,ignore) "::DragSite::*"
+    lappend vTcl(proc,ignore) "::DropSite::*"
+    lappend vTcl(proc,ignore) "::Entry::*"
+    lappend vTcl(proc,ignore) "::PanedWindow::*"
+    lappend vTcl(proc,ignore) "::BWLabel::*"
+    lappend vTcl(proc,ignore) "::LabelFrame::*"
+    lappend vTcl(proc,ignore) ArrowButton NoteBook ComboBox Entry PanedWindow Label LabelFrame
 }
 
 namespace eval vTcl::widgets::bwidgets {

@@ -38,5 +38,5 @@ proc vTcl:widget:lib:lib_vtcl {args} {
     vTcl:lib:add_widgets_to_toolbar $order
 
     global vTcl
-    append vTcl(proc,ignore) "|::progressbar::Trace.*"
+    lappend vTcl(proc,ignore) "::progressbar::Trace*"
 }

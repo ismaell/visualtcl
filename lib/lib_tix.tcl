@@ -155,7 +155,7 @@ proc vTcl:lib_tix:setup {} {
         append vTcl(bind,ignore) "|tix"
     }
 
-    append vTcl(proc,ignore) "|tix"
+    lappend vTcl(proc,ignore) "tix*"
     append vTcl(var,ignore)  "|tix"
 }
 

@@ -84,10 +84,10 @@ proc vTcl:widget:lib:lib_itcl {args} {
 
     vTcl:lib:add_widgets_to_toolbar $order
 
-    append vTcl(proc,ignore) "|::iwidgets::.*"
+    lappend vTcl(proc,ignore) "::iwidgets::*"
 
     foreach cmd [string tolower $order] {
-        append vTcl(proc,ignore) "|$cmd"
+        lappend vTcl(proc,ignore) "$cmd"
     }
 
     button .tmp

@@ -3,5 +3,49 @@ Lib		bwidget
 
 Icon		icon_BwLabelFrame.gif
 TreeLabel	BWidget LabelFrame
-CreateCmd	LabelFrame
+CreateCmd        LabelFrame
+DefaultOptions   -text "Label" -borderwidth 1
 MegaWidget	yes
+TreeChildrenCmd   {vTcl::widgets::bwidgets::labelframe::treeChildrenCmd
+                   vTcl::widgets::bwidgets::labelframe::treeChildrenChildsite}
+DumpCmd     vTcl::widgets::bwidgets::labelframe::dumpCmd
+CompoundCmd vTcl::widgets::bwidgets::labelframe::compoundCmd
+
+namespace eval vTcl::widgets::bwidgets::labelframe {
+
+    proc treeChildrenCmd {target {diff \#0}} {
+        set children ""
+        set wantsdiff [expr {$diff != ""}]
+
+        foreach site [treeChildrenChildsite $target] {
+            foreach child [::vTcl:complete_widget_tree $site $wantsdiff] {
+                lappend children $child$diff
+            }
+        }
+
+        return $children
+    }
+
+    proc treeChildrenChildsite {target} {
+        return [$target getframe]
+    }
+
+    proc dumpCmd {target basename} {
+        set result [vTcl:dump_widget_opt $target $basename]
+        set site [$target getframe]
+        append result "$::vTcl(tab)"
+        set sitevariable "site_[llength [split $site .]]_0"
+        append result "set $sitevariable "
+        append result "\[$basename getframe\]\n"
+        append result \
+                [vTcl::widgets::bwidgets::dump_subwidgets $site \$$sitevariable]
+    }
+
+    proc compoundCmd {target} {
+        set result ""
+        append result "set site \[\$target getframe\]; "
+        set compound [vTcl:create_compound [$target getframe]]
+        append result "vTcl:insert_compound \$site [list $compound] pack \{\}; "
+        return $result
+    }
+}

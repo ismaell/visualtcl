@@ -237,6 +237,7 @@ proc vTcl:setup_gui {} {
     rename exit vTcl:exit
 
     vTcl:splash_status "Setting Up Workspace"
+    package require BWidget
 
     if {$tcl_platform(platform) == "macintosh"} {
         set vTcl(pr,balloon) 0
