@@ -290,6 +290,10 @@ proc NewOption {args} {
     set options($option,title) $title
 }
 
+proc ClassOption {name args} {
+    eval lappend ::classoption($name) $args
+}
+
 proc Function {name command} {
     global tmp
     lappend tmp(functionText) $name

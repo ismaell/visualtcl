@@ -440,11 +440,17 @@ proc vTcl:dump:dump_user_bind {} {
     foreach tag $tags {
         append result {#############################################################################}
         append result "\n\#\# Binding tag:  $tag\n\n"
+        if {$tag == "_vTclBalloon"} {
+            vTcl:dump:not_sourcing_header result
+        }
         set bindlist [lsort [bind $tag]]
         foreach event $bindlist {
             set command [bind $tag $event]
             append result "bind \"$tag\" $event \{\n"
             append result "$vTcl(tab)[string trim $command]\n\}\n"
+        }
+        if {$tag == "_vTclBalloon"} {
+            vTcl:dump:sourcing_footer result
         }
     }
 
@@ -698,15 +704,6 @@ proc vTcl:dump:save_tops {} {
 
     foreach top [concat . $vTcl(tops)] {
         append string "Window show $top\n"
-        continue
-
-        if {[lsearch $vTcl(showtops) $top] > -1} {
-           append string "Window show $top\n"
-            continue
-        }
-	vTcl:dump:not_sourcing_header string
-        append string "Window show $top; update; Window hide $top"
-	vTcl:dump_sourcing_footer string
     }
 
     return $string

@@ -462,6 +462,9 @@ proc vTcl:save2 {file} {
 	puts $output $out
     }
 
+    ## Project header
+    puts $output "[subst $vTcl(head,proj)]\n"
+
     ## Code to load images
     vTcl:image:generate_image_stock $output
     vTcl:image:generate_image_user  $output
@@ -470,10 +473,6 @@ proc vTcl:save2 {file} {
     vTcl:font:generate_font_stock   $output
     vTcl:font:generate_font_user    $output
 
-    # @@end_change
-    puts $output "[subst $vTcl(head,proj)]\n"
-
-    # @@change by Christian Gavin
     # moved init proc after user procs so that the init
     # proc can call any user proc
 

@@ -1,6 +1,13 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Saving balloon help code with conditional statement so it does not get
+      reloaded into vTcl.
+    o A bit of cleanup.
+    o Added "ClassOption" command to define special options on a class basis.
+      For example, labels can have tooltips, tabbed notebooks will have a
+      combobox to select a page, toplevels will have a "module" option, and
+      so on.
     o Added a few more images for BWidgets.
     o Removed support for Entry, Label and Button in BWidget until we find
       a way to distinguish these widgets from Tk widgets. Otherwise, this will

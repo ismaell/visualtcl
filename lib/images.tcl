@@ -36,10 +36,7 @@ set vTcl(image,filetypes) {
 # returns "photo" if a GIF or "bitmap" if a xbm
 
 proc vTcl:image:get_creation_type {filename} {
-    set ext [file extension $filename]
-    set ext [string tolower $ext]
-
-    switch $ext {
+    switch [string tolower [file extension $filename]] {
         .ppm -
         .gif    {return photo}
         .xbm    {return bitmap}
