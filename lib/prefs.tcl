@@ -88,7 +88,8 @@ proc vTclWindow.vTcl.prefs {{base ""} {container 0}} {
     ###################
     if {!$container} {
     toplevel $base -class Toplevel
-    wm geometry   $base 400x400
+    # should use frames for spacing instead
+    #wm geometry   $base 400x400
     wm focusmodel $base passive
     wm withdraw $base
     wm maxsize $base 1284 1010

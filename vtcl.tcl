@@ -273,9 +273,15 @@ proc vTcl:setup_gui {} {
     if {[info exists vTcl(pr,bgcolor)] && ![lempty $vTcl(pr,bgcolor)]} {
         tk_setPalette $vTcl(pr,bgcolor)
 	option add *vTcl*background $vTcl(pr,bgcolor)
+
+        # TODO: replace vTcl(pr,bgcolor) by entry background option
+        option add *vTcl*Entry.background $vTcl(pr,bgcolor)
+    } else {
+
+        # default for entry background is white
+        option add *vTcl*Entry.background #ffffff
     }
     option add *vTcl*Listbox.background #ffffff
-    option add *vTcl*Entry.background #ffffff
 
     vTcl:setup_bind_tree .
     vTcl:load_images
