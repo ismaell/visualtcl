@@ -626,11 +626,51 @@ namespace eval ::vTcl::compounds {
             }
             append output "\}\n"
 
-            append output "\nprocsCmd \{\n"
+            append output "\nproc procsCmd \{\} \{\n"
             foreach procname $procs {
                 append output "[vTcl:dump_proc $procname]\n"
             }
             append output "\}\n"
+        }
+
+        ## enumerate all the binding tags used
+        set children [vTcl:complete_widget_tree $target 0]
+        set used_tags ""
+        set all_tags $::widgets_bindings::tagslist
+        foreach child $children {
+            # now, are bindtags non-standard ?
+            set bindtags $::vTcl(bindtags,$child)
+            if {$bindtags != [::widgets_bindings::get_standard_bindtags $child] } {
+                foreach bindtag $bindtags {
+                    if {[lsearch -exact $all_tags $bindtag] >= 0} {
+                        lappend used_tags $bindtag
+                    }
+                }
+            }
+        }
+
+        ## optional list of bindtags to include with the compound
+        if {![lempty $used_tags]} {
+            set used_tags [vTcl:lrmdups $used_tags]
+            append output "\nset bindtags \{\n"
+            foreach used_tag $used_tags {
+                append output "    $used_tag\n"
+            }
+            append output "\}\n\n"
+
+            append output "\nproc bindtagsCmd \{\} \{\n"
+            foreach used_tag $used_tags {
+                append output {#############################################################################}
+                append output "\n\#\# Binding tag:  $used_tag\n\n"
+                set bindlist [lsort [bind $used_tag]]
+                foreach event $bindlist {
+                   set command [bind $used_tag $event]
+                   append output "bind \"$used_tag\" $event \{\n"
+                   append output "$::vTcl(tab)[string trim $command]\n\}\n"
+                }
+            }
+            append output "\}\n"
+            append output "\n"
         }
 
         ## closing brace of namespace statement
@@ -638,3 +678,4 @@ namespace eval ::vTcl::compounds {
         return $output
     }
 }
+

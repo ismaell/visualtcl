@@ -62,9 +62,9 @@ proc vTcl:base_name {target} {
         }
     }
 
-    ## otherwise, just replace the toplevel by $base
+    ## otherwise, just replace the toplevel by $top
     set l [split $target .]
-    set name "\$base"
+    set name "\$top"
     foreach i [lrange $l 2 end] {
         append name ".$i"
     }
@@ -1471,3 +1471,4 @@ proc vTcl:widget:register_all_widgets {{w .}} {
         vTcl:widget:register_widget $w
     }
 }
+
