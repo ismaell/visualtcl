@@ -73,9 +73,6 @@ proc vTcl:widget:lib:lib_itcl {args} {
 
 	switch $tcl_platform(platform) {
 	    windows {
-		option add *Scrolledhtml.sbWidth    16
-		option add *Scrolledtext.sbWidth    16
-		option add *Scrolledlistbox.sbWidth 16
 	    }
 	    default {
 		option add *Scrolledhtml.sbWidth    10
