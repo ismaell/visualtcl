@@ -159,7 +159,7 @@ proc ::vTcl:Toplevel:WidgetProc {w args} {
     }
     set command [lindex $args 0]
     set args [lrange $args 1 end]
-    switch -- $command {
+    switch -- [string tolower $command] {
         "setvar" {
             set varname [lindex $args 0]
             set value [lindex $args 1]
@@ -169,15 +169,24 @@ proc ::vTcl:Toplevel:WidgetProc {w args} {
                 return [set ::${w}::${varname} $value]
             }
         }
-        "hide" - "Hide" - "show" - "Show" {
+        "hide" - "show" {
             Window [string tolower $command] $w
         }
-        "ShowModal" {
-            Window show $w
-            raise $w
-            grab $w
-            tkwait window $w
-            grab release $w
+        "showmodal" {
+            ## modal dialog ends when window is destroyed
+            Window show $w; raise $w
+            grab $w; tkwait window $w; grab release $w
+        }
+        "startmodal" {
+            ## ends when endmodal called
+            Window show $w; raise $w
+            set ::${w}::_modal 1
+            grab $w; tkwait variable ::${w}::_modal; grab release $w
+        }
+        "endmodal" {
+            ## ends modal dialog started with startmodal, argument is var name
+            set ::${w}::_modal 0
+            Window hide $w
         }
         default {
             uplevel $w $command $args
@@ -221,7 +230,7 @@ proc ::vTcl:toplevel {args} {
 
     uplevel #0 eval toplevel $args
     set target [lindex $args 0]
-    namespace eval ::$target {}
+    namespace eval ::$target {set _modal 0}
 }
 }
 
@@ -239,7 +248,7 @@ proc vTcl:project:info {} {
         array set save {-menu 1 -padx 1 -pady 1 -relief 1 -text 1}
     }
     namespace eval ::widgets::$base.men74.m {
-        array set save {-activeborderwidth 1 -borderwidth 1 -font 1 -tearoff 1}
+        array set save {-activeborderwidth 1 -borderwidth 1 -tearoff 1}
         namespace eval subOptions {
             array set save {-command 1 -label 1 -menu 1}
         }
@@ -264,6 +273,7 @@ proc vTcl:project:info {} {
         }
         set compounds {
         }
+        set projectType single
     }
 }
 }
@@ -295,7 +305,7 @@ proc vTclWindow. {base} {
     # CREATING WIDGETS
     ###################
     wm focusmodel $top passive
-    wm geometry $top 200x200+22+25; update
+    wm geometry $top 200x200+154+175; update
     wm maxsize $top 1284 1006
     wm minsize $top 111 1
     wm overrideredirect $top 0
@@ -343,7 +353,7 @@ proc vTclWindow.top72 {base} {
         -text {Menu Button} 
     vTcl:DefineAlias "$top.men74" "Menubutton1" vTcl:WidgetProc "Toplevel1" 1
     menu $top.men74.m \
-        -activeborderwidth 1 -borderwidth 1 -font {Tahoma 8} -tearoff 0 
+        -activeborderwidth 1 -borderwidth 1 -tearoff 0 
     $top.men74.m add command \
         -command {# TODO: Your menu handler here} -label {Item 1} 
     $top.men74.m add command \
@@ -390,7 +400,11 @@ bind "_TopLevel" <<Create>> {
     if {![info exists _topcount]} {set _topcount 0}; incr _topcount
 }
 bind "_TopLevel" <<DeleteWindow>> {
-    destroy %W; if {$_topcount == 0} {exit}
+    if {[set ::%W::_modal]} {
+                vTcl:Toplevel:WidgetProc %W endmodal
+            } else {
+                destroy %W; if {$_topcount == 0} {exit}
+            }
 }
 bind "_TopLevel" <Destroy> {
     if {[winfo toplevel %W] == "%W"} {incr _topcount -1}

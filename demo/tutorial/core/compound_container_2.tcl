@@ -34,11 +34,15 @@ set bindtags {
     BitmapButtonTop
 }
 
+set source .top79.cpd80
+
 set libraries {
     core
 }
 
-set source .top82.cpd83
+set images {
+        {{[file join D:/ cygwin home cgavin vtcl images edit ok.gif]} {} stock {}}
+}
 
 set class Frame
 
@@ -50,6 +54,50 @@ set procs {
     ::bitmapbutton::mouse_up
     ::bitmapbutton::set_command
     ::bitmapbutton::show_state
+}
+
+
+proc vTcl:DefineAlias {target alias args} {
+    if {![info exists ::vTcl(running)]} {
+        return [eval ::vTcl:DefineAlias $target $alias $args]
+    }
+    set class [vTcl:get_class $target]
+    vTcl:set_alias $target [vTcl:next_widget_name $class $target $alias] -noupdate
+}
+
+
+proc infoCmd {target} {
+    namespace eval ::widgets::$target {
+        array set save {-borderwidth 1 -height 1 -relief 1 -takefocus 1}
+    }
+    set site_3_0 $target
+    namespace eval ::widgets::$site_3_0.upframe {
+        array set save {-borderwidth 1 -height 1}
+    }
+    namespace eval ::widgets::$site_3_0.centerframe {
+        array set save {-borderwidth 1}
+    }
+    set site_4_0 $site_3_0.centerframe
+    namespace eval ::widgets::$site_4_0.leftframe {
+        array set save {-borderwidth 1 -width 1}
+    }
+    namespace eval ::widgets::$site_4_0.rightframe {
+        array set save {-borderwidth 1 -width 1}
+    }
+    namespace eval ::widgets::$site_4_0.05 {
+        array set save {-borderwidth 1}
+    }
+    set site_5_0 $site_4_0.05
+    namespace eval ::widgets::$site_5_0.06 {
+        array set save {-borderwidth 1 -image 1 -text 1}
+    }
+    namespace eval ::widgets::$site_5_0.07 {
+        array set save {-borderwidth 1 -text 1}
+    }
+    namespace eval ::widgets::$site_3_0.downframe {
+        array set save {-borderwidth 1 -height 1 -relief 1}
+    }
+
 }
 
 
@@ -121,55 +169,14 @@ bind "BitmapButtonTop" <Motion> {
 }
 
 
-proc infoCmd {target} {
-    namespace eval ::widgets::$target {
-        array set save {-borderwidth 1 -height 1 -relief 1 -takefocus 1}
-    }
-    set site_3_0 $target
-    namespace eval ::widgets::$site_3_0.upframe {
-        array set save {-borderwidth 1 -height 1}
-    }
-    namespace eval ::widgets::$site_3_0.centerframe {
-        array set save {-borderwidth 1}
-    }
-    set site_4_0 $site_3_0.centerframe
-    namespace eval ::widgets::$site_4_0.leftframe {
-        array set save {-borderwidth 1 -width 1}
-    }
-    namespace eval ::widgets::$site_4_0.rightframe {
-        array set save {-borderwidth 1 -width 1}
-    }
-    namespace eval ::widgets::$site_4_0.05 {
-        array set save {-borderwidth 1}
-    }
-    set site_5_0 $site_4_0.05
-    namespace eval ::widgets::$site_5_0.06 {
-        array set save {-borderwidth 1 -image 1 -text 1}
-    }
-    namespace eval ::widgets::$site_5_0.07 {
-        array set save {-borderwidth 1 -text 1}
-    }
-    namespace eval ::widgets::$site_3_0.downframe {
-        array set save {-borderwidth 1 -height 1 -relief 1}
-    }
-
-}
-
-
-proc vTcl:DefineAlias {target alias args} {
-    if {![info exists ::vTcl(running)]} {
-        return [eval ::vTcl:DefineAlias $target $alias $args]
-    }
-    set class [vTcl:get_class $target]
-    vTcl:set_alias $target [vTcl:next_widget_name $class $target $alias] -noupdate
-}
-
-
 proc compoundCmd {target} {
+    ::bitmapbutton::init $target
+
+    imagesCmd $target
     set items [split $target .]
     set parent [join [lrange $items 0 end-1] .]
     set top [winfo toplevel $parent]
-    frame $target  -borderwidth 2 -height 0 -relief raised -takefocus 1 
+    frame $target  -borderwidth 2 -relief raised -height 0 -takefocus 1 
     vTcl:DefineAlias "$target" "TestButton1" vTcl:WidgetProc "Toplevel1" 1
     bindtags $target "$target Frame $top all BitmapButtonTop"
     set site_3_0 $target
@@ -194,12 +201,21 @@ proc compoundCmd {target} {
     pack $site_4_0.leftframe  -in $site_4_0 -anchor center -expand 0 -fill none -side left 
     pack $site_4_0.rightframe  -in $site_4_0 -anchor center -expand 0 -fill none -side right 
     pack $site_4_0.05  -in $site_4_0 -anchor center -expand 0 -fill none -side top 
-    frame $site_3_0.downframe  -borderwidth 2 -height 2 -relief groove 
+    frame $site_3_0.downframe  -borderwidth 2 -relief groove -height 2 
     bindtags $site_3_0.downframe "$site_3_0.downframe Frame $top all BitmapButtonSub1"
     pack $site_3_0.upframe  -in $site_3_0 -anchor center -expand 0 -fill none -side top 
     pack $site_3_0.centerframe  -in $site_3_0 -anchor center -expand 0 -fill none -side top 
     pack $site_3_0.downframe  -in $site_3_0 -anchor center -expand 0 -fill none -side bottom 
 
+}
+
+
+proc imagesCmd {target} {
+    variable images
+    foreach img $images {
+        eval set file [lindex $img 0]
+        vTcl:image:create_new_image $file [lindex $img 1] [lindex $img 2] [lindex $img 3]
+}
 }
 
 
@@ -825,7 +841,7 @@ proc ::vTcl:Toplevel:WidgetProc {w args} {
     }
     set command [lindex $args 0]
     set args [lrange $args 1 end]
-    switch -- $command {
+    switch -- [string tolower $command] {
         "setvar" {
             set varname [lindex $args 0]
             set value [lindex $args 1]
@@ -835,15 +851,24 @@ proc ::vTcl:Toplevel:WidgetProc {w args} {
                 return [set ::${w}::${varname} $value]
             }
         }
-        "hide" - "Hide" - "show" - "Show" {
+        "hide" - "show" {
             Window [string tolower $command] $w
         }
-        "ShowModal" {
-            Window show $w
-            raise $w
-            grab $w
-            tkwait window $w
-            grab release $w
+        "showmodal" {
+            ## modal dialog ends when window is destroyed
+            Window show $w; raise $w
+            grab $w; tkwait window $w; grab release $w
+        }
+        "startmodal" {
+            ## ends when endmodal called
+            Window show $w; raise $w
+            set ::${w}::_modal 1
+            grab $w; tkwait variable ::${w}::_modal; grab release $w
+        }
+        "endmodal" {
+            ## ends modal dialog started with startmodal, argument is var name
+            set ::${w}::_modal 0
+            Window hide $w
         }
         default {
             uplevel $w $command $args
@@ -887,7 +912,7 @@ proc ::vTcl:toplevel {args} {
 
     uplevel #0 eval toplevel $args
     set target [lindex $args 0]
-    namespace eval ::$target {}
+    namespace eval ::$target {set _modal 0}
 }
 }
 
@@ -920,15 +945,6 @@ proc vTcl:project:info {} {
     namespace eval ::widgets::$site_3_0.com79 {
         array set save {-class 1 -compoundClass 1}
     }
-    set base .top73
-    namespace eval ::widgets::$base {
-        set set,origin 1
-        set set,size 1
-        set runvisible 0
-    }
-    namespace eval ::widgets::$base.lab74 {
-        array set save {-image 1 -text 1}
-    }
     namespace eval ::widgets_bindings {
         set tagslist _TopLevel
     }
@@ -940,6 +956,7 @@ proc vTcl:project:info {} {
         set compounds {
             {user {bitmap button}}
         }
+        set projectType single
     }
 }
 }
@@ -971,7 +988,7 @@ proc vTclWindow. {base} {
     # CREATING WIDGETS
     ###################
     wm focusmodel $top passive
-    wm geometry $top 200x200+154+175; update
+    wm geometry $top 200x200+22+25; update
     wm maxsize $top 1284 1006
     wm minsize $top 111 1
     wm overrideredirect $top 0
@@ -1063,45 +1080,6 @@ The compound creation command is called once for each compound, to create the un
     vTcl:FireEvent $base <<Ready>>
 }
 
-proc vTclWindow.top73 {base} {
-    if {$base == ""} {
-        set base .top73
-    }
-    if {[winfo exists $base]} {
-        wm deiconify $base; return
-    }
-    set top $base
-    ###################
-    # CREATING WIDGETS
-    ###################
-    vTcl:toplevel $top -class Toplevel
-    wm withdraw $top
-    wm focusmodel $top passive
-    wm geometry $top 111x40+256+521; update
-    wm maxsize $top 1284 1006
-    wm minsize $top 111 1
-    wm overrideredirect $top 0
-    wm resizable $top 1 1
-    wm title $top "Images used by compounds."
-    vTcl:DefineAlias "$top" "Toplevel2" vTcl:Toplevel:WidgetProc "" 1
-    bindtags $top "$top Toplevel all _TopLevel"
-    vTcl:FireEvent $top <<Create>>
-    wm protocol $top WM_DELETE_WINDOW "vTcl:FireEvent $top <<DeleteWindow>>"
-
-    label $top.lab74 \
-        \
-        -image [vTcl:image:get_image [file join D:/ cygwin home cgavin vtcl images edit ok.gif]] \
-        -text label 
-    vTcl:DefineAlias "$top.lab74" "Label1" vTcl:WidgetProc "Toplevel2" 1
-    ###################
-    # SETTING GEOMETRY
-    ###################
-    place $top.lab74 \
-        -in $top -x 0 -y 0 -anchor nw -bordermode ignore 
-
-    vTcl:FireEvent $base <<Ready>>
-}
-
 #############################################################################
 ## Binding tag:  _TopLevel
 
@@ -1109,7 +1087,11 @@ bind "_TopLevel" <<Create>> {
     if {![info exists _topcount]} {set _topcount 0}; incr _topcount
 }
 bind "_TopLevel" <<DeleteWindow>> {
-    destroy %W; if {$_topcount == 0} {exit}
+    if {[set ::%W::_modal]} {
+                vTcl:Toplevel:WidgetProc %W endmodal
+            } else {
+                destroy %W; if {$_topcount == 0} {exit}
+            }
 }
 bind "_TopLevel" <Destroy> {
     if {[winfo toplevel %W] == "%W"} {incr _topcount -1}
@@ -1117,7 +1099,6 @@ bind "_TopLevel" <Destroy> {
 
 Window show .
 Window show .top72
-Window show .top73
 
 main $argc $argv
 
