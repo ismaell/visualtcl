@@ -62,7 +62,7 @@ proc vTclWindow.vTcl.about {args} {
         -borderwidth 1 -font [vTcl:font:get_font "vTcl:font5"]
     label $base.lab21 \
         -borderwidth 1 -font [vTcl:font:get_font "vTcl:font5"] \
-        -text {Version 1.5.1b4} -foreground white -background black
+        -text {Version 1.5.1} -foreground white -background black
     ###################
     # SETTING GEOMETRY
     ###################

@@ -240,10 +240,10 @@ proc {vTcl:DefineAlias} {target alias widgetProc top_or_alias cmdalias} {
 }
 
 proc {vTcl:DoCmdOption} {target cmd} {
-    regsub -all {\%W} $cmd $target cmd
+    regsub -all {\%widget} $cmd $target cmd
     regsub -all {\%top} $cmd [winfo toplevel $target] cmd
 
-    uplevel #0 eval $cmd
+    uplevel #0 [list eval $cmd]
 }
 
 proc {vTcl:Toplevel:WidgetProc} {w args} {
@@ -524,7 +524,7 @@ proc vTcl:project:info {} {
         array set save {-command 1 -text 1 -width 1}
     }
     namespace eval ::widgets_bindings {
-        set tagslist FlatToolbarButton
+        set tagslist {FlatToolbarButton Accelerators}
     }
 }
 }
@@ -1502,15 +1502,15 @@ proc vTclWindow.top21 {base {container 0}} {
     ###################
     if {!$container} {
     vTcl:toplevel $base -class Toplevel \
-        -menu "$base.m26" 
+        -menu "$base.m26"
     wm focusmodel $base passive
-    wm geometry $base 678x575+146+51; update
+    wm geometry $base 678x575+150+71; update
     wm maxsize $base 1009 738
     wm minsize $base 100 1
     wm overrideredirect $base 0
     wm resizable $base 1 1
     wm deiconify $base
-    wm title $base "/home/cgavin/vtcl/test/text_image.ttd - Visual Text"
+    wm title $base "Visual Text"
     }
     frame $base.fra22 \
         -borderwidth 1 
@@ -1532,27 +1532,27 @@ proc vTclWindow.top21 {base {container 0}} {
         -background white -borderwidth 0 -wrap word \
         -xscrollcommand "$base.cpd23.01.cpd24.01 set" \
         -yscrollcommand "$base.cpd23.01.cpd24.02 set" 
-    bindtags $base.cpd23.01.cpd24.03 "Text $base all $base.cpd23.01.cpd24.03"
+    bindtags $base.cpd23.01.cpd24.03 "Text $base all $base.cpd23.01.cpd24.03 Accelerators"
     bind $base.cpd23.01.cpd24.03 <Button-1> {
-        ::visual_text::show_tags_at_insert VisualText
+        ::visual_text::show_tags_at_insert $widget(rev,[winfo toplevel %W])
     }
     bind $base.cpd23.01.cpd24.03 <Key-Down> {
-        ::visual_text::show_tags_at_insert VisualText
+        ::visual_text::show_tags_at_insert $widget(rev,[winfo toplevel %W])
     }
     bind $base.cpd23.01.cpd24.03 <Key-Left> {
-        ::visual_text::show_tags_at_insert VisualText
+        ::visual_text::show_tags_at_insert $widget(rev,[winfo toplevel %W])
     }
     bind $base.cpd23.01.cpd24.03 <Key-Next> {
-        ::visual_text::show_tags_at_insert VisualText
+        ::visual_text::show_tags_at_insert $widget(rev,[winfo toplevel %W])
     }
     bind $base.cpd23.01.cpd24.03 <Key-Prior> {
-        ::visual_text::show_tags_at_insert VisualText
+        ::visual_text::show_tags_at_insert $widget(rev,[winfo toplevel %W])
     }
     bind $base.cpd23.01.cpd24.03 <Key-Right> {
-        ::visual_text::show_tags_at_insert VisualText
+        ::visual_text::show_tags_at_insert $widget(rev,[winfo toplevel %W])
     }
     bind $base.cpd23.01.cpd24.03 <Key-Up> {
-        ::visual_text::show_tags_at_insert VisualText
+        ::visual_text::show_tags_at_insert $widget(rev,[winfo toplevel %W])
     }
     frame $base.cpd23.02
     frame $base.cpd23.02.fra25 \
@@ -1569,7 +1569,8 @@ proc vTclWindow.top21 {base {container 0}} {
     frame $base.cpd23.02.fra22 \
         -borderwidth 2 -height 75 -width 125 
     button $base.cpd23.02.fra22.but23 \
-        -command {::visual_text::command-add_tag VisualText EditTag} \
+        \
+        -command [list vTcl:DoCmdOption $base.cpd23.02.fra22.but23 {::visual_text::command-add_tag $widget(rev,%top) EditTag}] \
         -image [vTcl:image:get_image [file join / home cgavin vtcl images edit add.gif]] \
         -relief flat -text button 
     bindtags $base.cpd23.02.fra22.but23 "$base.cpd23.02.fra22.but23 Button $base all FlatToolbarButton"
@@ -1586,12 +1587,12 @@ proc vTclWindow.top21 {base {container 0}} {
         -yscrollcommand "$base.cpd23.02.cpd22.03 set" 
     bind $base.cpd23.02.cpd22.01 <Button-1> {
         if {[MainText tag ranges sel] != ""} {
-    ::visual_text::apply_tag VisualText %x %y
+    ::visual_text::apply_tag $widget(rev,[winfo toplevel %W]) %x %y
 }
 break
     }
     bind $base.cpd23.02.cpd22.01 <Button-3> {
-        ::visual_text::command-edit_tag VisualText EditTag [TagsListbox get @%x,%y]
+        ::visual_text::command-edit_tag $widget(rev,[winfo toplevel %W]) EditTag [%W get @%x,%y]
     }
     scrollbar $base.cpd23.02.cpd22.02 \
         -command "$base.cpd23.02.cpd22.01 xview" -highlightthickness 0 \
@@ -1609,7 +1610,7 @@ break
     set root [ lreplace $root $nb $nb ]
     set root [ join $root . ]
     set width [ winfo width $root ].0
-    
+
     set val [ expr (%X - [winfo rootx $root]) /$width ]
 
     if { $val >= 0 && $val <= 1.0 } {
@@ -1629,7 +1630,7 @@ break
         -label Edit 
     $base.m26 add cascade \
         -menu "$base.m26.men29" -accelerator {} -command {} -image {} \
-        -label Help 
+        -label Help
     menu $base.m26.men27 \
         -tearoff 0 
     $base.m26.men27 add command \
@@ -1667,7 +1668,7 @@ break
     menu $base.m26.men29 \
         -tearoff 0 
     $base.m26.men29 add command \
-        -accelerator {} -command {AboutVisualText show} -image {} \
+        -accelerator F1 -command {AboutVisualText show} -image {} \
         -label About... 
     ###################
     # SETTING GEOMETRY
@@ -1984,6 +1985,21 @@ bind "FlatToolbarButton" <Enter> {
 }
 bind "FlatToolbarButton" <Leave> {
     %W configure -relief flat
+}
+bind "Accelerators" <Control-Key-n> {
+    ::visual_text::command-new $widget(rev,[winfo toplevel %W])
+}
+bind "Accelerators" <Control-Key-o> {
+    ::visual_text::command-open $widget(rev,[winfo toplevel %W])
+}
+bind "Accelerators" <Control-Key-q> {
+    exit
+}
+bind "Accelerators" <Control-Key-s> {
+    ::visual_text::command-save $widget(rev,[winfo toplevel %W])
+}
+bind "Accelerators" <Key-F1> {
+    AboutVisualText show
 }
 
 Window show .

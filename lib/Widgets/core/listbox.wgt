@@ -6,7 +6,7 @@ DoubleClickCmd	vTcl:set_list
 InsertCmd	vTcl:widget:listbox:inscmd
 DefaultValues   -foreground \
                 -highlightbackground -highlightcolor \
-                -selectbackground -selectforeground
+                -selectbackground -selectforeground -font
 DefaultOptions  -background white
 
 proc vTcl:widget:listbox:inscmd {target} {

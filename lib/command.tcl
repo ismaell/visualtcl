@@ -38,7 +38,7 @@ proc vTcl:set_command {target {option -command} {variable vTcl(w,opt,-command)}}
     set cmd [string trim $r]
 
     ## if the command is non null, replace it by DoCmdOption
-    if {$cmd != ""} {
+    if {$cmd != "" && [string match *%* $cmd]} {
         set cmd [list vTcl:DoCmdOption $target $cmd]
     }
 

@@ -1,6 +1,12 @@
 ChangeLog for Visual Tcl:
 
 1.51b4 -> 1.51
+    o Added Ctrl + N, Ctrl + O, Ctrl + S, Ctrl + Q and F1 keyboard shortcuts
+      to demo application VisualText
+    o listbox and text widget on creation take default values for -font option
+    o new text widgets have a white background
+    o replaced %W by %widget for command options, to avoid
+      conflicts with %W from the bind command
     o -command options can have substitution strings:
       %W will be replaced by the widget path
       %top will be replaced by the toplevel path
