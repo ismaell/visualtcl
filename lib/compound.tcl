@@ -582,8 +582,15 @@ namespace eval ::vTcl::compounds {
 
     proc createCompound {target compoundName {procs {}}} {
 
+        ## we don't want handles to be enumerated with the widget
+        vTcl:destroy_handles
+
         set output ""
         append output "namespace eval ::vTcl::compounds::$compoundName \{\n"
+
+        ## basic compound information
+        set class [vTcl:get_class $target]
+        append output "\nset class $class\n\n"
 
         ## append of version of vTcl:DefineAlias that is local to this namespace
         append output "\n"
@@ -593,7 +600,6 @@ namespace eval ::vTcl::compounds {
         append output "\}\n"
         append output "\n"
 
-        set class [vTcl:get_class $target]
         set ::vTcl(num,index) 0
 	  set ::vTcl(num,total) [llength [vTcl:list_widget_tree $target]]
 
@@ -608,7 +614,9 @@ namespace eval ::vTcl::compounds {
         if {$class == "Toplevel"} {
             append output "    vTclWindow$target \$target\n"
         } else {
-            append output "    set top \[winfo toplevel \$target\]\n"
+            append output "    set items \[split \$target .\]\n"
+            append output "    set parent \[join \[lrange \$items 0 end-1\] .\]\n"
+            append output "    set top \[winfo toplevel \$parent\]\n"
             append output "[$::classes($class,dumpCmd) $target \$target]\n"
         }
         append output "\}\n\n"
@@ -631,6 +639,9 @@ namespace eval ::vTcl::compounds {
                 append output "[vTcl:dump_proc $procname]\n"
             }
             append output "\}\n"
+        } else {
+            append output "\nset procs \{\}\n"
+            append output "\nproc procsCmd \{\} \{\}\n\n"
         }
 
         ## enumerate all the binding tags used
@@ -671,11 +682,34 @@ namespace eval ::vTcl::compounds {
             }
             append output "\}\n"
             append output "\n"
+        } else {
+            append output "\nset bindtags \{\}\n"
+            append output "\nproc bindtagsCmd \{\} \{\}\n\n"
         }
 
         ## closing brace of namespace statement
         append output "\}\n"
+
+        ## we can put the handles back
+        vTcl:place_handles $::vTcl(w,widget)
+
         return $output
+    }
+
+    proc mergeCompoundCode {compoundName} {
+        if {![lempty [vTcl:at ${compoundName}::procs]]} {
+            ${compoundName}::procsCmd
+            set ::vTcl(procs) [concat $::vTcl(procs) [vTcl:at ${compoundName}::procs]]
+            set ::vTcl(procs) [vTcl:lrmdups $::vTcl(procs)]
+            vTcl:update_proc_list
+        }
+
+        if {![lempty [vTcl:at ${compoundName}::bindtags]]} {
+            ${compoundName}::bindtagsCmd
+            foreach tag [vTcl:at ${compoundName}::bindtags] {
+                ::widgets_bindings::add_tag_to_tagslist $tag
+            }
+        }
     }
 }
 

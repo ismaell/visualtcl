@@ -43,7 +43,7 @@ proc vTcl:dump_proc {i {type ""}} {
         append output "\nnamespace eval [list ${context}] \{\n"
     }
 
-    append output "\nproc \{$i\} \{$args\} \{$body\}\n"
+    append output "\nproc [list ::$i] \{$args\} \{$body\}\n"
 
     if {[regexp (.*):: $i]} {
         append output "\n\}\n"
@@ -744,6 +744,7 @@ proc vTcl:dump:sourcing_footer {varName} {
     if {![vTcl:streq [string index $var end] "\n"]} { append var "\n" }
     append var "\}\n"
 }
+
 
 
 
