@@ -230,7 +230,7 @@ proc vTclWindow.vTcl.tip {base {container 0}} {
         -command "$base.cpd25.03 xview" -orient horizontal
     scrollbar $base.cpd25.02 \
         -command "$base.cpd25.03 yview"
-    text $base.cpd25.03 \
+    text $base.cpd25.03 -background white \
         -font -Adobe-Helvetica-Medium-R-Normal-*-*-120-*-*-*-*-*-* -height 1 \
         -xscrollcommand "$base.cpd25.01 set" \
         -yscrollcommand "$base.cpd25.02 set" 
