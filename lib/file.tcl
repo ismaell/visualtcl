@@ -347,6 +347,8 @@ proc vTcl:close {} {
     vTcl:cmp_user_menu
     ::vTcl::project::initModule main
 
+    ::vTcl::notify::publish closed_project
+
     after idle {vTcl:init_wtree}
 }
 
@@ -728,6 +730,7 @@ namespace eval vTcl::project {
         return [lsort -unique $result]
     }
 }
+
 
 
 

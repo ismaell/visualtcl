@@ -22,3 +22,4 @@ geom_config_cmd 	{target mgr opt}	a toplevel is being configured,
 delete_widget		{target}		widget is being deleted
 deleted_childsite	{target index}		childsite has been deleted,
 						should refresh megawidget editor
+closed_project		none			current project has being closed

@@ -406,14 +406,22 @@ proc vTclWindow.vTcl.proc {args} {
     ::vTcl::notify::subscribe edit_mode $base ::vTcl::proc::edit_mode
     ::vTcl::notify::subscribe test_mode $base ::vTcl::proc::test_mode
 
+    ## be notified when the project has been closed... proc window will be destroyed
+    ::vTcl::notify::subscribe closed_project $base ::vTcl::proc::closed_project
+
     bind $base <Destroy> "
         grab release $base
         ::vTcl::notify::unsubscribe edit_mode $base
         ::vTcl::notify::unsubscribe test_mode $base
+        ::vTcl::notify::unsubscribe closed_project $base
     "
 }
 
 namespace eval ::vTcl::proc {
+
+    proc closed_project {base} {
+        destroy $base
+    }
 
     proc edit_mode {base args} {
     }
@@ -456,3 +464,4 @@ namespace eval ::vTcl::proc {
         set vTcl(proc,$w,chg) 1
     }
 }
+
