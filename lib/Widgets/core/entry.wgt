@@ -13,13 +13,10 @@ proc vTcl:widget:entry:inscmd {target} {
 }
 
 proc vTcl:widget:entry:SetTextVariable {} {
+
     global vTcl
 
-    set target $vTcl(w,widget)
-    set value [$target cget -textvariable]
-    set newvalue [vTcl:get_string "Text variable for $target" $target $value]
-
-    if {! [vTcl:streq $value $newvalue]} {
-        $target configure -textvariable $newvalue
-    }
+    vTcl:core:set_option $vTcl(w,widget)\
+                         -textvariable \
+                         "Text Variable for $vTcl(w,widget)"
 }

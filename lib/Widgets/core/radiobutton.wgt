@@ -5,3 +5,24 @@ Icon		icon_radiobutton.gif
 DefaultOptions	-text radio
 DoubleClickCmd	vTcl:set_command
 TreeLabel	@vTcl:core:get_widget_tree_label
+
+Function        "Set Variable" vTcl:widget:radiobutton:SetVariable
+Function        "Set Value"    vTcl:widget:radiobutton:SetValue
+
+proc vTcl:widget:radiobutton:SetVariable {} {
+
+    global vTcl
+
+    vTcl:core:set_option $vTcl(w,widget)\
+                         -variable \
+                         "Variable for $vTcl(w,widget)"
+}
+
+proc vTcl:widget:radiobutton:SetValue {} {
+
+    global vTcl
+
+    vTcl:core:set_option $vTcl(w,widget)\
+                         -value \
+                         "Value for $vTcl(w,widget)"
+}

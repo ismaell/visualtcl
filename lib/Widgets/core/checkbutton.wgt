@@ -5,3 +5,14 @@ Icon		icon_checkbutton.gif
 DefaultOptions	-text check
 DoubleClickCmd	vTcl:set_command
 TreeLabel	@vTcl:core:get_widget_tree_label
+
+Function        "Set Variable" vTcl:widget:checkbutton:SetVariable
+
+proc vTcl:widget:checkbutton:SetVariable {} {
+
+    global vTcl
+
+    vTcl:core:set_option $vTcl(w,widget)\
+                         -variable \
+                         "Variable for $vTcl(w,widget)"
+}

@@ -2,7 +2,6 @@ Class		Text
 Lib		core
 
 Icon		icon_text.gif
-DoubleClickCmd	vTcl:set_textvar
 InsertCmd	vTcl:widget:text:inscmd
 TreeLabel	Text Widget
 
