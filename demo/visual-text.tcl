@@ -543,6 +543,10 @@ variable ttdVersion {}
 
 }
 
+proc {apply_tag} {tag} {
+eval MainText tag add $tag [MainText tag ranges sel]
+}
+
 proc {command-new} {} {
 set tags [MainText tag names]
 foreach tag $tags {
@@ -554,8 +558,7 @@ fill_tags
 }
 
 proc {command-open} {w {file {}}} {
-global filename
-global tk_strictMotif
+global filename widget tk_strictMotif
     
     if {$file == ""} {
         set old $tk_strictMotif
@@ -569,7 +572,7 @@ global tk_strictMotif
     $w delete 1.0 end
 
     set filename $file
-    wm title . "$filename - Tcl/Tk Text Dump Viewer"
+    wm title $widget(VisualText) "$filename - Visual Text"
     set id [open $filename]
     set ttd [read $id]
     close $id
@@ -578,6 +581,32 @@ global tk_strictMotif
     }
     $w mark set insert 1.0
     fill_tags
+}
+
+proc {compare_range} {range1 range2} {
+set range1 [split $range1 .]
+set range2 [split $range2 .]
+
+set line1 [lindex $range1 0]
+set line2 [lindex $range2 0]
+set col1  [lindex $range1 1]
+set col2  [lindex $range2 1]
+
+if {$line1 < $line2} {
+    return -1
+}
+
+if {$line1 == $line2} {
+    if {$col1 < $col2} {
+        return -1
+    } elseif {$col1 == $col2} {
+        return 0
+    } else {
+        return 1
+    } 
+} else {
+    return 1
+}
 }
 
 proc {fill_tags} {} {
@@ -612,7 +641,19 @@ TagsText tag configure default -background white
 TagsText configure -state disabled
 }
 
+proc {show_insert_position} {} {
+set position [MainText index insert]
+regexp {([0-9]+)\.([0-9]+)} $position matchAll line col
+LineCol configure -text "Line $line Col $col"
+}
+
 proc {show_tags_at_insert} {} {
+## if anything is selected, we show tags related to the selection
+if {[MainText tag ranges sel] != ""} {
+    show_tags_at_selection
+    return
+}
+
 global widget
 set tags [MainText tag names insert]
 
@@ -622,23 +663,101 @@ set listtags [TagsListbox get 0 end]
 for {set i 0} {$i < [llength $listtags]} {incr i} {
     set tag [lindex $listtags $i]
     if {[lsearch -exact $tags $tag] != -1} {
-        TagsListbox selection set $i
+        TagsListbox itemconfigure $i -background #8080FF
+    } else {
+        TagsListbox itemconfigure $i -background white
     }
 }
 
-set position [MainText index insert]
-regexp {([0-9]+)\.([0-9]+)} $position matchAll line col
-LineCol configure -text "Line $line Col $col"
+show_insert_position
+}
 
-focus $widget(MainText)
+proc {show_tags_at_selection} {} {
+global widget
+
+TagsListbox selection clear 0 end
+set listtags [TagsListbox get 0 end]
+
+set selranges [MainText tag ranges sel]
+set selstart  [lindex $selranges 0]
+set selend    [lindex $selranges 1]
+
+foreach tag $listtags {
+    set ranges($tag) [MainText tag ranges $tag]
+}
+
+for {set i 0} {$i < [llength $listtags]} {incr i} {
+    set tag [lindex $listtags $i]
+    
+    ## check if a text is inside the selection or not
+    set range $ranges($tag)
+    set found 0
+                
+    while {[llength $range] > 0} {
+        set start [lindex $range 0]
+        set end   [lindex $range 1]
+        set range [lreplace $range 0 1]
+        
+        set comp1 [compare_range $start $selstart]
+        set comp2 [compare_range $selend     $end] 
+        if {$comp1 <= 0 && $comp2 <= 0} {
+            ## the tag is applied to the whole selection
+            TagsListbox itemconfigure $i -background #8080FF
+            set found 1
+            break
+        } elseif {$comp1 >= 0 && $comp2 >= 0} {
+            ## the tag is applied somewhere inside the selection
+            TagsListbox itemconfigure $i -background gray
+            set found 1
+            break
+        } elseif {$comp1 == -1 && $comp2 == 1 &&
+                  [compare_range $end $selstart] == 1} {
+            ## the tag starts before the selection, ends in the middle
+            TagsListbox itemconfigure $i -background gray
+            set found 1
+            break
+        } elseif {$comp1 == 1 && $comp2 == -1 &&
+                  [compare_range $selend $start] == 1} {
+            ## the tag starts inside the selection, ends outside
+            TagsListbox itemconfigure $i -background gray
+            set found 1
+            break
+        } 
+    }
+
+    if {!$found} {
+        TagsListbox itemconfigure $i -background white
+    }
+}
+
+show_insert_position
 }
 
 proc {main} {argc argv} {
 wm protocol .top21 WM_DELETE_WINDOW {exit}
 }
 
-proc {apply_tag} {tag} {
-eval MainText tag add $tag [MainText tag ranges sel]
+proc {command-save} {w} {
+global filename tk_strictMotif widget
+
+    set old $tk_strictMotif
+    set tk_strictMotif 0
+    set file [tk_getSaveFile \
+	    -defaultextension {.ttd}  \
+	    -initialdir . \
+	    -filetypes {{{Rich Tcl Text} *.ttd TEXT} {all *.* TEXT}} \
+	    -initialfile $filename \
+	    -title "Save..."]
+    set tk_strictMotif $old
+
+    if {$file != ""} {
+	set filename $file
+	set id [open $filename w]
+	set data [::ttd::get $w]
+	puts -nonewline $id $data
+	close $id
+	wm title $widget(VisualText) "$file - Visual Text"
+    }
 }
 
 proc init {argc argv} {
@@ -758,10 +877,11 @@ proc vTclWindow.top21 {base {container 0}} {
     }
 
     global widget
-    vTcl:DefineAlias "$base.cpd23.01.cpd24.03" "MainText" vTcl:WidgetProc "$base" 1
-    vTcl:DefineAlias "$base.cpd23.02.cpd22.01" "TagsListbox" vTcl:WidgetProc "$base" 1
-    vTcl:DefineAlias "$base.cpd23.02.fra25.03" "TagsText" vTcl:WidgetProc "$base" 1
-    vTcl:DefineAlias "$base.fra22.lab30" "LineCol" vTcl:WidgetProc "$base" 1
+    vTcl:DefineAlias "$base" "VisualText" vTcl:Toplevel:WidgetProc "" 1
+    vTcl:DefineAlias "$base.cpd23.01.cpd24.03" "MainText" vTcl:WidgetProc "VisualText" 1
+    vTcl:DefineAlias "$base.cpd23.02.cpd22.01" "TagsListbox" vTcl:WidgetProc "VisualText" 1
+    vTcl:DefineAlias "$base.cpd23.02.fra25.03" "TagsText" vTcl:WidgetProc "VisualText" 1
+    vTcl:DefineAlias "$base.fra22.lab30" "LineCol" vTcl:WidgetProc "VisualText" 1
 
     ###################
     # CREATING WIDGETS
@@ -770,7 +890,7 @@ proc vTclWindow.top21 {base {container 0}} {
     toplevel $base -class Toplevel \
         -menu "$base.m26" 
     wm focusmodel $base passive
-    wm geometry $base 678x613+182+55; update
+    wm geometry $base 678x613+190+95; update
     wm maxsize $base 1009 738
     wm minsize $base 1 1
     wm overrideredirect $base 0
@@ -781,7 +901,7 @@ proc vTclWindow.top21 {base {container 0}} {
     frame $base.fra22 \
         -borderwidth 1 
     label $base.fra22.lab30 \
-        -borderwidth 1 -padx 1 -relief sunken -text {Line 46 Col 20} 
+        -borderwidth 1 -padx 1 -relief sunken -text {Line 32 Col 19} 
     label $base.fra22.lab31 \
         -borderwidth 1 -padx 1 -relief sunken -text INS 
     frame $base.cpd23 \
@@ -904,7 +1024,7 @@ apply_tag [TagsListbox get @%x,%y]
         -accelerator {Ctrl + S} -command {# TODO: Your menu handler here} \
         -image {} -label Save 
     $base.m26.men27 add command \
-        -accelerator {} -command {# TODO: Your menu handler here} -image {} \
+        -accelerator {} -command {command-save $widget(MainText)} -image {} \
         -label {Save As...} 
     $base.m26.men27 add separator
     $base.m26.men27 add command \

@@ -74,7 +74,7 @@ proc vTclWindow.vTcl.bind {args} {
         wm title $base "Widget bindings"
         wm transient .vTcl.bind .vTcl
     }
-    menu $base.m37
+    menu $base.m37 -relief flat
     $base.m37 add cascade \
         -menu "$base.m37.men38" -label Insert
     $base.m37 add cascade \

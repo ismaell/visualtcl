@@ -1,6 +1,7 @@
 ChangeLog for Visual Tcl:
 
 1.51b4 -> 1.51rc0
+    o Made toplevel menus flat
     o Added <Destroy> to simple bindings menu
     o Removed <<TkCon*>> bindings from binding editor
     o Added demo application 'visual-text.tcl' using Bryan Oakley's

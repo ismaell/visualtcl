@@ -969,7 +969,7 @@ proc vTclWindow.vTclMenuEdit {base menu} {
     wm title $base "Menu editor"
     wm transient $base .vTcl
 
-    menu $base.m22 -tearoff 0
+    menu $base.m22 -tearoff 0 -relief flat
     $base.m22 add cascade \
         -menu "$base.m22.men23" -label Insert
     $base.m22 add cascade \
