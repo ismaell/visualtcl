@@ -53,6 +53,7 @@ proc vTcl:prefs:init {base} {
        variable entrybgcolor     ""
        variable entryactivecolor ""
        variable listboxbgcolor   ""
+       variable treehighlight	 ""
        variable texteditor	 ""
     }
 
@@ -190,6 +191,8 @@ proc {vTcl:prefs:data_exchange} {save_and_validate} {
         prefs::entryactivecolor $save_and_validate
     vTcl:data_exchange_var vTcl(pr,listboxbgcolor) \
         prefs::listboxbgcolor $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,treehighlight) \
+        prefs::treehighlight $save_and_validate
     vTcl:data_exchange_var vTcl(pr,texteditor) \
         prefs::texteditor $save_and_validate
 
@@ -377,6 +380,13 @@ proc {vTcl:prefs:bgcolor} {tab} {
     $last configure -command "vTcl:prefs:bgcolor_get $last"
 
     ##-----------------------------------------------------------------------
+
+    set last  [vTcl:formCompound:add $tab  label \
+	-text "Widget Tree" -background gray -relief raised]
+    pack configure $last -fill x
+
+    vTcl:prefs:color_pref $tab "Widget Tree highlight color" \
+	::prefs::treehighlight
 
     set last  [vTcl:formCompound:add $tab  label \
 	-text "Entries" -background gray -relief raised]

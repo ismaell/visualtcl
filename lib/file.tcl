@@ -530,14 +530,6 @@ proc vTcl:quit {} {
 	if {[vTcl:close] == -1} { return }
     }
 
-    if {$vTcl(quit)} {
-	if {[::vTcl::MessageBox -default yes -icon question -message \
-             "Are you sure you want to quit?" -title "Really Quit?" \
-             -type yesno] == "no"} {
-	    return
-	}
-    }
-
     if {[winfo exists .vTcl.tip]} {
        eval [wm protocol .vTcl.tip WM_DELETE_WINDOW]
     }

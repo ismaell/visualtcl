@@ -1,6 +1,12 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Shift-click will now place the last widget placed.  This sort of bombs
+      the shift-click scrollbar feature, but since it's in the widget menu
+      of the scrollbar, we don't really lose functionality.
+    o Removed the quit confirmation when exiting.
+    o Added a preference option for Widget Tree highlight color.
+    o The command window remembers where it was and saves.
     o Made news return immediately and fetch in the background so that vTcl
       doesn't hang while waiting for news to come back.
     o Fixed saving bug introduced when adding "save position" and "save size"

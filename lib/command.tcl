@@ -55,9 +55,10 @@ proc vTcl:get_command {title initial base} {
     set vTcl(x,$base) -1
     toplevel $base -class vTcl
     wm transient $base .vTcl
-    # wm geometry $base $vTcl(pr,geom_comm)
     vTcl:check_mouse_coords
-    wm geometry $base 350x200+[expr $vTcl(mouse,X)-120]+[expr $vTcl(mouse,Y)-20]
+    set geom 350x200+[expr $vTcl(mouse,X)-120]+[expr $vTcl(mouse,Y)-20]
+    if {[info exists vTcl(pr,geom_comm)]} { set geom $vTcl(pr,geom_comm) }
+    wm geometry $base $geom
     wm resizable $base 1 1
     wm title $base $title
     set vTcl(comm,$base,chg) 0
@@ -114,7 +115,6 @@ proc vTcl:get_command {title initial base} {
 proc vTcl:command:save_geom {base} {
     global vTcl
     set vTcl(pr,geom_comm) [winfo geometry $base]
-    # set vTcl(pr,geom_comm) [lindex [split [wm geom $base] +-] 0]
 }
 
 proc vTcl:command:edit_save {base} {

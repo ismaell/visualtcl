@@ -45,7 +45,9 @@ proc vTcl:show_selection {button_path target} {
 	    $b itemconfigure "TEXT$vTcl(tree,last_selected)" -fill #000000
     }
 
-    $b itemconfigure "TEXT$button_path" -fill #0000ff
+    set fill #0000ff
+    if {![lempty $vTcl(pr,treehighlight)]} { set fill $vTcl(pr,treehighlight) }
+    $b itemconfigure "TEXT$button_path" -fill $fill
 
     set vTcl(tree,last_selected) $button_path
 
