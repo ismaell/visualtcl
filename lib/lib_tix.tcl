@@ -26,7 +26,7 @@
 #
 proc vTcl:lib_tix:init {} {
     catch {package require Tix} erg
-    vTcl:puts "init lib_tix -> $erg"
+    # vTcl:puts "init lib_tix -> $erg"
 }
 
 proc vTcl:widget:lib:lib_tix {args} {
@@ -34,7 +34,7 @@ proc vTcl:widget:lib:lib_tix {args} {
 
     ## See if we have Tix. If not, return
     if {[info command tixNoteBookFrame] == ""} {
-        lappend vTcl(w,libsnames) {(not detected) Tix Widget Support Library}
+        lappend vTcl(libNames) {(not detected) Tix Widget Support Library}
         return
     }
 
@@ -60,6 +60,19 @@ proc vTcl:widget:lib:lib_tix {args} {
     vTcl:lib_tix:unscrew_option_db
 
     lappend vTcl(libNames) {Tix Widget Support Library}
+
+    append vTcl(head,importheader) {
+
+        # provoke name search
+        catch {package require foobar}
+        set names [package names]
+
+        # check if tix is available
+        if { [lsearch -exact $names Tix] != -1} {
+
+            package require Tix
+        }
+    }
 }
 
 # Tix has screwed with the option database; reset it back to Tk's
