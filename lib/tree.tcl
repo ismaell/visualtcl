@@ -259,6 +259,7 @@ proc vTcl:init_wtree {{wants_destroy_handles 1}} {
     if {!$wants_destroy_handles} {
         vTcl:create_handles $vTcl(w,widget)
         vTcl:place_handles $vTcl(w,widget)
+        vTcl:show_selection_in_tree $vTcl(w,widget)
     }
 
     # Restore scrolling position
