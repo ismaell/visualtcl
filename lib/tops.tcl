@@ -103,6 +103,16 @@ proc vTcl:update_top_list {} {
             set vTcl(tops,$index) $i
             incr index
         }
+        foreach i $vTcl(tops) {
+            if {![winfo exists $i]} {
+                # this is to convert 1.22 projects to 1.51
+                # 1.51 hidden toplevels exists but are hidden
+                # 1.2x hidden toplevels don't exist at all except
+                # their proc
+                vTcl:show_top $i
+                vTcl:hide_top $i
+            }
+        }
     }
 }
 

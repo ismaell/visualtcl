@@ -76,6 +76,7 @@ proc vTclWindow.vTcl.bind {args} {
         wm focusmodel $base passive
         wm withdraw $base
         wm geometry $base 660x514+264+138
+        update
         wm maxsize $base 1284 1010
         wm minsize $base 100 1
         wm overrideredirect $base 0

@@ -25,7 +25,7 @@ proc vTcl:LoadWidgets {dir} {
     global vTcl tmp
 
     set lib [file tail $dir]
-    foreach file [lsort [glob -nocomplain $dir/*.wgt]] {
+    foreach file [lsort [glob -nocomplain [file join $dir *.wgt]]] {
         set tmp(lib) $lib
         vTcl:LoadWidget $tmp(lib) $file
     }

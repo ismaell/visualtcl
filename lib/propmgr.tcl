@@ -96,6 +96,7 @@ proc vTclWindow.vTcl.ae {args} {
     wm geometry $ae 206x325
     wm resizable $ae 1 1
     wm transient $vTcl(gui,ae) .vTcl
+    wm overrideredirect $ae 0
 
     canvas $ae.c -yscrollcommand "$ae.sv set" \
         -xscrollcommand "$ae.sh set" -highlightthickness 0

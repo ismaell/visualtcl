@@ -34,7 +34,9 @@ proc vTcl:new {} {
     set vTcl(mode) EDIT
 
     set w [vTcl:auto_place_widget Toplevel]
-    wm geometry $w $vTcl(pr,geom_new)
+    if {$w != ""} {
+        wm geometry $w $vTcl(pr,geom_new)
+    }
 
     vTcl:setup_bind_tree .
     vTcl:update_top_list
@@ -42,10 +44,9 @@ proc vTcl:new {} {
     vTcl:update_proc_list
     set vTcl(project,name) "unknown.tcl"
     wm title $vTcl(gui,main) "Visual Tcl - $vTcl(project,name)"
-    proc main {argc argv} "
-    	wm protocol $vTcl(w,insert) WM_DELETE_WINDOW {exit}
-
-    "
+    if {$w != ""} {
+        proc main {argc argv} "wm protocol $vTcl(w,insert) WM_DELETE_WINDOW {exit}\n"
+    }
 }
 
 proc vTcl:file_source {} {

@@ -367,10 +367,10 @@ proc vTcl:image:replace_image {filename} {
 proc vTcl:image:tag_image_list {t tagname object} {
 
     $t tag bind $tagname <Enter> \
-        "$t tag configure $tagname -relief raised -borderwidth 2"
+        "$t tag configure $tagname -background gray -relief raised -borderwidth 2"
 
     $t tag bind $tagname <Leave> \
-        "$t tag configure $tagname -relief flat -borderwidth 0"
+        "$t tag configure $tagname -background white -relief flat -borderwidth 0"
 
     $t tag bind $tagname <ButtonPress-1> \
         "set vTcl(images,selector_dlg,current) $object"
@@ -454,7 +454,7 @@ proc vTcl:image:create_selector_dlg {base} {
         -command "$base.cpd29.03 yview" -cursor left_ptr \
         -orient vert
     text $base.cpd29.03 \
-        -background #bcbcbc \
+        -background white \
         -foreground #000000 -highlightbackground #f3f3f3 \
         -highlightcolor #000000 -selectbackground #000080 \
         -selectforeground #ffffff -state disabled \
@@ -700,6 +700,7 @@ proc vTclWindow.vTcl.imgManager {args} {
     wm focusmodel $base passive
     wm maxsize $base 1009 738
     wm minsize $base 1 1
+    update
     wm overrideredirect $base 0
     wm resizable $base 1 1
     wm title $base "Image manager"
@@ -717,7 +718,7 @@ proc vTclWindow.vTcl.imgManager {args} {
         -command "$base.cpd29.03 yview" -cursor left_ptr \
         -orient vert
     text $base.cpd29.03 \
-        -background #bcbcbc -cursor left_ptr \
+        -background white -cursor left_ptr \
         -height 1 \
         -state disabled -tabs {0.2i 3i 3.75i} \
         -width 8 -wrap none -xscrollcommand "$base.cpd29.01 set" \

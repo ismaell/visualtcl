@@ -547,6 +547,7 @@ proc vTclWindow.vTcl.inspector {base {container 0}} {
     if {!$container} {
         toplevel $base -class Toplevel
         wm focusmodel $base passive
+        wm transient .vTcl.inspector .vTcl
         wm withdraw $base
         wm geometry $base 550x400
         wm maxsize $base 1600 1200
@@ -555,7 +556,6 @@ proc vTclWindow.vTcl.inspector {base {container 0}} {
         wm resizable $base 1 1
         wm deiconify $base
         wm title $base "System Inspector"
-        wm transient .vTcl.inspector .vTcl
         wm protocol $base WM_DELETE_WINDOW "Window hide $base"
     }
     frame $base.fra23 \
@@ -727,10 +727,3 @@ proc vTclWindow.vTcl.inspector {base {container 0}} {
 
     vTcl:setup_vTcl:bind $base
 }
-
-
-
-
-
-
-

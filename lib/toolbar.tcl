@@ -31,6 +31,7 @@ proc vTcl:toolbar_create {args} {
     wm title $base "Widget Toolbar"
     wm grid $base 1 1 20 20
     wm geometry $base +0+110
+    wm overrideredirect $base 0
     catch {wm geometry .vTcl.toolbar $vTcl(geometry,.vTcl.toolbar)}
     wm protocol .vTcl.toolbar WM_DELETE_WINDOW {
         vTcl:error "You cannot remove the toolbar"
