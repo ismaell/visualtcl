@@ -165,17 +165,25 @@ proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
         set cmpdname [string trim [lindex $i 10]]
         set topopt [string trim [lindex $i 11]]
         #
-        # process procs first in case there are dependancies (init)
+        # process procs first in case there are dependencies (init)
         #
         foreach j $proc {
             set nme [lindex $j 0]
             set arg [lindex $j 1]
             set bdy [lindex $j 2]
-            proc $nme $arg $bdy
-            vTcl:list add "{$nme}" vTcl(procs)
-            if {$nme == "${cmpdname}:init"} {
-                eval $nme
+
+            # if the proc name is in a namespace, make sure the
+            # namespace exists
+		if {[string match ::${cmpdname}::* $nme]} {
+                namespace eval ::${cmpdname} [list proc $nme $arg $bdy]
+            } else {
+                proc $nme $arg $bdy
             }
+
+            vTcl:list add "{$nme}" vTcl(procs)
+        }
+        if {[lsearch -exact $vTcl(procs) "::${cmpdname}::init"] >= 0 } {
+            eval ::${cmpdname}::init $name
         }
         if {$mgrt == "wm" || $base == "."} {
             set base $name
@@ -257,8 +265,8 @@ proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
 	set next [vTcl:next_widget_name $class]
     	append todo "vTcl:set_alias $name $next -noupdate; "
 
-        if {[info procs "${cmpdname}:main"] != ""} {
-            eval ${cmpdname}:main
+        if {[lsearch -exact $vTcl(procs) "::${cmpdname}::main"] >= 0 } {
+            eval ::${cmpdname}::main $name 
         }
     }
 
@@ -268,7 +276,6 @@ proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
 proc vTcl:create_compound {target {cmpdname ""}} {
     global vTcl
     set vTcl(cmp,alias) ""
-    set vTcl(cmp,index) 0
     set ret [vTcl:gen_compound $target "" $cmpdname]
     lappend ret $vTcl(cmp,alias)
     return $ret
@@ -338,8 +345,13 @@ proc vTcl:gen_compound {target {name ""} {cmpdname ""}} {
     }
 
     foreach i [vTcl:get_children $target] {
-	incr vTcl(cmp,index)
-	append chld "[vTcl:gen_compound $i $name.0$vTcl(cmp,index)] "
+
+      # change cy CGavin to retain children names
+      # while creating a compound
+      set windowpath [split $i .]
+      set lastpath [lindex $windowpath end]
+
+	append chld "[vTcl:gen_compound $i $name.$lastpath] "
     }
 
     catch {set alias $widget(rev,$target)}
@@ -361,7 +373,7 @@ proc vTcl:gen_compound {target {name ""} {cmpdname ""}} {
     }
     if {$cmpdname != ""} {
         foreach i $vTcl(procs) {
-            if {[string match ${cmpdname}:* $i]} {
+            if {[string match ::${cmpdname}::* $i]} {
                 lappend proc [list $i [vTcl:proc:get_args $i] [info body $i]]
             }
         }
