@@ -1,6 +1,9 @@
 ChangeLog for Visual Tcl:
 
 1.51b4 -> 1.51rc0
+    o Fixed bug where closing menu editor wouldn't save changes
+    o Fixed aliases bugs in menu editor
+    o Removed a few unused variables in menu editor
     o Made toplevel menus flat
     o Added <Destroy> to simple bindings menu
     o Removed <<TkCon*>> bindings from binding editor
