@@ -416,7 +416,7 @@ proc vTcl:find_new_tops {} {
         }
     }
     foreach i [vTcl:list_widget_tree .] {
-        if {[winfo class $i] == "Toplevel"} {
+        if {$i != ".x" && [winfo class $i] == "Toplevel"} {
             if {[lsearch $new $i] < 0} {
                 lappend new $i
             }
