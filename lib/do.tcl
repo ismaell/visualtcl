@@ -23,6 +23,7 @@
 
 proc vTcl:passive_push_action {do undo} {
     global vTcl
+    ::vTcl::change;	# update the title bar
     incr vTcl(change) 1
     incr vTcl(action_index)
     set vTcl(action_limit) $vTcl(action_index)
@@ -52,6 +53,7 @@ proc vTcl:pop_action {} {
 
 proc vTcl:redo_action {} {
     global vTcl
+    ::vTcl::change;	# update the title bar
     incr vTcl(change) 1
     if { $vTcl(action_index) < $vTcl(action_limit) } {
         vTcl:destroy_handles

@@ -173,6 +173,7 @@ namespace eval ::vTcl::findReplace {
     variable base	.vTcl.find
     variable txtbox	""
     variable count	0
+    variable changeCmd  ""
 
     variable case	1
     variable wild	0
@@ -345,11 +346,14 @@ proc ::vTcl::findReplace::window {{newBase ""}} {
         -rowspan 1 -sticky ew
 }
 
-proc ::vTcl::findReplace::show {textWidget} {
+proc ::vTcl::findReplace::show {textWidget changeCmdParam} {
     variable base
     variable txtbox  $textWidget
     variable index   0.0
     variable origInd [$txtbox index current]
+    variable changeCmd 
+
+    set changeCmd $changeCmdParam
 
     ## Bind the F3 key so the user can continue to find the next entry.
     bind $txtbox <Key-F3> "::vTcl::findReplace::find"
@@ -417,6 +421,15 @@ proc ::vTcl::findReplace::find {{replace 0}} {
     return $i
 }
 
+proc ::vTcl::findReplace::notifyChange {} {
+    variable changeCmd
+
+    ## the buffer has changed, notify
+    if {$changeCmd != ""} {
+        uplevel #0 $changeCmd
+    }
+}
+
 proc ::vTcl::findReplace::replace {} {
     variable base
     variable txtbox
@@ -425,6 +438,7 @@ proc ::vTcl::findReplace::replace {} {
     variable selFirst
     variable selLast
     variable origInd
+    variable changeCmd
 
     set text [$base.fra22.replaceEnt get]
 
@@ -440,6 +454,13 @@ proc ::vTcl::findReplace::replace {} {
 
 	$txtbox delete $selFirst $selLast
 	$txtbox insert $selFirst $text
+
+      ## buffer has changed
+      notifyChange
+
+      ## advances the current index to avoid recursively replacing the
+      ## same pattern
+      set index [$txtbox index "$index + [llength $text] chars"]
     }
 
     set index 0.0
@@ -475,6 +496,13 @@ proc ::vTcl::findReplace::replaceAll {} {
     while {[::vTcl::findReplace::find 1] > -1} {
 	$txtbox delete $selFirst $selLast
 	$txtbox insert $selFirst $text
+
+      ## buffer has changed
+      notifyChange
+
+      ## advances the current index to avoid recursively replacing the
+      ## same pattern
+      set index [$txtbox index "$index + [llength $text] chars"]
     }
 
     set index 0.0

@@ -1,6 +1,9 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Fixed find/replace problem where replace string is a superset
+      of find string.
+    o Display asterisk in title bar to show that changes have been made.
     o Added BLT tab set.
     o Added BWidgets paned window.
     o Added a list of choices for the -cursor option.

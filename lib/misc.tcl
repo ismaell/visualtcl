@@ -1043,7 +1043,10 @@ proc vTcl:read_file {file} {
 
 proc ::vTcl::change {} {
     global vTcl
-    set vTcl(change) 1
+    if {!$vTcl(change)} {
+        wm title .vTcl "[wm title .vTcl]*"
+        set vTcl(change) 1
+    }
 }
 
 proc vTclWindow.vTcl.tkcon {args} {

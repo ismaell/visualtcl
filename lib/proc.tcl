@@ -345,7 +345,7 @@ proc vTclWindow.vTcl.proc {args} {
 
     set butFind [vTcl:formCompound:add $base.f3.toolbar vTcl:toolbar_button \
         -image [vTcl:image:get_image [file join $vTcl(VTCL_HOME) images edit search.gif] ] \
-	-command "::vTcl::findReplace::show $base.f4.text"]
+	-command "::vTcl::findReplace::show $base.f4.text \"vTcl::proc_edit_change $base Space\""]
     pack configure $butFind -side left
     vTcl:set_balloon $butFind "Find/Replace"
 
@@ -446,5 +446,9 @@ proc ::vTcl::proc_edit_change {w k} {
 	"Delete" { return }
     }
     global vTcl
+    if {!$vTcl(proc,$w,chg)} {
+        wm title $w "[wm title $w]*"
+    }
+
     set vTcl(proc,$w,chg) 1
 }
