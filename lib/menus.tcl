@@ -615,6 +615,13 @@ namespace eval ::menu_edit {
         set menu_edit_windows ""
     }
 
+    proc {::menu_edit::browse_image} {top} {
+
+        set image [vTcl:at ::${top}::entry_image]
+        set r [vTcl:prompt_user_image2 $image]
+        set ::${top}::entry_image $r
+    }
+
 } ; # namespace eval
 
 proc vTclWindow.vTclMenuEdit {base menu} {
@@ -998,7 +1005,8 @@ proc vTclWindow.vTclMenuEdit {base menu} {
         ::menu_edit::update_current [winfo toplevel %W]
     }
     button $base.cpd24.02.but27 \
-        -padx 1 -pady 0 -text ...
+        -padx 1 -pady 0 -text ... \
+        -command "::menu_edit::browse_image $base"
     label $base.cpd24.02.lab28 \
         -borderwidth 1 -padx 1 -pady 1 -text Accelerator:
     entry $base.cpd24.02.ent29 \

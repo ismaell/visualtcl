@@ -477,11 +477,25 @@ proc vTcl:prompt_user_image {target option} {
         return
     }
 
+    set r [vTcl:prompt_user_image2 $object]
+
+    if {$r != ""} {
+	    $target configure $option $r
+
+	    # refresh property manager
+	    vTcl:update_widget_info $target
+	    vTcl:prop:update_attr
+    }
+}
+
+proc vTcl:prompt_user_image2 {image} {
+
+    global vTcl
+
     vTcl:image:create_selector_dlg ""
 
     # is there an initial filename ?
-    if [info exist vTcl(images,filename,$object)] {
-
+    if [info exist vTcl(images,filename,$image)] {
     }
 
     # don't reposition dialog according to parent
@@ -494,15 +508,13 @@ proc vTcl:prompt_user_image {target option} {
     # user wants a new image?
     if {$r == "<new>"} {
 
-    	set r [vTcl:image:new_image_file]
+        set r [vTcl:image:new_image_file]
     }
 
     if {$r != ""} {
-	    $target configure $option $r
-
-	    # refresh property manager
-	    vTcl:update_widget_info $target
-	    vTcl:prop:update_attr
+        return $r
+    } else {
+        return $image
     }
 }
 
