@@ -1216,3 +1216,8 @@ proc vTcl:read_file {file} {
     close $fp
     return $x
 }
+
+proc ::vTcl::change {} {
+    global vTcl
+    set vTcl(change) 1
+}

@@ -26,9 +26,8 @@ proc vTclWindow(post).vTcl.bind {args} {
 }
 
 proc vTcl:get_bind {target} {
-
-    if [winfo exists .vTcl.bind] {
-        ::widgets_bindings::fill_bindings $target
+    if {[winfo exists .vTcl.bind]} {
+        ::widgets_bindings::fill_bindings $target 0
     }
 }
 
@@ -37,9 +36,7 @@ proc vTclWindow.vTcl.bind {args} {
     set container 0
     set base .vTcl.bind
 
-    if {[winfo exists $base] && (!$container)} {
-        wm deiconify $base; return
-    }
+    if {[winfo exists $base] && (!$container)} { wm deiconify $base; return }
 
     global widget
     set widget(rev,$base) {BindingsEditor}
@@ -89,7 +86,7 @@ proc vTclWindow.vTcl.bind {args} {
         -borderwidth 2 -height 75 \
         -width 125 
     button $base.fra22.but24 \
-        -image [vTcl:image:get_image "/home/cgavin/vtcl/images/edit/ok.gif"] \
+        -image [vTcl:image:get_image "ok.gif"] \
         -padx 9 -pady 3 -text button -command "Window hide .vTcl.bind"
     vTcl:set_balloon $base.fra22.but24 "Close"
     frame $base.cpd21 \
@@ -103,7 +100,7 @@ proc vTclWindow.vTcl.bind {args} {
         -highlightbackground #dcdcdc -highlightcolor #000000 -width 125 
     menubutton $base.cpd21.01.fra22.men20 \
         -height 23 \
-        -image [vTcl:image:get_image "/home/cgavin/vtcl/images/edit/add.gif"] \
+        -image [vTcl:image:get_image "add.gif"] \
         -menu "$base.cpd21.01.fra22.men20.m" -padx 0 -pady 0 -relief raised \
         -text menu -width 23 
     menu $base.cpd21.01.fra22.men20.m \
@@ -145,7 +142,7 @@ proc vTclWindow.vTcl.bind {args} {
         -command ::widgets_bindings::delete_binding \
         -height 23 \
         -highlightthickness 0 \
-        -image [vTcl:image:get_image "/home/cgavin/vtcl/images/edit/remove.gif"] \
+        -image [vTcl:image:get_image "remove.gif"] \
         -padx 0 -pady 0 -text button -width 23
     button $base.cpd21.01.fra22.but25 \
         -command "::widgets_bindings::movetag up" \
@@ -270,9 +267,7 @@ proc vTclWindow.vTcl.bind {args} {
         -xscrollcommand "$base.cpd21.02.cpd21.01 set" \
         -yscrollcommand "$base.cpd21.02.cpd21.02 set" 
     bind $base.cpd21.02.cpd21.03 <ButtonRelease-3> {
-        if {! [winfo exists %W.menu] } {
-            menu %W.menu
-        }
+        if {![winfo exists %W.menu]} { menu %W.menu }
 
         %W.menu configure -tearoff 0
         %W.menu delete 0 end
@@ -814,7 +809,6 @@ namespace eval ::widgets_bindings {
     }
 
     proc {::widgets_bindings::movetag} {moveupdown} {
-
         global vTcl widget
 
         set indices [ListboxBindings curselection]
@@ -874,7 +868,6 @@ namespace eval ::widgets_bindings {
     }
 
     proc {::widgets_bindings::is_editable_tag} {tag} {
-
         global widget
 
         set target $widgets_bindings::target
@@ -891,7 +884,6 @@ namespace eval ::widgets_bindings {
     }
 
     proc {::widgets_bindings::add_binding} {event} {
-
         global widget
 
         # before selecting a different binding, make sure we
@@ -1052,8 +1044,7 @@ namespace eval ::widgets_bindings {
         }
     }
 
-    proc {::widgets_bindings::fill_bindings} {target} {
-
+    proc {::widgets_bindings::fill_bindings} {target {change 1}} {
         global widget vTcl tk_version
 
         # before selecting a different binding, make sure we
@@ -1072,7 +1063,6 @@ namespace eval ::widgets_bindings {
         set ::widgets_bindings::target $target
 
         foreach tag $tags {
-        
            ListboxBindings insert end $tag
            if {[::widgets_bindings::is_editable_tag $tag]} {
                if {$tk_version > 8.2} {
@@ -1085,7 +1075,6 @@ namespace eval ::widgets_bindings {
            
            set events [bind $tag]
            foreach event $events {
-              
                ListboxBindings insert end "   $event"
                if {[::widgets_bindings::is_editable_tag $tag]} {
                    if {$tk_version > 8.2} {
@@ -1100,6 +1089,8 @@ namespace eval ::widgets_bindings {
                 
         # enable/disable various buttons
         ::widgets_bindings::enable_toolbar_buttons
+
+	if {$change} { ::vTcl::change }
     }
 
     proc {::widgets_bindings::find_tag_event} {l index ref_tag ref_event} {
@@ -1183,15 +1174,9 @@ namespace eval ::widgets_bindings {
         set tag    $::widgets_bindings::lasttag
         set event  $::widgets_bindings::lastevent
         
-        if {$tag == "" ||
-            $event == "" ||
-            $target == ""} {
-            return
-        }
-        
-        if {![winfo exists $target] } return
-
-        if {![::widgets_bindings::is_editable_tag $tag]} return
+        if {$tag == "" || $event == "" || $target == ""} { return }
+        if {![winfo exists $target] } { return }
+        if {![::widgets_bindings::is_editable_tag $tag]} { return }
                         
         set old_bind [string trim [bind $tag $event]]
         set new_bind [string trim [TextBindings get 0.0 end]]
@@ -1199,6 +1184,7 @@ namespace eval ::widgets_bindings {
         # is it really different?
         if {$new_bind != $old_bind} {
             bind $tag $event $new_bind
+	    ::vTcl::change
         }
     }
 
@@ -1400,12 +1386,3 @@ namespace eval ::widgets_bindings {
     }
 
 } ; # namespace eval
-
-
-
-
-
-
-
-
-

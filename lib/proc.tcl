@@ -88,23 +88,20 @@ proc vTcl:update_proc {base} {
     set name [$base.f2.f8.procname get]
     set args [$base.f2.f9.args get]
     set body [string trim [$base.f3.text get 0.0 end] "\n"]
-    if {$name != ""} {
+    if {[lempty $name]} { return }
+    if {[regexp (.*):: $name matchAll context]} {
 
-        if {[regexp (.*):: $name matchAll context]} {
-
-            # create new namespace if necessary
-	    namespace eval ${context} {}
-	}
-
-        proc $name $args $body
-    } else {
-    	# user hasn't entered a proc name yet
-    	return
+	# create new namespace if necessary
+	namespace eval ${context} {}
     }
+
+    proc $name $args $body
+
     vTcl:list add "{$name}" vTcl(procs)
     grab release $base
     destroy $base
     vTcl:update_proc_list $name
+    ::vTcl::change
 }
 
 proc vTcl:update_proc_list {{name {}}} {

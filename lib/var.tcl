@@ -558,7 +558,7 @@ proc vTclWindow.vTcl.inspector {base {container 0}} {
     frame $base.fra23 \
         -borderwidth 2
     button $base.fra23.but24 \
-        -image [vTcl:image:get_image "/home/cgavin/vtcl/images/edit/ok.gif"] \
+        -image [vTcl:image:get_image "ok.gif"] \
         -command "Window hide $base"
     frame $base.cpd26 \
         -background #000000
@@ -607,7 +607,7 @@ proc vTclWindow.vTcl.inspector {base {container 0}} {
     frame $base.cpd26.01.fra29 \
         -borderwidth 2
     button $base.cpd26.01.fra29.but30 \
-        -image [vTcl:image:get_image "/home/cgavin/vtcl/images/edit/refresh.gif"]
+        -image [vTcl:image:get_image "refresh.gif"]
     frame $base.cpd26.02 \
         -background #dcdcdc -highlightbackground #dcdcdc \
         -highlightcolor #000000 -width 0

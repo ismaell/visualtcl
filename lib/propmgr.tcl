@@ -25,7 +25,7 @@ set vTcl(w,last_widget_in) ""
 set vTcl(w,last_value) ""
 
 proc vTcl:show_propmgr {} {
-	vTclWindow.vTcl.ae
+    vTclWindow.vTcl.ae
 }
 
 proc vTcl:grid:height {parent {col 0}} {
@@ -207,49 +207,44 @@ proc vTcl:prop:recalc_canvas {} {
 }
 
 proc vTcl:focus_out_cmd {option} {
+    global vTcl
+    if {$vTcl(mode) == "TEST"} return
 
-	global vTcl
-	if {$vTcl(mode) == "TEST"} return
+    if {$vTcl(w,last_widget_in) != "" && $vTcl(w,last_value) != ""} {
+	set back_last_widget_in $vTcl(w,last_widget_in)
+	set back_last_value $vTcl(w,last_value)
 
-	if {$vTcl(w,last_widget_in) != "" && \
-	    $vTcl(w,last_value)     != ""} {
+	set vTcl(w,last_widget_in) ""
+	set vTcl(w,last_value)     ""
 
-		set back_last_widget_in $vTcl(w,last_widget_in)
-		set back_last_value $vTcl(w,last_value)
-
-	    	set vTcl(w,last_widget_in) ""
-	    	set vTcl(w,last_value)     ""
-
-	    	$back_last_widget_in configure $option $back_last_value
-
-	} else {
-	    vTcl:log "oops:$vTcl(w,widget),$vTcl(w,last_widget_in)!"
-	}
+	$back_last_widget_in configure $option $back_last_value
+    } else {
+	vTcl:log "oops:$vTcl(w,widget),$vTcl(w,last_widget_in)!"
+    }
 }
 
 proc vTcl:focus_out_geometry_cmd {option cmd {cmd2 ""}} {
+    global vTcl
 
-	global vTcl
-	if {$vTcl(mode) == "TEST"} return
+    if {$vTcl(mode) == "TEST"} return
 
-        if {$vTcl(w,last_widget_in) != "" && \
-            $vTcl(w,last_value)     != ""} {
+    if {$vTcl(w,last_widget_in) != "" && \
+	$vTcl(w,last_value)     != ""} {
 
-	    set back_last_widget_in $vTcl(w,last_widget_in)
-	    set back_last_value $vTcl(w,last_value)
+	set back_last_widget_in $vTcl(w,last_widget_in)
+	set back_last_value $vTcl(w,last_value)
 
-	    set vTcl(w,last_widget_in) ""
-    	    set vTcl(w,last_value)     ""
+	set vTcl(w,last_widget_in) ""
+	set vTcl(w,last_value)     ""
 
-            if {$cmd2==""} {
-	            $cmd $back_last_widget_in $option $back_last_value
-	    } else {
-	            $cmd $cmd2 $back_last_widget_in $option $back_last_value
-	    }
-
-         } else {
-         	vTcl:log "oops2:$vTcl(w,widget),$vTcl(w,last_widget_in)!"
-         }
+	if {$cmd2==""} {
+	    $cmd $back_last_widget_in $option $back_last_value
+	} else {
+	    $cmd $cmd2 $back_last_widget_in $option $back_last_value
+	}
+     } else {
+	vTcl:log "oops2:$vTcl(w,widget),$vTcl(w,last_widget_in)!"
+     }
 }
 
 proc vTcl:prop:update_attr {} {
@@ -643,13 +638,5 @@ proc vTcl:prop:save_opt {w opt varName} {
     } else {
 	set ::widgets::${w}::save($opt) 1
     }
+    ::vTcl::change
 }
-
-
-
-
-
-
-
-
-
