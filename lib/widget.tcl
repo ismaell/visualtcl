@@ -702,6 +702,19 @@ proc vTcl:create_widget {class options new_widg x y} {
     return $new_widg
 }
 
+proc vTcl:valid_alias {target alias} {
+
+    global widget
+    set toplevel [vTcl:get_top_level_or_alias $target]
+
+    if {[info exists widget($toplevel,$alias)] &&
+         $widget($toplevel,$alias) != $target} {
+        return 0
+    } else {
+        return 1
+    }
+}
+
 proc vTcl:set_alias {target {alias ""} {noupdate ""}} {
     global vTcl widget classes
 
@@ -710,11 +723,22 @@ proc vTcl:set_alias {target {alias ""} {noupdate ""}} {
     set c [vTcl:get_class $target]
     set was {}
     if {[lempty $alias]} {
-        if {![info exists widget(rev,$target)]} {
-            set alias [vTcl:get_string "Widget alias for $c" $target]
-        } else {
+        if {[info exists widget(rev,$target)]} {
             set was $widget(rev,$target)
+        }
+        set valid 0
+        while {!$valid} {
             set alias [vTcl:get_string "Widget alias for $c" $target $was]
+            if {$alias != $was} {
+                # make sure no other widget in the same toplevel has the same alias
+                set valid [vTcl:valid_alias $target $alias]
+                if {!$valid} {
+                    vTcl:dialog "Alias '$alias' already exists in the same toplevel"
+                }
+            } else {
+                # user decided not to change the alias, or to cancel
+                return
+            }
         }
     }
 
@@ -972,7 +996,11 @@ proc vTcl:new_widget {class button {options ""}} {
         return [vTcl:auto_place_widget $class $options]
     }
 
-    $button configure -relief sunken
+    # the trick is, ButtonRelease-1 gets processed first (this is
+    # how we came here), but then the button class raises the button
+    # again, so we wait until we have some free time
+
+    after 10 "$button configure -relief sunken"
 
     vTcl:status "Insert $class"
 
