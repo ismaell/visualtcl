@@ -27,9 +27,10 @@ exec wish "$0" "$@"
 
 set vTcl(sourcing) 0
 
-# under Windows we are using the standard wish console
+# under Windows/Macintosh we are using the standard wish console
 
-if {$tcl_platform(platform) != "windows"} {
+if {$tcl_platform(platform) != "windows" &&
+    $tcl_platform(platform) != "macintosh"} {
 
 	rename puts vTcl:puts
 
