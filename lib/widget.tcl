@@ -986,6 +986,11 @@ proc vTcl:widget:get_image {w} {
     global vTcl classes
 
     set c [vTcl:get_class $w]
+
+    if {! [info exists classes($c,icon)]} {
+        return [vTcl:image:get_image hide.gif]
+    }
+
     set i $classes($c,icon)
     if {[vTcl:streq [string index $i 0] "@"]} {
     	set i [[string range $i 1 end] $w]
@@ -997,6 +1002,11 @@ proc vTcl:widget:get_tree_label {w} {
     global vTcl classes
 
     set c [vTcl:get_class $w]
+
+    if {! [info exists classes($c,treeLabel)]} {
+        return $c
+    }
+
     set t $classes($c,treeLabel)
     if {[vTcl:streq [string index $t 0] "@"]} {
     	set t [[string range $t 1 end] $w]
@@ -1054,6 +1064,15 @@ proc vTcl:widget:register_all_widgets {{w .}} {
     	vTcl:widget:register_widget $w
     }
 }
+
+
+
+
+
+
+
+
+
 
 
 

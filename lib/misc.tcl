@@ -708,9 +708,9 @@ proc vTcl:copy_widgetname {} {
     .vTcl.widgetname selection range 0 end
 }
 
-proc error {string} {
-    tk_messageBox -title Error -icon error -type ok -message $string
-}
+# proc error {string} {
+#   tk_messageBox -title Error -icon error -type ok -message $string
+# }
 
 proc echo {args} {
     puts stdout [join $args ""]
@@ -1184,6 +1184,9 @@ proc vTcl:entry {w args} {
     eval entry $w $args
     bind $w <Control-Key-u> "$w delete 0 end"
 }
+
+
+
 
 
 

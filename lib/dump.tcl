@@ -88,6 +88,7 @@ proc vTcl:export_procs {} {
     global vTcl classes
 
     set output ""
+    append output "if {!\[info exists vTcl(sourcing)\]} \{"
     set children [vTcl:list_widget_tree .]
 
     foreach child $children {
@@ -95,8 +96,12 @@ proc vTcl:export_procs {} {
     }
 
     foreach class [vTcl:lrmdups $classList] {
-	eval lappend list $classes($class,exportCmds)
-	eval lappend list $classes($class,widgetProc)
+	    if {[info exists classes($class,exportCmds)]} {
+            eval lappend list $classes($class,exportCmds)
+	    }
+		if {[info exists classes($class,widgetProc)]} {
+            eval lappend list $classes($class,widgetProc)
+		}
     }
 
     foreach i [vTcl:lrmdups $list] {
@@ -123,6 +128,7 @@ proc vTcl:export_procs {} {
             }
         }
     }
+    append output "\}\n"
     return $output
 }
 
@@ -844,3 +850,7 @@ proc vTcl:dump:project_info {basedir project} {
     close $fp
     return
 }
+
+
+
+
