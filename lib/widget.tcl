@@ -251,7 +251,7 @@ proc vTcl:select_widget {target} {
 proc vTcl:widget_tree {target {include_target 1}} {
     global vTcl classes
 
-    if {$target == ".vTcl" || [string range $target 0 4] == ".__tk"} { return }
+    if {$target == ".vTcl" || [string range $target 0 2] == ".__"} { return }
 
     set output ""
     if {$include_target} {
@@ -287,7 +287,7 @@ proc vTcl:widget_tree {target {include_target 1}} {
 
 proc vTcl:list_widget_tree {target {which ""} {include_menus 0} {include_megachildren 0}} {
     if {$which == ""} {
-        if {$target == ".vTcl" || [string range $target 0 4] == ".__tk"} {
+        if {$target == ".vTcl" || [string range $target 0 2] == ".__"} {
             return
         }
     }

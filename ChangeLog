@@ -1,6 +1,7 @@
 ChangeLog for Visual Tcl:
 
 1.6.0a2 ->
+    o Support for tablelist widget.
     o Getting rid of the old stack trace dialog and using TkCon instead.
     o Added unmanaged frame widget. This is a frame where you can
       programmatically insert any widgets you like. Visual Tcl won't care

@@ -441,7 +441,7 @@ proc vTcl:get_children {target {include_megachildren 0}} {
         set n $all
     }
     foreach i $n {
-        if ![string match ".__tk*" $i] {
+        if ![string match ".__*" $i] {
             lappend r $i
         }
     }
