@@ -1,6 +1,8 @@
 ChangeLog for Visual Tcl:
 
 1.6.0a1 ->
+    o Namespace'izing label and entry widgets for cleaner code
+    o Saving suboptions for megawidgets according to checkboxes.
     o For megawidgets, saving checkboxes for saving suboptions or not.
     o Fixed bug where setting geometry padx/y option would set regular
       padx/y option for button widget.

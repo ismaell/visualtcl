@@ -29,14 +29,28 @@ Lib         core
 Icon            icon_label.gif
 DefaultOptions  -text label -relief flat
 DoubleClickCmd  vTcl:set_label
-TreeLabel       @vTcl:core:get_widget_tree_label
+TreeLabel       @vTcl::widgets::core::label::getWidgetTreeLabel
 DefaultValues   -activebackground -activeforeground -background \
                 -foreground -highlightbackground -highlightcolor
 ClassOption     -_tooltip
 
-Function        "Set Text"  vTcl:label:setText
+Function        "Set Text"  vTcl::widgets::core::label::setText
 
-proc vTcl:label:setText {} {
-    global vTcl
-    vTcl:set_label $vTcl(w,widget)
+namespace eval vTcl::widgets::core::label {
+
+    proc setText {} {
+        global vTcl
+        vTcl:set_label $vTcl(w,widget)
+    }
+
+    proc getWidgetTreeLabel {target} {
+        set ttt1 [$target cget -text]
+	set ttt2 [$target cget -textvariable]
+
+	if {$ttt2 == ""} {
+	    return "LAB: $ttt1"
+	} else {
+	    return "LAB: $ttt1 var=$ttt2"
+	}
+    }
 }

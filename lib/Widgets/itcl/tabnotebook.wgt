@@ -112,7 +112,7 @@ namespace eval vTcl::widgets::iwidgets::tabnotebook {
         set size    [llength $entries]
         for {set i 0} {$i < $size} {incr i} {
             set conf [$target pageconfigure $i]
-            set pairs [vTcl:conf_to_pairs $conf ""]
+            set pairs [vTcl:get_subopts_special $conf $target]
             append result "$vTcl(tab)$basename add \\\n"
             append result "[vTcl:clean_pairs $pairs]\n"
         }

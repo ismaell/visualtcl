@@ -28,13 +28,13 @@ Lib		core
 
 Icon		icon_entry.gif
 DoubleClickCmd	vTcl:set_textvar
-InsertCmd	vTcl:widget:entry:inscmd
-TreeLabel	@vTcl:core:get_widget_tree_label
+InsertCmd	vTcl::widgets::core::entry::insertCmd
+TreeLabel	@vTcl::widgets::core::entry::getWidgetTreeLabel
 DefaultValues   -foreground -highlightbackground \
                 -highlightcolor -selectbackground -selectforeground
 DefaultOptions  -background white
 ClassOption     -_tooltip
-Function        "Set Text Variable" vTcl:widget:entry:SetTextVariable
+Function        "Set Text Variable" vTcl::widgets::core::entry::setTextVariable
 
 ## If we're using Tcl 8.4, we need to add the readonly option.
 if {[info tclversion] > 8.3} {
@@ -43,21 +43,28 @@ if {[info tclversion] > 8.3} {
     SpecialOpt -state "state" choice {normal disabled}
 }
 
-proc vTcl:widget:entry:inscmd {target} {
-    set last [lindex [split $target .] end]
-    set last [vTcl:rename $last]
-    set name "[winfo toplevel $target]::$last"
+SpecialOpt -validate "Validate" choice {none focus focusin focusout key all}
 
-    $target configure -textvariable $name
-}
+namespace eval vTcl::widgets::core::entry {
 
-proc vTcl:widget:entry:SetTextVariable {} {
+    proc insertCmd {target} {
+	set last [lindex [split $target .] end]
+	set last [vTcl:rename $last]
+	set name "[winfo toplevel $target]::$last"
 
-    global vTcl
+	$target configure -textvariable $name
+    }
 
-    vTcl:core:set_option $vTcl(w,widget)\
+    proc setTextVariable {} {
+        global vTcl
+        vTcl:core:set_option $vTcl(w,widget)\
                          -textvariable \
                          "Text Variable for $vTcl(w,widget)"
-}
+    }
 
-SpecialOpt -validate "Validate" choice {none focus focusin focusout key all}
+    proc getWidgetTreeLabel {target} {
+        set val [$target cget -textvariable]
+	if {[lempty $val]} { set val NONE }
+	return "VAR: $val"
+    }
+}

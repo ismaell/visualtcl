@@ -282,16 +282,6 @@ proc vTcl:core:get_widget_tree_label {target} {
 
     switch [string tolower $class] {
 	toplevel { set t [wm title $target] }
-	label {
-	    set ttt1 [$target cget -text]
-	    set ttt2 [$target cget -textvariable]
-
-	    if {$ttt2 == ""} {
-		set t "LAB: $ttt1"
-	    } else {
-		set t "LAB: $ttt1 var=$ttt2"
-	    }
-	}
 	radiobutton {
 	    set ttt1 [$target cget -text]
 	    set ttt2 [$target cget -variable]
@@ -324,11 +314,6 @@ proc vTcl:core:get_widget_tree_label {target} {
 	    } else {
 		set t "BUT: $ttt1 var=$ttt2"
 	    }
-	}
-	entry {
-	    set val [$target cget -textvariable]
-	    if {[lempty $val]} { set val NONE }
-	    set t "VAR: $val"
 	}
 	listbox {
 	    set val [$target cget -listvariable]

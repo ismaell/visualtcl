@@ -272,11 +272,41 @@ proc vTcl:get_opts {opts} {
 ## subcomponents (pages, columns, childsites) where the user cannot
 ## save or not save an option.
 proc vTcl:get_subopts_special {opts w} {
+    if {[info exists ::widgets::${w}::subOptions::save]} {
+        ## if there is a list of options to save, use it, and delegate
+	## to sister function to do so
+        return [vTcl:get_subopts_special_save $opts $w]
+    }
+
     global vTcl
     set ret ""
     foreach i $opts {
-        lassign $i opt x x def val
+        ## avoid option shortcuts (like -bg)
+        if {[llength $i] != 5} {continue}
+
+	lassign $i opt x x def val
         if {[vTcl:streq $opt "-class"] || [vTcl:streq $val $def]} { continue }
+        if {[info exists vTcl(option,translate,$opt)]} {
+            set val [$vTcl(option,translate,$opt) $val]
+        }
+        lappend ret $opt $val
+    }
+    return $ret
+}
+
+proc vTcl:get_subopts_special_save {opts w} {
+    upvar ::widgets::${w}::subOptions::save subSave
+
+    global vTcl
+    set ret ""
+    foreach i $opts {
+        ## avoid option shortcuts (like -bg)
+        if {[llength $i] != 5} {continue}
+
+	lassign $i opt x x def val
+        if {[vTcl:streq $opt "-class"]} {continue}
+	if {![info exists subSave($opt)]} {continue}
+	if {!$subSave($opt)} {continue}
         if {[info exists vTcl(option,translate,$opt)]} {
             set val [$vTcl(option,translate,$opt) $val]
         }
@@ -834,11 +864,13 @@ proc vTcl:dump:project_info {basedir project} {
                 if {!$subSave($var)} { continue }
                 lappend list $var $subSave($var)
             }
-            append out $vTcl(tab2)
-            append out "namespace eval subOptions \{\n"
-            append out $vTcl(tab)$vTcl(tab2)
-            append out "array set save [list $list]\n"
-            append out $vTcl(tab2)\}\n
+	    if {![lempty $list]} {
+                append out $vTcl(tab2)
+                append out "namespace eval subOptions \{\n"
+                append out $vTcl(tab)$vTcl(tab2)
+                append out "array set save [list $list]\n"
+                append out $vTcl(tab2)\}\n
+	    }
         }
         append out "$vTcl(tab)\}\n"
     }
