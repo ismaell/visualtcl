@@ -3,7 +3,6 @@
 
 ttd.version 1.0
 
-ttd.tagdef sel -background SystemHighlight -borderwidth 0 -foreground SystemHighlightText -relief flat
 ttd.tagdef Title -background white -font {-family Arial -weight bold -slant roman -size 12 -underline 0 -overstrike 0} -foreground #000000 -justify left
 ttd.tagdef {Level 1 Title} -background white -font {-family Arial -weight bold -slant roman -size 11 -underline 0 -overstrike 0} -foreground #004080 -justify left
 ttd.tagdef {Level 2 Title} -background white -font {-family Arial -weight bold -slant roman -size 10 -underline 0 -overstrike 0} -foreground #000000 -justify left
@@ -986,9 +985,7 @@ ttd.text {
 ttd.text {
 }
 ttd.tagon {Level 2 Title}
-ttd.tagon sel
 ttd.text {5.3 Delete Toplevel Window}
-ttd.tagoff sel
 ttd.tagoff {Level 2 Title}
 ttd.text {
 }
@@ -998,6 +995,21 @@ ttd.tagon {Level 1 Title}
 ttd.text {6. Widget Tree}
 ttd.tagoff {Level 1 Title}
 ttd.text {
+}
+ttd.text {The Widget Tree shows all the widgets in your application and the relationships between them.
+}
+ttd.text {
+}
+ttd.text {Widgets that don't have a widget above them are toplevel windows.
+}
+ttd.text {The widget above (containing) a widget is called the parent widget.
+}
+ttd.text {The widget(s) below (contained by) a widget is(are) called child(children) widget(s).
+}
+ttd.text {
+}
+ttd.text {When you click on a widget in the widget tree, it becomes the current selection. You can }
+ttd.text {also right-click on a widget in the widget tree to show a context menu with operations available for that widget.
 }
 ttd.text {
 }
@@ -1021,6 +1033,48 @@ ttd.text {
 ttd.tagon {Level 1 Title}
 ttd.text {8. Widget Bindings}
 ttd.tagoff {Level 1 Title}
+ttd.text {
+}
+ttd.text {Bindings link events to actions for a widget. For example, in a drawing application, when pressing a mouse button on a canvas, your code will start drawing, when moving the mouse, your code will draw according to mouse movements, and when releasing the mouse, drawing will end.
+}
+ttd.text {
+}
+ttd.text {Bindings also allow to set accelerator keys for toplevel windows. You can decide what actions to take whenever a widget gains or lose the focus, and many other things.
+}
+ttd.text {
+}
+ttd.text {By using binding tags, you can define a collection of bindings and apply it to several widgets. When modifying the behavior of a binding tag, all widgets that have been assigned this binding tag will automatically inherit the new behavior.
+}
+ttd.text {
+}
+ttd.text {You can even define virtual bindings, whose names are enclosed with << >>, and fire events yourself to which your widgets will respond.
+}
+ttd.text {
+}
+ttd.tagon {Level 2 Title}
+ttd.text {8.1 Insert}
+ttd.tagoff {Level 2 Title}
+ttd.text {
+}
+ttd.text {
+}
+ttd.tagon {Level 2 Title}
+ttd.text {8.2 Move}
+ttd.tagoff {Level 2 Title}
+ttd.text {
+}
+ttd.text {
+}
+ttd.tagon {Level 2 Title}
+ttd.text {8.3 Add}
+ttd.tagoff {Level 2 Title}
+ttd.text {
+}
+ttd.text {
+}
+ttd.tagon {Level 2 Title}
+ttd.text {8.4 Delete}
+ttd.tagoff {Level 2 Title}
 ttd.text {
 }
 ttd.text {
