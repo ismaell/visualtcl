@@ -28,9 +28,7 @@ proc Window {args} {
     ##    Please read their license agreements for details.
 
     global vTcl
-    set cmd     [lindex $args 0]
-    set name    [lindex $args 1]
-    set newname [lindex $args 2]
+    foreach {cmd name newname} [lrange $args 0 2] {}
     set rest    [lrange $args 3 end]
     if {$name == "" || $cmd == ""} { return }
     if {$newname == ""} { set newname $name }
@@ -179,3 +177,4 @@ proc {info_script} {} {
     }
     return $scriptdir
 }
+

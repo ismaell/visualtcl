@@ -90,8 +90,7 @@ proc vTcl:Toplevel:WidgetProc {w args} {
     set args [lrange $args 1 end]
     switch -- [string tolower $command] {
         "setvar" {
-            set varname [lindex $args 0]
-            set value [lindex $args 1]
+            foreach {varname value} $args {}
             if {$value == ""} {
                 return [set ::${w}::${varname}]
             } else {
@@ -359,6 +358,7 @@ namespace eval vTcl::widgets::core::toplevel {
 	return $out
     }
 }
+
 
 
 
