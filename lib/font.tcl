@@ -1,5 +1,3 @@
-#!/usr/bin/wish
-
 ##############################################################################
 #
 # font.tcl - procedures to select a font and return its description
