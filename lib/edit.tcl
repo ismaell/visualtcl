@@ -93,7 +93,8 @@ proc vTcl:delete {recipient {w ""}} {
     append do "set _cmds \[info commands $w.*\]; "
     append do {foreach _cmd $_cmds {catch {rename $_cmd ""}}}
     set opts ""
-    if {[winfo manager $w] != "wm"} {
+    set mgr [winfo manager $w]
+    if {$mgr != "wm" && $mgr != "canvas"} {
         set opts [[winfo manager $w] info $w]
     }
     set undo "$buffer; ::vTcl::compounds::insertCompoundDirect $w temp scrap $vTcl(w,def_mgr) [list $opts]; "
@@ -522,6 +523,7 @@ proc ::vTcl::findReplace::cancel {} {
     wm withdraw $base
     focus $txtbox
 }
+
 
 
 

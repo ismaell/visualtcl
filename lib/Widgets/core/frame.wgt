@@ -147,7 +147,14 @@ namespace eval ::vTcl::widgets::core::frame {
         # yes it is a childsite, ask to delete
         set class [vTcl:get_class $megawidget]
         if {$classes($class,deleteSiteCmd) != ""} {
+
+            ## before deleting, get the index
+            set childsiteCmd [lindex $classes($class,treeChildrenCmd) 1]
+            set sites [$childsiteCmd $megawidget]
+            set index [lsearch -exact $sites $target]
+
             $classes($class,deleteSiteCmd) $megawidget $target
+            ::vTcl::notify::publish deleted_childsite $target $index
         }
     }
 
@@ -182,3 +189,4 @@ namespace eval ::vTcl::widgets::core::frame {
         }
     }
 }
+

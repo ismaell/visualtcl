@@ -20,3 +20,5 @@ test_mode		none			user selects test mode
 geom_config_cmd 	{target mgr opt}	a toplevel is being configured,
 						should refresh toplevel list
 delete_widget		{target}		widget is being deleted
+deleted_childsite	{target index}		childsite has been deleted,
+						should refresh megawidget editor

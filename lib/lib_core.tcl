@@ -732,6 +732,7 @@ namespace eval ::vTcl::itemEdit {
         wm title $top [::$cmds($top)::getTitle $w]
 
         ::vTcl::notify::subscribe delete_widget $top ::vTcl::itemEdit::widgetDeleted
+        ::vTcl::notify::subscribe deleted_childsite $top ::vTcl::itemEdit::childsiteDeleted
     }
 
     ## find the superset of all options for all subitems
@@ -890,6 +891,7 @@ namespace eval ::vTcl::itemEdit {
         unset allOptions($top)
 
         ::vTcl::notify::unsubscribe delete_widget $top
+        ::vTcl::notify::unsubscribe deleted_childsite $top
     }
 
     proc addItem {top} {
@@ -914,6 +916,24 @@ namespace eval ::vTcl::itemEdit {
 	if {$::vTcl(w,widget) == $target($top)} {
 	    vTcl:update_widget_info $target($top)
 	}
+    }
+
+    ## a childsite has been deleted, need to refresh the display
+    proc childsiteDeleted {top w index} {
+        variable cmds
+        variable target
+        variable current
+
+        if {$index == -1} {return}
+        ::vTcl::ui::attributes::setPending
+        set ::${top}::list_items [lreplace [::vTcl:at ::${top}::list_items] \
+            $index $index]
+        set length [llength [::vTcl:at ::${top}::list_items]]
+
+        set current($top) [expr $current($top) % $length]
+        selectItem $top $current($top)
+
+        enableMenus $top
     }
 
     proc removeItem {top} {
@@ -968,6 +988,7 @@ namespace eval ::vTcl::itemEdit {
 	$top.ItemsEditMenuAddDelete entryconfigure 1 -state $state($enabled)
     }
 }
+
 
 
 
