@@ -280,7 +280,7 @@ proc vTcl:close {} {
 
             # this is clean up for leftover widget commands
             set _cmds [info commands $i.*]
-            foreach _cmd $_cmds {rename $_cmd ""}
+            foreach _cmd $_cmds {catch {rename $_cmd ""}}
         }
     }
     set vTcl(tops) ""

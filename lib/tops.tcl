@@ -78,6 +78,7 @@ proc vTcl:show_top {target} {
         vTcl:init_wtree
     }
     vTcl:select_widget $target
+    vTcl:destroy_handles
 }
 
 proc vTcl:hide_top {target} {

@@ -40,6 +40,7 @@ proc vTcl:bind_button_1 {target X Y x y} {
             set vTcl(cursor,last) [$target cget -cursor]
             $target configure -cursor fleur
         } else {
+            set vTcl(cursor,last) [$target cget -cursor]
             vTcl:active_widget $parent
         }
     }
@@ -350,3 +351,10 @@ proc vTcl:can_resize {dir} {
 	}
     }
 }
+
+
+
+
+
+
+

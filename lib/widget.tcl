@@ -960,7 +960,8 @@ proc vTcl:new_widget {class button {options ""}} {
     vTcl:status "Insert $class"
 
     bind vTcl(b) <Button-1> \
-        "vTcl:place_widget $class $button [list $options] %X %Y %x %y"
+        "vTcl:place_widget $class $button [list $options] %X %Y %x %y
+         set vTcl(cursor,last) \[%W cget -cursor\]"
 }
 
 proc vTcl:place_widget {class button options rx ry x y} {
