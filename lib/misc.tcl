@@ -731,3 +731,98 @@ proc incr0 {varName {num 1}} {
     if {![info exists var]} { set var 0 }
     incr var $num
 }
+
+#####################################################################
+#                                                                   #
+# The following routines are used for in-line images support        #
+#                                                                   #
+# In-line images are stored in the main project file instead of     #
+# beeing contained in separate files. They are encoded using base64 #
+#                                                                   #
+#####################################################################
+
+# -------------------------------------------------------------------
+# Routines for encoding and decoding base64
+# encoding from Time Janes,
+# decoding from Pascual Alonso,
+# namespace'ing and bugs from Parand Tony Darugar
+# (tdarugar@binevolve.com)
+# -------------------------------------------------------------------
+
+namespace eval base64 {
+  set charset "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+
+  # ----------------------------------------
+  # encode the given text
+  proc encode {text} {
+    set encoded ""
+    set y 0
+    for {set i 0} {$i < [string length $text] } {incr i} {
+      binary scan [string index $text $i] c x
+      if { $x < 0 } {
+        set x [expr $x + 256 ]
+      }
+      set y [expr ( $y << 8 ) + $x]
+      if { [expr $i % 3 ] == 2}  {
+        append  encoded [string index $base64::charset [expr ( $y & 0xfc0000 ) >> 18 ]]
+        append  encoded [string index $base64::charset [expr ( $y & 0x03f000 ) >> 12 ]]
+        append  encoded [string index $base64::charset [expr ( $y & 0x000fc0 ) >> 6 ]]
+        append  encoded [string index $base64::charset [expr ( $y & 0x00003f ) ]]
+        set y 0
+      }
+    }
+    if { [expr $i % 3 ] == 1 } {
+      set y [ expr $y << 4 ]
+      append encoded [string index $base64::charset [ expr ( $y & 0x000fc0 ) >> 6]]
+      append encoded [string index $base64::charset [ expr ( $y & 0x00003f ) ]]
+      append encoded "=="
+    }
+    if { [expr $i % 3 ] == 2 } {
+      set y [ expr $y << 2 ]
+      append  encoded [string index $base64::charset [expr ( $y & 0x03f000 ) >> 12 ]]
+      append  encoded [string index $base64::charset [expr ( $y & 0x000fc0 ) >> 6 ]]
+      append  encoded [string index $base64::charset [expr ( $y & 0x00003f ) ]]
+      append encoded "="
+    }
+    return $encoded
+  }
+
+  # ----------------------------------------
+  # decode the given text
+  # Generously contributed by Pascual Alonso
+  proc decode {text} {
+    set decoded ""
+    set y 0
+    if {[string first = $text] == -1} {
+      set lenx [string length $text]
+    } else {
+      set lenx [string first = $text]
+    }
+    for {set i 0} {$i < $lenx } {incr i} {
+      set x [string first [string index $text $i] $base64::charset]
+      set y [expr ( $y << 6 ) + $x]
+      if { [expr $i % 4 ] == 3}  {
+        append decoded \
+	  [binary format c [expr $y >> 16 ]]
+	append decoded \
+	  [binary format c [expr ( $y & 0x00ff00 ) >> 8 ]]
+	append decoded \
+	  [binary format c [expr ( $y & 0x0000ff ) ]]
+	set y 0
+      }
+    }
+    if { [expr $i % 4 ] == 3 } {
+      set y [ expr $y >> 2 ]
+	append decoded \
+	  [binary format c [expr ( $y & 0x00ff00 ) >> 8 ]]
+	append decoded \
+	  [binary format c [expr ( $y & 0x0000ff ) ]]
+    }
+    if { [expr $i % 4 ] == 2 } {
+      set y [ expr $y >> 4 ]
+	append decoded \
+	  [binary format c [expr ( $y & 0x0000ff ) ]]
+    }
+    return $decoded
+  }
+}

@@ -54,6 +54,10 @@ proc vTcl:show_wtree {} {
 }
 
 proc vTcl:clear_wtree {} {
+
+    # do not refresh the widget tree if it does not exist
+    if {![winfo exists .vTcl.tree]} return
+
     set b .vTcl.tree.fra4.can8
     foreach i [winfo children $b] {
         destroy $i

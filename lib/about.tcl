@@ -51,7 +51,11 @@ proc vTclWindow.vTcl.about {args} {
         -padx 0 -pady 0 -side top
     label .vTcl.about.lab21 \
         -borderwidth 0 \
-        -text "Maintained by Christian Gavin (cgavin@dnai.com)\nfreeWrap is Copyright (C) 1998\nby Dennis R. LaBelle (dlabelle@albany.net)\nAll Rights Reserved."
+        -text "Maintained by Christian Gavin (cgavin@dnai.com)
+and Damon Courtney
+freeWrap is Copyright (C) 1998
+by Dennis R. LaBelle (dlabelle@albany.net)
+All Rights Reserved."
     pack .vTcl.about.lab21 \
         -in .vTcl.about -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 \
         -padx 0 -pady 0 -side top

@@ -1,3 +1,25 @@
+##############################################################################
+#
+# bgerror.tcl - a replacement for the standard bgerror message box
+#
+# Copyright (C) 2000 Christian Gavin
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+#
+##############################################################################
+
 namespace eval ::stack_trace {
 
     proc {::stack_trace::add_stack} {top context} {
@@ -19,31 +41,59 @@ namespace eval ::stack_trace {
 
         set index [lindex $indices 0]
 
-        set context  [$top.$widget(child,stack_trace_callstack) get $index]
+        set context [$top.$widget(child,stack_trace_callstack) get $index]
         set context [string trim $context]
 
         if [string match "(procedure*)" $context] {
 
-        set procname [lindex $context 1]
+            set procname [lindex $context 1]
 
-        if { [uplevel #0 "info proc $procname" ] != ""} {
+            if { [uplevel #0 "info proc $procname" ] != ""} {
 
-            ::stack_trace::set_details $top  [::stack_trace::get_proc_details $procname]
+                regexp {([0-9]+)} [lindex $context 3] matchAll lineno
 
-            vTcl:syntax_color $top.$widget(child,stack_trace_details)  0 -1
+                ::stack_trace::set_details $top  [::stack_trace::get_proc_details $procname]
+                vTcl:syntax_color $top.$widget(child,stack_trace_details)  0 -1
+                ::stack_trace::highlight_details $top [expr $lineno +1]
 
-            regexp {([0-9]+)} [lindex $context 3] matchAll lineno
+            } else {
 
-            ::stack_trace::highlight_details $top $lineno
-
-        } else {
-            ::stack_trace::set_details $top "(no code available)"
-
-        }
+                ::stack_trace::set_details $top "(no code available)"
+            }
 
         } else {
-            ::stack_trace::set_details $top "(no code available)"
 
+            if [string match "(*arm line *)" $context] {
+
+                set context_previous [$top.$widget(child,stack_trace_callstack) get [expr $index + 1] ]
+                set context_previous [string trim $context_previous]
+
+                if [string match "(procedure*)" $context_previous] {
+
+                    set procname [lindex $context_previous 1]
+                    regexp {([0-9]+)} [lindex $context_previous 3] matchAll lineno
+
+                    set statement [::stack_trace::get_proc_instruction $procname $lineno]
+                    set armindex [lindex [string range $context 1 end] 0]
+
+                    set arms [::stack_trace::get_switch_arms $statement]
+                    set arm  [::stack_trace::get_switch_arm $arms $armindex]
+
+                    regexp {([0-9]+)} [lindex $context 3] matchAll lineno
+
+                    ::stack_trace::set_details $top $arm
+                    vTcl:syntax_color $top.$widget(child,stack_trace_details)  0 -1
+                    ::stack_trace::highlight_details $top $lineno
+
+               } else {
+
+                    ::stack_trace::set_details $top "(no code available)"
+               }
+
+           } else {
+
+              ::stack_trace::set_details $top "(no code available)"
+           }
         }
     }
 
@@ -112,11 +162,10 @@ namespace eval ::stack_trace {
         global widget vTcl
 
         set t $top.$widget(child,stack_trace_details)
-        incr lineno
 
         foreach tag $vTcl(syntax,tags) {
 
-        $t tag remove $tag $lineno.0 [expr $lineno + 1].0
+            $t tag remove $tag $lineno.0 [expr $lineno + 1].0
         }
 
         $t tag add vTcl:highlight $lineno.0 [expr $lineno + 1].0
@@ -168,6 +217,71 @@ namespace eval ::stack_trace {
 
         $top.$widget(child,stack_trace_msg) delete 0.1 end
         $top.$widget(child,stack_trace_msg) insert 0.1 $error
+    }
+
+    # return a list such as {pattern body pattern body ...} from
+    # a complete switch statement
+
+    proc {::stack_trace::get_switch_arms} {statement} {
+
+       if { [lindex $statement 0] != "switch"} {
+           return ""
+       }
+
+       set length [llength $statement]
+       set index 1
+       set item ""
+
+       # start with the options
+
+	   while {$index < $length} {
+
+          set item [lindex $statement $index]
+          if [regexp -- {-[a-z]+} $item ] {
+
+             incr index
+             continue
+          }
+
+          if {$item == "--"} {
+             incr index
+          }
+
+          # we have reached the end of options
+          break
+       }
+
+       # now skips the string to switch
+       incr index
+
+       # one bloc ?
+       if {$index == $length - 1} {
+
+          return [lindex $statement $index]
+       } else {
+
+          return [lrange $statement $index [expr $length - 1] ]
+       }
+    }
+
+    # returns the code for a given arm of a switch statement, using
+    # the arms returned by the previous procedure
+
+    proc {::stack_trace::get_switch_arm} {arms arm} {
+
+        set length [llength $arms]
+
+        for {set index 0} \
+            {$index < $length} \
+            {set index [expr $index + 2] } {
+
+            if { [lindex $arms $index] == $arm } {
+                return [lrange $arms $index [expr $index + 1] ]
+            }
+        }
+
+        # nope
+        return ""
     }
 
     variable boxIndex 0
