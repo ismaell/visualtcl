@@ -168,9 +168,10 @@ proc vTcl:grab_resize {absX absY handle} {
                 Message -
                 Scrollbar -
                 Scale {
-                    set vTcl(w,opt,-height) ""
+#                    set vTcl(w,opt,-height) ""
                 }
             }
+                     
             switch $handle {
                 n {
                     set newW $vTcl(w,opt,-width)
