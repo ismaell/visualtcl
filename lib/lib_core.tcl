@@ -46,6 +46,7 @@ proc vTcl:widget:lib:lib_core {args} {
 	Scrollbar
 	Scale
 	Menubutton
+      CompoundContainer
 	UnmanagedFrame
     } 
 
@@ -953,3 +954,4 @@ namespace eval ::vTcl::itemEdit {
 	$top.ItemsEditMenuAddDelete entryconfigure 1 -state $state($enabled)
     }
 }
+
