@@ -346,10 +346,8 @@ proc vTcl:font:get_font_dlg {base font_desc} {
     	"ok" {
     		return [font configure $vTcl(x,$base,font)]
     	}
-    	default -
-    	"cancel" {
-    		return ""
-    	}
+    	"cancel" -
+    	default  { return }
     }
 }
 

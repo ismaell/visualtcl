@@ -828,6 +828,7 @@ proc vTcl:dump:gather_widget_info {} {
         } ; # foreach type [...]
     }
 
+    foreach var $vars { set vTcl(dump,$var) [vTcl:lrmdups $vTcl(dump,$var)] }
     set vTcl(dump,libraries) [vTcl:lrmdups $vTcl(dump,libraries)]
 }
 
