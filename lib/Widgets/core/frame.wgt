@@ -15,8 +15,6 @@ proc vTcl:Frame:delete {target} {
     # find one, we ask for its childsites, and if the frame is
     # one of them, we ask the megawidget to delete it's childsite
 
-    set components [split $target .]
-
     # all widgets that are not childsites have a pointer to their
     # parent
 
