@@ -216,27 +216,27 @@ proc select {contents title {selectMode single}} {
     set ::${top}::selectedItems ""
 
     frame $top.fra87 \
-        -borderwidth 2 -height 75 -width 125 
+        -borderwidth 2
     set site_3_0 $top.fra87
     label $site_3_0.lab88 \
-        -text {Select item:} 
+        -text {Select item:}
     vTcl:DefineAlias "$site_3_0.lab88" "SelectLabel" vTcl:WidgetProc "$top" 1
     pack $site_3_0.lab88 \
-        -in $site_3_0 -anchor center -expand 0 -fill none -side left 
+        -in $site_3_0 -anchor center -expand 0 -fill none -side left
     frame $top.fra82 \
-        -borderwidth 2 -height 75 -width 125 
+        -borderwidth 2
     set site_3_0 $top.fra82
     listbox $site_3_0.lis83 \
         -background white -listvariable "::${top}::listContents" \
-        -selectmode $selectMode
+        -selectmode $selectMode -height 2
     vTcl:DefineAlias "$site_3_0.lis83" "SelectListbox" vTcl:WidgetProc "$top" 1
     bind $site_3_0.lis83 <<ListboxSelect>> {
         ::vTcl::input::listboxSelect::updateSelection [winfo toplevel %W]
     }
     pack $site_3_0.lis83 \
-        -in $site_3_0 -anchor center -expand 1 -fill both -padx 2 -side top 
+        -in $site_3_0 -anchor center -expand 1 -fill both -padx 2 -side top
     frame $top.fra84 \
-        -borderwidth 2 -height 75 -width 125 
+        -borderwidth 2
     set site_3_0 $top.fra84
     button $site_3_0.but85 -state disabled \
         -pady 0 -text OK -width 8 -command "set ::${top}::status ok" 
@@ -256,7 +256,7 @@ proc select {contents title {selectMode single}} {
     pack $top.fra87 \
         -in $top -anchor center -expand 0 -fill x -padx 2 -side top 
     pack $top.fra82 \
-        -in $top -anchor center -expand 1 -fill both -side top 
+        -in $top -anchor center -expand 1 -fill both -side top
     pack $top.fra84 \
         -in $top -anchor center -expand 0 -fill none -side top 
 
