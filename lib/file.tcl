@@ -76,7 +76,7 @@ proc vTcl:is_vtcl_prj {file} {
     if {$vmajor != "" && $vminor != ""} {
     	
     	if {$vmajor > 1 ||
-    	    ($vmajor == 1 && $vminor > 21)} {
+    	    ($vmajor == 1 && $vminor > 22)} {
 
 		tk_messageBox -title "Error loading file" \
 		              -message "You are trying to load a project created using Visual Tcl v$vmajor.$vminor\n\nPlease update to vTcl $vmajor.$vminor and try again." \
