@@ -57,7 +57,7 @@ echo
 cd `dirname $0`
 VTCL_HOME=`pwd`
 
-cat > vtcl << EOF
+cat > $VTCL_HOME/vtcl << EOF
 #!/bin/sh
 
 PATH_TO_WISH=$WISH
@@ -68,3 +68,5 @@ export VTCL_HOME
 
 exec \${PATH_TO_WISH} \${VTCL_HOME}/vt.tcl \$*
 EOF
+
+chmod +x $VTCL_HOME/vtcl
