@@ -657,8 +657,10 @@ proc vTcl:dump:aliases {target} {
 	append output $vTcl(tab)
 	append output "set \{widget(child,$alias)\} \"[join $components .]\"\n"
 
-	append output $vTcl(tab)
-	append output "interp alias {} $alias {} [interp alias {} $alias]\n"
+	if {$vTcl(pr,cmdalias)} {
+	    append output $vTcl(tab)
+	    append output "interp alias {} $alias {} [interp alias {} $alias]\n"
+	}
     }
 
     return "$output\n"

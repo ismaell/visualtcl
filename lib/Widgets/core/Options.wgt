@@ -8,9 +8,9 @@ NewOption -anchor		"anchor"		choice \
   "n ne e se s sw w nw center"
 NewOption -aspect		"aspect"		type
 NewOption -background		"background"		color	{}	Colors
-NewOption -bd			"borderwidth"		type
+NewOption -bd			"borderwidth"		synonym
 NewOption -bitmap		"bitmap"		type
-NewOption -bg			"background"		color	{}	Colors
+NewOption -bg			"background"		synonym
 NewOption -bordermode		"border mode"		choice \
   "inside ignore outside"
 NewOption -borderwidth		"borderwidth"		type
@@ -22,7 +22,7 @@ NewOption -disabledforeground	"disabled fg"		color	{}	Colors
 NewOption -editable		"editable"		boolean	"0 1"
 NewOption -elementborderwidth	"element bd"		type
 NewOption -exportselection	"export"		boolean	"0 1"
-NewOption -fg			"foreground"		color	{}	Colors
+NewOption -fg			"foreground"		synonym
 NewOption -foreground		"foreground"		color	{}	Colors
 NewOption -font			"font"			font
 NewOption -height		"height"		type

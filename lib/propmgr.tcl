@@ -267,6 +267,7 @@ proc vTcl:prop:update_attr {} {
             pack $top -side left -fill both -expand 1
         }
         foreach i $vTcl(options) {
+	    if {$options($i,type) == "synonym"} { continue }
             if {[lsearch $vTcl(w,optlist) $i] >= 0} {
 		if {$options($i,type) == "color"} {
                     $top.t${i}.f configure -bg $vTcl(w,opt,$i)
@@ -280,6 +281,7 @@ proc vTcl:prop:update_attr {} {
         grid columnconf $top 1 -weight 1
         set type ""
         foreach i $vTcl(options) {
+	    if {$options($i,type) == "synonym"} { continue }
 	    set newtype $options($i,title)
             if {$type != $newtype} {
                 set type $newtype
