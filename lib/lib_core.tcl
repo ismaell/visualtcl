@@ -338,6 +338,16 @@ proc vTcl:core:noencasewhenscroll {value} {
 	}
 }
 
+proc vTcl:core:set_option {target option description} {
 
+    set value [$target cget $option]
+    set newvalue [vTcl:get_string $description $target $value]
 
+    if {! [vTcl:streq $value $newvalue]} {
+        $target configure $option $newvalue
 
+        # keep showing the selection in the toplevel
+        # (do not destroy the selection handles)
+        vTcl:init_wtree 0
+    }
+}
