@@ -911,7 +911,7 @@ namespace eval ::widgets_bindings {
         # event already bound ?
         set old_code [bind $tag $event]
         if {$old_code == ""} {
-            bind $tag $event "\#TODO: your $event event handler here"
+            bind $tag $event "\# TODO: your event handler here"
         }
 
         ::widgets_bindings::fill_bindings $target
