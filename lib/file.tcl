@@ -341,6 +341,7 @@ proc vTcl:close {} {
     vTcl:font:remove_user_fonts
     vTcl:prop:clear
     ::widgets_bindings::init
+    ::menu_edit::close_all_editors
 
     after idle {vTcl:init_wtree}
 }

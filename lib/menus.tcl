@@ -22,6 +22,9 @@
 
 namespace eval ::menu_edit {
 
+    # this contains a list of currently open menu editors
+    variable menu_edit_windows ""
+
     proc {::menu_edit::delete_item} {top} {
         global widget
 
@@ -599,6 +602,19 @@ namespace eval ::menu_edit {
         }
     }
 
+    proc {::menu_edit::close_all_editors} {} {
+
+        variable menu_edit_windows
+
+        set wnds $menu_edit_windows
+
+        foreach wnd $wnds {
+            destroy $wnd
+        }
+
+        set menu_edit_windows ""
+    }
+
 } ; # namespace eval
 
 proc vTclWindow.vTclMenuEdit {base menu} {
@@ -652,18 +668,6 @@ proc vTclWindow.vTclMenuEdit {base menu} {
         vTcl:WidgetProc $base.cpd24.01.cpd25.01.m25
     interp alias {} NewMenuContextPopup.NewMenuContextPopup {} \
         vTcl:WidgetProc $base.cpd24.01.cpd25.01.m25
-    set widget(rev,$base.cpd24.01.cpd25.02) {Scrollbar1}
-    set {widget(Scrollbar1)} "$base.cpd24.01.cpd25.02"
-    set widget($base,Scrollbar1) "$base.cpd24.01.cpd25.02"
-    interp alias {} Scrollbar1 {} vTcl:WidgetProc $base.cpd24.01.cpd25.02
-    interp alias {} $base.Scrollbar1 {} \
-        vTcl:WidgetProc $base.cpd24.01.cpd25.02
-    set widget(rev,$base.cpd24.01.cpd25.03) {Scrollbar2}
-    set {widget(Scrollbar2)} "$base.cpd24.01.cpd25.03"
-    set widget($base,Scrollbar2) "$base.cpd24.01.cpd25.03"
-    interp alias {} Scrollbar2 {} vTcl:WidgetProc $base.cpd24.01.cpd25.03
-    interp alias {} $base.Scrollbar2 {} \
-        vTcl:WidgetProc $base.cpd24.01.cpd25.03
     set widget(rev,$base.cpd24.01.fra20.but21) {NewMenu}
     set {widget(NewMenu)} "$base.cpd24.01.fra20.but21"
     set widget($base,NewMenu) "$base.cpd24.01.fra20.but21"
@@ -1158,4 +1162,23 @@ proc vTclWindow.vTclMenuEdit {base menu} {
         -bordermode ignore
 
     ::menu_edit::fill_menu_list $base $menu
+
+    # keep a record of open menu editors
+    lappend ::menu_edit::menu_edit_windows $base
+
+    # when a menu editor is closed, should be removed from the list
+    bind $base <Destroy> {
+
+        set ::menu_edit::index \
+            [lsearch -exact ${::menu_edit::menu_edit_windows} %W]
+
+        if {${::menu_edit::index} != -1} {
+            set ::menu_edit::menu_edit_windows \
+                [lreplace ${::menu_edit::menu_edit_windows} \
+                    ${::menu_edit::index} ${::menu_edit::index}]
+
+            # clean up after ourselves
+            namespace delete %W
+        }
+    }
 }
