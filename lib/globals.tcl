@@ -170,7 +170,7 @@ set vTcl(images,user)    ""
 set vTcl(fonts,stock)    ""
 set vTcl(fonts,user)     ""
 
-set vTcl(pr,proprelief)  "groove"
+set vTcl(pr,proprelief)  "flat"
 
 set vTcl(reliefs)        "flat groove raised ridge sunken"
 

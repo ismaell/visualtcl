@@ -772,6 +772,9 @@ namespace eval ::vTcl::itemEdit {
         variable allOptions
         variable enableData
 
+        ## first, sets any pending options
+        ::vTcl::ui::attributes::setPending
+
         ${top}.ItemsListbox selection clear 0 end
         ${top}.ItemsListbox selection set $index
         set current($top) $index
@@ -804,6 +807,9 @@ namespace eval ::vTcl::itemEdit {
         variable enableData
         variable class
 
+        ## first, sets any pending options
+        ::vTcl::ui::attributes::setPending
+
         set ::vTcl(pr,edit$class($top)) [wm geometry $top]
         destroy $top
         ## clean up after ourselves
@@ -825,6 +831,7 @@ namespace eval ::vTcl::itemEdit {
         variable target
         variable adding
 
+        ::vTcl::ui::attributes::setPending
         set added [::$cmds($top)::addItem $target($top)]
         ## user canceled ?
         if {$added == ""} {return}
@@ -841,6 +848,7 @@ namespace eval ::vTcl::itemEdit {
         variable target
         variable current
 
+        ::vTcl::ui::attributes::setPending
         ::$cmds($top)::removeItem $target($top) $current($top)
         set ::${top}::list_items [lreplace [::vTcl:at ::${top}::list_items] \
             $current($top) $current($top)]
@@ -854,6 +862,7 @@ namespace eval ::vTcl::itemEdit {
         variable target
         variable current
 
+        ::vTcl::ui::attributes::setPending
         set offset(up) -1
         set offset(down) 1
         ::$cmds($top)::moveUpOrDown $target($top) $current($top) $direction

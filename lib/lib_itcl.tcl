@@ -67,12 +67,14 @@ proc vTcl:widget:lib:lib_itcl {args} {
 
     switch $tcl_platform(platform) {
 	windows {
+            option add *Pushbutton.padY         0
 	}
 	default {
 	    option add *Scrolledhtml.sbWidth    10
 	    option add *Scrolledtext.sbWidth    10
 	    option add *Scrolledlistbox.sbWidth 10
 	    option add *Hierarchy.sbWidth       10
+            option add *Pushbutton.padY         2
         }
     }
     }
@@ -127,12 +129,14 @@ proc vTcl:lib_itcl:setup {} {
     ## under Windows, we want to use the default values
     switch $tcl_platform(platform) {
         windows {
+            option add *Pushbutton.padY         0
         }
         default {
             option add *Scrolledhtml.sbWidth    10
             option add *Scrolledtext.sbWidth    10
             option add *Scrolledlistbox.sbWidth 10
             option add *Hierarchy.sbWidth       10
+            option add *Pushbutton.padY         2
         }
     }
 

@@ -1145,8 +1145,11 @@ proc ::vTcl::MessageBox {args} {
 
 namespace eval ::vTcl::ui::attributes {
 
-    variable counter
-    set counter 0
+    variable pendingCmds
+    variable checked
+    variable counter 0
+    array set pendingCmds {}
+    array set checked {}
 
     proc show_color {w variable args} {
         catch {
@@ -1216,6 +1219,9 @@ namespace eval ::vTcl::ui::attributes {
 
     ## returns: a string used to enable/disable the option
     proc newAttribute {target top option variable config_cmd} {
+        variable pendingCmds
+        variable checked
+
         set class $::vTcl(w,class)
 	if {[info exists ::specialOpts($class,$option,type)]} {
 	    set text    $::specialOpts($class,$option,text)
@@ -1329,10 +1335,29 @@ namespace eval ::vTcl::ui::attributes {
         }
 
         ## When the user presses <Return>, the option is set
-        bind $focusControl <KeyRelease-Return> $config_cmd
+        bind $focusControl <KeyRelease-Return> "::vTcl::ui::attributes::setPending"
+        bind $focusControl <FocusOut> "::vTcl::ui::attributes::setPending"
+        bind $focusControl <KeyRelease> \
+		"set ::vTcl::ui::attributes::pendingCmds($focusControl) [list $config_cmd]"
 
-        grid $label $base -sticky news
+        ## Checkbox to save/not save the option
+        set theCheck $top.${option}check
+        checkbutton $theCheck -text "" \
+            -variable "::vTcl::ui::attributes::checked($base)"
+        bind $theCheck <Destroy> "unset ::vTcl::ui::attributes::checked($base)"
+
+        grid $label $base $theCheck -sticky news
         grid columnconf $top 1 -weight 1
         return $enableData
+    }
+
+    ## Sets all pending options (eg. for which user didn't press the <Return> key)
+    proc setPending {} {
+        variable pendingCmds
+        set names [array names pendingCmds]
+        foreach name $names {
+            uplevel #0 $pendingCmds($name)
+            unset pendingCmds($name)
+        }
     }
 }
