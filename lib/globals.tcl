@@ -336,7 +336,7 @@ $vTcl(tab)###################
 # patterns and colors for syntax colouring
 # @@end_change
 
-set vTcl(syntax,tags) "vTcl:dollar vTcl:bracket vTcl:command vTcl:option vTcl:parenthesis vTcl:window vTcl:string vTcl:comment"
+set vTcl(syntax,tags) "vTcl:dollar vTcl:command vTcl:option vTcl:parenthesis vTcl:bracket vTcl:window vTcl:string vTcl:comment"
 
 set vTcl(syntax,vTcl:parenthesis)            {\([^ ]+\)}
 set vTcl(syntax,vTcl:parenthesis,configure)  {-foreground #00A000}
@@ -344,7 +344,7 @@ set vTcl(syntax,vTcl:parenthesis,configure)  {-foreground #00A000}
 set vTcl(syntax,vTcl:dollar)            {\$[a-zA-Z0-9_]+}
 set vTcl(syntax,vTcl:dollar,configure)  {-foreground #00A000}
 
-set vTcl(syntax,vTcl:bracket)           {\[|\]|\{|\}}
+set vTcl(syntax,vTcl:bracket)           {\[|\]|\{|\}|\(|\)}
 set vTcl(syntax,vTcl:bracket,configure) {-foreground #FF0000}
 
 set vTcl(syntax,vTcl:command)           {[a-zA-Z0-9_\-:]+}
@@ -369,6 +369,7 @@ proc vTcl:syntax:iscommand {command} {
 
 # special case for -in option
 set vTcl(option,noencase,-in) 1
+
 
 
 
