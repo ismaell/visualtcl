@@ -36,13 +36,14 @@ namespace eval ::stack_trace {
         set context [$top.$widget(child,stack_trace_callstack) get $index]
         set context [string trim $context]
 
-        if [string match "(procedure*)" $context] {
+        if { [string match "(procedure*)" $context] || 
+              [string match "(compiling body of proc*)" $context] } {
 
-            set procname [lindex $context 1]
+            regexp {"([^"]+)"} $context matchAll procname
 
             if { [uplevel #0 "info proc $procname" ] != ""} {
 
-                regexp {([0-9]+)} [lindex $context 3] matchAll lineno
+                regexp {line ([0-9]+)} $context matchAll lineno
 
 				return [::stack_trace::get_proc_instruction $procname $lineno]
 
@@ -114,13 +115,14 @@ namespace eval ::stack_trace {
         set context [$top.$widget(child,stack_trace_callstack) get $index]
         set context [string trim $context]
 
-        if [string match "(procedure*)" $context] {
+        if { [string match "(procedure*)" $context] || 
+              [string match "(compiling body of proc*)" $context] } {
 
-            set procname [lindex $context 1]
+            regexp {"([^"]+)"} $context matchAll procname
 
             if { [uplevel #0 "info proc $procname" ] != ""} {
 
-                regexp {([0-9]+)} [lindex $context 3] matchAll lineno
+                regexp {line ([0-9]+)} $context matchAll lineno
 
                 ::stack_trace::set_details $top  [::stack_trace::get_proc_details $procname]
                 vTcl:syntax_color $top.$widget(child,stack_trace_details)  0 -1
