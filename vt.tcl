@@ -32,6 +32,19 @@ vTcl:proc proc {name args body} {
     vTcl:proc $name $args $body
 }
 
+# replace 'winfo' command to fix place bug with toplevel windows
+rename winfo vTcl:winfo
+
+proc winfo {options args} {
+	if {$options == "manager"} {
+		set w [lindex $args 0]
+		if {$w == "." || [vTcl:winfo class $w] == "Toplevel"} {
+			return "wm"
+		}
+	}
+	return [uplevel vTcl:winfo $options $args]
+}
+
 proc vTcl:splash {} {
     global vTcl
     toplevel .x -bd 3 -relief raised
