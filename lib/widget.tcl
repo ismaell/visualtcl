@@ -1159,7 +1159,7 @@ proc vTcl:widget:register_widget_megachildren {w} {
             set realChildren [$childrenCmd $w ""]
 		
             #puts "after: $realChildren"
-            
+
             foreach realChild $realChildren {
                 if {[info exists ::widgets::${realChild}::parent]} {
                    unset ::widgets::${realChild}::parent
@@ -1184,7 +1184,8 @@ proc vTcl:widget:register_widget {w {save_options ""}} {
     if {![catch {namespace children ::widgets} namespaces]} {
         if {[lsearch $namespaces ::widgets::${w}] > -1} {
 
-            if {![info exists ::widgets::${w}::options] } {
+            if {![info exists ::widgets::${w}::options] &&
+                 [info exists ::widgets::${w}::save]} {
 
                 # at least, if the widget has already been registered
                 # (typically just after a "file open" operation), we
@@ -1200,8 +1201,9 @@ proc vTcl:widget:register_widget {w {save_options ""}} {
                     set ::widgets::${w}::options($opt) $val
                     set ::widgets::${w}::defaults($opt) $def
                 }
+
+                return
             }
-            return
         }
     }
 
@@ -1220,6 +1222,8 @@ proc vTcl:widget:register_widget {w {save_options ""}} {
             set ::widgets::${w}::save($opt) 1
             continue
         }
+
+	if {[info exists ::widgets::${w}::save($opt)]} { continue }
 
         if {[vTcl:streq $def $val]} {
             set ::widgets::${w}::save($opt) 0
