@@ -276,9 +276,13 @@ proc TreeLabel {args} {
     set tmp(treeLabel) $args
 }
 
-proc Export {name} {
-    global tmp
-    lappend tmp(exportCmds) $name
+proc Export {name {c ""}} {
+    if {$c == ""} {
+        global tmp
+        lappend tmp(exportCmds) $name
+    } else {
+        lappend ::classes($c,exportCmds) $name
+    }
 }
 
 proc NewOption {args} {
@@ -372,10 +376,14 @@ proc SpecialOpt {args} {
 
 proc AdditionalClasses {args} {
 
-    global vTcl
-
     foreach arg $args {
-        lappend vTcl(classes) $arg
+        lappend ::vTcl(classes) $arg
+        set ::classes($args,treeChildrenCmd) {}
+        set ::classes($args,megaWidget) 0
+        set ::classes($args,ignoreLeftClk) 0
+        set ::classes($args,ignoreRightClk) 0
+        set ::classes($args,functionCmds) {}
+        set ::classes($args,lib) $::tmp(lib)
     }
 }
 
@@ -402,8 +410,12 @@ proc GetFontsCmd {cmd} {
     set ::classes($::tmp(class),getFontsCmd) $cmd
 }
 
-proc InsertChildCmd {cmd} {
-    set ::classes($::tmp(class),insertChildCmd) $cmd
+proc InsertChildCmd {cmd {c ""}} {
+    if {$c == ""} {
+        set ::classes($::tmp(class),insertChildCmd) $cmd
+    } else {
+        set ::classes($c,insertChildCmd) $cmd
+    }
 }
 
 proc IgnoreProc {args} {
@@ -422,8 +434,11 @@ proc NoEncaseOptionWhen {option proc} {
     set ::vTcl(option,noencasewhen,$option) $proc
 }
 
-proc Insertable {} {
-    set ::classes($::tmp(class),insertable) 1
+proc Insertable {{c ""}} {
+    if {$c == ""} {
+        set c $::tmp(class)
+    }
+    set ::classes($c,insertable) 1
 }
 
 proc DumpInfoCmd {val} {
@@ -438,3 +453,4 @@ proc EditableTagsCmd {val} {
 proc QueryInsertOptionsCmd {val} {
     set ::classes($::tmp(class),queryInsertOptionsCmd) $val
 }
+
