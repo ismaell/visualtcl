@@ -1128,8 +1128,6 @@ proc vTcl:widget:register_widget_megachildren {w} {
     # when the user clicks on such a child, and such an information is
     # found, then the parent will be selected instead
 
-    # puts "vTcl:widget:register_widget_megachildren $w"
-
     if {[info exists classes(${wdg_class},megaWidget)]} {
         if {$classes(${wdg_class},megaWidget)} {
 
@@ -1141,15 +1139,12 @@ proc vTcl:widget:register_widget_megachildren {w} {
                 }
                 set ::widgets::${child}::parent $w
             }
-            
-            #puts "=>$w"
-		#puts "before: $children"
-            
+
             # Now, we shall unmark those widgets as parent that
             # are in childsites, because the user should be able
             # to manipulate them. First, let try to get a list of
             # eligible children.
-            
+
             set childrenCmd [lindex $classes($wdg_class,treeChildrenCmd) 0]
             if {$childrenCmd == ""} {
                 return
@@ -1158,8 +1153,6 @@ proc vTcl:widget:register_widget_megachildren {w} {
             # don't include levels info for widget tree display
             #                                 v
             set realChildren [$childrenCmd $w ""]
-		
-            #puts "after: $realChildren"
 
             foreach realChild $realChildren {
                 if {[info exists ::widgets::${realChild}::parent]} {

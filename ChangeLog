@@ -1,6 +1,11 @@
 ChangeLog for Visual Tcl:
 
 1.51b4 -> 1.51rc0
+    o Cleaned up dumping megawidgets and their childsites. There are
+      no more absolute paths, instead the code asks for each childsite
+      in turn and stores its path into a variable. Still need to figure
+      out how to save scrollbars with this new mechanism.
+    o Fixed default options problem for megawidgets childsites.
     o Added code to select pages in tabnotebook and notebook widgets
       when selecting a frame in the widget tree
     o Made sure Visual Tcl doesn't change the manager for childsites!

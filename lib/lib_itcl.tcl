@@ -126,11 +126,9 @@ proc vTcl:lib_itcl:setup {} {
     set vTcl(option,translate,-balloonfont) vTcl:font:translate
     set vTcl(option,noencase,-balloonfont) 1
 
+    ## under Windows, we want to use the default values
     switch $tcl_platform(platform) {
         windows {
-            option add *Scrolledhtml.sbWidth    16
-            option add *Scrolledtext.sbWidth    16
-            option add *Scrolledlistbox.sbWidth 16
         }
         default {
             option add *Scrolledhtml.sbWidth    10
@@ -152,8 +150,6 @@ proc vTcl:lib_itcl:setup {} {
     # Iwidgets creates them
     #
     # this creates problems while sourcing a Iwidgets project in vTcl
-    #
-    # see save_option proc below for resolution
 }
 
 #
@@ -196,14 +192,6 @@ proc vTcl:widget:radiobox:inscmd {target} {
             $target add radio3   -text {Radio 3}"
 }
 
-proc vTcl:widget:tabnotebook:inscmd {target} {
-
-    return "$target add -label {Page 1} ;\
-            $target add -label {Page 2} ;\
-            $target add -label {Page 3} ;\
-            $target select 0"
-}
-
 proc vTcl:widget:panedwindow:inscmd {target} {
 
     return "$target add pane1; $target add pane2"
@@ -221,14 +209,22 @@ proc vTcl:widget:combobox:inscmd {target} {
 # it dumps the geometry of $subwidget, but it doesn't dump $subwidget
 # itself (`vTcl:dump:widgets $subwidget' doesn't do the right thing if
 # the grid geometry manager is used to manage children of $subwidget.
-proc vTcl:lib_itcl:dump_subwidgets {subwidget} {
+proc vTcl:lib_itcl:dump_subwidgets {subwidget {sitebasename {}}} {
     global vTcl classes
     set output ""
     set geometry ""
     set widget_tree [vTcl:widget_tree $subwidget]
+    set length      [string length $subwidget]
 
     foreach i $widget_tree {
-        set basename [vTcl:base_name $i]
+
+        if {$sitebasename == ""} {
+            set basename [vTcl:base_name $i]
+        } else {
+            set first    [string first $subwidget $i]
+            set basename [string replace $i $first \
+                [expr $first + $length - 1] $sitebasename]
+        }
 
         # don't try to dump subwidget itself
         if {"$i" != "$subwidget"} {

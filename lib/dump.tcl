@@ -268,13 +268,13 @@ proc vTcl:get_class {target {lower 0}} {
     return $class
 }
 
-# if basename is 1 then the -in option will have the
-# first path component replaced by $base
+# if basename is not empty then the -in option will have the
+# value specified by basename
 #
 # example: -in .top27.fra32
 #       => -in $base.fra32
 
-proc vTcl:get_mgropts {opts {basename 0}} {
+proc vTcl:get_mgropts {opts {basename {}}} {
 #    if {[lindex $opts 0] == "-in"} {
 #        set opts [lrange $opts 2 end]
 #    }
@@ -298,9 +298,8 @@ proc vTcl:get_mgropts {opts {basename 0}} {
                     }
                 }
                 -in {
-                    if {$basename} {
-                    	set v [vTcl:base_name $v]
-                    	vTcl:log "Base name $v!"
+                    if {$basename != ""} {
+                    	set v $basename
                     }
 
                     if {$v != ""} {
@@ -454,7 +453,10 @@ proc vTcl:dump_widget_geom {target basename} {
         && $mgr != "tixForm"} {
         set opts [$mgr info $target]
         set result "$vTcl(tab)$mgr $basename \\\n"
-        append result "[vTcl:clean_pairs [vTcl:get_mgropts $opts 1]]\n"
+        set basesplit  [split $basename .]
+        set length     [llength $basesplit]
+        set parentname [join [lrange $basesplit 0 [expr $length - 2]] .]
+        append result "[vTcl:clean_pairs [vTcl:get_mgropts $opts $parentname]]\n"
     }
 
     ## Megawidgets are like blackboxes. We don't want to know what's inside,

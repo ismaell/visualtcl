@@ -198,18 +198,16 @@ proc vTcl:open {{file ""}} {
     vTcl:load_lib vtclib.tcl;            vTcl:statbar 60
 
     vTcl:list add "init main" vTcl(procs)
-    vTcl:status "Setting up bind tree"
-    vTcl:setup_bind_tree .;              vTcl:statbar 65
     vTcl:status "Updating top list"
-    vTcl:update_top_list;                vTcl:statbar 75
+    vTcl:update_top_list;                vTcl:statbar 65
     vTcl:status "Updating variable list"
-    vTcl:update_var_list;                vTcl:statbar 85
+    vTcl:update_var_list;                vTcl:statbar 70
     vTcl:status "Updating proc list"
-    vTcl:update_proc_list;               vTcl:statbar 90
+    vTcl:update_proc_list;               vTcl:statbar 75
     vTcl:status "Updating aliases"
-    vTcl:update_aliases;                 vTcl:statbar 92
+    vTcl:update_aliases;                 vTcl:statbar 80
 
-    vTcl:status "Loading Project Info";  vTcl:statbar 95
+    vTcl:status "Loading Project Info";  vTcl:statbar 85
 
     set vTcl(project,file) $file
     set vTcl(project,name) [file tail $file]
@@ -228,9 +226,14 @@ proc vTcl:open {{file ""}} {
     ## If there are project settings, load them
     if {![lempty [info proc vTcl:project:info]]} { vTcl:project:info }
 
+    ## Setup the bind tree after we have loaded project info, so
+    ## that registration of children in childsites works OK
+    vTcl:status "Setting up bind tree"
+    vTcl:setup_bind_tree .;              vTcl:statbar 90
+
     vTcl:status "Registering widgets"
     vTcl:widget:register_all_widgets;	 vTcl:statbar 97
-    
+
     wm title .vTcl "Visual Tcl - $vTcl(project,name)"
     vTcl:status "Done Loading"
     vTcl:statbar 0
