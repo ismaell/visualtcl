@@ -68,7 +68,7 @@ proc vTclWindow.vTcl.about {args} {
         -ipady 0 -padx 0 -pady 0 -side left
     label .vTcl.about.fra8.lab10 \
         -borderwidth 0 \
-         -text "$vTcl(version) beta 1"
+         -text "$vTcl(version)"
     pack .vTcl.about.fra8.lab10 \
         -in .vTcl.about.fra8 -anchor center -expand 0 -fill none -ipadx 0 \
         -ipady 0 -padx 0 -pady 0 -side left

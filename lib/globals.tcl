@@ -307,6 +307,9 @@ set vTcl(opt,list) "
     -onvalue
     -value
     -editable
+    -validate
+    -validatecommand
+    -invalidcommand
 
     -screen
     -show
@@ -352,6 +355,7 @@ set vTcl(opt,-insertborderwidth)   { {insert bd}     {}       type    {} }
 set vTcl(opt,-insertofftime)       { {insert off time} {}     type    {} }
 set vTcl(opt,-insertontime)        { {insert on time} {}      type    {} }
 set vTcl(opt,-insertwidth)         { {insert wd}     {}       type    {} }
+set vTcl(opt,-invalidcommand)      { {Inv. Cmd}      {}       command {} }
 set vTcl(opt,-jump)                { jump            {}       boolean {0 1} }
 set vTcl(opt,-justify)             { justify         {}       choice  {left right center} }
 set vTcl(opt,-labelfont)           { {Label Font}    {}       font    {} }
@@ -396,6 +400,8 @@ set vTcl(opt,-troughcolor)         { {trough color}  Colors   color   {} }
 set vTcl(opt,-underline)           { underline       {}       type    {} }
 set vTcl(opt,-value)               { value           {}       type    {} }
 set vTcl(opt,-variable)            { variable        {}       type    {} }
+set vTcl(opt,-validatecommand)     { {validate Cmd}  {}       command {} }
+set vTcl(opt,-validate)            { validate        {}       type    {} }
 set vTcl(opt,-width)               { width           {}       type    {} }
 set vTcl(opt,-wrap)                { wrap            {}       choice  {char none word} }
 set vTcl(opt,-wraplength)          { {wrap length}   {}       type    {} }
