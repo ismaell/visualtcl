@@ -130,7 +130,7 @@ proc vTcl:export_procs {} {
     }
 
     # support procs for multiple file projects
-    if {$vTcl(pr,projecttype) == "multiple"} {
+    if {[vTcl::project::isMultipleFileProject]} {
         lappend list chasehelper info_script
     }
 
@@ -171,6 +171,56 @@ proc vTcl:dump:get_files_list {basedir project_name} {
     return $result
 }
 
+proc vTcl:dump_data_tofile {target_file target_data} {
+    # @@ Proc added on 20030408 Nelson
+    # Tests for backup operations and performs dumps
+    # target_file is our output name and target_data is the data to dump.
+    if {[file exists $target_file] && (![file exists $target_file.tmp]) } {
+        # If we are here then the original file exists and no ${file}.tmp exists
+        # We will move the original file to ${target_file}.tmp . 
+        # If all goes well during the save process then we can move 
+        # the ${target_file}.tmp to ${target_file}.bak . 
+        file rename -force ${target_file} ${target_file}.tmp
+    } elseif {![file exists $target_file]} {
+        # Do nothing here since implies we were called from a save as operation or it is a new addition!
+    } else {
+        # Give feedback here if things went wrong.
+	  ::vTcl::MessageBox -icon error -message \
+            "$target_file.tmp already exists! This means for some reason a prior save attempt has failed!" \
+            -title "Save Error!" -type ok	  
+	  ::vTcl::MessageBox -icon info -message \
+            "To work around the $target_file.tmp error: Perform a perform a \"Save As\" operation with a different file name.\nThis will protect the data in the $target_file.tmp and save your current work." \
+	     -title "Save Information!" -type ok	   
+	  return 0
+    }
+    if {[catch {
+        set fp [open $target_file w]
+        puts $fp $target_data
+        close $fp
+    } errResult]} {
+        # End the catch and give feedback here if things went wrong.
+	  ::vTcl::MessageBox -icon error -message \
+            "An error occured during the dump_data_tofile operation:\n\n$errResult" \
+            -title "Save Error!" -type ok	
+
+	  # Move the original file back and do not mess with the .bak file.  
+        # First of all, close the messed up and uncompletely saved file.
+        if {$fp != ""} {
+            close $fp
+        }
+        if {[file exists ${target_file}.tmp]} {
+               file rename -force ${file}.tmp ${file}
+        }
+	return 0
+    } else {
+        # All well if we get here and we need to move the ${target_file}.tmp to ${target_file}.bak
+	if {[file exists ${target_file}.tmp]} {
+            file rename -force ${target_file}.tmp ${target_file}.bak
+        }
+	return 1
+    }
+   
+}
 proc vTcl:dump_top_tofile {target basedir project_name} {
 
     global vTcl
@@ -180,13 +230,19 @@ proc vTcl:dump_top_tofile {target basedir project_name} {
     }
 
     set filename [vTcl:dump:get_top_filename $target $basedir $project_name]
-    set id [open $filename w]
-    puts $id "[subst $vTcl(head,projfile)]\n\n"
-    puts $id [vTcl:dump_top $target]
-    close $id
+    ## @@ Modification  20030408 by Nelson
+    set output ""
+    append output "[subst $vTcl(head,projfile)]\n\n"
+    append output [vTcl:dump_top $target]
+    ## Make the call to get the data out and with backups.
+    if {![vTcl:dump_data_tofile $filename $output]} {
+        ## If we are here then something happend during the multifile project save and we need to make
+        ## note of it.
+        set output "::vTcl::MessageBox -icon error -message \"Error on $filename with multi file save! Project may be corrupted! If so try the Restore operation!\" -title \"Notification!\" -type ok\n\n"
+    }
+    ## @@ End Modification 20030408 by Nelson
 
     set output ""
-
     append output "if \[info exists _freewrap_progsrc\] \{\n"
     append output \
        "    source \"[vTcl:dump:get_top_filename $target $basedir $project_name]\"\n"
@@ -733,8 +789,7 @@ proc vTcl:dump:project_info {basedir project} {
     global vTcl classes
 
     set out   {}
-    set multi 0
-    if {![vTcl:streq $vTcl(pr,projecttype) "single"]} { set multi 1 }
+    set multi [vTcl::project::isMultipleFileProject]
 
     ## It's a single project without a project file.
     if {!$multi && !$vTcl(pr,projfile)} {
@@ -765,7 +820,10 @@ proc vTcl:dump:project_info {basedir project} {
     foreach item [vTcl::project::getCompounds main] {
         append out "$vTcl(tab)$vTcl(tab2)[list $item]\n"
     }
-    append out "$vTcl(tab2)\}\n"    
+    append out "$vTcl(tab2)\}\n"
+    array set prjType "0 single 1 multiple"
+    append out "$vTcl(tab2)set projectType $prjType($multi)\n"
+
     append out "$vTcl(tab)\}\n"
     append out "\}\n"
 
@@ -781,11 +839,14 @@ proc vTcl:dump:project_info {basedir project} {
         file mkdir [file join $basedir $dir]
         set file [file join $basedir $dir $file]
     }
-
-    set fp [open $file w]
-    puts $fp $out
-    close $fp
-    return
+    
+    # @@ Nelson 20030408 Change to work on backup operations.
+    # Make the call to get the data out and with backups.
+    if {![vTcl:dump_data_tofile $file $out]} {
+       return "::vTcl::MessageBox -icon error -message \"Error on $file with multi file save! Project may be corrupted! If so try the Restore operation!\" -title \"Notification!\" -type ok\n\n"
+    }
+    
+		
 }
 
 proc vTcl:dump:sourcing_header {varName} {
@@ -803,6 +864,8 @@ proc vTcl:dump:sourcing_footer {varName} {
     if {![vTcl:streq [string index $var end] "\n"]} { append var "\n" }
     append var "\}\n"
 }
+
+
 
 
 

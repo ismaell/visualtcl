@@ -128,7 +128,7 @@ proc vTclWindow.vTcl.newProjectWizard {args} {
     label $p1.left.l -text "Project Type:" -underline 8
     pack $p1.left.l -side top -anchor w
 
-    set listbox [ListBox $p1.left.list -bg white -width 25 -padx 25 -deltay 20]
+    set listbox [ListBox $p1.left.list -bg white -deltay 20 -padx 25 -width 25]
     pack $listbox -fill both -expand 1
 
     pack [frame $p1.spacer1 -width 10] -side left
@@ -177,5 +177,6 @@ proc vTclWindow.vTcl.newProjectWizard {args} {
 
     wm deiconify $base
 }
+
 
 

@@ -244,6 +244,11 @@ proc vTcl:open {{file ""}} {
     vTcl:update_proc_list;               vTcl:statbar 95
     vTcl:bind_tops;                      vTcl:statbar 98
 
+    ## The "single file" or "multiple files" option is now saved with each
+    ## project, and defaults to the current preference if not saved into the
+    ## project file. This is an intermediate step toward module oriented projects.
+    set vTcl(pr,projecttype) $::vTcl::modules::main::projectType
+
     wm title .vTcl "Visual Tcl - $vTcl(project,name)"
     vTcl:status "Done Loading"
     vTcl:statbar 0
@@ -274,7 +279,9 @@ proc vTcl:close {} {
             -title "Save Changes?" -type yesnocancel]
         switch $result {
             yes {
-                if {[vTcl:save_as] == -1} { return -1 }
+                # @@ Nelson 20030409 if project is named just save it.
+		#if {[vTcl:save_as] == -1} { return -1 }
+                if {[vTcl:save] == -1} { return -1 }
             }
             cancel {
                 return -1
@@ -435,7 +442,7 @@ proc vTcl:save2 {file} {
     set vTcl(project,name) [lindex [file split $file] end]
     set vTcl(project,file) $file
     
-    # @@change 20030316 Nelson bug 415090
+    # @@change 20030409 Nelson bug 415090
     if {[file exists $file] && (![file exists $file.tmp]) } {
         # If we are here then the original file exists and no ${file}.tmp exists
         # We will move the original file to ${file}.tmp . 
@@ -554,8 +561,6 @@ proc vTcl:save2 {file} {
             }
             vTcl:create_handles $vTcl(w,save)
         }
-        set vTcl(change) 0
-        wm title $vTcl(gui,main) "Visual Tcl - $vTcl(project,name)"
 	
         # it really annoyed me when I had to set the file as
         # executable under Linux to be able to run it, so here
@@ -576,16 +581,50 @@ proc vTcl:save2 {file} {
         if {$output != ""} {
             close $output
         }
-	  if {[file exists ${file}.tmp]} {
-               file rename -force ${file}.tmp ${file}
+	if {[file exists ${file}.tmp]} {
+            file rename -force ${file}.tmp ${file}
         }
     } else {
-        # All well if we get here and we need to move the ${file}.tmp to ${fiel}.bak
-	  if {[file exists ${file}.tmp]} {
-            file rename -force ${file}.tmp ${file}.bak
+        if {[vTcl::project::isMultipleFileProject]} {
+            ## If we get here then we are testing to see that the files associated with the 
+            ## multifile project all dumped to .bak files ok. If any ${file}.tmp files with
+            ## the project exist then we do not want to finish the dump with the project file.
+            set tops ". $vTcl(tops)"
+            ## The tmpSentry will come out 0 still if all the .tmp files for the project are gone.
+            set tmpSentry 0
+            foreach i $tops {
+                if {[file exists [file join [file dirname $file] [vTcl:dump:get_multifile_project_dir $vTcl(project,name)] f$i.tcl.tmp]]} {
+                    set tmpSentry 1
+                }
+            }
+            if {!$tmpSentry} {
+                ## All well if we get here and we need to move the ${file}.tmp to ${fiel}.bak
+                if {[file exists ${file}.tmp]} {
+                    file rename -force ${file}.tmp ${file}.bak
+                }
+                set vTcl(change) 0
+                wm title $vTcl(gui,main) "Visual Tcl - $vTcl(project,name)"
+            } else {
+                ## The backup has failed to move the original main file back.
+                if {[file exists ${file}.tmp]} {
+                    file rename -force ${file}.tmp ${file}
+                }
+                ## Let the user know that all the associated files for the project did not backup correct.
+                ## Advise them to choose save as.
+                ::vTcl::MessageBox -icon error -message \
+                 "An error occured during the multifile backup operation:\n\nPlease choose Save As and save in a new location!" \
+                 -title "Save Error!" -type ok	
+            }
+        } else {
+            ## All well if we get here and we need to move the ${file}.tmp to ${fiel}.bak
+            if {[file exists ${file}.tmp]} {
+               file rename -force ${file}.tmp ${file}.bak
+            }
+            set vTcl(change) 0
+            wm title $vTcl(gui,main) "Visual Tcl - $vTcl(project,name)"
         }
     }
-    # @@end_change 20030316 Nelson bug 415090
+    # @@end_change 20030409 Nelson bug 415090
 }
 
 proc vTcl:quit {} {
@@ -701,27 +740,52 @@ proc vTcl:restore {} {
     set file $vTcl(project,file)
 
     if {[lempty $file]} { return }
-
     set bakFile $file.bak
     if {![file exists $bakFile]} {
-        # change by Nelson 20030227
-        # Provides the user feedback about no $file.bak existance
-        # and potential reason why one might not exist.
-	
+        ## change by Nelson 20030227
+        ## Provides the user feedback about no $file.bak existance
+        ## and potential reason why one might not exist.
+
         ::vTcl::MessageBox -icon error -message \
-        "A backup file $bakFile does not exist! Backup files are
-only created upon save operations beyond the original creation of the file." \
-        -title "Restore Error!" -type ok
-
-        return
+         "A backup file $bakFile does not exist! Backup files are only created upon save operations beyond the original creation of the file." \
+         -title "Restore Error!" -type ok
+          
+	return
     }
+    
+    if {[vTcl::project::isMultipleFileProject]} {
+        ## If we get here then it is a multi file project. So lets try to restore from each backup file.
+        set restoreProject $vTcl(project,name)
+        set tops ". $vTcl(tops)"
+        vTcl:close
+        foreach i $tops {
+            set multiFile [file join [file dirname $file] [vTcl:dump:get_multifile_project_dir $restoreProject] f$i.tcl]
+            set bakMultiFile [file join [file dirname $file] [vTcl:dump:get_multifile_project_dir $restoreProject] $multiFile.bak]
+            if {[file exists $bakMultiFile ]} {
+                file copy -force -- $bakMultiFile $multiFile
+            } else {
+                ::vTcl::MessageBox -icon error -message \
+                 "A backup file $bakMultiFile does not exist!\n $tops \n Backup files are only created upon save operations beyond the original creation of the file." \
+                 -title "Restore Error!" -type ok
+            }
+        }
+        file copy -force -- $bakFile $file
+        update idletasks
+        vTcl:open $file
 
-    vTcl:close
-    file copy -force -- $bakFile $file
-    vTcl:open $file
+    } else {
+        ## If we are here then it is a single file backup.
+        vTcl:close
+        file copy -force -- $bakFile $file
+        vTcl:open $file
+    }    
 }
 
 namespace eval vTcl::project {
+
+    proc isMultipleFileProject {} {
+        return [expr {$::vTcl(pr,projecttype) == "multiple"}]
+    }
 
     proc initModule {moduleName} {
         namespace eval ::vTcl::modules::${moduleName} {
@@ -729,6 +793,11 @@ namespace eval vTcl::project {
             set procs ""
             variable compounds
             set compounds ""
+            ## TODO: this will probably be discarded once we have real modules
+            ##       where any object (toplevel, procedure, image, font, ...) can
+            ##       be contained and saved into a particular module
+            variable projectType
+            set projectType $::vTcl(pr,projecttype)
         }
     }
 
@@ -789,10 +858,5 @@ namespace eval vTcl::project {
         return [lsort -unique $result]
     }
 }
-
-
-
-
-
 
 

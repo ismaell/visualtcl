@@ -22,7 +22,7 @@
 #
 
 set vTcl(menu,file) {
-    {&New             Ctrl+N       vTcl:new                   }
+    {&New...          Ctrl+N       vTcl:new                   }
     {separator        {}           {}                         }
     {&Open...         Ctrl+O       vTcl:open                  }
     {&Save            Ctrl+S       vTcl:save                  }
@@ -226,3 +226,4 @@ proc vTcl:enable_entries {menu state} {
         $menu entryconfigure $i -state $state
     }
 }
+

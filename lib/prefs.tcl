@@ -86,7 +86,8 @@ proc vTclWindow.vTcl.prefs {{base ""}} {
         set base .vTcl.prefs
     }
     if {[winfo exists $base]} {
-        wm deiconify $base; return
+        wm deiconify $base
+        return
     }
 
     ###################
@@ -115,6 +116,10 @@ proc vTclWindow.vTcl.prefs {{base ""}} {
     }
     bind $base <Key-Escape> {
         wm withdraw [winfo toplevel %W]; vTcl:prefs:data_exchange 0
+    }
+    bind $base <<Show>> {
+        ## make sure the dialog is up-to-date
+        vTcl:prefs:data_exchange 0
     }
     frame $base.fra19
     ::vTcl::OkButton $base.fra19.but20 \
@@ -518,3 +523,4 @@ proc vTcl:prefs:external {tab} {
 	-command "vTcl:prefs:browse_file prefs::texteditor"]
     pack configure $x -side left -anchor nw
 }
+
