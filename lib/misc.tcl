@@ -718,8 +718,6 @@ proc vTcl:namespace_tree {{root "::"}} {
 }
 
 proc vTcl:copy_widgetname {} {
-    global fakeClipboard vTcl
-    set fakeClipboard $vTcl(w,widget)
     .vTcl.widgetname selection range 0 end
 }
 
