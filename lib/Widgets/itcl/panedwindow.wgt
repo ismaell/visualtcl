@@ -23,6 +23,8 @@
 ##############################################################################
 #
 
+if {[info tclversion] < 8.4} {
+
 Class		Panedwindow
 Lib		itcl
 
@@ -295,3 +297,4 @@ namespace eval vTcl::widgets::iwidgets::panedwindow::edit {
     }
 }
 
+}; ## if {[info tclversion] < 8.4}
