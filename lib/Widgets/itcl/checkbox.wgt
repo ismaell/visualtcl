@@ -35,6 +35,10 @@ CompoundCmd     vTcl:compound:checkbox
 InsertCmd	vTcl:widget:checkbox:inscmd
 TagsCmd         vTcl:lib_itcl:tagscmd
 DefaultOptions	-labeltext "Checkbox"
+DefaultValues   -background -font
+ClassOption     -_itcl_radiocheckboxes
+GetImagesCmd    vTcl::widgets::iwidgets::boxes::getImagesCmd
+GetFontsCmd     vTcl::widgets::iwidgets::boxes::getFontsCmd
 
 proc vTcl:compound:checkbox {target} {
 
@@ -61,8 +65,7 @@ proc vTcl:dump:checkbox {target basename} {
 
     for {set i 0} {$i <= $last} {incr i} {
         set conf [$target buttonconfigure $i]
-        set pairs [vTcl:get_opts_special $conf $target \
-            "-text -variable"]
+        set pairs [vTcl:get_subopts_special $conf $target]
 
         append result "$vTcl(tab)$basename add chk$i \\\n"
         append result "[vTcl:clean_pairs $pairs]\n"
@@ -76,4 +79,10 @@ proc vTcl:widget:checkbox:inscmd {target} {
     $target add check1   -text {Check 1}
     $target add check2   -text {Check 2}
     $target add check3   -text {Check 3}
+
+    vTcl::widgets::iwidgets::boxes::setDefaultValues $target \
+        {-activebackground -activeforeground
+         -background -disabledforeground
+         -font -foreground -highlightbackground
+         -highlightcolor -highlightthickness -selectcolor}
 }

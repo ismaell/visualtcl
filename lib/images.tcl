@@ -771,6 +771,9 @@ proc vTcl:image:get_files_list {} {
 set vTcl(option,translate,-image) vTcl:image:translate
 set vTcl(option,noencase,-image) 1
 
+set vTcl(option,translate,-selectimage) vTcl:image:translate
+set vTcl(option,noencase,-selectimage) 1
+
 proc vTcl:image:translate {value} {
     global vTcl
 

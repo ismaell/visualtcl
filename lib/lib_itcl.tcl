@@ -89,6 +89,13 @@ proc vTcl:widget:lib:lib_itcl {args} {
     foreach cmd [string tolower $order] {
         append vTcl(proc,ignore) "|$cmd"
     }
+
+    button .tmp
+    set defaultBackground [lindex [.tmp configure -background] 3]
+    option add *Checkbox.background $defaultBackground
+    option add *Radiobox.background $defaultBackground
+    option add *Buttonbox.background $defaultBackground
+    destroy .tmp
 }
 
 proc vTcl:lib_itcl:setup {} {
@@ -108,9 +115,6 @@ proc vTcl:lib_itcl:setup {} {
     set vTcl(feedback,insert)           "-labeltext {Percent complete:}"
     set vTcl(optionmenu,insert)         "-labeltext {Select option:}"
     set vTcl(hierarchy,insert)          ""
-    set vTcl(buttonbox,insert)          ""
-    set vTcl(checkbox,insert)           ""
-    set vTcl(radiobox,insert)           ""
     set vTcl(panedwindow,insert)        ""
     set vTcl(scrolledtext,insert)       ""
 
@@ -195,12 +199,152 @@ proc vTcl:lib_itcl:tagscmd {target} {
     }
 }
 
+###########################################################
+## Code for displaying a combo box with the list of
+## radio/check boxes in the attributes editor
+##
+namespace eval vTcl::widgets::iwidgets::boxes {
+
+    proc get_pages {target} {
+    }
+
+    proc update_pages {target var} {
+        ## there is a trace on var to update the combobox
+        ## first item in the list is the current index
+        set last -1
+        catch {set last [$target index end]}
+        set values 0
+        for {set i 0} {$i <= $last} {incr i} {
+            set labelOption [$target buttonconfigure $i -text]
+            lappend values [lindex $labelOption 4]
+        }
+
+        ## this will trigger the trace
+        set ::$var $values
+    }
+
+    proc config_pages {target var} {
+    }
+
+    proc select_page {target index} {
+    }
+
+    proc getOptions {target opts} {
+        set result {}
+        set last -1
+        catch {set last [$target index end]}
+        for {set i 0} {$i <= $last} {incr i} {
+            foreach opt $opts {
+                set value [lindex [$target buttonconfigure $i $opt] 4]
+                if {$value != ""} {
+                    lappend result $value
+                }
+            }
+        }
+        return $result
+    }
+
+    proc getImagesCmd {target} {
+        switch [vTcl:get_class $target] {
+        Radiobox - Checkbox {
+            set opts {-image -selectimage}
+        }
+        default {
+            set opts -image
+        }
+        }
+        return [getOptions $target $opts]
+    }
+
+    proc getFontsCmd {target} {
+        return [getOptions $target -font]
+    }
+
+    proc setDefaultValues {target opts} {
+        set last -1
+        catch {set last [$target index end]}
+        for {set i 0} {$i <= $last} {incr i} {
+            foreach opt $opts {
+                set default [lindex [$target buttonconfigure $i $opt] 3]
+                $target buttonconfigure $i $opt $default
+            }
+        }
+    }
+}
+
+###########################################################
+## Editing radioboxes/checkboxes
+##
+namespace eval vTcl::widgets::iwidgets::boxes::edit {
+
+    variable counter 0
+
+    proc getTitle {target} {
+        return "Edit boxes for $target"
+    }
+
+    proc getLabelOption {} {
+        return -text
+    }
+
+    proc getItems {target} {
+        ## first item in the list is the current index
+        set last -1
+        catch {set last [$target index end]}
+        set values 0
+        for {set i 0} {$i <= $last} {incr i} {
+            set labelOption [$target buttonconfigure $i -text]
+            lappend values [lindex $labelOption 4]
+        }
+        return $values
+    }
+
+    proc addItem {target} {
+        variable counter
+        incr counter
+        $target add tag_$counter -text "New Box"
+        if {$::vTcl(w,widget) == $target} {
+            vTcl:place_handles $target
+        }
+        return "New Box"
+    }
+
+    proc removeItem {target index} {
+        $target delete $index
+        if {$::vTcl(w,widget) == $target} {
+            vTcl:place_handles $target
+        }
+    }
+
+    proc itemConfigure {target index args} {
+        if {$args == ""} {
+            set options [$target buttonconfigure $index]
+            set result ""
+            foreach option $options {
+                ## only return valid options
+                if {[llength $option] == 5} {
+                    lappend result $option
+                }
+            }
+            return $result
+        } else {
+            eval $target buttonconfigure $index $args
+        }
+    }
+
+    proc moveUpOrDown {target index direction} {
+        error "Not implemented yet!"
+    }
+}
+
+###########################################################
+## Code for displaying a combo box with pages in the
+## attributes editor
+##
 proc vTcl:lib_itcl:get_pages {target} {
 }
 
 proc vTcl:lib_itcl:update_pages {target var} {
-    global vTcl
-
     ## there is a trace on var to update the combobox
     ## first item in the list is the current index
     set sites [$target childsite]
@@ -267,8 +411,6 @@ namespace eval vTcl::widgets::iwidgets::notebooks::edit {
         if {$args == ""} {
             set options [$target pageconfigure $index]
             set result ""
-            ## grrr: why do they return options from the widget here with
-            ##       three items like {-width 15 10} ?? bug!!
             foreach option $options {
                 ## only return valid options
                 if {[llength $option] == 5} {

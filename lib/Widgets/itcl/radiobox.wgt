@@ -35,6 +35,10 @@ CompoundCmd     vTcl:compound:radiobox
 InsertCmd	vTcl:widget:radiobox:inscmd
 TagsCmd         vTcl:lib_itcl:tagscmd
 DefaultOptions	-labeltext "Radiobox"
+DefaultValues   -background -font
+ClassOption     -_itcl_radiocheckboxes
+GetImagesCmd    vTcl::widgets::iwidgets::boxes::getImagesCmd
+GetFontsCmd     vTcl::widgets::iwidgets::boxes::getFontsCmd
 
 proc vTcl:compound:radiobox {target} {
 
@@ -61,8 +65,7 @@ proc vTcl:dump:radiobox {target basename} {
 
     for {set i 0} {$i <= $last} {incr i} {
         set conf [$target buttonconfigure $i]
-        set pairs [vTcl:get_opts_special $conf $target \
-            "-text -variable"]
+        set pairs [vTcl:get_subopts_special $conf $target]
 
         append result "$vTcl(tab)$basename add rad$i \\\n"
         append result "[vTcl:clean_pairs $pairs]\n"
@@ -76,4 +79,10 @@ proc vTcl:widget:radiobox:inscmd {target} {
     $target add radio1   -text {Radio 1}
     $target add radio2   -text {Radio 2}
     $target add radio3   -text {Radio 3}
+
+    vTcl::widgets::iwidgets::boxes::setDefaultValues $target \
+        {-activebackground -activeforeground
+         -background -disabledforeground
+         -font -foreground -highlightbackground
+         -highlightcolor -highlightthickness -selectcolor}
 }

@@ -35,6 +35,9 @@ TagsCmd         vTcl:widget:buttonbox:tagscmd
 DumpCmd		vTcl:dump:buttonbox
 CompoundCmd     vTcl:compound:buttonbox
 DefaultOptions	-padx 0 -pady 0
+ClassOption     -_itcl_radiocheckboxes
+GetImagesCmd    vTcl::widgets::iwidgets::boxes::getImagesCmd
+GetFontsCmd     vTcl::widgets::iwidgets::boxes::getFontsCmd
 
 AdditionalClasses Pushbutton
 
@@ -78,6 +81,12 @@ proc vTcl:widget:buttonbox:inscmd {target} {
     $target add ok     -text OK
     $target add cancel -text Cancel
     $target add help   -text Help
+
+    vTcl::widgets::iwidgets::boxes::setDefaultValues $target \
+        {-activebackground -activeforeground
+         -background -disabledforeground
+         -font -foreground -highlightbackground
+         -highlightcolor -highlightthickness}
 }
 
 proc vTcl:widget:buttonbox:tagscmd {target} {
