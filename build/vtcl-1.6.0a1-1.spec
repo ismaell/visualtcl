@@ -77,6 +77,7 @@ install -m 644 opt/local/vtcl-%{version}/lib/Widgets/bwidget/*.wgt	$RPM_BUILD_RO
 install -m 644 opt/local/vtcl-%{version}/lib/Widgets/bwidget/*.gif	$RPM_BUILD_ROOT/opt/local/vtcl-%{version}/lib/Widgets/bwidget
 install -m 644 opt/local/vtcl-%{version}/lib/Widgets/core/*.wgt		$RPM_BUILD_ROOT/opt/local/vtcl-%{version}/lib/Widgets/core
 install -m 644 opt/local/vtcl-%{version}/lib/Widgets/tix/*.wgt		$RPM_BUILD_ROOT/opt/local/vtcl-%{version}/lib/Widgets/tix
+install -m 644 opt/local/vtcl-%{version}/lib/Widgets/tix/*.gif		$RPM_BUILD_ROOT/opt/local/vtcl-%{version}/lib/Widgets/tix
 install -m 644 opt/local/vtcl-%{version}/lib/Widgets/vtcl/*.wgt		$RPM_BUILD_ROOT/opt/local/vtcl-%{version}/lib/Widgets/vtcl
 install -m 644 opt/local/vtcl-%{version}/lib/Widgets/itcl/*.wgt		$RPM_BUILD_ROOT/opt/local/vtcl-%{version}/lib/Widgets/itcl
 install -m 644 opt/local/vtcl-%{version}/lib/Widgets/itcl/*.gif		$RPM_BUILD_ROOT/opt/local/vtcl-%{version}/lib/Widgets/itcl
