@@ -232,19 +232,7 @@ proc vTclWindow.vTcl.bind {args} {
         ::widgets_bindings::enable_toolbar_buttons
         ::widgets_bindings::select_binding
     }
-    bind $base.cpd21.01.cpd25.01 <ButtonRelease-1> {
-        ::widgets_bindings::listbox_click
-    }
-    bind $base.cpd21.01.cpd25.01 <KeyRelease-Up> {
-        ::widgets_bindings::listbox_click
-    }
-    bind $base.cpd21.01.cpd25.01 <KeyRelease-Prior> {
-        ::widgets_bindings::listbox_click
-    }
-    bind $base.cpd21.01.cpd25.01 <KeyRelease-Down> {
-        ::widgets_bindings::listbox_click
-    }
-    bind $base.cpd21.01.cpd25.01 <KeyRelease-Next> {
+    bind $base.cpd21.01.cpd25.01 <<ListboxSelect>> {
         ::widgets_bindings::listbox_click
     }
     bind $base.cpd21.01.cpd25.01 <ButtonRelease-3> {

@@ -407,10 +407,10 @@ proc vTcl:dialog {mesg {options Ok} {root 0}} {
 	wm withdraw $base
         wm title $base "Visual Tcl Message"
         wm transient $base .vTcl
-        frame $base.f -bd 2 -relief groove
+        frame $base.f -bd 4
         label $base.f.t -bd 0 -relief flat -text $mesg -justify left \
             -font $vTcl(pr,font_dlg)
-        frame $base.o -bd 1 -relief sunken
+        frame $base.o -bd 1
         foreach i $options {
             set n [string tolower $i]
             button $base.o.$n -text $i -width 5 \
@@ -418,11 +418,11 @@ proc vTcl:dialog {mesg {options Ok} {root 0}} {
                 set vTcl(x_mesg) $i
                 destroy $base
             "
-            pack $base.o.$n -side left -expand 1 -fill x
+            pack $base.o.$n -side left -expand 1
         }
         pack $base.f.t -side top -expand 1 -fill both -ipadx 5 -ipady 5
         pack $base.f -side top -expand 1 -fill both -padx 2 -pady 2
-        pack $base.o -side top -fill x -padx 2 -pady 2
+        pack $base.o -side top -fill x -padx 2 -pady 5
     }
     update idletasks
     set w [winfo reqwidth $base]

@@ -572,9 +572,9 @@ proc vTclWindow.vTcl.inspector {base {container 0}} {
         -xscrollcommand "$base.cpd26.01.cpd27.02 set" \
         -yscrollcommand "$base.cpd26.01.cpd27.03 set"
     bindtags $base.cpd26.01.cpd27.01 "Listbox $base.cpd26.01.cpd27.01 $base all"
-    bind $base.cpd26.01.cpd27.01 <Button-1> {
+    bind $base.cpd26.01.cpd27.01 <<ListboxSelect>> {
         set listbox %W
-        set index [%W index @%x,%y]
+        set index [%W curselection]
 
         set content_line [lindex [vTcl:at ::%W::contents] $index]
 
