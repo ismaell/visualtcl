@@ -5,3 +5,8 @@ CreateCmd	::iwidgets::feedback
 Icon		icon_feedback.gif
 DumpChildren	no
 MegaWidget	yes
+InsertCmd	vTcl:widget:feedback:inscmd
+
+proc vTcl:widget:feedback:inscmd {target} {
+    $target configure -labeltext "Percent complete:"
+}

@@ -11,9 +11,15 @@ DefaultOptions	-padx 0 -pady 0
 
 AdditionalClasses Pushbutton
 
-proc vTcl:dump:buttonbox {target basename} {
+proc vTcl:widget:buttonbox:inscmd {target} {
+    $target add ok     -text OK
+    $target add cancel -text Cancel
+    $target add help   -text Help
+}
 
+proc vTcl:dump:buttonbox {target basename} {
     global vTcl
+
     set result [vTcl:dump_widget_opt $target $basename]
     set last -1
     catch {set last [$target index end]}

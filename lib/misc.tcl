@@ -779,8 +779,7 @@ proc vTcl:lib:add_widgets_to_toolbar {list} {
 	    vTcl:$i:ToolBarSetup
 	    continue
 	}
-	vTcl:toolbar_add $i $classes($i,balloon) \
-	    $classes($i,icon) $classes($i,addOptions)
+	vTcl:toolbar_add $i $classes($i,balloon) $classes($i,icon)
     }
 }
 
@@ -1240,6 +1239,7 @@ proc vTcl:show_console {{show show}} {
 proc ::vTcl::InitTkcon {} {
     if {[catch {winfo exists $::tkcon::PRIV(root)}]} {
     	::tkcon::Init
+	::tkcon::Attach Main slave
 	tkcon title "Visual Tcl"
     }	
 }

@@ -14,11 +14,10 @@ DumpCmd		vTcl:dump:tabnotebook
 AdditionalClasses Notebook Tabset Page
 
 proc vTcl:widget:tabnotebook:inscmd {target} {
-
-    return "$target add -label {Page 1} ;\
-            $target add -label {Page 2} ;\
-            $target add -label {Page 3} ;\
-            $target select 0"
+    $target add -label {Page 1}
+    $target add -label {Page 2}
+    $target add -label {Page 3}
+    $target select 0
 }
 
 # All right, I explain it: -4 is the number of levels
@@ -28,7 +27,6 @@ proc vTcl:widget:tabnotebook:inscmd {target} {
 # lines)
 
 proc vTcl:widget:tabnotebook:treeChildrenCmd {target {diff \#-4}} {
-
     set children ""
     set wantsdiff [expr {$diff != ""}]
 
@@ -37,7 +35,6 @@ proc vTcl:widget:tabnotebook:treeChildrenCmd {target {diff \#-4}} {
             lappend children $child$diff
         }
     }
-
     return $children
 }
 
@@ -47,8 +44,8 @@ proc vTcl:widget:tabnotebook:treeChildrenChildsite {target} {
 }
 
 proc vTcl:dump:tabnotebook {target basename} {
-
     global vTcl
+
     set result [vTcl:dump_widget_opt $target $basename]
     set entries [$target childsite]
     set size [llength $entries]
@@ -64,4 +61,3 @@ proc vTcl:dump:tabnotebook {target basename} {
     append result "$vTcl(tab)$basename select 0\n"
     return $result
 }
-

@@ -10,12 +10,10 @@ MegaWidget   yes
 InsertCmd	vTcl:widget:tixPopupMenu:inscmd
 
 proc vTcl:widget:tixPopupMenu:inscmd {target} {
-    return "
-        $target bind \[winfo toplevel $target\]
-        set menu \[$target subwidget menu\]
-        \$menu add command -label Entry1
-        \$menu add command -label Entry2
-        \$menu add separator
-        \$menu add command -label Entry2
-    "
+    $target bind [winfo toplevel $target]
+    set menu [$target subwidget menu]
+    $menu add command -label Entry1
+    $menu add command -label Entry2
+    $menu add separator
+    $menu add command -label Entry2
 }
