@@ -249,23 +249,24 @@ proc vTcl:select_widget {target} {
 #
 proc vTcl:widget_tree {target {include_target 1}} {
     global vTcl classes
-    if {$target == ".vTcl" || [string range $target 0 4] == ".__tk"} {
-        return
-    }
+
+    if {$target == ".vTcl" || [string range $target 0 4] == ".__tk"} { return }
+
     set output ""
     if {$include_target} {
         set output "$target "
     }
-    set class [winfo class $target]
+
     set dumpChildren 1
+    set class [winfo class $target]
     if {[info exists classes($class,dumpChildren)]} {
-    	set dumpChildren $classes($class,dumpChildren)
+	set dumpChildren $classes($class,dumpChildren)
     }
     if {!$dumpChildren} { return $output }
 
     set c [vTcl:get_children $target]
     foreach i $c {
-        set mgr [winfo manager $i]
+	if {[string range $i 0 1] == ".#"} { continue }
         set class [vTcl:get_class $i]
         if {$class != "Toplevel"} {
             append output [vTcl:widget_tree $i]
@@ -295,12 +296,11 @@ proc vTcl:list_widget_tree {target {which ""} {include_menus 0} {include_megachi
         ## Tix leaves some windows behind
         if {[string match .tix* $i]} {continue}
 
-	## Ignore temporary toplevel windows completely.
-	if {[string match .#* $i]} { continue }
+	## Ignore temporary windows completely.
+	if {[string range $i 0 1] == ".#"} { continue }
 
         ## Don't include temporary windows
-        if {[string match {*#*} $i] &&
-        (! $include_menus)} { continue }
+        if {[string match {*#*} $i] && (!$include_menus)} { continue }
 
         ## Don't include unknown widgets
         set c [vTcl:get_class $i]
