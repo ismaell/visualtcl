@@ -530,7 +530,7 @@ proc vTcl:dump_widget_bind {target basename} {
                 if {"$tag" == "$target"} {
                     set tag [vTcl:base_name $target]
                 } elseif {"$tag" == "[winfo toplevel $target]"} {
-                    set tag \$base
+                    set tag \$top
                 }
                 if {[string match "* *" $tag]} {
                     set tag "\{$tag\}"
@@ -641,6 +641,7 @@ proc vTcl:dump_top {target} {
         append output "$vTcl(tab)if \{\[winfo exists \$base\]\} \{\n"
         append output "$vTcl(tab2)wm deiconify \$base; return\n"
         append output "$vTcl(tab)\}\n"
+	append output "$vTcl(tab)set top \$base\n"
     }
     if {[wm state $target] == "normal" ||
         [wm state $target] == "iconic" ||

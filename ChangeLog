@@ -1,6 +1,10 @@
 ChangeLog for Visual Tcl:
 
 1.6.0a2 ->
+    o Variables with the form .top33::my_var are now replaced by $top\::my_var
+      instead of $base\::my_var. 
+    o Binding tags now use $top to refer to the top level window. This will
+      allow easy copy/paste of compounds between toplevels.
     o Added Context Menu to Itcl paned window to edit panes.
     o Fixed BWidget Spinbox that was broken by namespacization.
     o When dumping binding tags, replace occurences of the widget path by %W

@@ -309,7 +309,12 @@ proc vTcl:core:variabletranslate {value} {
             ## potential candidate, is it a window ?
             if {![winfo exists $path]} {return $value}
 
-            set path [vTcl:base_name $path]
+	    if {"$path" == "[winfo toplevel $path]"} {
+	        set path {$top}
+	    } else {
+                set path [vTcl:base_name $path]
+	    }
+
             return "\"${path}\\::${variable}\""
         }
 
@@ -353,7 +358,8 @@ proc vTcl:core:commandtranslate {value} {
 proc vTcl:core:noencasewhen {value} {
 
     if { [string match {"$base*} $value] ||
-         [string match {"$site*} $value] } {
+         [string match {"$site*} $value] ||
+	 [string match {"$top*} $value] } {
         return 1
     }
 
