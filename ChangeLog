@@ -1,6 +1,10 @@
 ChangeLog for Visual Tcl:
 
 1.51b3 ->
+    o Have the most common options like -background, -activebackground etc.
+      take their default value when a widget is created, instead of using the
+      value from the options database. This saves space when saving projects, and
+      makes it easier to port them to other platforms.
     o Fixed "Set command" bug where it would prevent from saving the project
     o Made sure -label, -anchor and other options are saved
     o Fixed error when inserting compound for the first time after starting vTcl
