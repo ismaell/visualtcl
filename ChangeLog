@@ -1,6 +1,10 @@
 ChangeLog for Visual Tcl:
 
 1.6.0a3 ->
+    o Added "Run Visible" property for toplevels. What it does is always
+      show the toplevel in EDIT mode but hide it in TEST mode and when
+      project is run outside vTcl. Overrides the "state" property when
+      off.
     o Redone the menu editor, now showing all the properties for entries.
     o Allows editing of alias in attributes editor.
     o When a childsite is deleted, update any possibly open childsite 
@@ -975,6 +979,7 @@ ChangeLog for Visual Tcl:
     o And much, much more :)
 
 1.01 released (December 5, 1996)
+
 
 
 
