@@ -349,7 +349,7 @@ proc vTclWindow.vTcl {args} {
 
     .vTcl conf -menu .vTcl.m
 
-    foreach menu {file edit mode compound options window} {
+    foreach menu {file edit mode compound options window widget} {
 	if {$tcl_version >= 8} {
 	    vTcl:menu:insert .vTcl.m.$menu $menu .vTcl.m
 	} else {
@@ -726,6 +726,7 @@ proc vTcl:main {argc argv} {
 }
 
 vTcl:main $argc $argv
+
 
 
 

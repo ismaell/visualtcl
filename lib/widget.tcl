@@ -1110,12 +1110,14 @@ proc vTcl:add_functions_to_rc_menu {} {
     global vTcl classes
 
     $vTcl(gui,rc_widget_menu) delete 0 end
+    .vTcl.m.widget delete 0 end
 
     set c $vTcl(w,class)
     if {[lempty $classes($c,functionCmds)]} { return }
 
     foreach cmd $classes($c,functionCmds) text $classes($c,functionText) {
         $vTcl(gui,rc_widget_menu) add command -label $text -command $cmd
+        .vTcl.m.widget add command -label $text -command $cmd
     }
 }
 
@@ -1622,5 +1624,6 @@ namespace eval vTcl::widgets {
         return [lsort -unique $result]
     }
 }
+
 
 

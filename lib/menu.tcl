@@ -105,6 +105,9 @@ set vTcl(menu,window) {
     {{&Save Window Locations} {}     vTcl:save_prefs            }
 }
 
+## this menu is built dynamically
+set vTcl(menu,widget) {}
+
 set vTcl(menu,help) {
     {{&About Visual Tcl...} {}         {Window show .vTcl.about}      }
     {{&Libraries...}        {}         {Window show .vTcl.infolibs}   }
@@ -226,4 +229,5 @@ proc vTcl:enable_entries {menu state} {
         $menu entryconfigure $i -state $state
     }
 }
+
 
