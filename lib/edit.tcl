@@ -126,7 +126,7 @@ proc vTcl:paste {{fromMouse ""}} {
 }
 
 namespace eval ::vTcl::findReplace {
-    variable base	.find
+    variable base	.vTcl.find
     variable txtbox	""
     variable count	0
 
