@@ -114,35 +114,8 @@ proc vTclWindow.vTcl.tip {base} {
         wm deiconify $base; return
     }
 
-    image create photo light_bulb -data {
-        R0lGODdhNAA0APcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwMDcwKbK8AAA
-        AAAAKgAAVQAAfwAAqgAA1AAqAAAqKgAqVQAqfwAqqgAq1ABVAABVKgBVVQBV
-        fwBVqgBV1AB/AAB/KgB/VQB/fwB/qgB/1ACqAACqKgCqVQCqfwCqqgCq1ADU
-        AADUKgDUVQDUfwDUqgDU1CoAACoAKioAVSoAfyoAqioA1CoqACoqKioqVSoq
-        fyoqqioq1CpVACpVKipVVSpVfypVqipV1Cp/ACp/Kip/VSp/fyp/qip/1Cqq
-        ACqqKiqqVSqqfyqqqiqq1CrUACrUKirUVSrUfyrUqirU1FUAAFUAKlUAVVUA
-        f1UAqlUA1FUqAFUqKlUqVVUqf1UqqlUq1FVVAFVVKlVVVVVVf1VVqlVV1FV/
-        AFV/KlV/VVV/f1V/qlV/1FWqAFWqKlWqVVWqf1WqqlWq1FXUAFXUKlXUVVXU
-        f1XUqlXU1H8AAH8AKn8AVX8Af38Aqn8A1H8qAH8qKn8qVX8qf38qqn8q1H9V
-        AH9VKn9VVX9Vf39Vqn9V1H9/AH9/Kn9/VX9/f39/qn9/1H+qAH+qKn+qVX+q
-        f3+qqn+q1H/UAH/UKn/UVX/Uf3/Uqn/U1KoAAKoAKqoAVaoAf6oAqqoA1Koq
-        AKoqKqoqVaoqf6oqqqoq1KpVAKpVKqpVVapVf6pVqqpV1Kp/AKp/Kqp/Vap/
-        f6p/qqp/1KqqAKqqKqqqVaqqf6qqqqqq1KrUAKrUKqrUVarUf6rUqqrU1NQA
-        ANQAKtQAVdQAf9QAqtQA1NQqANQqKtQqVdQqf9QqqtQq1NRVANRVKtRVVdRV
-        f9RVqtRV1NR/ANR/KtR/VdR/f9R/qtR/1NSqANSqKtSqVdSqf9SqqtSq1NTU
-        ANTUKtTUVdTUf9TUqtTU1AAAAAwMDBkZGSYmJjMzMz8/P0xMTFlZWWZmZnJy
-        cn9/f4yMjJmZmaWlpbKysr+/v8zMzNjY2OXl5fLy8v/78KCgpICAgP8AAAD/
-        AP//AAAA//8A/wD//////ywAAAAANAA0AAAI/gD/CRxIsKDBgwgTKlzIsKHD
-        hxD/AYhIsaJFihMRZrxYcGNCjx05HgRpEABJiSdFojRoz57JljBbmlSpkWBM
-        lzddArBHc2TGnDtvvuTZs2NQoUd1Ji0qUKbJpDlx5kSZ0mHMp1GzXp3JUahW
-        rU+rWv1K1unLrmXTDiUaMezXsG7JVoQL9Om+u/viaqVoFikAvHe93dX5lS9M
-        qCYFe1vMeDDUmxHf7pNHGZxly43z7qXKFSFYAJXBtbwMrvFas3AZfg59E7M3
-        eZq3ij0IdrJonjEvU877mG3D2vJEs7RnmTLs3r5LwtXr8vVtg6R3I2+4POnf
-        4C0Lji4tPWpkpYdttwsfuL34ce8QsyYOfjs39+PWwz4Ejt29N3DyBCNePrZu
-        aNKXMXZaTIZFBcBr+QGYGXLJ/bZafowthldhFX0GGoQS3jUgTBf1JRtsgO0j
-        1VYNPsTcYReKeJiBT2FE3lvyoLiZQLMpBKNS0xUFVozMncXUPyseFiN4Zv1I
-        0GlB6SWfkVwFidNOR3bWk5Q0crhSlD+elNGSIRWV0kZPyWOkQ5SFJeaY1F1I
-        GZomtshmmzW+KeecdPYUEAA7}
+    image create photo light_bulb -file \
+        [file join $vTcl(VTCL_HOME) images tip.gif]
 
     global widget
     vTcl:DefineAlias $base TipWindow vTcl:TopLevel:WidgetProc "" 1
@@ -452,3 +425,4 @@ proc vTclWindow.vTcl.infolibs {{base ""}} {
     vTcl:center $base 446 322
     wm deiconify $base
 }
+
