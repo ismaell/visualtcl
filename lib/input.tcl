@@ -128,7 +128,7 @@ proc vTcl:text_window {base title target} {
     toplevel $base -class Toplevel
     wm transient $base .vTcl
     wm focusmodel $base passive
-    wm geometry $base 274x289+[expr $vTcl(mouse,X)-130]+[expr $vTcl(mouse,Y)-20]
+    wm geometry $base 400x289+[expr $vTcl(mouse,X)-130]+[expr $vTcl(mouse,Y)-20]
     wm maxsize $base 1265 994
     wm minsize $base 1 1
     wm overrideredirect $base 0
@@ -276,6 +276,7 @@ proc select {contents title {selectMode single}} {
     return [vTcl:at ::${top}::selectedItems]
 }
 }
+
 
 
 
