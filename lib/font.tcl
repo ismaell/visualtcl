@@ -137,11 +137,11 @@ proc vTcl:font:get_font_dlg {base font_desc} {
     set vTcl(x,$base,overstrike) [font configure $vTcl(x,$base,font) -overstrike]
     set vTcl(x,$base,size)       [font configure $vTcl(x,$base,font) -size]
 
-    vTcl:log "vTcl:font:get_font_dlg: font=$vTcl(x,$base,font)"
-    vTcl:log "vTcl:font:get_font_dlg: $font_desc"
-    vTcl:log "weight = $vTcl(x,$base,weight)"
-    vTcl:log "slant  = $vTcl(x,$base,slant)"
-    vTcl:log "size   = $vTcl(x,$base,size)"
+    # vTcl:log "vTcl:font:get_font_dlg: font=$vTcl(x,$base,font)"
+    # vTcl:log "vTcl:font:get_font_dlg: $font_desc"
+    # vTcl:log "weight = $vTcl(x,$base,weight)"
+    # vTcl:log "slant  = $vTcl(x,$base,slant)"
+    # vTcl:log "size   = $vTcl(x,$base,size)"
 
     ###################
     # CREATING WIDGETS
@@ -505,12 +505,11 @@ proc {vTcl:font:display_fonts_in_text} {t} {
 
         # add short font description
 
-        $t insert end "font: "
         $t insert end "[font configure $object -family] " vTcl:fontname
         $t insert end "[font configure $object -size] " vTcl:fontname
         $t insert end "[font configure $object -weight] " vTcl:fontname
         $t insert end "[font configure $object -slant]" vTcl:fontname
-        $t insert end " ($object, $vTcl(fonts,$object,type))\n"
+        $t insert end " ($vTcl(fonts,$object,type))\n"
 
         $t insert end "\n"
         $t insert end "Abcdefghijklmnopqrstuvwxyz 0123456789\n"  vTcl:$object
@@ -635,7 +634,7 @@ if {$font_desc != ""} {
 
     pack $base.cpd31 \
         -in $base -anchor center -expand 1 -fill both -side top
-    
+
     grid columnconf $base.cpd31 0 -weight 1
     grid rowconf $base.cpd31 0 -weight 1
     grid $base.cpd31.01 \
@@ -742,10 +741,8 @@ proc vTcl:font:create_noborder_fontlist {base} {
         -highlightbackground #bcbcbc -highlightcolor #000000 -relief raised \
         -width 30
     scrollbar $base.cpd29.02 \
-        -activebackground #bcbcbc -background #bcbcbc \
         -command "$base.cpd29.03 yview" -cursor left_ptr \
-        -highlightbackground #bcbcbc -highlightcolor #000000 -orient vert \
-        -troughcolor #bcbcbc
+        -orient vert
     text $base.cpd29.03 \
         -background #bcbcbc \
         -foreground #000000 -highlightbackground #f3f3f3 \
@@ -765,9 +762,22 @@ proc vTcl:font:create_noborder_fontlist {base} {
         -in $base.cpd29 -column 0 -row 0 -columnspan 1 -rowspan 1 \
         -sticky nesw
 
-    vTcl:display_pulldown $base 396 252
+    vTcl:display_pulldown $base 396 252 \
+        "set vTcl(font,noborder_fontlist,font) <cancel>"
 
     vTcl:font:fill_noborder_font_list $base.cpd29.03
+}
+
+proc vTcl:font:tag_font_list {t tagname object} {
+
+    $t tag bind $tagname <Enter> \
+        "$t tag configure $tagname -background white -relief raised -borderwidth 2"
+
+    $t tag bind $tagname <Leave> \
+        "$t tag configure $tagname -background #bcbcbc -relief flat -borderwidth 0"
+
+    $t tag bind $tagname <ButtonPress-1> \
+        "set vTcl(font,noborder_fontlist,font) $object"
 }
 
 proc {vTcl:font:fill_noborder_font_list} {t} {
@@ -781,33 +791,31 @@ proc {vTcl:font:fill_noborder_font_list} {t} {
 
     foreach object $vTcl(fonts,objects) {
 
-	$t insert end \
-	    "ABDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwyz 0123456789\n" \
-	   vTcl:font_list:$object
+        $t insert end \
+           "ABDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwyz 0123456789\n" \
+            vTcl:font_list:$object
 
-	$t tag configure vTcl:font_list:$object -font $object
+        $t tag configure vTcl:font_list:$object -font $object
 
-	$t tag bind vTcl:font_list:$object <Enter> \
-	    "$t tag configure vTcl:font_list:$object -background white -relief raised -borderwidth 2"
-
-	$t tag bind vTcl:font_list:$object <Leave> \
-	    "$t tag configure vTcl:font_list:$object -background #bcbcbc -relief flat -borderwidth 0"
-
-	$t tag bind vTcl:font_list:$object <ButtonPress-1> \
-	    "set vTcl(font,noborder_fontlist,font) $object"
+        vTcl:font:tag_font_list $t \
+                                vTcl:font_list:$object \
+                                $object
     }
 
     # add additional item to create a new font
-    $t insert end "\nNew font...\t\n\t" vTcl:font_list:new
+    $t insert end "\n New font...\t\n\t" vTcl:font_list:new
 
-    $t tag bind vTcl:font_list:new <Enter> \
-	    "$t tag configure vTcl:font_list:new -relief raised -borderwidth 2 -background white"
+    vTcl:font:tag_font_list $t \
+                            vTcl:font_list:new \
+                            <new>
 
-    $t tag bind vTcl:font_list:new <Leave> \
-	    "$t tag configure vTcl:font_list:new -relief flat -borderwidth 0 -background #bcbcbc"
+    # cancel
+    $t insert end "\n Cancel\t\n\t" vTcl:font_list:cancel
+    $t tag configure vTcl:font_list:cancel -foreground #ff0000
 
-    $t tag bind vTcl:font_list:new <ButtonPress-1> \
-	    "set vTcl(font,noborder_fontlist,font) <new>"
+    vTcl:font:tag_font_list $t \
+                            vTcl:font_list:cancel \
+                            <cancel>
 
     $t configure -state disabled
 }
@@ -823,18 +831,20 @@ proc vTcl:font:prompt_noborder_fontlist {font} {
 
     # user wants a new font ?
     if {$vTcl(font,noborder_fontlist,font)=="<new>"} {
-	set font_desc [vTcl:font:prompt_user_font_2 "-family helvetica -size 12"]
+        set font_desc [vTcl:font:prompt_user_font_2 "-family helvetica -size 12"]
 
-	if {$font_desc != ""} {
-	    set vTcl(font,noborder_fontlist,font) \
-	        [vTcl:font:add_font $font_desc user]
+        if {$font_desc != ""} {
+            set vTcl(font,noborder_fontlist,font) \
+                [vTcl:font:add_font $font_desc user]
 
-	    # refresh font manager
-	    vTcl:font:refresh_manager 1.0
+            # refresh font manager
+            vTcl:font:refresh_manager 1.0
 
-	} else {
-	    set vTcl(font,noborder_fontlist,font) ""
-	}
+        } else {
+            set vTcl(font,noborder_fontlist,font) ""
+        }
+    } elseif {$vTcl(font,noborder_fontlist,font)=="<cancel>"} {
+        return $font
     }
 
     return $vTcl(font,noborder_fontlist,font)

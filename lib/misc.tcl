@@ -594,7 +594,7 @@ proc vTcl:prepare_pulldown {base xl yl} {
         wm geometry $base $size+1600+1200
     } else {
 
-	wm geometry $base $size+0+0
+        wm geometry $base $size+0+0
     }
 }
 
@@ -606,9 +606,12 @@ proc vTcl:prepare_pulldown {base xl yl} {
 # xl is the requested width
 # yl is the requested height
 #
+# close_action is a script to execute when the user clicks outside
+# the pulldown menu
+#
 # @@end_change
 
-proc vTcl:display_pulldown {base xl yl} {
+proc vTcl:display_pulldown {base xl yl {close_action ""}} {
 
     global tcl_platform
 
@@ -633,11 +636,11 @@ proc vTcl:display_pulldown {base xl yl} {
     set ymax [winfo screenheight $base]
 
     if {$x1 > $xmax } {
-    	set x0 [expr $xmax - $xl ]
+        set x0 [expr $xmax - $xl ]
     }
 
     if {$y1 > $ymax } {
-	set y0 [expr $ymax - $yl ]
+        set y0 [expr $ymax - $yl ]
     }
 
     if {$x0 < 0} "set x0 0"
@@ -653,6 +656,11 @@ proc vTcl:display_pulldown {base xl yl} {
     if {$tcl_platform(platform)=="windows"} {
         wm geometry $base "+$x0+$y0"
     }
+
+    bind $base <ButtonPress-1> "
+       set where \[winfo containing %X %Y\]
+       if \{\"\$where\" != \"%W\"\} \{$close_action\}
+       unset where"
 }
 
 proc vTcl:split_geom {geom} {

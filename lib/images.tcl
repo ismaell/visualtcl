@@ -235,7 +235,7 @@ proc {vTcl:image:init_img_manager} {} {
        $base insert end "$image: $vTcl(images,$reference,description)"
        $base insert end " ($vTcl(images,$reference,type))\n"
        $base insert end "[image type $object] [image width $object] x [image height $object]"
-       $base insert end " ($object)\n\n\t"
+       $base insert end "\n\n\t"
 
        $base window create end -window $base.$reference
        $base insert end "\t"
@@ -363,6 +363,18 @@ proc vTcl:image:replace_image {filename} {
     vTcl:image:refresh_manager $pos
 }
 
+proc vTcl:image:tag_image_list {t tagname object} {
+
+    $t tag bind $tagname <Enter> \
+        "$t tag configure $tagname -relief raised -borderwidth 2"
+
+    $t tag bind $tagname <Leave> \
+        "$t tag configure $tagname -relief flat -borderwidth 0"
+
+    $t tag bind $tagname <ButtonPress-1> \
+        "set vTcl(images,selector_dlg,current) $object"
+}
+
 proc vTcl:image:fill_noborder_image_list {t} {
     global vTcl
 
@@ -371,34 +383,33 @@ proc vTcl:image:fill_noborder_image_list {t} {
     $t delete 0.0 end
 
     foreach image $vTcl(images,files) {
-	set object [vTcl:image:get_image $image]
-	set reference [vTcl:rename $image]
+        set object [vTcl:image:get_image $image]
+        set reference [vTcl:rename $image]
 
-	$t image create end -image $object
-	$t insert end " $image\t" vTcl:image_list:$object
-	$t insert end "\n\n"
+        $t image create end -image $object
+        $t insert end " $image\t" vTcl:image_list:$object
+        $t insert end "\n\n"
 
-	$t tag bind vTcl:image_list:$object <Enter> \
-	    "$t tag configure vTcl:image_list:$object -relief raised -borderwidth 2"
-
-	$t tag bind vTcl:image_list:$object <Leave> \
-	    "$t tag configure vTcl:image_list:$object -relief flat -borderwidth 0"
-
-	$t tag bind vTcl:image_list:$object <ButtonPress-1> \
-	    "set vTcl(images,selector_dlg,current) $object"
+        vTcl:image:tag_image_list $t \
+                                  vTcl:image_list:$object \
+                                  $object
     }
 
     # add additional item to create a new image
-    $t insert end "\nNew image...\t\n\t" vTcl:image_list:new
+    $t insert end "\n New image...\t\n\t" vTcl:image_list:new
 
-    $t tag bind vTcl:image_list:new <Enter> \
-	    "$t tag configure vTcl:image_list:new -relief raised -borderwidth 2"
+    vTcl:image:tag_image_list $t \
+                              vTcl:image_list:new \
+                              <new>
 
-    $t tag bind vTcl:image_list:new <Leave> \
-	    "$t tag configure vTcl:image_list:new -relief flat -borderwidth 0"
+    # cancel
+    $t insert end "\n Cancel\t\n\t" vTcl:image_list:cancel
 
-    $t tag bind vTcl:image_list:new <ButtonPress-1> \
-	    "set vTcl(images,selector_dlg,current) <new>"
+    vTcl:image:tag_image_list $t \
+                              vTcl:image_list:cancel \
+                              <cancel>
+
+    $t tag configure vTcl:image_list:cancel -foreground #ff0000
 
     $t configure -state disabled
 }
@@ -439,10 +450,8 @@ proc vTcl:image:create_selector_dlg {base} {
         -highlightbackground #bcbcbc -highlightcolor #000000 -relief raised \
         -width 30
     scrollbar $base.cpd29.02 \
-        -activebackground #bcbcbc -background #bcbcbc \
         -command "$base.cpd29.03 yview" -cursor left_ptr \
-        -highlightbackground #bcbcbc -highlightcolor #000000 -orient vert \
-        -troughcolor #bcbcbc
+        -orient vert
     text $base.cpd29.03 \
         -background #bcbcbc \
         -foreground #000000 -highlightbackground #f3f3f3 \
@@ -462,7 +471,8 @@ proc vTcl:image:create_selector_dlg {base} {
         -in $base.cpd29 -column 0 -row 0 -columnspan 1 -rowspan 1 \
         -sticky nesw
 
-    vTcl:display_pulldown $base 496 252
+    vTcl:display_pulldown $base 496 252 \
+        "set vTcl(images,selector_dlg,current) <cancel>"
 
     vTcl:image:fill_noborder_image_list $base.cpd29.03
 }
@@ -509,6 +519,9 @@ proc vTcl:prompt_user_image2 {image} {
     if {$r == "<new>"} {
 
         set r [vTcl:image:new_image_file]
+    } elseif {$r == "<cancel>"} {
+
+        set r ""
     }
 
     if {$r != ""} {
