@@ -6,13 +6,6 @@ namespace eval ::NewWizard {
     variable ProjectName   ""
     variable ProjectFile   ""
 
-proc WinButton {w args} {
-    frame $w -width 74 -height 22
-    eval button $w.b $args
-    place $w.b -x 0 -y 0 -width 74 -height 22
-    return $w
-}
-
 proc GetFolder {} {
     variable base
     variable ProjectFolder
@@ -147,11 +140,10 @@ proc vTclWindow.vTcl.newProjectWizard {args} {
     pack $f.l2 -anchor w
     frame $f.f1
     entry $f.f1.e2 -textvariable ::NewWizard::ProjectFolder
-    button $f.f1.b1 -image [vTcl:image:get_image browse.gif] \
-    	-command "::NewWizard::GetFolder"
+    ::vTcl::BrowseButton $f.f1.b1 -command "::NewWizard::GetFolder"
     pack $f.f1 -fill x
     pack $f.f1.e2 -side left -fill x -expand 1
-    pack $f.f1.b1 -side left
+    pack $f.f1.b1 -side left -padx 2
 
     pack [frame $f.spacer2 -height 10]
 
