@@ -147,8 +147,8 @@ proc ::vTcl::findReplace::window {{newBase ""} {container 0}} {
     if {[llength $newBase] > 0} { set base $newBase }
     if {[winfo exists $base] && (!$container)} {
 	wm deiconify $base
-	$base.findEnt select range 0 end
-	focus $base.findEnt
+	$base.fra22.findEnt select range 0 end
+	focus $base.fra22.findEnt
 	return
     }
 
@@ -156,63 +156,71 @@ proc ::vTcl::findReplace::window {{newBase ""} {container 0}} {
     # CREATING WIDGETS
     ###################
     if {!$container} {
-	toplevel $base -class Toplevel -cursor {} 
+	toplevel $base -class Toplevel -cursor {}
 	wm focusmodel $base passive
-	wm geometry $base 450x163+215+102; update
+	wm geometry $base 450x175+215+102; update
 	wm maxsize $base 1028 753
 	wm minsize $base 104 1
 	wm overrideredirect $base 0
-	wm resizable $base 0 0
+	wm resizable $base 1 1
 	wm deiconify $base
 	wm title $base "Find and Replace"
     }
-    label $base.lab23 \
-        -anchor w -borderwidth 1 -height 0 -text {Find what:} -underline 2 \
-        -width 61 
-    label $base.lab24 \
-        -borderwidth 1 -text {Replace with:} -underline 1
-    entry $base.findEnt \
-        -width 256 
-    entry $base.replaceEnt \
-        -width 256 
-    button $base.findBut \
-        -height 23 -text {Find Next} -width 90 -command ::vTcl::findReplace::find -underline 0
-    button $base.cancelBut \
-        -height 23 -text Cancel -width 90 -command ::vTcl::findReplace::cancel -underline 0
-    button $base.replaceBut \
-        -height 23 -text Replace -width 90 -command ::vTcl::findReplace::replace -underline 0
-    button $base.replaceAllBut \
-        -height 23 -text {Replace All} -width 90 -command ::vTcl::findReplace::replaceAll \
-	-underline 8
-    checkbutton $base.caseCheck \
-        -anchor w -height 17 -text {Match case} -variable che32 -width 88 \
-	-variable ::vTcl::findReplace::case -underline 0
-    checkbutton $base.wildCheck \
-        -anchor w -height 17 -text {Use wildcards} -variable che33 -width 98 \
-	-variable ::vTcl::findReplace::wild -underline 4
-    checkbutton $base.regexpCheck \
-        -anchor w -height 17 -text {Regular expression} -variable che34 -width 123 \
-	-variable ::vTcl::findReplace::regexp -underline 2
-    frame $base.fra22 \
-        -borderwidth 2 -height 35 -relief groove -width 110 
-    radiobutton $base.fra22.upRadio \
-        -height 17 -text Up -underline 0 -value up \
-        -variable ::vTcl::findReplace::dir -width 41 
-    radiobutton $base.fra22.downRadio \
-        -height 17 -text Down -underline 0 -value down \
-        -variable ::vTcl::findReplace::dir -width 51 
-    label $base.lab25 \
-        -borderwidth 1 -height 0 -padx 1 -text Direction -width 46 
 
-    focus $base.findEnt
+    frame $base.fra22
+    label $base.fra22.labelFindWhat \
+        -pady 1 -text {Find what:} -underline 2
+    label $base.fra22.labelReplaceWith \
+        -pady 1 -text {Replace with:} -underline 1
+    entry $base.fra22.findEnt
+    entry $base.fra22.replaceEnt
+    button $base.findBut \
+        -padx 3m -pady 1 -text {Find Next} \
+        -underline 0 -command ::vTcl::findReplace::find
+    button $base.cancelBut \
+        -padx 3m -pady 1 -text Cancel -underline 0 \
+        -command ::vTcl::findReplace::cancel
+    button $base.replaceBut \
+        -padx 3m -pady 1 -text Replace -underline 0 \
+        -command ::vTcl::findReplace::replace
+    button $base.replaceAllBut \
+        -padx 3m -pady 1 -text {Replace All} -underline 8 \
+        -command ::vTcl::findReplace::replaceAll
+    frame $base.bottomFrame
+    frame $base.bottomFrame.frameDirection \
+        -borderwidth 2
+    frame $base.bottomFrame.frameDirection.frameUpDown \
+        -relief groove -borderwidth 2
+    radiobutton $base.bottomFrame.frameDirection.frameUpDown.upRadio \
+        -pady 0 -text Up -underline 0 -value up \
+        -variable ::vTcl::findReplace::dir
+    radiobutton $base.bottomFrame.frameDirection.frameUpDown.downRadio \
+        -pady 0 -text Down -underline 0 -value down \
+        -variable ::vTcl::findReplace::dir
+    frame $base.bottomFrame.frameDirection.frameUpDown.frameSpacing \
+        -height 10
+    label $base.bottomFrame.frameDirection.labelDirection \
+        -text Direction
+    frame $base.bottomFrame.frameOptions
+    checkbutton $base.bottomFrame.frameOptions.caseCheck \
+        -anchor w -pady 0 -text {Match case} -underline 0  \
+        -variable ::vTcl::findReplace::case
+    checkbutton $base.bottomFrame.frameOptions.wildCheck \
+        -anchor w -pady 0 -text {Use wildcards} -underline 4 \
+        -variable ::vTcl::findReplace::wild
+    checkbutton $base.bottomFrame.frameOptions.regexpCheck \
+        -anchor w -pady 0 -text {Regular expression} -underline 2 \
+        -variable ::vTcl::findReplace::regexp
+
+    focus $base.fra22.findEnt
 
     bind $base <Key-Escape> "::vTcl::findReplace::cancel"
 
-    bind $base.findEnt <Key-Return> "::vTcl::findReplace::find"
-    bind $base.replaceEnt <Key-Return> "::vTcl::findReplace::replace"
+    bind $base.fra22.findEnt <Key-Return> "::vTcl::findReplace::find"
+    bind $base.fra22.replaceEnt <Key-Return> "::vTcl::findReplace::replace"
 
-    bind $base <Alt-f> "focus $base.findEnt"
-    bind $base <Alt-e> "focus $base.replaceEnt"
+    bind $base <Alt-f> "focus $base.fra22.findEnt"
+    bind $base <Alt-e> "focus $base.fra22.replaceEnt"
     bind $base <Alt-n> "$base.findBut invoke"
     bind $base <Alt-c> "$base.cancelBut invoke"
     bind $base <Alt-r> "$base.replaceBut invoke"
@@ -226,36 +234,74 @@ proc ::vTcl::findReplace::window {{newBase ""} {container 0}} {
     ###################
     # SETTING GEOMETRY
     ###################
-    place $base.lab23 \
-        -x 5 -y 10 -width 70 -height 17 -anchor nw -bordermode ignore 
-    place $base.lab24 \
-        -x 5 -y 60 -width 70 -anchor nw -bordermode ignore 
-    place $base.findEnt \
-        -x 85 -y 6 -width 256 -height 19 -anchor nw -bordermode ignore 
-    place $base.replaceEnt \
-        -x 85 -y 58 -width 256 -height 19 -anchor nw -bordermode ignore 
-    place $base.findBut \
-        -x 355 -y 5 -width 90 -height 23 -anchor nw -bordermode ignore 
-    place $base.cancelBut \
-        -x 355 -y 30 -width 90 -height 23 -anchor nw -bordermode ignore 
-    place $base.replaceBut \
-        -x 355 -y 55 -width 90 -height 23 -anchor nw -bordermode ignore 
-    place $base.replaceAllBut \
-        -x 355 -y 80 -width 90 -height 23 -anchor nw -bordermode ignore 
-    place $base.caseCheck \
-        -x 0 -y 100 -width 125 -height 17 -anchor nw -bordermode ignore 
-    place $base.wildCheck \
-        -x 0 -y 120 -width 125 -height 17 -anchor nw -bordermode ignore 
-    place $base.regexpCheck \
-        -x 0 -y 140 -width 125 -height 17 -anchor nw -bordermode ignore 
-    place $base.fra22 \
-        -x 230 -y 85 -width 112 -height 35 -anchor nw -bordermode ignore 
-    place $base.fra22.upRadio \
-        -x 5 -y 10 -width 41 -height 17 -anchor nw -bordermode ignore 
-    place $base.fra22.downRadio \
-        -x 50 -y 10 -width 51 -height 17 -anchor nw -bordermode ignore 
-    place $base.lab25 \
-        -x 235 -y 79 -width 46 -height 12 -anchor nw -bordermode ignore 
+    grid columnconf $base 0 -weight 1
+    grid rowconf $base 4 -weight 1
+    grid $base.fra22 \
+        -in $base -column 0 -row 0 -columnspan 1 -rowspan 4 -pady 5 \
+        -sticky nesw
+    grid columnconf $base.fra22 1 -weight 1
+    grid rowconf $base.fra22 0 -weight 1
+    grid rowconf $base.fra22 1 -weight 1
+    grid $base.fra22.labelFindWhat \
+        -in $base.fra22 -column 0 -row 0 -columnspan 1 -rowspan 1 -sticky nw
+    grid $base.fra22.labelReplaceWith \
+        -in $base.fra22 -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky nw
+    grid $base.fra22.findEnt \
+        -in $base.fra22 -column 1 -row 0 -columnspan 1 -rowspan 1 -padx 3 \
+        -sticky new
+    grid $base.fra22.replaceEnt \
+        -in $base.fra22 -column 1 -row 1 -columnspan 1 -rowspan 1 -padx 3 \
+        -sticky new
+    grid $base.findBut \
+        -in $base -column 1 -row 0 -columnspan 1 -rowspan 1 -padx 3 -pady 2 \
+        -sticky new
+    grid $base.cancelBut \
+        -in $base -column 1 -row 1 -columnspan 1 -rowspan 1 -padx 3 -pady 2 \
+        -sticky new
+    grid $base.replaceBut \
+        -in $base -column 1 -row 2 -columnspan 1 -rowspan 1 -padx 3 -pady 2 \
+        -sticky new
+    grid $base.replaceAllBut \
+        -in $base -column 1 -row 3 -columnspan 1 -rowspan 1 -padx 3 -pady 2 \
+        -sticky new
+    grid $base.bottomFrame \
+        -in $base -column 0 -row 4 -columnspan 1 -rowspan 1 -sticky nesw
+    grid columnconf $base.bottomFrame 0 -weight 1
+    grid columnconf $base.bottomFrame 1 -weight 1
+    grid rowconf $base.bottomFrame 0 -weight 1
+    grid $base.bottomFrame.frameDirection \
+        -in $base.bottomFrame -column 1 -row 0 -columnspan 1 -rowspan 1 \
+        -sticky new
+    grid columnconf $base.bottomFrame.frameDirection 0 -weight 1
+    grid rowconf $base.bottomFrame.frameDirection 0 -weight 1
+    grid $base.bottomFrame.frameDirection.frameUpDown \
+        -in $base.bottomFrame.frameDirection -column 0 -row 0 -columnspan 1 \
+        -rowspan 1 -pady 5 -sticky nesw
+    grid columnconf $base.bottomFrame.frameDirection.frameUpDown 0 -weight 1
+    grid $base.bottomFrame.frameDirection.frameUpDown.upRadio \
+        -in $base.bottomFrame.frameDirection.frameUpDown -column 0 -row 1 \
+        -columnspan 1 -rowspan 1 -sticky w
+    grid $base.bottomFrame.frameDirection.frameUpDown.downRadio \
+        -in $base.bottomFrame.frameDirection.frameUpDown -column 0 -row 2 \
+        -columnspan 1 -rowspan 1 -sticky w
+    grid $base.bottomFrame.frameDirection.frameUpDown.frameSpacing \
+        -in $base.bottomFrame.frameDirection.frameUpDown -column 0 -row 0 \
+        -columnspan 1 -rowspan 1
+    place $base.bottomFrame.frameDirection.labelDirection \
+        -x 10 -y 0 -anchor nw -bordermode ignore
+    grid $base.bottomFrame.frameOptions \
+        -in $base.bottomFrame -column 0 -row 0 -columnspan 1 -rowspan 1 \
+        -sticky new
+    grid columnconf $base.bottomFrame.frameOptions 0 -weight 1
+    grid $base.bottomFrame.frameOptions.caseCheck \
+        -in $base.bottomFrame.frameOptions -column 0 -row 0 -columnspan 1 \
+        -rowspan 1 -sticky ew
+    grid $base.bottomFrame.frameOptions.wildCheck \
+        -in $base.bottomFrame.frameOptions -column 0 -row 1 -columnspan 1 \
+        -rowspan 1 -sticky ew
+    grid $base.bottomFrame.frameOptions.regexpCheck \
+        -in $base.bottomFrame.frameOptions -column 0 -row 2 -columnspan 1 \
+        -rowspan 1 -sticky ew
 }
 
 proc ::vTcl::findReplace::show {textWidget} {
@@ -298,7 +344,7 @@ proc ::vTcl::findReplace::find {{replace 0}} {
 
     lappend switches -count ::vTcl::findReplace::count --
 
-    set text [$base.findEnt get]
+    set text [$base.fra22.findEnt get]
     if {[llength $text] == 0} { return }
 
     set i [eval $txtbox search $switches $text $index $stop]
@@ -340,7 +386,7 @@ proc ::vTcl::findReplace::replace {} {
     variable selLast
     variable origInd
 
-    set text [$base.replaceEnt get]
+    set text [$base.fra22.replaceEnt get]
 
     while {[::vTcl::findReplace::find 1] > -1} {
 	set ln [lindex [split $selFirst .] 0]
@@ -364,7 +410,7 @@ proc ::vTcl::findReplace::replace {} {
 	set start bottom
     }
 
-    set text [$base.findEnt get]
+    set text [$base.fra22.findEnt get]
     set x [tk_messageBox -title "No match found" -parent $base -type yesno \
 	-message "   Cannot find \"$text\"\nSearch again from the $start?"]
 
@@ -384,7 +430,7 @@ proc ::vTcl::findReplace::replaceAll {} {
     variable selLast
     variable origInd
 
-    set text [$base.replaceEnt get]
+    set text [$base.fra22.replaceEnt get]
 
     while {[::vTcl::findReplace::find 1] > -1} {
 	$txtbox delete $selFirst $selLast
