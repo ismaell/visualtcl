@@ -233,3 +233,63 @@ tree (say, a frame) then place the new widget inside it by pressing
 the Shift key then clicking on the widget you want to insert in
 the toolbar.
 }
+
+{
+In the -command option for a button, you can use special symbols
+to know what window triggered the command.
+
+%widget will be replaced by the window that triggered the command.
+%top will be replaced by the toplevel containing that window.
+}
+
+{
+You can use the %widget and %top symbols in menu commands, too.
+}
+
+{
+When you create a toplevel window, Visual Tcl automatically
+creates a namespace whose name is the window path. This namespace
+can be used to store data about the toplevel window.
+
+For example, if you create a toplevel named .top22, Visual Tcl
+will automatically create the ::.top22 namespace for you.
+
+You can then store and retrieve data to and from this namespace,
+for instance you can write:
+
+puts $::.top22::my_variable
+
+to display the value of my_variable in the ::.top22 namespace.}
+
+{The namespace associated with a toplevel may be used to store
+the values of input fields in the window, the equivalent of
+"member variables" of dialog boxes in Visual C++.
+
+When you place an input widget inside a toplevel, say, a
+checkbutton, Visual Tcl automatically assigns a variable to
+this checkbutton for you. The variable will be stored inside
+the toplevel namespace.
+
+You can modify the name of this variable, but it is a good idea
+to keep the variable inside the toplevel namespace.}
+
+{
+Visual Tcl applications spend most of their time doing nothing.
+Instead of wasting unnecessary processor time, user interface
+applications respond to events, typically when the user interacts
+with widgets. As long as the user does not interact with the
+program and there is no background task running, your application
+just waits for events to happen.
+
+An event can be a click on a button, a movement of the mouse,
+a scrollbar beeing dragged, etc.}
+
+{
+In Tcl/Tk, the relationship between an event and its action is
+called a binding. You "bind" an event to a block of code to
+execute. Whenever something triggers an event, the corresponding
+code executes.
+
+Visual Tcl has a "bindings editor" that allows you to define
+actions to take when events happen. To invoke the bindings editor,
+select a widget, then press Alt + B.}
