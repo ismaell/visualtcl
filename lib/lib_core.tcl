@@ -21,6 +21,11 @@
 #
 # initializes this library
 #
+proc vTcl:lib_core:init {} {
+    # since vTcl must be started with Wish, what's the point?
+    # catch {package require Tk}
+}
+
 proc vTcl:widget:lib:lib_core {args} {
     global vTcl widgets classes
 
@@ -127,41 +132,41 @@ proc vTcl:edit_menu {menu} {
     vTclWindow.vTclMenuEdit $base $menu
 }
 
-proc vTcl:core:get_menu_label {class {target ""}} {
+proc vTcl:core:get_menu_label {target} {
 
-	set components [split $target .]
+    set components [split $target .]
 
-	# let's see if the parent is a menu
-	set size [llength $components]
+    # let's see if the parent is a menu
+    set size [llength $components]
 
-	# parent is at least a toplevel
-	if {$size <= 3} {
-		return "Menu"
-	}
+    # parent is at least a toplevel
+    if {$size <= 3} {
+        return "Menu"
+    }
 
-	set parent [lrange $components 0 [expr $size - 2] ]
-	set parent [join $parent .]
+    set parent [lrange $components 0 [expr $size - 2] ]
+    set parent [join $parent .]
 
-	# puts "parent is $parent"
-	if { [vTcl:get_class $parent 1] != "menu" } {
-		return "Menu"
-	}
+    # puts "parent is $parent"
+    if { [vTcl:get_class $parent 1] != "menu" } {
+        return "Menu"
+    }
 
-	for {set i 0} {$i <= [$parent index end]} {incr i} {
+    for {set i 0} {$i <= [$parent index end]} {incr i} {
 
-		if { [$parent type $i] != "cascade" } {
-			continue
-		}
+        if { [$parent type $i] != "cascade" } {
+            continue
+        }
 
-		set menuwindow [$parent entrycget $i -menu]
+        set menuwindow [$parent entrycget $i -menu]
 
-		if {$menuwindow == $target} {
+        if {$menuwindow == $target} {
 
-			return [$parent entrycget $i -label]
-		}
-	}
+            return [$parent entrycget $i -label]
+        }
+    }
 
-	return "Menu"
+    return "Menu"
 }
 
 proc vTcl:core:get_widget_tree_label {target} {

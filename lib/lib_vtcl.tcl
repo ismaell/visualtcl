@@ -21,6 +21,9 @@
 #
 # initializes this library
 #
+proc vTcl:lib_vtcl:init {} {
+}
+
 proc vTcl:widget:lib:lib_vtcl {args} {
     global vTcl widgets classes
 

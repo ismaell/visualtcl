@@ -58,6 +58,9 @@ catch {
 } errorText
 vTcl:log $errorText
 
+proc vTcl:lib_itcl:init {} {
+}
+
 proc vTcl:widget:lib:lib_itcl {args} {
 
     global vTcl

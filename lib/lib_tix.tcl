@@ -24,10 +24,13 @@
 #
 # Initializes this library
 #
+proc vTcl:lib_tix:init {} {
+    catch {package require Tix} erg
+    vTcl:puts "init lib_tix -> $erg"
+}
+
 proc vTcl:widget:lib:lib_tix {args} {
     global vTcl
-
-    catch {package require Tix}
 
     ## See if we have Tix. If not, return
     if {[info command tixNoteBookFrame] == ""} {
@@ -39,17 +42,17 @@ proc vTcl:widget:lib:lib_tix {args} {
     vTcl:lib_tix:setup
 
     set order {
-    	tixNoteBook
-	tixLabelFrame
-	tixComboBox
-	tixMeter
-	tixFileEntry
-	tixLabelEntry
-	tixScrolledHList
-	tixScrolledListBox
-	tixSelect
-	tixPanedWindow
-	tixOptionMenu
+        TixNoteBook
+        TixLabelFrame
+        TixComboBox
+        TixMeter
+        TixFileEntry
+        TixLabelEntry
+        TixScrolledHList
+        TixScrolledListBox
+        TixSelect
+        TixPanedWindow
+        TixOptionMenu
     }
 
     vTcl:lib:add_widgets_to_toolbar $order

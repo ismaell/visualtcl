@@ -52,7 +52,7 @@ proc vTcl:LoadWidget {lib file} {
 	if {![info exists tmp(typeCmd)]} {
 	    return -code error "Must specify a TypeCmd in a super class"
 	}
-	
+
 	SetClassArray
 
     	if {![info exists tmp(superClass)]} { unset tmp }
@@ -109,18 +109,43 @@ proc SetClassArray {} {
 	set classes($elem) $tmp($var)
     }
 
-    ## Create the toolbar icon.
-    if {[vTcl:streq [string index $tmp(icon) 0] "@"]} {
-	set cmd [string range $tmp(icon) 1 end]
-	set icons [$cmd]
+    if {[info exists tmp(icon)]} {
+        ## Create the toolbar icon.
+        if {[vTcl:streq [string index $tmp(icon) 0] "@"]} {
+            set cmd [string range $tmp(icon) 1 end]
+            set icons [$cmd]
+        } else {
+            set icons $tmp(icon)
+        }
+        # FIXME: what's the reason for having more than one icon?
+        #   and where is this information found after the creation?
+        foreach i $icons {
+            set icon [file join $vTcl(VTCL_HOME) images $i]
+            if {![file exists $icon]} { continue }
+            image create photo $i -file $icon
+        }
     } else {
-    	set icons $tmp(icon)
+        if {[ensureImage icon_$classes($tmp(class),lib)_unknown.gif]} {
+            set classes($tmp(class),icon) icon_tix_unknown.gif
+        } else {
+            ensureImage icon_unknown.gif
+            set classes($tmp(class),icon) icon_unknown.gif
+        }
     }
-    foreach i $icons {
-	set icon [file join $vTcl(VTCL_HOME) images $i]
-	if {![file exists $icon]} { continue }
-	image create photo $i -file $icon
+}
+
+proc ensureImage {name} {
+    global vTcl
+
+    if {[catch {image type $name}]} {
+        set icon [file join $vTcl(VTCL_HOME) images $name]
+        if {![file exists $icon]} {
+            return 0
+        }
+        image create photo $name -file $icon
     }
+
+    return 1
 }
 
 proc Name {args} { }
