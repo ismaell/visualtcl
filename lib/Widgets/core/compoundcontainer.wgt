@@ -119,6 +119,13 @@ namespace eval vTcl::widgets::core::compoundcontainer {
             cget {
                 return [eval cgetProc $w $args]
             }
+            widget {
+                ## call megawidget widgetProc
+                return [eval $w.cmpd widget $args]
+            }
+            innerClass {
+                return [winfo class $w.cmpd]
+            }
             default {
                 ## we have renamed the default widgetProc _<widgetpath>
                 uplevel _$w $command $args
@@ -210,5 +217,6 @@ namespace eval vTcl::widgets::core::compoundcontainer {
         return "Compound Container: [join $compoundClass]"
     }
 }
+
 
 

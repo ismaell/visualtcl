@@ -1,0 +1,165 @@
+##############################################################################
+#
+# Visual TCL - A cross-platform application development environment
+#
+# Copyright (C) 2002 Christian Gavin
+#
+# Description file for Tk Widget
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+##############################################################################
+#
+
+Class		MegaWidget
+Lib		core
+
+#Icon		../lib/Widgets/core/MegaWidget.gif
+Icon        icon_frame.gif
+DefaultValues   -background -highlightbackground -highlightcolor
+DumpCmd         ::vTcl::widgets::core::frame::dumpCmd
+DumpInfoCmd     ::vTcl::widgets::core::frame::dumpInfoCmd
+CreateCmd       vTcl::widgets::core::megawidget::createCmd
+WidgetProc      vTcl::widgets::core::megawidget::widgetProc
+TreeLabel       @vTcl::widgets::core::megawidget::getWidgetTreeLabel
+
+Export          vTcl::widgets::core::megawidget::widgetProc
+Export          vTcl::widgets::core::megawidget::createCmd
+Export          vTcl::widgets::core::megawidget::cgetProc
+Export          vTcl::widgets::core::megawidget::configureProc
+
+NewOption -widgetProc  "Widget Proc"  type
+
+namespace eval vTcl::widgets::core::megawidget {
+
+    proc cgetProc {w args} {
+        ## This procedure may be used free of restrictions.
+        ##    Exception added by Christian Gavin on 08/08/02.
+        ## Other packages and widget toolkits have different licensing requirements.
+        ##    Please read their license agreements for details.
+
+        upvar ::${w}::widgetProc  widgetProc
+
+        set option [lindex $args 0]
+        switch -- $option {
+            -class         {return MegaWidget}
+            -widgetProc    {return $widgetProc}
+            default        {error "unknown option $option"}
+        }
+    }
+
+    proc configureProc {w args} {
+        ## This procedure may be used free of restrictions.
+        ##    Exception added by Christian Gavin on 08/08/02.
+        ## Other packages and widget toolkits have different licensing requirements.
+        ##    Please read their license agreements for details.
+
+        upvar ::${w}::widgetProc  widgetProc
+
+        if {[lempty $args]} {
+            return [concat [configureProc $w -class] \
+                           [configureProc $w -widgetProc]]
+        }
+        if {[llength $args] == 1} {
+            set option [lindex $args 0]
+            switch -- $option {
+                -class {
+                    return [list "-class class Class Frame MegaWidget"]
+                }
+                -widgetProc {
+                    return [list "-widgetProc widgetproc WidgetProc {} [list $widgetProc]"]
+                }
+                default {
+                    error "unknown option $option"
+                }
+            }
+        }
+
+        foreach {option value} $args {
+            if {$option == "-widgetProc"} {
+                set widgetProc $value
+            }
+        }
+    }
+
+    proc widgetProc {w args} {
+        ## This procedure may be used free of restrictions.
+        ##    Exception added by Christian Gavin on 08/08/02.
+        ## Other packages and widget toolkits have different licensing requirements.
+        ##    Please read their license agreements for details.
+
+        if {[llength $args] == 0} {
+            ## If no arguments, returns the path the alias points to
+            return $w
+        }
+
+        set command [lindex $args 0]
+        set args [lrange $args 1 end]
+        switch $command {
+            configure {
+                return [eval configureProc $w $args]
+            }
+            cget {
+                return [eval cgetProc $w $args]
+            }
+            widget {
+                ## this calls the custom widgetProc
+                upvar ::${w}::widgetProc  widgetProc
+                return [eval $widgetProc $w $args]
+            }
+            default {
+                ## we have renamed the default widgetProc _<widgetpath>
+                uplevel _$w $command $args
+            }
+        }
+    }
+
+    proc createCmd {path args} {
+        ## This procedure may be used free of restrictions.
+        ##    Exception added by Christian Gavin on 08/08/02.
+        ## Other packages and widget toolkits have different licensing requirements.
+        ##    Please read their license agreements for details.
+
+        frame $path -class MegaWidget
+        namespace eval ::$path "set widgetProc {}"
+
+        ## change the widget procedure
+        rename ::$path ::_$path
+        proc ::$path {command args} \
+	     "eval ::vTcl::widgets::core::megawidget::widgetProc $path \$command \$args"
+
+        ## widgetProc specified ? if so, store it
+        if {[llength $args] == 2 && [lindex $args 0] == "-widgetProc"} {
+            upvar ::${path}::widgetProc  widgetProc
+            set widgetProc [lindex $args 1]
+        }
+        
+        return $path
+    }
+
+    proc treeChildrenCmd {target {diff \#0}} {
+        return {}
+    }
+
+    proc treeChildrenChildsite {target} {
+        return {}
+    }
+
+    proc getWidgetTreeLabel {target} {
+        upvar ::${target}::widgetProc widgetProc
+        return "MegaWidget widgetProc: $widgetProc"
+    }
+}
+

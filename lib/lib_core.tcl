@@ -47,6 +47,7 @@ proc vTcl:widget:lib:lib_core {args} {
 	Scale
 	Menubutton
       CompoundContainer
+      MegaWidget
 	UnmanagedFrame
     } 
 
@@ -966,6 +967,7 @@ namespace eval ::vTcl::itemEdit {
 	$top.ItemsEditMenuAddDelete entryconfigure 1 -state $state($enabled)
     }
 }
+
 
 
 

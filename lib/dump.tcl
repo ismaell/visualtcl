@@ -109,7 +109,15 @@ proc vTcl:export_procs {} {
     set children [vTcl:complete_widget_tree . 0]
 
     foreach child $children {
-        lappend classList [vTcl:get_class $child]
+        set class [vTcl:get_class $child]
+        lappend classList $class
+
+        ## if this is a compound container with a megawidget inside,
+        ## save the megawidget support procs into the project
+        if {$class == "CompoundContainer" && 
+            [$child innerClass] == "MegaWidget"} {
+            lappend classList MegaWidget
+        }
     }
 
     foreach class [vTcl:lrmdups $classList] {
@@ -584,8 +592,9 @@ proc vTcl:dump:widgets {target} {
     set output ""
 
     # for dumping widgets recursively using relative paths
-    set classes(Frame,dumpChildren) 0
-    set classes(Menu,dumpChildren) 0
+    set classes(Frame,dumpChildren)      0
+    set classes(MegaWidget,dumpChildren) 0
+    set classes(Menu,dumpChildren)       0
     set tree [vTcl:widget_tree $target]
 
     append output $vTcl(head,proc,widgets)
@@ -611,8 +620,9 @@ proc vTcl:dump:widgets {target} {
     }
 
     # end of dumping widgets with relative paths
-    set classes(Frame,dumpChildren) 1
-    set classes(Menu,dumpChildren) 1
+    set classes(Frame,dumpChildren)      1
+    set classes(MegaWidget,dumpChildren) 1
+    set classes(Menu,dumpChildren)       1
 
     return $output
 }
@@ -786,6 +796,7 @@ proc vTcl:dump:sourcing_footer {varName} {
     if {![vTcl:streq [string index $var end] "\n"]} { append var "\n" }
     append var "\}\n"
 }
+
 
 
 
