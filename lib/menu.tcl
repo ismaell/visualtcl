@@ -79,15 +79,21 @@ set vTcl(menu,compound) {
     {{Save as &Tclet} {}            {vTcl:create_tclet $vTcl(w,widget)}  }
 }
 
+set vTcl(menu,manager) {
+    {{+Place}          {}           {vTcl(w,def_mgr) place {vTcl:set_manager place}}}
+    {{+Pack}           {}           {vTcl(w,def_mgr) pack  {vTcl:set_manager pack}}}
+    {{+Grid}           {}           {vTcl(w,def_mgr) grid  {vTcl:set_manager grid}}}
+}
+
 set vTcl(menu,options) {
     {{Set &Insert}     Alt+I        vTcl:set_insert            }
     {{Set &Alias}      Alt+A        {vTcl:set_alias $vTcl(w,widget)}     }
+    {{Manager}         {menu manager} {} }
     {separator         {}           {}                         }
     {{Select &Toplevel} {}          vTcl:select_toplevel       }
     {{Select Pa&rent}  {}           vTcl:select_parent         }
     {separator         {}           {}                         }
     {&Bindings         Alt+B        vTcl:show_bindings         }
-    {&Properties       Alt+P        {vTcl:properties $vTcl(w,widget)}    }
     {separator         {}           {}                         }
     {&Hide             {}           vTcl:hide                  }
 }
@@ -143,6 +149,11 @@ proc vTcl:menu:insert {menu name {root ""}} {
                 $menu add separator
             } elseif {[string index $txt 0] == "@"} {
                 eval [string range $item 1 end]
+            } elseif {[string index $txt 0] == "+"} {
+                $menu add radiobutton -label [string range $txt 1 end]$tab -accel $acc \
+                    -variable [lindex $cmd 0] -value [lindex $cmd 1] \
+                    -command [lindex $cmd 2]
+                set vTcl(menu,$name,widget) $menu
             } else {
                 set ampersand [string first & $txt]
                 if {$ampersand != -1} then {
@@ -229,5 +240,6 @@ proc vTcl:enable_entries {menu state} {
         $menu entryconfigure $i -state $state
     }
 }
+
 
 

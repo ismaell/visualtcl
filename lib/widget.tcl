@@ -71,10 +71,6 @@ proc vTcl:base_name {target} {
     return $name
 }
 
-proc vTcl:properties {target} {
-    vTcl:status "Properties not implemented"
-}
-
 #
 # Given two compatible widgets, sets up a scrollbar
 # link (i.e. textfield and scrollbar)
@@ -1648,4 +1644,5 @@ namespace eval vTcl::widgets {
         return [lsort -unique $result]
     }
 }
+
 
