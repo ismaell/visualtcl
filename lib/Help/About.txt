@@ -52,7 +52,4 @@ Initiated: Thu Aug 17 15:36:47 PDT 1995
 
 jeff.hobbs@acm.org
 
-source standard_disclaimer.tcl
-source bourbon_ware.tcl
-
 ======================================================================
