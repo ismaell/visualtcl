@@ -1298,6 +1298,11 @@ namespace eval ::vTcl::ui::attributes {
         }
     }
 
+    proc checkAttribute {top option variable keyrelease_cmd} {
+        set base $top.t${option}
+        eval $keyrelease_cmd $option $variable ::vTcl::ui::attributes::checked($base)
+    }
+
     ## returns: a string used to enable/disable the option
     proc newAttribute {target top option variable config_cmd check_cmd keyrelease_cmd} {
         variable pendingCmds
@@ -1441,6 +1446,7 @@ namespace eval ::vTcl::ui::attributes {
 
         grid $label $base $theCheck -sticky news
         grid columnconf $top 1 -weight 1
+        lappend enableData $theCheck
         return $enableData
     }
 
@@ -1461,7 +1467,4 @@ namespace eval ::vTcl::ui::attributes {
         }
     }
 }
-
-
-
 

@@ -38,7 +38,7 @@ namespace eval ::menu_edit {
 
         if {$index == ""} return
 
-        set listboxitems [vTcl:at ::${top}::listboxitems]
+        set listboxitems [set ::${top}::listboxitems]
 
         set reference [lindex $listboxitems $index]
 
@@ -57,7 +57,8 @@ namespace eval ::menu_edit {
             vTcl:init_wtree
         }
 
-        ::menu_edit::fill_menu_list $top [vTcl:at ::${top}::menu]
+        ::menu_edit::fill_menu_list $top [set ::${top}::menu]
+        click_listbox $top
     }
 
     proc {::menu_edit::delete_menu_recurse} {menu} {
@@ -93,10 +94,8 @@ namespace eval ::menu_edit {
 
         global widget
 
-        set ctrls "$top.EntryLabel    $top.EntryImage   $top.EntryAccelerator
-                   $top.EntryVariable $top.EntryValueOn $top.EntryValueOff
-                   $top.MenuText      $top.NewMenu      $top.DeleteMenu
-                   $top.MoveMenuUp    $top.MoveMenuDown $top.BrowseImage"
+        set ctrls "$top.NewMenu      $top.DeleteMenu
+                   $top.MoveMenuUp   $top.MoveMenuDown"
 
         switch $enable {
             0 - false - no {
@@ -111,70 +110,23 @@ namespace eval ::menu_edit {
 
                     $ctrl configure -state disabled
                 }
-
+                enableProperties $top 0
             }
             1 - true - yes {
                 foreach ctrl $ctrls {
                     if {[info exists ::${top}::$ctrl.state]} {
-                        $ctrl configure -state      [vTcl:at ::${top}::$ctrl.state] \
-                                        -background [vTcl:at ::${top}::$ctrl.background]
+                        $ctrl configure -state      [set ::${top}::$ctrl.state] \
+                                        -background [set ::${top}::$ctrl.background]
                     }
                 }
 
                 if {[info exists ::${top}::backup_bindings]} {
-                    bindtags $widget($top,MenuListbox) [vTcl:at ::${top}::backup_bindings]
+                    bindtags $widget($top,MenuListbox) [set ::${top}::backup_bindings]
                 }
                 bindtags $widget($top,NewMenu) ""
                 $top.MenuListbox configure -background white
-            }
-        }
-    }
-
-    proc {::menu_edit::enable_controls} {top args} {
-        global widget
-
-        foreach ctrl "$top.EntryLabel   $top.EntryImage  $top.EntryAccelerator
-                    $top.EntryVariable $top.EntryValueOn $top.EntryValueOff
-                    $top.EntryFont" {
-
-            set [$ctrl cget -textvariable] ""
-        }
-
-        $top.MenuText         delete 0.0 end
-
-        foreach arg $args {
-
-            set ctrl     [lindex $arg 0]
-            set value    [lindex $arg 1]
-
-            switch $value {
-                0 {set newstate disabled
-                set newbg    gray}
-                1 {set newstate normal
-                set newbg    white}
-            }
-
-            set ctrlAlias(label)       "RadioLabel       EntryLabel"
-            set ctrlAlias(image)       "RadioImage       EntryImage"
-            set ctrlAlias(font)        "LabelFont        EntryFont"
-            set ctrlAlias(accelerator) "LabelAccelerator EntryAccelerator"
-            set ctrlAlias(variable)    "LabelVariable    EntryVariable"
-            set ctrlAlias(value_on)    "LabelValueOn     EntryValueOn"
-            set ctrlAlias(value_off)   "LabelValueOff    EntryValueOff"
-
-            switch $ctrl {
-                "label" -
-                "image" - "font" -
-                "accelerator" -
-                "variable" -
-                "value_on" - "value_off" {
-                    $top.[lindex $ctrlAlias($ctrl) 0] configure -state $newstate
-                    $top.[lindex $ctrlAlias($ctrl) 1] configure -state $newstate -bg $newbg
-                }
-                "text" {
-                    $top.LabelCommand configure -state $newstate
-                    $top.MenuText configure -state $newstate -bg $newbg
-                }
+                enableProperties $top 1
+                ::menu_edit::click_listbox $top
             }
         }
     }
@@ -193,7 +145,7 @@ namespace eval ::menu_edit {
     proc {::menu_edit::set_uistate} {top} {
         foreach name [array names ::${top}::uistate] {
             if {$name != "Tearoff"} {
-                $top.$name configure -state [vTcl:at ::${top}::uistate($name)]
+                $top.$name configure -state [set ::${top}::uistate($name)]
             }
         }
     }
@@ -341,6 +293,10 @@ namespace eval ::menu_edit {
         # let's try to save the context
         set indices [$top.MenuListbox curselection]
         set index [lindex $indices 0]
+        if {$index == ""} {
+            set index [set ::${top}::listbox_index]
+        }
+
         set yview [lindex [$top.MenuListbox yview] 0]
 
         set ::${top}::listboxitems ""
@@ -364,7 +320,7 @@ namespace eval ::menu_edit {
         upvar $ref_m m
         upvar $ref_i i
 
-        set reference [vTcl:at ::${top}::listboxitems]
+        set reference [set ::${top}::listboxitems]
         set reference [lindex $reference $index]
         set m [lindex $reference end-1]
         set i [lindex $reference end]
@@ -408,7 +364,7 @@ namespace eval ::menu_edit {
         # insert menu at the new place
         eval $m insert $new_i $mtype [join $optval]
 
-        ::menu_edit::fill_menu_list $top [vTcl:at ::${top}::menu]
+        ::menu_edit::fill_menu_list $top [set ::${top}::menu]
 
         # let's select the same menu at its new location
         set size [$top.MenuListbox index end]
@@ -437,7 +393,7 @@ namespace eval ::menu_edit {
 
         if {$index == ""} return
 
-        set listboxitems [vTcl:at ::${top}::listboxitems]
+        set listboxitems [set ::${top}::listboxitems]
 
         set reference [lindex $listboxitems $index]
 
@@ -482,7 +438,7 @@ namespace eval ::menu_edit {
             }
         }
 
-        ::menu_edit::fill_menu_list $top [vTcl:at ::${top}::menu]
+        ::menu_edit::fill_menu_list $top [set ::${top}::menu]
     }
 
     proc {::menu_edit::post_context_new_menu} {top X Y} {
@@ -502,6 +458,35 @@ namespace eval ::menu_edit {
         tk_popup $widget($top,NewMenuToolbarPopup)  $x [expr $y + $h]
     }
 
+    ## get initial values for the checkboxes
+    proc initBoxes {top m} {
+        variable target
+
+        set nm ::widgets::${m}::subOptions
+        namespace eval $nm {}
+
+        ## first time ? if so, check values that are not the default
+        if {![info exists ${nm}::save]} {
+            ## how many subitems ?
+            set size [$m index end]
+            if {$size == "none"} {
+                return
+            }
+
+            for {set i 0} {$i <= $size} {incr i} {
+                set conf [$m entryconfigure $i]
+                foreach opt $conf {
+		        set option  [lindex $opt 0]
+                    set default [lindex $opt 3]
+		        set value   [lindex $opt 4]
+		        if {$value != $default} {
+		            set ${nm}::save($option) 1
+                    }
+                }
+            }
+	  }
+    }
+
     proc {::menu_edit::show_menu} {top index} {
         global widget
 
@@ -513,9 +498,7 @@ namespace eval ::menu_edit {
         set i [lindex $reference end]
 
         if {$i == -1} {
-            ::menu_edit::enable_controls $top {"label" 0} {"font" 0} \
-                {"image" 0} {"accelerator" 0} {"variable" 0} \
-                {"value_on" 0} {"value_off" 0} {"text" 0}
+            enableProperties $top 0
             set ::${top}::current_menu  $m
             set ::${top}::current_index $i
             ::menu_edit::enable_toolbar_buttons $top
@@ -523,71 +506,171 @@ namespace eval ::menu_edit {
         }
 
         set mtype  [$m type $i]
-        #puts "show_menu: $m $i $mtype"
-
-        switch $mtype {
-            "command" {
-                ::menu_edit::enable_controls $top  {"label" 1} {"font" 1} \
-                    {"image" 1} {"accelerator" 1} {"variable" 0} \
-                    {"value_on" 0} {"value_off" 0} {"text" 1}
-                set ${top}::entry_label        [$m entrycget $i -label]
-                set ${top}::entry_image        [$m entrycget $i -image]
-                set ${top}::entry_font         [$m entrycget $i -font]
-                set ${top}::entry_accelerator  [$m entrycget $i -accelerator]
-                ::menu_edit::fill_command $top [$m entrycget $i -command]
-            }
-            "cascade" {
-                ::menu_edit::enable_controls $top {"label" 1}  {"font" 1} \
-                    {"image" 1} {"accelerator" 1} {"variable" 0} \
-                    {"value_on" 0} {"value_off" 0}  {"text" 0}
-                set ${top}::entry_label [$m entrycget $i -label]
-                set ${top}::entry_image [$m entrycget $i -image]
-                set ${top}::entry_font  [$m entrycget $i -font]
-                set ${top}::entry_accelerator ""
-                vTcl:active_widget [$m entrycget $i -menu]
-            }
-            "separator" {
-                ::menu_edit::enable_controls $top {"label" 0}  {"font" 0} \
-                    {"image" 0} {"accelerator" 0} {"variable" 0} \
-                    {"value_on" 0} {"value_off" 0}  {"text" 0}
-                set ${top}::entry_label ""
-                set ${top}::entry_accelerator ""
-            }
-            "radiobutton" {
-                ::menu_edit::enable_controls $top  {"label" 1} {"font" 1} \
-                    {"image" 1} {"accelerator" 1} {"variable" 1} \
-                    {"value_on" 1} {"value_off" 0} {"text" 1}
-                set ${top}::entry_label        [$m entrycget $i -label]
-                set ${top}::entry_image        [$m entrycget $i -image]
-                set ${top}::entry_font         [$m entrycget $i -font]
-                set ${top}::entry_accelerator  [$m entrycget $i -accelerator]
-                set ${top}::entry_variable     [$m entrycget $i -variable]
-                set ${top}::entry_value_on     [$m entrycget $i -value]
-                ::menu_edit::fill_command $top [$m entrycget $i -command]
-            }
-            "checkbutton" {
-                ::menu_edit::enable_controls $top  {"label" 1} {"font" 1} \
-                    {"image" 1} {"accelerator" 1} {"variable" 1} \
-                    {"value_on" 1} {"value_off" 1} {"text" 1}
-                set ${top}::entry_label        [$m entrycget $i -label]
-                set ${top}::entry_image        [$m entrycget $i -image]
-                set ${top}::entry_font         [$m entrycget $i -font]
-                set ${top}::entry_accelerator  [$m entrycget $i -accelerator]
-                set ${top}::entry_variable     [$m entrycget $i -variable]
-                set ${top}::entry_value_on     [$m entrycget $i -onvalue]
-                set ${top}::entry_value_off    [$m entrycget $i -offvalue]
-                ::menu_edit::fill_command $top [$m entrycget $i -command]
-            }
-        }
-
-        ## test for revamped menu editor!
-        ## fillProperties TopProperties $m $i
-        ## end test
 
         set ::${top}::current_menu  $m
         set ::${top}::current_index $i
+        set ::${top}::listbox_index $index
+
+        initBoxes $top $m
+        fillProperties $top $m $i
 
         ::menu_edit::enable_toolbar_buttons $top
+    }
+
+    proc setGetBox {top option {var {}}} {
+        set m [set ::${top}::current_menu]
+        set i [set ::${top}::current_index]
+        if {$m == "" || $i == ""} {return}
+
+        set nm ::widgets::${m}::subOptions
+        if {$var != ""} {
+            set ${nm}::save($option) [set $var]
+        } else {
+            if {[info exists ${nm}::save($option)]} {
+                return [set ${nm}::save($option)]
+            } else {
+                return 0
+            }
+        }
+    }
+
+    proc keyRelease {top option var boxvar} {
+        set m [set ::${top}::current_menu]
+        set i [set ::${top}::current_index]
+        if {$m == "" || $i == ""} {return}
+
+	  set conf [$m entryconfigure $i $option]
+        set default [lindex $conf 3]
+        set value [set $var]
+
+        if {$value != $default} {
+	      set $boxvar 1
+            setGetBox $top $option $boxvar
+        }
+    }
+
+    proc discoverOptions {} {
+        menu .m -tearoff 0
+        .m add cascade -menu ".m.cascade" -label "test"
+        menu .m.cascade -tearoff 0
+        set options [.m entryconfigure 0]
+
+        .m.cascade add command -label "command"
+        set options [concat $options [.m.cascade entryconfigure 0]]
+
+        .m.cascade add radiobutton -label "command"
+        set options [concat $options [.m.cascade entryconfigure 1]]
+
+        .m.cascade add checkbutton -label "command"
+        set options [concat $options [.m.cascade entryconfigure 2]]
+
+        .m.cascade add separator
+        set options [concat $options [.m.cascade entryconfigure 3]]
+
+        destroy .m.cascade
+        destroy .m
+
+        set optionsList ""
+        foreach option $options {
+            lappend optionsList [lindex $option 0]
+        }
+        return [lsort -unique $optionsList]
+    }
+
+    proc checkAttribute {m option checkVar} {
+        set nm ::widgets::${m}::subOptions
+        if {[info exists ${nm}::save($option)]} {
+            set $checkVar [set ${nm}::save($option)]
+        } else {
+            set $checkVar 0
+        }
+    }
+
+    proc fillProperties {top m i} {
+        upvar ::${top}::enableData enableData
+        upvar ::${top}::allOptions allOptions
+
+        set properties [$m entryconfigure $i]
+        set currentOptions ""
+
+        foreach property $properties {
+            set option [lindex $property 0]
+            set value  [lindex $property 4]
+            set variable ::${top}::optionsValues($option)
+            set $variable $value
+            lappend currentOptions $option
+        }
+
+        foreach option $allOptions($top) {
+            set variable ::${top}::optionsValues($option)
+            set f [$top.MenuCanvas].f.$option
+
+            # first uncheck the box, then check it if needed
+            set checkVar [::vTcl::ui::attributes::getCheckVariable $f $option]
+            set $checkVar 0
+
+            # enable/disable option if it does/does not apply to subitem
+            if {[lsearch -exact $currentOptions $option] == -1} {
+                ::vTcl::ui::attributes::enableAttribute $enableData($top,$option) 0
+            } else {
+                ::vTcl::ui::attributes::enableAttribute $enableData($top,$option) 1
+
+                checkAttribute $m $option $checkVar
+            }
+        }
+    }
+
+    proc enableProperties {top enable} {
+        upvar ::${top}::enableData enableData
+        upvar ::${top}::allOptions allOptions
+
+        foreach option $allOptions($top) {
+            ::vTcl::ui::attributes::enableAttribute $enableData($top,$option) $enable
+        }
+    }
+
+    proc configCmd {top option variable} {
+        set m [set ::${top}::current_menu]
+        set i [set ::${top}::current_index]
+        if {$m == "" || $i == ""} {return}
+
+        $m entryconfigure $i $option [set $variable]
+
+        if {$option == "-label" || $option == "-accelerator"} {
+            ::menu_edit::fill_menu_list $top [set ::${top}::menu]
+        }
+    }
+
+    proc initProperties {top m} {
+        upvar ::${top}::enableData enableData
+        upvar ::${top}::allOptions allOptions
+
+        set options [discoverOptions]
+        set allOptions($top) $options
+
+        set target($top) $m
+
+        foreach option $options {
+            set variable ::${top}::optionsValues($option)
+            set $variable ""
+            set f [$top.MenuCanvas].f.$option
+            if {[winfo exists $f]} {destroy $f}
+            frame $f
+            set config_cmd "::menu_edit::configCmd $top $option $variable"
+            set enableData($top,$option) \
+                [::vTcl::ui::attributes::newAttribute  $target($top) $f \
+                 $option $variable $config_cmd  \
+                 "::menu_edit::setGetBox $top"  \
+                 "::menu_edit::keyRelease $top"]
+            pack $f -side top -fill x -expand 0
+            ::vTcl::ui::attributes::enableAttribute $enableData($top,$option) 0
+        }
+
+        ## calculate the scrolling region
+        update idletasks
+        set w [winfo width  [$top.MenuCanvas].f]
+        set h [winfo height [$top.MenuCanvas].f]
+        ${top}.MenuCanvas configure -scrollregion [list 0 0 $w $h]
     }
 
     proc {::menu_edit::toggle_tearoff} {top} {
@@ -611,109 +694,12 @@ namespace eval ::menu_edit {
         set tearoff [expr 1-$tearoff]
         $submenu configure -tearoff $tearoff
 
-        ::menu_edit::fill_menu_list $top [vTcl:at ::${top}::menu]
+        ::menu_edit::fill_menu_list $top [set ::${top}::menu]
         ::menu_edit::show_menu $top $index
     }
 
     proc {::menu_edit::update_current} {top} {
-        if {! [info exists ::${top}::current_menu] }  return
-        if {! [info exists ::${top}::current_index] } return
-
-        set index [vTcl:at ::${top}::current_index]
-        if {$index == -1 || $index == ""} {
-            return
-        }
-
-        set menu  [vTcl:at ::${top}::current_menu]
-        if {$menu == ""} {
-            return
-        }
-
-        set type [$menu type $index]
-
-        switch $type {
-            "cascade" {
-                ::menu_edit::update_option $top $menu $index \
-                    -label [vTcl:at ::${top}::entry_label]
-                ::menu_edit::update_option $top $menu $index \
-                    -image [vTcl:at ::${top}::entry_image]
-                ::menu_edit::update_option $top $menu $index \
-                    -font [vTcl:at ::${top}::entry_font]
-                ::menu_edit::update_option $top $menu $index \
-                    -accelerator [vTcl:at ::${top}::entry_accelerator]
-            }
-            "command"  {
-                ::menu_edit::update_option $top $menu $index \
-                    -label [vTcl:at ::${top}::entry_label]
-                ::menu_edit::update_option $top $menu $index \
-                    -image [vTcl:at ::${top}::entry_image]
-                ::menu_edit::update_option $top $menu $index \
-                    -font [vTcl:at ::${top}::entry_font]
-                ::menu_edit::update_option $top $menu $index \
-                    -accelerator [vTcl:at ::${top}::entry_accelerator]
-                ::menu_edit::update_option $top $menu $index \
-                    -command [string trim [$top.MenuText get 0.0 end]]
-            }
-            "separator"  {
-            }
-            "radiobutton"  {
-                ::menu_edit::update_option $top $menu $index \
-                    -label [vTcl:at ::${top}::entry_label]
-                ::menu_edit::update_option $top $menu $index \
-                    -image [vTcl:at ::${top}::entry_image]
-                ::menu_edit::update_option $top $menu $index \
-                    -font [vTcl:at ::${top}::entry_font]
-                ::menu_edit::update_option $top $menu $index \
-                    -accelerator [vTcl:at ::${top}::entry_accelerator]
-                ::menu_edit::update_option $top $menu $index \
-                    -command  [string trim [$top.MenuText get 0.0 end]]
-                ::menu_edit::update_option $top $menu $index \
-                    -variable [vTcl:at ::${top}::entry_variable]
-                ::menu_edit::update_option $top $menu $index \
-                    -value    [vTcl:at ::${top}::entry_value_on]
-            }
-            "checkbutton" {
-                ::menu_edit::update_option $top $menu $index \
-                    -label [vTcl:at ::${top}::entry_label]
-                ::menu_edit::update_option $top $menu $index \
-                    -image [vTcl:at ::${top}::entry_image]
-                ::menu_edit::update_option $top $menu $index \
-                    -font [vTcl:at ::${top}::entry_font]
-                ::menu_edit::update_option $top $menu $index \
-                    -accelerator [vTcl:at ::${top}::entry_accelerator]
-                ::menu_edit::update_option $top $menu $index \
-                    -command  [string trim [$top.MenuText get 0.0 end]]
-                ::menu_edit::update_option $top $menu $index \
-                    -variable [vTcl:at ::${top}::entry_variable]
-                ::menu_edit::update_option $top $menu $index \
-                    -onvalue  [vTcl:at ::${top}::entry_value_on]
-                ::menu_edit::update_option $top $menu $index \
-                    -offvalue [vTcl:at ::${top}::entry_value_off]
-            }
-        }
-    }
-
-    proc {::menu_edit::update_option} {top menu index option value} {
-        global widget
-
-        set oldvalue [$menu entrycget $index $option]
-
-        if {$option == "-command"} {
-            ## if the command is non null, replace it by DoCmdOption
-            if {$value != "" && [string match *%* $value]} {
-                set value [list vTcl:DoCmdOption $menu $value]
-            }
-        }
-
-        if {$value != $oldvalue} {
-            $menu entryconfigure $index $option $value
-
-            if {$option == "-label" || $option == "-accelerator"} {
-                ::menu_edit::fill_menu_list $top [vTcl:at ::${top}::menu]
-            }
-
-            #puts "Updating: $menu $index $option $value"
-        }
+        ::vTcl::ui::attributes::setPending
     }
 
     proc {::menu_edit::close_all_editors} {} {
@@ -730,13 +716,13 @@ namespace eval ::menu_edit {
     }
 
     proc {::menu_edit::browse_image} {top} {
-        set image [vTcl:at ::${top}::entry_image]
+        set image [set ::${top}::entry_image]
         set r [vTcl:prompt_user_image2 $image]
         set ::${top}::entry_image $r
     }
 
     proc {::menu_edit::browse_font} {top} {
-        set font [vTcl:at ::${top}::entry_font]
+        set font [set ::${top}::entry_font]
         set r [vTcl:font:prompt_noborder_fontlist $font]
         if {$r != ""} {
             set ::${top}::entry_font $r
@@ -766,7 +752,7 @@ namespace eval ::menu_edit {
     proc {::menu_edit::includes_menu} {top m} {
 
         # is it the root menu?
-        if {[vTcl:at ::${top}::menu] == $m} {
+        if {[set ::${top}::menu] == $m} {
             return 0}
 
         set size [$top.MenuListbox index end]
@@ -789,9 +775,8 @@ namespace eval ::menu_edit {
         return -1
     }
 
-    # check if the menu to edit is a submenu in an already open
-    # menu editor, and if so, open that menu editor
-
+    ## check if the menu to edit is a submenu in an already open
+    ## menu editor, and if so, open that menu editor
     proc {::menu_edit::open_existing_editor} {m} {
 
         # let's check each menu editor
@@ -829,11 +814,10 @@ namespace eval ::menu_edit {
         return ""
     }
 
-    # refreshes the menu editor
-
+    ## refreshes the menu editor
     proc {::menu_edit::refreshes_existing_editor} {top} {
 
-        ::menu_edit::fill_menu_list $top [vTcl:at ::${top}::menu]
+        ::menu_edit::fill_menu_list $top [set ::${top}::menu]
 
         $top.MenuListbox selection clear 0 end
         $top.MenuListbox selection set 0
@@ -841,8 +825,7 @@ namespace eval ::menu_edit {
         ::menu_edit::show_menu $top 0
     }
 
-    # finds the root menu of the given menu
-
+    ## finds the root menu of the given menu
     proc {::menu_edit::find_root_menu} {m} {
 
         # go up until we find something that is not a menu
@@ -883,6 +866,11 @@ proc vTclWindow.vTclMenuEdit {base menu} {
         variable listboxitems  ""
         variable current_menu  ""
         variable current_index ""
+        variable listbox_index ""
+        variable enableData
+        variable allOptions
+        array set enableData {}
+        array set allOptions {}
     }
 
     ###################
@@ -895,23 +883,6 @@ proc vTclWindow.vTclMenuEdit {base menu} {
     vTcl:DefineAlias $base.fra21.but22 DeleteMenu vTcl:WidgetProc $base 1
     vTcl:DefineAlias $base.fra21.but23 MoveMenuUp vTcl:WidgetProc $base 1
     vTcl:DefineAlias $base.fra21.but24 MoveMenuDown vTcl:WidgetProc $base 1
-    vTcl:DefineAlias $base.cpd24.02.but27 BrowseImage vTcl:WidgetProc $base 1
-    vTcl:DefineAlias $base.cpd24.02.ent23 EntryLabel vTcl:WidgetProc $base 1
-    vTcl:DefineAlias $base.cpd24.02.ent24 EntryImage vTcl:WidgetProc $base 1
-    vTcl:DefineAlias $base.cpd24.02.labFont LabelFont vTcl:WidgetProc $base 1
-    vTcl:DefineAlias $base.cpd24.02.entFont EntryFont vTcl:WidgetProc $base 1
-    vTcl:DefineAlias $base.cpd24.02.ent25 EntryVariable vTcl:WidgetProc $base 1
-    vTcl:DefineAlias $base.cpd24.02.ent27 EntryValueOn vTcl:WidgetProc $base 1
-    vTcl:DefineAlias $base.cpd24.02.ent29 EntryAccelerator vTcl:WidgetProc $base 1
-    vTcl:DefineAlias $base.cpd24.02.ent30 EntryValueOff vTcl:WidgetProc $base 1
-    vTcl:DefineAlias $base.cpd24.02.fra22.cpd32.03 MenuText vTcl:WidgetProc $base 1
-    vTcl:DefineAlias $base.cpd24.02.fra22.lab31 LabelCommand vTcl:WidgetProc $base 1
-    vTcl:DefineAlias $base.cpd24.02.lab22 LabelVariable vTcl:WidgetProc $base 1
-    vTcl:DefineAlias $base.cpd24.02.lab26 LabelValueOn vTcl:WidgetProc $base 1
-    vTcl:DefineAlias $base.cpd24.02.lab28 LabelAccelerator vTcl:WidgetProc $base 1
-    vTcl:DefineAlias $base.cpd24.02.lab29 LabelValueOff vTcl:WidgetProc $base 1
-    vTcl:DefineAlias $base.cpd24.02.rad20 RadioLabel vTcl:WidgetProc $base 1
-    vTcl:DefineAlias $base.cpd24.02.rad21 RadioImage vTcl:WidgetProc $base 1
     vTcl:DefineAlias $base.fra21.but22 MenuOK vTcl:WidgetProc $base 1
 
     ###################
@@ -953,15 +924,15 @@ proc vTclWindow.vTclMenuEdit {base menu} {
         -label {New check}
     menu $base.m22.men24 -tearoff 0  \
         -postcommand "$base.m22.men24 entryconfigure 0 -state \
-            \[vTcl:at ::${base}::uistate(DeleteMenu)\]"
+            \[set ::${base}::uistate(DeleteMenu)\]"
     $base.m22.men24 add command \
         -command "::menu_edit::ask_delete_menu $base" \
         -label {Selected item...}
     menu $base.m22.men36 -tearoff 0 \
         -postcommand "$base.m22.men36 entryconfigure 0 -state \
-            \[vTcl:at ::${base}::uistate(MoveMenuUp)\]
+            \[set ::${base}::uistate(MoveMenuUp)\]
             $base.m22.men36 entryconfigure 1 -state \
-            \[vTcl:at ::${base}::uistate(MoveMenuDown)\]"
+            \[set ::${base}::uistate(MoveMenuDown)\]"
     $base.m22.men36 add command \
         -command "::menu_edit::move_item $base up" \
         -label Up
@@ -1038,7 +1009,7 @@ proc vTclWindow.vTclMenuEdit {base menu} {
     menu $base.cpd24.01.cpd25.01.m25 \
         -activeborderwidth 1 -tearoff 0 \
         -postcommand "$base.cpd24.01.cpd25.01.m25 entryconfigure 8 -state \
-            \[vTcl:at ::${base}::uistate(Tearoff)\]"
+            \[set ::${base}::uistate(Tearoff)\]"
     $base.cpd24.01.cpd25.01.m25 add command \
         -accelerator {} -command "::menu_edit::new_item $base command" \
         -label {New command}
@@ -1066,76 +1037,13 @@ proc vTclWindow.vTclMenuEdit {base menu} {
         -accelerator {} -command "::menu_edit::toggle_tearoff $base" \
         -label Tearoff
     frame $base.cpd24.02
-    label $base.cpd24.02.rad20 \
-        -padx 1 -pady 1 -text Label:
-    label $base.cpd24.02.rad21 \
-        -text Image:
-    frame $base.cpd24.02.fra22 \
-        -borderwidth 2 -relief flat
-    label $base.cpd24.02.fra22.lab31 \
-        -anchor center -text Command:
 
-    ScrolledWindow $base.cpd24.02.fra22.cpd32
-    text $base.cpd24.02.fra22.cpd32.03 -background gray -width 20
-    $base.cpd24.02.fra22.cpd32 setwidget $base.cpd24.02.fra22.cpd32.03
+    ScrolledWindow $base.cpd24.02.scr84
+    canvas $base.cpd24.02.scr84._grid.f.can85 \
+        -highlightthickness 0 -yscrollincrement 20 -closeenough 1.0 
+    vTcl:DefineAlias "$base.cpd24.02.scr84._grid.f.can85" "MenuCanvas" vTcl:WidgetProc $base 1
+    $base.cpd24.02.scr84 setwidget $base.cpd24.02.scr84._grid.f.can85
 
-    bind $base.cpd24.02.fra22.cpd32.03 <FocusOut> {
-        ::menu_edit::update_current [winfo toplevel %W]
-    }
-    entry $base.cpd24.02.ent23 \
-        -background white -cursor {} -textvariable ${base}::entry_label
-    bind $base.cpd24.02.ent23 <FocusOut> {
-        ::menu_edit::update_current [winfo toplevel %W]
-    }
-    entry $base.cpd24.02.ent24 \
-        -background white -cursor {} -textvariable ${base}::entry_image
-    bind $base.cpd24.02.ent24 <FocusOut> {
-        ::menu_edit::update_current [winfo toplevel %W]
-    }
-    label $base.cpd24.02.labFont \
-        -padx 1 -pady 1 -text Font:
-    entry $base.cpd24.02.entFont \
-        -background white -cursor {} -textvariable ${base}::entry_font
-    bind $base.cpd24.02.entFont <FocusOut> {
-        ::menu_edit::update_current [winfo toplevel %W]
-    }
-    button $base.cpd24.02.butFont \
-        -padx 1 -pady 0 -text ... -command "::menu_edit::browse_font $base"
-    button $base.cpd24.02.but27 \
-        -padx 1 -pady 0 -text ... \
-        -command "::menu_edit::browse_image $base"
-    label $base.cpd24.02.lab28 \
-        -padx 1 -pady 1 -text Accelerator:
-    entry $base.cpd24.02.ent29 \
-        -background white -cursor {} -textvariable ${base}::entry_accelerator
-    bind $base.cpd24.02.ent29 <FocusOut> {
-        ::menu_edit::update_current [winfo toplevel %W]
-    }
-    frame $base.cpd24.02.fra30 \
-        -borderwidth 2 -height 20 -width 125
-    frame $base.cpd24.02.fra21 \
-        -borderwidth 2 -height 20 -width 125
-    label $base.cpd24.02.lab22 \
-        -padx 1 -pady 1 -text Variable:
-    entry $base.cpd24.02.ent25 \
-        -background gray -cursor {} -textvariable ${base}::entry_variable
-    bind $base.cpd24.02.ent25 <FocusOut> {
-        ::menu_edit::update_current [winfo toplevel %W]
-    }
-    label $base.cpd24.02.lab26 \
-        -padx 1 -pady 1 -text {Value On:}
-    entry $base.cpd24.02.ent27 \
-        -background gray -cursor {} -textvariable ${base}::entry_value_on
-    bind $base.cpd24.02.ent27 <FocusOut> {
-        ::menu_edit::update_current [winfo toplevel %W]
-    }
-    label $base.cpd24.02.lab29 \
-        -padx 1 -pady 1 -text {Value Off:}
-    entry $base.cpd24.02.ent30 \
-        -background gray -cursor {} -textvariable ${base}::entry_value_off
-    bind $base.cpd24.02.ent30 <FocusOut> {
-        ::menu_edit::update_current [winfo toplevel %W]
-    }
     frame $base.cpd24.03 \
         -background #ff0000 -borderwidth 2 -relief raised
     bind $base.cpd24.03 <B1-Motion> {
@@ -1165,7 +1073,7 @@ proc vTclWindow.vTclMenuEdit {base menu} {
     pack $base.cpd24 \
         -in $base -anchor center -expand 1 -fill both -side top
     place $base.cpd24.01 \
-        -x 0 -y 0 -width -1 -relwidth 0.3612 -relheight 1 -anchor nw \
+        -x 0 -y 0 -width -1 -relwidth 0.6 -relheight 1 -anchor nw \
         -bordermode ignore
     pack $base.fra21.but21 \
         -in $base.fra21 -anchor center -expand 0 -fill none \
@@ -1179,81 +1087,16 @@ proc vTclWindow.vTclMenuEdit {base menu} {
     pack $base.fra21.but24 \
         -in $base.fra21 -anchor center -expand 0 -fill none \
         -side left
-
     pack $base.cpd24.01.cpd25 \
         -in $base.cpd24.01 -anchor center -expand 1 -fill both -side top
     pack $base.cpd24.01.cpd25.01
-
     place $base.cpd24.02 \
-        -x 0 -relx 1 -y 0 -width -1 -relwidth 0.6388 -relheight 1 -anchor ne \
+        -x 0 -relx 1 -y 0 -width -1 -relwidth 0.4 -relheight 1 -anchor ne \
         -bordermode ignore
-    grid columnconf $base.cpd24.02 1 -weight 1
-    grid rowconf $base.cpd24.02 9 -weight 1
-    grid $base.cpd24.02.rad20 \
-        -in $base.cpd24.02 -column 0 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky ne -padx 5
-    grid $base.cpd24.02.rad21 \
-        -in $base.cpd24.02 -column 0 -row 1 -columnspan 1 -rowspan 1 \
-        -sticky ne -padx 5
-    grid $base.cpd24.02.fra22 \
-        -in $base.cpd24.02 -column 0 -row 9 -columnspan 3 -rowspan 1 -padx 5 \
-        -pady 5 -sticky nesw
-    pack $base.cpd24.02.fra22.lab31 \
-        -in $base.cpd24.02.fra22 -anchor w -expand 0 -fill none -side top
-
-    pack $base.cpd24.02.fra22.cpd32 \
-        -in $base.cpd24.02.fra22 -anchor center -expand 1 -fill both \
-        -side top
-    pack $base.cpd24.02.fra22.cpd32.03
-
-    grid $base.cpd24.02.ent23 \
-        -in $base.cpd24.02 -column 1 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky ew
-    grid $base.cpd24.02.ent24 \
-        -in $base.cpd24.02 -column 1 -row 1 -columnspan 1 -rowspan 1 \
-        -sticky ew
-    grid $base.cpd24.02.but27 \
-        -in $base.cpd24.02 -column 2 -row 1 -columnspan 1 -rowspan 1 -padx 5
-    grid $base.cpd24.02.labFont \
-        -in $base.cpd24.02 -column 0 -row 3 -columnspan 1 -rowspan 1 -padx 5 \
-        -pady 5 -sticky e
-    grid $base.cpd24.02.entFont \
-        -in $base.cpd24.02 -column 1 -row 3 -columnspan 1 -rowspan 1 -pady 5 \
-        -sticky ew
-    grid $base.cpd24.02.butFont \
-        -in $base.cpd24.02 -column 2 -row 3 -columnspan 1 -rowspan 1 -padx 5
-    grid $base.cpd24.02.lab28 \
-        -in $base.cpd24.02 -column 0 -row 4 -columnspan 1 -rowspan 1 -padx 5 \
-        -sticky e
-    grid $base.cpd24.02.ent29 \
-        -in $base.cpd24.02 -column 1 -row 4 -columnspan 1 -rowspan 1 \
-        -sticky new
-    grid $base.cpd24.02.fra30 \
-        -in $base.cpd24.02 -column 0 -row 2 -columnspan 3 -rowspan 1 \
-        -sticky new
-    grid $base.cpd24.02.fra21 \
-        -in $base.cpd24.02 -column 0 -row 5 -columnspan 3 -rowspan 1 \
-        -sticky new
-    grid $base.cpd24.02.lab22 \
-        -in $base.cpd24.02 -column 0 -row 6 -columnspan 1 -rowspan 1 -padx 5 \
-        -pady 5 -sticky e
-    grid $base.cpd24.02.ent25 \
-        -in $base.cpd24.02 -column 1 -row 6 -columnspan 1 -rowspan 1 -pady 5 \
-        -sticky ew
-    grid $base.cpd24.02.lab26 \
-        -in $base.cpd24.02 -column 0 -row 7 -columnspan 1 -rowspan 1 -padx 5 \
-        -pady 5 -sticky e
-    grid $base.cpd24.02.ent27 \
-        -in $base.cpd24.02 -column 1 -row 7 -columnspan 1 -rowspan 1 -pady 5 \
-        -sticky ew
-    grid $base.cpd24.02.lab29 \
-        -in $base.cpd24.02 -column 0 -row 8 -columnspan 1 -rowspan 1 -padx 5 \
-        -pady 5 -sticky e
-    grid $base.cpd24.02.ent30 \
-        -in $base.cpd24.02 -column 1 -row 8 -columnspan 1 -rowspan 1 -pady 5 \
-        -sticky ew
+    pack $base.cpd24.02.scr84 \
+        -in $base.cpd24.02 -anchor center -expand 1 -fill both -side top 
     place $base.cpd24.03 \
-        -x 0 -relx 0.3612 -y 0 -rely 0.9 -width 10 -height 10 -anchor s \
+        -x 0 -relx 0.6 -y 0 -rely 0.9 -width 10 -height 10 -anchor s \
         -bordermode ignore
 
     vTcl:set_balloon $widget($base,NewMenu) \
@@ -1265,6 +1108,9 @@ proc vTclWindow.vTclMenuEdit {base menu} {
     vTcl:set_balloon $widget($base,MoveMenuDown) \
         "Move menu down"
 
+    frame [$base.MenuCanvas].f
+    $base.MenuCanvas create window 0 0 -window [$base.MenuCanvas].f -anchor nw -tag properties
+
     array set ::${base}::uistate {
         DeleteMenu disabled  MoveMenuUp disabled MoveMenuDown disabled
         Tearoff disabled
@@ -1275,6 +1121,7 @@ proc vTclWindow.vTclMenuEdit {base menu} {
     #############################
 
     # initializes menu editor
+    ::menu_edit::initProperties $base $menu
     ::menu_edit::fill_menu_list $base $menu
 
     # keep a record of open menu editors
@@ -1330,4 +1177,5 @@ proc vTclWindow.vTclMenuEdit {base menu} {
 
     wm deiconify $base
 }
+
 
