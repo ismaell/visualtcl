@@ -22,8 +22,11 @@
 ##############################################################################
 #
 
+# system indicator that we are not 'sourcing' a file
 set vTcl(sourcing) 0
 
+# replace 'proc' command with our own so we can monitor
+# actions like sourcing a file
 rename proc vTcl:proc
 
 vTcl:proc proc {name args body} {
@@ -45,6 +48,7 @@ proc winfo {options args} {
 	return [uplevel vTcl:winfo $options $args]
 }
 
+# vtcl splash screen
 proc vTcl:splash {} {
     global vTcl
     toplevel .x -bd 3 -relief raised
@@ -115,15 +119,20 @@ proc vTcl:setup {} {
         vTcl:load_lib $i
         lappend vTcl(w,libs) [lindex [split [lindex [file split $i] end] .] 0]
     }
+
+	# load config/preferences file if it exists
     if {[file exists $vTcl(CONF_FILE)]} {
         catch {uplevel #0 [list source $vTcl(CONF_FILE)]}
         catch {set vTcl(w,def_mgr) $vTcl(pr,manager)}
     }
+
     vTcl:setup_gui
+
     update idletasks
     set vTcl(start,procs)   [lsort [info procs]]
     set vTcl(start,globals) [lsort [info globals]]
 
+	# setup default procs and prevent app-exits
     rename exit vTcl:exit
     proc exit {args} {}
     proc init {argc argv} {}
@@ -137,10 +146,13 @@ proc vTcl:setup {} {
 proc vTcl:setup_gui {} {
     global vTcl tcl_platform tk_version
 
+	# turn off balloon help for the macintosh
     if {$tcl_platform(platform) == "macintosh"} {
         set vTcl(pr,balloon) 0
         set vTcl(balloon,on) 0
     }
+
+	# use unix font names for tk versions prior to 8.x
     if {$tk_version < 8} {
         if {$vTcl(pr,font_dlg) == ""} {
             set vTcl(pr,font_dlg) -Adobe-Helvetica-Medium-R-Normal-*-*-180-*-*-*-*-*-*
@@ -166,23 +178,39 @@ proc vTcl:setup_gui {} {
     }
     option add *vTcl*Text*font $vTcl(pr,font_fixed)
 
+	# setup vtcl program shortcut keystrokes
     vTcl:setup_bind_tree .
+
+	# load vtcl images
     vTcl:load_images
+
+	# show root window
     Window show .vTcl
+
+	# load vtcl libraries
     foreach l $vTcl(w,libs) {
         vTcl:widget:lib:$l
     }
+
+	# add widget icons
     vTcl:toolbar_reflow
+
+	# show windows in their last positions
     foreach i $vTcl(gui,showlist) {
         Window show $i
     }
+
+	# define edit-mode key/mouse bindings
     vTcl:define_bindings
+
+	# build system compount menu
     vTcl:cmp_sys_menu
 }
 
 proc vTclWindow.vTcl {args} {
     global vTcl tcl_platform tcl_version
 
+	# setup root window (.vTcl)
     if {[winfo exists .vTcl]} {return}
     toplevel $vTcl(gui,main)
     wm title $vTcl(gui,main) "Visual Tcl"
@@ -202,6 +230,7 @@ proc vTclWindow.vTcl {args} {
     frame .vTcl.stat -relief flat
     pack $tmp -side top -expand 1 -fill x
 
+	# setup vtcl menu options
 	if {$tcl_version >= 8} {
 		.vTcl conf -menu .vTcl.m
 	}
@@ -216,6 +245,7 @@ proc vTclWindow.vTcl {args} {
 		}
     }
 
+	# add vtcl help menu
 	if {$tcl_version >= 8} {
 		vTcl:menu:insert .vTcl.m.help help .vTcl.m
 	} else {
@@ -261,6 +291,7 @@ proc vTclWindow.vTcl {args} {
     pack .vTcl.stat.f  -side left -padx 2 -fill y
     pack .vTcl.stat -side top -fill both
 
+	# setup vtcl app key bindings
     vTcl:setup_vTcl:bind .vTcl
 }
 
@@ -391,9 +422,11 @@ proc vTcl:define_bindings {} {
 proc vTcl:main {argc argv} {
     global env vTcl tcl_version tcl_platform
 
-    catch {package require Unsafe} ; #for running in Netscape
-    catch {package require dde}    ; #for windows
-    catch {package require Tk}     ; #for dynamic loading tk
+    catch {package require Unsafe} ; # for running in Netscape
+    catch {package require dde}    ; # for windows
+    catch {package require Tk}     ; # for dynamic loading tk
+
+	# detect old versions of Tcl/Tk and refuse to run
     if {$tcl_version < 7.6} {
         wm deiconify .
         wm title . "Time to upgrade"
@@ -430,6 +463,7 @@ proc vTcl:main {argc argv} {
             set vTcl(VTCL_HOME) [pwd]
         }
         vTcl:setup
+		# load a vtcl project if speficied on the command line
         if {$argc == 1} {
             if {[file exists $argv]} {
                 vTcl:open $argv
@@ -437,6 +471,7 @@ proc vTcl:main {argc argv} {
                 vTcl:open [file join [pwd] $argv]
             }
         }
+		# determine if wish knows about a 'console' command (win32)
         if {[info commands console] == "console"} {
             set vTcl(console) 1
         }
