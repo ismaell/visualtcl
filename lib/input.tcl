@@ -137,6 +137,10 @@ proc vTcl:text_window {base title target} {
         -width 8 -xscrollcommand "$base.cpd48.01 set" \
         -yscrollcommand "$base.cpd48.02 set" -background white
 
+    # avoid syntax coloring here (automatic for text widgets in vTcl)
+    global $base.cpd48.03.nosyntax
+    set $base.cpd48.03.nosyntax 1
+
     frame $base.butfr
 
     button $base.butfr.but52 -image [vTcl:image:get_image ok.gif] \
