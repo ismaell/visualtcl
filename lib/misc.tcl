@@ -129,7 +129,11 @@ proc vTcl:clean_pairs {list {indent 8}} {
 	}
 
 	if {$noencase} {
-	    set i "$last $i "
+        if {$i == ""} {
+            set i "$last {} "
+        } else {
+	        set i "$last $i "
+        }
 	} else {
 	    switch $vTcl(pr,encase) {
 	       list {

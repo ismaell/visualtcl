@@ -549,9 +549,9 @@ proc vTcl:dump_menu_widget {target basename} {
             default {
                 # set pairs [vTcl:conf_to_pairs $conf ""]
 
-		# to allow option translation
-		set pairs [vTcl:get_opts_special $conf $target \
-                       "-menu -label -command -tearoff -accelerator -value -onvalue -offvalue -variable"]
+                # to allow option translation
+                set pairs [vTcl:get_opts_special $conf $target \
+                    "-menu -label -image -command -tearoff -accelerator -value -onvalue -offvalue -variable"]
 
                 append result "$vTcl(tab)$basename add $type \\\n"
                 append result "[vTcl:clean_pairs $pairs]\n"
@@ -786,18 +786,33 @@ proc vTcl:dump:widget_fonts_and_images {} {
 
     set children [vTcl:list_widget_tree .]
 
-    foreach type [list stock user] {
-	foreach child $children {
-	    if {![catch {$child cget -image} image]
-	    	&& [lsearch $vTcl(images,$type) $image] > -1} {
-		lappend vTcl(dump,${type}Images) $image
-	    }
+    foreach child $children {
 
-	    if {![catch {$child cget -font} font]
-	    	&& [lsearch $vTcl(fonts,$type) $font] > -1} {
-		lappend vTcl(dump,${type}Fonts) $font
-	    }
-	}
+        foreach type [list stock user] {
+
+            if {![catch {$child cget -image} image]
+                && [lsearch $vTcl(images,$type) $image] > -1} {
+                lappend vTcl(dump,${type}Images) $image
+            }
+            if {![catch {$child cget -font} font]
+                && [lsearch $vTcl(fonts,$type) $font] > -1} {
+                lappend vTcl(dump,${type}Fonts) $font
+            }
+
+            if {[vTcl:get_class $child] == "Menu"} {
+
+                set size [$child index end]
+                if {$size != "none"} {
+
+                    for {set i 0} {$i <= $size} {incr i} {
+                        if {![catch {$child entrycget $i -image} image]
+                            && [lsearch $vTcl(images,$type) $image] > -1} {
+                            lappend vTcl(dump,${type}Images) $image
+                        }
+                    }
+                }
+            }
+        } ; # foreach type [...]
     }
 }
 
