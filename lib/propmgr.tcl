@@ -479,7 +479,7 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
                 -image ellipses -bd 1 -width 12 \
                 -highlightthickness 1 -fg black -padx 0 -pady 1 \
                 -command "
-		vTcl:set_command \$vTcl(w,widget) $option
+		vTcl:set_command \$vTcl(w,widget) $option $variable
 		vTcl:prop:save_opt \$vTcl(w,widget) $option $variable
 		"
             pack ${base}.l -side left -expand 1 -fill x
@@ -620,6 +620,8 @@ proc vTcl:prop:save_opt {w opt varName} {
 	set ::widgets::${w}::save($opt) 1
     }
 }
+
+
 
 
 

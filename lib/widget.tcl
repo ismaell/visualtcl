@@ -1023,30 +1023,51 @@ proc vTcl:widget:register_widget {w {save_options ""}} {
     set opts [$w configure]
 
     if {![catch {namespace children ::widgets} namespaces]} {
-	if {[lsearch $namespaces ::widgets::${w}] > -1} {return}
+	    if {[lsearch $namespaces ::widgets::${w}] > -1} {
+
+            if {! [info exists ::widgets::${w}::options] } {
+
+                # at least, if the widget has already been registered
+    			# (typically just after a "file open" operation), we
+			    # need to create the options and defaults arrays
+
+                namespace eval ::widgets::${w} {
+                    variable options
+                    variable defaults
+                }
+
+                foreach list $opts {
+                    lassign $list opt x x def val
+                    set ::widgets::${w}::options($opt) $val
+                    set ::widgets::${w}::defaults($opt) $def
+	    		}
+			}
+
+	        return
+	    }
     }
 
     namespace eval ::widgets::${w} {
-    	variable options
-	variable save
-	variable defaults
+        variable options
+        variable save
+        variable defaults
     }
 
     foreach list $opts {
-    	lassign $list opt x x def val
-	set ::widgets::${w}::options($opt) $val
-	set ::widgets::${w}::defaults($opt) $def
+        lassign $list opt x x def val
+        set ::widgets::${w}::options($opt) $val
+        set ::widgets::${w}::defaults($opt) $def
 
-      if {[lsearch -exact $save_options $opt] >=0 } {
-          set ::widgets::${w}::save($opt) 1
-          continue
-      }
+        if {[lsearch -exact $save_options $opt] >=0 } {
+            set ::widgets::${w}::save($opt) 1
+            continue
+        }
 
-	if {[vTcl:streq $def $val]} {
-	    set ::widgets::${w}::save($opt) 0
-	} else {
-	    set ::widgets::${w}::save($opt) 1
-	}
+        if {[vTcl:streq $def $val]} {
+            set ::widgets::${w}::save($opt) 0
+        } else {
+            set ::widgets::${w}::save($opt) 1
+        }
     }
 }
 
@@ -1064,6 +1085,8 @@ proc vTcl:widget:register_all_widgets {{w .}} {
     	vTcl:widget:register_widget $w
     }
 }
+
+
 
 
 

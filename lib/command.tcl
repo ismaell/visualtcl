@@ -43,7 +43,7 @@
 #    }
 # }
 
-proc vTcl:set_command {target {option -command}} {
+proc vTcl:set_command {target {option -command} {variable ""}} {
     global vTcl
     if {$target == ""} {return}
     set base ".vTcl.com_[vTcl:rename ${target}${option}]"
@@ -55,6 +55,10 @@ proc vTcl:set_command {target {option -command}} {
         return
     } else {
         $target configure $option [string trim $r]
+		if {$variable != ""} {
+		    global $variable
+		    set $variable [string trim $r]
+		}
     }
 }
 
@@ -166,3 +170,5 @@ proc vTcl:command:edit_cancel {base} {
         }
     }
 }
+
+
