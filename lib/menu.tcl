@@ -100,6 +100,8 @@ set vTcl(menu,window) {
     {separator           {}         {}                         }
     {{Command Console}   {}         vTcl:show_console          }
     {{Widget Tree}       Alt+W      vTcl:show_wtree            }
+    {separator           {}         {}                         }
+    {{Save Window Locations} {}     vTcl:save_prefs            }
 }
 
 set vTcl(menu,help) {

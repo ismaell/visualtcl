@@ -125,14 +125,14 @@ proc vTclWindow.vTcl.toplist {args} {
         wm deiconify .vTcl.toplist; return
     }
     toplevel .vTcl.toplist -class vTcl
-	wm transient .vTcl.toplist .vTcl
+    wm withdraw .vTcl.toplist
+    wm transient .vTcl.toplist .vTcl
     wm focusmodel .vTcl.toplist passive
     wm geometry .vTcl.toplist 200x200+714+382
     wm maxsize .vTcl.toplist 1137 870
     wm minsize .vTcl.toplist 200 100
     wm overrideredirect .vTcl.toplist 0
     wm resizable .vTcl.toplist 1 1
-    wm deiconify .vTcl.toplist
     wm title .vTcl.toplist "Window List"
     wm protocol $base WM_DELETE_WINDOW {vTcl:toplist:show 0}
     bind .vTcl.toplist <Double-Button-1> {
@@ -141,6 +141,7 @@ proc vTclWindow.vTcl.toplist {args} {
             vTcl:show_top $vTcl(tops,$vTcl(x))
         }
     }
+
     frame .vTcl.toplist.frame7 \
         -borderwidth 1 -height 30 -relief sunken -width 30 
     pack .vTcl.toplist.frame7 \
@@ -188,7 +189,7 @@ proc vTclWindow.vTcl.toplist {args} {
         -ipady 0 -padx 0 -pady 0 -side left 
     vTcl:set_balloon .vTcl.toplist.frame7.button10 "Delete toplevel window"
     button $base.frame7.button11 \
-    	-command "wm withdraw $base" \
+    	-command "vTcl:toplist:show 0" \
 	-image [vTcl:image:get_image ok.gif]
     pack $base.frame7.button11 \
     	-expand 0 -side right
@@ -210,7 +211,6 @@ proc vTclWindow.vTcl.toplist {args} {
         -in .vTcl.toplist.f2 -anchor center -expand 0 -fill y -ipadx 0 \
         -ipady 0 -padx 0 -pady 0 -side right 
 
-    wm withdraw .vTcl.toplist
     vTcl:setup_vTcl:bind .vTcl.toplist
     catch {wm geometry .vTcl.toplist $vTcl(geometry,.vTcl.toplist)}
     update idletasks

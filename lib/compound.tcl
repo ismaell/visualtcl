@@ -87,6 +87,9 @@ proc vTcl:put_compound {text compound} {
 
     vTcl:status "Insert $text"
 
+    # because the bind commands does % substitution
+    regsub -all % $compound %% compound
+
     bind vTcl(b) <Button-1> \
     	"vTcl:place_compound [list $compound] $vTcl(w,def_mgr) %X %Y %x %y"
 }

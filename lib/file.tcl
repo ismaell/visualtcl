@@ -477,12 +477,12 @@ proc vTcl:save_prefs {} {
     set output "set vTcl(geometry,$w) $vTcl(pr,geom_vTcl)$pos\n"
     set showlist ""
 
+    ## If the window exists but is not visible, we still want to save its
+    ## geometry, just not add it to the showlist.
     foreach i $vTcl(windows) {
         if {[winfo exists $i]} {
-            if {[wm state $i] == "normal"} {
-                append output "set vTcl(geometry,${i}) [wm geometry $i]\n"
-                lappend showlist $i
-            }
+	    append output "set vTcl(geometry,${i}) [wm geometry $i]\n"
+	    if {[vTcl:streq [wm state $i] "normal"]} { lappend showlist $i }
         } else {
             catch {
                 append output "set vTcl(geometry,${i}) $vTcl(geometry,${i})\n"

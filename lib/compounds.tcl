@@ -61,40 +61,40 @@ lappend vTcl(syscmpd,list) {Split Vertical Panel} {Split Horizontal Panel}
 
 set {vTcl(syscmpd:Split Vertical Panel)} {{Frame {-background #000000 -width 200 -height 100} {pack {-expand 1 -fill both -side top}} {} {} {{Frame {-background #9900991B99FE} {place {-x 0 -y 0 -relwidth 1 -height -1 -relheight 0.6595 -anchor nw -bordermode ignore}} {} {} {} .01 {} {} {
 } {}} {Frame {-background #9900991B99FE} {place {-x 0 -y 0 -rely 1 -relwidth 1 -height -1 -relheight 0.3405 -anchor sw -bordermode ignore}} {} {} {} .02 {} {} {} {}} {Frame {-background #ff0000 -borderwidth 2 -relief raised} {place {-x 0 -relx 0.9 -y 0 -rely 0.6595 -width 10 -height 10 -anchor e -bordermode ignore}} {{<B1-Motion> {
-    set root \[ split %W . \]
-    set nb \[ llength \$root \]
+    set root [ split %W . ]
+    set nb [ llength $root ]
     incr nb -1
-    set root \[ lreplace \$root \$nb \$nb \]
-    set root \[ join \$root . \]
-    set height \[ winfo height \$root \].0
+    set root [ lreplace $root $nb $nb ]
+    set root [ join $root . ]
+    set height [ winfo height $root ].0
     
-    set val \[ expr (%Y - \[winfo rooty \$root\]) /\$height \]
+    set val [ expr (%Y - [winfo rooty $root]) /$height ]
 
-    if { \$val >= 0 && \$val <= 1.0 } {
+    if { $val >= 0 && $val <= 1.0 } {
     
-        place \$root.01 -relheight \$val
-        place \$root.03 -rely \$val
-        place \$root.02 -relheight \[ expr 1.0 - \$val \]
+        place $root.01 -relheight $val
+        place $root.03 -rely $val
+        place $root.02 -relheight [ expr 1.0 - $val ]
     }
     }}} {} {} .03 {} {} {} {}} } {} {} {} {} panel} {{.panel.top .01} {.panel.bottom .02} {.panel.handle .03} {.panel }}}
 
 
 set {vTcl(syscmpd:Split Horizontal Panel)} {{Frame {-background #000000 -width 200 -height 100} {pack {-expand 1 -fill both -side top}} {} {} {{Frame {-background #9900991B99FE} {place {-x 0 -y 0 -relheight 1 -width -1 -relwidth 0.6595 -anchor nw -bordermode ignore}} {} {} {} .01 {} {} 
 {} {}} {Frame {-background #9900991B99FE} {place {-x 0 -y 0 -relx 1 -relheight 1 -width -1 -relwidth 0.3405 -anchor ne -bordermode ignore}} {} {} {} .02 {} {} {} {}} {Frame {-background #ff0000 -borderwidth 2 -relief raised} {place {-y 0 -rely 0.9 -x 0 -relx 0.6595 -width 10 -height 10 -anchor s -bordermode ignore}} {{<B1-Motion> {
-    set root \[ split %W . \]
-    set nb \[ llength \$root \]
+    set root [ split %W . ]
+    set nb [ llength $root ]
     incr nb -1
-    set root \[ lreplace \$root \$nb \$nb \]
-    set root \[ join \$root . \]
-    set width \[ winfo width \$root \].0
+    set root [ lreplace $root $nb $nb ]
+    set root [ join $root . ]
+    set width [ winfo width $root ].0
     
-    set val \[ expr (%X - \[winfo rootx \$root\]) /\$width \]
+    set val [ expr (%X - [winfo rootx $root]) /$width ]
 
-    if { \$val >= 0 && \$val <= 1.0 } {
+    if { $val >= 0 && $val <= 1.0 } {
     
-        place \$root.01 -relwidth \$val
-        place \$root.03 -relx \$val
-        place \$root.02 -relwidth \[ expr 1.0 - \$val \]
+        place $root.01 -relwidth $val
+        place $root.03 -relx $val
+        place $root.02 -relwidth [ expr 1.0 - $val ]
     }
     }}} {} {} .03 {} {} {} {}} } {} {} {} {} panel} {{.panel.top .01} {.panel.bottom .02} {.panel.handle .03} {.panel }}}
 
