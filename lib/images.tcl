@@ -758,6 +758,7 @@ proc vTclWindow.vTcl.imgManager {args} {
     wm deiconify $base
 
     vTcl:image:init_img_manager
+    vTcl:setup_vTcl:bind $base
 }
 
 proc vTcl:image:prompt_image_manager {} {
