@@ -1,6 +1,9 @@
 ChangeLog for Visual Tcl:
 
 1.51b4 -> 1.51
+    o Added "Reload" button to image manager, to reload images modified
+      by other programs like image editors.
+    o Added <<Ready>> event for toplevels
     o Added <<Create>>, <<Show>> and <<Hide>> virtual events for toplevels.
     o Updated demo app with these virtual events.
     o Removed (pre) and (post) mechanism for toplevels.

@@ -679,6 +679,15 @@ proc vTcl:image:remove_user_images {} {
     vTcl:image:refresh_manager
 }
 
+proc vTcl:image:reload_images {} {
+    global vTcl
+
+    foreach image $vTcl(images,files) {
+        set object [vTcl:image:get_image $image]
+        $object configure -file $image
+    }
+}
+
 proc vTclWindow.vTcl.imgManager {args} {
 
     set base ""
@@ -725,10 +734,13 @@ proc vTclWindow.vTcl.imgManager {args} {
         -width 8 -wrap none -xscrollcommand "$base.cpd29.01 set" \
         -yscrollcommand "$base.cpd29.02 set"
     frame $base.butfr
-    button $base.butfr.but32 \
+    vTcl:toolbar_button $base.butfr.but32 \
         -command vTcl:image:new_image_file \
-        -padx 9 -pady 3 -image [vTcl:image:get_image add.gif]
-    button $base.butfr.but33 \
+        -padx 3 -pady 3 -image [vTcl:image:get_image add.gif]
+    vTcl:toolbar_button $base.butfr.but34 \
+        -command vTcl:image:reload_images \
+        -padx 3 -pady 3 -image [vTcl:image:get_image refresh.gif]
+    vTcl:toolbar_button $base.butfr.but33 \
     	-command "wm withdraw $base" \
 	-image [vTcl:image:get_image ok.gif]
     ###################
@@ -749,6 +761,9 @@ proc vTclWindow.vTcl.imgManager {args} {
     pack $base.butfr.but32 \
         -anchor nw -expand 0 -fill none -side left
     vTcl:set_balloon $base.butfr.but32 "Add new image"
+    pack $base.butfr.but34 \
+        -anchor nw -expand 0 -fill none -side left
+    vTcl:set_balloon $base.butfr.but34 "Reload images"
     pack $base.butfr.but33 \
     	-anchor nw -expand 0 -fill none -side right
     vTcl:set_balloon $base.butfr.but33 "Close"

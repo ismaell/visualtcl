@@ -590,7 +590,7 @@ proc vTclWindow.vTcl.fontManager {args} {
 
     frame $base.butfr
 
-    button $base.butfr.but30 \
+    vTcl:toolbar_button $base.butfr.but30 \
         -command {set font_desc "-family {Helvetica} -size 12"
 
 set font_desc [vTcl:font:prompt_user_font_2 $font_desc]
@@ -604,7 +604,7 @@ if {$font_desc != ""} {
 }} \
         -padx 9 -pady 3 -image [vTcl:image:get_image add.gif]
 
-    button $base.butfr.but31 \
+    vTcl:toolbar_button $base.butfr.but31 \
     	-command "wm withdraw $base" -image [vTcl:image:get_image ok.gif]
 
     frame $base.cpd31 \
