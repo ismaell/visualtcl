@@ -40,6 +40,8 @@ proc vTcl:widget:lib:lib_tix {args} {
     # see if we're running tixWish. if not, return
     #
     if {[info command tixNoteBookFrame] == ""} {
+
+        lappend vTcl(w,libsnames) {(not detected) Tix Widgets Support Library}
         return
     }
 	# setup required variables
@@ -70,6 +72,9 @@ proc vTcl:widget:lib:lib_tix {args} {
             -file [file join $vTcl(VTCL_HOME) images icon_tix_unknown.gif]
     }
     vTcl:lib_tix:unscrew_option_db
+
+    # announce ourselves!
+    lappend vTcl(w,libsnames) {Tix Widgets Support Library}
 }
 
 # Tix has screwed with the option database; reset it back to Tk's

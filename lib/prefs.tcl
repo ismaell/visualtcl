@@ -347,3 +347,77 @@ proc vTclWindow.vTcl.prefs {{base ""}} {
         -in $base.fra23 -column 0 -row 0 -columnspan 1 -rowspan 1 -padx 3 \
         -pady 3 -sticky nesw 
 }
+
+proc vTclWindow.vTcl.infolibs {{base ""} {container 0}} {
+
+    if {$base == ""} {
+        set base .vTcl.infolibs
+    }
+    if {[winfo exists $base] && (!$container)} {
+        wm deiconify $base; return
+    }
+
+    global vTcl
+    
+    # let's keep widget local    
+    set widget(libraries_close)         "$base.but40"
+    set widget(libraries_frame_listbox) "$base.cpd39"
+    set widget(libraries_header)        "$base.lab38"
+    set widget(libraries_listbox)       "$base.cpd39.01"
+
+    ###################
+    # CREATING WIDGETS
+    ###################
+    if {!$container} {
+    toplevel $base -class Toplevel
+    wm focusmodel $base passive
+    wm geometry $base 446x322+157+170
+    wm maxsize $base 1009 738
+    wm minsize $base 1 1
+    wm overrideredirect $base 0
+    wm resizable $base 1 1
+    wm deiconify $base
+    wm title $base "Visual Tcl Libraries"
+    }
+    label $base.lab38 \
+        -borderwidth 1 -text {The following libraries are available:} 
+    frame $base.cpd39 \
+        -borderwidth 1 -height 30 -relief raised -width 30 
+    listbox $base.cpd39.01 \
+        -font -Adobe-Helvetica-Medium-R-Normal-*-*-120-*-*-*-*-*-* -height 0 \
+        -width 0 -xscrollcommand "$base.cpd39.02 set" \
+        -yscrollcommand "$base.cpd39.03 set"
+    scrollbar $base.cpd39.02 \
+        -borderwidth 1 -command "$base.cpd39.01 xview" -orient horiz \
+        -width 10 
+    scrollbar $base.cpd39.03 \
+        -borderwidth 1 -command "$base.cpd39.01 yview" -orient vert \
+        -width 10 
+    button $base.but40 \
+        -padx 9 -pady 3 -text Close -command {wm withdraw .vTcl.infolibs}
+    ###################
+    # SETTING GEOMETRY
+    ###################
+    pack $base.lab38 \
+        -in $base -anchor center -expand 0 -fill x -ipadx 1 -side top 
+    pack $base.cpd39 \
+        -in $base -anchor center -expand 1 -fill both -side top 
+    grid columnconf $base.cpd39 0 -weight 1
+    grid rowconf $base.cpd39 0 -weight 1
+    grid $base.cpd39.01 \
+        -in $base.cpd39 -column 0 -row 0 -columnspan 1 -rowspan 1 \
+        -sticky nesw 
+    grid $base.cpd39.02 \
+        -in $base.cpd39 -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew 
+    grid $base.cpd39.03 \
+        -in $base.cpd39 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns 
+    pack $base.but40 \
+        -in $base -anchor center -expand 0 -fill x -side top 
+
+    $widget(libraries_listbox) delete 0 end
+
+    foreach name $vTcl(w,libsnames) {
+
+        $widget(libraries_listbox) insert end $name
+    }
+}

@@ -55,6 +55,7 @@ catch {
     namespace import iwidgets::radiobox
     namespace import iwidgets::tabnotebook
     namespace import iwidgets::panedwindow
+    namespace import iwidgets::scrolledtext
 } errorText
 vTcl:log $errorText
 
@@ -74,6 +75,7 @@ proc vTcl:widget:lib:lib_itcl {args} {
     # the namespace itcl has been exported
     
     if {[catch {itcl::class itcltest { constructor {args} {}}}]} {
+        lappend vTcl(w,libsnames) {(not detected) [Incr Tcl/Tk] MegaWidgets Support Library}
         return
     }
 
@@ -103,6 +105,7 @@ proc vTcl:widget:lib:lib_itcl {args} {
     # added radiobox
     # added tabnotebook
     # added panedwindow
+    # added scrolledtext
     # @@end_change
     
     foreach i {
@@ -122,6 +125,7 @@ proc vTcl:widget:lib:lib_itcl {args} {
         radiobox
         tabnotebook
         panedwindow
+        scrolledtext
     } {
         set img_file [file join $vTcl(VTCL_HOME) images icon_$i.gif]
         if {![file exists $img_file]} {
@@ -136,6 +140,9 @@ proc vTcl:widget:lib:lib_itcl {args} {
     # The images need to be called, e.g. ctl_itclNoteBookFrame.
     # Don't put these in the toolbar, because they are not commands,
     # only classes.
+    
+    # announce ourselves!
+    lappend vTcl(w,libsnames) {[Incr Tcl/Tk] MegaWidgets Support Library}
 }
 
 proc vTcl:lib_itcl:setup {} {
@@ -160,6 +167,7 @@ proc vTcl:lib_itcl:setup {} {
 	set vTcl(radiobox,insert)           ""
 	set vTcl(tabnotebook,insert)        ""
 	set vTcl(panedwindow,insert)        ""
+	set vTcl(scrolledtext,insert)       ""
 
 	#
 	# add to procedure, var, bind regular expressions
@@ -183,7 +191,8 @@ proc vTcl:lib_itcl:setup {} {
                 Checkbox \
                 Radiobox \
                 Tabnotebook \
-                Panedwindow
+                Panedwindow \
+                Scrolledtext
 
 	# @@change by Christian Gavin 3/7/2000
 	# list of megawidgets whose children are not visible by Vtcl
@@ -203,7 +212,8 @@ proc vTcl:lib_itcl:setup {} {
 				 Checkbox \
 				 Radiobox \
 				 Tabnotebook \
-				 Panedwindow
+				 Panedwindow \
+				 Scrolledtext
 	
 	# @@end_change
 	
@@ -312,9 +322,9 @@ proc vTcl:lib_itcl:setup {} {
 	set vTcl(opt,-tabbackground)  { {Tab BgColor}      Colors   color   {} }
 	set vTcl(opt,-tabborders)     { {Tab borders}      {}       boolean {0 1} }
 	set vTcl(opt,-tabforeground)  { {Tab FgColor}      Colors   color   {} }
-	set vTcl(opt,-tabpos)         { {Tab pos}          {}       choice  {n s e w} }
+	set vTcl(opt,-tabpos)         { {Tab pos}          {}       choice {n s e w} }
 	set vTcl(opt,-alwaysquery)    { {Always Query}     {}       boolean {0 1} }
-	set vTcl(opt,-closedicon)     { {Closed icon}      {}       image    {} }
+	set vTcl(opt,-closedicon)     { {Closed icon}      {}       image   {} }
 	set vTcl(opt,-expanded)       { {Expanded}         {}       boolean {0 1} }
 	set vTcl(opt,-filter)         { {Filter}           {}       boolean {0 1} }
 	set vTcl(opt,-iconcommand)    { {Icon Cmd}         {}       command {} }
@@ -391,6 +401,8 @@ proc vTcl:lib_itcl:setup {} {
 	set vTcl(Radiobox,dump_opt)            vTcl:lib_itcl:dump_widget_opt
 	set vTcl(Tabnotebook,dump_opt)         vTcl:lib_itcl:dump_widget_opt
 	set vTcl(Panedwindow,dump_opt)         vTcl:lib_itcl:dump_widget_opt
+	set vTcl(Scrolledtext,dump_opt)        vTcl:lib_itcl:dump_widget_opt
+	
 	#
 	# define whether or not do dump children of a class
 	#
@@ -410,6 +422,7 @@ proc vTcl:lib_itcl:setup {} {
 	set vTcl(Radiobox,dump_children)           0
 	set vTcl(Tabnotebook,dump_children)        0
 	set vTcl(Panedwindow,dump_children)        0
+	set vTcl(Scrolledtext,dump_children)       0
 	
 	# @@change by Christian Gavin 3/9/2000
 	# code to be generated at the top of a file if Itcl is supported
@@ -451,7 +464,10 @@ proc vTcl:lib_itcl:setup {} {
                    namespace import iwidgets::radiobox
                    namespace import iwidgets::tabnotebook
                    namespace import iwidgets::panedwindow
+                   namespace import iwidgets::scrolledtext
                    
+                   option add *Scrolledhtml.sbWidth 10
+                   option add *Scrolledtext.sbWidth 10
                	   option add *Scrolledlistbox.sbWidth 10
                 }
         }
@@ -502,6 +518,9 @@ proc vTcl:lib_itcl:setup {} {
 
 	set vTcl(Panedwindow,get_widget_tree_label)  \
 	    vTcl:lib_itcl:get_widget_tree_label
+
+	set vTcl(Scrolledtext,get_widget_tree_label)  \
+	    vTcl:lib_itcl:get_widget_tree_label
 		
 	# @@end_change
 	
@@ -519,7 +538,9 @@ proc vTcl:lib_itcl:setup {} {
 	set vTcl(option,noencase,-textfont) 1
 
 	# @@end_change
-		
+	
+	option add *Scrolledhtml.sbWidth 10
+	option add *Scrolledtext.sbWidth 10	
 	option add *Scrolledlistbox.sbWidth 10
 
 	# hum... this is not too clean, but the hierarchy widget creates
@@ -557,6 +578,7 @@ proc vTcl:lib_itcl:get_widget_tree_label {className {target ""}} {
 		"radiobox"          {return "Radio Box"}
 		"tabnotebook"       {return "Tab Notebook"}
 		"panedwindow"       {return "Paned Window"}
+		"scrolledtext"      {return "Scrolled Text"}
 		
 		default             {return ""}
 	}

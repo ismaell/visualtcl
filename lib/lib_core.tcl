@@ -41,6 +41,8 @@ proc vTcl:widget:lib:lib_core {args} {
             vTcl:toolbar_add $i $i ctl_$i ""
         }
     }
+    
+    lappend vTcl(w,libsnames) "Tcl/Tk Core Widgets Library"
 }
 
 #

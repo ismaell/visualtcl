@@ -100,8 +100,9 @@ set vTcl(menu,window) {
 }
 
 set vTcl(menu,help) {
-    {{About Visual Tcl}  {}         vTclWindow.vTcl.about      }
-    {{Index of Help}     {}         vTclWindow.vTcl.help       }
+    {{About Visual Tcl...}  {}         vTclWindow.vTcl.about      }
+    {{Libraries...}         {}         vTclWindow.vTcl.infolibs   }
+    {{Index of Help...}     {}         vTclWindow.vTcl.help       }
 }
 
 proc vTcl:menu:insert {menu name {root ""}} {

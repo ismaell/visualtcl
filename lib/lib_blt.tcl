@@ -45,22 +45,21 @@ proc vTcl:widget:lib:lib_blt {args} {
     # see if we're running bltWish. if not, return
     #
     if {[info exist blt_library] == 0} {
+
+        lappend vTcl(w,libsnames) {(not detected) BLT Widgets Support Library}
         return
+
     } else {
         global auto_path blt_library tcl_version
         lappend auto_path $blt_library
-        if {$tcl_version < 8} {
-            catch {
-                import add blt
-            }
-        } else {
-            catch {
-                package require BLT
-                import add blt
-            }
-            catch {
-                namespace import blt::*
-            }
+
+        catch {
+            package require BLT
+            import add blt
+        }
+
+        catch {
+             namespace import blt::*
         }
         
     }
@@ -83,6 +82,9 @@ proc vTcl:widget:lib:lib_blt {args} {
     # The images need to be called, e.g. ctl_bltNoteBookFrame.
     # Don't put these in the toolbar, because they are not commands,
     # only classes.
+    
+    # announce ourselves!
+    lappend vTcl(w,libsnames) {BLT Widgets Support Library}
 }
 
 proc vTcl:lib_blt:setup {} {
