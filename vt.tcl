@@ -89,7 +89,7 @@ proc vTcl:load_libs {} {
 proc vTcl:setup {} {
     global tk_strictMotif env vTcl tcl_platform
 
-    set vTcl(version)   1.2.0
+    set vTcl(version)   1.2.1
     set vTcl(VTCL_HOME) $env(VTCL_HOME)
     if {$env(HOME) == ""} {
         set vTcl(CONF_FILE) [file join $env(VTCL_HOME) .vtclrc]
