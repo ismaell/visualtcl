@@ -38,59 +38,53 @@ proc vTcl:toolbar_create {args} {
         vTcl:error "You cannot remove the toolbar"
     }
 
-    set base .vTcl.toolbar
+    ScrolledWindow .vTcl.toolbar.sw
+    ScrollableFrame .vTcl.toolbar.sw.sf
+    .vTcl.toolbar.sw setwidget .vTcl.toolbar.sw.sf
+    pack .vTcl.toolbar.sw -side top -fill both -expand 1
+    pack .vTcl.toolbar.sw.sf -side top -fill both -expand 1
+    set base [.vTcl.toolbar.sw.sf getframe]
     set f [vTcl:new_widget_name tb $base]
+    frame $f
+    pack $f -side top -fill x
     image create photo pointer \
         -file [file join $vTcl(VTCL_HOME) images icon_pointer.gif]
-    button $f -bd 1 -image pointer -relief sunken -command "
-	$f configure -relief sunken
-	vTcl:raise_last_button $f
+    button $f.b -bd 1 -image pointer -relief sunken -command "
+	$f.b configure -relief sunken
+	vTcl:raise_last_button $f.b
 	vTcl:rebind_button_1
 	vTcl:status Status
-    	set vTcl(x,lastButton) $f
+    	set vTcl(x,lastButton) $f.b
     " -padx 0 -pady 0 -highlightthickness 0
-    lappend vTcl(tool,list) $f
-    set vTcl(x,lastButton) $f
-    set ${base}::resizing 0
-    set ${base}::event 0
-    bind $base <Configure> "vTcl:toolbar_configure $base"
-}
-
-proc vTcl:toolbar_configure {base} {
-    set ${base}::resizing 1
-    if {![vTcl:at ${base}::event]} {
-        set ${base}::event 1
-        after 1000 vTcl:toolbar_event $base
-    }
-}
-
-proc vTcl:toolbar_event {base} {
-    # no move for 1 second ?
-    if {[vTcl:at ${base}::resizing] == 0} {
-        vTcl:toolbar_reflow $base
-        after 1000 "set ${base}::event 0"
-    } else {
-        after 1000 vTcl:toolbar_event $base
-    }
-    set ${base}::resizing 0
+    lappend vTcl(tool,list) $f.b
+    set vTcl(x,lastButton) $f.b
+    pack $f.b -side left
+    label $f.l -text "Pointer" 
+    pack $f.l -side left
 }
 
 proc vTcl:toolbar_add {class name image cmd_add} {
     global vTcl
-    set base .vTcl.toolbar
-    if {![winfo exists $base]} { vTcl:toolbar_create }
+    if {![winfo exists $.vTcl.toolbar]} { vTcl:toolbar_create }
+    set base [.vTcl.toolbar.sw.sf getframe]
     set f [vTcl:new_widget_name tb $base]
     ensureImage $image
-    button $f -bd 1 -image $image -padx 0 -pady 0 -highlightthickness 0
+    frame $f
+    pack $f -side top -fill x
+    button $f.b -bd 1 -image $image -padx 0 -pady 0 -highlightthickness 0
 
-    bind $f <ButtonRelease-1> \
-        "vTcl:new_widget \$vTcl(pr,autoplace) $class $f \"$cmd_add\""
+    bind $f.b <ButtonRelease-1> \
+        "vTcl:new_widget \$vTcl(pr,autoplace) $class $f.b \"$cmd_add\""
 
-    bind $f <Shift-ButtonRelease-1> \
-        "vTcl:new_widget 1 $class $f \"$cmd_add\""
+    bind $f.b <Shift-ButtonRelease-1> \
+        "vTcl:new_widget 1 $class $f.b \"$cmd_add\""
 
-    vTcl:set_balloon $f $name
-    lappend vTcl(tool,list) $f
+    vTcl:set_balloon $f.b $name
+    lappend vTcl(tool,list) $f.b
+    pack $f.b -side left
+    label $f.l -text $class
+    vTcl:set_balloon $f.l $name
+    pack $f.l -side left
 }
 
 proc vTclWindow.vTcl.toolbar {args} {
@@ -102,53 +96,8 @@ proc vTcl:toolbar_reflow {{base .vTcl.toolbar}} {
     set existed [winfo exists $base]
     if {!$existed} { vTcl:toolbar_create }
     wm resizable $base 1 1
-    set num [llength [winfo children $base]]
-    switch $::tcl_platform(platform) {
-    windows {
-        set itemWidth  23
-        set itemHeight 23
-    }
-    default {
-        set itemWidth  22
-        set itemHeight 22
-    }
-    }
-    set oldw [winfo width $base]
-    set oldh [winfo height $base]
-    set w [expr $oldw / $itemWidth]
-    if {$w == 0} {
-        set w $vTcl(toolbar,width)
-    }
-    set h 0
-    set x 0
-    set gr ""
-    foreach i $vTcl(tool,list) {
-        append gr "$i "
-        incr x
-        if {$x >= $w} {
-            if {$existed} {
-                eval grid forget $gr
-            }
-            eval "grid $gr"
-            set x 0
-            incr h
-            set gr ""
-        }
-    }
-    if {$gr != ""} {
-        if {$existed} {
-            eval grid forget $gr
-        }
-        eval "grid $gr"
-        incr h
-    }
     update
+
     vTcl:setup_vTcl:bind $base
-    set neww [expr $w * $itemWidth]
-    set newh [expr $h * $itemHeight]
-    if {$oldw == $neww && $oldh == $newh} {
-        # already the right size
-	return
-    }
-    wm geometry $base ${neww}x${newh}
 }
+
