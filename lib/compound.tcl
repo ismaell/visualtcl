@@ -199,21 +199,22 @@ proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
     global vTcl widget classes
 
     set todo ""
+    set childsiteproc ""
     foreach i $compound {
         set class [string trim [lindex $i 0]]
-        set opts [string trim [lindex $i 1]]
-        set mgr  [string trim [lindex $i 2]]
-        set mgrt [string trim [lindex $mgr 0]]
-        set mgri [string trim [lindex $mgr 1]]
-        set bind [string trim [lindex $i 3]]
-        set menu [string trim [lindex $i 4]]
-        set chld [string trim [lindex $i 5]]
-        set wdgt [string trim [lindex $i 6]]
-        set alis [string trim [lindex $i 7]]
-        set grid [string trim [lindex $i 8]]
-        set proc [string trim [lindex $i 9]]
+        set opts  [string trim [lindex $i 1]]
+        set mgr   [string trim [lindex $i 2]]
+        set mgrt  [string trim [lindex $mgr 0]]
+        set mgri  [string trim [lindex $mgr 1]]
+        set bind  [string trim [lindex $i 3]]
+        set menu  [string trim [lindex $i 4]]
+        set chld  [string trim [lindex $i 5]]
+        set wdgt  [string trim [lindex $i 6]]
+        set alis  [string trim [lindex $i 7]]
+        set grid  [string trim [lindex $i 8]]
+        set proc  [string trim [lindex $i 9]]
         set cmpdname [string trim [lindex $i 10]]
-        set topopt [string trim [lindex $i 11]]
+        set topopt   [string trim [lindex $i 11]]
 
         ## process procs first in case there are dependencies (init)
         foreach j $proc {
@@ -228,7 +229,12 @@ proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
                 proc $nme $arg $bdy
             }
 
-            vTcl:list add "{$nme}" vTcl(procs)
+            ## there is a special procedure to paste a megawidget
+            if {[string match __insert* $nme]} {
+                set childsiteproc $nme
+            } else {
+                vTcl:list add "{$nme}" vTcl(procs)
+            }
         }
         if {[lsearch -exact $vTcl(procs) "::${cmpdname}::init"] >= 0 } {
             eval [list ::${cmpdname}::init] $name
@@ -252,14 +258,21 @@ proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
             vTcl:update_top_list
         }
 
-        set replaced_opts [vTcl:name_replace $base $opts]
-        append todo "$classes($class,createCmd) $name "
-	append todo "$replaced_opts; "
+        ## for megawidgets, we insert the compound into an already existing
+        ## frame, so if the base already exists, we skip it and insert children
+
+        set was_existing  [winfo exists $name]
+        if {!$was_existing} {
+            set replaced_opts [vTcl:name_replace $base $opts]
+            append todo "$classes($class,createCmd) $name $replaced_opts; "
+        }
         if {$mgrt != "" && $mgrt != "wm"} {
             if {$mgrt == "place" && $mgri == ""} {
                 set mgri "-x 5 -y 5"
             }
-            append todo "$mgrt $name [vTcl:name_replace $base $mgri]; "
+            if {!$was_existing} {
+                append todo "$mgrt $name [vTcl:name_replace $base $mgri]; "
+            }
         } elseif {$mgrt == "wm"} {
         } else {
             set ret $name
@@ -280,81 +293,86 @@ proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
             }
         }
 
-        ## widget registration
-        append todo "vTcl:widget:register_widget $name; "
+        ## megawidget childsites
+        if {$childsiteproc != ""} {
+            append todo "$childsiteproc $name; "
+            append toto "rename $childsiteproc {}; "
+        }
 
-        ## restore default values
-        set opts_only [vTcl:options_only $replaced_opts]
-        foreach def $classes($class,defaultValues) {
-            ## only replace the options not specified in the compound
-            if {[lsearch -exact $opts_only $def] == -1} {
-                append todo "vTcl:prop:default_opt $name $def vTcl(w,opt,$def); "
+        if {!$was_existing} {
+
+            ## widget registration
+            append todo "vTcl:widget:register_widget $name; "
+
+            ## restore default values
+            set opts_only [vTcl:options_only $replaced_opts]
+            foreach def $classes($class,defaultValues) {
+                ## only replace the options not specified in the compound
+                if {[lsearch -exact $opts_only $def] == -1} {
+                    append todo "vTcl:prop:default_opt $name $def vTcl(w,opt,$def); "
+                }
             }
-        }
 
-        ## options not to save
-        foreach def $classes($class,dontSaveOptions) {
-            append todo "vTcl:prop:save_or_unsave_opt $name $def vTcl(w,opt,$def) 0; "
-        }
+            ## options not to save
+            foreach def $classes($class,dontSaveOptions) {
+                append todo "vTcl:prop:save_or_unsave_opt $name $def vTcl(w,opt,$def) 0; "
+            }
 
-        set index 0
-        incr level
-        foreach j $bind {
-            # see if it is a list of bindtags, a binding for
-            # the target, or a binding for a bindtag (ya follow me?)
-            switch -exact -- [llength $j] {
+            ## bindings
+            foreach j $bind {
+                # see if it is a list of bindtags, a binding for
+                # the target, or a binding for a bindtag (ya follow me?)
+                switch -exact -- [llength $j] {
                 1 {
                     append todo "bindtags $name [list [vTcl:name_replace $base [lindex $j 0]]]; "
                 }
-
                 2 {
                     set e [lindex $j 0]
                     set c [vTcl:name_replace $base [lindex $j 1]]
                     append todo "bind $name $e \{$c\}; "
                 }
-
                 3 {
                     set bindtag [lindex $j 0]
                     set event   [lindex $j 1]
-
                     if {[lsearch -exact $::widgets_bindings::tagslist $bindtag] == -1} {
-                       lappend ::widgets_bindings::tagslist $bindtag
+                        lappend ::widgets_bindings::tagslist $bindtag
                     }
-
                     append todo "if \{\[bind $bindtag $event] == \"\"\} \{bind $bindtag $event \{[lindex $j 2]\}\}; "
                 }
-
                 default {
                     oops "Internal error"
+                        }
                 }
             }
-        }
-        foreach j $menu {
-            set t [lindex $j 0]
-            set o [lindex $j 1]
-            if {$t != "tearoff"} {
-                append todo "$name add $t [vTcl:name_replace $base $o]; "
+            foreach j $menu {
+                set t [lindex $j 0]
+                set o [lindex $j 1]
+                if {$t != "tearoff"} {
+                        append todo "$name add $t [vTcl:name_replace $base $o]; "
+                }
             }
-        }
+        }; ## if {!$was_existing} ...
+        incr level
 	if {$classes($class,dumpChildren)} {
 	    foreach j $chld {
 	       append todo "[vTcl:extract_compound $base $name \{$j\} $level]; "
-		incr index
 	    }
 	}
-        if {$alis != ""} {
-            append todo "if \{\[vTcl:alias_in_other_toplevel $name $alis\]\} \{"
-            append todo "vTcl:set_alias $name $alis -noupdate\} else \{"
-            append todo "vTcl:set_alias $name \[vTcl:next_widget_name $class\] -noupdate\}; "
-        } elseif {$alis == "" && $vTcl(pr,autoalias)} {
-            append todo "vTcl:set_alias $name \[vTcl:next_widget_name $class\] -noupdate; "
-        }
+        if {!$was_existing} {
+            if {$alis != ""} {
+                append todo "if \{\[vTcl:alias_in_other_toplevel $name $alis\]\} \{"
+                append todo "vTcl:set_alias $name $alis -noupdate\} else \{"
+                append todo "vTcl:set_alias $name \[vTcl:next_widget_name $class\] -noupdate\}; "
+            } elseif {$alis == "" && $vTcl(pr,autoalias)} {
+                append todo "vTcl:set_alias $name \[vTcl:next_widget_name $class\] -noupdate; "
+            }
+        }; ## if {!$was_existing} ...
 
         foreach j $grid {
-            set cmd [lindex $j 0]
-            set num [lindex $j 1]
+            set cmd  [lindex $j 0]
+            set num  [lindex $j 1]
             set prop [lindex $j 2]
-            set val [lindex $j 3]
+            set val  [lindex $j 3]
             append todo "grid $cmd $name $num $prop $val; "
         }
 
@@ -375,7 +393,7 @@ proc vTcl:create_compound {target {cmpdname ""}} {
 }
 
 proc vTcl:gen_compound {target {name ""} {cmpdname ""}} {
-    global vTcl widget
+    global vTcl widget classes
     set ret ""
     set mgr ""
     set bind ""
@@ -389,13 +407,8 @@ proc vTcl:gen_compound {target {name ""} {cmpdname ""}} {
     }
     set class [vTcl:get_class $target]
 
-    # @@change by Christian Gavin 3/6/2000
-    # rename conf to configure because Iwidgets don't like
-    # conf only
-
+    # rename conf to configure because Iwidgets don't like conf only
     set opts [vTcl:get_opts [$target configure]]
-
-    # @@end_change
 
     if {$class == "Menu"} {
         set mnum [$target index end]
@@ -414,11 +427,8 @@ proc vTcl:gen_compound {target {name ""} {cmpdname ""}} {
     } else {
         set mgrt [winfo manager $target]
 
-        # vTcl:log "gen_compound: mgrt=\"$mgrt\""
-
- 	# in Iwidgets, some controls are not yet packed/gridded/placed
- 	# when they are in edit mode, therefore there is no manager at
- 	# this time
+        # in Iwidgets, some controls are not yet packed/gridded/placed when
+        # they are in edit mode, therefore there is no manager at this time
 
 	if {[lempty $mgrt] || [lempty [info commands $mgrt]]} {
 	    set mgri {}
@@ -453,8 +463,7 @@ proc vTcl:gen_compound {target {name ""} {cmpdname ""}} {
 
       if {[string match {*#*} $i]} {continue}
 
-      # change cy CGavin to retain children names
-      # while creating a compound
+      # retain children names while creating a compound
       set windowpath [split $i .]
       set lastpath [lindex $windowpath end]
 
@@ -485,6 +494,13 @@ proc vTcl:gen_compound {target {name ""} {cmpdname ""}} {
             }
         }
     }
+
+    ## special case for megawidgets: code to recreate all the childsites
+    if {$classes($class,compoundCmd) != ""} {
+        set compoundCode [$classes($class,compoundCmd) $target]
+        lappend proc [list __insert$target target $compoundCode]
+    }
+
     set topopt ""
     if {$class == "Toplevel"} {
         foreach i $vTcl(attr,tops) {

@@ -244,4 +244,20 @@ proc vTcl:lib_itcl:dump_subwidgets {subwidget} {
     return $output
 }
 
+proc vTcl:lib_itcl:tagscmd {target} {
 
+    global vTcl
+
+    # workaround for special binding tags in IWidgets
+    set tags $vTcl(bindtags,$target)
+    set special [lsearch -glob $tags itk-delete-*]
+
+    set class [winfo class $target]
+    set toplevel [winfo toplevel $target]
+
+    if {$special == -1} {
+        return [list $target $class $toplevel all]
+    } else {
+        return [list [lindex $tags $special] $target $class $toplevel all]
+    }
+}

@@ -2,6 +2,7 @@ Class		Spinint
 Lib		itcl
 
 CreateCmd	::iwidgets::spinint
+TagsCmd         vTcl:lib_itcl:tagscmd
 Icon		icon_spinint.gif
 DumpChildren	no
 MegaWidget	yes

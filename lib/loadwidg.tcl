@@ -85,6 +85,8 @@ proc SetClassArray {} {
         $tmp(class),dumpChildren    1
         $tmp(class),megaWidget      0
         $tmp(class),dumpCmd         vTcl:dump_widget_opt
+        $tmp(class),compoundCmd     {}
+        $tmp(class),tagsCmd         {}
         $tmp(class),options         {}
         $tmp(class),defaultOptions  {}
         $tmp(class),insertCmd       {}
@@ -207,6 +209,16 @@ proc DontSaveOptions {args} {
 proc DumpCmd {val} {
     global tmp
     set tmp(dumpCmd) $val
+}
+
+proc CompoundCmd {val} {
+    global tmp
+    set tmp(compoundCmd) $val
+}
+
+proc TagsCmd {val} {
+    global tmp
+    set tmp(tagsCmd) $val
 }
 
 proc DumpChildren {val} {

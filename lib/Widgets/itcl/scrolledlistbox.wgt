@@ -2,6 +2,7 @@ Class		Scrolledlistbox
 Lib		itcl
 
 CreateCmd	::iwidgets::scrolledlistbox
+TagsCmd         vTcl:lib_itcl:tagscmd
 Icon		icon_scrolledlistbox.gif
 DumpChildren	no
 MegaWidget	yes

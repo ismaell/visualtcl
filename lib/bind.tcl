@@ -42,23 +42,18 @@ proc vTclWindow.vTcl.bind {args} {
     global widget
     set widget(rev,$base) {BindingsEditor}
     set {widget(BindingsEditor)} "$base"
-    set {widget(child,BindingsEditor)} ""
     interp alias {} BindingsEditor {} vTcl:Toplevel:WidgetProc $base
     set widget(rev,$base.cpd21.01.cpd25.01) {ListboxBindings}
     set {widget(ListboxBindings)} "$base.cpd21.01.cpd25.01"
-    set {widget(child,ListboxBindings)} "cpd21.01.cpd25.01"
     interp alias {} ListboxBindings {} vTcl:WidgetProc $base.cpd21.01.cpd25.01
     set widget(rev,$base.fra22.but24) {RemoveBinding}
     set {widget(RemoveBinding)} "$base.fra22.but24"
-    set {widget(child,RemoveBinding)} "cpd21.01.fra22.but24"
     interp alias {} RemoveBinding {} vTcl:WidgetProc $base.fra22.but24
     set widget(rev,$base.fra22.men20) {AddBinding}
     set {widget(AddBinding)} "$base.fra22.men20"
-    set {widget(child,AddBinding)} "cpd21.01.fra22.men20"
     interp alias {} AddBinding {} vTcl:WidgetProc $base.fra22.men20
     set widget(rev,$base.cpd21.02.cpd21.03) {TextBindings}
     set {widget(TextBindings)} "$base.cpd21.02.cpd21.03"
-    set {widget(child,TextBindings)} "cpd21.02.cpd21.03"
     interp alias {} TextBindings {} vTcl:WidgetProc $base.cpd21.02.cpd21.03
     set widget(MoveTagUp) $base.fra22.but25
     interp alias {} MoveTagUp {} vTcl:WidgetProc $base.fra22.but25
@@ -454,19 +449,15 @@ proc vTclWindow.vTcl.newbind {base {container 0}} {
     global widget
     set widget(rev,$base) {BindingsInsert}
     set {widget(BindingsInsert)} "$base"
-    set {widget(child,BindingsInsert)} ""
     interp alias {} BindingsInsert {} vTcl:Toplevel:WidgetProc $base
     set widget(rev,$base.fra23.cpd34.01) {BindingsModifiers}
     set {widget(BindingsModifiers)} "$base.fra23.cpd34.01"
-    set {widget(child,BindingsModifiers)} "fra23.cpd34.01"
     interp alias {} BindingsModifiers {} vTcl:WidgetProc $base.fra23.cpd34.01
     set widget(rev,$base.fra23.cpd35.01) {BindingsEvents}
     set {widget(BindingsEvents)} "$base.fra23.cpd35.01"
-    set {widget(child,BindingsEvents)} "fra23.cpd35.01"
     interp alias {} BindingsEvents {} vTcl:WidgetProc $base.fra23.cpd35.01
     set widget(rev,$base.fra36.ent38) {BindingsEventEntry}
     set {widget(BindingsEventEntry)} "$base.fra36.ent38"
-    set {widget(child,BindingsEventEntry)} "fra36.ent38"
     interp alias {} BindingsEventEntry {} vTcl:WidgetProc $base.fra36.ent38
 
     ###################
@@ -679,19 +670,15 @@ proc vTclWindow.vTcl.newtag {base} {
     global widget
     set widget(rev,$base.fra20.but21) {NewBindingTagOK}
     set {widget(NewBindingTagOK)} "$base.fra20.but21"
-    set {widget(child,NewBindingTagOK)} "fra20.but21"
     interp alias {} NewBindingTagOK {} vTcl:WidgetProc $base.fra20.but21
     set widget(rev,$base.fra20.but23) {NewBindingTagCancel}
     set {widget(NewBindingTagCancel)} "$base.fra20.but23"
-    set {widget(child,NewBindingTagCancel)} "fra20.but23"
     interp alias {} NewBindingTagCancel {} vTcl:WidgetProc $base.fra20.but23
     set widget(rev,$base.fra24.cpd26.01) {ListboxTags}
     set {widget(ListboxTags)} "$base.fra24.cpd26.01"
-    set {widget(child,ListboxTags)} "fra24.cpd26.01"
     interp alias {} ListboxTags {} vTcl:WidgetProc $base.fra24.cpd26.01
     set widget(rev,$base.fra24.ent28) {NewBindingTagEntry}
     set {widget(NewBindingTagEntry)} "$base.fra24.ent28"
-    set {widget(child,NewBindingTagEntry)} "fra24.ent28"
     interp alias {} NewBindingTagEntry {} vTcl:WidgetProc $base.fra24.ent28
 
     global NewBindingTagName
@@ -1451,6 +1438,9 @@ namespace eval ::widgets_bindings {
     }
 
     proc {::widgets_bindings::get_standard_bindtags} {target} {
+
+        global vTcl classes
+
         # returns the default binding tags for any widget
         #
         # for example:
@@ -1459,6 +1449,10 @@ namespace eval ::widgets_bindings {
         #        .top19.but22 => ".top19.but22 Button .top19 all"
 
         set class [winfo class $target]
+        if {[info exists classes($class,tagsCmd)] && $classes($class,tagsCmd) != ""} {
+            return [$classes($class,tagsCmd) $target]
+        }
+
         if {$class == "Toplevel" || $class == "Vt" || $class == "Menu"} {
             return [list $target $class all]
         }
@@ -1468,5 +1462,3 @@ namespace eval ::widgets_bindings {
     }
 
 } ; # namespace eval
-
-
