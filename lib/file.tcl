@@ -420,6 +420,21 @@ proc vTcl:save_as_binary {} {
 	set freewrap [file join $env(VTCL_HOME) Freewrap $ostag bin freewrap]
     }
 
+    ## user installation required?
+    if {![file exists $freewrap]} {
+        ::vTcl::MessageBox -title "Freewrap not installed" -message \
+"You have not yet installed freewrap in the vTcl distribution.
+
+Visual Tcl needs to find freewrap in the following location:
+
+[file dirname $freewrap]
+
+Install a copy of the freewrap binary '[file tail $freewrap]' in the
+above location then try again." \
+-icon error -type ok
+        return
+    }
+
     exec $freewrap $file -f $filelist
 
     file delete -force $filelist
@@ -877,4 +892,5 @@ namespace eval vTcl::project {
         set ::vTcl(pr,loadlibs) $libs
     }
 }
+
 
