@@ -575,5 +575,173 @@ proc procsCmd {} {}
 
 }
 
+namespace eval {vTcl::compounds::system::{Single Document Application}} {
+
+set bindtags {
+    _TopLevel
+}
+
+set source .top81
+
+set class Toplevel
+
+set procs {}
+
+
+proc bindtagsCmd {} {
+#############################################################################
+## Binding tag:  _TopLevel
+
+bind "_TopLevel" <<Create>> {
+    if {![info exists _topcount]} {set _topcount 0}; incr _topcount
+}
+bind "_TopLevel" <<DeleteWindow>> {
+    destroy %W; if {$_topcount == 0} {exit}
+}
+bind "_TopLevel" <Destroy> {
+    if {[winfo toplevel %W] == "%W"} {incr _topcount -1}
+}
+}
+
+
+proc infoCmd {target} {
+    namespace eval ::widgets::$target {
+        set set,origin 1
+        set set,size 1
+    }
+    namespace eval ::widgets::$target.fra86 {
+        array set save {-borderwidth 1 -height 1 -width 1}
+    }
+    set site_3_0 $target.fra86
+    namespace eval ::widgets::$site_3_0.lab87 {
+        array set save {-relief 1 -text 1}
+    }
+    namespace eval ::widgets::$site_3_0.lab88 {
+        array set save {-relief 1 -text 1}
+    }
+    namespace eval ::widgets::$target.fra89 {
+        array set save {-background 1 -height 1 -width 1}
+    }
+    set site_3_0 $target.fra89
+    namespace eval ::widgets::$site_3_0.lab90 {
+        array set save {-background 1 -text 1}
+    }
+    namespace eval ::widgets::$target.m82 {
+        array set save {-activeborderwidth 1 -borderwidth 1 -tearoff 1}
+    }
+    set site_3_0 $target.m82
+    namespace eval ::widgets::$site_3_0.men83 {
+        array set save {-activeborderwidth 1 -tearoff 1}
+    }
+    set site_3_0 $target.m82
+    namespace eval ::widgets::$site_3_0.men84 {
+        array set save {-activeborderwidth 1 -tearoff 1}
+    }
+    set site_3_0 $target.m82
+    namespace eval ::widgets::$site_3_0.men85 {
+        array set save {-activeborderwidth 1 -tearoff 1}
+    }
+
+}
+
+
+proc vTcl:DefineAlias {target alias args} {
+    if {![info exists ::vTcl(running)]} {
+        return [eval ::vTcl:DefineAlias $target $alias $args]
+    }
+    set class [vTcl:get_class $target]
+    vTcl:set_alias $target [vTcl:next_widget_name $class $target $alias] -noupdate
+}
+
+
+proc compoundCmd {target} {
+    vTclWindow.top81 $target
+}
+
+
+proc procsCmd {} {}
+
+
+proc vTclWindow.top81 {base} {
+    if {$base == ""} {
+        set base .top81
+    }
+    if {[winfo exists $base]} {
+        wm deiconify $base; return
+    }
+    set top $base
+    ###################
+    # CREATING WIDGETS
+    ###################
+    vTcl:toplevel $top -class Toplevel  -menu "$top.m82" 
+    wm focusmodel $top passive
+    wm geometry $top 396x265+269+257; update
+    wm maxsize $top 1284 986
+    wm minsize $top 111 1
+    wm overrideredirect $top 0
+    wm resizable $top 1 1
+    wm deiconify $top
+    wm title $top "SDI Application"
+    vTcl:DefineAlias "$top" "Toplevel1" vTcl:Toplevel:WidgetProc "" 1
+    bindtags $top "$top Toplevel all _TopLevel"
+    bind $top <Control-Key-q> {
+        exit
+    }
+    vTcl:FireEvent $top <<Create>>
+    wm protocol $top WM_DELETE_WINDOW "vTcl:FireEvent $top <<DeleteWindow>>"
+
+    frame $top.fra86  -borderwidth 2 -height 75 -width 125 
+    vTcl:DefineAlias "$top.fra86" "Frame1" vTcl:WidgetProc "Toplevel1" 1
+    set site_3_0 $top.fra86
+    label $site_3_0.lab87  -relief groove -text {Line 1 Col 1} 
+    vTcl:DefineAlias "$site_3_0.lab87" "Label1" vTcl:WidgetProc "Toplevel1" 1
+    label $site_3_0.lab88  -relief groove -text {Status Info} 
+    vTcl:DefineAlias "$site_3_0.lab88" "Label2" vTcl:WidgetProc "Toplevel1" 1
+    grid $site_3_0.lab87  -in $site_3_0 -column 0 -row 0 -columnspan 1 -rowspan 1 -padx 1 
+    grid $site_3_0.lab88  -in $site_3_0 -column 1 -row 0 -columnspan 1 -rowspan 1 -padx 1  -sticky ew 
+    frame $top.fra89  -background #cccccc -height 75 -width 125 
+    vTcl:DefineAlias "$top.fra89" "Frame2" vTcl:WidgetProc "Toplevel1" 1
+    set site_3_0 $top.fra89
+    label $site_3_0.lab90  -background #cccccc -text {TODO: Your client area here.} 
+    vTcl:DefineAlias "$site_3_0.lab90" "Label3" vTcl:WidgetProc "Toplevel1" 1
+    pack $site_3_0.lab90  -in $site_3_0 -anchor center -expand 1 -fill none -side top 
+    menu $top.m82  -activeborderwidth 1 -borderwidth 1 -tearoff 1 
+    $top.m82 add cascade  -menu "$top.m82.men83" -label File 
+    set site_3_0 $top.m82
+    menu $site_3_0.men83  -activeborderwidth 1 -tearoff 0 
+    $site_3_0.men83 add command  -accelerator {Ctrl + O} -command {# TODO: Your menu handler here}  -label Open... 
+    $site_3_0.men83 add command  -accelerator {Ctrl + S} -command {# TODO: Your menu handler here}  -label Save 
+    $site_3_0.men83 add command  -command {# TODO: Your menu handler here} -label {Save As...} 
+    $site_3_0.men83 add separator
+    $site_3_0.men83 add command  -accelerator {Ctrl + P} -command {# TODO: Your menu handler here}  -label Print... 
+    $site_3_0.men83 add separator
+    $site_3_0.men83 add command  -accelerator {Ctrl + Q} -command {# TODO: Your menu handler here}  -label Exit -command exit
+    $top.m82 add cascade  -menu "$top.m82.men84" -label Edit 
+    set site_3_0 $top.m82
+    menu $site_3_0.men84  -activeborderwidth 1 -tearoff 0 
+    $site_3_0.men84 add command  -accelerator {Ctrl + X} -command {# TODO: Your menu handler here}  -label Cut 
+    $site_3_0.men84 add command  -accelerator {Ctrl + C} -command {# TODO: Your menu handler here}  -label Copy 
+    $site_3_0.men84 add command  -accelerator {Ctrl + V} -command {# TODO: Your menu handler here}  -label Paste 
+    $site_3_0.men84 add separator
+    $site_3_0.men84 add command  -accelerator {Ctrl + A} -command {# TODO: Your menu handler here}  -label {Select All} 
+    $site_3_0.men84 add command  -command {# TODO: Your menu handler here} -label {Select None} 
+    $top.m82 add cascade  -menu "$top.m82.men85" -label Help 
+    set site_3_0 $top.m82
+    menu $site_3_0.men85  -activeborderwidth 1 -tearoff 0 
+    $site_3_0.men85 add command  -accelerator F1 -command {# TODO: Your menu handler here}  -label Index 
+    $site_3_0.men85 add separator
+    $site_3_0.men85 add command  -accelerator {Shift + F1}  -command {tk_messageBox -message "My Application (C) Myself" -title "My Application"}  -label About... 
+    ###################
+    # SETTING GEOMETRY
+    ###################
+    pack $top.fra86  -in $top -anchor center -expand 0 -fill x -side bottom 
+    grid columnconf $top.fra86 1 -weight 1
+    pack $top.fra89  -in $top -anchor center -expand 1 -fill both -side top 
+
+    vTcl:FireEvent $base <<Ready>>
+}
+
+}
+
 
 
