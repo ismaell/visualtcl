@@ -34,7 +34,6 @@ MegaWidget	yes
 InsertCmd	vTcl:widget:combobox:inscmd
 
 proc vTcl:widget:combobox:inscmd {target} {
-
     $target insert list end {Item 1}
     $target insert list end {Item 2}
     $target insert list end {Item 3}
