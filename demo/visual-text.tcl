@@ -1596,13 +1596,17 @@ global filename widget tk_strictMotif
 
 namespace eval ::visual_text {
 
-proc {::visual_text::command-save} {mainw} {
+proc {::visual_text::command-save} {mainw {interactive 0}} {
 global filename tk_strictMotif widget
 
-    set old $tk_strictMotif
-    set tk_strictMotif 0
-    set file [tk_getSaveFile  -defaultextension {.ttd}   -initialdir .  -filetypes {{{Rich Tcl Text} *.ttd TEXT} {all *.* TEXT}}  -initialfile $filename  -title "Save..."]
-    set tk_strictMotif $old
+    if {$interactive || ($filename == "")} {
+        set old $tk_strictMotif
+        set tk_strictMotif 0
+        set file [tk_getSaveFile  -defaultextension {.ttd}   -initialdir .  -filetypes {{{Rich Tcl Text} *.ttd TEXT} {all *.* TEXT}}  -initialfile $filename  -title "Save..."]
+        set tk_strictMotif $old
+    } else {
+        set file $filename
+    }
 
     if {$file != ""} {
 	set filename $file
@@ -1834,17 +1838,30 @@ return [lindex $opts $index]
 
 proc {main} {argc argv} {
 global widget
+global vTcl
 wm protocol .top21 WM_DELETE_WINDOW {exit}
 
 ::edit_tag::init_edit_tag $widget(EditTag)
 ::about::init
 
 ## set commands for toolbar buttons
-::bitmapbutton::set_command $widget(ToolbarButtonSave)  {tk_messageBox -message {to implement!}}
-::bitmapbutton::set_command $widget(ToolbarButtonNew)   {::visual_text::command-new %top}
-::bitmapbutton::set_command $widget(ToolbarButtonCut)   {tk_messageBox -message {to implement!}}
-::bitmapbutton::set_command $widget(ToolbarButtonCopy)  {tk_messageBox -message {to implement!}}
-::bitmapbutton::set_command $widget(ToolbarButtonPaste) {tk_messageBox -message {to implement!}}
+::bitmapbutton::set_command $widget(ToolbarButtonSave)  {
+    ::visual_text::command-save %top}
+::bitmapbutton::set_command $widget(ToolbarButtonNew)   {
+    ::visual_text::command-new %top}
+::bitmapbutton::set_command $widget(ToolbarButtonCut)   {
+    tk_textCut   $widget(%top,MainText)}
+::bitmapbutton::set_command $widget(ToolbarButtonCopy)  {
+    tk_textCopy  $widget(%top,MainText)}
+::bitmapbutton::set_command $widget(ToolbarButtonPaste) {
+    tk_textPaste $widget(%top,MainText)}
+
+## if not running vTcl, we use our own bindings for the text widget
+if {![winfo exists .vTcl]} {
+    bind Text <Control-Key-c> {}
+    bind Text <Control-Key-x> {}
+    bind Text <Control-Key-v> {}
+}
 }
 
 proc init {argc argv} {
@@ -1966,7 +1983,7 @@ proc vTclWindow.top21 {base {container 0}} {
     vTcl:toplevel $base -class Toplevel \
         -menu "$base.m26" 
     wm focusmodel $base passive
-    wm geometry $base 678x575+125+63; update
+    wm geometry $base 678x575+129+83; update
     wm maxsize $base 1009 738
     wm minsize $base 100 1
     wm overrideredirect $base 0
@@ -2002,33 +2019,33 @@ proc vTclWindow.top21 {base {container 0}} {
         -borderwidth 2 -width 2 
     bindtags $base.cpd23.01.fra18.cpd23.centerframe.rightframe "$base.cpd23.01.fra18.cpd23.centerframe.rightframe Frame $base all BitmapButtonSub2"
     frame $base.cpd23.01.fra18.cpd23.centerframe.05 \
-        -borderwidth 1
+        -borderwidth 1 
     bindtags $base.cpd23.01.fra18.cpd23.centerframe.05 "$base.cpd23.01.fra18.cpd23.centerframe.05 Frame $base all BitmapButtonSub2"
     label $base.cpd23.01.fra18.cpd23.centerframe.05.06 \
         -borderwidth 0 -height 20 \
         -image [vTcl:image:get_image [file join / home cgavin vtcl images edit save.gif]] \
-        -text label
+        -text label 
     bindtags $base.cpd23.01.fra18.cpd23.centerframe.05.06 "$base.cpd23.01.fra18.cpd23.centerframe.05.06 Label $base all BitmapButtonSub3"
     label $base.cpd23.01.fra18.cpd23.centerframe.05.07 \
-        -borderwidth 1 -padx 1 -text Save -width 5
+        -borderwidth 1 -padx 1 -text Save -width 5 
     bindtags $base.cpd23.01.fra18.cpd23.centerframe.05.07 "$base.cpd23.01.fra18.cpd23.centerframe.05.07 Label $base all BitmapButtonSub3"
     frame $base.cpd23.01.fra18.cpd23.downframe \
-        -borderwidth 2 -height 2 -relief groove
+        -borderwidth 2 -height 2 -relief groove 
     bindtags $base.cpd23.01.fra18.cpd23.downframe "$base.cpd23.01.fra18.cpd23.downframe Frame $base all BitmapButtonSub1"
     frame $base.cpd23.01.fra18.cpd19 \
-        -borderwidth 2 -relief raised -takefocus 1
+        -borderwidth 2 -relief raised -takefocus 1 
     bindtags $base.cpd23.01.fra18.cpd19 "$base.cpd23.01.fra18.cpd19 Frame $base all BitmapButtonTop"
     frame $base.cpd23.01.fra18.cpd19.upframe \
-        -borderwidth 2 -height 3
+        -borderwidth 2 -height 3 
     bindtags $base.cpd23.01.fra18.cpd19.upframe "$base.cpd23.01.fra18.cpd19.upframe Frame $base all BitmapButtonSub1"
     frame $base.cpd23.01.fra18.cpd19.centerframe \
-        -borderwidth 2
+        -borderwidth 2 
     bindtags $base.cpd23.01.fra18.cpd19.centerframe "$base.cpd23.01.fra18.cpd19.centerframe Frame $base all BitmapButtonSub1"
     frame $base.cpd23.01.fra18.cpd19.centerframe.leftframe \
-        -borderwidth 2 -width 3
+        -borderwidth 2 -width 3 
     bindtags $base.cpd23.01.fra18.cpd19.centerframe.leftframe "$base.cpd23.01.fra18.cpd19.centerframe.leftframe Frame $base all BitmapButtonSub2"
     frame $base.cpd23.01.fra18.cpd19.centerframe.rightframe \
-        -borderwidth 2 -width 2
+        -borderwidth 2 -width 2 
     bindtags $base.cpd23.01.fra18.cpd19.centerframe.rightframe "$base.cpd23.01.fra18.cpd19.centerframe.rightframe Frame $base all BitmapButtonSub2"
     frame $base.cpd23.01.fra18.cpd19.centerframe.05 \
         -borderwidth 1 
@@ -2258,10 +2275,11 @@ break
         -image {} -label Open... 
     $base.m26.men27 add command \
         -accelerator {Ctrl + S} -command {# TODO: Your menu handler here} \
-        -image {} -label Save 
+        -command [list vTcl:DoCmdOption $base.m26.men27 {::visual_text::command-save %top}] \
+        -image {} -label Save
     $base.m26.men27 add command \
         -accelerator {} \
-        -command [list vTcl:DoCmdOption $base.m26.men27 {::visual_text::command-save %top}] \
+        -command [list vTcl:DoCmdOption $base.m26.men27 {::visual_text::command-save %top 1}] \
         -image {} -label {Save As...} 
     $base.m26.men27 add separator
     $base.m26.men27 add command \
@@ -2269,13 +2287,16 @@ break
     menu $base.m26.men28 \
         -tearoff 0 
     $base.m26.men28 add command \
-        -accelerator {Ctrl + X} -command {# TODO: Your menu handler here} \
+        -accelerator {Ctrl + X} \
+        -command [list vTcl:DoCmdOption $base.m26.men28 {tk_textCut   $widget(%top,MainText)}] \
         -image {} -label Cut 
     $base.m26.men28 add command \
-        -accelerator {Ctrl + C} -command {# TODO: Your menu handler here} \
+        -accelerator {Ctrl + C} \
+        -command [list vTcl:DoCmdOption $base.m26.men28 {tk_textCopy   $widget(%top,MainText)}] \
         -image {} -label Copy 
     $base.m26.men28 add command \
-        -accelerator {Ctrl + V} -command {# TODO: Your menu handler here} \
+        -accelerator {Ctrl + V} \
+        -command [list vTcl:DoCmdOption $base.m26.men28 {tk_textPaste   $widget(%top,MainText)}] \
         -image {} -label Paste 
     $base.m26.men28 add separator
     $base.m26.men28 add command \
@@ -2361,7 +2382,7 @@ break
         -side bottom 
     pack $base.cpd23.01.fra18.fra24 \
         -in $base.cpd23.01.fra18 -anchor center -expand 0 -fill none \
-        -side left 
+        -side left
     pack $base.cpd23.01.fra18.cpd20 \
         -in $base.cpd23.01.fra18 -anchor center -expand 0 -fill none -padx 5 \
         -pady 5 -side left 
@@ -2421,7 +2442,7 @@ break
         -side left 
     pack $base.cpd23.01.fra18.cpd22.upframe \
         -in $base.cpd23.01.fra18.cpd22 -anchor center -expand 0 -fill none \
-        -side top
+        -side top 
     pack $base.cpd23.01.fra18.cpd22.centerframe \
         -in $base.cpd23.01.fra18.cpd22 -anchor center -expand 0 -fill none \
         -side top 
@@ -2619,7 +2640,7 @@ proc vTclWindow.top22 {base {container 0}} {
 ::edit_tag::update_sample [winfo toplevel %W]
     }
     label $base.fra27.fra29.lab23 \
-        -background #000000 -text Foregnd 
+        -background #000000 -text Foregnd
     bind $base.fra27.fra29.lab23 <Button-1> {
         %W configure -background [tk_chooseColor -initialcolor [%W cget -background]]
 ::edit_tag::update_sample [winfo toplevel %W]
@@ -2677,7 +2698,7 @@ proc vTclWindow.top22 {base {container 0}} {
         -in $base.fra27 -anchor center -expand 0 -fill y -side right 
     pack $base.fra27.fra29.fra30 \
         -in $base.fra27.fra29 -anchor center -expand 0 -fill none -ipadx 2 \
-        -ipady 2 -side top 
+        -ipady 2 -side top
     pack $base.fra27.fra29.fra30.lab34 \
         -in $base.fra27.fra29.fra30 -anchor center -expand 0 -fill none \
         -side left 
@@ -2705,7 +2726,7 @@ proc vTclWindow.top22 {base {container 0}} {
     pack $base.fra27.fra29.rad42 \
         -in $base.fra27.fra29 -anchor center -expand 0 -fill x -side top 
     pack $base.fra27.fra29.rad43 \
-        -in $base.fra27.fra29 -anchor center -expand 0 -fill x -side top 
+        -in $base.fra27.fra29 -anchor center -expand 0 -fill x -side top
     pack $base.fra27.fra29.lab22 \
         -in $base.fra27.fra29 -anchor center -expand 0 -fill x -padx 2 \
         -pady 1 -side top 
@@ -2719,7 +2740,7 @@ proc vTclWindow.top22 {base {container 0}} {
     grid columnconf $base.cpd44 0 -weight 1
     grid rowconf $base.cpd44 0 -weight 1
     grid $base.cpd44.01 \
-        -in $base.cpd44 -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew 
+        -in $base.cpd44 -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew
     grid $base.cpd44.02 \
         -in $base.cpd44 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns 
     grid $base.cpd44.03 \
@@ -2743,6 +2764,12 @@ bind "FlatToolbarButton" <Enter> {
 bind "FlatToolbarButton" <Leave> {
     %W configure -relief flat
 }
+bind "Accelerators" <Control-Key-c> {
+    ## Visual Tcl already has bindings for text widgets
+if {![info exists vTcl]} {
+    tk_textCopy $widget([winfo toplevel %W],MainText)
+}
+}
 bind "Accelerators" <Control-Key-n> {
     ::visual_text::command-new [winfo toplevel %W]
 }
@@ -2754,6 +2781,18 @@ bind "Accelerators" <Control-Key-q> {
 }
 bind "Accelerators" <Control-Key-s> {
     ::visual_text::command-save [winfo toplevel %W]
+}
+bind "Accelerators" <Control-Key-v> {
+    ## Visual Tcl already has bindings for text widgets
+if {![info exists vTcl]} {
+    tk_textPaste $widget([winfo toplevel %W],MainText)
+}
+}
+bind "Accelerators" <Control-Key-x> {
+    ## Visual Tcl already has bindings for text widgets
+if {![info exists vTcl]} {
+    tk_textCut $widget([winfo toplevel %W],MainText)
+}
 }
 bind "Accelerators" <Key-F1> {
     AboutVisualText show

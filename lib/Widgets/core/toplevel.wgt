@@ -69,6 +69,7 @@ proc vTcl:widget:toplevel:inscmd {target} {
 
 proc vTcl:widget:toplevel:deletecmd {target} {
     global vTcl
+
     set vTcl(tops) [lremove $vTcl(tops) $target]
     destroy $target
     namespace delete ::$target

@@ -136,6 +136,7 @@ proc vTcl:delete {{w ""}} {
 
     if {[vTcl:streq $n "."]} {
         vTcl:prop:clear
+        ::widgets_bindings::init_ui
         return
     }
 

@@ -1,6 +1,7 @@
 ChangeLog for Visual Tcl:
 
 1.51b4 -> 1.51
+    o When a toplevel is destroyed, refresh the bindings editor
     o Added bitmapbutton compound and test app in demo folder
     o Added toolbar buttons to visual text application
     o Added horizontal scrollbars to command and proc editors
