@@ -85,6 +85,7 @@ eval exec cp [glob $bldroot/lib/Help/WidgetTree]          $copyroot/lib/Help
 eval exec cp [glob $bldroot/lib/Help/Tips]                $copyroot/lib/Help
 eval exec cp [glob $bldroot/lib/Help/About.txt]           $copyroot/lib/Help
 eval exec cp [glob $bldroot/lib/Help/about.ttd]           $copyroot/lib/Help
+eval exec cp [glob $bldroot/lib/Help/reference.ttd]       $copyroot/lib/Help
 eval exec cp [glob $bldroot/lib/Widgets/bwidget/*.*]      $copyroot/lib/Widgets/bwidget
 eval exec cp [glob $bldroot/lib/Widgets/core/*.*]         $copyroot/lib/Widgets/core
 eval exec cp [glob $bldroot/lib/Widgets/tix/*.*]          $copyroot/lib/Widgets/tix
@@ -109,8 +110,30 @@ eval exec cp [glob $bldroot/demo/tutorial/core/*.tcl]     $copyroot/demo/tutoria
 eval exec cp [glob $bldroot/demo/tutorial/megawidgets/imagelist/*.tcl]     $copyroot/demo/tutorial/megawidgets/imagelist
 eval exec cp [glob $bldroot/demo/tutorial/megawidgets/imagelist/*.txt]     $copyroot/demo/tutorial/megawidgets/imagelist
 eval exec cp [glob $bldroot/demo/tutorial/megawidgets/databaseview/*.tcl]  $copyroot/demo/tutorial/megawidgets/databaseview
+eval exec cp [glob $bldroot/demo/tutorial/megawidgets/databaseview/*.txt]  $copyroot/demo/tutorial/megawidgets/databaseview
 eval exec cp [glob $bldroot/demo/tutorial/megawidgets/listviewer/*.tcl]     $copyroot/demo/tutorial/megawidgets/listviewer
 eval exec cp [glob $bldroot/sample/*.tcl]                 $copyroot/sample
+
+# stuff to get rid of
+file delete -force $copyroot/demo/bitmapbutton_compound.tcl
+file delete -force $copyroot/demo/bitmapbutton_compound2.tcl
+file delete -force $copyroot/demo/bitmapbutton_test.tcl
+file delete -force $copyroot/demo/bitmapbutton_test_2.tcl
+file delete -force $copyroot/demo/ex1_cmpd.tcl
+file delete -force $copyroot/demo/makeunix.tcl
+file delete -force $copyroot/demo/test1compound.tcl
+file delete -force $copyroot/lib/makeunix.tcl
+file delete -force $copyroot/lib/bwidget/makeunix.tcl
+file delete -force $copyroot/lib/Widgets/bwidget/makeunix.tcl
+file delete -force $copyroot/lib/Widgets/core/makeunix.tcl
+file delete -force $copyroot/lib/Widgets/itcl/makeunix.tcl
+file delete -force $copyroot/lib/Widgets/tix/makeunix.tcl
+file delete -force $copyroot/lib/Widgets/blt/makeunix.tcl
+file delete -force $copyroot/lib/Widgets/vtcl/makeunix.tcl
+file delete -force $copyroot/demo/tutorial/core/makeunix.tcl
+file delete -force $copyroot/demo/tutorial/megawidgets/databaseview/makeunix.tcl
+file delete -force $copyroot/demo/tutorial/megawidgets/imagelist/makeunix.tcl
+file delete -force $copyroot/demo/tutorial/megawidgets/listviewer/makeunix.tcl
 
 # temp for the alpha version
 file delete -force $copyroot/lib/lib_user.tcl
