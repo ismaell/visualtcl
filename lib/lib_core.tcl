@@ -373,6 +373,10 @@ set vTcl(option,translate,-command) vTcl:core:commandtranslate
 set vTcl(option,noencase,-command) 1
 set vTcl(option,noencasewhen,-command) vTcl:core:noencasecommandwhen
 
+set vTcl(option,translate,-listvariable) vTcl:core:variabletranslate
+set vTcl(option,noencase,-listvariable) 1
+set vTcl(option,noencasewhen,-listvariable) vTcl:core:noencasewhen
+
 set vTcl(option,translate,-variable) vTcl:core:variabletranslate
 set vTcl(option,noencase,-variable) 1
 set vTcl(option,noencasewhen,-variable) vTcl:core:noencasewhen
@@ -633,6 +637,8 @@ namespace eval ::vTcl::itemEdit {
     variable counter
     variable suffix
     variable current
+    variable allOptions
+    variable enableData
     set counter 0
 
     proc edit {target cmds} {
@@ -657,9 +663,33 @@ namespace eval ::vTcl::itemEdit {
         set current($top) [lindex $list_items 0]
         set list_items [lrange $list_items 1 end]
         set ::${top}::list_items $list_items
-        ${top}.ItemsListbox selection set $current($top)
         initProperties $top
+        selectItem $top $current($top)
         wm title $top [::$cmds($top)::getTitle $w]
+    }
+
+    ## find the superset of all options for all subitems
+    proc allOptions {top} {
+        variable cmds
+        variable target
+
+        set optionsList ""
+        if {[info proc ::$cmds($top)::getMinimumOptions] != ""} {
+            return [::$cmds($top)::getMinimumOptions]
+        }
+
+        ## how many subitems ?
+        set size [llength [vTcl:at ::${top}::list_items]]
+        for {set i 0} {$i < $size} {incr i} {
+            set conf [::$cmds($top)::itemConfigure $target($top) $i]
+            foreach option $conf {
+                lappend optionsList [lindex $option 0]
+            }
+        }
+
+        ## remove duplicates
+        set optionsList [vTcl:lrmdups $optionsList]
+        return $optionsList
     }
 
     proc initProperties {top} {
@@ -667,15 +697,15 @@ namespace eval ::vTcl::itemEdit {
         variable target
         variable suffix
         variable current
+        variable allOptions
+        variable enableData
 
-        set properties [::$cmds($top)::itemConfigure $target($top) $current($top)]
+        set options [allOptions $top]
+        set allOptions($top) $options
 
-        ## let's just assume that all subitems have the same properties
-        foreach property $properties {
-            set option [lindex $property 0]
-            set value  [lindex $property 4]
+        foreach option $options {
             set variable ::vTcl::itemEdit::${option}_$suffix($top)
-            set $variable $value
+            set $variable ""
             set f $::widget(${top},PropertiesFrame).$option
             frame $f
             set config_cmd "
@@ -683,17 +713,19 @@ namespace eval ::vTcl::itemEdit {
                    \[vTcl:at ::vTcl::itemEdit::current($top)\] \
                    $option \[vTcl:at $variable\]
                "
-            ::vTcl::ui::attributes::newAttribute \
-                $target($top) $f $option $variable $config_cmd
+            set enableData($top,$option) [::vTcl::ui::attributes::newAttribute \
+                $target($top) $f $option $variable $config_cmd]
             pack $f -side top -fill x -expand 0
         }
 
         ## the label option is kinda special, it updates the label in the
         ## listbox as well
         set labelOption [::$cmds($top)::getLabelOption]
-        set variable ::vTcl::itemEdit::${labelOption}_$suffix($top)
-        trace variable $variable w \
-            "::vTcl::itemEdit::setLabel $top $labelOption $variable"
+        if {$labelOption != ""} {
+            set variable ::vTcl::itemEdit::${labelOption}_$suffix($top)
+            trace variable $variable w \
+                "::vTcl::itemEdit::setLabel $top $labelOption $variable"
+        }
 
         ## calculate the scrolling region
         update idletasks
@@ -719,6 +751,8 @@ namespace eval ::vTcl::itemEdit {
         variable target
         variable suffix
         variable current
+        variable allOptions
+        variable enableData
 
         ${top}.ItemsListbox selection clear 0 end
         ${top}.ItemsListbox selection set $index
@@ -730,6 +764,16 @@ namespace eval ::vTcl::itemEdit {
             set value  [lindex $property 4]
             set variable ::vTcl::itemEdit::${option}_$suffix($top)
             set $variable $value
+            lappend currentOptions $option
+        }
+
+        foreach option $allOptions($top) {
+            # enable/disable option if it does/does not apply to subitem
+            if {[lsearch -exact $currentOptions $option] == -1} {
+                ::vTcl::ui::attributes::enableAttribute $enableData($top,$option) 0
+            } else {
+                ::vTcl::ui::attributes::enableAttribute $enableData($top,$option) 1
+            }
         }
     }
 
@@ -738,20 +782,22 @@ namespace eval ::vTcl::itemEdit {
         variable target
         variable suffix
         variable current
+        variable allOptions
+        variable enableData
 
         destroy $top
         ## clean up after ourselves
-        set properties [::$cmds($top)::itemConfigure $target($top) $current($top)]
-        foreach property $properties {
-            set option [lindex $property 0]
+        foreach option $allOptions($top) {
             set variable ${option}_$suffix($top)
             variable $variable
             unset $variable
+            unset enableData($top,$option)
         }
         unset cmds($top)
         unset target($top)
         unset suffix($top)
         unset current($top)
+        unset allOptions($top)
     }
 
     proc addItem {top} {
@@ -759,6 +805,8 @@ namespace eval ::vTcl::itemEdit {
         variable target
 
         set added [::$cmds($top)::addItem $target($top)]
+        ## user canceled ?
+        if {$added == ""} {return}
         lappend ::${top}::list_items $added
         set length [llength [vTcl:at ::${top}::list_items]]
         vTcl:setup_bind_tree $target($top)

@@ -36,6 +36,10 @@ DumpCmd         vTcl::widgets::iwidgets::toolbar::dumpCmd
 CompoundCmd     vTcl::widgets::iwidgets::toolbar::compoundCmd
 GetImagesCmd    vTcl::widgets::iwidgets::toolbar::getImagesCmd
 GetFontsCmd     vTcl::widgets::iwidgets::toolbar::getFontsCmd
+Function        "Edit Toolbar..." vTcl::widgets::iwidgets::toolbar::editToolbar
+
+NewOption -helpstr     "help str"    type
+NewOption -balloonstr  "balloon str" type
 
 namespace eval vTcl::widgets::iwidgets::toolbar {
 
@@ -52,17 +56,27 @@ namespace eval vTcl::widgets::iwidgets::toolbar {
                 -command {tk_messageBox -message {TODO: Save Command handler here!}}
     }
 
-    proc dumpCmd {target basename} {
-        set result [vTcl:dump_widget_opt $target $basename]
+    proc getSortedComponents {target} {
         set components [$target component]
+        if {[lempty $components]} {return ""}
         foreach component $components {
             if {$component == "hull"} {continue}
             set path [$target component $component]
+            if {![winfo exists $path]} {continue}
             set x [winfo x $path]
             set sorted($x) $component
         }
+        set result ""
         foreach index [lsort -integer [array names sorted]] {
-            set component $sorted($index)
+            lappend result $sorted($index)
+        }
+        return $result
+    }
+
+    proc dumpCmd {target basename} {
+        set result [vTcl:dump_widget_opt $target $basename]
+
+        foreach component [getSortedComponents $target] {
             set path [$target component $component]
             set class [vTcl:get_class $path]
 
@@ -82,15 +96,7 @@ namespace eval vTcl::widgets::iwidgets::toolbar {
     ##
     proc compoundCmd {target} {
         set result ""
-        set components [$target component]
-        foreach component $components {
-            if {$component == "hull"} {continue}
-            set path [$target component $component]
-            set x [winfo x $path]
-            set sorted($x) $component
-        }
-        foreach index [lsort -integer [array names sorted]] {
-            set component $sorted($index)
+        foreach component [getSortedComponents $target] {
             set path [$target component $component]
             set class [string tolower [vTcl:get_class $path]]
 
@@ -104,7 +110,7 @@ namespace eval vTcl::widgets::iwidgets::toolbar {
 
     proc getOptionsCmd {target option} {
         set result ""
-        foreach component [$target component] {
+        foreach component [getSortedComponents $target] {
             if {$component == "hull"} {continue}
             set value ""
             catch {set value [$target itemcget $component $option]}
@@ -121,5 +127,195 @@ namespace eval vTcl::widgets::iwidgets::toolbar {
 
     proc getFontsCmd {target} {
         return [getOptionsCmd $target -font]
+    }
+
+    proc editToolbar {} {
+        set target $::vTcl(w,widget)
+        ::vTcl::itemEdit::edit $target vTcl::widgets::iwidgets::toolbar::edit
+    }
+
+    namespace export getSortedComponents
+}
+
+proc vTclWindow.vTcl.addToolbarItem {base} {
+    if {$base == ""} {
+        set base .vTcl.addToolbarItem
+    }
+    if {[winfo exists $base]} {
+        wm deiconify $base; return
+    }
+
+    global widget
+
+    vTcl:DefineAlias $base AddToolbarItem vTcl:Toplevel:WidgetProc "" 1
+    vTcl:DefineAlias $base.fra59.but60 AddButton vTcl:WidgetProc "AddToolbarItem" 1
+
+    ###################
+    # CREATING WIDGETS
+    ###################
+    vTcl:toplevel $base -class Toplevel
+    wm geometry $base 296x209
+    wm focusmodel $base passive
+    wm maxsize $base 1009 738
+    wm minsize $base 1 1
+    wm overrideredirect $base 0
+    wm resizable $base 1 1
+    wm withdraw $base
+    wm title $base "Add Toolbar Item"
+    bindtags $base "$base Toplevel all _TopLevel"
+    vTcl:FireEvent $base <<Create>>
+    wm protocol $base WM_DELETE_WINDOW "vTcl:FireEvent $base <<DeleteWindow>>"
+
+    frame $base.fra58 \
+        -borderwidth 2
+    label $base.fra58.lab65 \
+        -anchor w -justify left -text {Select the type of item to add:}
+    ScrolledWindow $base.fra58.scr56 \
+        -size 14
+    listbox $base.fra58.scr56._grid.f.lis57 \
+        -background white -height 0 -listvariable "$base\::classes"
+    bind $base.fra58.scr56._grid.f.lis57 <<ListboxSelect>> {
+        set index [lindex [%W curselection] 0]
+        if {$index != ""} {
+            set [winfo toplevel %W]::selected [%W get $index]
+            AddToolbarItem.AddButton configure -state normal
+        }
+    }
+
+    $base.fra58.scr56 setwidget $base.fra58.scr56._grid.f.lis57
+    frame $base.fra59 \
+        -borderwidth 2 -height 75 -width 125
+    button $base.fra59.but60 \
+        -text Add -width 8 -command "destroy $base" -state disabled
+    button $base.fra59.but61 \
+        -text Cancel -width 8 -command "set ${base}::selected {}; destroy $base"
+    ###################
+    # SETTING GEOMETRY
+    ###################
+    pack $base.fra58 \
+        -in $base -anchor center -expand 1 -fill both -side top
+    pack $base.fra58.lab65 \
+        -in $base.fra58 -anchor center -expand 0 -fill x -side top
+    pack $base.fra58.scr56 \
+        -in $base.fra58 -anchor center -expand 1 -fill both -side top
+    pack $base.fra59 \
+        -in $base -anchor center -expand 0 -fill none -ipady 5 -side top
+    pack $base.fra59.but60 \
+        -in $base.fra59 -anchor center -expand 0 -fill none -padx 5 \
+        -side left
+    pack $base.fra59.but61 \
+        -in $base.fra59 -anchor center -expand 0 -fill none -padx 5 \
+        -side left
+
+    ## Initialization
+    set ${base}::classes {Button Radiobutton Checkbutton Frame Label}
+    set ${base}::selected ""
+
+    vTcl:FireEvent $base <<Ready>>
+    vTcl:center $base 296 209
+    wm deiconify $base
+}
+
+namespace eval vTcl::widgets::iwidgets::toolbar::edit {
+
+    namespace import ::vTcl::widgets::iwidgets::toolbar::getSortedComponents
+
+    proc getTitle {target} {
+        return "Edit toolbar for $target"
+    }
+
+    proc getMinimumOptions {} {
+        set result ""
+        foreach class {Button Radiobutton Checkbutton Frame Label} {
+            $::classes($class,createCmd) .tmp__001
+            set options [.tmp__001 configure]
+            foreach option $options {
+                if {[llength $option] != 5} {continue}
+                lappend result [lindex $option 0]
+            }
+            destroy .tmp__001
+        }
+        lappend result -helpstr -balloonstr
+        set result [vTcl:lrmdups $result]
+        return [lsort $result]
+    }
+
+    proc getLabelOption {} {
+        return ""
+    }
+
+    proc getItems {target} {
+        ## first item in the list is the current index
+        set values 0
+        set index 0
+        foreach component [getSortedComponents $target] {
+            set value "item $index"
+            set path [$target component $component]
+            set class [vTcl:get_class $path]
+            lappend values "$value ($class)"
+            incr index
+        }
+        return $values
+    }
+
+    proc addItem {target} {
+        Window show .vTcl.addToolbarItem
+        AddToolbarItem ShowModal
+        set class [vTcl:at .vTcl.addToolbarItem::selected]
+        if {$class == ""} return ""
+
+        ## find unique component name
+        set index 0
+        set components [getSortedComponents $target]
+        set component item$index
+        while {[lsearch -exact $components $component] != -1} {
+            incr index
+            set component item$index
+        }
+
+        ## add an item of given class
+        set options {}
+        switch $class {
+            Button      {set options "-text Button"}
+            Radiobutton {set options "-text Radio"}
+            Checkbutton {set options "-text Check"}
+            Frame       {set options "-width 10 -relief flat"}
+            Label       {set options "-text Label"}
+        }
+        $target add $::classes($class,createCmd) $component
+        eval $target itemconfigure $component $options
+
+        if {$::vTcl(w,widget) == $target} {
+            vTcl:place_handles $target
+        }
+        set last [$target index end]
+        return "item $last ($class)"
+    }
+
+    proc removeItem {target index} {
+        $target delete $index
+        if {$::vTcl(w,widget) == $target} {
+            vTcl:place_handles $target
+        }
+    }
+
+    proc itemConfigure {target index args} {
+        if {$args == ""} {
+            set options [$target itemconfigure $index]
+            set result ""
+            foreach option $options {
+                ## only return valid options
+                if {[llength $option] == 5} {
+                    lappend result $option
+                }
+            }
+            return $result
+        } else {
+            eval $target itemconfigure $index $args
+        }
+    }
+
+    proc moveUpOrDown {target index direction} {
+        error "Not implemented yet!"
     }
 }

@@ -34,6 +34,11 @@ DeleteCmd       ::vTcl::widgets::core::frame::deleteCmd
 SelectCmd       ::vTcl::widgets::core::frame::selectCmd
 InsertChildCmd  ::vTcl::widgets::core::frame::insertChildCmd
 
+NewOption -class     "class"      type
+NewOption -colormap  "color map"  type
+NewOption -container "container"  boolean
+NewOption -visual    "visual"     type
+
 namespace eval ::vTcl::widgets::core::frame {
 
     proc containing_megawidget {target} {

@@ -58,6 +58,16 @@ proc vTcl:toolbar_label {args} {
     bind $path <Leave> "%W configure -relief flat"
 }
 
+# special button that triggers its command on ButtonRelease
+proc vTcl:special_button {path args} {
+    eval button $path $args
+    set command [$path cget -command]
+    $path configure -command {}
+    bind _${path}_release <ButtonRelease-1> \
+        "if \{\[$path cget -state\] != \"disabled\"\} \{uplevel #0 [list $command]\}"
+    bindtags $path [concat [bindtags $path] _${path}_release]
+}
+
 proc vTcl:portable_filename {filename} {
     set result "\[file join "
     append result "[file split $filename]"
@@ -1196,6 +1206,15 @@ namespace eval ::vTcl::ui::attributes {
         eval $config_cmd
     }
 
+    proc enableAttribute {enableData enable} {
+        set state(1) normal
+        set state(0) disabled
+        foreach widget $enableData {
+            $widget configure -state $state($enable)
+        }
+    }
+
+    ## returns: a string used to enable/disable the option
     proc newAttribute {target top option variable config_cmd} {
         set class $::vTcl(w,class)
 	if {[info exists ::specialOpts($class,$option,type)]} {
@@ -1221,6 +1240,7 @@ namespace eval ::vTcl::ui::attributes {
         ## the option value
         set base $top.t${option}
         set focusControl $base
+        set enableData $label
 
         switch $type {
             boolean {
@@ -1232,12 +1252,14 @@ namespace eval ::vTcl::ui::attributes {
                     -variable $variable -value 0 -text "No" -relief sunken  \
                     -command "$config_cmd" -padx 0 -pady 1
                 pack ${base}.y ${base}.n -side left -expand 1 -fill both
+                lappend enableData ${base}.y ${base}.n
             }
             choice {
                 ComboBox ${base} -editable 0 -width 12 -values $choices \
                     -modifycmd "vTcl:prop:choice_select ${base} $variable; $config_cmd"
                 trace variable $variable w "vTcl:prop:choice_update ${base} $variable"
                 vTcl:prop:choice_update ${base} $variable
+                lappend enableData ${base}
             }
             color {
                 frame $base
@@ -1246,8 +1268,8 @@ namespace eval ::vTcl::ui::attributes {
                     -highlightthickness 1 -fg black
                 bind ${base}.l <KeyRelease-Return> \
                     "$config_cmd; ${base}.f conf -bg \$$variable"
-                frame ${base}.f -relief raised -bd 2 -width 20 -height 5
-                bind ${base}.f <ButtonPress> \
+                vTcl:special_button ${base}.f -width 2 -highlightthickness 1 -padx 0 -pady 1 \
+                    -command \
                     "::vTcl::ui::attributes::select_color ${base}.f [list $config_cmd] $variable"
                 pack ${base}.l -side left -expand 1 -fill x
                 pack ${base}.f -side right -fill y -pady 1 -padx 1
@@ -1255,6 +1277,7 @@ namespace eval ::vTcl::ui::attributes {
                 trace variable $variable w \
                     "::vTcl::ui::attributes::show_color ${base}.f $variable"
                 ::vTcl::ui::attributes::show_color ${base}.f $variable
+                lappend enableData ${base}.l ${base}.f
             }
             command {
                 frame $base
@@ -1268,6 +1291,7 @@ namespace eval ::vTcl::ui::attributes {
                 pack ${base}.l -side left -expand 1 -fill x
                 pack ${base}.f -side right -fill y -pady 1 -padx 1
 	        set focusControl ${base}.l
+                lappend enableData ${base}.l
             }
             font {
                 frame $base
@@ -1281,6 +1305,7 @@ namespace eval ::vTcl::ui::attributes {
                 pack ${base}.l -side left -expand 1 -fill x
                 pack ${base}.f -side right -fill y -pady 1 -padx 1
                 set focusControl ${base}.l
+                lappend enableData ${base}.l ${base}.f
             }
             image {
                 frame $base
@@ -1294,10 +1319,12 @@ namespace eval ::vTcl::ui::attributes {
                 pack ${base}.l -side left -expand 1 -fill x
                 pack ${base}.f -side right -fill y -pady 1 -padx 1
 	        set focusControl ${base}.l
+                lappend enableData ${base}.l ${base}.f
             }
             default {
                 vTcl:entry $base \
                     -textvariable $variable -width 12 -highlightthickness 1
+                lappend enableData ${base}
 	    }
         }
 
@@ -1306,5 +1333,6 @@ namespace eval ::vTcl::ui::attributes {
 
         grid $label $base -sticky news
         grid columnconf $top 1 -weight 1
+        return $enableData
     }
 }

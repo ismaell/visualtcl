@@ -1,6 +1,7 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Right-click menu to edit Iwidgets toolbar
     o Added icons for vertical/horizontal panedwindow in IWidgets
     o Set reasonable defaults for scrollbar width/border under Unix
     o Toolbar can now be resized
