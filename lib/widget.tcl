@@ -84,7 +84,8 @@ proc vTcl:bind_scrollbar {t1 t2} {
     }
     switch $c1 {
         Listbox -
-        Canvas -
+        Canvas  -
+        Table   -
         Text {
             $t1 conf $scr_cmd "$t2 set"
             $t2 conf -command "$t1 $v_cmd"

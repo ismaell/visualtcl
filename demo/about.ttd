@@ -7,6 +7,8 @@ ttd.tagdef Title -background white -font {-family arial -weight bold -slant roma
 ttd.tagdef Remark -background white -font {-family {times new roman} -weight bold -slant italic -size 12 -underline 0 -overstrike 0} -foreground #000000 -justify left
 ttd.tagdef SubTitle -background #e4e0e8 -font {-family {courier new} -weight bold -slant roman -size 19 -underline 0 -overstrike 0} -foreground #0000f2 -justify center
 ttd.tagdef Copyright -background #ffffff -font {-family arial -weight bold -slant roman -size 12 -underline 0 -overstrike 0} -foreground #7e5c2e -justify left
+ttd.tagdef Body -background white -font {-family arial -weight bold -slant roman -size 10 -underline 0 -overstrike 0} -foreground #000000 -justify left
+ttd.tagdef Body_Title -background white -font {-family arial -weight bold -slant roman -size 11 -underline 0 -overstrike 0} -foreground #000000 -justify left
 
 
 
@@ -28,14 +30,77 @@ ttd.text {
 ttd.text {
 }
 ttd.tagon Copyright
-ttd.text {Copyright (C) Christian Gavin 2001
+ttd.text {Copyright (C) 2001 Christian Gavin
 }
-ttd.text {Copyright (C) Bryan Oakley for text dump/restore code
+ttd.text {Copyright (C) 1999 Bryan Douglas Oakley for text dump/restore code
 }
 ttd.tagoff Copyright
 ttd.text {
 }
 ttd.tagon Remark
-ttd.text {This software is licensed under the GPL software agreement. Please see the LICENSE file for more information.
+ttd.text {This software is licensed under the GPL (GNU Public License). Please see the LICENSE file for more information.
 }
 ttd.tagoff Remark
+ttd.text {
+}
+ttd.tagon Body
+ttd.text {This sample shows a complete application created with Visual Tcl. Its main features are:
+}
+ttd.text {
+}
+ttd.text {- SDI (Single Document Interface)
+}
+ttd.text {- Main menu bar
+}
+ttd.text {- Status bar
+}
+ttd.text {- Advanced text widget programming, use of tags to control the document appearance, how to dump/restore the contents of a text widget
+}
+ttd.text {- A vertical divider
+}
+ttd.text {- Scrolled text compound
+}
+ttd.text {- Scrolled listbox compound
+}
+ttd.text {- Aliases
+}
+ttd.text {- Widget bindings
+}
+ttd.text {
+}
+ttd.tagon Body_Title
+ttd.text {The basics}
+ttd.tagoff Body_Title
+ttd.text {
+}
+ttd.text {
+}
+ttd.text {Visual Text uses tags to control the appearance of documents. To change the text formating, select a bloc of text by clicking with the left mouse button and dragging, or by holding the Shift key pressed while using the cursor keys to mark the selection. Then, in the right hand side of the window, click on the yellowish icon. A dialog box shows up, where you can define a new tag.
+}
+ttd.text {
+}
+ttd.text {Enter the name of the new tag. This tag can be applied later on to any other portion of your document. Choose the font size, the font family, the text justification, foreground and background color. See how it looks in the sample text at the bottom of the dialog. When you are satisfied with the text style, close the dialog by pressing the "OK" button. This will apply the style to the bloc of text you have selected.
+}
+ttd.text {
+}
+ttd.tagon Body_Title
+ttd.text {Reusing a tag}
+ttd.tagoff Body_Title
+ttd.text {
+}
+ttd.text {
+}
+ttd.text {To reuse a tag you have defined earlier, select a bloc of text, then in the upper right side of the window, click on the style you want to apply. If the tag has already been applied to the text, it will be removed for that bloc of text, otherwise it will be applied.
+}
+ttd.text {
+}
+ttd.tagon Body_Title
+ttd.text {Inserting an image}
+ttd.tagoff Body_Title
+ttd.text {
+}
+ttd.text {
+}
+ttd.text {In the "Edit" menu, select "Insert image..." and choose a file in the selector dialog. Press "OK" to dismiss the dialog box. Note: inserting an image inserts a reference to the image file. If you want to transmit the text to someone else, you need to include the image file as well.
+}
+ttd.tagoff Body

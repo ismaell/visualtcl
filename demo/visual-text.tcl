@@ -130,8 +130,48 @@ proc vTcl:image:broken_image {} {
 
 foreach img {
 
-        {{[file join / home cgavin vtcl images edit add.gif]} {} stock {}}
-        {{[file join / home cgavin vtcl images edit remove.gif]} {} stock {}}
+        {{[file join / home cgavin vtcl images edit add.gif]} {} stock {
+R0lGODdhFAAUAPcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwMDcwKbK8AAA
+AAAAKgAAVQAAfwAAqgAA1AAqAAAqKgAqVQAqfwAqqgAq1ABVAABVKgBVVQBV
+fwBVqgBV1AB/AAB/KgB/VQB/fwB/qgB/1ACqAACqKgCqVQCqfwCqqgCq1ADU
+AADUKgDUVQDUfwDUqgDU1CoAACoAKioAVSoAfyoAqioA1CoqACoqKioqVSoq
+fyoqqioq1CpVACpVKipVVSpVfypVqipV1Cp/ACp/Kip/VSp/fyp/qip/1Cqq
+ACqqKiqqVSqqfyqqqiqq1CrUACrUKirUVSrUfyrUqirU1FUAAFUAKlUAVVUA
+f1UAqlUA1FUqAFUqKlUqVVUqf1UqqlUq1FVVAFVVKlVVVVVVf1VVqlVV1FV/
+AFV/KlV/VVV/f1V/qlV/1FWqAFWqKlWqVVWqf1WqqlWq1FXUAFXUKlXUVVXU
+f1XUqlXU1H8AAH8AKn8AVX8Af38Aqn8A1H8qAH8qKn8qVX8qf38qqn8q1H9V
+AH9VKn9VVX9Vf39Vqn9V1H9/AH9/Kn9/VX9/f39/qn9/1H+qAH+qKn+qVX+q
+f3+qqn+q1H/UAH/UKn/UVX/Uf3/Uqn/U1KoAAKoAKqoAVaoAf6oAqqoA1Koq
+AKoqKqoqVaoqf6oqqqoq1KpVAKpVKqpVVapVf6pVqqpV1Kp/AKp/Kqp/Vap/
+f6p/qqp/1KqqAKqqKqqqVaqqf6qqqqqq1KrUAKrUKqrUVarUf6rUqqrU1NQA
+ANQAKtQAVdQAf9QAqtQA1NQqANQqKtQqVdQqf9QqqtQq1NRVANRVKtRVVdRV
+f9RVqtRV1NR/ANR/KtR/VdR/f9R/qtR/1NSqANSqKtSqVdSqf9SqqtSq1NTU
+ANTUKtTUVdTUf9TUqtTU1AAAAAwMDBkZGSYmJjMzMz8/P0xMTFlZWWZmZnJy
+cn9/f4yMjJmZmaWlpbKysr+/v8zMzNjY2OXl5fLy8v/78KCgpICAgP8AAAD/
+AP//AAAA//8A/wD//////ywAAAAAFAAUAAAIWADnCRxIsKDBgwgTKlzIsCA+
+gfj+zcO3r+FDihQBzNOoEeE+iv/wiXwosKNDkQf2VWw4ryK+lCQHmiSITyNF
+ljQRziS4E6fCniV9sgS6sShHo0KTKl26MCAAOw==}}
+        {{[file join / home cgavin vtcl images edit remove.gif]} {} stock {
+R0lGODdhFAAUAPcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwMDcwKbK8AAA
+AAAAKgAAVQAAfwAAqgAA1AAqAAAqKgAqVQAqfwAqqgAq1ABVAABVKgBVVQBV
+fwBVqgBV1AB/AAB/KgB/VQB/fwB/qgB/1ACqAACqKgCqVQCqfwCqqgCq1ADU
+AADUKgDUVQDUfwDUqgDU1CoAACoAKioAVSoAfyoAqioA1CoqACoqKioqVSoq
+fyoqqioq1CpVACpVKipVVSpVfypVqipV1Cp/ACp/Kip/VSp/fyp/qip/1Cqq
+ACqqKiqqVSqqfyqqqiqq1CrUACrUKirUVSrUfyrUqirU1FUAAFUAKlUAVVUA
+f1UAqlUA1FUqAFUqKlUqVVUqf1UqqlUq1FVVAFVVKlVVVVVVf1VVqlVV1FV/
+AFV/KlV/VVV/f1V/qlV/1FWqAFWqKlWqVVWqf1WqqlWq1FXUAFXUKlXUVVXU
+f1XUqlXU1H8AAH8AKn8AVX8Af38Aqn8A1H8qAH8qKn8qVX8qf38qqn8q1H9V
+AH9VKn9VVX9Vf39Vqn9V1H9/AH9/Kn9/VX9/f39/qn9/1H+qAH+qKn+qVX+q
+f3+qqn+q1H/UAH/UKn/UVX/Uf3/Uqn/U1KoAAKoAKqoAVaoAf6oAqqoA1Koq
+AKoqKqoqVaoqf6oqqqoq1KpVAKpVKqpVVapVf6pVqqpV1Kp/AKp/Kqp/Vap/
+f6p/qqp/1KqqAKqqKqqqVaqqf6qqqqqq1KrUAKrUKqrUVarUf6rUqqrU1NQA
+ANQAKtQAVdQAf9QAqtQA1NQqANQqKtQqVdQqf9QqqtQq1NRVANRVKtRVVdRV
+f9RVqtRV1NR/ANR/KtR/VdR/f9R/qtR/1NSqANSqKtSqVdSqf9SqqtSq1NTU
+ANTUKtTUVdTUf9TUqtTU1AAAAAwMDBkZGSYmJjMzMz8/P0xMTFlZWWZmZnJy
+cn9/f4yMjJmZmaWlpbKysr+/v8zMzNjY2OXl5fLy8v/78KCgpICAgP8AAAD/
+AP//AAAA//8A/wD//////ywAAAAAFAAUAAAITADnCRxIsKDBgwgTKkQYIMA/
+hg4NNmz4kCBFiBcFZkw48WHEhRonfgQ5ryPJkCZBmtyIsWLJkRJZlnQZE6ZG
+mgVtDtR5sqfPn0B/BgQAOw==}}
 
             } {
     eval set _file [lindex $img 0]
@@ -272,6 +312,24 @@ proc {vTcl:toplevel} {args} {
 
 if {[info exists vTcl(sourcing)]} {
 proc vTcl:project:info {} {
+    namespace eval ::widgets::.top18 {
+        array set save {}
+    }
+    namespace eval ::widgets::.top18.cpd19 {
+        array set save {-borderwidth 1 -height 1 -relief 1 -width 1}
+    }
+    namespace eval ::widgets::.top18.cpd19.01 {
+        array set save {-command 1 -highlightthickness 1 -orient 1}
+    }
+    namespace eval ::widgets::.top18.cpd19.02 {
+        array set save {-command 1 -highlightthickness 1}
+    }
+    namespace eval ::widgets::.top18.cpd19.03 {
+        array set save {-background 1 -font 1 -height 1 -relief 1 -width 1 -wrap 1 -xscrollcommand 1 -yscrollcommand 1}
+    }
+    namespace eval ::widgets::.top18.but20 {
+        array set save {-command 1 -text 1 -width 1}
+    }
     namespace eval ::widgets::.top21 {
         array set save {-menu 1}
     }
@@ -456,25 +514,7 @@ proc vTcl:project:info {} {
         array set save {-command 1 -text 1 -width 1}
     }
     namespace eval ::widgets::.top22.fra46.but48 {
-        array set save {-command 1 -padx 1 -text 1 -width 1}
-    }
-    namespace eval ::widgets::.top18 {
-        array set save {}
-    }
-    namespace eval ::widgets::.top18.cpd19 {
-        array set save {-borderwidth 1 -height 1 -relief 1 -width 1}
-    }
-    namespace eval ::widgets::.top18.cpd19.01 {
-        array set save {-command 1 -highlightthickness 1 -orient 1}
-    }
-    namespace eval ::widgets::.top18.cpd19.02 {
-        array set save {-command 1 -highlightthickness 1}
-    }
-    namespace eval ::widgets::.top18.cpd19.03 {
-        array set save {-background 1 -font 1 -height 1 -relief 1 -width 1 -xscrollcommand 1 -yscrollcommand 1}
-    }
-    namespace eval ::widgets::.top18.but20 {
-        array set save {-command 1 -pady 1 -text 1 -width 1}
+        array set save {-command 1 -text 1 -width 1}
     }
     namespace eval ::widgets_bindings {
         set tagslist {}
@@ -1082,6 +1122,33 @@ $mainw.TagsText configure -state disabled
 
 }
 ###########################################################
+## Procedure:  ::visual_text::insert_image
+
+namespace eval ::visual_text {
+
+proc {::visual_text::insert_image} {mainw} {
+global widget tk_strictMotif
+
+set types {
+    {{GIF Files}          {.gif}       }
+    {{Portable Pixel Map} {.ppm}       }
+    {{X Windows Bitmap}   {.xbm}       }
+    {{All Files}          *            }
+}
+ 
+set old $tk_strictMotif
+set tk_strictMotif 0
+set newImageFile [tk_getOpenFile -filetypes $types  -defaultextension .gif]
+set tk_strictMotif $old
+
+if {$newImageFile == ""} { return }
+
+set object [image create photo -file $newImageFile]
+$mainw.MainText image create insert -image $object
+}
+
+}
+###########################################################
 ## Procedure:  ::visual_text::show_insert_position
 
 namespace eval ::visual_text {
@@ -1366,9 +1433,9 @@ proc vTclWindow.top18 {base {container 0}} {
     ###################
     if {!$container} {
     vTcl:toplevel $base -class Toplevel
-    wm withdraw .top18
+    wm withdraw $base
     wm focusmodel $base passive
-    wm geometry $base 471x392+256+141; update
+    wm geometry $base 471x392+260+161; update
     wm maxsize $base 1009 738
     wm minsize $base 1 1
     wm overrideredirect $base 0
@@ -1385,10 +1452,11 @@ proc vTclWindow.top18 {base {container 0}} {
     text $base.cpd19.03 \
         -background white \
         -font -Adobe-Helvetica-Medium-R-Normal-*-*-120-*-*-*-*-*-* -height 10 \
-        -relief flat -width 20 -xscrollcommand "$base.cpd19.01 set" \
+        -relief flat -width 20 -wrap word \
+        -xscrollcommand "$base.cpd19.01 set" \
         -yscrollcommand "$base.cpd19.02 set" 
     button $base.but20 \
-        -command {AboutVisualText hide} -pady 1m -text Close -width 8 
+        -command {AboutVisualText hide} -text Close -width 8 
     ###################
     # SETTING GEOMETRY
     ###################
@@ -1429,18 +1497,18 @@ proc vTclWindow.top21 {base {container 0}} {
     vTcl:toplevel $base -class Toplevel \
         -menu "$base.m26" 
     wm focusmodel $base passive
-    wm geometry $base 678x613+157+77; update
+    wm geometry $base 678x613+152+43; update
     wm maxsize $base 1009 738
     wm minsize $base 1 1
     wm overrideredirect $base 0
     wm resizable $base 1 1
     wm deiconify $base
-    wm title $base "/home/cgavin/vtcl/test/experiment.ttd - Visual Text"
+    wm title $base "/home/cgavin/vtcl/test/text_image.ttd - Visual Text"
     }
     frame $base.fra22 \
         -borderwidth 1 
     label $base.fra22.lab30 \
-        -borderwidth 1 -padx 1 -relief sunken -text {Line 15 Col 0} 
+        -borderwidth 1 -padx 1 -relief sunken -text {Line 6 Col 0} 
     label $base.fra22.lab31 \
         -borderwidth 1 -padx 1 -relief sunken -text INS 
     frame $base.cpd23 \
@@ -1585,6 +1653,10 @@ break
     $base.m26.men28 add command \
         -accelerator {Ctrl + V} -command {# TODO: Your menu handler here} \
         -image {} -label Paste 
+    $base.m26.men28 add separator
+    $base.m26.men28 add command \
+        -accelerator {} -command {::visual_text::insert_image VisualText} \
+        -image {} -label {Insert image...} 
     menu $base.m26.men29 \
         -tearoff 0 
     $base.m26.men29 add command \
@@ -1689,9 +1761,9 @@ proc vTclWindow.top22 {base {container 0}} {
     ###################
     if {!$container} {
     vTcl:toplevel $base -class Toplevel
-    wm withdraw .top22
+    wm withdraw $base
     wm focusmodel $base passive
-    wm geometry $base 439x473+303+154; update
+    wm geometry $base 439x473+307+174; update
     wm maxsize $base 1009 738
     wm minsize $base 1 1
     wm overrideredirect $base 0
@@ -1800,8 +1872,8 @@ proc vTclWindow.top22 {base {container 0}} {
     button $base.fra46.but47 \
         -command {set ::.top22::edit_tag_status "OK"} -text OK -width 8 
     button $base.fra46.but48 \
-        -command {set ::.top22::edit_tag_status "Cancel"} -padx 3m \
-        -text Cancel -width 8 
+        -command {set ::.top22::edit_tag_status "Cancel"} -text Cancel \
+        -width 8 
     ###################
     # SETTING GEOMETRY
     ###################

@@ -5,6 +5,7 @@ Icon		icon_table.gif
 TreeLabel	tkTable
 
 DefaultOptions	-rows 3 -cols 3
+DefaultValues   -background -foreground
 DumpChildren	no
 MegaWidget   	no
 

@@ -1,6 +1,9 @@
 ChangeLog for Visual Tcl:
 
 1.51b4 -> 1.51rc0
+    o Added 'Insert image...' menu item to VisualText
+    o Replaced 'wm withdraw .top22' by 'wm withdraw $base' in saved project
+    o Added Shift + Click functionality to scrollbar to link to table widget
     o Namespace'ized demo application VisualText
     o Added 'About' box in Visual Text
     o Now dumps procedures with a header including procedure name
@@ -8,7 +11,7 @@ ChangeLog for Visual Tcl:
     o Fixing _ problem in toplevel names when saving projects with scrollbars
     o Toplevels are now automatically assigned a namespace with the window
       path, allowing the user to save his data inside. For example, a window
-      named .top2 will be assigned a ::.top22 namespace while a window named
+      named .top22 will be assigned a ::.top22 namespace while a window named
       my_own_window will have a ::my_own_window namespace. It is recommended
       to use this namespace to store variables like check box variable, radio
       box variable, etc.

@@ -401,12 +401,12 @@ proc vTcl:dump_widget_opt {target basename} {
         if {$class == "Toplevel"} {
             if {![lempty [wm transient $target]]} {
                 append result $vTcl(tab)
-                append result "wm transient $target [wm transient $target]"
+                append result "wm transient $basename [wm transient $target]"
                 append result "\; update\n"
             }
             if {[wm state $target] == "withdrawn"} {
                 append result $vTcl(tab)
-                append result "wm withdraw $target\n"
+                append result "wm withdraw $basename\n"
             }
         }
     }
