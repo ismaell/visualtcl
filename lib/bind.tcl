@@ -148,7 +148,7 @@ proc vTclWindow.vTcl.bind {args} {
         -ipady 0 -padx 0 -pady 0 -side right 
     entry .vTcl.bind.fra9.ent14 \
          \
-        -highlightthickness 0 -textvariable vTcl(bind,scratch) 
+        -highlightthickness 0 -textvariable vTcl(bind,scratch) -bg white
     bind .vTcl.bind.fra9.ent14 <KeyPress> {
         append vTcl(bind,event) "<Key-%K>"
     }
@@ -157,7 +157,7 @@ proc vTclWindow.vTcl.bind {args} {
         -relheight {} -anchor nw -bordermode ignore 
     entry .vTcl.bind.fra9.ent15 \
          \
-        -highlightthickness 0 -textvariable vTcl(bind,event) 
+        -highlightthickness 0 -textvariable vTcl(bind,event) -bg white
     place .vTcl.bind.fra9.ent15 \
         -x 60 -relx 0 -y 143 -rely 0 -width 340 -relwidth {} -height 20 \
         -relheight {} -anchor nw -bordermode ignore 
@@ -174,7 +174,7 @@ proc vTclWindow.vTcl.bind {args} {
         -ipady 0 -padx 0 -pady 0 -side right 
     text .vTcl.bind.fra9.fra16.tex21 \
          \
-        -highlightthickness 0 \
+        -highlightthickness 0 -bg white \
         -yscrollcommand {.vTcl.bind.fra9.fra16.scr20 set} 
     pack .vTcl.bind.fra9.fra16.tex21 \
         -in .vTcl.bind.fra9.fra16 -anchor center -expand 1 -fill both \
@@ -205,7 +205,7 @@ proc vTclWindow.vTcl.bind {args} {
         -relheight {} -anchor nw -bordermode ignore 
     entry .vTcl.bind.fra9.ent27 \
          \
-        -highlightthickness 0 -textvariable vTcl(bind,tags) 
+        -highlightthickness 0 -textvariable vTcl(bind,tags) -bg white
     place .vTcl.bind.fra9.ent27 \
         -x 60 -relx 0 -y 166 -rely 0 -width 340 -relwidth {} -height 20 \
         -relheight {} -anchor nw -bordermode ignore 

@@ -266,7 +266,7 @@ proc vTclWindow.vTcl.proc {args} {
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 2 -pady 0 \
         -side left 
     entry $base.f2.f8.procname \
-        -cursor {}  \
+        -cursor {} -bg white \
         -highlightthickness 0 
     pack $base.f2.f8.procname \
         -anchor center -expand 1 -fill x -ipadx 0 -ipady 0 -padx 2 -pady 2 \
@@ -283,7 +283,7 @@ proc vTclWindow.vTcl.proc {args} {
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 2 -pady 0 \
         -side left 
     entry $base.f2.f9.args \
-        -cursor {}  \
+        -cursor {} -bg white \
         -highlightthickness 0 
     pack $base.f2.f9.args \
         -anchor center -expand 1 -fill x -ipadx 0 -ipady 0 -padx 2 -pady 2 \
@@ -294,7 +294,7 @@ proc vTclWindow.vTcl.proc {args} {
         -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 3 -pady 3 \
         -side top 
     text $base.f3.text \
-        -height 7 -highlightthickness 0 -width 16 \
+        -height 7 -highlightthickness 0 -width 16 -bg white \
         -wrap none -yscrollcommand "$base.f3.scrollbar4 set"
     pack $base.f3.text \
         -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 2 -pady 2 \

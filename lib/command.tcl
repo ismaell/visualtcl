@@ -70,7 +70,7 @@ proc vTcl:get_command {title initial base} {
         -in $base -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 \
         -padx 3 -pady 3 -side top 
     text $base.f.text \
-        -height 2 -width 2 -wrap none \
+        -height 2 -width 2 -wrap none -bg white \
         -yscrollcommand "$base.f.scrollbar16 set"
     pack $base.f.text \
         -in $base.f -anchor center -expand 1 -fill both -ipadx 0 \

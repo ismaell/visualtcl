@@ -301,10 +301,10 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix} {
             frame $base
             radiobutton ${base}.y \
                 -variable $variable -value 1 -text "Yes" -relief sunken -bd 1 \
-                -command "$config_cmd" -selectcolor #0077ff -padx 0 -pady 1
+                -command "$config_cmd" -selectcolor #0077ff -padx 0 -pady 1 -bg white
             radiobutton ${base}.n \
                 -variable $variable -value 0 -text "No" -relief sunken -bd 1 \
-                -command "$config_cmd" -selectcolor #0077ff -padx 0 -pady 1
+                -command "$config_cmd" -selectcolor #0077ff -padx 0 -pady 1 -bg white
             pack ${base}.y ${base}.n -side left -expand 1 -fill both
         }
         choice {
@@ -312,14 +312,14 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix} {
             menubutton ${base}.l \
                 -textvariable $variable -bd 1 -width 12 -menu ${base}.l.m \
                 -highlightthickness 1 -relief sunken -anchor w -fg black \
-                -padx 0 -pady 1
+                -padx 0 -pady 1 -bg white
             menu ${base}.l.m -tearoff 0
             foreach i [lindex $vTcl($prefix,$option) 3] {
                 ${base}.l.m add command -label "$i" -command \
                     "set $variable $i; $config_cmd; "
             }
             button ${base}.f -relief raised -bd 1 -image file_down \
-                -height 5 -command "tkMbPost ${base}.l"
+                -height 5 -command "tkMbPost ${base}.l" -bg white
             pack ${base}.l -side left -expand 1 -fill x
             pack ${base}.f -side right -fill y -pady 1 -padx 1
         }
@@ -329,13 +329,13 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix} {
                 -highlightthickness 1 -fg black -padx 0 -pady 1 \
                 -command {
                     vTcl:edit_target_menu $vTcl(w,widget)
-                } -anchor w
+                } -anchor w -bg white
         }
         color {
             frame $base
             entry ${base}.l -relief sunken -bd 1 \
                 -textvariable $variable -width 8 \
-                -highlightthickness 1 -fg black
+                -highlightthickness 1 -fg black -bg white
             bind ${base}.l <KeyRelease-Return> \
                 "$config_cmd; ${base}.f conf -bg \$$variable"
             frame ${base}.f -relief raised -bd 1 \
@@ -349,19 +349,19 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix} {
             frame $base
             entry ${base}.l -relief sunken -bd 1 \
                 -textvariable $variable -width 8 \
-                -highlightthickness 1 -fg black
+                -highlightthickness 1 -fg black -bg white
             bind ${base}.l <KeyRelease-Return> $config_cmd
             button ${base}.f \
                 -image ellipses -bd 1 -width 12 \
                 -highlightthickness 1 -fg black -padx 0 -pady 1 \
-                -command "vTcl:set_command \$vTcl(w,widget) $option"
+                -command "vTcl:set_command \$vTcl(w,widget) $option" -bg white
             pack ${base}.l -side left -expand 1 -fill x
             pack ${base}.f -side right -fill y -pady 1 -padx 1
         }
         default {
             entry $base \
                 -textvariable $variable -relief sunken -bd 1 -width 12 \
-                -highlightthickness 1 -fg black
+                -highlightthickness 1 -fg black -bg white
         }
     }
     bind $base <KeyRelease-Return> $config_cmd
