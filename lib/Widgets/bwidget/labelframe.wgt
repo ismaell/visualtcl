@@ -8,11 +8,16 @@ DefaultOptions   -text "Label" -borderwidth 1
 MegaWidget	yes
 TreeChildrenCmd   {vTcl::widgets::bwidgets::labelframe::treeChildrenCmd
                    vTcl::widgets::bwidgets::labelframe::treeChildrenChildsite}
+InsertCmd         vTcl::widgets::bwidgets::labelframe::insertCmd
 DumpCmd           vTcl::widgets::bwidgets::labelframe::dumpCmd
 DumpInfoCmd       vTcl::widgets::bwidgets::labelframe::dumpInfoCmd
 CompoundCmd       vTcl::widgets::bwidgets::labelframe::compoundCmd
 
 namespace eval vTcl::widgets::bwidgets::labelframe {
+
+    proc insertCmd {target} {
+        ::vTcl::widgets::saveOptions [$target getframe] -background
+    }
 
     proc treeChildrenCmd {target {diff \#0}} {
         set children ""
@@ -63,3 +68,4 @@ namespace eval vTcl::widgets::bwidgets::labelframe {
         return $result
     }
 }
+
