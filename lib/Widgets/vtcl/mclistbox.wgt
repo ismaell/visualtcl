@@ -38,6 +38,8 @@ AliasPrefix   Mclistbox
 ResizeCmd     vTcl::widgets::vtcl::mclistbox::resizeCmd
 InsertCmd     vTcl::widgets::vtcl::mclistbox::insertCmd
 DumpCmd       vTcl::widgets::vtcl::mclistbox::dumpCmd
+GetImagesCmd  vTcl::widgets::vtcl::mclistbox::getImagesCmd
+GetFontsCmd   vTcl::widgets::vtcl::mclistbox::getFontsCmd
 
 Function      "Edit Columns..." vTcl::widgets::vtcl::mclistbox::editColumns
 
@@ -70,6 +72,10 @@ OptionConfigCmd -_mclistbox_columns     get        vTcl::widgets::vtcl::mclistbo
 OptionConfigCmd -_mclistbox_columns     select     vTcl::widgets::vtcl::mclistbox::select_column
 OptionConfigCmd -_mclistbox_columns     edit       vTcl::itemEdit::edit
 OptionConfigCmd -_mclistbox_columns     editArg    vTcl::widgets::vtcl::mclistbox::edit
+
+## For saving images
+TranslateOption -labelimage vTcl:image:translate
+NoEncaseOption  -labelimage 1
 
 namespace eval ::vTcl::widgets::vtcl::mclistbox::edit {
 
@@ -203,6 +209,30 @@ namespace eval ::vTcl::widgets::vtcl::mclistbox {
 
     proc resizeCmd {target w h} {
         $target configure -width $w -height $h
+    }
+
+    proc getImagesCmd {target} {
+        set result [$target cget -labelimage]
+        set names [$target column names]
+        foreach name $names {
+            set image [$target column cget $name -image]
+            if {$image != ""} {
+                lappend result $image
+            }
+        }
+        return $result
+    }
+
+    proc getFontsCmd {target} {
+        set result [$target cget -labelfont]
+        set names [$target column names]
+        foreach name $names {
+            set image [$target column cget $name -font]
+            if {$image != ""} {
+                lappend result $image
+            }
+        }
+        return $result
     }
 }
 
