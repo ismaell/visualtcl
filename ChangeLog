@@ -1,6 +1,12 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Cleaned up the tk_strictMotif code.  Added a ::vTcl::MessageBox proc.
+    o Replaced all instances of Ok buttons with the ::vTcl::OkButton command.
+    o Replaced all instances of Cancel buttons with the ::vTcl::CancelButton
+      command.
+    o If a toolbar button, label or menubutton is disabled, it will not
+      raise when the mouse passes over it.
     o Using transparent GIF images.
     o Added background color tab in preferences.
     o Messages boxes don't use tk_strictMotif
