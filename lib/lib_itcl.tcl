@@ -218,13 +218,7 @@ proc vTcl:lib_itcl:dump_subwidgets {subwidget {sitebasename {}}} {
 
     foreach i $widget_tree {
 
-        if {$sitebasename == ""} {
-            set basename [vTcl:base_name $i]
-        } else {
-            set first    [string first $subwidget $i]
-            set basename [string replace $i $first \
-                [expr $first + $length - 1] $sitebasename]
-        }
+        set basename [vTcl:base_name $i]
 
         # don't try to dump subwidget itself
         if {"$i" != "$subwidget"} {

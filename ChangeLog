@@ -1,6 +1,11 @@
 ChangeLog for Visual Tcl:
 
 1.51b4 -> 1.51rc0
+    o Added more default values to scale and message widget, to avoid
+      saving them in the project when not needed.
+    o Updated tix panedwindow and notebook to save childsites using
+      relative paths (eg. asking the megawidget the path to its childsites
+      instead of hardcoding it in the project)
     o Found how to dump scrollbars with childsites to avoid absolute
       widget paths.
     o Made sure not-to-be-saved options won't be saved again after a

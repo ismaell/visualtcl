@@ -3,6 +3,7 @@ Lib		core
 
 Icon		icon_message.gif
 DefaultOptions	-text message -width 70
+DefaultValues   -background -foreground
 DoubleClickCmd	vTcl:set_text
 TreeLabel	@vTcl:core:get_widget_tree_label
 

@@ -2,6 +2,8 @@ Class		Scale
 
 Icon		@vTcl:Scale:GetIcon
 TreeLabel	@vTcl:Scale:GetTreeLabel
+DefaultValues   -activebackground -background -foreground \
+                -highlightbackground -highlightcolor -troughcolor
 
 ## Special proc for setting up icons on the toolbar.
 proc vTcl:Scale:ToolBarSetup {} {

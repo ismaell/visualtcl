@@ -101,9 +101,15 @@ proc vTcl:dump:tixNoteBook {target basename} {
         append result "$vTcl(tab)$basename add $page \\\n"
         append result "[vTcl:clean_pairs $pairs]\n"
     }
+    set index 0
     foreach page $entries {
         set subwidget [$target subwidget $page]
-        append result [vTcl:lib_tix:dump_subwidgets $subwidget]
+        set sitevariable "site_[llength [split $subwidget .]]_[vTcl:rename $page]"
+        append result "$vTcl(tab)"
+        append result "set $sitevariable "
+        append result "\[$basename subwidget \[lindex \[$basename pages\] $index\]\]\n"
+        append result [vTcl:lib_tix:dump_subwidgets $subwidget \$$sitevariable]
+        incr index
     }
     return $result
 }

@@ -221,19 +221,28 @@ proc vTcl:dump:TixSelect {target basename} {
 # it dumps the geometry of $subwidget, but it doesn't dump $subwidget
 # itself (`vTcl:dump:widgets $subwidget' doesn't do the right thing if
 # the grid geometry manager is used to manage children of $subwidget.
-proc vTcl:lib_tix:dump_subwidgets {subwidget} {
-    global vTcl classes
+proc vTcl:lib_tix:dump_subwidgets {subwidget {sitebasename {}}} {
+    global vTcl basenames classes
     set output ""
     set widget_tree [vTcl:widget_tree $subwidget]
+    set length      [string length $subwidget]
+    set basenames($subwidget) $sitebasename
+
     foreach i $widget_tree {
+
         set basename [vTcl:base_name $i]
+
         # don't try to dump subwidget itself
         if {"$i" != "$subwidget"} {
+            set basenames($i) $basename
             set class [vTcl:get_class $i]
             append output [$classes($class,dumpCmd) $i $basename]
+            unset basenames($i)
         }
         append output [vTcl:dump_widget_geom $i $basename]
     }
+
+    unset basenames($subwidget)
     return $output
 }
 
