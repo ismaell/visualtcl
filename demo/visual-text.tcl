@@ -1995,6 +1995,8 @@ proc vTclWindow. {base {container 0}} {
     ###################
     # SETTING GEOMETRY
     ###################
+
+    vTcl:FireEvent $base <<Ready>>
 }
 
 proc vTclWindow.top18 {base {container 0}} {
@@ -2055,6 +2057,8 @@ proc vTclWindow.top18 {base {container 0}} {
         -sticky nesw 
     pack $base.but20 \
         -in $base -anchor center -expand 0 -fill none -pady 5 -side top 
+
+    vTcl:FireEvent $base <<Ready>>
 }
 
 proc vTclWindow.top19 {base {container 0}} {
@@ -2068,6 +2072,7 @@ proc vTclWindow.top19 {base {container 0}} {
     global widget
     vTcl:DefineAlias "$base" "DeleteTextTag" vTcl:Toplevel:WidgetProc "" 1
     vTcl:DefineAlias "$base.cpd22.01" "DeleteTagListbox" vTcl:WidgetProc "DeleteTextTag" 1
+    vTcl:DefineAlias "$base.fra23.but24" "DeleteTagOK" vTcl:WidgetProc "DeleteTextTag" 1
 
     ###################
     # CREATING WIDGETS
@@ -2076,23 +2081,37 @@ proc vTclWindow.top19 {base {container 0}} {
     vTcl:toplevel $base -class Toplevel
     wm withdraw $base
     wm focusmodel $base passive
-    wm geometry $base 394x328+337+187; update
+    wm geometry $base 394x328+322+213; update
     wm maxsize $base 1009 738
     wm minsize $base 1 1
     wm overrideredirect $base 0
     wm resizable $base 1 1
     wm title $base "Delete Tag"
+    bind $base <<Show>> {
+        DeleteTextTag.DeleteTagOK configure -state disabled
+    }
+    bind $base <Key-Escape> {
+        set [winfo toplevel %W]::status "cancel"
+    }
+    bind $base <Key-Return> {
+        set [winfo toplevel %W]::status "delete"
+    }
     vTcl:FireEvent $base <<Create>>
     }
     label $base.lab20 \
         -anchor w -padx 1 -pady 1 \
-        -text {Select the tag you want to delete, then press "Delete".} 
+        -text {Select the tag you want to delete, then press "Delete".}
     frame $base.cpd22 \
         -borderwidth 1 -height 30 -relief sunken -width 30 
     listbox $base.cpd22.01 \
         -background white -highlightthickness 0 -relief flat \
         -xscrollcommand "$base.cpd22.02 set" \
         -yscrollcommand "$base.cpd22.03 set" 
+    bind $base.cpd22.01 <<ListboxSelect>> {
+        if {[%W curselection] != ""} {
+    DeleteTextTag.DeleteTagOK configure -state normal
+}
+    }
     scrollbar $base.cpd22.02 \
         -command "$base.cpd22.01 xview" -highlightthickness 0 \
         -orient horizontal 
@@ -2131,6 +2150,8 @@ proc vTclWindow.top19 {base {container 0}} {
     pack $base.fra23.but25 \
         -in $base.fra23 -anchor center -expand 0 -fill none -padx 5 \
         -side right 
+
+    vTcl:FireEvent $base <<Ready>>
 }
 
 proc vTclWindow.top21 {base {container 0}} {
@@ -2159,7 +2180,7 @@ proc vTclWindow.top21 {base {container 0}} {
     vTcl:toplevel $base -class Toplevel \
         -menu "$base.m26" 
     wm focusmodel $base passive
-    wm geometry $base 678x575+159+60; update
+    wm geometry $base 678x575+145+66; update
     wm maxsize $base 1009 738
     wm minsize $base 100 1
     wm overrideredirect $base 0
@@ -2345,22 +2366,7 @@ proc vTclWindow.top21 {base {container 0}} {
     bind $base.cpd23.01.cpd24.03 <Button-1> {
         ::visual_text::show_tags_at_insert [winfo toplevel %W]
     }
-    bind $base.cpd23.01.cpd24.03 <Key-Down> {
-        ::visual_text::show_tags_at_insert [winfo toplevel %W]
-    }
-    bind $base.cpd23.01.cpd24.03 <Key-Left> {
-        ::visual_text::show_tags_at_insert [winfo toplevel %W]
-    }
-    bind $base.cpd23.01.cpd24.03 <Key-Next> {
-        ::visual_text::show_tags_at_insert [winfo toplevel %W]
-    }
-    bind $base.cpd23.01.cpd24.03 <Key-Prior> {
-        ::visual_text::show_tags_at_insert [winfo toplevel %W]
-    }
-    bind $base.cpd23.01.cpd24.03 <Key-Right> {
-        ::visual_text::show_tags_at_insert [winfo toplevel %W]
-    }
-    bind $base.cpd23.01.cpd24.03 <Key-Up> {
+    bind $base.cpd23.01.cpd24.03 <Key> {
         ::visual_text::show_tags_at_insert [winfo toplevel %W]
     }
     frame $base.cpd23.02
@@ -2704,6 +2710,8 @@ break
     place $base.cpd23.03 \
         -x 0 -relx 0.6906 -y 0 -rely 0.9 -width 10 -height 10 -anchor s \
         -bordermode ignore 
+
+    vTcl:FireEvent $base <<Ready>>
 }
 
 proc vTclWindow.top22 {base {container 0}} {
@@ -2730,7 +2738,7 @@ proc vTclWindow.top22 {base {container 0}} {
     vTcl:toplevel $base -class Toplevel
     wm withdraw $base
     wm focusmodel $base passive
-    wm geometry $base 439x473+127+198; update
+    wm geometry $base 439x473+272+161; update
     wm maxsize $base 1009 738
     wm minsize $base 100 1
     wm overrideredirect $base 0
@@ -2841,7 +2849,7 @@ proc vTclWindow.top22 {base {container 0}} {
         -xscrollcommand "$base.cpd44.01 set" \
         -yscrollcommand "$base.cpd44.02 set" 
     frame $base.fra45 \
-        -borderwidth 2 -height 2 -relief groove -width 125 
+        -borderwidth 2 -height 2 -relief groove -width 125
     frame $base.fra46 \
         -borderwidth 2 -height 75 -width 125 
     button $base.fra46.but47 \
@@ -2938,6 +2946,8 @@ proc vTclWindow.top22 {base {container 0}} {
     pack $base.fra46.but48 \
         -in $base.fra46 -anchor center -expand 0 -fill none -padx 5 -pady 2 \
         -side left 
+
+    vTcl:FireEvent $base <<Ready>>
 }
 
 bind "FlatToolbarButton" <Enter> {
