@@ -120,6 +120,10 @@ proc vTcl:load_widgets {} {
 	set toload $vTcl(LIB_WIDG)
     }
 
+    ## Make sure lib_core loads before all other widget libraries.
+    ::vTcl::lremove toload *lib_core.tcl
+    set toload [linsert $toload 0 lib_core.tcl]
+
     foreach i $toload {
         set lib [lindex [split [file root $i] _] end]
         if {[vTcl:load_lib $i]} {
@@ -194,10 +198,6 @@ proc vTcl:setup {} {
     wm withdraw .
     vTcl:splash
     vTcl:load_libs
-
-    ## Make sure lib_core loads before all other widget libraries.
-    ::vTcl::lremove vTcl(LIB_WIDG) *lib_core.tcl
-    set vTcl(LIB_WIDG) [linsert $vTcl(LIB_WIDG) 0 lib_core.tcl]
 
     ::vTcl::load_bwidgets
     vTcl:load_widgets
