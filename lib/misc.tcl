@@ -21,6 +21,11 @@
 ##############################################################################
 #
 
+proc vTcl:at {varname} {
+    upvar $varname localvar
+    return $localvar
+}
+
 proc vTcl:util:greatest_of {numlist} {
     set max 0
     foreach i $numlist {
@@ -817,6 +822,8 @@ proc vTcl:raise_last_button {newButton} {
 # decoding from Pascual Alonso,
 # namespace'ing and bugs from Parand Tony Darugar
 # (tdarugar@binevolve.com)
+#
+# $Id: misc.tcl,v 1.16 2000/10/21 22:01:45 cgavin Exp $
 # -------------------------------------------------------------------
 
 namespace eval base64 {
@@ -1174,3 +1181,25 @@ proc vTcl:tabnotebook_refresh {win} {
 
 vTcl:notebook_init
 vTcl:tabnotebook_init
+
+proc vTcl:safe_encode_string {s} {
+
+	regsub -all \" $s %quote s
+      regsub -all {\[} $s %leftbracket s
+      regsub -all {\]} $s %rightbracket s
+      regsub -all \{ $s %leftbrace s
+      regsub -all \} $s %rightbrace s
+
+	return $s
+}
+
+proc vTcl:safe_decode_string {s} {
+
+	regsub -all %quote $s \" s
+      regsub -all %leftbracket $s {[} s
+      regsub -all %rightbracket $s {]} s
+      regsub -all %leftbrace $s \{ s
+      regsub -all %rightbrace $s \} s
+
+	return $s
+}
