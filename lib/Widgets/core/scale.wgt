@@ -25,9 +25,9 @@
 
 Class		Scale
 
-Icon		@vTcl:Scale:GetIcon
-TreeLabel	@vTcl:Scale:GetTreeLabel
-InsertCmd	vTcl:widget:scale:inscmd
+Icon		@vTcl::widgets::core::scale::getIcon
+TreeLabel	@vTcl::widgets::core::scale::getWidgetTreeLabel
+InsertCmd	vTcl::widgets::core::scale::insertCmd
 DefaultValues   -activebackground -background -foreground \
                 -highlightbackground -highlightcolor -troughcolor
 
@@ -38,26 +38,39 @@ proc vTcl:Scale:ToolBarSetup {} {
     	"-orient horizontal"
 }
 
-proc vTcl:Scale:GetIcon {{w ""}} {
-    if {[lempty $w]} { return [list icon_scale_h.gif icon_scale_v.gif] }
-    if {[catch {$w cget -orient} orient]} { return "icon_scale.gif" }
-    if {$orient == "horizontal"} { return "icon_scale_h.gif" }
-    return "icon_scale_v.gif"
-}
+namespace eval vTcl::widgets::core::scale {
 
-proc vTcl:Scale:GetTreeLabel {w} {
-    if {[catch {$w cget -orient} orient]} { return "Scale" }
-    set var [$w cget -variable]
-    if {$var != ""} {
-        set var " VAR: $var"
+    proc getIcon {{w ""}} {
+    	if {[lempty $w]} {
+	    return [list icon_scale_h.gif icon_scale_v.gif]
+	}
+	if {[catch {$w cget -orient} orient]} {
+	    return "icon_scale.gif"
+	}
+    	if {$orient == "horizontal"} {
+	    return "icon_scale_h.gif"
+	}
+    	return "icon_scale_v.gif"
     }
-    if {$orient == "horizontal"} { return "Horz Scale$var" }
-    return "Vert Scale$var"
-}
 
-proc vTcl:widget:scale:inscmd {target} {
-    set last [lindex [split $target .] end]
-    set last [vTcl:rename $last]
+    proc getWidgetTreeLabel {w} {
+        if {[catch {$w cget -orient} orient]} {
+	    return "Scale"
+	}
+        set var [$w cget -variable]
+        if {$var != ""} {
+            set var " VAR: $var"
+        }
+        if {$orient == "horizontal"} {
+	    return "Horz Scale$var"
+	}
+        return "Vert Scale$var"
+    }
 
-    $target configure -variable "[winfo toplevel $target]::$last"
+    proc insertCmd {target} {
+        set last [lindex [split $target .] end]
+        set last [vTcl:rename $last]
+
+        $target configure -variable "[winfo toplevel $target]::$last"
+    }
 }

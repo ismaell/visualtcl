@@ -245,8 +245,6 @@ proc vTcl:core:get_widget_tree_label {target} {
 
     switch [string tolower $class] {
 	toplevel { set t [wm title $target] }
-
-	message { set t [$target cget -text] }
     }
 
     return $t

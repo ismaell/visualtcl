@@ -30,11 +30,17 @@ Icon		icon_message.gif
 DefaultOptions	-text message -width 70
 DefaultValues   -background -foreground
 DoubleClickCmd	vTcl:set_text
-TreeLabel	@vTcl:core:get_widget_tree_label
+TreeLabel	@vTcl::widgets::core::message::getWidgetTreeLabel
 
-Function	"Set Text"	vTcl:Message:SetText
+Function	"Set Text"	vTcl::widgets::core::message::setText
 
-proc vTcl:Message:SetText {} {
-    global vTcl
-    vTcl:set_text $vTcl(w,widget)
+namespace eval vTcl::widgets::core::message {
+
+    proc setText {} {
+        vTcl:set_text $::vTcl(w,widget)
+    }
+
+    proc getWidgetTreeLabel {target} {
+        return [$target cget -text]
+    }
 }
