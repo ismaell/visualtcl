@@ -105,7 +105,7 @@ proc vTcl:setup {} {
         input.tcl menu.tcl misc.tcl name.tcl prefs.tcl proc.tcl tclet.tcl
         toolbar.tcl tops.tcl tree.tcl var.tcl vtclib.tcl widget.tcl help.tcl"
 
-    set tk_strictMotif    1
+    set tk_strictMotif 1
     wm withdraw .
     vTcl:splash
 
@@ -369,9 +369,8 @@ proc vTcl:define_bindings {} {
         focus %W
         break
     }
-    #
+
     # handles auto-indent
-    #
     bind Text <Key-Return>    {
         set pos [%W index "insert linestart"]
         set nos [%W search -regexp -nocase "\[a-z0-9\]" $pos]

@@ -207,9 +207,7 @@ proc vTcl:prop:update_attr {} {
         return
     }
 
-    #
     # Update Widget Attributes
-    #
     set fr $vTcl(gui,ae).c.f2.f
     set top $fr._$vTcl(w,class)
     update idletasks
@@ -251,9 +249,7 @@ proc vTcl:prop:update_attr {} {
         return
     }
 
-    #
     # Update Widget Geometry
-    #
     set fr $vTcl(gui,ae).c.f3.f
     set top $fr._$vTcl(w,manager)
     set mgr $vTcl(w,manager)
