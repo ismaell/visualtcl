@@ -1,0 +1,77 @@
+##############################################################################
+#
+# Visual TCL - A cross-platform application development environment
+#
+# Copyright (C) 2001 Christian Gavin
+#
+# Description file for [Incr Widgets]
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+##############################################################################
+#
+
+Class		Scrolledframe
+Lib		itcl
+
+CreateCmd	::iwidgets::scrolledframe
+Icon		../lib/Widgets/itcl/scrolledframe.gif
+DumpChildren	no
+MegaWidget	yes
+TagsCmd         vTcl:lib_itcl:tagscmd
+TreeChildrenCmd	{
+		vTcl:widget:scrolledframe:treeChildrenCmd
+		vTcl:widget:scrolledframe:treeChildrenChildsite
+		}
+DumpCmd		vTcl:dump:scrolledframe
+CompoundCmd     vTcl:compound:scrolledframe
+DefaultOptions	-labeltext "Scrolled frame"
+
+proc vTcl:widget:scrolledframe:treeChildrenCmd {target {diff "\#-3"}} {
+    set children ""
+    set wantsdiff [expr {$diff != ""}]
+
+    foreach child [vTcl:complete_widget_tree [$target childsite] $wantsdiff] {
+        lappend children $child$diff
+    }
+
+    return $children
+}
+
+proc vTcl:widget:scrolledframe:treeChildrenChildsite {target} {
+    return [$target childsite]
+}
+
+proc vTcl:dump:scrolledframe {target basename} {
+    global vTcl
+
+    set result [vTcl:dump_widget_opt $target $basename]
+    set page   [$target childsite]
+    set sitevariable "site_[llength [split $page .]]_0"
+    append result "$vTcl(tab)set $sitevariable "
+    append result "\[$basename childsite\]\n"
+    append result [vTcl:lib_itcl:dump_subwidgets $page \$$sitevariable]
+
+    return $result
+}
+
+proc vTcl:compound:scrolledframe {target} {
+    set result ""
+
+    set compound [vTcl:create_compound [$target childsite]]
+    append result "vTcl:insert_compound \[\$target childsite\] [list $compound] pack \{\}; "
+
+    return $result
+}

@@ -115,7 +115,6 @@ namespace eval vTcl::widgets::iwidgets::optionmenu::edit {
             set value [$target get $index]
             return [list [list -label Label Label {} $value]]
         } else {
-            puts "configure $target $index $args"
             set label [lindex $args 1]
             set current [$target index select]
             $target delete $index
