@@ -1,6 +1,7 @@
 ChangeLog for Visual Tcl:
 
 1.51b4 -> 1.51rc0
+    o Megawidgets don't save their internal grid geometry
     o Added necessary compound code to allow copy/paste of megawidgets with
       childsites. Enabled tabnotebook and panedwindow [Iwidgets] with this
       functionality.

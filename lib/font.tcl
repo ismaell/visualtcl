@@ -137,12 +137,6 @@ proc vTcl:font:get_font_dlg {base font_desc} {
     set vTcl(x,$base,overstrike) [font configure $vTcl(x,$base,font) -overstrike]
     set vTcl(x,$base,size)       [font configure $vTcl(x,$base,font) -size]
 
-    # vTcl:log "vTcl:font:get_font_dlg: font=$vTcl(x,$base,font)"
-    # vTcl:log "vTcl:font:get_font_dlg: $font_desc"
-    # vTcl:log "weight = $vTcl(x,$base,weight)"
-    # vTcl:log "slant  = $vTcl(x,$base,slant)"
-    # vTcl:log "size   = $vTcl(x,$base,size)"
-
     ###################
     # CREATING WIDGETS
     ###################
@@ -159,9 +153,8 @@ proc vTcl:font:get_font_dlg {base font_desc} {
         -relief flat \
         -width 125
     frame $base.fra28.cpd29 \
-        -borderwidth 2 \
-        -relief raised -width 30
-    listbox $base.fra28.cpd29.01 \
+        -borderwidth 1 -relief sunken -width 30
+    listbox $base.fra28.cpd29.01 -borderwidth 0 \
         -xscrollcommand "$base.fra28.cpd29.02 set" \
         -yscrollcommand "$base.fra28.cpd29.03 set"
     bind $base.fra28.cpd29.01 <Button-1> \
@@ -615,8 +608,8 @@ if {$font_desc != ""} {
     	-command "wm withdraw $base" -image [vTcl:image:get_image ok.gif]
 
     frame $base.cpd31 \
-        -borderwidth 1 -height 30 \
-        -relief raised \
+        -borderwidth 2 -height 30 \
+        -relief sunken \
         -width 30
     scrollbar $base.cpd31.01 \
         -command "$base.cpd31.03 xview" -cursor left_ptr \
@@ -626,7 +619,7 @@ if {$font_desc != ""} {
         -orient vert
     text $base.cpd31.03 \
         -background white -cursor left_ptr \
-        -foreground #000000 -height 1 \
+        -foreground #000000 -height 1 -borderwidth 0 \
         -state disabled -width 8 -wrap none \
         -xscrollcommand "$base.cpd31.01 set" \
         -yscrollcommand "$base.cpd31.02 set"

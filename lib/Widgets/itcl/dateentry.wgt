@@ -5,3 +5,4 @@ CreateCmd	::iwidgets::dateentry
 Icon		icon_dateentry.gif
 DumpChildren	no
 MegaWidget	yes
+TagsCmd         vTcl:lib_itcl:tagscmd

@@ -5,11 +5,13 @@ CreateCmd	::iwidgets::labeledframe
 Icon		icon_incrLabelFrame.gif
 DumpChildren	no
 MegaWidget	yes
+TagsCmd         vTcl:lib_itcl:tagscmd
 TreeChildrenCmd	{
 		vTcl:widget:labeledframe:treeChildrenCmd
 		vTcl:widget:labeledframe:treeChildrenChildsite
 		}
 DumpCmd		vTcl:dump:labeledframe
+CompoundCmd     vTcl:compound:labeledframe
 DefaultOptions	-labeltext "Labeled frame"
 
 proc vTcl:widget:labeledframe:treeChildrenCmd {target {diff ""}} {
@@ -33,6 +35,15 @@ proc vTcl:dump:labeledframe {target basename} {
     set result [vTcl:dump_widget_opt $target $basename]
     set page   [$target childsite]
     append result [vTcl:lib_itcl:dump_subwidgets $page]
+
+    return $result
+}
+
+proc vTcl:compound:labeledframe {target} {
+    set result ""
+
+    set compound [vTcl:create_compound [$target childsite]]
+    append result "vTcl:insert_compound \[\$target childsite\] [list $compound] pack \{\}; "
 
     return $result
 }

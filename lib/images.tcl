@@ -709,8 +709,8 @@ proc vTclWindow.vTcl.imgManager {args} {
     wm transient .vTcl.imgManager .vTcl
 
     frame $base.cpd29 \
-        -borderwidth 1 -height 30 \
-        -relief raised \
+        -borderwidth 2 -height 30 \
+        -relief sunken \
         -width 30
     scrollbar $base.cpd29.01 \
         -command "$base.cpd29.03 xview" -cursor left_ptr \
@@ -720,7 +720,7 @@ proc vTclWindow.vTcl.imgManager {args} {
         -orient vert
     text $base.cpd29.03 \
         -background white -cursor left_ptr \
-        -height 1 \
+        -height 1 -borderwidth 0 \
         -state disabled -tabs {0.2i 3i 3.75i} \
         -width 8 -wrap none -xscrollcommand "$base.cpd29.01 set" \
         -yscrollcommand "$base.cpd29.02 set"

@@ -5,3 +5,4 @@ CreateCmd	::iwidgets::hierarchy
 Icon		icon_hierarchy.gif
 DumpChildren	no
 MegaWidget	yes
+TagsCmd         vTcl:lib_itcl:tagscmd

@@ -292,13 +292,13 @@ proc vTclWindow.vTcl.tree {args} {
     button $base.frameTop.buttonClose \
         -image [vTcl:image:get_image "ok.gif"] \
         -command "wm withdraw .vTcl.tree"
-    frame $base.cpd21 -relief raised
+    frame $base.cpd21 -relief sunken -borderwidth 2
     scrollbar $base.cpd21.01 \
         -command "$base.cpd21.03 xview" -orient horizontal
     scrollbar $base.cpd21.02 \
         -command "$base.cpd21.03 yview"
     canvas $base.cpd21.03 \
-        -background #ffffff -borderwidth 2 -closeenough 1.0 -relief sunken \
+        -background #ffffff -borderwidth 0 -closeenough 1.0 -relief flat \
         -xscrollcommand "$base.cpd21.01 set" \
         -yscrollcommand "$base.cpd21.02 set"
 

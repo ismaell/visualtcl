@@ -5,3 +5,4 @@ CreateCmd	::iwidgets::toolbar
 Icon		icon_toolbar.gif
 DumpChildren	no
 MegaWidget	yes
+TagsCmd         vTcl:lib_itcl:tagscmd

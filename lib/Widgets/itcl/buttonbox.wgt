@@ -6,6 +6,7 @@ Icon		icon_buttonbox.gif
 DumpChildren	no
 MegaWidget	yes
 InsertCmd	vTcl:widget:buttonbox:inscmd
+TagsCmd         vTcl:widget:buttonbox:tagscmd
 DumpCmd		vTcl:dump:buttonbox
 DefaultOptions	-padx 0 -pady 0
 
@@ -27,5 +28,33 @@ proc vTcl:dump:buttonbox {target basename} {
         append result "[vTcl:clean_pairs $pairs]\n"
     }
 
+    return $result
+}
+
+proc vTcl:widget:buttonbox:tagscmd {target} {
+
+    global vTcl
+
+    # workaround for special binding tags in IWidgets
+    set tags $vTcl(bindtags,$target)
+    set special1 [lsearch -glob $tags bbox-config]
+    set special2 [lsearch -glob $tags bbox-map]
+    set special3 [lsearch -glob $tags itk-delete-*]
+
+    set class [winfo class $target]
+    set toplevel [winfo toplevel $target]
+    set result ""
+
+    if {$special1 != -1} {
+        lappend result [lindex $tags $special1]
+    }
+    if {$special2 != -1} {
+        lappend result [lindex $tags $special2]
+    }
+    if {$special3 != -1} {
+        lappend result [lindex $tags $special3]
+    }
+
+    lappend result $target $class $toplevel all
     return $result
 }

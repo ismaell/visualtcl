@@ -430,7 +430,7 @@ proc vTcl:dump_widget_opt {target basename} {
 }
 
 proc vTcl:dump_widget_geom {target basename} {
-    global vTcl
+    global vTcl classes
     if {$target == "."} {
         set mgr wm
     } else {
@@ -456,6 +456,12 @@ proc vTcl:dump_widget_geom {target basename} {
         set result "$vTcl(tab)$mgr $basename \\\n"
         append result "[vTcl:clean_pairs [vTcl:get_mgropts $opts 1]]\n"
     }
+
+    ## Megawidgets are like blackboxes. We don't want to know what's inside,
+    ## and besides, they are supposed to configure themselves on construction.
+    if {[info exists classes($class,megaWidget)] &&
+        $classes($class,megaWidget)} {return $result}
+
     set pre g
     set gcolumn [lindex [grid size $target] 0]
     set grow [lindex [grid size $target] 1]

@@ -7,6 +7,7 @@ DumpChildren	no
 MegaWidget	yes
 DumpCmd		vTcl:dump:radiobox
 InsertCmd	vTcl:widget:radiobox:inscmd
+TagsCmd         vTcl:lib_itcl:tagscmd
 DefaultOptions	-labeltext "Radiobox"
 
 proc vTcl:dump:radiobox {target basename} {

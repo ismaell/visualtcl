@@ -260,6 +260,9 @@ proc vTcl:setup_gui {} {
 
     if {$tcl_platform(platform) == "unix"} {
         option add *vTcl*Scrollbar.width 10
+        option add *vTcl*Scrollbar.highlightThickness 0
+        option add *vTcl*Scrollbar.elementBorderWidth 2
+        option add *vTcl*Scrollbar.borderWidth 2
         option add *Scrollbar.width 10
         option add *vTcl*font {Helvetica 12}
     }
