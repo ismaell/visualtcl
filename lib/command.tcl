@@ -62,30 +62,15 @@ proc vTcl:get_command {title initial base} {
     wm title $base $title
     set vTcl(comm,$base,chg) 0
 
-    frame $base.f \
-        -borderwidth 1 -relief sunken
-    scrollbar $base.f.01 \
-        -command "$base.f.text xview" -highlightthickness 0 \
-        -orient horizontal
-    scrollbar $base.f.02 \
-        -command "$base.f.text yview" -highlightthickness 0
+    ScrolledWindow $base.f
     text $base.f.text \
         -background white -borderwidth 0 -height 3 -wrap none \
-        -relief flat -width 20 -xscrollcommand "$base.f.01 set" \
-        -yscrollcommand "$base.f.02 set"
+        -relief flat -width 20
+    $base.f setwidget $base.f.text
+
     pack $base.f \
         -in "$base" -anchor center -expand 1 -fill both -side bottom
-    grid columnconf $base.f 0 -weight 1
-    grid rowconf $base.f 0 -weight 1
-    grid $base.f.01 \
-        -in "$base.f" -column 0 -row 1 -columnspan 1 -rowspan 1 \
-        -sticky ew
-    grid $base.f.02 \
-        -in "$base.f" -column 1 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky ns
-    grid $base.f.text \
-        -in "$base.f" -column 0 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky nesw
+    pack $base.f.text
 
     frame $base.f21 \
         -height 30 -relief flat -width 30

@@ -1,4 +1,4 @@
-##############################################################################
+#############################################################################
 #
 # input.tcl - procedures for prompting windowed string input
 #
@@ -123,15 +123,9 @@ proc vTcl:text_window {base title target} {
     wm deiconify $base
     wm title $base $title
 
-    frame $base.cpd48 \
-        -borderwidth 1 -height 245 -relief raised -width 262
-    scrollbar $base.cpd48.01 \
-        -command "$base.cpd48.03 xview" -orient horizontal
-    scrollbar $base.cpd48.02 \
-        -command "$base.cpd48.03 yview"
-    text $base.cpd48.03 \
-        -width 8 -xscrollcommand "$base.cpd48.01 set" \
-        -yscrollcommand "$base.cpd48.02 set" -background white
+    ScrolledWindow $base.cpd48
+    text $base.cpd48.03 -width 8 -background white
+    $base.cpd48 setwidget $base.cpd48.03
 
     # avoid syntax coloring here (automatic for text widgets in vTcl)
     global $base.cpd48.03.nosyntax
@@ -155,16 +149,7 @@ proc vTcl:text_window {base title target} {
     pack $base.butfr.but53 -side right
     pack $base.butfr.but52 -side right
     pack $base.cpd48 -fill both -expand 1
-
-    grid columnconf $base.cpd48 0 -weight 1
-    grid rowconf $base.cpd48 0 -weight 1
-    grid $base.cpd48.01 \
-        -in $base.cpd48 -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew
-    grid $base.cpd48.02 \
-        -in $base.cpd48 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns
-    grid $base.cpd48.03 \
-        -in $base.cpd48 -column 0 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky nesw 
+    pack $base.cpd48.03
 
     $base.cpd48.03 insert end [$target cget -text]
     focus $base.cpd48.03

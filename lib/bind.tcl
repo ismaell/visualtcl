@@ -616,19 +616,11 @@ proc vTclWindow.vTcl.newtag {base} {
         -borderwidth 2 -height 75
     label $base.fra24.lab25 \
         -text {Select an existing tag:}
-    frame $base.fra24.cpd26 \
-        -borderwidth 1 \
-        -relief raised \
-        -width 30
-    listbox $base.fra24.cpd26.01 \
-        -xscrollcommand "$base.fra24.cpd26.02 set" \
-        -yscrollcommand "$base.fra24.cpd26.03 set"
-    scrollbar $base.fra24.cpd26.02 \
-        -command "$base.fra24.cpd26.01 xview" \
-        -orient horizontal
-    scrollbar $base.fra24.cpd26.03 \
-        -command "$base.fra24.cpd26.01 yview"  \
-        -orient vertical
+
+    ScrolledWindow $base.fra24.cpd26
+    listbox $base.fra24.cpd26.01
+    $base.fra24.cpd26 setwidget $base.fra24.cpd26.01
+
     label $base.fra24.lab27 \
         -text {Or name a new tag:}
     entry $base.fra24.ent28 \
@@ -668,19 +660,11 @@ proc vTclWindow.vTcl.newtag {base} {
         -in $base -anchor center -expand 1 -fill both -side top
     pack $base.fra24.lab25 \
         -in $base.fra24 -anchor center -expand 0 -fill none -side top
+
     pack $base.fra24.cpd26 \
         -in $base.fra24 -anchor center -expand 1 -fill both -side top
-    grid columnconf $base.fra24.cpd26 0 -weight 1
-    grid rowconf $base.fra24.cpd26 0 -weight 1
-    grid $base.fra24.cpd26.01 \
-        -in $base.fra24.cpd26 -column 0 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky nesw
-    grid $base.fra24.cpd26.02 \
-        -in $base.fra24.cpd26 -column 0 -row 1 -columnspan 1 -rowspan 1 \
-        -sticky ew
-    grid $base.fra24.cpd26.03 \
-        -in $base.fra24.cpd26 -column 1 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky ns
+    pack $base.fra24.cpd26.01
+
     pack $base.fra24.lab27 \
         -in $base.fra24 -anchor center -expand 0 -fill none -side top
     pack $base.fra24.ent28 \

@@ -640,29 +640,24 @@ proc vTclWindow.vTcl.stack_trace {base {container 0}} {
     label $base.cpd18.01.fratop.lab19 \
         -borderwidth 1 -relief flat -text Error
     ::vTcl::OkButton $base.cpd18.01.fratop.close -command "destroy $base"
-    frame $base.cpd18.01.cpd20 \
-        -borderwidth 1 -height 30 -relief raised -width 30
-    scrollbar $base.cpd18.01.cpd20.01 \
-        -command "$base.cpd18.01.cpd20.03 xview" -orient horiz
-    scrollbar $base.cpd18.01.cpd20.02 \
-        -command "$base.cpd18.01.cpd20.03 yview" -orient vert
+
+    ScrolledWindow $base.cpd18.01.cpd20
     text $base.cpd18.01.cpd20.03 \
         -background #dcdcdc \
         -font [vTcl:font:get_font "vTcl:font8"] \
         -foreground #000000 -highlightbackground #ffffff \
         -highlightcolor #000000 -selectbackground #008080 \
-        -selectforeground #ffffff \
-        -xscrollcommand "$base.cpd18.01.cpd20.01 set" \
-        -yscrollcommand "$base.cpd18.01.cpd20.02 set"
+        -selectforeground #ffffff
+    $base.cpd18.01.cpd20 setwidget $base.cpd18.01.cpd20.03
+
     frame $base.cpd18.02
     frame $base.cpd18.02.cpd21 -background #000000
     frame $base.cpd18.02.cpd21.01
-    frame $base.cpd18.02.cpd21.01.cpd22 \
-        -borderwidth 1 -height 30 -relief raised -width 30
-    listbox $base.cpd18.02.cpd21.01.cpd22.01 \
-        -xscrollcommand "$base.cpd18.02.cpd21.01.cpd22.02 set" \
-        -yscrollcommand "$base.cpd18.02.cpd21.01.cpd22.03 set" \
-        -background white
+
+    ScrolledWindow $base.cpd18.02.cpd21.01.cpd22
+    listbox $base.cpd18.02.cpd21.01.cpd22.01 -background white
+    $base.cpd18.02.cpd21.01.cpd22 setwidget $base.cpd18.02.cpd21.01.cpd22.01
+
     bindtags $base.cpd18.02.cpd21.01.cpd22.01 \
         "Listbox $base.cpd18.02.cpd21.01.cpd22.01 $base all"
     bind $base.cpd18.02.cpd21.01.cpd22.01 <ButtonPress-1> \
@@ -673,10 +668,7 @@ proc vTclWindow.vTcl.stack_trace {base {container 0}} {
         "::stack_trace::extract_code $base"
     bind $base.cpd18.02.cpd21.01.cpd22.01 <Key-Down> \
         "::stack_trace::extract_code $base"
-    scrollbar $base.cpd18.02.cpd21.01.cpd22.02 \
-        -command "$base.cpd18.02.cpd21.01.cpd22.01 xview" -orient horiz
-    scrollbar $base.cpd18.02.cpd21.01.cpd22.03 \
-        -command "$base.cpd18.02.cpd21.01.cpd22.01 yview" -orient vert
+
     frame $base.cpd18.02.cpd21.01.fra01
     button $base.cpd18.02.cpd21.01.fra01.but1 \
         -image icon_message.gif \
@@ -693,22 +685,14 @@ proc vTclWindow.vTcl.stack_trace {base {container 0}} {
     frame $base.cpd18.02.cpd21.02 \
         -background #9900991B99FE -highlightbackground #dcdcdc \
         -highlightcolor #000000
-    frame $base.cpd18.02.cpd21.02.cpd23 \
-        -background #dcdcdc -borderwidth 1 -height 30 \
-        -highlightbackground #dcdcdc -highlightcolor #000000 -relief raised \
-        -width 30
-    scrollbar $base.cpd18.02.cpd21.02.cpd23.01 \
-        -command "$base.cpd18.02.cpd21.02.cpd23.03 xview" -cursor left_ptr \
-        -orient horiz
-    scrollbar $base.cpd18.02.cpd21.02.cpd23.02 \
-        -command "$base.cpd18.02.cpd21.02.cpd23.03 yview" -cursor left_ptr \
-        -orient vert
+
+    ScrolledWindow $base.cpd18.02.cpd21.02.cpd23 -background #dcdcdc
     text $base.cpd18.02.cpd21.02.cpd23.03 \
         -background #dcdcdc \
         -foreground #000000 -height 1 -highlightbackground #ffffff \
-        -width 8 -wrap none \
-        -xscrollcommand "$base.cpd18.02.cpd21.02.cpd23.01 set" \
-        -yscrollcommand "$base.cpd18.02.cpd21.02.cpd23.02 set"
+        -width 8 -wrap none
+    $base.cpd18.02.cpd21.02.cpd23 setwidget $base.cpd18.02.cpd21.02.cpd23.03
+
     frame $base.cpd18.02.cpd21.03 \
         -background #ff0000 -borderwidth 2 -highlightbackground #dcdcdc \
         -highlightcolor #000000 -relief raised
@@ -763,19 +747,11 @@ proc vTclWindow.vTcl.stack_trace {base {container 0}} {
         -in $base.cpd18.01.fratop -anchor center -expand 0 -fill x -side left
     pack $base.cpd18.01.fratop.close \
         -in $base.cpd18.01.fratop -side right
+
     pack $base.cpd18.01.cpd20 \
         -in $base.cpd18.01 -anchor center -expand 1 -fill both -side top
-    grid columnconf $base.cpd18.01.cpd20 0 -weight 1
-    grid rowconf $base.cpd18.01.cpd20 0 -weight 1
-    grid $base.cpd18.01.cpd20.01 \
-        -in $base.cpd18.01.cpd20 -column 0 -row 1 -columnspan 1 -rowspan 1 \
-        -sticky ew
-    grid $base.cpd18.01.cpd20.02 \
-        -in $base.cpd18.01.cpd20 -column 1 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky ns
-    grid $base.cpd18.01.cpd20.03 \
-        -in $base.cpd18.01.cpd20 -column 0 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky nesw
+    pack $base.cpd18.01.cpd20.03
+
     place $base.cpd18.02 \
         -x 0 -y 0 -rely 1 -relwidth 1 -height -1 -relheight 0.7061 -anchor sw \
         -bordermode ignore
@@ -792,37 +768,21 @@ proc vTclWindow.vTcl.stack_trace {base {container 0}} {
         -in $base.cpd18.02.cpd21.01.fra01 -side left
     pack $base.cpd18.02.cpd21.01.fra01.but3 \
         -in $base.cpd18.02.cpd21.01.fra01 -side left
+
     pack $base.cpd18.02.cpd21.01.cpd22 \
         -in $base.cpd18.02.cpd21.01 -anchor center -expand 1 -fill both \
         -side top
-    grid columnconf $base.cpd18.02.cpd21.01.cpd22 0 -weight 1
-    grid rowconf $base.cpd18.02.cpd21.01.cpd22 0 -weight 1
-    grid $base.cpd18.02.cpd21.01.cpd22.01 \
-        -in $base.cpd18.02.cpd21.01.cpd22 -column 0 -row 0 -columnspan 1 \
-        -rowspan 1 -sticky nesw
-    grid $base.cpd18.02.cpd21.01.cpd22.02 \
-        -in $base.cpd18.02.cpd21.01.cpd22 -column 0 -row 1 -columnspan 1 \
-        -rowspan 1 -sticky ew
-    grid $base.cpd18.02.cpd21.01.cpd22.03 \
-        -in $base.cpd18.02.cpd21.01.cpd22 -column 1 -row 0 -columnspan 1 \
-        -rowspan 1 -sticky ns
+    pack $base.cpd18.02.cpd21.01.cpd22.01
+
     place $base.cpd18.02.cpd21.02 \
         -x 0 -relx 1 -y 0 -width -1 -relwidth 0.6533 -relheight 1 -anchor ne \
         -bordermode ignore
+
     pack $base.cpd18.02.cpd21.02.cpd23 \
         -in $base.cpd18.02.cpd21.02 -anchor center -expand 1 -fill both \
         -side top
-    grid columnconf $base.cpd18.02.cpd21.02.cpd23 0 -weight 1
-    grid rowconf $base.cpd18.02.cpd21.02.cpd23 0 -weight 1
-    grid $base.cpd18.02.cpd21.02.cpd23.01 \
-        -in $base.cpd18.02.cpd21.02.cpd23 -column 0 -row 1 -columnspan 1 \
-        -rowspan 1 -sticky ew
-    grid $base.cpd18.02.cpd21.02.cpd23.02 \
-        -in $base.cpd18.02.cpd21.02.cpd23 -column 1 -row 0 -columnspan 1 \
-        -rowspan 1 -sticky ns
-    grid $base.cpd18.02.cpd21.02.cpd23.03 \
-        -in $base.cpd18.02.cpd21.02.cpd23 -column 0 -row 0 -columnspan 1 \
-        -rowspan 1 -sticky nesw
+    pack $base.cpd18.02.cpd21.02.cpd23.03
+
     place $base.cpd18.02.cpd21.03 \
         -x 0 -relx 0.3467 -y 0 -rely 0.9 -width 10 -height 10 -anchor s \
         -bordermode ignore
@@ -875,16 +835,15 @@ proc vTclWindow.vTcl.bgerror {base {container 0}} {
     label $base.fra20.lab21 \
         -bitmap error -borderwidth 0 \
         -padx 0 -pady 0 -relief raised -text label
-    frame $base.fra20.cpd23
-    scrollbar $base.fra20.cpd23.02 \
-        -command "$base.fra20.cpd23.03 yview" -cursor left_ptr \
-        -orient vert
+
+    ScrolledWindow $base.fra20.cpd23
     text $base.fra20.cpd23.03 \
         -background #dcdcdc -font [vTcl:font:get_font "vTcl:font8"] \
         -foreground #000000 -height 1 -highlightbackground #ffffff \
         -highlightcolor #000000 -selectbackground #008080 \
-        -selectforeground #ffffff -width 8 -wrap word \
-        -yscrollcommand "$base.fra20.cpd23.02 set"
+        -selectforeground #ffffff -width 8 -wrap word
+    $base.fra20.cpd23 setwidget $base.fra20.cpd23.03
+
     frame $base.fra25 \
         -borderwidth 2
     button $base.fra25.but26 \
@@ -912,16 +871,11 @@ proc vTclWindow.vTcl.bgerror {base {container 0}} {
         -in $base -anchor center -expand 1 -fill both -pady 2 -side top
     pack $base.fra20.lab21 \
         -in $base.fra20 -anchor e -expand 0 -fill none -padx 5 -side left
+
     pack $base.fra20.cpd23 \
         -in $base.fra20 -anchor center -expand 1 -fill both -padx 2 -side top
-    grid columnconf $base.fra20.cpd23 0 -weight 1
-    grid rowconf $base.fra20.cpd23 0 -weight 1
-    grid $base.fra20.cpd23.02 \
-        -in $base.fra20.cpd23 -column 1 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky ns
-    grid $base.fra20.cpd23.03 \
-        -in $base.fra20.cpd23 -column 0 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky nesw
+    pack $base.fra20.cpd23.03
+
     pack $base.fra25 \
         -in $base -anchor center -expand 0 -fill x -pady 4 -side top
     pack $base.fra25.but26 \

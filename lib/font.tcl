@@ -150,19 +150,14 @@ proc vTcl:font:get_font_dlg {base font_desc} {
         -height 75 \
         -relief flat \
         -width 125
-    frame $base.fra28.cpd29 \
-        -borderwidth 1 -relief sunken -width 30
+    ScrolledWindow $base.fra28.cpd29
     listbox $base.fra28.cpd29.01 -borderwidth 0 \
         -xscrollcommand "$base.fra28.cpd29.02 set" \
         -yscrollcommand "$base.fra28.cpd29.03 set"
+    $base.fra28.cpd29 setwidget $base.fra28.cpd29.01
     bind $base.fra28.cpd29.01 <Button-1> \
     	"vTcl:font:font_select_family $base %W %y"
-    scrollbar $base.fra28.cpd29.02 \
-        -command "$base.fra28.cpd29.01 xview" -cursor left_ptr \
-        -orient horiz
-    scrollbar $base.fra28.cpd29.03 \
-        -command "$base.fra28.cpd29.01 yview" -cursor left_ptr \
-        -orient vert
+
     label $base.fra28.lab30 \
         -borderwidth 1 \
         -padx 5 -pady 0 -text Size:
@@ -220,21 +215,14 @@ proc vTcl:font:get_font_dlg {base font_desc} {
     label $base.lab41 \
         -borderwidth 1 \
         -text Sample
-    frame $base.cpd43 \
-        -borderwidth 0 \
-        -relief flat -width 50
-    scrollbar $base.cpd43.01 \
-        -command "$base.cpd43.03 xview" -cursor left_ptr \
-        -orient horiz
-    scrollbar $base.cpd43.02 \
-        -command "$base.cpd43.03 yview" -cursor left_ptr \
-        -orient vert
+
+    ScrolledWindow $base.cpd43
     text $base.cpd43.03 \
         -font $vTcl(x,$base,font) \
         -height 3 -bg white \
-        -width 8 -wrap none \
-        -xscrollcommand "$base.cpd43.01 set" \
-        -yscrollcommand "$base.cpd43.02 set"
+        -width 8 -wrap none
+    $base.cpd43 setwidget $base.cpd43.03
+
     # we don't want syntax coloring, which is the default for
     # text widgets in vTcl whose window path name starts with .vTcl
     bind $base.cpd43.03 <KeyRelease> "break"
@@ -267,15 +255,8 @@ proc vTcl:font:get_font_dlg {base font_desc} {
         -sticky nesw
     grid columnconf $base.fra28.cpd29 0 -weight 1
     grid rowconf $base.fra28.cpd29 0 -weight 1
-    grid $base.fra28.cpd29.01 \
-        -in $base.fra28.cpd29 -column 0 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky nesw
-    grid $base.fra28.cpd29.02 \
-        -in $base.fra28.cpd29 -column 0 -row 1 -columnspan 1 -rowspan 1 \
-        -sticky ew
-    grid $base.fra28.cpd29.03 \
-        -in $base.fra28.cpd29 -column 1 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky ns
+    pack $base.fra28.cpd29.01
+
     grid $base.fra28.lab30 \
         -in $base.fra28 -column 1 -row 0 -columnspan 1 -rowspan 2 -pady 5 \
         -sticky e
@@ -310,13 +291,7 @@ proc vTcl:font:get_font_dlg {base font_desc} {
         -in $base -anchor center -expand 0 -fill both -side top
     grid columnconf $base.cpd43 0 -weight 1
     grid rowconf $base.cpd43 0 -weight 1
-    grid $base.cpd43.01 \
-        -in $base.cpd43 -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew
-    grid $base.cpd43.02 \
-        -in $base.cpd43 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns
-    grid $base.cpd43.03 \
-        -in $base.cpd43 -column 0 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky nesw
+    pack $base.cpd43.03
 
     vTcl:font:fill_fonts $base
     vTcl:font:init_fontselect $base
@@ -602,22 +577,13 @@ if {$font_desc != ""} {
 
     ::vTcl::OkButton $base.butfr.but31 -command "Window hide $base"
 
-    frame $base.cpd31 \
-        -borderwidth 2 -height 30 \
-        -relief sunken \
-        -width 30
-    scrollbar $base.cpd31.01 \
-        -command "$base.cpd31.03 xview" -cursor left_ptr \
-        -orient horiz
-    scrollbar $base.cpd31.02 \
-        -command "$base.cpd31.03 yview" -cursor left_ptr \
-        -orient vert
+    ScrolledWindow $base.cpd31
     text $base.cpd31.03 \
         -background white -cursor left_ptr \
         -foreground #000000 -height 1 -borderwidth 0 \
-        -state disabled -width 8 -wrap none \
-        -xscrollcommand "$base.cpd31.01 set" \
-        -yscrollcommand "$base.cpd31.02 set"
+        -state disabled -width 8 -wrap none
+    $base.cpd31 setwidget $base.cpd31.03
+
     ###################
     # SETTING GEOMETRY
     ###################
@@ -631,16 +597,7 @@ if {$font_desc != ""} {
 
     pack $base.cpd31 \
         -in $base -anchor center -expand 1 -fill both -side top
-
-    grid columnconf $base.cpd31 0 -weight 1
-    grid rowconf $base.cpd31 0 -weight 1
-    grid $base.cpd31.01 \
-        -in $base.cpd31 -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew
-    grid $base.cpd31.02 \
-        -in $base.cpd31 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns
-    grid $base.cpd31.03 \
-        -in $base.cpd31 -column 0 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky nesw
+    pack $base.cpd31.03
 
     wm geometry $base 491x544+314+132
     vTcl:center $base 491 544
@@ -734,31 +691,21 @@ proc vTcl:font:create_noborder_fontlist {base} {
     wm minsize $base 1 1
     wm resizable $base 1 1
 
-    frame $base.cpd29 \
-        -background #bcbcbc -borderwidth 1 -height 30 \
-        -highlightbackground #bcbcbc -highlightcolor #000000 -relief raised \
-        -width 30
-    scrollbar $base.cpd29.02 \
-        -command "$base.cpd29.03 yview" -cursor left_ptr \
-        -orient vert
+    ScrolledWindow $base.cpd29 -background #bcbcbc
     text $base.cpd29.03 \
         -background white \
         -foreground #000000 -highlightbackground #f3f3f3 \
         -highlightcolor #000000 -selectbackground #000080 \
         -selectforeground #ffffff -state disabled \
-        -yscrollcommand "$base.cpd29.02 set" -cursor left_ptr
+        -cursor left_ptr
+    $base.cpd29 setwidget $base.cpd29.03
+
     ###################
     # SETTING GEOMETRY
     ###################
     pack $base.cpd29 \
         -in $base -anchor center -expand 1 -fill both -side top
-    grid columnconf $base.cpd29 0 -weight 1
-    grid rowconf $base.cpd29 0 -weight 1
-    grid $base.cpd29.02 \
-        -in $base.cpd29 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns
-    grid $base.cpd29.03 \
-        -in $base.cpd29 -column 0 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky nesw
+    pack $base.cpd29.03
 
     vTcl:display_pulldown $base 396 252 \
         "set vTcl(font,noborder_fontlist,font) <cancel>"

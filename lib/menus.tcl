@@ -984,12 +984,11 @@ proc vTclWindow.vTclMenuEdit {base menu} {
         -command "::menu_edit::move_item $base up" -image up
     vTcl:toolbar_button $base.fra21.but24 \
         -command "::menu_edit::move_item $base down" -image down
-    frame $base.cpd24.01.cpd25 \
-        -borderwidth 1 -height 30 -relief raised -width 30
-    listbox $base.cpd24.01.cpd25.01 \
-        -xscrollcommand "$base.cpd24.01.cpd25.02 set" \
-        -yscrollcommand "$base.cpd24.01.cpd25.03 set" \
-        -background white
+
+    ScrolledWindow $base.cpd24.01.cpd25
+    listbox $base.cpd24.01.cpd25.01 -background white
+    $base.cpd24.01.cpd25 setwidget $base.cpd24.01.cpd25.01
+
     bindtags $base.cpd24.01.cpd25.01 \
         "Listbox $base.cpd24.01.cpd25.01 $base all"
     bind $base.cpd24.01.cpd25.01 <Button-1> {
@@ -1062,10 +1061,6 @@ proc vTclWindow.vTclMenuEdit {base menu} {
     $base.cpd24.01.cpd25.01.m25 add command \
         -accelerator {} -command "::menu_edit::toggle_tearoff $base" \
         -label Tearoff
-    scrollbar $base.cpd24.01.cpd25.02 \
-        -command "$base.cpd24.01.cpd25.01 xview" -orient horizontal
-    scrollbar $base.cpd24.01.cpd25.03 \
-        -command "$base.cpd24.01.cpd25.01 yview"
     frame $base.cpd24.02
     radiobutton $base.cpd24.02.rad20 \
         -padx 1 -pady 1 -text Label: -value label -variable ${base}::label
@@ -1075,16 +1070,11 @@ proc vTclWindow.vTclMenuEdit {base menu} {
         -borderwidth 2 -relief flat
     label $base.cpd24.02.fra22.lab31 \
         -anchor center -text Command:
-    frame $base.cpd24.02.fra22.cpd32 \
-        -borderwidth 1 -height 30 -relief raised -width 30
-    scrollbar $base.cpd24.02.fra22.cpd32.01 \
-        -command "$base.cpd24.02.fra22.cpd32.03 xview" -orient horizontal
-    scrollbar $base.cpd24.02.fra22.cpd32.02 \
-        -command "$base.cpd24.02.fra22.cpd32.03 yview"
-    text $base.cpd24.02.fra22.cpd32.03 \
-        -background gray \
-        -width 20 -xscrollcommand "$base.cpd24.02.fra22.cpd32.01 set" \
-        -yscrollcommand "$base.cpd24.02.fra22.cpd32.02 set"
+
+    ScrolledWindow $base.cpd24.02.fra22.cpd32
+    text $base.cpd24.02.fra22.cpd32.03 -background gray -width 20
+    $base.cpd24.02.fra22.cpd32 setwidget $base.cpd24.02.fra22.cpd32.03
+
     bind $base.cpd24.02.fra22.cpd32.03 <FocusOut> {
         ::menu_edit::update_current [winfo toplevel %W]
     }
@@ -1177,19 +1167,11 @@ proc vTclWindow.vTclMenuEdit {base menu} {
     pack $base.fra21.but24 \
         -in $base.fra21 -anchor center -expand 0 -fill none \
         -side left
+
     pack $base.cpd24.01.cpd25 \
         -in $base.cpd24.01 -anchor center -expand 1 -fill both -side top
-    grid columnconf $base.cpd24.01.cpd25 0 -weight 1
-    grid rowconf $base.cpd24.01.cpd25 0 -weight 1
-    grid $base.cpd24.01.cpd25.01 \
-        -in $base.cpd24.01.cpd25 -column 0 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky nesw
-    grid $base.cpd24.01.cpd25.02 \
-        -in $base.cpd24.01.cpd25 -column 0 -row 1 -columnspan 1 -rowspan 1 \
-        -sticky ew
-    grid $base.cpd24.01.cpd25.03 \
-        -in $base.cpd24.01.cpd25 -column 1 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky ns
+    pack $base.cpd24.01.cpd25.01
+
     place $base.cpd24.02 \
         -x 0 -relx 1 -y 0 -width -1 -relwidth 0.6388 -relheight 1 -anchor ne \
         -bordermode ignore
@@ -1206,20 +1188,12 @@ proc vTclWindow.vTclMenuEdit {base menu} {
         -pady 5 -sticky nesw
     pack $base.cpd24.02.fra22.lab31 \
         -in $base.cpd24.02.fra22 -anchor w -expand 0 -fill none -side top
+
     pack $base.cpd24.02.fra22.cpd32 \
         -in $base.cpd24.02.fra22 -anchor center -expand 1 -fill both \
         -side top
-    grid columnconf $base.cpd24.02.fra22.cpd32 0 -weight 1
-    grid rowconf $base.cpd24.02.fra22.cpd32 0 -weight 1
-    grid $base.cpd24.02.fra22.cpd32.01 \
-        -in $base.cpd24.02.fra22.cpd32 -column 0 -row 1 -columnspan 1 \
-        -rowspan 1 -sticky ew
-    grid $base.cpd24.02.fra22.cpd32.02 \
-        -in $base.cpd24.02.fra22.cpd32 -column 1 -row 0 -columnspan 1 \
-        -rowspan 1 -sticky ns
-    grid $base.cpd24.02.fra22.cpd32.03 \
-        -in $base.cpd24.02.fra22.cpd32 -column 0 -row 0 -columnspan 1 \
-        -rowspan 1 -sticky nesw
+    pack $base.cpd24.02.fra22.cpd32.03
+
     grid $base.cpd24.02.ent23 \
         -in $base.cpd24.02 -column 1 -row 0 -columnspan 1 -rowspan 1 \
         -sticky ew

@@ -446,31 +446,20 @@ proc vTcl:image:create_selector_dlg {base} {
     wm resizable $base 1 1
     wm deiconify $base
 
-    frame $base.cpd29 \
-        -background #bcbcbc -borderwidth 1 -height 30 \
-        -highlightbackground #bcbcbc -highlightcolor #000000 -relief raised \
-        -width 30
-    scrollbar $base.cpd29.02 \
-        -command "$base.cpd29.03 yview" -cursor left_ptr \
-        -orient vert
+    ScrolledWindow $base.cpd29 -background #bcbcbc
     text $base.cpd29.03 \
         -background white \
         -foreground #000000 -highlightbackground #f3f3f3 \
         -highlightcolor #000000 -selectbackground #000080 \
-        -selectforeground #ffffff -state disabled \
-        -yscrollcommand "$base.cpd29.02 set" -cursor left_ptr
+        -selectforeground #ffffff -state disabled -cursor left_ptr
+    $base.cpd29 setwidget $base.cpd29.03
+
     ###################
     # SETTING GEOMETRY
     ###################
     pack $base.cpd29 \
         -in $base -anchor center -expand 1 -fill both -side top
-    grid columnconf $base.cpd29 0 -weight 1
-    grid rowconf $base.cpd29 0 -weight 1
-    grid $base.cpd29.02 \
-        -in $base.cpd29 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns
-    grid $base.cpd29.03 \
-        -in $base.cpd29 -column 0 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky nesw
+    pack $base.cpd29.03
 
     vTcl:display_pulldown $base 496 252 \
         "set vTcl(images,selector_dlg,current) <cancel>"
@@ -717,22 +706,14 @@ proc vTclWindow.vTcl.imgManager {args} {
     wm protocol $base WM_DELETE_WINDOW "wm withdraw $base"
     wm transient .vTcl.imgManager .vTcl
 
-    frame $base.cpd29 \
-        -borderwidth 2 -height 30 \
-        -relief sunken \
-        -width 30
-    scrollbar $base.cpd29.01 \
-        -command "$base.cpd29.03 xview" -cursor left_ptr \
-        -orient horiz
-    scrollbar $base.cpd29.02 \
-        -command "$base.cpd29.03 yview" -cursor left_ptr \
-        -orient vert
+    ScrolledWindow $base.cpd29
     text $base.cpd29.03 \
         -background white -cursor left_ptr \
         -height 1 -borderwidth 0 \
         -state disabled -tabs {0.2i 3i 3.75i} \
-        -width 8 -wrap none -xscrollcommand "$base.cpd29.01 set" \
-        -yscrollcommand "$base.cpd29.02 set"
+        -width 8 -wrap none
+    $base.cpd29 setwidget $base.cpd29.03
+
     frame $base.butfr
     vTcl:toolbar_button $base.butfr.but32 \
         -command vTcl:image:new_image_file \
@@ -746,15 +727,8 @@ proc vTclWindow.vTcl.imgManager {args} {
     ###################
     pack $base.cpd29 \
         -in $base -anchor center -expand 1 -fill both -side bottom
-    grid columnconf $base.cpd29 0 -weight 1
-    grid rowconf $base.cpd29 0 -weight 1
-    grid $base.cpd29.01 \
-        -in $base.cpd29 -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew
-    grid $base.cpd29.02 \
-        -in $base.cpd29 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns
-    grid $base.cpd29.03 \
-        -in $base.cpd29 -column 0 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky nesw
+    pack $base.cpd29.03
+
     pack $base.butfr -fill x -side top
     pack $base.butfr.but32 \
         -anchor nw -expand 0 -fill none -side left
