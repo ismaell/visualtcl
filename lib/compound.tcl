@@ -440,15 +440,37 @@ proc vTcl:name_compound {t} {
     ## selection of list of procs to include
     set proposedProcs ""
     foreach item $vTcl(procs) {
-        if {[vTcl:valid_procname $item]} {
+        if {[vTcl:valid_procname $item] && 
+            ($item != "main") &&
+            ($item != "init")} {
             lappend proposedProcs $item
         }
     }
 
-    set includedProcs [::vTcl::input::listboxSelect::select \
-        $proposedProcs "Select Code for Compound" extended]
+    ## if there are no procs to include well just don't ask (duh)
+    set includedProcs ""
+    if {![lempty $proposedProcs]} {
+        set includedProcs [::vTcl::input::listboxSelect::select \
+        $proposedProcs "Select Code for Compound" extended \
+        -canceltext "No Code" \
+        -headertext "Choose procedures to include with the compound.
+Select 'No Code' if the compound doesn't contain code."]
+    }
 
-    eval [vTcl::compounds::createCompound $t user $name $includedProcs]
+    ## if any of the included procs is in a namespace and ends with init
+    ## or main, it is a special proc
+    set initCmd "" 
+    set mainCmd ""
+    foreach includedProc $includedProcs {
+        if {[string match *::init $includedProc]} {
+            set initCmd $includedProc
+        }
+        if {[string match *::main $includedProc]} {
+            set mainCmd $includedProc
+        }
+    }    
+
+    eval [vTcl::compounds::createCompound $t user $name $includedProcs $initCmd $mainCmd]
     vTcl:cmp_user_menu
 }
 
@@ -779,6 +801,7 @@ namespace eval ::vTcl::compounds {
         namespace delete $spc
     }
 }
+
 
 
 

@@ -187,7 +187,7 @@ proc updateSelection {top} {
     }
 }
 
-proc select {contents title {selectMode single}} {
+proc select {contents title {selectMode single} args} {
     set base .vTcl.listboxSelect
     if {[winfo exists $base]} {
         wm deiconify $base; return
@@ -219,7 +219,7 @@ proc select {contents title {selectMode single}} {
         -borderwidth 2
     set site_3_0 $top.fra87
     label $site_3_0.lab88 \
-        -text {Select item:}
+        -text {Select item:} -justify left -anchor w
     vTcl:DefineAlias "$site_3_0.lab88" "SelectLabel" vTcl:WidgetProc "$top" 1
     pack $site_3_0.lab88 \
         -in $site_3_0 -anchor center -expand 0 -fill none -side left
@@ -264,6 +264,20 @@ proc select {contents title {selectMode single}} {
     vTcl:center $base 339 247
     wm deiconify $base
 
+    foreach {option value} $args {
+        switch -- $option {
+            -oktext {
+                 $top.SelectOK configure -text $value
+            }
+            -canceltext {
+                 $top.SelectCancel configure -text $value
+            }
+            -headertext {
+                 $top.SelectLabel configure -text $value
+            }
+        }
+    }
+
     grab set $base
     vwait ::${top}::status
     grab release $base
@@ -276,7 +290,4 @@ proc select {contents title {selectMode single}} {
     return [vTcl:at ::${top}::selectedItems]
 }
 }
-
-
-
 

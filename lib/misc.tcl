@@ -871,7 +871,9 @@ proc vTcl:raise_last_button {newButton} {
 
     if {$vTcl(x,lastButton) == $newButton} { return }
 
-    $vTcl(x,lastButton) configure -relief raised
+    if {[winfo exists $vTcl(x,lastButton)]} {
+        $vTcl(x,lastButton) configure -relief raised
+    }
 
     set vTcl(x,lastButton) $newButton
 }
@@ -1476,4 +1478,5 @@ namespace eval ::vTcl::ui::attributes {
         }
     }
 }
+
 
