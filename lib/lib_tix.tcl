@@ -41,7 +41,7 @@ proc vTcl:widget:lib:lib_tix {args} {
         TixOptionMenu
     }
 
-    vTcl:lib:add_widgets_to_toolbar $order
+    vTcl:lib:add_widgets_to_toolbar $order "Tix Widgets"
 
     append vTcl(head,tix,importheader) {
     # Tix is required
@@ -262,3 +262,4 @@ proc vTcl:lib_tix:dump_widget_opt {target basename} {
     append result [vTcl:dump_widget_bind $target $basename]
     return $result
 }
+
