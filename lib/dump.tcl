@@ -404,15 +404,22 @@ proc vTcl:dump_widget_opt {target basename} {
             }
         }
     }
-    if {$mgr == "wm"} {
-        if {$class == "Menu"} {
+    if {$mgr == "wm"} then {
+        if {$class == "Menu"} then {
             append result [vTcl:dump_menu_widget $target $basename]
         } else {
             append result [vTcl:dump_top_widget $target $basename]
         }
-    } elseif {$mgr == "menubar"} {
+    } elseif {$mgr == "menubar"} then {
         return ""
+    } elseif {$mgr == "place" && $class == "Menu"} then {
+
+        # this is a weird bug where the window manager switches
+        # from 'wm' to 'place' for a menu, so we need to save the
+        # menu anyway
+        append result [vTcl:dump_menu_widget $target $basename]
     }
+
     append result [vTcl:dump_widget_bind $target $basename]
     return $result
 }
@@ -429,6 +436,11 @@ proc vTcl:dump_widget_geom {target basename} {
 
     ## Let's be safe and force wm for toplevel windows.  Just incase...
     if {$class == "Toplevel"} { set mgr wm }
+
+    ## Weird totally I mean like confusing kinda bug: the window manager
+    ## switches from 'wm' for a menu to 'place' which messed up the saved
+    ## file.
+    if {$class == "Menu" && $mgr == "place"} {return ""}
 
     set result ""
     if {$mgr != "wm" \
