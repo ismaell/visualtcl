@@ -55,7 +55,8 @@ proc Window {args} {
 
 proc vTcl:WidgetProc {w args} {
     if {[llength $args] == 0} {
-        return -code error "wrong # args: should be \"$w option ?arg arg ...?\""
+        ## If no arguments, returns the path the alias points to
+        return $w
     }
     ## The first argument is a switch, they must be doing a configure.
     if {[string index $args 0] == "-"} {
