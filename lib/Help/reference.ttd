@@ -677,8 +677,7 @@ ttd.text {- [incr Widgets]
 }
 ttd.text {- Tcl/Tk Core Widgets (always required)
 }
-ttd.text {- Visual Tcl Widget Library (a collection of multiple columns listbox, combo box and progress }
-ttd.text {bar)
+ttd.text {- Visual Tcl Widget Library (a collection of multiple columns listbox, combo box and progress bar)
 }
 ttd.text {- tablelist (see www.nemethi.de)
 }
@@ -715,33 +714,141 @@ ttd.text {1.9 Main Window Toolbar}
 ttd.tagoff {Level 2 Title}
 ttd.text {
 }
+ttd.text {The main window toolbar allows to quickly do common operations.
+}
+ttd.text {
+}
 ttd.tagon {Level 4 Title}
 ttd.tagon {Level 3 Title}
 ttd.text {1.9.1 Text Entry
 }
+ttd.tagoff {Level 3 Title}
+ttd.tagoff {Level 4 Title}
+ttd.text {The text entry located right under the main menu allows to set the label for a widget like a button, or the title of a toplevel window.
+}
+ttd.text {
+}
+ttd.tagon {Level 4 Title}
+ttd.tagon {Level 3 Title}
 ttd.text {1.9.2 Command Console
+}
+ttd.tagoff {Level 4 Title}
+ttd.tagoff {Level 3 Title}
+ttd.text {This button shows or hide the command console. The command console allows you to enter interactive commands and the see the results right away.
+}
+ttd.tagon {Level 3 Title}
+ttd.tagon {Level 4 Title}
+ttd.text {
 }
 ttd.text {1.9.3 Border
 }
+ttd.tagoff {Level 4 Title}
+ttd.tagoff {Level 3 Title}
+ttd.text {Sets the border relief for the currently selected widget. You can choose among raised, sunken, groove, ridge, or flat. It is not a good idea to change the border type of buttons, because they will not look right and behave according to the operating system's conventions.
+}
+ttd.text {
+}
+ttd.tagon {Level 3 Title}
+ttd.tagon {Level 4 Title}
 ttd.text {1.9.4 Border Width
+}
+ttd.tagoff {Level 4 Title}
+ttd.tagoff {Level 3 Title}
+ttd.text {Sets the border width for the currently selected widget. It is advised not to change the border width of widgets like buttons that take their default value from the platform.
+}
+ttd.tagon {Level 3 Title}
+ttd.tagon {Level 4 Title}
+ttd.text {
 }
 ttd.text {1.9.5 Label Anchor
 }
+ttd.tagoff {Level 4 Title}
+ttd.tagoff {Level 3 Title}
+ttd.text {Specifies where the text will be anchored in a widget. The menu shows graphically where the text will be inside the widget rectangle.
+}
+ttd.tagon {Level 3 Title}
+ttd.tagon {Level 4 Title}
+ttd.text {
+}
 ttd.text {1.9.6 Foreground Color
+}
+ttd.tagoff {Level 3 Title}
+ttd.tagoff {Level 4 Title}
+ttd.text {Sets the foreground color of the currently selected widget.}
+ttd.tagon {Level 4 Title}
+ttd.tagon {Level 3 Title}
+ttd.text {
+}
+ttd.text {
 }
 ttd.text {1.9.7 Background Color
 }
+ttd.tagoff {Level 4 Title}
+ttd.tagoff {Level 3 Title}
+ttd.text {Sets the background color of the currently selected widget.}
+ttd.tagon {Level 3 Title}
+ttd.tagon {Level 4 Title}
+ttd.text {
+}
+ttd.text {
+}
 ttd.text {1.9.8 Font Selection
 }
+ttd.tagoff {Level 3 Title}
+ttd.tagoff {Level 4 Title}
+ttd.text {The font selection buttons in the toolbar specify the font for the currently selected widget. It is recommended to use the Visual Tcl font mechanism instead, accessible from within the attributes editor font option. The Visual Tcl font system allows you to change the size and or typeface of a font, and all widgets displaying this font will automatically change to reflect the new font.
+}
+ttd.text {
+}
+ttd.text {If you set the font individually for each widget from within the toolbar, and you need to change a lot of widgets' font options at once, you will need to do it one widget at a time.
+}
+ttd.text {
+}
+ttd.tagon {Level 4 Title}
+ttd.tagon {Level 3 Title}
 ttd.text {1.9.8.1 Typeface
+}
+ttd.tagoff {Level 3 Title}
+ttd.tagoff {Level 4 Title}
+ttd.text {Displays the list of fonts available on your system, grouped by the first letter of their name.
+}
+ttd.tagon {Level 4 Title}
+ttd.tagon {Level 3 Title}
+ttd.text {
 }
 ttd.text {1.9.8.2 Font Size
 }
+ttd.tagoff {Level 3 Title}
+ttd.tagoff {Level 4 Title}
+ttd.text {Sets the font size of the currently selected widget. If you do not use truetype fonts, you may get blocky letters for large font sizes.}
+ttd.tagon {Level 4 Title}
+ttd.tagon {Level 3 Title}
+ttd.text {
+}
+ttd.text {
+}
 ttd.text {1.9.8.3 Font Style
+}
+ttd.tagoff {Level 3 Title}
+ttd.tagoff {Level 4 Title}
+ttd.text {Sets the font style of the currently selected widget. You can choose between bold, italic, or underline, or combine them together.
+}
+ttd.tagon {Level 4 Title}
+ttd.tagon {Level 3 Title}
+ttd.text {
 }
 ttd.text {1.9.9 Justification
 }
-ttd.text {1.9.10 Geometry Manager
+ttd.tagoff {Level 3 Title}
+ttd.tagoff {Level 4 Title}
+ttd.text {Sets the justification style for the currently selected widget. Justification only applies to widgets whose text spans on multiple lines.
+}
+ttd.text {
+}
+ttd.tagon {Level 4 Title}
+ttd.tagon {Level 3 Title}
+ttd.text {1.9.10 Geometry Manager}
+ttd.text {
 }
 ttd.tagoff {Level 3 Title}
 ttd.text {1.9.10.1 Grid
