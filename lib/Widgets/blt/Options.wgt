@@ -3,7 +3,7 @@ NewOption -closerelief {closerelief} choice {raised sunken}
 NewOption -dashes {dashes} type
 NewOption -halo {halo} type
 NewOption -invertxy {invertxy} type
-NewOption -justify {justify} longname choice {left right center}
+NewOption -justify {justify} choice {left right center}
 NewOption -leftmargin {LeftMar} type
 NewOption -opencommand {Opencmd} command {}
 NewOption -openrelief {openrelief} choice {raised sunken}
@@ -16,3 +16,4 @@ NewOption -rightmargin {RightMar} type
 NewOption -tile tile type
 NewOption -title Title type
 NewOption -topmargin {TopMar} type
+
