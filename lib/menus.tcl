@@ -109,7 +109,7 @@ namespace eval ::menu_edit {
                     set ::${top}::$ctrl.state      [$ctrl cget -state]
                     set ::${top}::$ctrl.background [$ctrl cget -background]
 
-                    $ctrl configure -state disabled -background gray
+                    $ctrl configure -state disabled
                 }
 
             }
@@ -1026,14 +1026,11 @@ proc vTclWindow.vTclMenuEdit {base menu} {
     }
     vTcl:toolbar_button $base.fra21.but22 \
         -command "::menu_edit::ask_delete_menu $base" \
-        -image [vTcl:image:get_image "remove.gif"] \
-        -text button
+        -image [vTcl:image:get_image "remove.gif"]
     vTcl:toolbar_button $base.fra21.but23 \
-        -command "::menu_edit::move_item $base up" -height 20 -image up \
-        -text button -width 20
+        -command "::menu_edit::move_item $base up" -image up
     vTcl:toolbar_button $base.fra21.but24 \
-        -command "::menu_edit::move_item $base down" -height 20 -image down \
-        -text button -width 20
+        -command "::menu_edit::move_item $base down" -image down
     frame $base.cpd24.01.cpd25 \
         -borderwidth 1 -height 30 -relief raised -width 30
     listbox $base.cpd24.01.cpd25.01 \

@@ -90,7 +90,7 @@ proc vTclWindow.vTcl.bind {args} {
                 ButtonRelease-1 ButtonRelease-2 ButtonRelease-3
                 Motion          Enter           Leave
                 KeyPress        KeyRelease      FocusIn
-                FocusOut} {
+                FocusOut        Destroy} {
         $base.m37.men38 add command \
             -command "::widgets_bindings::add_binding <$ev>" \
             -label $ev
@@ -178,6 +178,8 @@ proc vTclWindow.vTcl.bind {args} {
     $base.fra22.men20.m add command \
         -command {::widgets_bindings::add_binding <FocusOut>} -label FocusOut
     $base.fra22.men20.m add command \
+        -command {::widgets_bindings::add_binding <Destroy>} -label Destroy
+    $base.fra22.men20.m add command \
         -command {Window show .vTcl.newbind} -label Advanced...
     vTcl:toolbar_button $base.fra22.but24 \
         -command "::widgets_bindings::delete_binding" \
@@ -230,26 +232,26 @@ proc vTclWindow.vTcl.bind {args} {
         -tearoff 0
     $base.cpd21.01.cpd25.01.menu add command \
         -command {::widgets_bindings::right_click_modifier ""} \
-        -label {<no modifier>} 
+        -label {<no modifier>}
     $base.cpd21.01.cpd25.01.menu add command \
         -command {::widgets_bindings::right_click_modifier Double} \
-        -label Double 
+        -label Double
     $base.cpd21.01.cpd25.01.menu add command \
         -command {::widgets_bindings::right_click_modifier Triple} \
-        -label Triple 
+        -label Triple
     $base.cpd21.01.cpd25.01.menu add command \
         -command {::widgets_bindings::right_click_modifier Control} \
-        -label Control 
+        -label Control
     $base.cpd21.01.cpd25.01.menu add command \
         -command {::widgets_bindings::right_click_modifier Shift} \
-        -label Shift 
+        -label Shift
     $base.cpd21.01.cpd25.01.menu add command \
         -command {::widgets_bindings::right_click_modifier Meta} -label Meta
     $base.cpd21.01.cpd25.01.menu add command \
-        -command {::widgets_bindings::right_click_modifier Alt} -label Alt 
+        -command {::widgets_bindings::right_click_modifier Alt} -label Alt
     $base.cpd21.01.cpd25.01.menu add command \
         -command {::widgets_bindings::right_click_modifier Button1} \
-        -label Button1 
+        -label Button1
     $base.cpd21.01.cpd25.01.menu add command \
         -command {::widgets_bindings::right_click_modifier Button2} \
         -label Button2
@@ -262,11 +264,11 @@ proc vTclWindow.vTcl.bind {args} {
         -command "$base.cpd21.01.cpd25.01 yview"
     frame $base.cpd21.02 \
         -background #9900991B99FE -highlightbackground #dcdcdc \
-        -highlightcolor #000000 
+        -highlightcolor #000000
     frame $base.cpd21.02.cpd21 \
         -background #dcdcdc -borderwidth 1 -height 30 \
         -highlightbackground #dcdcdc -highlightcolor #000000 -relief raised \
-        -width 30 
+        -width 30
     scrollbar $base.cpd21.02.cpd21.01 \
         -command "$base.cpd21.02.cpd21.03 xview" -orient horizontal
     scrollbar $base.cpd21.02.cpd21.02 \
@@ -614,12 +616,13 @@ proc vTclWindow.vTcl.newbind {base {container 0}} {
         ButtonRelease-1 ButtonRelease-2 ButtonRelease-3
         Motion KeyPress KeyRelease Enter Leave
         FocusIn FocusOut Activate Deactivate MouseWheel 
-        Map Unmap Configure
+        Map Unmap Configure Destroy
     } {
         BindingsEvents insert end $event
     }
 
     foreach event [event info] {
+        if {[string match <<TkCon*>> $event]} {continue}
         BindingsEvents insert end $event
     }
 
@@ -1306,7 +1309,7 @@ namespace eval ::widgets_bindings {
         # adds the modifier to the last event in the sequence
         
         set last [string last < $event]
-        
+
         if {$last == -1} return
         
         if {$modifier == "<no modifier>" ||

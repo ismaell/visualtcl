@@ -3,6 +3,7 @@ Lib         core
 
 Icon        icon_menu.gif
 TreeLabel   @vTcl:core:get_menu_label
+DefaultValues -background
 
 NewOption -menuspecial      "menu"          menuspecial
 NewOption -tearoff          "tearoff"       boolean "0 1"

@@ -1,6 +1,10 @@
 ChangeLog for Visual Tcl:
 
 1.51b4 -> 1.51rc0
+    o Added <Destroy> to simple bindings menu
+    o Removed <<TkCon*>> bindings from binding editor
+    o Added demo application 'visual-text.tcl' using Bryan Oakley's
+      code to dump an entire text widget contents into a file
     o Prevent the same alias from being defined in two toplevels
     o Center alias dialog and command dialog if no widget has been
       selected using the mouse (it is possible to select a widget in
