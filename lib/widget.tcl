@@ -1572,9 +1572,54 @@ namespace eval vTcl::widgets {
 
         return [$::classes($class,queryInsertOptionsCmd) $addOptions options]
     }
+
+    ## return the list of used images or fonts for this widget
+    ## resourceType parameter needs to be "image" or "font"
+    proc getResources {w resourceType} {
+        set used {}
+        set value {}
+
+        ## 1. use defaut -image or -font option
+        catch {set value [$w cget -$resourceType]}
+        if {$value != ""} {
+            lappend used $value
+        }
+
+        ## 2. use custom per class procedure to get used images or fonts
+        set c [vTcl:get_class $w]
+        set cmd get[string totitle $resourceType]sCmd
+        if {[info exists ::classes($c,$cmd)]} {
+            set used [concat $used [$::classes($c,$cmd) $w]]
+        }
+
+        ## 3. only return vTcl images and fonts objects
+        set result {}
+        foreach type {stock user} {
+            foreach object $used {
+                if {[lsearch [set ::vTcl(${resourceType}s,$type)] $object] > -1} {
+                   lappend result $object
+                }
+            }
+        } ; # foreach type ...
+
+        return $result
+    }
+
+    ## return the list of images/font used by a compound
+    ## resourceType parameter needs to be "image" or "font"
+    proc usedResources {root resourceType} {
+        array set resources {}
+        iterateCompleteWidgetTree $root getResources $resourceType resources
+
+        set result ""
+        foreach index [array names resources] {
+            if {![lempty $resources($index)]} {
+                lappend result $resources($index)
+            }
+        }
+
+        ## return a list without duplicates
+        return [lsort -unique $result]
+    }
 }
-
-
-
-
 
