@@ -1,6 +1,9 @@
 ChangeLog for Visual Tcl:
 
 1.51b4 -> 1.51
+    o Fixed bug where combobox/mclistbox/progressbar code wouldn't be
+      saved with project in some situations
+    o File Open/Save remembers last directory
     o Added "-listvariable" option for listbox
     o Added "Reload" button to image manager, to reload images modified
       by other programs like image editors.

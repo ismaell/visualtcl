@@ -599,6 +599,9 @@ proc vTcl:find_files {base pattern} {
 
 proc vTcl:get_file {mode {title File} {ext .tcl}} {
     global vTcl tk_version tcl_platform tcl_version tk_strictMotif
+    if {![info exists vTcl(pr,initialdir)]} {
+        set vTcl(pr,initialdir) [pwd]
+    }
     if {[string tolower $mode] == "open"} {
         set vTcl(file,mode) "Open"
     } else {
@@ -610,7 +613,7 @@ proc vTcl:get_file {mode {title File} {ext .tcl}} {
     switch $mode {
         open {
             set file [tk_getOpenFile -defaultextension $ext \
-                -initialdir [pwd] -filetypes $types]
+                -initialdir $vTcl(pr,initialdir) -filetypes $types]
         }
         save {
             set initname [file tail $vTcl(project,file)]
@@ -619,15 +622,18 @@ proc vTcl:get_file {mode {title File} {ext .tcl}} {
             }
             if {$tcl_platform(platform) == "macintosh"} then {
                 set file [tk_getSaveFile -defaultextension $ext \
-                    -initialdir [pwd] -initialfile $initname]
+                    -initialdir $vTcl(pr,initialdir) -initialfile $initname]
             } else {
                 set file [tk_getSaveFile -defaultextension $ext \
-                    -initialdir [pwd] -filetypes $types \
+                    -initialdir $vTcl(pr,initialdir) -filetypes $types \
                     -initialfile $initname]
             }
         }
     }
     set tk_strictMotif 1
+    if {$file != ""} {
+        set vTcl(pr,initialdir) [file dirname $file]
+    }
     catch {cd [file dirname $file]}
     return $file
 }

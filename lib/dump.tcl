@@ -91,7 +91,7 @@ proc vTcl:export_procs {} {
 
     set output ""
     vTcl:dump:not_sourcing_header output
-    set children [vTcl:list_widget_tree .]
+    set children [vTcl:complete_widget_tree . 0]
 
     foreach child $children {
         lappend classList [vTcl:get_class $child]
