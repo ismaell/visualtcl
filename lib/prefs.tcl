@@ -262,7 +262,7 @@ proc {vTcl:prefs:data_exchange} {save_and_validate} {
     vTcl:data_exchange_var vTcl(pr,saveasexecutable) \
         prefs::saveasexecutable $save_and_validate
     vTcl:data_exchange_var vTcl(pr,bgcolor) \
-        prefs::saveasexecutable $save_and_validate
+        prefs::bgcolor $save_and_validate
 
     if {$save_and_validate} {
     	set vTcl(pr,font_dlg)   [font configure $prefs::font_dlg]
