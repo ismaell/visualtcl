@@ -1,6 +1,9 @@
 ChangeLog for Visual Tcl:
 
-1.51b4 -> 1.51
+1.51b4 -> 1.51rc0
+    o Cleaned up the keyboard scrolling in the property manager.
+    o Fixed a bug where options would get changed while scrolling in the
+      property manager.
     o Fixed delete toplevel bug
     o Added support for deleting childsites in notebook/panedwindow (Tix)
     o Added support for deleting childsites in tabnotebook/notebook [Iwidgets]
@@ -150,7 +153,7 @@ ChangeLog for Visual Tcl:
     o Added Find/Replace in procedure editor
 
 1.22   -> 1.51b1
-	o Added a configure script to locate the best WISH shell.
+    o Added a configure script to locate the best WISH shell.
     o Changed the way libs are loaded
     o Support for mclistbox and combobox from Bryan Oakley. This time,
       no additional packages are needed, and when projects are saved, the

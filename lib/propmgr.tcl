@@ -98,8 +98,10 @@ proc vTclWindow.vTcl.ae {args} {
     wm transient $vTcl(gui,ae) .vTcl
     wm overrideredirect $ae 0
 
-    canvas $ae.c -yscrollcommand "$ae.sv set" \
-        -xscrollcommand "$ae.sh set" -highlightthickness 0
+    canvas $ae.c -highlightthickness 0 \
+	-xscrollcommand "$ae.sh set" \
+	-yscrollcommand "$ae.sv set" \
+	-yscrollincrement 20
     scrollbar $ae.sh -orient horiz -command "$ae.c xview" -takefocus 0
     scrollbar $ae.sv -orient vert  -command "$ae.c yview" -takefocus 0
 
@@ -208,10 +210,10 @@ proc vTcl:prop:recalc_canvas {} {
     wm minsize .vTcl.ae $w 200
 
     set vTcl(propmgr,frame,$f1) 0
-    lassign [vTcl:split_geom [winfo geometry $f1]] x y
-    set vTcl(propmgr,frame,$f2) $y
-    lassign [vTcl:split_geom [winfo geometry $f2]] x y
-    set vTcl(propmgr,frame,$f3) $y
+    lassign [vTcl:split_geom [winfo geometry $f1]] w h
+    set vTcl(propmgr,frame,$f2) $h
+    lassign [vTcl:split_geom [winfo geometry $f2]] w h2
+    set vTcl(propmgr,frame,$f3) [expr $h + $h2]
 }
 
 proc vTcl:focus_out_cmd {option} {
@@ -226,7 +228,7 @@ proc vTcl:focus_out_cmd {option} {
 	set vTcl(w,last_value)     ""
 
 	$w configure $option $val
-	vTcl:prop:save_opt $w $option ::widgets::${w}::save($option)
+	vTcl:prop:save_opt $w $option ::widgets::${w}::options($option)
 	vTcl:place_handles $vTcl(w,widget)
     } else {
 	vTcl:log "oops:$vTcl(w,widget),$vTcl(w,last_widget_in)!"
@@ -687,16 +689,17 @@ proc vTcl:prop:save_opt {w opt varName} {
     upvar #0 $varName var
     vTcl:WidgetVar $w options
     vTcl:WidgetVar $w defaults
+    vTcl:WidgetVar $w save
 
     if {![info exists options($opt)]} { return }
     if {[vTcl:streq $options($opt) $var]} { return }
 
-    set ::widgets::${w}::options($opt) $var
+    set options($opt) $var
 
     if {$options($opt) == $defaults($opt)} {
-	set ::widgets::${w}::save($opt) 0
+	set save($opt) 0
     } else {
-	set ::widgets::${w}::save($opt) 1
+	set save($opt) 1
     }
     ::vTcl::change
 }
@@ -735,7 +738,8 @@ proc vTcl:propmgr:focusOnLabel {w dir} {
     ## We want to set the focus to the focusControl, but we want the canvas
     ## to scroll to the label of the focusControl.
     focus $propmgrLabels($next)
-    vTcl:propmgr:scrollToLabel $vTcl(gui,ae).c $next
+
+    vTcl:propmgr:scrollToLabel $vTcl(gui,ae).c $next $dir
 }
 
 proc vTcl:propmgr:focusPrev {w} {
@@ -746,15 +750,24 @@ proc vTcl:propmgr:focusNext {w} {
     vTcl:propmgr:focusOnLabel $w 1
 }
 
-proc vTcl:propmgr:scrollToLabel {c w} {
+proc vTcl:propmgr:scrollToLabel {c w units} {
     global vTcl
     set split [split $w .]
     set split [lrange $split 0 4]
     set frame [join $split .]
+
     lassign [$c cget -scrollregion] foo foo cx cy
     lassign [vTcl:split_geom [winfo geometry $w]] foo foo ix iy
-    set y [expr ($iy.0 + $vTcl(propmgr,frame,$frame)) / $cy]
-    $c yview moveto $y
+    set yt [expr $iy.0 + $vTcl(propmgr,frame,$frame) + 20]
+    lassign [$c yview] topY botY
+    set topY [expr $topY * $cy]
+    set botY [expr $botY * $cy]
+
+    ## If the total new height is lower than the current view, scroll up.
+    ## If the total new height is higher than the current view, scroll down.
+    if {$yt < $topY || $yt > $botY} {
+	$c yview scroll $units units
+    }
 }
 
 proc vTcl:propmgr:show_rightclick_menu {base option variable X Y} {
@@ -884,6 +897,7 @@ proc vTcl:prop:default_opt {w opt varName {user_param {}}} {
     upvar #0 $varName var
     vTcl:WidgetVar $w options
     vTcl:WidgetVar $w defaults
+    vTcl:WidgetVar $w save
 
     if {![info exists options($opt)]} { return }
     if {![info exists defaults($opt)]} { return }
@@ -896,8 +910,8 @@ proc vTcl:prop:default_opt {w opt varName {user_param {}}} {
     }
 
     $w configure $opt $defaults($opt)
-    set ::widgets::${w}::options($opt) $defaults($opt)
-    set ::widgets::${w}::save($opt) 0
+    set options($opt) $defaults($opt)
+    set save($opt) 0
 
     ::vTcl::change
 }
@@ -910,12 +924,13 @@ proc vTcl:prop:set_opt {w opt varName value} {
     upvar #0 $varName var
     vTcl:WidgetVar $w options
     vTcl:WidgetVar $w defaults
+    vTcl:WidgetVar $w save
 
     if {![info exists options($opt)]} { return }
     if {![info exists defaults($opt)]} { return }
 
     $w configure $opt $value
-    set ::widgets::${w}::options($opt) $value
+    set options($opt) $value
 
     # only refresh the attribute editor if this is the
     # current widget, otherwise we'll get into trouble
@@ -925,19 +940,20 @@ proc vTcl:prop:set_opt {w opt varName value} {
     }
 
     if {$value == $defaults($opt)} {
-        set ::widgets::${w}::save($opt) 0
+	set save($opt) 0
     } else {
-        set ::widgets::${w}::save($opt) 1
+	set save($opt) 1
     }
 }
 
 proc vTcl:prop:save_or_unsave_opt {w opt varName save_or_not} {
 
     vTcl:WidgetVar $w options
+    vTcl:WidgetVar $w save
 
     if {![info exists options($opt)]} { return }
 
-    set ::widgets::${w}::save($opt) $save_or_not
+    set save($opt) $save_or_not
     ::vTcl::change
 }
 
