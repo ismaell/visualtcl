@@ -57,7 +57,9 @@ proc vTcl:delete {} {
     }
     append do "vTcl:unset_alias $vTcl(w,widget); "
     append do "vTcl:setup_unbind $vTcl(w,widget); "
-    append do "destroy $vTcl(w,widget)"
+    append do "destroy $vTcl(w,widget); "
+    append do "set _cmds \[info commands $vTcl(w,widget).*\]; "
+    append do "foreach _cmd \$_cmds \{rename \$_cmd \"\"\}"
     set undo "vTcl:insert_compound $vTcl(w,widget) \{$buffer\} $vTcl(w,def_mgr)"
     vTcl:push_action $do $undo
 

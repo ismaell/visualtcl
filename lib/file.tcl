@@ -275,6 +275,10 @@ proc vTcl:close {} {
             }
             vTcl:unset_alias $i
             destroy $i
+
+            # this is clean up for leftover widget commands
+            set _cmds [info commands $i.*]
+            foreach _cmd $_cmds {rename $_cmd ""}
         }
     }
     set vTcl(tops) ""

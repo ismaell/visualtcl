@@ -238,5 +238,7 @@ proc vTcl:widget:combobox:inscmd {target} {
     # combobox doesn't destroy all its commands
     # sometimes, so we clean up the rest
 
-    return "bind $target <Destroy> \{set _cmds \[info commands %W.*\]; foreach _cmd \$_cmds \{rename \$_cmd \"\"\}\}"
+    return "$target insert list end {Item 1}; \
+            $target insert list end {Item 2}; \
+            $target insert list end {Item 3}"
 }

@@ -55,7 +55,7 @@ set vTcl(menu,edit) {
 
 set vTcl(menu,mode) {
     {{Test Mode}      Alt+T        {vTcl:setup_unbind_tree .} }
-    {{Edit Mode}      Alt+E        {vTcl:setup_bind_tree .}   }
+    {{Edit Mode}      Alt+E        {vTcl:setup_bind_tree .} }
 }
 
 set vTcl(menu,system) {

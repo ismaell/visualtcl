@@ -41,25 +41,31 @@ proc vTcl:destroy_top {target} {
         return 0
     }
 
-    if [winfo exists $target] {
-        if {[vTcl:get_class $target] == "Toplevel"} {
-            destroy $target
-        }
-    }
-    if {[info procs vTclWindow$target] != ""} {
-        rename vTclWindow$target {}
-    }
-    if {[info procs vTclWindow(pre)$target] != ""} {
-        rename vTclWindow$target {}
-    }
-    if {[info procs vTclWindow(post)$target] != ""} {
-        rename vTclWindow$target {}
-    }
-    set x [lsearch $vTcl(tops) $target]
-    if {$x >= 0} {
-        set vTcl(tops) [lreplace $vTcl(tops) $x $x]
-    }
+    vTcl:select_widget $target
+    vTcl:delete
 
+#    if [winfo exists $target] {
+#        if {[vTcl:get_class $target] == "Toplevel"} {
+#            if {$vTcl(w,toplevel) == $target} {
+#                 vTcl:select_widget .
+#             }
+#            destroy $target
+#        }
+#    }
+#    if {[info procs vTclWindow$target] != ""} {
+#        rename vTclWindow$target {}
+#    }
+#    if {[info procs vTclWindow(pre)$target] != ""} {
+#        rename vTclWindow$target {}
+#    }
+#    if {[info procs vTclWindow(post)$target] != ""} {
+#        rename vTclWindow$target {}
+#    }
+#    set x [lsearch $vTcl(tops) $target]
+#    if {$x >= 0} {
+#        set vTcl(tops) [lreplace $vTcl(tops) $x $x]
+#    }
+#
     return 1
 }
 
@@ -78,6 +84,7 @@ proc vTcl:show_top {target} {
         vTcl:setup_bind_tree $target
         vTcl:update_top_list
     }
+    vTcl:select_widget $target
 }
 
 proc vTcl:hide_top {target} {
@@ -85,6 +92,7 @@ proc vTcl:hide_top {target} {
     if [winfo exists $target] {
         if {[vTcl:get_class $target] == "Toplevel"} {
             wm withdraw $target
+            vTcl:select_widget .
         }
     }
 }
@@ -217,3 +225,5 @@ proc vTclWindow.vTcl.toplist {args} {
     update idletasks
     wm deiconify .vTcl.toplist
 }
+
+

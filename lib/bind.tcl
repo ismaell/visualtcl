@@ -28,6 +28,7 @@ proc vTclWindow(post).vTcl.bind {args} {
 proc vTcl:get_bind {target} {
     if {[winfo exists .vTcl.bind]} {
         ::widgets_bindings::fill_bindings $target 0
+        ::widgets_bindings::select_show_binding $target ""
     }
 }
 
@@ -776,6 +777,7 @@ proc vTclWindow.vTcl.newtag {base} {
 namespace eval ::widgets_bindings {
 
     variable tagslist ""
+    variable backup_bindings ""
 
     proc {::widgets_bindings::listbox_click} {} {
 
@@ -962,7 +964,7 @@ namespace eval ::widgets_bindings {
     proc {::widgets_bindings::delete_binding} {} {
 
         global widget
-        
+
         set indices [ListboxBindings curselection]
         set index [lindex $indices 0]
         
@@ -1087,11 +1089,11 @@ namespace eval ::widgets_bindings {
                incr index
            }
         }
-                
+
         # enable/disable various buttons
         ::widgets_bindings::enable_toolbar_buttons
 
-	if {$change} { ::vTcl::change }
+        if {$change} { ::vTcl::change }
     }
 
     proc {::widgets_bindings::find_tag_event} {l index ref_tag ref_event} {
@@ -1113,6 +1115,34 @@ namespace eval ::widgets_bindings {
         set event [lindex $tagevent 1]       
     }
 
+    proc {::widgets_bindings::enable_editor} {enable} {
+
+        if {![winfo exists .vTcl.bind]} return
+
+        global widget
+        variable backup_bindings
+        
+        switch $enable {
+            1 - yes - true {
+                ListboxBindings configure -background white
+                if {$backup_bindings != ""} {
+                    bindtags $widget(ListboxBindings) $backup_bindings
+                }
+                $widget(AddTag) configure -state normal
+            }
+            0 - no - false {
+                ListboxBindings selection clear 0 end
+                ListboxBindings configure -background gray
+                set backup_bindings [bindtags $widget(ListboxBindings)]
+                bindtags $widget(ListboxBindings) dummy
+                TextBindings configure -state disabled
+                TextBindings configure -background gray
+                ::widgets_bindings::enable_toolbar_buttons
+                $widget(AddTag) configure -state disabled
+            }
+        }
+    }
+
     proc {::widgets_bindings::init} {} {
         global widget vTcl
 
@@ -1125,14 +1155,17 @@ namespace eval ::widgets_bindings {
         set ::widgets_bindings::tagslist ""
 
         if {![winfo exists .vTcl.bind]} { return }
-                
+
+        # enable editor in case it was disabled in test mode
+        ::widgets_bindings::enable_editor 1
+
         ListboxBindings delete 0 end
 
         TextBindings configure -state normal
         TextBindings delete 0.0 end
         TextBindings configure -font $vTcl(pr,font_fixed) \
                                -background gray -state disabled
-       
+
         variable lastselected 0
         variable lasttag ""
         variable lastevent ""
@@ -1146,7 +1179,7 @@ namespace eval ::widgets_bindings {
     proc {::widgets_bindings::right_click_modifier} {modifier} {
 
         global widget
-        
+
         set indices [ListboxBindings curselection]
         set index [lindex $indices 0]
         
@@ -1174,7 +1207,7 @@ namespace eval ::widgets_bindings {
         set target $::widgets_bindings::target
         set tag    $::widgets_bindings::lasttag
         set event  $::widgets_bindings::lastevent
-        
+
         if {$tag == "" || $event == "" || $target == ""} { return }
         if {![winfo exists $target] } { return }
         if {![::widgets_bindings::is_editable_tag $tag]} { return }
@@ -1185,29 +1218,29 @@ namespace eval ::widgets_bindings {
         # is it really different?
         if {$new_bind != $old_bind} {
             bind $tag $event $new_bind
-	    ::vTcl::change
+            ::vTcl::change
         }
     }
 
     proc {::widgets_bindings::select_binding} {} {
 
         global widget
-        
+
         # before selecting a different binding, make sure we
         # save the current one
         ::widgets_bindings::save_current_binding
-        
+
         set indices [ListboxBindings curselection]
         set index [lindex $indices 0]
-        
+
         set tag ""
         set event ""
-        
+
         ::widgets_bindings::find_tag_event \
             $widget(ListboxBindings) $index tag event
 
         if {$tag == "" || $event == ""} {
-        
+
             TextBindings configure -state normal
             TextBindings delete 0.0 end
             TextBindings configure  -state disabled -background gray
@@ -1298,9 +1331,9 @@ namespace eval ::widgets_bindings {
     proc {::widgets_bindings::show_binding} {tag event} {
 
         global widget
-        
+
         set bindcode [string trim [bind $tag $event]]
-        
+
         TextBindings configure  -state normal
         TextBindings delete 0.0 end
         TextBindings insert 0.0 $bindcode
@@ -1329,21 +1362,21 @@ namespace eval ::widgets_bindings {
     proc {::widgets_bindings::find_event_in_sequence} \
        {sequence index ref_start_index ref_end_index} {
 
-    	upvar $ref_start_index start_index
-    	upvar $ref_end_index   end_index
+        upvar $ref_start_index start_index
+        upvar $ref_end_index   end_index
 
-    	if {$sequence == ""} {
+        if {$sequence == ""} {
             set start_index -1
             set end_index -1
             return
         }
 
-    	regsub -all << $sequence <_ sequence
-    	regsub -all >> $sequence _> sequence
-    	set start_index $index
-    	set end_index   $index
+        regsub -all << $sequence <_ sequence
+        regsub -all >> $sequence _> sequence
+        set start_index $index
+        set end_index   $index
 
-    	while {1} {
+        while {1} {
             set result [string range $sequence $start_index $end_index]
 
             if { ![string match *>  $result]} {
@@ -1366,7 +1399,7 @@ namespace eval ::widgets_bindings {
             if { [string match <*> $result]} {
                 break
             }
-    	}
+        }
     }
 
     proc {::widgets_bindings::get_standard_bindtags} {target} {
@@ -1387,3 +1420,5 @@ namespace eval ::widgets_bindings {
     }
 
 } ; # namespace eval
+
+
