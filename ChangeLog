@@ -1,6 +1,6 @@
 ChangeLog for Visual Tcl:
 
-1.20 -> 1.21 (April 2000)
+1.20 -> 1.21 (May 2000)
 	o Added image manager to maintain a database of images and use
 	  them for widgets
 	o Added font manager to maintain a database of fonts and use
@@ -15,7 +15,10 @@ ChangeLog for Visual Tcl:
 	o Added support for Freewrap to generate stand-alone executables
 	  on Linux and Windows platforms
 	o Support for more Iwidgets, including scrolledhtml, calendar,
-	  dateentry, feedback, optionmenu
+	  dateentry, feedback, optionmenu, buttonbox, checkbox, radiobox
+	o Saved projects when run as stand alone automatically detect
+	  the following packages: BLT, Itcl, Itk, Iwidgets and load them
+	o File Open... checks that it is reading a vTcl generated project
 	
 1.20 -> 1.2x (November 23, 1999) * version not released *
     o Root window placer fix (long-standing bug) from Alex Goodyear
