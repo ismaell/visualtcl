@@ -188,11 +188,13 @@ install -m 644 usr/local/vtcl-1.2.2/ChangeLog			$RPM_BUILD_ROOT/usr/local/vtcl-1
 install -m 644 usr/local/vtcl-1.2.2/LICENSE			$RPM_BUILD_ROOT/usr/local/vtcl-1.2.2/LICENSE
 install -m 644 usr/local/vtcl-1.2.2/README			$RPM_BUILD_ROOT/usr/local/vtcl-1.2.2/README	
 install -m 755 usr/local/vtcl-1.2.2/vt.tcl 			$RPM_BUILD_ROOT/usr/local/vtcl-1.2.2/vt.tcl
+install -m 755 usr/local/vtcl-1.2.2/vtsetup.tcl			$RPM_BUILD_ROOT/usr/local/vtcl-1.2.2/vtsetup.tcl
 install -m 755 usr/local/vtcl-1.2.2/vtcl 			$RPM_BUILD_ROOT/usr/local/vtcl-1.2.2/vtcl
 install -m 644 usr/local/vtcl-1.2.2/vtclmac			$RPM_BUILD_ROOT/usr/local/vtcl-1.2.2/vtclmac
 
 %files
 /usr/local/vtcl-1.2.2/vt.tcl
+/usr/local/vtcl-1.2.2/vtsetup.tcl
 /usr/local/vtcl-1.2.2/demo/combo.tcl
 /usr/local/vtcl-1.2.2/demo/README
 /usr/local/vtcl-1.2.2/demo/images/free.gif
