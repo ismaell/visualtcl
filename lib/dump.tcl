@@ -85,22 +85,65 @@ proc vTcl:save_procs {} {
     return $output
 }
 
+proc vTcl:dump:get_multifile_project_dir {project_name} {
+
+    return [file rootname $project_name]_
+}
+
+proc vTcl:dump:get_top_filename {target basedir project_name} {
+
+    return [file join $basedir \
+                      [vTcl:dump:get_multifile_project_dir $project_name] \
+                      f$target.tcl]
+}
+
+proc vTcl:dump:get_files_list {basedir project_name} {
+
+    global vTcl
+
+    if {! [info exists vTcl(pr,projecttype)]} {
+	return ""
+    }
+
+    if {$vTcl(pr,projecttype) == "single"} {
+        return ""
+    }
+
+    set result ""
+    set tops ". $vTcl(tops)"
+
+    foreach i $tops {
+
+        lappend result [vTcl:dump:get_top_filename $i $basedir $project_name]
+    }
+
+    return $result
+}
+
 proc vTcl:dump_top_tofile {target basedir project_name} {
 
     global vTcl
 
     catch {
-        file mkdir [file join $basedir [file rootname $project_name]]
+        file mkdir [file join $basedir [vTcl:dump:get_multifile_project_dir $project_name] ]
     }
 
-    set filename [file join $basedir [file rootname $project_name] $target.tcl]
+    set filename [vTcl:dump:get_top_filename $target $basedir $project_name]
     set id [open $filename w]
     puts $id "[subst $vTcl(head,projfile)]\n\n"
     puts $id [vTcl:dump_top $target]
     close $id
 
-    set output \
-       "source \"\[file join \[file dirname \[info script\] \] [file rootname $project_name] $target.tcl\]\"\n"
+    set output ""
+
+    append output "if \[info exists _freewrap_progsrc\] \{\n"
+    append output \
+       "    source \"[vTcl:dump:get_top_filename $target $basedir $project_name]\"\n"
+    append output "\} else \{\n"
+    append output \
+       "    source \"\[file join \[file dirname \[info script\] \] [vTcl:dump:get_multifile_project_dir $project_name] f$target.tcl\]\"\n"
+    append output "\}\n"
+
     return $output
 }
 

@@ -76,7 +76,7 @@ proc vTcl:is_vtcl_prj {file} {
     if {$vmajor != "" && $vminor != ""} {
 
     	if {$vmajor > 1 ||
-    	    ($vmajor == 1 && $vminor > 22)} {
+    	    ($vmajor == 1 && $vminor > 40)} {
 
 		tk_messageBox -title "Error loading file" \
 		              -message "You are trying to load a project created using Visual Tcl v$vmajor.$vminor\n\nPlease update to vTcl $vmajor.$vminor and try again." \
@@ -315,6 +315,7 @@ proc vTcl:save_as_binary {} {
     set vTcl(save) all
     set vTcl(w,save) $vTcl(w,widget)
     set file [vTcl:get_file save "Save Project With Binary"]
+
     vTcl:save2 $file
 
     # now comes the magic
@@ -322,6 +323,9 @@ proc vTcl:save_as_binary {} {
 
     set listID [open $filelist w]
     puts $listID [join [vTcl:image:get_files_list] \n]
+    puts $listID [join [vTcl:dump:get_files_list \
+                          [file dirname $file] \
+                          [file rootname $file] ] \n]
     close $listID
 
     # launches freewrap
