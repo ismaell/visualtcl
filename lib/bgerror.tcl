@@ -29,6 +29,76 @@ namespace eval ::stack_trace {
         $top.$widget(child,stack_trace_callstack) insert end $context
     }
 
+    proc {::stack_trace::get_statement_at_level} {top index} {
+
+        global widget
+
+        set context [$top.$widget(child,stack_trace_callstack) get $index]
+        set context [string trim $context]
+
+        if [string match "(procedure*)" $context] {
+
+            set procname [lindex $context 1]
+
+            if { [uplevel #0 "info proc $procname" ] != ""} {
+
+                regexp {([0-9]+)} [lindex $context 3] matchAll lineno
+
+				return [::stack_trace::get_proc_instruction $procname $lineno]
+
+			} else {
+
+				return ""
+			}
+
+		} else {
+
+            if [string match "(*arm line *)" $context] {
+
+                set statement \
+					[::stack_trace::get_statement_at_level $top [expr $index + 1] ]
+
+                if {$statement != ""} {
+
+                	set armindex [lindex [string range $context 1 end] 0]
+                    set arms     [::stack_trace::get_switch_arms $statement]
+                    set arm      [::stack_trace::get_switch_arm $arms $armindex]
+
+                    regexp {([0-9]+)} [lindex $context 3] matchAll lineno
+
+					return [::stack_trace::get_bloc_instruction $arm $lineno]
+
+				} else {
+
+					return ""
+				}
+
+			} else {
+
+                if [string match {("if" then script line *)} $context] {
+
+	                set statement \
+						[::stack_trace::get_statement_at_level $top [expr $index + 1] ]
+
+	                if {$statement != ""} {
+
+	                    regexp {([0-9]+)} [lindex $context 4] matchAll lineno
+
+						return [::stack_trace::get_bloc_instruction $statement $lineno]
+
+					} else {
+
+						return ""
+					}
+
+                } else {
+
+					return ""
+				}
+			}
+		}
+    }
+
     proc {::stack_trace::extract_code} {top} {
 
         global widget
@@ -65,19 +135,14 @@ namespace eval ::stack_trace {
 
             if [string match "(*arm line *)" $context] {
 
-                set context_previous [$top.$widget(child,stack_trace_callstack) get [expr $index + 1] ]
-                set context_previous [string trim $context_previous]
+                set statement \
+					[::stack_trace::get_statement_at_level $top [expr $index + 1] ]
 
-                if [string match "(procedure*)" $context_previous] {
+                if {$statement != ""} {
 
-                    set procname [lindex $context_previous 1]
-                    regexp {([0-9]+)} [lindex $context_previous 3] matchAll lineno
-
-                    set statement [::stack_trace::get_proc_instruction $procname $lineno]
-                    set armindex [lindex [string range $context 1 end] 0]
-
-                    set arms [::stack_trace::get_switch_arms $statement]
-                    set arm  [::stack_trace::get_switch_arm $arms $armindex]
+                	set armindex [lindex [string range $context 1 end] 0]
+                    set arms     [::stack_trace::get_switch_arms $statement]
+                    set arm      [::stack_trace::get_switch_arm $arms $armindex]
 
                     regexp {([0-9]+)} [lindex $context 3] matchAll lineno
 
@@ -85,15 +150,35 @@ namespace eval ::stack_trace {
                     vTcl:syntax_color $top.$widget(child,stack_trace_details)  0 -1
                     ::stack_trace::highlight_details $top $lineno
 
-               } else {
+                } else {
 
                     ::stack_trace::set_details $top "(no code available)"
-               }
+                }
 
-           } else {
+            } else {
 
-              ::stack_trace::set_details $top "(no code available)"
-           }
+                if [string match {("if" then script line *)} $context] {
+
+	                set statement \
+						[::stack_trace::get_statement_at_level $top [expr $index + 1] ]
+
+	                if {$statement != ""} {
+
+	                    regexp {([0-9]+)} [lindex $context 4] matchAll lineno
+
+	                    ::stack_trace::set_details $top $statement
+                    	vTcl:syntax_color $top.$widget(child,stack_trace_details)  0 -1
+                    	::stack_trace::highlight_details $top $lineno
+
+					} else {
+
+		                ::stack_trace::set_details $top "(no code available)"
+					}
+
+                } else {
+	                ::stack_trace::set_details $top "(no code available)"
+				}
+            }
         }
     }
 
@@ -136,6 +221,12 @@ namespace eval ::stack_trace {
     proc {::stack_trace::get_proc_instruction} {procname lineno} {
 
         set body [uplevel #0 "info body $procname"]
+
+        return [::stack_trace::get_bloc_instruction $body $lineno]
+    }
+
+    proc {::stack_trace::get_bloc_instruction} {body lineno} {
+
         set body [split $body \n]
         set size [llength $body]
 
@@ -145,7 +236,7 @@ namespace eval ::stack_trace {
 
             incr lineno
 
-            # end of procedure reached
+            # end of bloc reached?
             if {$lineno == $size} {
                break
             }
@@ -343,12 +434,12 @@ proc vTclWindow.vTcl.stack_trace {base {container 0}} {
         -activebackground #dcdcdc -background #dcdcdc \
         -command "$base.cpd18.01.cpd20.03 xview" -cursor left_ptr \
         -highlightbackground #dcdcdc -highlightcolor #000000 -orient horiz \
-        -troughcolor #dcdcdc -width 10
+        -troughcolor #dcdcdc 
     scrollbar $base.cpd18.01.cpd20.02 \
         -activebackground #dcdcdc -background #dcdcdc \
         -command "$base.cpd18.01.cpd20.03 yview" -cursor left_ptr \
         -highlightbackground #dcdcdc -highlightcolor #000000 -orient vert \
-        -troughcolor #dcdcdc -width 10
+        -troughcolor #dcdcdc 
     text $base.cpd18.01.cpd20.03 \
         -background #dcdcdc \
         -font [vTcl:font:get_font "vTcl:font8"] \
@@ -389,12 +480,12 @@ proc vTclWindow.vTcl.stack_trace {base {container 0}} {
         -activebackground #dcdcdc -background #dcdcdc \
         -command "$base.cpd18.02.cpd21.01.cpd22.01 xview" -cursor left_ptr \
         -highlightbackground #dcdcdc -highlightcolor #000000 -orient horiz \
-        -troughcolor #dcdcdc -width 10
+        -troughcolor #dcdcdc 
     scrollbar $base.cpd18.02.cpd21.01.cpd22.03 \
         -activebackground #dcdcdc -background #dcdcdc \
         -command "$base.cpd18.02.cpd21.01.cpd22.01 yview" -cursor left_ptr \
         -highlightbackground #dcdcdc -highlightcolor #000000 -orient vert \
-        -troughcolor #dcdcdc -width 10
+        -troughcolor #dcdcdc 
     frame $base.cpd18.02.cpd21.02 \
         -background #9900991B99FE -highlightbackground #dcdcdc \
         -highlightcolor #000000
@@ -406,12 +497,12 @@ proc vTclWindow.vTcl.stack_trace {base {container 0}} {
         -activebackground #dcdcdc -background #dcdcdc \
         -command "$base.cpd18.02.cpd21.02.cpd23.03 xview" -cursor left_ptr \
         -highlightbackground #dcdcdc -highlightcolor #000000 -orient horiz \
-        -troughcolor #dcdcdc -width 10
+        -troughcolor #dcdcdc 
     scrollbar $base.cpd18.02.cpd21.02.cpd23.02 \
         -activebackground #dcdcdc -background #dcdcdc \
         -command "$base.cpd18.02.cpd21.02.cpd23.03 yview" -cursor left_ptr \
         -highlightbackground #dcdcdc -highlightcolor #000000 -orient vert \
-        -troughcolor #dcdcdc -width 10
+        -troughcolor #dcdcdc 
     text $base.cpd18.02.cpd21.02.cpd23.03 \
         -background #dcdcdc -font [vTcl:font:get_font "vTcl:font3"] \
         -foreground #000000 -height 1 -highlightbackground #ffffff \
@@ -581,7 +672,7 @@ proc vTclWindow.vTcl.bgerror {base {container 0}} {
         -activebackground #dcdcdc -background #dcdcdc \
         -command "$base.fra20.cpd23.03 yview" -cursor left_ptr \
         -highlightbackground #dcdcdc -highlightcolor #000000 -orient vert \
-        -troughcolor #dcdcdc -width 10
+        -troughcolor #dcdcdc
     text $base.fra20.cpd23.03 \
         -background #dcdcdc -font [vTcl:font:get_font "vTcl:font8"] \
         -foreground #000000 -height 1 -highlightbackground #ffffff \
