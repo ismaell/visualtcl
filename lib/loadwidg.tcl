@@ -434,3 +434,7 @@ proc DumpInfoCmd {val} {
 proc EditableTagsCmd {val} {
     set ::classes($::tmp(class),editableTagsCmd) $val
 }
+
+proc QueryInsertOptionsCmd {val} {
+    set ::classes($::tmp(class),queryInsertOptionsCmd) $val
+}

@@ -737,6 +737,7 @@ proc vTcl:auto_place_widget {class {options ""}} {
             -title "Error!" -type ok
         return
     }
+
     ## grid and pack managers cannot be mixed in the same container
     if {![vTcl:can_insert $vTcl(w,insert) $vTcl(w,def_mgr)]} {
         ::vTcl::MessageBox -icon error \
@@ -744,6 +745,13 @@ proc vTcl:auto_place_widget {class {options ""}} {
             -title "Error!" -type ok
         return
     }
+    ## last call
+    set moreOptions ""
+    if {![vTcl::widgets::queryInsertOptions $class moreOptions]} {
+        return
+    }
+
+    append options $moreOptions
     set vTcl(mgrs,update) no
     if $vTcl(pr,getname) {
         set new_widg [vTcl:get_name $class]
@@ -1167,6 +1175,13 @@ proc vTcl:place_widget {class button options rx ry x y} {
         return
     }
 
+    ## last call
+    set moreOptions ""
+    if {![vTcl::widgets::queryInsertOptions $class moreOptions]} {
+        return
+    }
+
+    append options $moreOptions
     set vTcl(w,insert) $try_insert
 
     set vTcl(mgrs,update) no
@@ -1526,6 +1541,19 @@ namespace eval vTcl::widgets {
             }
         }
         return $result
+    }
+
+    ## asks a widget class if can insert and if so returns additional options
+    proc queryInsertOptions {class refOptions} {
+        upvar $refOptions options
+
+        if {![info exists ::classes($class,queryInsertOptionsCmd)]} {
+            ## yeah, we can insert, there is no restriction
+            set options ""
+            return 1
+        }
+
+        return [$::classes($class,queryInsertOptionsCmd) options]
     }
 }
 

@@ -40,6 +40,8 @@ Export          vTcl::widgets::core::compoundcontainer::insertCompound
 TreeChildrenCmd	{vTcl::widgets::core::compoundcontainer::treeChildrenCmd
 		       vTcl::widgets::core::compoundcontainer::treeChildrenChildsite}
 TreeLabel       @vTcl::widgets::core::compoundcontainer::getWidgetTreeLabel
+QueryInsertOptionsCmd \
+                vTcl::widgets::core::compoundcontainer::queryInsertOptionsCmd
 
 NewOption -compoundClass  "Cmpd Class"  type
 NewOption -compoundType   "Cmpd Type"   type
@@ -133,7 +135,9 @@ namespace eval vTcl::widgets::core::compoundcontainer {
         }
     }
 
-    proc insertCmd {target} {
+    proc queryInsertOptionsCmd {refOptions} {
+        upvar $refOptions options
+
         set userCmpds [lsort [vTcl::compounds::enumerateCompounds user]]
         set items ""
         foreach userCmpd $userCmpds {
@@ -142,20 +146,38 @@ namespace eval vTcl::widgets::core::compoundcontainer {
 
         ## no compounds available ? duh!
         if {[lempty $items]} {
-            return
+            ::vTcl::MessageBox -message "There are no compounds to insert!" -type ok
+            return 0
         }
 
         ## ask user to select a compound
         set compoundName [::vTcl::input::listboxSelect::select $items "Choose Compound"]
         if {$compoundName == ""} {
-            return
+            return 0
         }
 
         set type user
-        insertCompound $target $type $compoundName
+
+        ## last check, do we satisfy the dependencies ?
+        set required [::vTcl::compounds::getLibraries $type [join $compoundName]]
+        set missingLibs [::vTcl::widgets::verifyLibraries $required]
+        if {![lempty $missingLibs]} {
+            ::vTcl::MessageBox -icon error -message \
+"Cannot insert compound '[join $compoundName]' because the following libraries are not loaded:
+
+[join $missingLibs]" -title "Missing Libraries" -icon error
+            return 0
+        }
         
         ## add into project info
-        ::vTcl::project::addCompound main $type $compoundName
+        ::vTcl::project::addCompound main $type [join $compoundName]
+
+        ## return the option that will be used for insertion
+        set options "-compoundClass $compoundName"
+        return 1
+    }
+
+    proc insertCmd {target} {
     }
 
     proc insertCompound {target type compoundName} {
@@ -217,6 +239,7 @@ namespace eval vTcl::widgets::core::compoundcontainer {
         return "Compound Container: [join $compoundClass]"
     }
 }
+
 
 
 
