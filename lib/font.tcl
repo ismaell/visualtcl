@@ -471,7 +471,10 @@ proc vTcl:font:tag_font_list {t tagname object} {
     $t tag bind $tagname <Leave> \
         "$t tag configure $tagname -background white -relief flat -borderwidth 0"
 
-    $t tag bind $tagname <ButtonPress-1> \
+    ## Change by Nelson 2003/05/03 bug 529307. If we catch ButtonPress
+    ## instead of ButtonRelease, we risk strange things happening with the mouse
+    ## grabbing widgets.
+    $t tag bind $tagname <ButtonRelease-1> \
         "set vTcl(font,noborder_fontlist,font) $object"
 }
 
@@ -571,5 +574,6 @@ proc vTcl:font:translate {value} {
 
     return $value
 }
+
 
 
