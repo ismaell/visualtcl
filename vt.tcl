@@ -99,6 +99,8 @@ proc vTcl:splash {} {
 
 proc vTcl:load_lib {lib} {
     global vTcl
+    # vTcl:puts "Loading library: $lib"
+    
     set file [file join $vTcl(LIB_DIR) $lib]
     if {[file exists $file] == 0} {
         vTcl:log "Missing Libary: $lib"
@@ -109,7 +111,32 @@ proc vTcl:load_lib {lib} {
 
 proc vTcl:load_widgets {} {
     global vTcl
+    
+    # ok, by default, we enable all the libraries to be loaded
+    # now let's check for a .vtcllibs file that tells us what the
+    # user wants to load (which can significantly reduce startup time)
+    
+    set toload $vTcl(LIB_WIDG)
+    
+    if [file exists $vTcl(LIB_FILE)] {
+    	
+    	set toload ""
+    	set inID [open $vTcl(LIB_FILE) r]
+    	set contents [split [read $inID] \n]
+    	close $inID
+    	
+    	foreach content $contents {
+    		
+    		if { [string trim $content] == ""} continue
+    		lappend toload [file join $vTcl(LIB_DIR) $content]
+    	}
+    }
+    
+    # puts "To load: $toload"
+    
     foreach i $vTcl(LIB_WIDG) {
+    	
+    	if { [lsearch -exact $toload $i] == -1} continue
         vTcl:load_lib $i
         lappend vTcl(w,libs) [lindex [split [lindex [file split $i] end] .] 0]
     }
@@ -137,16 +164,21 @@ proc vTcl:setup {} {
     
     set vTcl(version)   1.22
     set vTcl(VTCL_HOME) $env(VTCL_HOME)
+    
     if {$env(HOME) == ""} {
         set vTcl(CONF_FILE) [file join $env(VTCL_HOME) .vtclrc]
-        set vTcl(LOG_FILE) [file join $env(VTCL_HOME) .vtclog]
+        set vTcl(LIB_FILE)  [file join $env(VTCL_HOME) .vtcllibs]
+        set vTcl(LOG_FILE)  [file join $env(VTCL_HOME) .vtclog]
     } else {
         set vTcl(CONF_FILE) [file join $env(HOME) .vtclrc]
-        set vTcl(LOG_FILE) [file join $env(HOME) .vtclog]
+        set vTcl(LIB_FILE)  [file join $env(HOME) .vtcllibs]
+        set vTcl(LOG_FILE)  [file join $env(HOME) .vtclog]
     }
-	set vTcl(LOG_FD_W)  [open $vTcl(LOG_FILE) "w"]
-	set vTcl(LOG_FD_R)  [open $vTcl(LOG_FILE) "r"]
-	fconfigure $vTcl(LOG_FD_R) -buffering line
+    
+    set vTcl(LOG_FD_W)  [open $vTcl(LOG_FILE) "w"]
+    set vTcl(LOG_FD_R)  [open $vTcl(LOG_FILE) "r"]
+    fconfigure $vTcl(LOG_FD_R) -buffering line
+    
     set vTcl(LIB_DIR)   [file join $vTcl(VTCL_HOME) lib]
     set vTcl(LIB_WIDG)  [glob -nocomplain [file join $vTcl(LIB_DIR) lib_*.tcl]]
     set vTcl(LIBS)      "globals.tcl about.tcl propmgr.tcl balloon.tcl
