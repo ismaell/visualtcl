@@ -253,7 +253,9 @@ proc vTcl:setup_gui {} {
     option add *vTcl*Radiobutton.highlightBackground #d9d9d9
     option add *vTcl*Text*font $vTcl(pr,font_fixed)
 
-    option add *vTcl*background #d9d9d9
+    if {[info exists vTcl(pr,bgcolor)] && ![lempty $vTcl(pr,bgcolor)]} {
+	option add *vTcl*background $vTcl(pr,bgcolor)
+    }
     option add *vTcl*Listbox.background #ffffff
 
     vTcl:setup_bind_tree .
