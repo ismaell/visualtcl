@@ -38,7 +38,7 @@ proc Window {args} {
             } elseif {[info procs vTclWindow$name] != ""} {
                 eval "vTclWindow$name $newname $rest"
             }
-            if {[wm state $newname] == "normal"} {
+            if {[winfo exists $newname] && [wm state $newname] == "normal"} {
                 vTcl:FireEvent $newname <<Show>>
             }
         }

@@ -929,7 +929,7 @@ proc vTcl:set_label {t} {
     if [catch {set txt [$t cget -text]}] {
         return
     }
-    set label [vTcl:get_string "Setting label" $t $txt]
+    set label [vTcl:get_string "Setting label for $t" $t $txt]
     $t conf -text $label
     vTcl:place_handles $t
     set vTcl(w,opt,-text) $label

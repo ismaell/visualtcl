@@ -25,6 +25,8 @@ proc vTcl:get_bind {target} {
     if {[winfo exists .vTcl.bind]} {
         ::widgets_bindings::fill_bindings $target 0
         ::widgets_bindings::select_show_binding $target ""
+        ::widgets_bindings::enable_toolbar_buttons
+        wm title [BindingsEditor] "Widget bindings for $target"
     }
 }
 
@@ -82,7 +84,7 @@ proc vTclWindow.vTcl.bind {args} {
             -label $ev
     }
     $base.m37.men38 add command \
-        -command {Window show .vTcl.newbind} \
+        -command {::widgets_bindings::show_advanced} \
         -label Advanced...
     menu $base.m37.men39 -tearoff 0 \
         -postcommand "$base.m37.men39 entryconfigure 0 -state \
@@ -164,7 +166,7 @@ proc vTclWindow.vTcl.bind {args} {
     $base.fra22.men20.m add command \
         -command {::widgets_bindings::add_binding <Destroy>} -label Destroy
     $base.fra22.men20.m add command \
-        -command {Window show .vTcl.newbind} -label Advanced...
+        -command {::widgets_bindings::show_advanced} -label Advanced...
     ::vTcl::CancelButton $base.fra22.but24 \
 	-command "::widgets_bindings::delete_binding"
     vTcl:toolbar_button $base.fra22.but25 \
@@ -339,7 +341,7 @@ proc vTclWindow.vTcl.bind {args} {
 
     place $base.cpd21.02 \
         -x 0 -relx 1 -y 0 -width -1 -relwidth 0.6319 -relheight 1 -anchor ne \
-        -bordermode ignore 
+        -bordermode ignore
 
     pack $base.cpd21.02.cpd21 \
         -in $base.cpd21.02 -anchor center -expand 1 -fill both -side top
@@ -402,7 +404,7 @@ proc vTclWindow.vTcl.newbind {base} {
     ###################
     # CREATING WIDGETS
     ###################
-    toplevel $base -class Toplevel
+    vTcl:toplevel $base -class Toplevel
     wm focusmodel $base passive
     wm withdraw $base
     wm geometry $base 500x400+418+226
@@ -413,6 +415,15 @@ proc vTclWindow.vTcl.newbind {base} {
     wm resizable $base 1 1
     wm title $base "Insert new binding"
     wm transient .vTcl.newbind .vTcl
+    bind $base <<Show>> {
+        set %W::status 0
+    }
+    bind $base <<Hide>> {
+        set %W::status 1
+    }
+    bind $base <<DeleteWindow>> {
+        BindingsInsert hide
+    }
 
     frame $base.fra20
     label $base.fra20.lab21 \
@@ -425,15 +436,6 @@ proc vTclWindow.vTcl.newbind {base} {
         set bindingsEventEntry "$bindingsEventEntry<Key-%K>"
         after idle {set bindingsKeystrokes ""}
     }
-
-    ::vTcl::OkButton $base.fra20.ok \
-        -command {
-             if {$bindingsEventEntry != ""} {
-                 BindingsInsert hide
-                 ::widgets_bindings::add_binding $bindingsEventEntry
-             }
-         }
-    ::vTcl::CancelButton $base.fra20.cancel -command {BindingsInsert hide}
 
     frame $base.fra23
     label $base.fra23.lab24 \
@@ -490,6 +492,16 @@ proc vTclWindow.vTcl.newbind {base} {
             $bindingsEventEntry $index stindex endindex
         BindingsEventEntry selection range $stindex [expr $endindex + 1]
     }
+    frame $base.fra37
+    button $base.fra37.but01 -text "Add" -width 8 \
+            -command {
+             if {$bindingsEventEntry != ""} {
+                 BindingsInsert hide
+                 ::widgets_bindings::add_binding $bindingsEventEntry
+             }
+         }
+    button $base.fra37.but02 -text "Cancel" -width 8 \
+        -command {BindingsInsert hide}
 
     ###################
     # SETTING GEOMETRY
@@ -501,29 +513,30 @@ proc vTclWindow.vTcl.newbind {base} {
     pack $base.fra20.ent22 \
         -in $base.fra20 -anchor center -expand 0 -fill none -padx 5 \
         -side left
-    pack $base.fra20.cancel -side right
-    pack $base.fra20.ok -side right
 
     pack $base.fra23 \
         -in $base -anchor center -expand 1 -fill both -side top
     pack $base.fra23.lab24 \
         -in $base.fra23 -anchor center -expand 0 -fill none -ipady 10 \
-        -side top 
+        -side top
 
     pack $base.fra23.cpd34 \
         -in $base.fra23 -anchor center -expand 1 -fill both -side right
     pack $base.fra23.cpd34.01
 
     pack $base.fra23.cpd35 \
-        -in $base.fra23 -anchor center -expand 1 -fill both -side left 
+        -in $base.fra23 -anchor center -expand 1 -fill both -side left
     pack $base.fra23.cpd35.01
 
     pack $base.fra36 \
-        -in $base -anchor center -expand 0 -fill x -ipady 10 -side top 
+        -in $base -anchor center -expand 0 -fill x -ipady 10 -side top
     pack $base.fra36.lab37 \
-        -in $base.fra36 -anchor center -expand 0 -fill none -side left 
+        -in $base.fra36 -anchor center -expand 0 -fill none -side left
     pack $base.fra36.ent38 \
-        -in $base.fra36 -anchor center -expand 1 -fill x -side left 
+        -in $base.fra36 -anchor center -expand 1 -fill x -side left
+    pack $base.fra37 -side bottom
+    pack $base.fra37.but01 -side left -padx 5 -pady 5
+    pack $base.fra37.but02 -side left -padx 5 -pady 5
 
     BindingsModifiers delete 0 end
     foreach modifier {
@@ -680,6 +693,14 @@ namespace eval ::widgets_bindings {
 
     variable tagslist ""
     variable backup_bindings ""
+
+    proc ::widgets_bindings::show_advanced {} {
+        Window show .vTcl.newbind
+        raise [BindingsInsert]
+        grab set [BindingsInsert]
+        vwait [BindingsInsert]::status
+        grab release [BindingsInsert]
+    }
 
     proc {::widgets_bindings::listbox_click} {} {
 
@@ -994,7 +1015,7 @@ namespace eval ::widgets_bindings {
                    ListboxBindings itemconfigure $index  -foreground blue
                }
            }
-           
+
            lappend ::widgets_bindings::bindingslist [list $tag ""]
            incr index
            
@@ -1175,7 +1196,7 @@ namespace eval ::widgets_bindings {
             set ::widgets_bindings::lastevent ""
             return
         }
-        
+
         ::widgets_bindings::show_binding $tag $event
         focus $widget(ListboxBindings)
         ListboxBindings selection set $index
@@ -1184,18 +1205,18 @@ namespace eval ::widgets_bindings {
     proc {::widgets_bindings::select_show_binding} {tag event} {
 
         global widget
-        
+
         # let's find it in the listbox first
         set lasttag ""
         set index 0
-        
+
         # Tk replaces bindings with shortcuts
         regsub -all Button1 $event B1 event
         regsub -all Button2 $event B2 event
         regsub -all Button3 $event B3 event
 
         set bindingslist $::widgets_bindings::bindingslist
-        
+
         foreach tag_event $bindingslist {
 
             set current_tag   [lindex $tag_event 0]
@@ -1224,13 +1245,13 @@ namespace eval ::widgets_bindings {
         if {[string match <<*>> $event]} {
             return $event
         }
-        
+
         # adds the modifier to the last event in the sequence
-        
+
         set last [string last < $event]
 
         if {$last == -1} return
-        
+
         if {$modifier == "<no modifier>" ||
             $modifier == ""} {
             regsub -all Button- $event Button_ event

@@ -1,6 +1,13 @@
 ChangeLog for Visual Tcl:
 
-1.52 -> ?
+1.6.0a1 ->
+    o Fixed problem with .vTcl.con being renamed to .vTcl.tkCon
+    o Added widget path to bindings editor
+    o Bindings editor now enables insert button and insert menu when
+      selecting a widget
+    o Made insert advanced binding dialog modal, added buttons at the
+      bottom of the dialog the way it should be for modal dialogs
+1.52 -> 1.6.0a1
     o Editing for tixPanedWindow.
     o Fixed scrollbar bug, when right-click / Attach to widget
       wouldn't save the -command and -x/yscrollcommand options into
