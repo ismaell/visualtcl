@@ -106,8 +106,7 @@ ttd.tagon {Level 3 Title}
 ttd.text {1.1.6 Close
 }
 ttd.tagoff {Level 3 Title}
-ttd.text {Closes the current project and asks you to save any changes you made. It is recommended that you save your project first }
-ttd.text {then close it, for added safety.
+ttd.text {Closes the current project and asks you to save any changes you made. It is recommended that you save your project first then close it, for added safety.
 }
 ttd.text {
 }
@@ -135,7 +134,7 @@ ttd.tagon {Level 3 Title}
 ttd.text {1.1.9 Source...
 }
 ttd.tagoff {Level 3 Title}
-ttd.text {Source a file into the interpreter.
+ttd.text {Sources a file into the interpreter.
 }
 ttd.text {
 }
@@ -182,24 +181,71 @@ ttd.text {1.2 Edit Menu}
 ttd.tagoff {Level 2 Title}
 ttd.text {
 }
+ttd.text {
+}
 ttd.tagon {Level 3 Title}
 ttd.text {1.2.1 Undo
 }
+ttd.tagoff {Level 3 Title}
+ttd.text {Undoes the last operation. Note that Visual Tcl has limited undo/redo capabilities. Always keep a backup of your project before making extensive changes.
+}
+ttd.text {
+}
+ttd.tagon {Level 3 Title}
 ttd.text {1.2.2 Redo
 }
+ttd.tagoff {Level 3 Title}
+ttd.text {Redoes the last operation.
+}
+ttd.text {
+}
+ttd.tagon {Level 3 Title}
 ttd.text {1.2.3 Cut
 }
+ttd.tagoff {Level 3 Title}
+ttd.text {Copies the currently selected widget and copies it into the Visual Tcl clipboard.
+}
+ttd.text {
+}
+ttd.tagon {Level 3 Title}
 ttd.text {1.2.4 Copy
 }
+ttd.tagoff {Level 3 Title}
+ttd.text {Copies the currently selected widget into the Visual Tcl clipboard.
+}
+ttd.text {
+}
+ttd.tagon {Level 3 Title}
 ttd.text {1.2.5 Paste
+}
+ttd.tagoff {Level 3 Title}
+ttd.text {Pastes the contents of the Visual Tcl clipboard into the current insertion point.
+}
+ttd.tagon {Level 3 Title}
+ttd.text {
 }
 ttd.text {1.2.6 Delete
 }
+ttd.tagoff {Level 3 Title}
+ttd.text {Deletes the currently selected widget. You can undo the operation by using the "Undo" menu item described above.
+}
+ttd.text {
+}
+ttd.tagon {Level 3 Title}
 ttd.text {1.2.7 Images...
+}
+ttd.tagoff {Level 3 Title}
+ttd.text {Shows the image manager window. See 10 for more details.}
+ttd.tagon {Level 3 Title}
+ttd.text {
+}
+ttd.text {
 }
 ttd.text {1.2.8 Fonts...}
 ttd.tagoff {Level 3 Title}
 ttd.text {
+}
+ttd.text {Shows the font manager window. See 11 for more details.
 }
 ttd.text {
 }
@@ -208,12 +254,42 @@ ttd.text {1.3 Mode Menu}
 ttd.tagoff {Level 2 Title}
 ttd.text {
 }
+ttd.text {
+}
+ttd.text {Visual Tcl has 2 modes of operation. In edit mode, you can add, delete, move, and configure widgets. You can also define widget bindings, edit menus, or add procedures.
+}
+ttd.text {
+}
+ttd.text {In test mode, you cannot place, move, configure widgets, nor is it possible to edit widget bindings or menus. However, you can still edit procedures.
+}
+ttd.text {
+}
+ttd.text {Unlike any other editor/compiler environment, when working in Visual Tcl you do not start your project over and over like you would when running an application in Visual C++. This means that variables will keep the values they have when switching from edit mode to test mode or vice versa. If you need to, you can add initialization code to your project that you can call from the command console, before switching to test mode, to initialize/reset the values of your variables.
+}
+ttd.text {
+}
+ttd.text {Also, unlike environments like Visual C++ or Visual Basic, your windows are not created anew when switching from edit mode to test mode. Windows will look exactly the same in both modes, meaning 100% WYSIWYG (What You See Is What You Get). Since Visual Tcl is entirely interpreted, there is no waiting time when switching from edit mode to test mode. You can start testing your project right away, without wasting time on compile/link cycles.
+}
+ttd.text {
+}
+ttd.text {However, it is possible that some values like the background color will look slightly different when running your project outside Visual Tcl. Visual Tcl does its best to use default values when creating widgets, but it is not possible to ensure 100% accuracy, even more when you have changed the color theme in the Preferences dialog.
+}
+ttd.text {
+}
 ttd.tagon {Level 3 Title}
 ttd.text {1.3.1 Test Mode
 }
+ttd.tagoff {Level 3 Title}
+ttd.text {Test mode allows you to test your program like it would work when run outside Visual Tcl. You can interact with widgets to see how they respond to events you have set up. Think of test mode as "run time" mode.
+}
+ttd.text {
+}
+ttd.tagon {Level 3 Title}
 ttd.text {1.3.2 Edit Mode}
 ttd.tagoff {Level 3 Title}
 ttd.text {
+}
+ttd.text {Edit mode allows you to insert, delete, move, configure widgets and megawidgets. You can add, edit, remove procedures, change menus, etc. Think of edit mode as "design time" mode.
 }
 ttd.text {
 }
@@ -222,19 +298,89 @@ ttd.text {1.4 Compound Menu}
 ttd.tagoff {Level 2 Title}
 ttd.text {
 }
+ttd.text {A compound is a reusable piece of user interface. It contains a widget (and its subwidgets), and code to perform operations on it.
+}
+ttd.text {
+}
+ttd.text {Compounds are most useful when used with megawidgets. You can save a compound into a file and reuse it later in another project. You can also save several compounds into the same file to make a widget compounds library.
+}
+ttd.text {
+}
+ttd.text {By using the compound container widget (similar to an activeX host window), you can insert a compound into a project and manipulate it as a black box. You can move the compound as one single entity, and code that performs operations on the compound will be invisible in the project. The underlying subwidgets structure will be hidden from the widget tree as well.
+}
+ttd.text {
+}
+ttd.text {When a new version of a compound is available, all you need to do to upgrade a project using it is load the compound, save the project, and reload it. When you insert a compound into a project, the project stays self contained. The compound will be saved into the project, ensuring that no dependency problems are encountered.
+}
+ttd.text {
+}
+ttd.text {Another use for compounds is templates that can be a starting point for creating a user interface. You could create an empty dialog box with just an OK and a Cancel button, and an empty area above them. Save the window as a compound and you can reuse it as a building block for your next project.
+}
+ttd.text {
+}
 ttd.tagon {Level 3 Title}
 ttd.text {1.4.1 Create...
 }
+ttd.tagoff {Level 3 Title}
+ttd.text {Creates a compound out of the currently selected widget. You will be prompted for:
+}
+ttd.text {
+}
+ttd.text {- the name of the compound; this name must not contain curly braces
+}
+ttd.text {- the code that goes with the compound; a list of procedures in the project will be shown to choose from}
+ttd.tagon {Level 3 Title}
+ttd.text {
+}
+ttd.tagoff {Level 3 Title}
+ttd.text {
+}
+ttd.text {It is recommended that code for a compound be stored in a separate namespace. This way, you avoid potential procedure name conflicts with other projects.
+}
+ttd.text {
+}
+ttd.text {There are 2 special procedures within a compound:
+}
+ttd.text {::<yournamespace>::init
+}
+ttd.text {::<yournamespace>::main
+}
+ttd.text {
+}
+ttd.text {Because these procedures have the same name as init and main from the project, they must be in a namespace. You do not need to implement these procedures, but if you do, they will behave as follows.
+}
+ttd.text {
+}
+ttd.text {Whenever a compound is created, init will be called with the compound path as argument, and this before the compound subwidgets are built. After all the compound subwidgets have been built, the main procedure will be called, also with the compound path as argument.
+}
+ttd.text {
+}
+ttd.tagon {Level 3 Title}
 ttd.text {1.4.2 Insert}
 ttd.tagoff {Level 3 Title}
+ttd.text {
+}
+ttd.text {Inserts a compound at the current insertion point.
+}
 ttd.text {
 }
 ttd.tagon {Level 4 Title}
 ttd.text {1.4.2.1 Insert System Compound
 }
+ttd.tagoff {Level 4 Title}
+ttd.text {Visual Tcl includes a few compounds that you can use as templates for building your user interface. System compounds are always available and cannot be deleted or modified.
+}
+ttd.text {
+}
+ttd.tagon {Level 4 Title}
 ttd.text {1.4.2.2 Insert User Compound
 }
 ttd.tagoff {Level 4 Title}
+ttd.text {Compounds you have created with the Create... menu item will appear in this }
+ttd.text {list.
+}
+ttd.text {
+}
 ttd.tagon {Level 3 Title}
 ttd.text {1.4.3 Save Compounds...
 }
