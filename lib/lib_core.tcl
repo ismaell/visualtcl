@@ -305,16 +305,6 @@ proc vTcl:core:get_widget_tree_label {target} {
 		set t "CB: $ttt1 var=$ttt2\(on=$ttt3,off=$ttt4\)"
 	    }
 	}
-	button {
-	    set ttt1 [$target cget -text]
-	    set ttt2 [$target cget -textvariable]
-
-	    if {$ttt2 == ""} {
-		set t "BUT: $ttt1"
-	    } else {
-		set t "BUT: $ttt1 var=$ttt2"
-	    }
-	}
 	listbox {
 	    set val [$target cget -listvariable]
 	    if {[lempty $val]} { set val NONE }

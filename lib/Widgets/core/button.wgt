@@ -32,22 +32,36 @@ DefaultValues   -activebackground -activeforeground -activeborderwidth \
                 -background -foreground -highlightbackground -highlightcolor
 ClassOption     -_tooltip
 
-DoubleClickCmd	vTcl:Button:DblClk
-TreeLabel	@vTcl:core:get_widget_tree_label
+DoubleClickCmd	vTcl::widgets::core::button::dblClk
+TreeLabel	@vTcl::widgets::core::button::getWidgetTreeLabel
 
-Function	"Set Text"	vTcl:Button:SetText
-Function	"Set Command"	vTcl:Button:SetCommand
+Function	"Set Text"	vTcl::widgets::core::button::setText
+Function	"Set Command"	vTcl::widgets::core::button::setCommand
 
-proc vTcl:Button:SetText {} {
-    global vTcl
-    vTcl:set_label $vTcl(w,widget)
-}
+namespace eval vTcl::widgets::core::button {
 
-proc vTcl:Button:SetCommand {} {
-    global vTcl
-    vTcl:set_command $vTcl(w,widget) -command vTcl(w,opt,-command)
-}
+    proc setText {} {
+	global vTcl
+	vTcl:set_label $vTcl(w,widget)
+    }
 
-proc vTcl:Button:DblClk {target} {
-    vTcl:set_command $target -command vTcl(w,opt,-command)
+    proc setCommand {} {
+	global vTcl
+	vTcl:set_command $vTcl(w,widget) -command vTcl(w,opt,-command)
+    }
+
+    proc dblClk {target} {
+	vTcl:set_command $target -command vTcl(w,opt,-command)
+    }
+
+    proc getWidgetTreeLabel {target} {
+        set ttt1 [$target cget -text]
+	set ttt2 [$target cget -textvariable]
+
+	if {$ttt2 == ""} {
+	    return "BUT: $ttt1"
+	} else {
+	    return "BUT: $ttt1 var=$ttt2"
+	}
+    }
 }
