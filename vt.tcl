@@ -1,5 +1,4 @@
 #!/usr/bin/wish -f
-
 ##############################################################################
 #
 # Visual TCL - A cross-platform application development environment
@@ -657,6 +656,14 @@ proc vTcl:main {argc argv} {
 
     vTcl:splash_status "              vTcl Loaded" -nodots
     after 1000 "destroy .x"
+
+    if {[info exists vTcl(pr,dontshowtips)]} {
+
+        if {! $vTcl(pr,dontshowtips) } {
+             Window show .vTcl.tip
+        }
+    }
 }
 
 vTcl:main $argc $argv
+
