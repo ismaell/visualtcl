@@ -21,6 +21,32 @@
 ##############################################################################
 #
 
+proc vTcl:store_cursor {target} {
+    global vTcl
+
+    set vTcl(cursor,last) [$target cget -cursor]
+    set vTcl(cursor,w) $target
+}
+
+proc vTcl:restore_cursor {target} {
+    global vTcl
+
+    # if the widget has been registered (it should), it's cursor option
+    # has been stored
+    set stored [vTcl:WidgetVar $target options(-cursor) cursor]
+
+    if {!$stored} {
+        set cursor ""
+        if {$target == $vTcl(cursor,w)} {
+            set cursor "$vTcl(cursor,last)"
+        }
+    }
+
+    $target configure -cursor $cursor
+
+    set vTcl(cursor,w) ""
+}
+
 proc vTcl:bind_button_1 {target X Y x y} {
     global vTcl
 
@@ -36,17 +62,14 @@ proc vTcl:bind_button_1 {target X Y x y} {
     # puts "click button 1: $target"
     set vTcl(cursor,inside_button_1) 1
 
+    vTcl:active_widget $parent
+
     if {$parent != "." && [winfo class $parent] != "Toplevel"} {
-	vTcl:active_widget $parent
 	vTcl:grab $target $X $Y
-	set vTcl(cursor,last) [$target cget -cursor]
-        set vTcl(cursor,w) $target
-        # puts "configure $target -cursor fleur"
+        vTcl:store_cursor $target
 	$target configure -cursor fleur
     } else {
-	set vTcl(cursor,last) [$target cget -cursor]
-        set vTcl(cursor,w) $target
-	vTcl:active_widget $parent
+        vTcl:store_cursor $target
     }
 
     # puts "end click button 1: $target"
@@ -70,8 +93,7 @@ proc vTcl:bind_button_2 {target X Y x y} {
         $vTcl(w,widget) != ""} {
 
 	vTcl:grab $target $X $Y
-	set vTcl(cursor,last) [$target cget -cursor]
-        set vTcl(cursor,w) $target
+        vTcl:store_cursor $target
 	$target configure -cursor fleur
     }
 }
@@ -95,15 +117,11 @@ proc vTcl:bind_release {W X Y x y} {
     }
 
     # puts "release button 1: $W"
-
     vTcl:set_mouse_coords $X $Y $x $y
 
     if {$vTcl(w,widget) == ""} {return}
-    if {$W == $vTcl(cursor,w)} {
-        # puts "$W configure -cursor $vTcl(cursor,last)"
-        $W configure -cursor "$vTcl(cursor,last)"
-        set vTcl(cursor,w) ""
-    }
+
+    vTcl:restore_cursor $W
     vTcl:place_handles $vTcl(w,widget)
     vTcl:grab_release $W
     vTcl:update_widget_info $vTcl(w,widget)
@@ -372,10 +390,3 @@ proc vTcl:can_resize {dir} {
 	}
     }
 }
-
-
-
-
-
-
-

@@ -105,8 +105,7 @@ proc vTcl:put_compound {text compound} {
     regsub -all % $compound %% compound
 
     bind vTcl(b) <Button-1> \
-    	"set vTcl(cursor,last) \[%W cget -cursor\]
-         set vTcl(cursor,w) %W
+    	"vTcl:store_cursor %W
          vTcl:place_compound [list $compound] $vTcl(w,def_mgr) %X %Y %x %y"
 }
 

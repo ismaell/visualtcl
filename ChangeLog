@@ -1,6 +1,8 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Made a fix that I hope will fix the cursor problem.
+    o System inspector shows window class in left pane
     o Widget tree now uses "dialog font" from the preferences.
     o Cleaned up alias definitions in bindings editor too.
     o Toplevel now links the WM_DELETE_WINDOW protocol event to the

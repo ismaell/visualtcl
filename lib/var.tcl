@@ -419,8 +419,10 @@ namespace eval ::inspector {
 
         foreach child $children {
 
-            ::inspector::insert_node $listbox  $node_index  $child  $level yes $child \
-                {::inspector::expand_widget ::inspector::show_widget}
+            set class [winfo class $child]
+
+            ::inspector::insert_node $listbox  $node_index  "$child ($class)" $level \
+                yes $child {::inspector::expand_widget ::inspector::show_widget}
             incr node_index
         }
 
