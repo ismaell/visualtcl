@@ -837,6 +837,9 @@ proc vTclWindow.vTcl.bgerror {base {container 0}} {
     wm resizable $base 1 1
     wm deiconify $base
     wm title $base "Error"
+    wm protocol $base WM_DELETE_WINDOW "
+            set [vTcl:rename $base.dialogStatus] ok
+            destroy $base"
     }
     frame $base.fra20 \
         -background #dcdcdc -borderwidth 2 -height 75 \
