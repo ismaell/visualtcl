@@ -33,6 +33,7 @@ DefaultValues   -activebackground -activeforeground -activeborderwidth \
                 -background -foreground -highlightbackground -highlightcolor
 DoubleClickCmd	vTcl:set_command
 TreeLabel	@vTcl::widgets::core::radiobutton::getWidgetTreeLabel
+GetImagesCmd    vTcl::widgets::core::radiobutton::getImagesCmd
 ClassOption     -_tooltip
 
 Function        "Set Variable" vTcl::widgets::core::radiobutton::setVariable
@@ -71,4 +72,18 @@ namespace eval vTcl::widgets::core::radiobutton {
 	    return "RB: $ttt1 var=$ttt2\(val=$ttt3\)"
 	}
     }
+
+    proc getImagesCmd {target} {
+        set options [$target configure]
+        set result ""
+        foreach option $options {
+            set name [lindex $option 0]
+            if {$name == "-image" || $name == "-selectimage"} {
+                 lappend result [$target cget $name]
+            }
+        }
+
+        return $result
+    }
 }
+
