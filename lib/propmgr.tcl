@@ -211,33 +211,39 @@ proc vTcl:focus_out_cmd {option} {
 
 	if {$vTcl(w,last_widget_in) != "" && \
 	    $vTcl(w,last_value)     != ""} {
-	    	
-	    	$vTcl(w,last_widget_in) configure $option $vTcl(w,last_value)
-	    	
+
+		set back_last_widget_in $vTcl(w,last_widget_in)
+		set back_last_value $vTcl(w,last_value)
+
 	    	set vTcl(w,last_widget_in) ""
 	    	set vTcl(w,last_value)     ""
-	    	
+
+	    	$back_last_widget_in configure $option $back_last_value
+
 	} else {
 	    vTcl:log "oops:$vTcl(w,widget),$vTcl(w,last_widget_in)!"
 	}
 }
 
 proc vTcl:focus_out_geometry_cmd {option cmd {cmd2 ""}} {
-	
+
 	global vTcl
 	if {$vTcl(mode) == "TEST"} return
-		
+
         if {$vTcl(w,last_widget_in) != "" && \
             $vTcl(w,last_value)     != ""} {
-                
-            if {$cmd2==""} {      
-	            $cmd $vTcl(w,last_widget_in) $option $vTcl(w,last_value)
-	    } else {
-	            $cmd $cmd2 $vTcl(w,last_widget_in) $option $vTcl(w,last_value)
-	    }
 
-    	    set vTcl(w,last_widget_in) ""
+	    set back_last_widget_in $vTcl(w,last_widget_in)
+	    set back_last_value $vTcl(w,last_value)
+
+	    set vTcl(w,last_widget_in) ""
     	    set vTcl(w,last_value)     ""
+
+            if {$cmd2==""} {
+	            $cmd $back_last_widget_in $option $back_last_value
+	    } else {
+	            $cmd $cmd2 $back_last_widget_in $option $back_last_value
+	    }
 
          } else {
          	vTcl:log "oops2:$vTcl(w,widget),$vTcl(w,last_widget_in)!"
@@ -284,7 +290,7 @@ proc vTcl:prop:update_attr {} {
                 set variable "vTcl(w,opt,$i)"
                 set config_cmd "\$vTcl(w,widget) configure $i \$$variable; "
                 set focus_out_cmd "vTcl:focus_out_cmd $i"
-                
+
                 append config_cmd "vTcl:place_handles \$vTcl(w,widget)"
                 vTcl:prop:new_attr $top $i $variable $config_cmd opt $focus_out_cmd
             }
@@ -338,7 +344,7 @@ proc vTcl:prop:update_attr {} {
 }
 
 proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
-    global vTcl
+    global vTcl $variable
     set base $top.t${option}
 	# hack for Tix
 	if {[ winfo exists $top.$option ] == 1} {
@@ -349,9 +355,9 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
 
     # @@change by Christian Gavin 3/10/2000
     # added font browser for individual properties
-    
+
     set focusControl $base
-    
+
     switch [lindex $vTcl($prefix,$option) 2] {
         boolean {
             frame $base
@@ -414,7 +420,7 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
             pack ${base}.l -side left -expand 1 -fill x
             pack ${base}.f -side right -fill y -pady 1 -padx 1
 	    set focusControl ${base}.l
-        }  
+        }
         font {
             frame $base
             entry ${base}.l -relief sunken -bd 1 \
@@ -427,7 +433,7 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
                 -command "vTcl:font:prompt_user_font \$vTcl(w,widget) $option"
             pack ${base}.l -side left -expand 1 -fill x
             pack ${base}.f -side right -fill y -pady 1 -padx 1
-        }        
+        }
         image {
             frame $base
             entry ${base}.l -relief sunken -bd 1 \
@@ -440,7 +446,7 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
                 -command "vTcl:prompt_user_image \$vTcl(w,widget) $option"
             pack ${base}.l -side left -expand 1 -fill x
             pack ${base}.f -side right -fill y -pady 1 -padx 1
-        }        
+        }
         default {
             entry $base \
                 -textvariable $variable -relief sunken -bd 1 -width 12 \
@@ -453,21 +459,21 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
 
     # @@change by Christian Gavin 3/12/2000
     # tries to activate changes when the user clicks outside an option
-    
+
     # vTcl:log "widget: $vTcl(w,widget)"
     # vTcl:log "config_cmd: $config_cmd"
     # vTcl:log "focus_out_cmd: $focus_out_cmd"
-    
+
     set focus_in_cmd "vTcl:log in:\$vTcl(w,widget),\$vTcl(w,last_widget_in)"
     # vTcl:log "focus_in_cmd: $focus_in_cmd"
-    
+
     bind $focusControl <FocusIn> $focus_in_cmd
 
     bind $focusControl <FocusOut> "vTcl:log \"out:(\$vTcl(w,widget)),\$vTcl(w,last_widget_in), value:\$vTcl(w,last_value)\";$focus_out_cmd"
-    
+
     bind $focusControl <KeyRelease> "vTcl:log \"type: \$vTcl(w,widget)\"; set vTcl(w,last_widget_in) \$vTcl(w,widget); set vTcl(w,last_value) \$$variable"
-    	
+
     # @@end_change
-    
+
     grid $top.$option $base -sticky news
 }

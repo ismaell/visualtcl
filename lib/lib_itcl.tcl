@@ -30,7 +30,7 @@
 
 # Initializes this library
 #
- 
+
 # @@change by Christian Gavin 3/6/2000
 # Itcl/tk and IWidgets support
 
@@ -60,37 +60,37 @@ catch {
 vTcl:log $errorText
 
 # @@end_change
-   
+
 proc vTcl:widget:lib:lib_itcl {args} {
 
     global vTcl
     #
     # see if we can define a class. if not, return
     #
-    
+
     # @@change by Christian Gavin 3/6/2000
-    
+
     # added namespace for itcl because some versions of itcl do
     # not declare classes with the full namespaces specified and assume
     # the namespace itcl has been exported
-    
+
     if {[catch {itcl::class itcltest { constructor {args} {}}}]} {
         lappend vTcl(w,libsnames) {(not detected) [Incr Tcl/Tk] MegaWidgets Support Library}
         return
     }
 
     # @@end_change
-    
+
     # @@change by Christian Gavin 3/6/2000
     # vTcl:log "Support for Itcl activated"
-    
+
     # @@end_change
-    
+
     # setup required variables
     vTcl:lib_itcl:setup
 
     # add items to toolbar
-    
+
     # @@change by Christian Gavin 3/6/2000
     # added scrolledlistbox to the list of classes supported
     # added calendar
@@ -107,9 +107,9 @@ proc vTcl:widget:lib:lib_itcl {args} {
     # added panedwindow
     # added scrolledtext
     # @@end_change
-    
+
     foreach i {
-        entryfield 
+        entryfield
         spinint
         combobox
         scrolledlistbox
@@ -140,7 +140,7 @@ proc vTcl:widget:lib:lib_itcl {args} {
     # The images need to be called, e.g. ctl_itclNoteBookFrame.
     # Don't put these in the toolbar, because they are not commands,
     # only classes.
-    
+
     # announce ourselves!
     lappend vTcl(w,libsnames) {[Incr Tcl/Tk] MegaWidgets Support Library}
 }
@@ -196,7 +196,7 @@ proc vTcl:lib_itcl:setup {} {
 
 	# @@change by Christian Gavin 3/7/2000
 	# list of megawidgets whose children are not visible by Vtcl
-	
+
 	lappend vTcl(megaWidget) Entryfield \
 				 Spinint \
 				 Combobox \
@@ -214,9 +214,9 @@ proc vTcl:lib_itcl:setup {} {
 				 Tabnotebook \
 				 Panedwindow \
 				 Scrolledtext
-	
+
 	# @@end_change
-	
+
 	#
 	# register additional options that might be on itcl widgets,
 	# and the option information that the Attribute Editor needs.
@@ -233,7 +233,6 @@ proc vTcl:lib_itcl:setup {} {
 	        -decrement \
 	        -increment \
 	        -listheight \
-	        -editable \
 	        -focuscommand \
 	        -invalid \
 	        -textbackground \
@@ -298,9 +297,9 @@ proc vTcl:lib_itcl:setup {} {
 	        -labelimage
 
 	set vTcl(opt,-labelimage)     { {Label Img}        {}       image   {} }
-	set vTcl(opt,-hscrollmode)    { {Horz Scroll}      {}  
+	set vTcl(opt,-hscrollmode)    { {Horz Scroll}      {}
 	                                choice {static dynamic none} }
-	set vTcl(opt,-vscrollmode)    { {Vert Scroll}      {}  
+	set vTcl(opt,-vscrollmode)    { {Vert Scroll}      {}
 	                                choice {static dynamic none} }
 	set vTcl(opt,-clientdata)     { {Client Data}      {}       type    {} }
 	set vTcl(opt,-sbwidth)        { {ScrollBar Width}  {}       type    {} }
@@ -348,7 +347,7 @@ proc vTcl:lib_itcl:setup {} {
 	set vTcl(opt,-helpvariable)      { {Help Var}      {}       type    {} }
 #	set vTcl(opt,-plotbackground) { {Plot BgColor}     Colors   color   {} }
 	set vTcl(opt,-textfont)       { {Text Font}        {}       font    {} }
-	set vTcl(opt,-labelpos)       { {Label Pos}        {}  
+	set vTcl(opt,-labelpos)       { {Label Pos}        {}
 	                                choice  {n ne e se s sw w nw center} }
 	set vTcl(opt,-fixed)          { {Fixed}            longname type    {} }
 	set vTcl(opt,-validate)       { {Validate Cmd}     {}       command {}}
@@ -360,11 +359,10 @@ proc vTcl:lib_itcl:setup {} {
 #	set vTcl(opt,-items)          { Items              longname type    {} }
 	set vTcl(opt,-step)           { Step               longname type    {} }
 	set vTcl(opt,-listheight)     { "List Height"      longname type    {} }
-	set vTcl(opt,-editable)	      { {Editable}         {}       boolean {0 1} }
 	set vTcl(opt,-focuscommand)   { {Focus Cmd}	   {}       command {}}
 	set vTcl(opt,-invalid)        { {Invalid Cmd}      {}       command {}}
 	set vTcl(opt,-textbackground) { {Text BgColor}     Colors   color   {}}
-	set vTcl(opt,-arrowrelief)    { {Arrow Relief}     {}       
+	set vTcl(opt,-arrowrelief)    { {Arrow Relief}     {}
 	                                choice  {flat groove raised ridge sunken} }
 	set vTcl(opt,-completion)     { {Completion}       {}       boolean {0 1} }
 	set vTcl(opt,-dropdown)       { {Drop Down}        {}       boolean {0 1} }
@@ -377,7 +375,7 @@ proc vTcl:lib_itcl:setup {} {
 	set vTcl(opt,-alink)          { {ALink color}      Colors   color   {}}
 	set vTcl(opt,-link)           { {Link color}       Colors   color   {}}
 	set vTcl(opt,-linkhighlight)  { {Link highlight}   Colors   color   {}}
-	
+
 	#
 	# define dump procedures for widget types
 	#
@@ -398,7 +396,7 @@ proc vTcl:lib_itcl:setup {} {
 	set vTcl(Tabnotebook,dump_opt)         vTcl:lib_itcl:dump_widget_opt
 	set vTcl(Panedwindow,dump_opt)         vTcl:lib_itcl:dump_widget_opt
 	set vTcl(Scrolledtext,dump_opt)        vTcl:lib_itcl:dump_widget_opt
-	
+
 	#
 	# define whether or not do dump children of a class
 	#
@@ -419,30 +417,30 @@ proc vTcl:lib_itcl:setup {} {
 	set vTcl(Tabnotebook,dump_children)        0
 	set vTcl(Panedwindow,dump_children)        0
 	set vTcl(Scrolledtext,dump_children)       0
-	
+
 	# @@change by Christian Gavin 3/9/2000
 	# code to be generated at the top of a file if Itcl is supported
-	
+
 	append vTcl(head,importheader) {
-		
+
 		# provoke name search
 	        catch {package require foobar}
 	        set names [package names]
-                
+
 	        # check if Itcl is available
-	        if { [lsearch -exact $names Itcl] != -1} { 
+	        if { [lsearch -exact $names Itcl] != -1} {
 
 		   package require Itcl 3.0
 		   namespace import itcl::* }
-                
+
 		# check if Itk is available
 		if { [lsearch -exact $names Itk] != -1} {
-		    
-		   package require Itk 3.0 } 
-		
+
+		   package require Itk 3.0 }
+
 		# check if Iwidgets is available
 		if { [lsearch -exact $names Iwidgets] != -1} {
-		  
+
 		   package require Iwidgets 3.0
                    namespace import iwidgets::entryfield
                    namespace import iwidgets::spinint
@@ -461,18 +459,18 @@ proc vTcl:lib_itcl:setup {} {
                    namespace import iwidgets::tabnotebook
                    namespace import iwidgets::panedwindow
                    namespace import iwidgets::scrolledtext
-                   
+
                    option add *Scrolledhtml.sbWidth 10
                    option add *Scrolledtext.sbWidth 10
                	   option add *Scrolledlistbox.sbWidth 10
                 }
         }
-	
+
 	# @@end_change
-	
+
 	# @@change by Christian Gavin 3/15/2000
 	# procedure to return the label of a widget to display in the tree view
-	
+
 	set vTcl(Combobox,get_widget_tree_label)   \
 	    vTcl:lib_itcl:get_widget_tree_label
 
@@ -517,22 +515,22 @@ proc vTcl:lib_itcl:setup {} {
 
 	set vTcl(Scrolledtext,get_widget_tree_label)  \
 	    vTcl:lib_itcl:get_widget_tree_label
-		
+
 	# @@end_change
-	
+
 	# @@change by Christian Gavin 4/1/2000
 	# translation of option values for Itcl widgets so that
 	# fonts are correctly saved
-	
+
 	set vTcl(option,translate,-textfont) vTcl:font:translate
 	set vTcl(option,noencase,-textfont) 1
 	set vTcl(option,translate,-balloonfont) vTcl:font:translate
 	set vTcl(option,noencase,-balloonfont) 1
 
 	# @@end_change
-	
+
 	option add *Scrolledhtml.sbWidth 10
-	option add *Scrolledtext.sbWidth 10	
+	option add *Scrolledtext.sbWidth 10
 	option add *Scrolledlistbox.sbWidth 10
 
 	# hum... this is not too clean, but the hierarchy widget creates
@@ -553,9 +551,9 @@ proc vTcl:lib_itcl:setup {} {
 }
 
 proc vTcl:lib_itcl:get_widget_tree_label {className {target ""}} {
-	
+
 	switch [string tolower $className] {
-		
+
 		"combobox"          {return "Combo Box"}
 		"scrolledlistbox"   {return "Scrolled List Box"}
 		"calendar"          {return "Calendar" }
@@ -571,7 +569,7 @@ proc vTcl:lib_itcl:get_widget_tree_label {className {target ""}} {
 		"tabnotebook"       {return "Tab Notebook"}
 		"panedwindow"       {return "Paned Window"}
 		"scrolledtext"      {return "Scrolled Text"}
-		
+
 		default             {return ""}
 	}
 }
@@ -581,9 +579,9 @@ proc vTcl:lib_itcl:get_widget_tree_label {className {target ""}} {
 #
 
 proc vTcl:widget:toolbar:inscmd {target} {
-	
+
 	global env
-	
+
 	return "$target add button open \
 		-balloonstr \"Open\" \
 		-image [vTcl:image:get_image $env(VTCL_HOME)/images/edit/open.gif] \
@@ -591,33 +589,33 @@ proc vTcl:widget:toolbar:inscmd {target} {
 }
 
 proc vTcl:widget:optionmenu:inscmd {target} {
-	
+
 	return "$target insert 0 {Choice 1} {Choice 2} {Choice 3}"
 }
 
 proc vTcl:widget:buttonbox:inscmd {target} {
-	
+
 	return "$target add ok     -text OK ;\
 	        $target add cancel -text Cancel ;\
 	        $target add help   -text Help"
 }
 
 proc vTcl:widget:checkbox:inscmd {target} {
-	
+
 	return "$target add check1   -text {Check 1} ;\
 	        $target add check2   -text {Check 2} ;\
 	        $target add check3   -text {Check 3}"
 }
 
 proc vTcl:widget:radiobox:inscmd {target} {
-	
+
 	return "$target add radio1   -text {Radio 1} ;\
 	        $target add radio2   -text {Radio 2} ;\
 	        $target add radio3   -text {Radio 3}"
 }
 
 proc vTcl:widget:tabnotebook:inscmd {target} {
-	
+
 	return "$target add -label {Page 1} ;\
 	        $target add -label {Page 2} ;\
 	        $target add -label {Page 3} ;\
@@ -625,7 +623,7 @@ proc vTcl:widget:tabnotebook:inscmd {target} {
 }
 
 proc vTcl:widget:panedwindow:inscmd {target} {
-	
+
 	return "$target add pane1; $target add pane2"
 }
 
@@ -641,14 +639,14 @@ proc vTcl:widget:panedwindow:inscmd {target} {
 #   0 means don't save it
 
 proc vTcl:lib_itcl:save_option {opt} {
-	
+
     set opt_name  [lindex $opt 0]
     set opt_value [lindex $opt 4]
-    
+
     if {$opt_name  == "-openicon" &&
         $opt_value == "openFolder"} {
         return 0 }
-        
+
     if {$opt_name  == "-closedicon" &&
         $opt_value == "closedFolder"} {
         return 0 }
@@ -656,7 +654,7 @@ proc vTcl:lib_itcl:save_option {opt} {
     if {$opt_name  == "-nodeicon" &&
         $opt_value == "nodeFolder"} {
         return 0 }
-        
+
     vTcl:log "save_option '$opt'"
     return 1
 }

@@ -306,6 +306,7 @@ set vTcl(opt,list) "
     -offvalue
     -onvalue
     -value
+    -editable
 
     -screen
     -show
@@ -334,6 +335,7 @@ set vTcl(opt,-command)             { command         {}       command {} }
 set vTcl(opt,-confine)             { confine         {}       boolean {0 1} }
 set vTcl(opt,-cursor)              { cursor          {}       type    {} }
 set vTcl(opt,-disabledforeground)  { {disabled fg}   Colors   color   {} }
+set vTcl(opt,-editable)	           { {editable}      {}       boolean {0 1} }
 set vTcl(opt,-elementborderwidth)  { {element bd}    {}       type    {} }
 set vTcl(opt,-exportselection)     { export          {}       boolean {0 1} }
 set vTcl(opt,-fg)                  { foreground      Colors   color   {} }
@@ -370,7 +372,7 @@ set vTcl(opt,-selectcolor)         { {select color}  Colors   color   {} }
 set vTcl(opt,-selectcommand)       { {Select Cmd}    {}       command {} }
 set vTcl(opt,-selectforeground)    { {select fg}     Colors   color   {} }
 set vTcl(opt,-selectimage)         { {select image}  {}       image   {} }
-set vTcl(opt,-selectmode)          { {select mode}   {}       choice  {single browse multiple extended 
+set vTcl(opt,-selectmode)          { {select mode}   {}       choice  {single browse multiple extended
                                                                        normal immediate} }
 set vTcl(opt,-setgrid)             { {set grid}      {}       boolean {0 1} }
 set vTcl(opt,-show)                { show            {}       type    {} }
@@ -472,7 +474,7 @@ set vTcl(syntax,vTcl:window)            {\.[a-zA-Z0-9_\.]+}
 set vTcl(syntax,vTcl:window,configure)  {-foreground #800060}
 
 proc vTcl:syntax:iscommand {command} {
-	
+
 	return [ expr { [info command $command] == $command } ]
 }
 
