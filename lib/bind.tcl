@@ -412,7 +412,9 @@ proc vTclWindow.vTcl.bind {args} {
           MoveTagUp     disabled   MoveTagDown   disabled
           DeleteTag     disabled }
 
-    ::widgets_bindings::init
+    ## only initializes UI stuff; the list of bindings tags has already
+    ## been initialized either on vTcl startup or when closing a project
+    ::widgets_bindings::init_ui
 
     catch {wm geometry $base $vTcl(geometry,$base)}
     wm deiconify $base
@@ -1152,7 +1154,6 @@ namespace eval ::widgets_bindings {
     }
 
     proc {::widgets_bindings::init} {} {
-        global widget vTcl
 
         foreach tag $::widgets_bindings::tagslist {
             foreach event [bind $tag] {
@@ -1161,6 +1162,13 @@ namespace eval ::widgets_bindings {
         }
 
         set ::widgets_bindings::tagslist ""
+
+        ::widgets_bindings::init_ui
+    }
+
+    proc {::widgets_bindings::init_ui} {} {
+
+        global vTcl
 
         if {![winfo exists .vTcl.bind]} { return }
 

@@ -1,6 +1,8 @@
 ChangeLog for Visual Tcl:
 
 1.51b4 -> 1.51
+    o Fixed bug where binding tags would all of a sudden disappear from a project
+      after bindings editor is being displayed.
     o Added Ctrl + N, Ctrl + O, Ctrl + S, Ctrl + Q and F1 keyboard shortcuts
       to demo application VisualText
     o listbox and text widget on creation take default values for -font option

@@ -707,6 +707,9 @@ proc vTcl:main {argc argv} {
              Window show .vTcl.tip
         }
     }
+
+    ## init the bindings editor
+    ::widgets_bindings::init
 }
 
 vTcl:main $argc $argv
