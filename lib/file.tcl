@@ -602,7 +602,7 @@ proc vTcl:get_file {mode {title File} {ext .tcl}} {
     set tk_strictMotif 0
     switch $mode {
         open {
-            set file [tk_getOpenFile -defaultextension $ext \
+            set file [tk_getOpenFile -defaultextension $ext -title $title \
                 -initialdir $vTcl(pr,initialdir) -filetypes $types]
         }
         save {
@@ -611,10 +611,10 @@ proc vTcl:get_file {mode {title File} {ext .tcl}} {
                 set initname "unknown.tcl"
             }
             if {$tcl_platform(platform) == "macintosh"} then {
-                set file [tk_getSaveFile -defaultextension $ext \
+                set file [tk_getSaveFile -defaultextension $ext -title $title \
                     -initialdir $vTcl(pr,initialdir) -initialfile $initname]
             } else {
-                set file [tk_getSaveFile -defaultextension $ext \
+                set file [tk_getSaveFile -defaultextension $ext -title $title \
                     -initialdir $vTcl(pr,initialdir) -filetypes $types \
                     -initialfile $initname]
             }

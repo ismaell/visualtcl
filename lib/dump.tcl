@@ -34,7 +34,7 @@ proc vTcl:dump_proc {i {type ""}} {
         }
     }
 
-    set body [string trim [info body $i]]
+    set body [info body $i]
 
     append output {#############################################################################}
     append output "\n\#\# ${type}Procedure:  $i\n"
@@ -43,7 +43,7 @@ proc vTcl:dump_proc {i {type ""}} {
         append output "\nnamespace eval [list ${context}] \{\n"
     }
 
-    append output "\nproc \{$i\} \{$args\} \{\n$body\n\}\n"
+    append output "\nproc \{$i\} \{$args\} \{$body\}\n"
 
     if {[regexp (.*):: $i]} {
         append output "\n\}\n"

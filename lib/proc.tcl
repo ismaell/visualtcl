@@ -95,7 +95,7 @@ proc vTcl:update_proc {base} {
 	namespace eval ${context} {}
     }
 
-    proc $name $args $body
+    proc $name $args \n$body\n
 
     vTcl:list add "{$name}" vTcl(procs)
     grab release $base

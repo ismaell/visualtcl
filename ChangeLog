@@ -1,6 +1,15 @@
 ChangeLog for Visual Tcl:
 
 1.6.0a1 ->
+    o If "autoload compounds" option is on, but file is not found, option
+      is turned off.
+    o If "autoload compounds" option is on, but no file has been specified,
+      asks for a file. If user cancels file selection dialog box, autoload
+      compounds option is turned off. If user specified a file, it is
+      saved in the preferences.
+    o Fixed dump format bug where it would trim the first line of a proc.
+    o Open/Save file dialog box now uses the title it is passed as a
+      parameter.
     o Fixed problem with .vTcl.con being renamed to .vTcl.tkCon
     o Added widget path to bindings editor
     o Bindings editor now enables insert button and insert menu when

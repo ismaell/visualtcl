@@ -678,7 +678,15 @@ proc vTcl:main {argc argv} {
 
     if [info exists vTcl(pr,autoloadcomp)] {
 	if {$vTcl(pr,autoloadcomp)} {
-	    vTcl:load_compounds $vTcl(pr,autoloadcompfile)
+	    set loaded [vTcl:load_compounds $vTcl(pr,autoloadcompfile)]
+            if {$loaded == ""} {
+                ## if user cancels, we unselect the "autoload compounds" option
+                ## so (s)he is not prompted again
+                set vTcl(pr,autoloadcomp) 0
+            } else {
+                ## user changed the compounds file, save the setting
+                set vTcl(pr,autoloadcompfile) $loaded
+            }
 	}
     }
 

@@ -51,22 +51,21 @@ proc vTcl:save_compounds {} {
 proc vTcl:load_compounds {{file ""}} {
     global vTcl
 
-    # @@change by Christian Gavin 3/5/2000
-    # if a file is given in file parameter, use it,
-    # otherwise prompts for a file
-
+    ## if a file is given in file parameter, use it,
+    ## otherwise prompts for a file
     if {$file == ""} {
 	    set file [vTcl:get_file open "Load Compound Library"]
     }
 
-    # @@end_change
-
-    if {$file == ""} {return}
+    if {$file == ""} {return ""}
+    if {![file exists $file]} {return ""}
     vTcl:statbar 10
     source $file
     vTcl:statbar 80
     vTcl:cmp_user_menu
     vTcl:statbar 0
+
+    return $file
 }
 
 proc vTcl:name_replace {name s} {
