@@ -21,6 +21,15 @@
 ##############################################################################
 #
 
+proc vTcl:portable_filename {filename} {
+
+   set result "\[file join "
+   append result "[file split $filename]"
+   append result "\]"
+
+   return $result
+}
+
 proc vTcl:at {varname} {
     upvar $varname localvar
     return $localvar

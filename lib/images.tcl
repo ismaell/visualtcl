@@ -557,7 +557,7 @@ proc vTcl:image:dump_create_image {image} {
     }
 
     set result [list \
-                   $image \
+                   [vTcl:portable_filename $image] \
                    [vTcl:image:get_description $image] \
                    [vTcl:image:get_type $image] \
                    $inline]
@@ -578,9 +578,10 @@ proc vTcl:image:dump_create_image_footer {} {
 
     set result ""
     append result "\n$vTcl(tab)$vTcl(tab)$vTcl(tab)\} \{\n"
+    append result "$vTcl(tab)eval set _file \[lindex \$img 0\]\n"
     append result "$vTcl(tab)vTcl:image:create_new_image\\\n"
     append result "$vTcl(tab)$vTcl(tab)"
-    append result "\[lindex \$img 0\] \[lindex \$img 1\] "
+    append result "\$_file \[lindex \$img 1\] "
     append result "\[lindex \$img 2\] \[lindex \$img 3\]\n"
     append result "\}\n"
 }
@@ -786,19 +787,20 @@ proc vTcl:image:translate {value} {
     global vTcl
 
     if [info exists vTcl(images,filename,$value)] {
-	set value "\[vTcl:image:get_image \"$vTcl(images,filename,$value)\"\]"
+        set newvalue "\[vTcl:image:get_image "
+        append newvalue "[vTcl:portable_filename $vTcl(images,filename,$value)]\]"
     }
-    return $value
+    return $newvalue
 }
 
 proc vTcl:image:refresh_manager {{position 0.0}} {
     global vTcl
 
     if [info exists vTcl(images,manager_dlg,win)] {
-	if [winfo exists $vTcl(images,manager_dlg,win)] {
-	    vTcl:image:init_img_manager
-	    $vTcl(images,manager_dlg,win).cpd29.03 yview moveto $position
-	}
+        if [winfo exists $vTcl(images,manager_dlg,win)] {
+            vTcl:image:init_img_manager
+            $vTcl(images,manager_dlg,win).cpd29.03 yview moveto $position
+        }
     }
 }
 
@@ -810,24 +812,6 @@ proc vTcl:image:get_manager_position {} {
 proc vTcl:image:external_editor {imageName} {
     global vTcl
     if {[catch {exec "$vTcl(pr,imageeditor)" "$imageName" &}]} {
-    	vTcl:error "Could not execute external image editor"
+        vTcl:error "Could not execute external image editor"
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -75,7 +75,7 @@ proc vTclWindow.vTcl.about {args} {
         -side right 
     pack $base.fra30.but32 \
         -in $base.fra30 -anchor center -expand 0 -fill none -padx 5 \
-        -side left 
+        -side left
     pack $base.lab21 \
         -in $base -anchor center -expand 0 -fill none -pady 2 -side top 
 
@@ -123,11 +123,11 @@ proc vTclWindow.vTcl.credits {base {container 0}} {
     ###################
     if {!$container} {
     toplevel $base -class Toplevel
+    wm overrideredirect $base 0
     wm focusmodel $base passive
     wm withdraw $base
     wm maxsize $base 1284 1010
     wm minsize $base 100 1
-    wm overrideredirect $base 0
     wm resizable $base 1 1
     wm title $base "Visual Tcl Credits"
     wm transient $base .vTcl
@@ -163,7 +163,13 @@ proc vTclWindow.vTcl.credits {base {container 0}} {
 
     CreditsText delete 0.0 end
     CreditsText insert 0.0 \
-         "Copyright\ (C)\ 1996-2000\ Stewart\ Allen\ (stewart@neuron.com)\n\n======================================================================\nMaintained\ by:\n\nChristian\ Gavin\ (cgavin@dnai.com)\nDamon\ Courtney\ (damon@unreality.com)\n\n======================================================================\nFreewrap\ is\ Copyright\ (C)\ 1998\ by\ Dennis\ LaBelle\n(dlabelle@albany.net)\ All\ Rights\ Reserved.\n\n======================================================================\nPortions\ of\ this\ software\ from\n\n\ \ Effective\ Tcl/Tk\ Programming\n\ \ Mark\ Harrison,\ DSC\ Communications\ Corp.\n\ \ Michael\ McLennan,\ Bell\ Labs\ Innovations\ for\ Lucent\ Technologies\n\ \ Addison-Wesley\ Professional\ Computing\ Series\n\n\ \ Copyright\ (c)\ 1996-1997\ \ Lucent\ Technologies\ Inc.\ and\ Mark\ Harrison\n======================================================================\n"
+         "Copyright\ (C)\ 1996-2000\ Stewart\ Allen\ (stewart@neuron.com)\n\n======================================================================\nMaintained\ by:\n\nChristian\ Gavin\ (cgavin@dnai.com)\nDamon\ Courtney\ (damon@unreality.com)\n\n======================================================================\nFreewrap\ is\ Copyright\ (C)\ 1998\ by\ Dennis\ LaBelle\n(dlabelle@albany.net)\ All\ Rights\ Reserved.\n\n======================================================================\nPortions\ of\ this\ software\ from\n\n\ \ Effective\ Tcl/Tk\ Programming\n\ \ Mark\ Harrison,\ DSC\ Communications\ Corp.\n\ \ Michael\ McLennan,\ Bell\ Labs\ Innovations\ for\ Lucent\ Technologies\n\ \ Addison-Wesley\ Professional\ Computing\ Series\n\n\ \ Copyright\ (c)\ 1996-1997\ \ Lucent\ Technologies\ Inc.\ and\ Mark\ Harrison\n======================================================================\n
+Routines for encoding and decoding base64
+   encoding from Time Janes,
+   decoding from Pascual Alonso,
+   namespace'ing and bugs from Parand Tony Darugar (tdarugar@binevolve.com)\n
+Combobox and Multicolumn listbox Copyright (c) 1999, Bryan Oakley
+Progressbar Copyright (c) 2000 Alexander Schoepe\n"
     CreditsText insert end \
          "\nTcl version $tcl_version\nTk version $tk_version"
     bind $base <Key-Escape> "$base.but23 invoke"
