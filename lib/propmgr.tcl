@@ -565,13 +565,13 @@ proc vTcl:prop:new_attr {top option variable config_cmd config_args prefix {isGe
             bind ${base}.l <KeyRelease-Return> \
                 "$config_cmd \$vTcl(w,widget) $option $variable {} $config_args
                  ${base}.f conf -bg \$$variable"
-            frame ${base}.f -relief raised \
-                -bg [subst $$variable] -bd 2 -width 20 -height 5
-            bind ${base}.f <ButtonPress> \
-                "
-		vTcl:propmgr:select_attr $top $option
-		vTcl:show_color $top.t${option}.f $option $variable ${base}.f
-		vTcl:prop:save_opt \$vTcl(w,widget) $option $variable
+            button ${base}.f \
+                -image ellipses  -width 12 \
+                -highlightthickness 1 -fg black -padx 0 -pady 1 \
+                -command "
+		    vTcl:propmgr:select_attr $top $option
+		    vTcl:show_color $top.t${option}.f $option $variable ${base}.f
+		    vTcl:prop:save_opt \$vTcl(w,widget) $option $variable
 		"
             pack ${base}.l -side left -expand 1 -fill x
             pack ${base}.f -side right -fill y -pady 1 -padx 1

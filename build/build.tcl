@@ -27,7 +27,7 @@
 
 ##############################################################################
 
-set version 1.6.0a2
+set version 1.6.0a3
 set bldroot /home/cgavin/vtcl2-0/vtcl
 set bldtmp $bldroot/build/tmp
 
@@ -51,6 +51,7 @@ file mkdir $copyroot/lib/Widgets/vtcl
 file mkdir $copyroot/lib/Widgets/itcl
 file mkdir $copyroot/lib/Widgets/blt
 file mkdir $copyroot/lib/Widgets/table
+file mkdir $copyroot/lib/Widgets/tablelist
 file mkdir $copyroot/images/edit
 file mkdir $copyroot/doc
 file mkdir $copyroot/demo
@@ -83,6 +84,7 @@ eval exec cp [glob $bldroot/lib/Widgets/vtcl/*.*]         $copyroot/lib/Widgets/
 eval exec cp [glob $bldroot/lib/Widgets/itcl/*.*]         $copyroot/lib/Widgets/itcl
 eval exec cp [glob $bldroot/lib/Widgets/blt/*.*]          $copyroot/lib/Widgets/blt
 eval exec cp [glob $bldroot/lib/Widgets/table/*.*]        $copyroot/lib/Widgets/table
+eval exec cp [glob $bldroot/lib/Widgets/tablelist/*.*]    $copyroot/lib/Widgets/tablelist
 eval exec cp [glob $bldroot/images/*.ppm]                 $copyroot/images
 eval exec cp [glob $bldroot/images/*.xbm]                 $copyroot/images
 eval exec cp [glob $bldroot/images/*.xpm]                 $copyroot/images
