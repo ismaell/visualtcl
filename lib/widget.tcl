@@ -510,7 +510,7 @@ proc vTcl:update_widget_info {target} {
             # window manager decide instead. Defaults to 1, which means the
             # user has control over toplevel position and size
             ##
-            foreach special {set,origin set,size} {
+            foreach special {set,origin set,size runvisible} {
                 if {![info exists ::widgets::${target}::${special}]} {
                     namespace eval ::widgets::${target} "
                         variable $special
@@ -808,7 +808,7 @@ proc vTcl:create_widget {class options new_widg x y} {
         if {$vTcl(w,def_mgr) == "place"} { append do " -x $x -y $y" }
         append do ";"
     }
-    append do "vTcl:setup_bind_tree $new_widg; "
+    append do "vTcl:setup_bind_widget $new_widg; "
     append do "vTcl:widget:register_widget $new_widg; "
     if {[info exists classes($p,insertChildCmd)] &&
         ![lempty $classes($p,insertChildCmd)]} {
@@ -1569,6 +1569,7 @@ namespace eval vTcl::widgets {
         return [$::classes($class,queryInsertOptionsCmd) $addOptions options]
     }
 }
+
 
 
 

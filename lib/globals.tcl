@@ -244,8 +244,8 @@ set vTcl(m,grid,propagate)         { propagate       {}       boolean {0 1} {vTc
 
 set vTcl(m,wm,list) ""
 set vTcl(m,wm,extlist) "set,origin geometry,x geometry,y set,size geometry,w geometry,h
-                        resizable,w resizable,h minsize,x minsize,y maxsize,x maxsize,y state title"
-set vTcl(m,wm,savelist) "set,origin set,size"
+                        resizable,w resizable,h minsize,x minsize,y maxsize,x maxsize,y state title runvisible"
+set vTcl(m,wm,savelist) "set,origin set,size runvisible"
 set vTcl(m,wm,set,origin)          { {set origin}    {}       boolean {0 1}  {vTcl:wm:conf_geom} }
 set vTcl(m,wm,geometry,x)          { {x position}    {}       type    {} {vTcl:wm:conf_geom} }
 set vTcl(m,wm,geometry,y)          { {y position}    {}       type    {} {vTcl:wm:conf_geom} }
@@ -259,6 +259,7 @@ set vTcl(m,wm,minsize,y)           { {y minsize}     {}       type    {} {vTcl:w
 set vTcl(m,wm,maxsize,x)           { {x maxsize}     {}       type    {} {vTcl:wm:conf_minmax} }
 set vTcl(m,wm,maxsize,y)           { {y maxsize}     {}       type    {} {vTcl:wm:conf_minmax} }
 set vTcl(m,wm,state)               { state           {}       choice  {iconify deiconify withdraw} {vTcl:wm:conf_state} }
+set vTcl(m,wm,runvisible)          { {run visible}   {}       boolean {0 1} {vTcl:wm:conf_geom} }
 set vTcl(m,wm,title)               { title           {}       type    {} {vTcl:wm:conf_title} }
 
 set vTcl(m,menebar,list) ""
@@ -281,6 +282,7 @@ set vTcl(w,wm,resizable,w)   0
 set vTcl(w,wm,resizable,h)   0
 set vTcl(w,wm,set,origin)    0
 set vTcl(w,wm,set,size)      0
+set vTcl(w,wm,runvisible)    1
 
 set vTcl(head,proj) [string trim {
 #############################################################################
@@ -367,6 +369,7 @@ proc vTcl:syntax:iscommand {command} {
 
 # special case for -in option
 set vTcl(option,noencase,-in) 1
+
 
 
 

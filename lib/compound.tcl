@@ -121,7 +121,7 @@ proc vTcl:auto_place_compound {compound gmgr gopt} {
     set name [vTcl:new_widget_name $class $vTcl(w,insert)]
 
     vTcl:insert_compound $name $compound $gmgr $gopt
-    vTcl:setup_bind_tree $name
+    vTcl:setup_bind_widget $name
     vTcl:active_widget $name
     vTcl:update_proc_list
 
@@ -700,7 +700,7 @@ namespace eval ::vTcl::compounds {
             append cmd "; lappend ::vTcl(tops) $target"
             append cmd "; vTcl:update_top_list"
         }
-        append cmd "; vTcl:setup_bind_tree $target"
+        append cmd "; vTcl:setup_bind_widget $target"
         append cmd "; vTcl:widget:register_all_widgets $target"
            
         set do "$cmd"
@@ -724,7 +724,7 @@ namespace eval ::vTcl::compounds {
             lappend ::vTcl(tops) $target
             vTcl:update_top_list
         }
-        vTcl:setup_bind_tree $target
+        vTcl:setup_bind_widget $target
         vTcl:widget:register_all_widgets $target        
         lappend ::vTcl(widgets,[winfo toplevel $target]) $target
     }
@@ -779,5 +779,6 @@ namespace eval ::vTcl::compounds {
         namespace delete $spc
     }
 }
+
 
 

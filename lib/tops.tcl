@@ -52,7 +52,7 @@ proc vTcl:show_top {target} {
         wm deiconify $target
         vTcl:raise $target
         vTcl:widget:register_all_widgets $target
-        vTcl:setup_bind_tree $target
+        vTcl:setup_bind_widget $target
         vTcl:update_top_list
         vTcl:init_wtree
     }
@@ -230,4 +230,26 @@ namespace eval ::vTcl::tops {
             vTcl:update_top_list
 	}
     }
+
+    proc handleRunvisible {cmd} {
+        foreach i $::vTcl(tops) {
+            set var ::widgets::${i}::runvisible
+            if {[info exists $var] &&
+                [set $var] == 0} {
+                wm $cmd $i
+            }
+        }
+    }
+    proc editMode {id args} {
+        handleRunvisible deiconify
+    }
+
+    proc testMode {id args} {
+        handleRunvisible withdraw
+    }
+
+    ## manages the "run visible" feature
+    ::vTcl::notify::subscribe edit_mode "vtcltops" ::vTcl::tops::editMode
+    ::vTcl::notify::subscribe test_mode "vtcltops" ::vTcl::tops::testMode
 }
+

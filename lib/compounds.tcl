@@ -608,6 +608,7 @@ proc infoCmd {target} {
     namespace eval ::widgets::$target {
         set set,origin 1
         set set,size 1
+        set runvisible 1
     }
     namespace eval ::widgets::$target.fra86 {
         array set save {-borderwidth 1 -height 1 -width 1}
@@ -742,6 +743,7 @@ proc vTclWindow.top81 {base} {
 }
 
 }
+
 
 
 

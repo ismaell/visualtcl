@@ -251,6 +251,9 @@ proc vTcl:open {{file ""}} {
 
     unset vTcl(sourcing)
 
+    ## show all toplevels for editing
+    ::vTcl:::tops::handleRunvisible deiconify
+
     ## refresh widget tree automatically after File Open...
     ## refresh image manager and font manager
     ## refresh user compounds menu
@@ -494,6 +497,7 @@ proc vTcl:save2 {file} {
     # moved init proc after user procs so that the init
     # proc can call any user proc
 
+    ::vTcl:::tops::handleRunvisible withdraw
     if {$vTcl(save) == "all"} {
 	puts $output $vTcl(head,exports)
 	puts $output [vTcl:export_procs]
@@ -509,8 +513,7 @@ proc vTcl:save2 {file} {
     } else {
         puts $output [vTcl:save_tree $vTcl(w,widget)]
     }
-
-    # @@end_change
+    ::vTcl:::tops::handleRunvisible deiconify
 
     vTcl:addRcFile $file
 
@@ -525,8 +528,6 @@ proc vTcl:save2 {file} {
     }
     set vTcl(change) 0
 
-    # @@change by Christian Gavin 3/5/2000
-    #
     # it really annoyed me when I had to set the file as
     # executable under Linux to be able to run it, so here
     # we go
@@ -535,8 +536,6 @@ proc vTcl:save2 {file} {
         $tcl_platform(platform) == "unix"} {
     	    file attributes $file -permissions [expr 0755]
     }
-
-    # @@end_change
 }
 
 proc vTcl:quit {} {
@@ -729,5 +728,6 @@ namespace eval vTcl::project {
         return [lsort -unique $result]
     }
 }
+
 
 

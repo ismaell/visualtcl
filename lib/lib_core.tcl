@@ -162,6 +162,7 @@ proc vTcl:wm:conf_geom {target var value} {
     global vTcl
     set ::widgets::${target}::set,origin $vTcl(w,wm,set,origin)
     set ::widgets::${target}::set,size   $vTcl(w,wm,set,size)
+    set ::widgets::${target}::runvisible $vTcl(w,wm,runvisible)
     set x $vTcl(w,wm,geometry,x)
     set y $vTcl(w,wm,geometry,y)
     set w $vTcl(w,wm,geometry,w)
@@ -989,6 +990,7 @@ namespace eval ::vTcl::itemEdit {
 	$top.ItemsEditMenuAddDelete entryconfigure 1 -state $state($enabled)
     }
 }
+
 
 
 
