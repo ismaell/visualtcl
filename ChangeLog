@@ -1,6 +1,10 @@
 ChangeLog for Visual Tcl:
 
 1.51b4 -> 1.51rc0
+    o Use as many default values as possible for new menu widgets
+    o Fixed bug where Visual Tcl would switch the manager for a menu from
+      'wm' to 'place'
+    o When moving menu items up and down, selects item at new position
     o Adopted Interned Explorer-like toolbar buttons for a much nicer look
       (well, that's my opinion at least)
     o Fixed lremove bug in bindings editor

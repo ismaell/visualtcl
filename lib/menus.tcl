@@ -412,7 +412,24 @@ namespace eval ::menu_edit {
         eval $m insert $new_i $mtype [join $optval]
 
         ::menu_edit::fill_menu_list $top [vTcl:at ::${top}::menu]
-        ::menu_edit::show_menu $top $index
+
+        # let's select the same menu at its new location
+        set size [$top.MenuListbox index end]
+
+        for {set ii 0} {$ii < $size} {incr ii} {
+
+            set mm ""
+            set mi ""
+
+            ::menu_edit::get_menu_index $top $ii mm mi
+            if {$mm == $m && $new_i == $mi} {
+                $top.MenuListbox selection clear 0 end
+                $top.MenuListbox selection set $ii
+                $top.MenuListbox activate $ii
+                ::menu_edit::show_menu $top $ii
+                break
+            }
+        }
     }
 
     proc {::menu_edit::new_item} {top type} {
@@ -446,6 +463,10 @@ namespace eval ::menu_edit {
                 $menu add $type -label "New cascade" -menu $nmenu
                 vTcl:init_wtree
                 vTcl:active_widget $nmenu
+                foreach def {-activebackground -activeforeground
+                             -background -foreground} {
+                    vTcl:prop:default_opt $nmenu $def vTcl(w,opt,$def)
+                }
             }
             "command" {
                 $menu add $type -label "New command"  \
@@ -1026,7 +1047,7 @@ proc vTclWindow.vTclMenuEdit {base menu} {
     }
     bind $base.cpd24.01.cpd25.01 <<ListboxSelect>> {
         ::menu_edit::click_listbox [winfo toplevel %W]
-        focus %W
+        after idle {focus %W}
     }
     bind $base.cpd24.01.cpd25.01 <ButtonRelease-3> {
         ::menu_edit::update_current [winfo toplevel %W]

@@ -109,10 +109,11 @@ proc vTcl:show {target} {
     if {![winfo viewable $target]} {
         if {[catch {eval $vTcl(hide,$target,m) $target $vTcl(hide,$target,i)}] == 1} {
 
-            ## don't try to change the manager of childsites !!
+            ## don't try to change the manager of childsites or menus !!
             ## only show widgets that are not childsites and have been hidden
 
-            if {[vTcl:Frame:containing_megawidget $target] == ""} {
+            if {[vTcl:Frame:containing_megawidget $target] == "" &&
+                [vTcl:get_class $target] != "Menu"} {
                 catch {$vTcl(w,def_mgr) $target $vTcl($vTcl(w,def_mgr),insert)}
             }
         }

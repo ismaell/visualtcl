@@ -20,8 +20,12 @@ proc vTcl:widget:menubutton:edit_menu {} {
 
 proc vTcl:widget:menubutton:inscmd {target} {
     return "
-        menu $target.m
+        menu $target.m -tearoff 0
         $target conf -menu $target.m
         vTcl:widget:register_widget $target.m
+        foreach def {-activebackground -activeforeground
+                     -background -foreground} {
+            vTcl:prop:default_opt $target.m \$def vTcl(w,opt,\$def)
+        }
     "
 }

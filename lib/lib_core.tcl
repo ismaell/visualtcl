@@ -130,6 +130,10 @@ proc vTcl:edit_target_menu {target} {
         vTcl:widget:register_widget $menu -tearoff
         vTcl:setup_vTcl:bind $menu
         $target conf -menu $menu
+        foreach def {-activebackground -activeforeground
+                     -background -foreground} {
+            vTcl:prop:default_opt $menu $def vTcl(w,opt,$def)
+        }
     }
 
     set name [vTcl:rename $menu]
