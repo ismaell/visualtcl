@@ -21,37 +21,6 @@
 ##############################################################################
 #
 
-proc vTcl:save_vars {} {
-    global vTcl
-    set output ""
-    set list $vTcl(vars)
-    vTcl:list add widget list
-    foreach i $list {
-        catch {
-            if {[vTcl:valid_varname $i]} {
-                global $i
-                append output "global $i; "
-                if {[array exists $i] == 1} {
-                    append output "\n"
-                    set names [lsort [array names $i]]
-                    foreach j $names {
-                        set value "[subst $$i\($j\)]"
-                        if {$vTcl(pr,saveglob) == 1} {
-                            append output "$vTcl(tab)set $i\($j\) \{$value\}\n"
-                        }
-                    }
-                } else {
-                    if {$vTcl(pr,saveglob) == 1} {
-                        append output "set $i \{[subst $\{$i\}]\}"
-                    }
-                    append output "\n"
-                }
-            }
-        }
-    }
-    return "$output"
-}
-
 proc vTcl:save_procs {} {
     global vTcl
     set output ""

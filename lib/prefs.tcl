@@ -33,8 +33,6 @@ proc vTcl:prefs:init {base} {
        variable balloon          ""
        variable getname          ""
        variable shortname        ""
-       variable fullcfg          ""
-       variable saveglob         ""
        variable winfocus         ""
        variable autoplace        ""
        variable cmdalias         ""
@@ -233,10 +231,6 @@ proc {vTcl:prefs:data_exchange} {save_and_validate} {
 	prefs::getname          $save_and_validate
     vTcl:data_exchange_var vTcl(pr,shortname)        \
 	prefs::shortname        $save_and_validate
-    vTcl:data_exchange_var vTcl(pr,fullcfg)          \
-	prefs::fullcfg          $save_and_validate
-    vTcl:data_exchange_var vTcl(pr,saveglob)         \
-	prefs::saveglob         $save_and_validate
     vTcl:data_exchange_var vTcl(pr,winfocus)         \
 	prefs::winfocus         $save_and_validate
     vTcl:data_exchange_var vTcl(pr,autoplace)        \
@@ -286,12 +280,6 @@ proc {vTcl:prefs:basics} {tab} {
 	vTcl:formCompound:add $tab checkbutton \
 		-text "Short automatic widget names" \
 		-variable prefs::shortname
-	vTcl:formCompound:add $tab checkbutton \
-		-text "Save verbose widget configuration" \
-		-variable prefs::fullcfg
-	vTcl:formCompound:add $tab checkbutton \
-		-text "Save global variable values" \
-		-variable prefs::saveglob
 	vTcl:formCompound:add $tab checkbutton \
 		-text "Window focus selects window" \
 		-variable prefs::winfocus

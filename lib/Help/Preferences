@@ -24,12 +24,6 @@
 	abbreviation method.  This option only matters if widgetnames are
 	being created automatically.
 
-    Save verbose widget configuration
-    	Not sure what this does.
-
-    Save global variable values
-    	Not sure what this does.
-
     Window focus selects window.
     	Not sure what this does.
 
@@ -82,4 +76,20 @@
 	on.
 
     Auto load compounds
-    	Not sure what this does.
+    	With this option, you can specify a file to load everytime you start
+        Visual Tcl.
+
+        The file can contain compounds that you frequently use. A compound is
+        a reusable piece of user interface containing tcl code as well. You
+        can create a compound out of any widget in Visual Tcl. A complete
+        toplevel may easily be converted into a compound and reused later on.
+
+        The difference between a compound and user interface components like
+        ActiveX's on Windows is that compounds are not shared. Everytime you
+        insert a compound into a project, all the widgets that make the
+        compound as well as the program code associated with the compound
+        are inserted.
+
+        Use this option if you frequently use the same compounds over and
+        over. After you have started Visual Tcl, you can insert the compounds
+        by choosing the Compound / Insert / User menu.
