@@ -194,7 +194,7 @@ proc vTcl:lib_blt:setup {} {
 	set vTcl(Stripchart,get_widget_tree_label)  vTcl:lib_blt:get_widget_tree_label
 }
 
-proc vTcl:lib_blt:get_widget_tree_label {className} {
+proc vTcl:lib_blt:get_widget_tree_label {className {target ""}} {
 	
 	switch [string tolower $className] {
 		

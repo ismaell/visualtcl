@@ -120,10 +120,6 @@ proc vTcl:init_wtree {{wants_destroy_handles 1}} {
                 scrollbar_h {set t "Horz Scrollbar"}
                 scrollbar_v {set t "Vert Scrollbar"}
                 canvas {set t "Canvas"}
-                label      -
-                button     -
-                checkbutton    -
-                radiobutton    -
                 message        -
                 menubutton {set t [$i cget -text]}
                 entry {set t "-textvariable [$i cget -textvariable]"}
@@ -134,7 +130,7 @@ proc vTcl:init_wtree {{wants_destroy_handles 1}} {
                 	
                 	if [info exists vTcl($tmpClass,get_widget_tree_label)] {
                 		
-                		set t [$vTcl($tmpClass,get_widget_tree_label) $c]
+                		set t [$vTcl($tmpClass,get_widget_tree_label) $c $i]
                 	}
                 }
             }

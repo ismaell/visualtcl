@@ -537,7 +537,7 @@ proc vTcl:lib_itcl:setup {} {
 	# see save_option proc below for resolution
 }
 
-proc vTcl:lib_itcl:get_widget_tree_label {className} {
+proc vTcl:lib_itcl:get_widget_tree_label {className {target ""}} {
 	
 	switch [string tolower $className] {
 		
