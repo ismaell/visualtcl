@@ -28,7 +28,6 @@ Lib		core
 
 Icon		../lib/Widgets/core/compoundcontainer.gif
 DefaultValues   -background -highlightbackground -highlightcolor
-TreeLabel	Compound Container
 MegaWidget      yes
 DumpChildren    no
 InsertCmd       vTcl::widgets::core::compoundcontainer::insertCmd
@@ -40,6 +39,7 @@ Export          vTcl::widgets::core::compoundcontainer::createCmd
 Export          vTcl::widgets::core::compoundcontainer::insertCompound
 TreeChildrenCmd	{vTcl::widgets::core::compoundcontainer::treeChildrenCmd
 		       vTcl::widgets::core::compoundcontainer::treeChildrenChildsite}
+TreeLabel       @vTcl::widgets::core::compoundcontainer::getWidgetTreeLabel
 
 NewOption -compoundClass  "Cmpd Class"  type
 NewOption -compoundType   "Cmpd Type"   type
@@ -139,7 +139,7 @@ namespace eval vTcl::widgets::core::compoundcontainer {
         }
 
         ## ask user to select a compound
-        set compoundName [::vTcl::input::listboxSelect::select $items]
+        set compoundName [::vTcl::input::listboxSelect::select $items "Choose Compound"]
         if {$compoundName == ""} {
             return
         }
@@ -184,6 +184,7 @@ namespace eval vTcl::widgets::core::compoundcontainer {
         ##    Please read their license agreements for details.
 
         frame $path -class CompoundContainer
+        namespace eval ::$path "set compoundType {}; set compoundClass {}"
         
         ## compound class specified ?
         if {[llength $args] == 2 && [lindex $args 0] == "-compoundClass"} {
@@ -202,7 +203,10 @@ namespace eval vTcl::widgets::core::compoundcontainer {
     proc treeChildrenChildsite {target} {
         return {}
     }
+
+    proc getWidgetTreeLabel {target} {
+        upvar ::${target}::compoundClass compoundClass
+        return "Compound Container: [join $compoundClass]"
+    }
 }
-
-
 
