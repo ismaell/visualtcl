@@ -1,9 +1,0 @@
-SuperClass	scale
-
-Name		scale_h
-Lib		core
-
-Class		Scale
-Icon		icon_scale_h.gif
-Balloon		horizontal scale
-AddOptions	-orient horizontal

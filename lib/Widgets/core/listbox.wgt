@@ -1,7 +1,6 @@
-Name		listbox
+Class		Listbox
 Lib		core
 
-Class		Listbox
 Icon		icon_listbox.gif
 DoubleClickCmd	vTcl:set_list
 InsertCmd	vTcl:widget:listbox:inscmd

@@ -1,7 +1,6 @@
-Name		label
+Class		Label
 Lib		core
 
-Class		Label
 Icon		icon_label.gif
 DefaultOptions	-text label -bd 1 -relief raised
 DoubleClickCmd	vTcl:set_label

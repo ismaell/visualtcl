@@ -424,21 +424,22 @@ proc vTcl:conf_to_pairs {conf opt} {
     return $pairs
 }
 
-proc vTcl:new_widget_name {type base} {
+proc vTcl:new_widget_name {class base} {
     global vTcl
+    set c [vTcl:lower_first $class]
     while { 1 } {
         if $vTcl(pr,shortname) {
-            set num "[string range $type 0 2]$vTcl(item_num)"
+            set num "[string range $c 0 2]$vTcl(item_num)"
         } else {
-            set num "$type$vTcl(item_num)"
+            set num "$c$vTcl(item_num)"
         }
         incr vTcl(item_num)
-        if {$base != "." && $type != "toplevel"} {
+        if {$base != "." && $class != "Toplevel"} {
             set new_widg $base.$num
         } else {
             set new_widg .$num
         }
-		if { [lsearch $vTcl(tops) $new_widg] >= 0 } { continue }
+	if { [lsearch $vTcl(tops) $new_widg] >= 0 } { continue }
         if { ![winfo exists $new_widg] } { break }
     }
     return $new_widg
@@ -513,27 +514,27 @@ proc vTcl:setup_unbind_tree {target} {
 ##############################################################################
 # INSERT NEW WIDGET ROUTINE
 ##############################################################################
-proc vTcl:auto_place_widget {type {options ""}} {
+proc vTcl:auto_place_widget {class {options ""}} {
     global vTcl
     if {$vTcl(mode) == "TEST"} {
         vTcl:error "Inserting widgets is not\nallowed in Test mode."
         return
     }
-    if { ($vTcl(w,insert) == "." && $type != "toplevel") ||
-         ([winfo exists $vTcl(w,insert)] == 0 && $type != "toplevel")} {
+    if { ($vTcl(w,insert) == "." && $class != "Toplevel") ||
+         ([winfo exists $vTcl(w,insert)] == 0 && $class != "Toplevel")} {
         vTcl:dialog "No insertion point set!"
         return
     }
     set vTcl(mgrs,update) no
     if $vTcl(pr,getname) {
-        set new_widg [vTcl:get_name $type]
+        set new_widg [vTcl:get_name $class]
     } else {
-        set new_widg [vTcl:new_widget_name $type $vTcl(w,insert)]
+        set new_widg [vTcl:new_widget_name $class $vTcl(w,insert)]
     }
 
     if {[lempty $new_widg]} { return }
 
-    set created_widget [vTcl:create_widget $type $options $new_widg 0 0]
+    set created_widget [vTcl:create_widget $class $options $new_widg 0 0]
 
     # @@change by Christian Gavin 3/5/2000
     #
@@ -553,8 +554,8 @@ proc vTcl:auto_place_widget {type {options ""}} {
     return $created_widget
 }
 
-proc vTcl:create_widget {type options new_widg x y} {
-    global vTcl widgets classes
+proc vTcl:create_widget {class options new_widg x y} {
+    global vTcl classes
 
     set do ""
     set undo ""
@@ -566,14 +567,14 @@ proc vTcl:create_widget {type options new_widg x y} {
         }
     }
 
-    set c $widgets($type,class)
+    set c $class
     append do "$classes($c,createCmd) $new_widg "
     append do "$classes($c,defaultOptions) $options;"
 
     if {![lempty $classes($c,insertCmd)]} {
 	append do "[$classes($c,insertCmd) $new_widg];"
     }
-    if {$type != "toplevel"} {
+    if {$class != "Toplevel"} {
         append do "$vTcl(w,def_mgr) $new_widg $vTcl($vTcl(w,def_mgr),insert)"
 	if {$vTcl(w,def_mgr) == "place"} { append do " -x $x -y $y" }
 	append do ";"
@@ -587,7 +588,7 @@ proc vTcl:create_widget {type options new_widg x y} {
     update idletasks
     set vTcl(mgrs,update) yes
 
-    if {$type == "toplevel"} {
+    if {$class == "Toplevel"} {
     	set vTcl(widgets,$new_widg) {}
     } else {
 	lappend vTcl(widgets,[winfo toplevel $new_widg]) $new_widg
@@ -829,8 +830,8 @@ proc vTcl:add_functions_to_rc_menu {} {
     }
 }
 
-proc vTcl:new_widget {type button {options ""}} {
-    global vTcl widgets
+proc vTcl:new_widget {class button {options ""}} {
+    global vTcl classes
     if {$vTcl(mode) == "TEST"} {
         vTcl:error "Inserting widgets is not\nallowed in Test mode."
         return
@@ -838,22 +839,22 @@ proc vTcl:new_widget {type button {options ""}} {
 
     vTcl:raise_last_button $button
 
-    if {$vTcl(pr,autoplace) || $type == "toplevel" \
-    	|| $widgets($type,autoPlace)} {
+    if {$vTcl(pr,autoplace) || $class == "Toplevel" \
+    	|| $classes($class,autoPlace)} {
 	vTcl:status "Status"
 	vTcl:rebind_button_1
-    	return [vTcl:auto_place_widget $type $options]
+    	return [vTcl:auto_place_widget $class $options]
     }
 
     $button configure -relief sunken
 
-    vTcl:status "Insert $type"
+    vTcl:status "Insert $class"
 
     bind vTcl(b) <Button-1> \
-    	"vTcl:place_widget $type $button [list $options] %X %Y %x %y"
+    	"vTcl:place_widget $class $button [list $options] %X %Y %x %y"
 }
 
-proc vTcl:place_widget {type button options rx ry x y} {
+proc vTcl:place_widget {class button options rx ry x y} {
     global vTcl
 
     if { !$vTcl(pr,multiplace) } {
@@ -866,14 +867,14 @@ proc vTcl:place_widget {type button options rx ry x y} {
 
     set vTcl(mgrs,update) no
     if $vTcl(pr,getname) {
-        set new_widg [vTcl:get_name $type]
+        set new_widg [vTcl:get_name $class]
     } else {
-        set new_widg [vTcl:new_widget_name $type $vTcl(w,insert)]
+        set new_widg [vTcl:new_widget_name $class $vTcl(w,insert)]
     }
 
     if {[lempty $new_widg]} { return }
 
-    set created_widget [vTcl:create_widget $type $options $new_widg $x $y]
+    set created_widget [vTcl:create_widget $class $options $new_widg $x $y]
 
     # @@change by Christian Gavin 3/5/2000
     #
@@ -924,4 +925,26 @@ proc vTcl:update_aliases {} {
 	if {![vTcl:valid_class $class]} { continue }
 	lappend widgetNums($class) $num
     }
+}
+
+proc vTcl:widget:get_image {w} {
+    global vTcl classes
+
+    set c [vTcl:get_class $w]
+    set i $classes($c,icon)
+    if {[vTcl:streq [string index $i 0] "@"]} {
+    	set i [[string range $i 1 end] $w]
+    }
+    return $i
+}
+
+proc vTcl:widget:get_tree_label {w} {
+    global vTcl classes
+
+    set c [vTcl:get_class $w]
+    set t $classes($c,treeLabel)
+    if {[vTcl:streq [string index $t 0] "@"]} {
+    	set t [[string range $t 1 end] $w]
+    }
+    return $t
 }

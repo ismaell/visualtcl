@@ -1,7 +1,6 @@
-Name		radiobutton
+Class		Radiobutton
 Lib		core
 
-Class		Radiobutton
 Icon		icon_radiobutton.gif
 DefaultOptions	-text radio
 DoubleClickCmd	vTcl:set_command

@@ -24,12 +24,10 @@
 proc vTcl:LoadWidgets {dir} {
     global vTcl tmp
 
-    foreach subdir [glob $dir/*] {
-	if {![file isdirectory $subdir]} { continue }
-	foreach file [lsort [glob -nocomplain $subdir/*.wgt]] {
-	    set tmp(lib) [file tail $subdir]
-	    vTcl:LoadWidget $tmp(lib) $file
-	}
+    set lib [file tail $dir]
+    foreach file [lsort [glob -nocomplain $dir/*.wgt]] {
+	set tmp(lib) $lib
+	vTcl:LoadWidget $tmp(lib) $file
     }
 
     set vTcl(libs) [vTcl:lrmdups $vTcl(libs)]
@@ -40,8 +38,8 @@ proc vTcl:LoadWidgets {dir} {
 }
 
 proc vTcl:LoadWidget {lib file} {
-    global tmp vTcl widgets classes
-
+    global tmp vTcl classes
+    
     set file [file tail $file]
     set file [file join $vTcl(VTCL_HOME) lib Widgets $lib $file]
 
@@ -61,11 +59,7 @@ proc vTcl:LoadWidget {lib file} {
     	return
     }
 
-    if {![info exists tmp(name)]} { return }
     if {![info exists tmp(class)]} { unset tmp; return }
-
-    ## We already have this widget.
-    if {[info exists widgets($tmp(name),class)]} { unset tmp; return }
 
     SetClassArray
 
@@ -74,18 +68,15 @@ proc vTcl:LoadWidget {lib file} {
     	return
     }
 
-    SetWidgetArray
-
     lappend vTcl(libs) $tmp(lib)
     lappend vTcl(classes) $tmp(class)
     lappend vTcl(lib_$tmp(lib),classes) $tmp(class)
-    lappend vTcl(lib_$tmp(lib),widgets) $tmp(name)
 
     unset tmp
 }
 
 proc SetClassArray {} {
-    global tmp classes
+    global vTcl tmp classes
 
     array set classes "
 	$tmp(class),lib			vtcl
@@ -104,6 +95,11 @@ proc SetClassArray {} {
 	$tmp(class),aliasPrefix		$tmp(class)
 	$tmp(class),widgetProc		vTcl:WidgetProc
 	$tmp(class),resizeCmd		vTcl:adjust_widget_size
+	$tmp(class),icon		icon_[vTcl:lower_first $tmp(class)].gif
+	$tmp(class),balloon		[string tolower $tmp(class)]
+	$tmp(class),addOptions		{}
+	$tmp(class),autoPlace		0
+	$tmp(class),treeLabel		$tmp(class)
     "
 
     foreach elem [array names classes $tmp(class),*] {
@@ -111,41 +107,22 @@ proc SetClassArray {} {
     	if {![info exists tmp($var)]} { continue }
 	set classes($elem) $tmp($var)
     }
-}
-
-proc SetWidgetArray {} {
-    global vTcl tmp widgets
-
-    array set widgets "
-	$tmp(name),name			$tmp(name)
-	$tmp(name),class		$tmp(class)
-	$tmp(name),icon			icon_[vTcl:lower_first $tmp(name)].gif
-	$tmp(name),balloon		$tmp(name)
-	$tmp(name),addOptions		{}
-	$tmp(name),autoPlace		0
-	$tmp(name),treeLabel		$tmp(class)
-    "
-
-    foreach elem [array names widgets $tmp(name),*] {
-	lassign [split $elem ,] name var
-    	if {![info exists tmp($var)]} { continue }
-	set widgets($elem) $tmp($var)
-    }
 
     ## Create the toolbar icon.
-    set icon [file join $vTcl(VTCL_HOME) images $widgets($tmp(name),icon)]
-    if {[file exists $icon]} {
-	set widgets($tmp(name),image) \
-	    [image create photo "ctl_$tmp(name)" -file $icon]
+    if {[vTcl:streq [string index $tmp(icon) 0] "@"]} {
+	set cmd [string range $tmp(icon) 1 end]
+	set icons [$cmd]
     } else {
-    	unset widgets($tmp(name),icon)
+    	set icons $tmp(icon)
+    }
+    foreach i $icons {
+	set icon [file join $vTcl(VTCL_HOME) images $i]
+	if {![file exists $icon]} { continue }
+	image create photo $i -file $icon
     }
 }
 
-proc Name {name} {
-    global tmp
-    set tmp(name) $name
-}
+proc Name {args} { }
 
 proc Class {name} {
     global tmp

@@ -1,7 +1,6 @@
-Name		text
+Class		Text
 Lib		core
 
-Class		Text
 Icon		icon_text.gif
 DoubleClickCmd	vTcl:set_textvar
 InsertCmd	vTcl:widget:text:inscmd

@@ -257,26 +257,6 @@ proc vTcl:valid_class {class} {
     }
 }
 
-proc vTcl:get_type {target {lower 0}} {
-    global widgets classes
-
-    set class [vTcl:get_class $target]
-
-    ## If we have a type cmd, execute it.
-    if {![lempty $classes($class,typeCmd)]} {
-    	set type [$classes($class,typeCmd) $target]
-    } else {
-	foreach elem [array names widgets *,class] {
-	    if {$widgets($elem) != $class} { continue }
-	    set type [lindex [split $elem ,] 0]
-	    break
-	}
-    }
-
-    if {$lower == 1} { set type [vTcl:lower_first $type] }
-    return $type
-}
-
 proc vTcl:get_class {target {lower 0}} {
     set class [winfo class $target]
 
@@ -401,7 +381,7 @@ proc vTcl:dump_widget_opt {target basename} {
     
     if {$target != "."} {
 	if {$class == "Menu" && [string first .# $target] >= 0} { return }
-        set result "$vTcl(tab)[vTcl:lower_first $classes($class,createCmd)] "
+        set result "$vTcl(tab)$classes($class,createCmd) "
 	append result "$basename"
 
         if {$mgr == "wm" && $class != "Menu"} {
@@ -421,6 +401,11 @@ proc vTcl:dump_widget_opt {target basename} {
         } else {
             append result "\n"
         }
+
+	if {$class == "Toplevel" && [wm state $target] == "withdrawn"} {
+	    append result $vTcl(tab)
+	    append result "wm withdraw $target\n"
+	}
     }
     if {$mgr == "wm"} {
         if {$class == "Menu"} {
@@ -549,6 +534,10 @@ proc vTcl:dump_top_widget {target basename} {
                         }
                     }
                 }
+		geometry {
+                    append result "$vTcl(tab)wm $i $basename [wm $i $target]\n"
+		    append result "$vTcl(tab)update\n"
+		}
                 default {
 		    ## Let's get the current values of the target.
                     # append result "$vTcl(tab)wm $i $basename $vTcl(w,wm,$i)\n"
@@ -706,6 +695,9 @@ proc vTcl:dump:save_tops {} {
     global vTcl
 
     foreach top [concat . $vTcl(tops)] {
+	append string "Window show $top\n"
+	continue
+
 	if {[lsearch $vTcl(showtops) $top] > -1} {
 	    append string "Window show $top\n"
 	    continue

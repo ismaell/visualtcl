@@ -1,7 +1,6 @@
-Name		menu
+Class		Menu
 Lib		core
 
-Class		Menu
 Icon		icon_menu.gif
 TreeLabel	@vTcl:core:get_menu_label
 

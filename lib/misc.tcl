@@ -310,7 +310,6 @@ proc vTcl:cmp_user_menu {} {
 
 proc vTcl:cmp_sys_menu {} {
     global vTcl
-#    set m $vTcl(gui,main).menu.c.m.m.s
     set m $vTcl(menu,system,m)
     catch {destroy $m}
     menu $m -tearoff 0
@@ -750,12 +749,17 @@ proc vTcl:rebind_button_1 {} {
 }
 
 proc vTcl:lib:add_widgets_to_toolbar {list} {
-    global widgets
+    global classes
 
     foreach i $list {
-	if {![info exists widgets($i,class)]} { continue }
-	vTcl:toolbar_add $i $widgets($i,balloon) \
-	    $widgets($i,image) $widgets($i,addOptions)
+	if {![info exists classes($i,lib)]} { continue }
+	## If there is a special proc, call it and continue.
+	if {![lempty [info procs vTcl:$i:ToolBarSetup]]} {
+	    vTcl:$i:ToolBarSetup
+	    continue
+	}
+	vTcl:toolbar_add $i $classes($i,balloon) \
+	    $classes($i,icon) $classes($i,addOptions)
     }
 }
 

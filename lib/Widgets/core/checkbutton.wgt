@@ -1,7 +1,6 @@
-Name		checkbutton
+Class		Checkbutton
 Lib		core
 
-Class		Checkbutton
 Icon		icon_checkbutton.gif
 DefaultOptions	-text check
 DoubleClickCmd	vTcl:set_command

@@ -1,6 +1,5 @@
-Name		canvas
+Class		Canvas
 Lib		core
 
-Class		Canvas
 Icon		icon_canvas.gif
 DefaultOptions	-bd 2 -relief ridge

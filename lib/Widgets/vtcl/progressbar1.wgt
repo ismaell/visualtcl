@@ -1,9 +1,8 @@
-Name		progressbar1
+Class		Progressbar1
 Lib		vtcl
 
-Class		Progressbar1
 CreateCmd	::progressbar::progressbar
-Icon		icon_tixMeter.gif
+Icon		icon_progressbar.gif
 Balloon		3d progressbar
 DumpChildren	no
 Resizable	horizontal

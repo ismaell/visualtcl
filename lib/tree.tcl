@@ -96,10 +96,8 @@ proc vTcl:init_wtree {{wants_destroy_handles 1}} {
         set j [vTcl:rename $i]
         if {$i == "."} {
             set c vTclRoot
-	    set type toplevel
 	    set t "Visual Tcl"
         } else {
-	    set type [vTcl:get_type $i 1]
 	    set c [vTcl:get_class $i 1]
 	    set t {}
         }
@@ -112,8 +110,8 @@ proc vTcl:init_wtree {{wants_destroy_handles 1}} {
                 incr l([expr $depth - 1]) -1
             }
 	    set cmd vTcl:show
-	    if {$type == "toplevel"} { set cmd vTcl:show_top }
-            button $b.$j -image ctl_$type -command "
+	    if {$c == "Toplevel" || $c == "vTclRoot"} { set cmd vTcl:show_top }
+            button $b.$j -image [vTcl:widget:get_image $i] -command "
                 if \{\$vTcl(mode) == \"EDIT\"\} \{
                 	$cmd $i
                 	vTcl:active_widget $i
@@ -123,16 +121,7 @@ proc vTcl:init_wtree {{wants_destroy_handles 1}} {
             vTcl:set_balloon $b.$j $i
             $b create window $x $y -window $b.$j -anchor nw -tags $b.$j
 
-	    if {[lempty $t]} {
-		set t ""
-		set t $widgets($type,treeLabel)
-
-		## If the first char is a @, execute it as a command.
-		## Otherwise, just put the text.
-		if {![lempty $t] && [string index $t 0] == "@"} {
-		    set t [[string range $t 1 end] $i]
-		}
-	    }
+	    if {[lempty $t]} { set t [vTcl:widget:get_tree_label $i] }
 
             $b create text $x2 $y2 -text $t -anchor w -tags "TEXT TEXT$b.$j"
             set d2 [expr $depth - 1]

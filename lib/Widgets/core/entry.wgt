@@ -1,7 +1,6 @@
-Name		entry
+Class		Entry
 Lib		core
 
-Class		Entry
 Icon		icon_entry.gif
 DoubleClickCmd	vTcl:set_textvar
 InsertCmd	vTcl:widget:entry:inscmd

@@ -1,6 +1,8 @@
 ChangeLog for Visual Tcl:
 
 1.22   -> 1.4 (not released yet)
+	o Removed "type" as a means of identifying widgets.  Widgets are all
+	  identified by class.
 	o If you iconify/deiconify vTcl, it takes the toplevels with it.
 	o Changed the default color for all vTcl windows to #d9d9d9.
 	o Completely re-wrote the way widgets are defined.

@@ -27,12 +27,8 @@ proc vTcl:widget:lib:lib_vtcl {args} {
     lappend vTcl(libNames) "Visual Tcl Widget Library"
 
     set order {
-	progressbar1
+	Progressbar1
     } 
 
-    foreach i $order {
-	if {![info exists widgets($i,class)]} { continue }
-	vTcl:toolbar_add $i $widgets($i,balloon) \
-	    $widgets($i,image) $widgets($i,addOptions)
-    }
+    vTcl:lib:add_widgets_to_toolbar $order
 }

@@ -51,14 +51,14 @@ proc vTcl:toolbar_create {args} {
     set vTcl(x,lastButton) $f
 }
 
-proc vTcl:toolbar_add {type name image cmd_add} {
+proc vTcl:toolbar_add {class name image cmd_add} {
     global vTcl
     if ![winfo exists .vTcl.toolbar] {
         vTcl:toolbar_create
     }
     set base .vTcl.toolbar
     set f [vTcl:new_widget_name tb $base]
-    button $f -bd 1 -image $image -comm "vTcl:new_widget $type $f \"$cmd_add\""
+    button $f -bd 1 -image $image -comm "vTcl:new_widget $class $f \"$cmd_add\""
     vTcl:set_balloon $f $name
     lappend vTcl(tool,list) $f
 }
@@ -93,5 +93,3 @@ proc vTcl:toolbar_reflow {} {
     wm geometry $base 1x1
     wm deiconify $base
 }
-
-

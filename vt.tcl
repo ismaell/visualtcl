@@ -130,9 +130,7 @@ proc vTcl:load_widgets {} {
     # now let's check for a .vtcllibs file that tells us what the
     # user wants to load (which can significantly reduce startup time)
 
-    set toload $vTcl(LIB_WIDG)
-
-    if [file exists $vTcl(LIB_FILE)] {
+    if {[file exists $vTcl(LIB_FILE)]} {
 
     	set toload ""
     	set inID [open $vTcl(LIB_FILE) r]
@@ -140,15 +138,16 @@ proc vTcl:load_widgets {} {
     	close $inID
 
     	foreach content $contents {
-
-    		if { [string trim $content] == ""} continue
-    		lappend toload [file join $vTcl(LIB_DIR) $content]
+	    if { [string trim $content] == ""} continue
+	    lappend toload [file join $vTcl(LIB_DIR) $content]
     	}
+    } else {
+	set toload $vTcl(LIB_WIDG)
     }
 
-    foreach i $vTcl(LIB_WIDG) {
-
-    	if { [lsearch -exact $toload $i] == -1} continue
+    foreach i $toload {
+	set lib [lindex [split [file root $i] _] end]
+	vTcl:LoadWidgets [file join $vTcl(VTCL_HOME) lib Widgets $lib]
         vTcl:load_lib $i
         lappend vTcl(w,libs) [lindex [split [lindex [file split $i] end] .] 0]
     }
@@ -160,7 +159,7 @@ proc vTcl:load_libs {} {
         vTcl:load_lib $i
     }
 
-    vTcl:LoadWidgets [file join $vTcl(VTCL_HOME) lib Widgets]
+    # vTcl:LoadWidgets [file join $vTcl(VTCL_HOME) lib Widgets]
 }
 
 proc vTcl:setup {} {
@@ -198,14 +197,14 @@ proc vTcl:setup {} {
 
     set vTcl(LIB_DIR)   [file join $vTcl(VTCL_HOME) lib]
     set vTcl(LIB_WIDG)  [glob -nocomplain [file join $vTcl(LIB_DIR) lib_*.tcl]]
-    set vTcl(LIBS)      [lsort "globals.tcl about.tcl propmgr.tcl balloon.tcl
+    set vTcl(LIBS)      "globals.tcl about.tcl propmgr.tcl balloon.tcl
         		attrbar.tcl bgerror.tcl bind.tcl command.tcl color.tcl
 			console.tcl compound.tcl compounds.tcl do.tcl
 			dragsize.tcl dump.tcl edit.tcl file.tcl font.tcl
-			handle.tcl input.tcl images.tcl menu.tcl misc.tcl
-			name.tcl prefs.tcl proc.tcl tclet.tcl toolbar.tcl
-			tops.tcl tree.tcl var.tcl vtclib.tcl widget.tcl
-			help.tcl loadwidg.tcl"]
+			handle.tcl input.tcl images.tcl loadwidg.tcl menu.tcl
+			misc.tcl name.tcl prefs.tcl proc.tcl tclet.tcl
+			toolbar.tcl tops.tcl tree.tcl var.tcl vtclib.tcl
+			widget.tcl help.tcl"
 
     set tk_strictMotif    1
     wm withdraw .

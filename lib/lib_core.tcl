@@ -27,22 +27,20 @@ proc vTcl:widget:lib:lib_core {args} {
     lappend vTcl(libNames) "Tcl/Tk Core Widget Library"
 
     set order {
-    	toplevel
-	message
-	frame
-	canvas
-	button
-	entry
-	label
-	listbox
-	text
-	checkbutton
-	radiobutton
-	scrollbar_h
-	scrollbar_v
-	scale_h
-	scale_v
-	menubutton
+    	Toplevel
+	Message
+	Frame
+	Canvas
+	Button
+	Entry
+	Label
+	Listbox
+	Text
+	Checkbutton
+	Radiobutton
+	Scrollbar
+	Scale
+	Menubutton
     } 
 
     vTcl:lib:add_widgets_to_toolbar $order

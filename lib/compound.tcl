@@ -129,7 +129,7 @@ proc vTcl:place_compound {compound gmgr rx ry x y} {
 }
 
 proc vTcl:insert_compound {name compound {gmgr pack} {gopt ""}} {
-    global vTcl widgets
+    global vTcl
 
     set cpd \{[lindex $compound 0]\}
     set alias [lindex $compound 1]
@@ -142,11 +142,11 @@ proc vTcl:insert_compound {name compound {gmgr pack} {gopt ""}} {
 }
 
 proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
-    global vTcl widget classes widgets
+    global vTcl widget classes
 
     set todo ""
     foreach i $compound {
-        set type [string trim [lindex $i 0]]
+        set class [string trim [lindex $i 0]]
         set opts [string trim [lindex $i 1]]
         set mgr  [string trim [lindex $i 2]]
         set mgrt [string trim [lindex $mgr 0]]
@@ -186,17 +186,11 @@ proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
         }
         if {$level > 0} {
             set name "$base$wdgt"
-        } elseif {$type == "toplevel"} {
+        } elseif {$class == "Toplevel"} {
             set vTcl(w,insert) $name
             lappend vTcl(tops) $name
             vTcl:update_top_list
         }
-
-	if {[info exists widgets($type,class)]} {
-	    set class $widgets($type,class)
-	} else {
-	    set class [vTcl:upper_first $type]
-	}
 
         append todo "$classes($class,createCmd) $name "
 	append todo "[vTcl:name_replace $base $opts]; "
@@ -290,7 +284,6 @@ proc vTcl:gen_compound {target {name ""} {cmpdname ""}} {
         return ""
     }
     set class [vTcl:get_class $target]
-    set type [vTcl:get_type $target 1]
 
     # @@change by Christian Gavin 3/6/2000
     # rename conf to configure because Iwidgets don't like
@@ -300,7 +293,7 @@ proc vTcl:gen_compound {target {name ""} {cmpdname ""}} {
 
     # @@end_change
 
-    if {$type == "menu"} {
+    if {$class == "Menu"} {
         set mnum [$target index end]
         if {$mnum != "none"} {
             for {set i 0} {$i <= $mnum} {incr i} {
@@ -311,7 +304,7 @@ proc vTcl:gen_compound {target {name ""} {cmpdname ""}} {
         }
         set mgrt {}
         set mgri {}
-    } elseif {$type == "toplevel"} {
+    } elseif {$class == "Toplevel"} {
         set mgrt "wm"
         set mgri ""
     } else {
@@ -370,7 +363,7 @@ proc vTcl:gen_compound {target {name ""} {cmpdname ""}} {
         }
     }
     set topopt ""
-    if {$type == "toplevel"} {
+    if {$class == "Toplevel"} {
         foreach i $vTcl(attr,tops) {
             set v [wm $i $target]
             if {$v != ""} {
@@ -378,7 +371,7 @@ proc vTcl:gen_compound {target {name ""} {cmpdname ""}} {
             }
         }
     }
-    lappend ret $type $opts $mgr $bind $menu $chld $name $alias $grid $proc $cmpdname $topopt
+    lappend ret $class $opts $mgr $bind $menu $chld $name $alias $grid $proc $cmpdname $topopt
     vTcl:append_alias $target $name
     return \{$ret\}
 }

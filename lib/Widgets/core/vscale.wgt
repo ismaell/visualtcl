@@ -1,9 +1,0 @@
-SuperClass	scale
-
-Name		scale_v
-Lib		core
-
-Class		Scale
-Icon		icon_scale_v.gif
-Balloon		vertical scale
-AddOptions	-orient vertical

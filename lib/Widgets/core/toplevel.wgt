@@ -1,7 +1,6 @@
-Name		toplevel
+Class		Toplevel
 Lib		core
 
-Class		Toplevel
 Icon		icon_toplevel.gif
 DoubleClickCmd	vTcl:edit_target_menu
 TreeLabel	@vTcl:core:get_widget_tree_label

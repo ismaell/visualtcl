@@ -1,7 +1,6 @@
-Name		button
+Class		Button
 Lib		core
 
-Class		Button
 Icon		icon_button.gif
 DefaultOptions	-text button
 DoubleClickCmd	vTcl:set_command

@@ -1,7 +1,6 @@
-Name		menubutton
+Class		Menubutton
 Lib		core
 
-Class		Menubutton
 Icon		icon_menubutton.gif
 DefaultOptions	-text menu
 DoubleClickCmd	vTcl:edit_target_menu
