@@ -425,7 +425,7 @@ proc vTcl:save_as_binary {} {
 proc vTcl:save2 {file} {
     global vTcl env
     global tcl_platform
-
+    
     if {$file == ""} {
         return -1
     }
@@ -434,110 +434,158 @@ proc vTcl:save2 {file} {
 
     set vTcl(project,name) [lindex [file split $file] end]
     set vTcl(project,file) $file
-    wm title $vTcl(gui,main) "Visual Tcl - $vTcl(project,name)"
-    if {[file exists $file] == 1} {
-        file rename -force ${file} ${file}.bak
-    }
-    set output [open $file w]
-
-    if {$vTcl(pr,saveasexecutable)} {
-        puts $output "\#!/bin/sh"
-        puts $output "\# the next line restarts using wish\\"
-        puts $output {exec wish "$0" "$@" }
-    }
-
-    ## Gather information about the widgets.
-    vTcl:dump:gather_widget_info
-
-    ## Find out what libraries are being used by the compounds
-    set vTcl(dump,libraries) [concat $vTcl(dump,libraries) [vTcl::project::requiredLibraries main]]
-    set vTcl(dump,libraries) [lsort -unique $vTcl(dump,libraries)]
-
-    ## Header to import libraries
-    ## If any of the widgets use an external library, we need to dump the
-    ## importheader for each library.  If all the widgets are core or don't
-    ## use an external library, don't dump anything.
-    if {![lempty $vTcl(dump,libraries)]} {
-	## If we have any library other than the core libraries, invoke
-	## a package name search in the headers.
-	set namesearch 0
-	foreach lib $vTcl(dump,libraries) {
-	    if {[vTcl:streq $lib "core"] \
-	    	|| [vTcl:streq $lib "vtcl"] \
-		|| [vTcl:streq $lib "user"]} { continue }
-	    set namesearch 1
-	}
-
-	vTcl:dump:not_sourcing_header out
-	if {$namesearch} {
-	    append out "\n$vTcl(tab)# Provoke name search\n"
-	    append out "$vTcl(tab)catch {package require bogus-package-name}\n"
-	    append out "$vTcl(tab)set packageNames \[package names\]\n"
-	}
-	foreach lib $vTcl(dump,libraries) {
-	    if {![info exists vTcl(head,$lib,importheader)]} { continue }
-	    append out $vTcl(head,$lib,importheader)
-	}
-	vTcl:dump:sourcing_footer out
-	puts $output $out
-    }
-
-    ## Project header
-    puts $output "[subst $vTcl(head,proj)]\n"
-
-    ## Save compounds (if any)
-    puts $output [vTcl::project::saveCompounds main]
-
-    ## Code to load images
-    vTcl:image:generate_image_stock $output
-    vTcl:image:generate_image_user  $output
-
-    ## Code to load fonts
-    vTcl:font:generate_font_stock   $output
-    vTcl:font:generate_font_user    $output
-
-    # moved init proc after user procs so that the init
-    # proc can call any user proc
-
-    ::vTcl:::tops::handleRunvisible withdraw
-    if {$vTcl(save) == "all"} {
-	puts $output $vTcl(head,exports)
-	puts $output [vTcl:export_procs]
-	puts $output [vTcl:dump:project_info \
-	    [file dirname $file] $vTcl(project,name)]
-        puts $output $vTcl(head,procs)
-        puts $output [vTcl:save_procs]
-        puts $output [vTcl:dump_proc init "Initialization "]
-        puts $output "init \$argc \$argv\n"
-        puts $output $vTcl(head,gui)
-        puts $output [vTcl:save_tree . [file dirname $file] $vTcl(project,name)]
-        puts $output "main \$argc \$argv"
+    
+    # @@change 20030316 Nelson bug 415090
+    if {[file exists $file] && (![file exists $file.tmp]) } {
+        # If we are here then the original file exists and no ${file}.tmp exists
+        # We will move the original file to ${file}.tmp . 
+        # If all goes well during the save process then we can move 
+        # the ${file}.tmp to ${file}.bak . 
+        file rename -force ${file} ${file}.tmp
+    } elseif {![file exists $file]} {
+        # Do nothing here since implies we were called from a save as operation!
     } else {
-        puts $output [vTcl:save_tree $vTcl(w,widget)]
+        # Give feedback here if things went wrong.
+	  ::vTcl::MessageBox -icon error -message \
+            "$file.tmp already exists! This means for some reason a prior save attempt has failed!" \
+            -title "Save Error!" -type ok	  
+	  ::vTcl::MessageBox -icon info -message \
+            "To work around the $file.tmp error: Perform a perform a \"Save As\" operation with a different file name.\nThis will protect the data in the $file.tmp and save your current work." \
+	     -title "Save Information!" -type ok	   
+         	  
+	  return -1
     }
-    ::vTcl:::tops::handleRunvisible deiconify
-
-    vTcl:addRcFile $file
-
-    close $output
-    vTcl:status "Done Saving"
-    set vTcl(file,mode) ""
-    if {$vTcl(w,save) != ""} {
-        if {$vTcl(w,widget) != $vTcl(w,save)} {
-            vTcl:active_widget $vTcl(w,save)
+   
+    # Catch for errors during the saving operations.
+    set output ""
+    if {[catch {
+        set output [open $file w]
+        if {$vTcl(pr,saveasexecutable)} {
+            puts $output "\#!/bin/sh"
+            puts $output "\# the next line restarts using wish\\"
+            puts $output {exec wish "$0" "$@" }
         }
-        vTcl:create_handles $vTcl(w,save)
-    }
-    set vTcl(change) 0
+       
+        ## Gather information about the widgets.
+        vTcl:dump:gather_widget_info
+        
+        ## Find out what libraries are being used by the compounds
+        set vTcl(dump,libraries) [concat $vTcl(dump,libraries) [vTcl::project::requiredLibraries main]]
+        set vTcl(dump,libraries) [lsort -unique $vTcl(dump,libraries)]
+        
+	  ## Header to import libraries
+        ## If any of the widgets use an external library, we need to dump the
+        ## importheader for each library.  If all the widgets are core or don't
+        ## use an external library, don't dump anything.
+        if {![lempty $vTcl(dump,libraries)]} {
+    	    
+            ## If we have any library other than the core libraries, invoke
+    	      ## a package name search in the headers.
+    	      set namesearch 0
+    	      foreach lib $vTcl(dump,libraries) {
+                if {[vTcl:streq $lib "core"] \
+                   || [vTcl:streq $lib "vtcl"] \
+                   || [vTcl:streq $lib "user"]} { continue }
+	          set namesearch 1
+	      }
+   	      vTcl:dump:not_sourcing_header out
+	    
+            if {$namesearch} {
+	          append out "\n$vTcl(tab)# Provoke name search\n"
+	          append out "$vTcl(tab)catch {package require bogus-package-name}\n"
+	          append out "$vTcl(tab)set packageNames \[package names\]\n"
+            }
+	    
+            foreach lib $vTcl(dump,libraries) {
+                if {![info exists vTcl(head,$lib,importheader)]} { continue }
+                append out $vTcl(head,$lib,importheader)
+	      }
+	    
+	      vTcl:dump:sourcing_footer out
+	      puts $output $out
+	    
+        }
+        
+        ## Project header
+        puts $output "[subst $vTcl(head,proj)]\n"
+        
+        ## Save compounds (if any)
+        puts $output [vTcl::project::saveCompounds main]
+        
+        ## Code to load images
+        vTcl:image:generate_image_stock $output
+        vTcl:image:generate_image_user  $output
+        
+        ## Code to load fonts
+        vTcl:font:generate_font_stock   $output
+        vTcl:font:generate_font_user    $output
+        
+        # moved init proc after user procs so that the init
+        # proc can call any user proc
+        ::vTcl:::tops::handleRunvisible withdraw
+        if {$vTcl(save) == "all"} {
+            puts $output $vTcl(head,exports)
+            puts $output [vTcl:export_procs]
+            puts $output [vTcl:dump:project_info \
+                [file dirname $file] $vTcl(project,name)]
+            puts $output $vTcl(head,procs)
+            puts $output [vTcl:save_procs]
+            puts $output [vTcl:dump_proc init "Initialization "]
+            puts $output "init \$argc \$argv\n"
+            puts $output $vTcl(head,gui)
+            puts $output [vTcl:save_tree . [file dirname $file] $vTcl(project,name)]
+            puts $output "main \$argc \$argv"
+        } else {
+            puts $output [vTcl:save_tree $vTcl(w,widget)]
+        }
+        
+        ::vTcl:::tops::handleRunvisible deiconify
+        vTcl:addRcFile $file
+        
+        close $output
+        
+	  vTcl:status "Done Saving"
+        
+	  set vTcl(file,mode) ""
+        
+	  if {$vTcl(w,save) != ""} {
+            if {$vTcl(w,widget) != $vTcl(w,save)} {
+                vTcl:active_widget $vTcl(w,save)
+            }
+            vTcl:create_handles $vTcl(w,save)
+        }
+        set vTcl(change) 0
+        wm title $vTcl(gui,main) "Visual Tcl - $vTcl(project,name)"
+	
+        # it really annoyed me when I had to set the file as
+        # executable under Linux to be able to run it, so here
+        # we go
+        if {$vTcl(pr,saveasexecutable) &&
+            $tcl_platform(platform) == "unix"} {
+            file attributes $file -permissions [expr 0755]
+        }
+        # The catch ends below.	
+    } errResult]} {
+        # End the catch and give feedback here if things went wrong.
+	  ::vTcl::MessageBox -icon error -message \
+            "An error occured during the save operation:\n\n$errResult" \
+            -title "Save Error!" -type ok	
 
-    # it really annoyed me when I had to set the file as
-    # executable under Linux to be able to run it, so here
-    # we go
-
-    if {$vTcl(pr,saveasexecutable) &&
-        $tcl_platform(platform) == "unix"} {
-    	    file attributes $file -permissions [expr 0755]
+	  # Move the original file back and do not mess with the .bak file.  
+        # First of all, close the messed up and uncompletely saved file.
+        if {$output != ""} {
+            close $output
+        }
+	  if {[file exists ${file}.tmp]} {
+               file rename -force ${file}.tmp ${file}
+        }
+    } else {
+        # All well if we get here and we need to move the ${file}.tmp to ${fiel}.bak
+	  if {[file exists ${file}.tmp]} {
+            file rename -force ${file}.tmp ${file}.bak
+        }
     }
+    # @@end_change 20030316 Nelson bug 415090
 }
 
 proc vTcl:quit {} {
@@ -659,7 +707,7 @@ proc vTcl:restore {} {
         # change by Nelson 20030227
         # Provides the user feedback about no $file.bak existance
         # and potential reason why one might not exist.
-
+	
         ::vTcl::MessageBox -icon error -message \
         "A backup file $bakFile does not exist! Backup files are
 only created upon save operations beyond the original creation of the file." \
@@ -741,6 +789,8 @@ namespace eval vTcl::project {
         return [lsort -unique $result]
     }
 }
+
+
 
 
 
