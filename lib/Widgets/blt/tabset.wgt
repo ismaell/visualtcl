@@ -36,13 +36,8 @@ TreeChildrenCmd	      {vTcl::widgets::blt::tabset::treeChildrenCmd
 		       vTcl::widgets::blt::tabset::treeChildrenChildsite}
 DumpCmd               vTcl::widgets::blt::tabset::dumpCmd
 DumpInfoCmd           vTcl::widgets::blt::tabset::dumpInfoCmd
-CompoundCmd           vTcl::widgets::blt::tabset::compoundCmd
 GetImagesCmd          vTcl::widgets::blt::tabset::getImagesCmd
 GetFontsCmd           vTcl::widgets::blt::tabset::getFontsCmd
-
-set vTcl(option,translate,-window) vTcl::widgets::blt::tabset::windowTranslate
-set vTcl(option,noencase,-window) 1
-set vTcl(option,noencasewhen,-window) vTcl:core:noencasewhen
 
 ## Widget specific options
 SpecialOpt -fill "fill" choice {none x y both}
@@ -246,9 +241,11 @@ namespace eval vTcl::widgets::blt::tabset {
 
             ## now add the tab
             set conf [$target tab configure [$target get $i]]
+            set ::basenames($page) $basename.$last
             set pairs [vTcl:get_subopts_special $conf $target]
             append result "$::vTcl(tab)$basename insert end page[expr $i + 1] \\\n"
             append result "[vTcl:clean_pairs $pairs]\n"
+            catch {unset ::basenames($page)}
         }
         for {set i 0} {$i < $size} {incr i} {
             set site [lindex $pages $i]
@@ -273,39 +270,6 @@ namespace eval vTcl::widgets::blt::tabset {
             append result [$classes(Frame,dumpInfoCmd) $page $basename.$last]
         }
         return $result
-    }
-
-    proc compoundCmd {target} {
-        set result ""
-        set size [$target size]
-        for {set i 0} {$i < $size} {incr i} {
-            set page [$target get $i]
-            set frame [$target tab cget $page -window]
-            set conf [$frame configure]
-            set pairs [vTcl:conf_to_pairs $conf ""]
-            append result "frame \$target.f[expr $i + 1] $pairs; "
-            set conf [$target tab configure $page]
-            set pairs [vTcl:conf_to_pairs $conf ""]
-            set to_remove [lsearch -exact $pairs -window]
-            set pairs [lreplace $pairs $to_remove [expr $to_remove + 1]]
-            append result "\$target insert end $page $pairs; "
-            append result "set site \$target.f[expr $i + 1]; "
-            append result "\$target tab configure $page -window \$site; "
-            set compound [vTcl:create_compound $frame]
-            append result "vTcl:insert_compound \$site [list $compound] pack \{\}; "
-        }
-        return $result
-    }
-
-    proc windowTranslate {value} {
-
-        if [regexp {((\.[a-zA-Z0-9_]+)+)} $value matchAll path] {
-		if {$matchAll == $value} {
-               	set path [vTcl:base_name $path]
-			return "\"$path\""
-		}
-        }
-        return $value
     }
 
     proc update_pages {target var} {
@@ -357,3 +321,4 @@ namespace eval vTcl::widgets::blt::tabset {
        return $result
     }
 }
+
