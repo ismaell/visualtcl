@@ -1,4 +1,5 @@
 #!/usr/bin/wish -f
+
 ##############################################################################
 #
 # Visual TCL - A cross-platform application development environment
@@ -174,7 +175,7 @@ proc vTcl:setup {} {
     # @@change by Christian Gavin 3/14/2000
     # text widget children should not be saved/seen
     lappend vTcl(megaWidget) Text
-    set vTcl(version)   1.40
+    set vTcl(version)   1.51
     if {$env(VTCL_HOME) == ""} {
         set vTcl(VTCL_HOME) [pwd]
     } else {
