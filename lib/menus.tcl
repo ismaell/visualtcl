@@ -88,6 +88,47 @@ namespace eval ::menu_edit {
         destroy $menu
     }
 
+    proc {::menu_edit::enable_editor} {top enable} {
+
+        global widget
+
+        set ctrls "$top.EntryLabel    $top.EntryImage   $top.EntryAccelerator
+                   $top.EntryVariable $top.EntryValueOn $top.EntryValueOff 
+                   $top.MenuText      $top.NewMenu      $top.DeleteMenu 
+                   $top.MoveMenuUp    $top.MoveMenuDown $top.BrowseImage"
+
+        switch $enable {
+            0 - false - no {
+                set ::${top}::backup_bindings [bindtags $widget($top,MenuListbox)]
+                bindtags $widget($top,MenuListbox) dummy
+                bindtags $widget($top,NewMenu)     dummy
+                $top.MenuListbox configure -background gray
+
+                foreach ctrl $ctrls {
+                    set ::${top}::$ctrl.state      [$ctrl cget -state]
+                    set ::${top}::$ctrl.background [$ctrl cget -background]
+
+                    $ctrl configure -state disabled -background gray
+                }
+
+            }
+            1 - true - yes {
+                foreach ctrl $ctrls {
+                    if {[info exists ::${top}::$ctrl.state]} {
+                        $ctrl configure -state      [vTcl:at ::${top}::$ctrl.state] \
+                                        -background [vTcl:at ::${top}::$ctrl.background]
+                    }
+                }
+
+                if {[info exists ::${top}::backup_bindings]} {
+                    bindtags $widget($top,MenuListbox) [vTcl:at ::${top}::backup_bindings]
+                }
+                bindtags $widget($top,NewMenu) ""
+                $top.MenuListbox configure -background white
+            }
+        }
+    }
+
     proc {::menu_edit::enable_controls} {top args} {
         global widget
 
@@ -142,6 +183,17 @@ namespace eval ::menu_edit {
                     $top.MenuText configure -state $newstate -bg $newbg
                 }
             }
+        }
+    }
+
+    proc {::menu_edit::enable_all_editors} {enable} {
+
+        variable menu_edit_windows
+
+        set wnds $menu_edit_windows
+
+        foreach wnd $wnds {
+            ::menu_edit::enable_editor $wnd $enable
         }
     }
 
@@ -1172,3 +1224,6 @@ proc vTclWindow.vTclMenuEdit {base menu} {
         }
     }
 }
+
+
+

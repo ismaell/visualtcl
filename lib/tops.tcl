@@ -52,15 +52,6 @@ proc vTcl:destroy_top {target} {
 #            destroy $target
 #        }
 #    }
-#    if {[info procs vTclWindow$target] != ""} {
-#        rename vTclWindow$target {}
-#    }
-#    if {[info procs vTclWindow(pre)$target] != ""} {
-#        rename vTclWindow$target {}
-#    }
-#    if {[info procs vTclWindow(post)$target] != ""} {
-#        rename vTclWindow$target {}
-#    }
 #    set x [lsearch $vTcl(tops) $target]
 #    if {$x >= 0} {
 #        set vTcl(tops) [lreplace $vTcl(tops) $x $x]
@@ -81,8 +72,10 @@ proc vTcl:show_top {target} {
         Window show $target
         wm deiconify $target
         raise $target
+        vTcl:widget:register_all_widgets $target
         vTcl:setup_bind_tree $target
         vTcl:update_top_list
+        vTcl:init_wtree
     }
     vTcl:select_widget $target
 }
@@ -225,5 +218,6 @@ proc vTclWindow.vTcl.toplist {args} {
     update idletasks
     wm deiconify .vTcl.toplist
 }
+
 
 

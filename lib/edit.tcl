@@ -53,7 +53,7 @@ proc vTcl:delete {} {
     set buffer [vTcl:create_compound $vTcl(w,widget)]
     set do ""
     foreach child $children {
-    	append do "vTcl:unset_alias $child; "
+        append do "vTcl:unset_alias $child; "
     }
     append do "vTcl:unset_alias $vTcl(w,widget); "
     append do "vTcl:setup_unbind $vTcl(w,widget); "
@@ -66,7 +66,19 @@ proc vTcl:delete {} {
     catch {namespace delete ::widgets::$vTcl(w,widget)} error
 
     ## If it's a toplevel window, remove it from the tops list.
-    if {$class == "Toplevel"} { lremove vTcl(tops) $w }
+    if {$class == "Toplevel"} {
+        lremove vTcl(tops) $w
+
+        if {[info procs vTclWindow$w] != ""} {
+            rename vTclWindow$w {}
+        }
+        if {[info procs vTclWindow(pre)$w] != ""} {
+            rename vTclWindow$w {}
+        }
+        if {[info procs vTclWindow(post)$w] != ""} {
+            rename vTclWindow$w {}
+        }
+    }
 
     if {![info exists vTcl(widgets,$top)]} { set vTcl(widgets,$top) {} }
     ## Activate the widget created before this one in the widget order.
@@ -76,9 +88,9 @@ proc vTcl:delete {} {
     eval lremove vTcl(widgets,$top) $w $children
 
     if {$s > 0} {
-	set n [lindex $vTcl(widgets,$top) [expr $s - 1]]
+        set n [lindex $vTcl(widgets,$top) [expr $s - 1]]
     } else {
-    	set n [lindex $vTcl(widgets,$top) end]
+        set n [lindex $vTcl(widgets,$top) end]
     }
 
     if {[lempty $vTcl(widgets,$top)] || ![winfo exists $n]} { set n $parent }
@@ -91,8 +103,8 @@ proc vTcl:delete {} {
     # @@end_change
 
     if {[vTcl:streq $n "."]} {
-    	vTcl:prop:clear
-	return
+        vTcl:prop:clear
+        return
     }
 
     if {[winfo exists $n]} { vTcl:active_widget $n }
