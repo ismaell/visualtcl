@@ -1,5 +1,22 @@
 ChangeLog for Visual Tcl:
 
+1.21 -> 1.22 (not released yet)
+	o Added button in toolbar to show/hide the command console
+        o Fixed bug when loading 1.2 project, saving it and reloading it
+          generates error for -font option
+        o Added safeguard in "Preferences" dialog to prevent the user from
+          activating the "Autoload compounds" option without having specified
+          a filename
+        o Added initial syntax coloring for binding editor (thanks Nelson)
+        o Added more descriptive labels in the widget tree window (thanks 
+          Eric Taylor)
+	o Added Iwidgets tabnotebook and panedwindow
+	o Added parameters to generated window procedures so that if the
+	  'container' argument is set to 1, the toplevel window is not created;
+	  this allows to fill in childsites for Iwidgets such as tabnotebook or
+	  panedwindow
+	o Fixed bug when adding new procedure with empty name
+	
 1.20 -> 1.21 (May 2000)
 	o Added image manager to maintain a database of images and use
 	  them for widgets

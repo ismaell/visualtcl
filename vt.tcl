@@ -135,7 +135,7 @@ proc vTcl:setup {} {
     # text widget children should not be saved/seen
     lappend vTcl(megaWidget) Text
     
-    set vTcl(version)   1.21
+    set vTcl(version)   1.22
     set vTcl(VTCL_HOME) $env(VTCL_HOME)
     if {$env(HOME) == ""} {
         set vTcl(CONF_FILE) [file join $env(VTCL_HOME) .vtclrc]
