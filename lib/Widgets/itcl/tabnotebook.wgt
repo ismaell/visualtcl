@@ -25,13 +25,14 @@ proc vTcl:widget:tabnotebook:inscmd {target} {
 # to skip 4 levels (otherwise it would draw 4 vertical
 # lines)
 
-proc vTcl:widget:tabnotebook:treeChildrenCmd {target} {
+proc vTcl:widget:tabnotebook:treeChildrenCmd {target {diff \#-4}} {
 
     set children ""
+    set wantsdiff [expr {$diff != ""}]
 
     foreach site [$target childsite] {
-        foreach child [vTcl:list_widget_tree $site] {
-            lappend children $child\#-4
+        foreach child [vTcl:complete_widget_tree $site $wantsdiff] {
+            lappend children $child$diff
         }
     }
 
@@ -58,5 +59,7 @@ proc vTcl:dump:tabnotebook {target basename} {
     foreach page $entries {
         append result [vTcl:lib_itcl:dump_subwidgets $page]
     }
+    append result "$vTcl(tab)$basename select 0\n"
     return $result
 }
+

@@ -1,13 +1,15 @@
-Name		tixNoteBook
-Lib		tix
+Name            tixNoteBook
+Lib             tix
 
-Class		TixNoteBook
-Icon		icon_tixNoteBook.gif
-TreeLabel	Tix NoteBook
-DumpCmd		vTcl:dump:TixNoteBook
-DumpChildren	no
-MegaWidget   yes
-InsertCmd	vTcl:widget:tixNoteBook:inscmd
+Class           TixNoteBook
+Icon            icon_tixNoteBook.gif
+TreeLabel       Tix NoteBook
+DumpCmd         vTcl:dump:TixNoteBook
+DumpChildren    no
+MegaWidget      yes
+InsertCmd       vTcl:widget:tixNoteBook:inscmd
+TreeChildrenCmd     "vTcl:widget:tixNotebook:treeChildrenCmd \
+                     vTcl:widget:tixNotebook:treeChildrenChildsite"
 
 proc vTcl:widget:tixNoteBook:inscmd {target} {
     # Add two pages to start with.  Unfortunately, additional pages have
@@ -18,4 +20,58 @@ proc vTcl:widget:tixNoteBook:inscmd {target} {
         $target subwidget page1 configure -width 30 -height 30;
         $target subwidget page2 configure -width 30 -height 30;
     "
+}
+
+# All right, I explain it: -1 is the number of levels
+# in the window path between the megawidget and its
+# pages (childsites). This is used by the widget tree
+# to skip 1 level (otherwise it would draw 1 vertical
+# lines)
+
+proc vTcl:widget:tixNotebook:treeChildrenCmd {target {diff \#-1}} {
+
+    set children ""
+    set wantsdiff [expr {$diff != ""}]
+
+    set entries [$target pages]
+    foreach page $entries {
+        set site [$target subwidget $page]
+        foreach child [vTcl:complete_widget_tree $site $wantsdiff] {
+            lappend children $child$diff
+        }
+    }
+
+    return $children
+}
+
+proc vTcl:widget:tixNotebook:treeChildrenChildsite {target} {
+
+    set entries [$target pages]
+    set sites ""
+
+    foreach page $entries {
+        lappend sites [$target subwidget $page]
+    }
+
+    return $sites
+}
+
+#
+# per-widget-class dump procedures
+#
+proc vTcl:dump:TixNoteBook {target basename} {
+    global vTcl
+    set result [vTcl:dump_widget_opt $target $basename]
+    set entries [$target pages]
+    foreach page $entries {
+        set conf [$target pageconfigure $page]
+        set pairs [vTcl:conf_to_pairs $conf ""]
+        append result "$vTcl(tab)$basename add $page \\\n"
+        append result "[vTcl:clean_pairs $pairs]\n"
+    }
+    foreach page $entries {
+        set subwidget [$target subwidget $page]
+        append result [vTcl:lib_tix:dump_subwidgets $subwidget]
+    }
+    return $result
 }

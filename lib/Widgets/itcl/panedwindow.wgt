@@ -22,13 +22,13 @@ proc vTcl:widget:panedwindow:inscmd {target} {
 # to skip 4 levels (otherwise it would draw 4 vertical
 # lines)
 
-proc vTcl:widget:panedwindow:treeChildrenCmd {target} {
+proc vTcl:widget:panedwindow:treeChildrenCmd {target {diff \#-1}} {
 
     set children ""
 
     foreach site [$target childsite] {
         foreach child [vTcl:list_widget_tree $site] {
-            lappend children $child\#-1
+            lappend children $child$diff
         }
     }
 
@@ -57,3 +57,4 @@ proc vTcl:dump:panedwindow {target basename} {
     }
     return $result
 }
+

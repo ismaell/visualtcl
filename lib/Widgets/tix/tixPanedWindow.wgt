@@ -1,14 +1,16 @@
-Name		tixPanedWindow
-Lib		tix
+Name            tixPanedWindow
+Lib             tix
 
-Class		TixPanedWindow
-Icon		icon_tixPanedWindow.gif
-TreeLabel	Tix PanedWindow
-DefaultOptions	-orient vertical
-DumpCmd		vTcl:dump:TixPanedWindow
-DumpChildren	no
-MegaWidget   yes
-InsertCmd	vTcl:widget:tixPanedWindow:inscmd
+Class           TixPanedWindow
+Icon            icon_tixPanedWindow.gif
+TreeLabel       Tix PanedWindow
+DefaultOptions  -orient vertical
+DumpCmd         vTcl:dump:TixPanedWindow
+DumpChildren    no
+MegaWidget      yes
+InsertCmd       vTcl:widget:tixPanedWindow:inscmd
+TreeChildrenCmd     "vTcl:widget:tixPanedWindow:treeChildrenCmd \
+                     vTcl:widget:tixPanedWindow:treeChildrenChildsite"
 
 proc vTcl:widget:tixPanedWindow:inscmd {target} {
     # Add two pages to start with.  Unfortunately, additional pages have
@@ -19,4 +21,54 @@ proc vTcl:widget:tixPanedWindow:inscmd {target} {
         $target subwidget page1 configure -width 30 -height 30;
         $target subwidget page2 configure -width 30 -height 30;
     "
+}
+
+proc vTcl:widget:tixPanedWindow:treeChildrenCmd {target {diff ""}} {
+
+    set children ""
+
+    set entries [$target panes]
+    foreach pane $entries {
+        set site [$target subwidget $pane]
+        foreach child [vTcl:complete_widget_tree $site] {
+            lappend children $child
+        }
+    }
+
+    return $children
+}
+
+proc vTcl:widget:tixPanedWindow:treeChildrenChildsite {target} {
+
+    set entries [$target panes]
+    set sites ""
+
+    foreach pane $entries {
+        lappend sites [$target subwidget $pane]
+    }
+
+    return $sites
+}
+
+proc vTcl:dump:TixPanedWindow {target basename} {
+    global vTcl
+    set result [vTcl:dump_widget_opt $target $basename]
+    set entries [$target panes]
+    foreach page $entries {
+        set conf [$target paneconfigure $page]
+        foreach c $conf {
+            # Filter the valid options out
+            if [regexp -- {^-(after|allow|at|before|expand|max|min|size)} $c] {
+                lappend validcfg $c
+            }
+        }
+        set pairs [vTcl:conf_to_pairs $validcfg ""]
+        append result "$vTcl(tab)$basename add $page \\\n"
+        append result "[vTcl:clean_pairs $pairs]\n"
+    }
+    foreach page $entries {
+        set subwidget [$target subwidget $page]
+        append result [vTcl:lib_tix:dump_subwidgets $subwidget]
+    }
+    return $result
 }
