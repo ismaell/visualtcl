@@ -687,4 +687,9 @@ namespace eval vTcl::project {
 
         return $output
     }
+
+    proc getCompounds {moduleName} {
+        return [vTcl:at ::vTcl::modules::${moduleName}::compounds]
+    }
 }
+

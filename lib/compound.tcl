@@ -572,7 +572,15 @@ proc vTcl:name_compound {t} {
     if {$name == ""} {return}
 
     ## selection of list of procs to include
-    set includedProcs [::vTcl::input::listboxSelect::select $vTcl(procs) extended]
+    set proposedProcs ""
+    foreach item $vTcl(procs) {
+        if {[vTcl:valid_procname $item]} {
+            lappend proposedProcs $item
+        }
+    }
+
+    set includedProcs [::vTcl::input::listboxSelect::select \
+        $proposedProcs "Select Code for Compound" extended]
 
     eval [vTcl::compounds::createCompound $t user $name $includedProcs]
     vTcl:cmp_user_menu
@@ -583,8 +591,9 @@ proc vTcl:name_compound {t} {
 
 namespace eval ::vTcl::compounds {
 
-    namespace eval system {}
-    namespace eval user   {}
+    namespace eval system    {}
+    namespace eval user      {}
+    namespace eval clipboard {}
 
     proc createCompound {target type compoundName \
                         {procs {}} {initCmd {}} {mainCmd {}}} {
@@ -736,7 +745,7 @@ namespace eval ::vTcl::compounds {
 
     ## type should be "system" (predefined compounds) or "user"
     proc enumerateCompounds {type} {
-        if {$type != "system" && $type != "user"} {
+        if {$type != "system" && $type != "user" && $type != "clipboard"} {
             return ""
         }
 
@@ -780,8 +789,8 @@ namespace eval ::vTcl::compounds {
         set target [vTcl:new_widget_name $namePrefix $::vTcl(w,insert)]
 
         insertCompound $target $type $compoundName $gmgr $gopt
-        vTcl:active_widget $target
         vTcl:init_wtree
+        vTcl:active_widget $target
     }
 
     proc insertCompound {target type compoundName {gmgr pack} {gopt ""}} {
@@ -823,6 +832,4 @@ namespace eval ::vTcl::compounds {
         return [vTcl:at ${spc}::class]
     }
 }
-
-
 

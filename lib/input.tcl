@@ -157,7 +157,24 @@ proc vTcl:text_window {base title target} {
 
 namespace eval ::vTcl::input::listboxSelect {
 
-proc select {contents {selectMode single}} {
+proc updateSelection {top} {
+    upvar ::${top}::selectedItems selectedItems
+
+    set selected [$top.SelectListbox curselection]
+    set selectedItems ""
+
+    foreach index $selected {
+        lappend selectedItems [$top.SelectListbox get $index]
+    }
+
+    if {[lempty $selectedItems]} {
+        $top.SelectOK configure -state disabled
+    } else {
+        $top.SelectOK configure -state normal
+    }
+}
+
+proc select {contents title {selectMode single}} {
     set base .vTcl.listboxSelect
     if {[winfo exists $base]} {
         wm deiconify $base; return
@@ -175,7 +192,7 @@ proc select {contents {selectMode single}} {
     wm minsize $top 111 1
     wm overrideredirect $top 0
     wm resizable $top 1 1
-    wm title $top "Select"
+    wm title $top $title
     bindtags $top "$top Toplevel all _TopLevel"
     vTcl:FireEvent $top <<Create>>
     wm transient .vTcl.listboxSelect .vTcl
@@ -183,6 +200,7 @@ proc select {contents {selectMode single}} {
 
     set ::${top}::listContents $contents
     set ::${top}::status ""
+    set ::${top}::selectedItems ""
 
     frame $top.fra87 \
         -borderwidth 2 -height 75 -width 125 
@@ -199,12 +217,15 @@ proc select {contents {selectMode single}} {
         -background white -listvariable "::${top}::listContents" \
         -selectmode $selectMode
     vTcl:DefineAlias "$site_3_0.lis83" "SelectListbox" vTcl:WidgetProc "$top" 1
+    bind $site_3_0.lis83 <<ListboxSelect>> {
+        ::vTcl::input::listboxSelect::updateSelection [winfo toplevel %W]
+    }
     pack $site_3_0.lis83 \
         -in $site_3_0 -anchor center -expand 1 -fill both -padx 2 -side top 
     frame $top.fra84 \
         -borderwidth 2 -height 75 -width 125 
     set site_3_0 $top.fra84
-    button $site_3_0.but85 \
+    button $site_3_0.but85 -state disabled \
         -pady 0 -text OK -width 8 -command "set ::${top}::status ok" 
     vTcl:DefineAlias "$site_3_0.but85" "SelectOK" vTcl:WidgetProc "$top" 1
     button $site_3_0.but86 \
@@ -238,14 +259,9 @@ proc select {contents {selectMode single}} {
         return ""
     }
 
-    set result ""
-    set selected [SelectListbox curselection]
-    foreach index $selected {
-        lappend result [SelectListbox get $index]
-    }
-
     destroy $base
-    return $result
+    return [vTcl:at ::${top}::selectedItems]
 }
 }
+
 

@@ -32,9 +32,7 @@ proc vTcl:copy {{w ""}} {
     # Cut/copy/paste handled by text widget only
     if {[vTcl:entry_or_text $w]} { return }
 
-    global vTcl
-    set vTcl(buffer) [vTcl:create_compound $vTcl(w,widget)]
-    set vTcl(buffer,class) $vTcl(w,class)
+    eval [vTcl::compounds::createCompound $::vTcl(w,widget) clipboard scrap]
 }
 
 proc vTcl:cut {{w ""}} {
@@ -145,30 +143,24 @@ proc vTcl:paste {{fromMouse ""} {w ""}} {
 
     global vTcl
 
-    if {![info exists vTcl(buffer)] || [lempty $vTcl(buffer)]} { return }
-
-    set opts {}
-    if {$fromMouse == "-mouse" && $vTcl(w,def_mgr) == "place"} {
-    	set opts "-x $vTcl(mouse,x) -y $vTcl(mouse,y)"
+    if {[lempty [vTcl::compounds::enumerateCompounds clipboard]]} {
+        return
     }
 
-    set name [vTcl:new_widget_name $vTcl(buffer,class) $vTcl(w,insert)]
-    set do "
-	vTcl:insert_compound $name [list $vTcl(buffer)] $vTcl(w,def_mgr) \
-	    [list $opts]
-	vTcl:setup_bind_tree $name
-    "
-    set undo "destroy $name"
-    vTcl:push_action $do $undo
+    set mgr $vTcl(w,def_mgr)
+    set opts {}
+    if {$fromMouse == "-mouse" && $mgr == "place"} {
+         set opts "-x $vTcl(mouse,x) -y $vTcl(mouse,y)"
+    } elseif {$mgr == "place"} {
+         set opts "-x 0 -y 0"
+    }
 
-    # @@change by Christian Gavin 3/5/2000
-    # automatically refresh widget tree after paste operation
+    if {[vTcl::compounds::getClass clipboard scrap] == "Toplevel"} {
+        set mgr "wm"
+        set opts ""
+    }
 
-    after idle {vTcl:init_wtree}
-
-    # @@end_change
-
-    vTcl:active_widget $name
+    vTcl::compounds::autoPlaceCompound clipboard scrap $mgr $opts
 }
 
 namespace eval ::vTcl::findReplace {
@@ -522,3 +514,4 @@ proc ::vTcl::findReplace::cancel {} {
     wm withdraw $base
     focus $txtbox
 }
+
