@@ -295,11 +295,14 @@ proc vTcl:list_widget_tree {target {which ""} {include_menus 0} {include_megachi
         ## Tix leaves some windows behind
         if {[string match .tix* $i]} {continue}
 
-        # don't include temporary windows
+	## Ignore temporary toplevel windows completely.
+	if {[string match .#* $i]} { continue }
+
+        ## Don't include temporary windows
         if {[string match {*#*} $i] &&
         (! $include_menus)} { continue }
 
-        # Don't include unknown widgets
+        ## Don't include unknown widgets
         set c [vTcl:get_class $i]
 
         if {![vTcl:valid_class $c]} { continue }

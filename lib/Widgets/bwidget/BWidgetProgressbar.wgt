@@ -1,7 +1,0 @@
-Name		progressbar2
-Lib		bwidget
-
-Class		ProgressBar
-Icon		icon_tixMeter.gif
-TreeLabel	"BWidget ProgressBar"
-CreateCmd	ProgressBar

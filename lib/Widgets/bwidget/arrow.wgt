@@ -1,0 +1,7 @@
+Class		ArrowButton
+Lib		bwidget
+
+Icon		icon_button.gif
+TreeLabel	BWidget ArrowButton
+CreateCmd	ArrowButton
+MegaWidget	yes

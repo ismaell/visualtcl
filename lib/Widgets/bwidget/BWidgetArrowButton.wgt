@@ -1,7 +1,0 @@
-Name		arrowbutton
-Lib		bwidget
-
-Class		ArrowButton
-Icon		icon_button.gif
-TreeLabel	"BWidget ArrowButton"
-CreateCmd	ArrowButton

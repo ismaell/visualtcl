@@ -1,7 +1,7 @@
-Name		notebook
+Class		NoteBook
 Lib		bwidget
 
-Class		NoteBook
 Icon		icon_tabnotebook.gif
-TreeLabel	"BWidget Notebook"
+TreeLabel	BWidget Notebook
 CreateCmd	NoteBook
+MegaWidget	yes

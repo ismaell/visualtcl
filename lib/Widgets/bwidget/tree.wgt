@@ -1,7 +1,7 @@
-Name		tree
+Class		Tree
 Lib		bwidget
 
-Class		Tree
 Icon		icon_tixTree.gif
-TreeLabel	"BWidget Tree"
+TreeLabel	BWidget Tree
 CreateCmd	Tree
+MegaWidget	yes
