@@ -323,7 +323,7 @@ namespace eval ::vTcl::news {
         if {[catch {package require http} error]} { return 0 }
 
 	set http ::http::geturl
-	if {$error < 2.0} { set http http_get }
+	if {$error < 2.3} { set http http_get }
 	return 1
     }
 
