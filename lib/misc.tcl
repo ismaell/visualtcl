@@ -705,7 +705,8 @@ proc ::vTcl::lremove {varName args} {
 }
 
 proc lempty {list} {
-    return [expr [llength $list] == 0]
+    if {[catch {expr [llength $list] == 0} res]} { return 0 }
+    return $res
 }
 
 proc lassign {list args} {

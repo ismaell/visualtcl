@@ -47,7 +47,6 @@ set vTcl(console)        0
 set vTcl(cursor,last)    ""
 set vTcl(procs)          "init main"
 set vTcl(state)		 "normal"
-set vTcl(propmgr,relief) "groove"
 set vTcl(file,base)      [pwd]
 set vTcl(file,mode)      ""
 set vTcl(file,type)      "*.tcl"
@@ -159,6 +158,8 @@ set vTcl(images,stock)   ""
 set vTcl(images,user)    ""
 set vTcl(fonts,stock)    ""
 set vTcl(fonts,user)     ""
+
+set vTcl(propmgr,relief) "groove"
 
 set vTcl(reliefs)        "flat groove raised ridge sunken"
 
