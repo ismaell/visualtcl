@@ -11,7 +11,11 @@ DefaultOptions  -background white
 Function        "Set Text Variable" vTcl:widget:entry:SetTextVariable
 
 proc vTcl:widget:entry:inscmd {target} {
-    return "$target insert end entry"
+    set last [lindex [split $target .] end]
+    set last [vTcl:rename $last]
+
+    return "$target configure -textvariable \"\[winfo toplevel $target\]::$last\"
+            $target insert end entry"
 }
 
 proc vTcl:widget:entry:SetTextVariable {} {

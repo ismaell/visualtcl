@@ -1,6 +1,10 @@
 ChangeLog for Visual Tcl:
 
 1.51b4 -> 1.51
+    o Automatically assigns a default variable for entry and scale widgets
+    o Added same %widget and %top mechanism for menu commands; this allows a
+      menu to know in which toplevel it is located, or to reconfigure itself
+      if needed
     o Fixed bug where binding tags would all of a sudden disappear from a project
       after bindings editor is being displayed.
     o Added Ctrl + N, Ctrl + O, Ctrl + S, Ctrl + Q and F1 keyboard shortcuts

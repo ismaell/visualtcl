@@ -252,6 +252,12 @@ namespace eval ::menu_edit {
     proc {::menu_edit::fill_command} {top command} {
         global widget
 
+        ## if the command is in the form "vTcl:DoCmdOption target cmd",
+        ## then extracts the command, otherwise use the command as is
+        if {[regexp {vTcl:DoCmdOption [^ ]+ (.*)} $command matchAll realCmd]} {
+            lassign $command dummy1 dummy2 command
+        }
+
         $top.MenuText delete 0.0 end
         $top.MenuText insert end $command
 
@@ -305,7 +311,6 @@ namespace eval ::menu_edit {
                 "command" {
                     set mlabel   [$m entrycget $i -label]
                     set maccel   [$m entrycget $i -accel]
-                    set mcommand [$m entrycget $i -command]
 
                     if {$maccel != ""} {
                         $top.MenuListbox insert end \
@@ -697,6 +702,13 @@ namespace eval ::menu_edit {
         global widget
 
         set oldvalue [$menu entrycget $index $option]
+
+        if {$option == "-command"} {
+            ## if the command is non null, replace it by DoCmdOption
+            if {$value != "" && [string match *%* $value]} {
+                set value [list vTcl:DoCmdOption $menu $value]
+            }
+        }
 
         if {$value != $oldvalue} {
             $menu entryconfigure $index $option $value

@@ -2,6 +2,7 @@ Class		Scale
 
 Icon		@vTcl:Scale:GetIcon
 TreeLabel	@vTcl:Scale:GetTreeLabel
+InsertCmd	vTcl:widget:scale:inscmd
 DefaultValues   -activebackground -background -foreground \
                 -highlightbackground -highlightcolor -troughcolor
 
@@ -21,6 +22,17 @@ proc vTcl:Scale:GetIcon {{w ""}} {
 
 proc vTcl:Scale:GetTreeLabel {w} {
     if {[catch {$w cget -orient} orient]} { return "Scale" }
-    if {$orient == "horizontal"} { return "Horz Scale" }
-    return "Vert Scale"
+    set var [$w cget -variable]
+    if {$var != ""} {
+        set var " VAR: $var"
+    }
+    if {$orient == "horizontal"} { return "Horz Scale$var" }
+    return "Vert Scale$var"
+}
+
+proc vTcl:widget:scale:inscmd {target} {
+    set last [lindex [split $target .] end]
+    set last [vTcl:rename $last]
+
+    return "$target configure -variable \"\[winfo toplevel $target\]::$last\""
 }
