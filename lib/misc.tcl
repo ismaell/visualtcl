@@ -1315,14 +1315,18 @@ namespace eval ::vTcl::ui::attributes {
         variable checked
 
         set class $::vTcl(w,class)
-	if {[info exists ::specialOpts($class,$option,type)]} {
-	    set text    $::specialOpts($class,$option,text)
-	    set type    $::specialOpts($class,$option,type)
-	    set choices $::specialOpts($class,$option,choices)
-	} else {
-	    set text    $::options($option,text)
-	    set type    $::options($option,type)
-	    set choices $::options($option,choices)
+        if {[info exists ::specialOpts($class,$option,type)]} {
+	      set text    $::specialOpts($class,$option,text)
+	      set type    $::specialOpts($class,$option,type)
+	      set choices $::specialOpts($class,$option,choices)
+        } elseif {[info exists ::options($option,text)]} {
+            set text    $::options($option,text)
+            set type    $::options($option,type)
+            set choices $::options($option,choices)
+        } else {
+            set text    [string trimleft $option -]
+            set type    type
+            set choices {}
         }
 
         ## standard relief options
@@ -1482,6 +1486,4 @@ namespace eval ::vTcl::ui::attributes {
         }
     }
 }
-
-
 
