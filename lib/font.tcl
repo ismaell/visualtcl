@@ -149,9 +149,8 @@ proc vTcl:font:get_font_dlg {base font_desc} {
     # CREATING WIDGETS
     ###################
     toplevel $base -class vTcl
+    wm withdraw $base
     wm transient $base .vTcl
-    wm geometry $base 380x451
-    vTcl:center $base 380 451
     wm maxsize $base 1009 738
     wm minsize $base 1 1
     wm overrideredirect $base 0
@@ -319,6 +318,10 @@ proc vTcl:font:get_font_dlg {base font_desc} {
 
     vTcl:font:fill_fonts $base
     vTcl:font:init_fontselect $base
+
+    wm geometry $base 380x451
+    vTcl:center $base 380 451
+    wm deiconify $base
 
     tkwait window $base
     update idletasks

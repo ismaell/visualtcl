@@ -85,13 +85,11 @@ proc vTclWindow.vTcl.prefs {{base ""} {container 0}} {
     	-background #dcdcdc -highlightbackground #dcdcdc \
 	-highlightcolor #000000
     wm focusmodel $base passive
-    wm geometry $base 409x500+240+159
-    vTcl:center $base 409 500
+    wm withdraw $base
     wm maxsize $base 1284 1010
     wm minsize $base 100 1
     wm overrideredirect $base 0
     wm resizable $base 1 1
-    wm withdraw $base
     wm title $base "Visual Tcl Preferences"
     wm protocol $base WM_DELETE_WINDOW "wm withdraw $base"
     }
@@ -106,7 +104,7 @@ proc vTclWindow.vTcl.prefs {{base ""} {container 0}} {
         -highlightcolor #000000 -padx 9 -text OK -width 10
     button $base.fra19.but21 \
         -activebackground #dcdcdc -activeforeground #000000 \
-        -command "wm withdraw $base" \
+        -command "wm withdraw $base; vTcl:prefs:data_exchange 0" \
         -background #dcdcdc -foreground #000000 -highlightbackground #dcdcdc \
         -highlightcolor #000000 -padx 9 -text Cancel -width 10
     ###################
@@ -123,6 +121,10 @@ proc vTclWindow.vTcl.prefs {{base ""} {container 0}} {
 
     vTcl:prefs:init $base
 
+    wm geometry $base 450x400
+    vTcl:center $base 450 400
+    wm deiconify $base
+    
     update idletasks
     wm deiconify $base
 }
