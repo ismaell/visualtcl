@@ -168,6 +168,37 @@ proc vTcl:options_only {opts} {
     return $result
 }
 
+# returns 1 if:
+#
+# - the alias is defined for another widget than the given
+#   target in another toplevel
+#
+# - the alias doesn't exist at all
+
+proc vTcl:alias_in_other_toplevel {target alias} {
+
+    global widget
+    if {! [info exists widget($alias)]} {return 1}
+
+    set toplevel ""
+    catch {
+	set toplevel [winfo toplevel $target]
+    }
+
+    set toplevel_alias ""
+    catch {
+        set toplevel_alias [winfo toplevel $widget($alias)]
+    }
+
+    # puts "target=$target alias=$alias top=$toplevel topalias=$toplevel_alias"
+
+    if {$toplevel != $toplevel_alias} {
+        return 1
+    } else {
+        return 0
+    }
+}
+
 proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
     global vTcl widget classes
 
@@ -316,10 +347,11 @@ proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
 	    }
 	}
         if {$alis != ""} {
-            append todo "vTcl:set_alias $name $alis -noupdate; "
+            append todo "if \{\[vTcl:alias_in_other_toplevel $name $alis\]\} \{"
+            append todo "vTcl:set_alias $name $alis -noupdate\} else \{"
+            append todo "vTcl:set_alias $name \[vTcl:next_widget_name $class\] -noupdate\}; "
         } elseif {$alis == "" && $vTcl(pr,autoalias)} {
-            set next [vTcl:next_widget_name $class]
-            append todo "vTcl:set_alias $name $next -noupdate; "
+            append todo "vTcl:set_alias $name \[vTcl:next_widget_name $class\] -noupdate; "
         }
 
         foreach j $grid {
