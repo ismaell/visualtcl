@@ -69,7 +69,7 @@ set vTcl(gui,prefs)      "$vTcl(gui,main).prefs"
 set vTcl(gui,rc_menu)    "$vTcl(gui,main).rc"
 set vTcl(gui,varlist)    "$vTcl(gui,main).varlist"
 set vTcl(gui,statbar)    "$vTcl(gui,main).stat.f.bar"
-set vTcl(gui,showlist)   ".vTcl.mgr .vTcl.ae"
+set vTcl(gui,showlist)   ".vTcl.ae"
 set vTcl(h,exist)        0
 set vTcl(h,size)         3
 set vTcl(hide)           ""
