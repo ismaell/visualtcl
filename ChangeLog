@@ -1,6 +1,9 @@
 ChangeLog for Visual Tcl:
 
 1.21 -> 1.22 (not released yet)
+	o Fixed problem when user tries to resize a packed label or
+	  entryfield using the handles
+	o Filter out Itcl generated procedures on open/save
 	o Added button in toolbar to show/hide the command console
         o Fixed bug when loading 1.2 project, saving it and reloading it
           generates error for -font option
