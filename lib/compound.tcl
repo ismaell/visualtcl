@@ -548,6 +548,13 @@ namespace eval ::vTcl::compounds {
         }
         append result "\}\n\n"
 
+        append result "proc fontsCmd \{target\} \{\n"
+        append result "    variable fonts\n"
+        append result "    foreach font \$fonts \{\n"
+        append result "        vTcl:font:add_font "
+        append result "\[lindex \$font  0\] \[lindex \$font  1\]\n\}\n"
+        append result "\}\n\n"
+
         return $result
     }
 
@@ -606,6 +613,9 @@ namespace eval ::vTcl::compounds {
         }
         if {$imagesDef != ""} {
             append output "    imagesCmd \$target\n"
+        }
+        if {$fontsDef != ""} {
+            append output "    fontsCmd \$target\n"
         }
         if {$class == "Toplevel"} {
             append output "    vTclWindow$target \$target\n"
@@ -872,6 +882,20 @@ namespace eval ::vTcl::compounds {
         return $result
     }
 
+    proc getFonts {type compoundName} {
+        set spc ${type}::[list $compoundName]
+        if {![info exists ${spc}::fonts]} {
+            return ""
+        }
+        set result ""
+        set fonts [set ${spc}::fonts]
+        foreach font $fonts {
+            set fontDescr [lindex $font 0]
+            lappend result [vTcl:font:getFontFromDescr $fontDescr]
+        }
+        return $result
+    }
+
     proc getProcs {type compoundName} {
         set spc ${type}::[list $compoundName]
         return [set ${spc}::procs]
@@ -897,4 +921,5 @@ namespace eval ::vTcl::compounds {
         namespace delete $spc
     }
 }
+
 

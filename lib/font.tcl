@@ -110,9 +110,13 @@ proc {vTcl:font:add_font} {font_descr font_type {newkey {}}} {
     ## Other packages and widget toolkits have different licensing requirements.
     ##    Please read their license agreements for details.
 
+    if {[info exists ::vTcl(fonts,$font_descr,object)]} {
+        ## cool, it already exists
+        return $::vTcl(fonts,$font_descr,object)
+    }
+
      incr ::vTcl(fonts,counter)
      set newfont [eval font create $font_descr]
-
      lappend ::vTcl(fonts,objects) $newfont
 
      ## each font has its unique key so that when a project is
@@ -359,7 +363,7 @@ proc vTcl:font:prompt_font_manager {} {
 }
 
 proc vTcl:font:dump_create_font {font} {
-	return [list [list [font configure $font] \
+	return [list [list [vTcl:font:get_descr $font] \
 	             [vTcl:font:get_type $font] \
 	             [vTcl:font:get_key $font]]]
 }
@@ -402,7 +406,7 @@ proc vTcl:font:generate_font_user {fileID} {
 
     foreach font $vTcl(dump,userFonts) {
 	puts $fileID "vTcl:font:add_font \\"
-	puts $fileID "    \"[font configure $font]\" \\"
+	puts $fileID "    \"[vTcl:font:get_descr $font]\" \\"
 	puts $fileID "    [vTcl:font:get_type $font] \\"
 	puts $fileID "    [vTcl:font:get_key $font]"
     }
@@ -567,4 +571,5 @@ proc vTcl:font:translate {value} {
 
     return $value
 }
+
 
