@@ -1602,7 +1602,7 @@ namespace eval vTcl::widgets {
             }
         } ; # foreach type ...
 
-        return $result
+        return [lsort -unique $result]
     }
 
     ## return the list of images/font used by a compound
@@ -1614,7 +1614,7 @@ namespace eval vTcl::widgets {
         set result ""
         foreach index [array names resources] {
             if {![lempty $resources($index)]} {
-                lappend result $resources($index)
+                set result [concat $result $resources($index)]
             }
         }
 
@@ -1622,4 +1622,5 @@ namespace eval vTcl::widgets {
         return [lsort -unique $result]
     }
 }
+
 
