@@ -75,7 +75,7 @@ proc vTclWindow.vTcl.con {args} {
     pack .vTcl.con.fra6.but1 -fill x -side left
     # @@end_change
     vTcl:entry .vTcl.con.fra6.ent10 \
-        -highlightthickness 0
+        -highlightthickness 0 -bg white
     pack .vTcl.con.fra6.ent10 \
         -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 2 -pady 2 \
         -side top

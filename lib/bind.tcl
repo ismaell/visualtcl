@@ -67,6 +67,8 @@ proc vTclWindow.vTcl.bind {args} {
     set widget(MoveTagDown) $base.cpd21.01.fra22.but26
     interp alias {} MoveTagDown {} vTcl:WidgetProc $base.cpd21.01.fra22.but26
     set widget(AddTag) $base.cpd21.01.fra22.but27
+    set widget(DeleteTag) $base.cpd21.01.fra22.but28
+    interp alias {} DeleteTag {} vTcl:WidgetProc $base.cpd21.01.fra22.but28
     
     ###################
     # CREATING WIDGETS
@@ -162,6 +164,11 @@ proc vTclWindow.vTcl.bind {args} {
         -height 23 \
         -highlightthickness 0 \
         -padx 0 -pady 0 -image icon_message.gif -width 23 
+    button $base.cpd21.01.fra22.but28 \
+        -command "::widgets_bindings::delete_tag" \
+        -height 23 \
+        -highlightthickness 0 \
+        -padx 0 -pady 0 -image delete_tag -width 23 
     frame $base.cpd21.01.cpd25 \
         -background #dcdcdc -borderwidth 1 -height 30 \
         -highlightbackground #dcdcdc -highlightcolor #000000 -relief raised \
@@ -328,7 +335,10 @@ proc vTclWindow.vTcl.bind {args} {
         -side left 
     pack $base.cpd21.01.fra22.but27  \
         -in $base.cpd21.01.fra22 -anchor center -expand 0 -fill none \
-        -side left -padx 5
+        -side left
+    pack $base.cpd21.01.fra22.but28  \
+        -in $base.cpd21.01.fra22 -anchor center -expand 0 -fill none \
+        -side left
     pack $base.cpd21.01.fra22.but25  \
         -in $base.cpd21.01.fra22 -anchor center -expand 0 -fill none \
         -side left 
@@ -373,6 +383,7 @@ proc vTclWindow.vTcl.bind {args} {
     vTcl:set_balloon $widget(MoveTagUp)     "Move tag up"
     vTcl:set_balloon $widget(MoveTagDown)   "Move tag down"
     vTcl:set_balloon $widget(AddTag)        "Add/Reuse tag"
+    vTcl:set_balloon $widget(DeleteTag)     "Delete tag"
 
     Window hide .vTcl.newbind
     
@@ -782,6 +793,32 @@ namespace eval ::widgets_bindings {
 
     variable tagslist ""
     
+    proc {::widgets_bindings::delete_tag} {} {
+        global vTcl widget
+
+        set indices [ListboxBindings curselection]
+        set index [lindex $indices 0]
+        
+        if {$index == ""} return
+        
+        set tag ""
+        set event ""
+        
+        ::widgets_bindings::find_tag_event \
+            $widget(ListboxBindings) $index tag event
+
+        if {![::widgets_bindings::is_editable_tag $tag]} return
+
+        set w $widget(BindingsEditor)
+        set n [vTcl:rename $w]
+        eval set target $${n}::target
+
+        lremove vTcl(bindtags,$target) $tag
+
+        ::widgets_bindings::fill_bindings $target
+        ::widgets_bindings::select_show_binding $target ""     
+    }
+    
     proc {::widgets_bindings::movetag} {moveupdown} {
 
         global vTcl widget
@@ -986,6 +1023,7 @@ namespace eval ::widgets_bindings {
             RemoveBinding configure -state disabled
             MoveTagUp     configure -state disabled
             MoveTagDown   configure -state disabled
+            DeleteTag     configure -state disabled
             return
         }
         
@@ -999,13 +1037,16 @@ namespace eval ::widgets_bindings {
             AddBinding configure -state normal
             
             if {$event == ""} {
+            	DeleteTag configure -state normal
                 RemoveBinding configure -state disabled
             } else {
                 RemoveBinding configure -state normal
+                DeleteTag     configure -state disabled
             }
         } else {
             AddBinding    configure -state disabled
             RemoveBinding configure -state disabled
+            DeleteTag     configure -state disabled
         }
 
         set w $widget(BindingsEditor)
@@ -1018,12 +1059,13 @@ namespace eval ::widgets_bindings {
             } else {
                 MoveTagUp   configure -state disabled
             }
-            if {[lsearch -exact $vTcl(bindtags,$target) $tag] ==
-                [expr [llength $vTcl(bindtags,$target)] - 1]} {
+
+            set pos [lsearch -exact $vTcl(bindtags,$target) $tag]          
+            if {$pos == [expr [llength $vTcl(bindtags,$target)] - 1]} {
                 MoveTagDown configure -state disabled
             } else {
                 MoveTagDown configure -state normal
-            }
+            }           
         } else {
             MoveTagUp   configure -state disabled
             MoveTagDown configure -state disabled
@@ -1184,11 +1226,7 @@ namespace eval ::widgets_bindings {
         }
         
         if {![::widgets_bindings::is_editable_tag $tag]} return
-        
-        # debug
-        # puts "updating: $tag $event"
-        # end-debug
-     
+            
         if { [winfo exists $target] } {
            
             bind $tag $event [string trim [TextBindings get 0.0 end]]
@@ -1398,7 +1436,3 @@ namespace eval ::widgets_bindings {
     }
 
 } ; # namespace eval
-
-
-
-
