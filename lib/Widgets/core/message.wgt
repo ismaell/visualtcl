@@ -5,3 +5,10 @@ Class		Message
 Icon		icon_message.gif
 DefaultOptions	-text message -width 60
 DoubleClickCmd	vTcl:set_text
+
+Function	"Set Text"	vTcl:Message:SetText
+
+proc vTcl:Message:SetText {} {
+    global vTcl
+    vTcl:set_text $vTcl(w,widget)
+}

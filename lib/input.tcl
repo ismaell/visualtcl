@@ -108,7 +108,9 @@ proc vTcl:get_text {base text} {
 
     ## Remove the last character which is a \n the text widget puts in for
     ## some reason.
-    set vTcl(x,$base) [string range [$text get 0.0 end] 0 end-1]
+    set string [$text get 0.0 end]
+    set end [expr [string length $string] - 1]
+    set vTcl(x,$base) [string range $string 0 [expr $end - 1]]
     destroy $base
 }
 

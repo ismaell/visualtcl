@@ -659,7 +659,7 @@ proc vTcl:dump:aliases {target} {
 
 	append output $vTcl(tab)
 	## Find out what command we're aliased to.  Usually vTcl:WidgetProc.
-	set cmd [interp alias {} $alias]
+	set cmd [lindex [interp alias {} $alias] 0]
 	append output "interp alias {} $alias {} $cmd $value\n"
     }
 
