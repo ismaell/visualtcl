@@ -495,7 +495,13 @@ proc vTclWindow.vTcl.itemEdit {base} {
     ###################
     vTcl:toplevel $base -class Toplevel
     wm focusmodel $base passive
-    wm geometry $base 490x343
+    set defaultGeometry 1
+    if {[info exists ::vTcl(pr,edit[vTcl:at ::vTcl::itemEdit::class($base)])]} {
+        wm geometry $base $::vTcl(pr,edit[vTcl:at ::vTcl::itemEdit::class($base)])
+        set defaultGeometry 0
+    } else {
+        wm geometry $base 490x343
+    }
     wm withdraw $base
     wm maxsize $base 1009 738
     wm minsize $base 1 1
@@ -624,7 +630,9 @@ proc vTclWindow.vTcl.itemEdit {base} {
     $base.cpd37.02.sw.c create window 0 0 -window $base.cpd37.02.sw.c.f \
         -anchor nw -tag properties
 
-    vTcl:center $base 490 343
+    if {$defaultGeometry} {
+       vTcl:center $base 490 343
+    }
     wm deiconify $base
 
     vTcl:FireEvent $base <<Ready>>
@@ -640,15 +648,18 @@ namespace eval ::vTcl::itemEdit {
     variable allOptions
     variable enableData
     variable adding
+    variable class
     set counter 0
 
     proc edit {target cmds} {
         variable counter
         variable suffix
+        variable class
 
         incr counter
         set top .vTcl.itemEdit_$counter
         set suffix($top) $counter
+        set class($top) [vTcl:get_class $target]
         Window show .vTcl.itemEdit $top
         init $top $target $cmds
     }
@@ -791,7 +802,9 @@ namespace eval ::vTcl::itemEdit {
         variable current
         variable allOptions
         variable enableData
+        variable class
 
+        set ::vTcl(pr,edit$class($top)) [wm geometry $top]
         destroy $top
         ## clean up after ourselves
         foreach option $allOptions($top) {
