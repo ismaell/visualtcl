@@ -80,7 +80,7 @@ proc vTcl:widget:lib:lib_itcl {args} {
     }
     }
 
-    set order {Entryfield Spinint Combobox Scrolledlistbox Calendar
+    set order {Entryfield Spinint Spintime Combobox Scrolledlistbox Calendar
                Dateentry Scrolledhtml Toolbar Feedback Optionmenu
                Hierarchy Buttonbox Checkbox Radiobox Labeledframe
                Notebook Tabnotebook Panedwindow Scrolledtext Scrolledcanvas

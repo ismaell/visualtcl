@@ -1,6 +1,7 @@
 ChangeLog for Visual Tcl:
 
 1.6.0a2 ->
+    o Support for Iwidgets spintime.
     o Added code to ensure multiple file projects track symbolic links on
       loading. I think the code was submitted by Jorge Leon (hope I spell it
       right) a few months ago. Thanks!
