@@ -45,7 +45,8 @@ proc vTcl:delete {} {
     vTcl:destroy_handles
 
     set top [winfo toplevel $w]
-    set children [winfo children $w]
+    # list widget tree without including $w (it's why the "0" parameter)
+    set children [vTcl:widget_tree $w 0]
     set parent [winfo parent $vTcl(w,widget)]
     set class [winfo class $w]
 
@@ -122,6 +123,8 @@ proc vTcl:paste {{fromMouse ""}} {
 
     vTcl:active_widget $name
 }
+
+
 
 
 

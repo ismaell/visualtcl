@@ -297,13 +297,23 @@ proc vTcl:close {} {
 
     set tops [winfo children .]
     foreach i $tops {
-        if {$i != ".vTcl" && $i != ".__tk_filedialog"} {destroy $i}
+        if {$i != ".vTcl" && $i != ".__tk_filedialog"} {
+            # list widget tree without including $i (it's why the "0" parameter)
+            foreach child [vTcl:widget_tree $i 0] {
+                vTcl:unset_alias $child
+            }
+            vTcl:unset_alias $i
+            destroy $i
+        }
     }
     set vTcl(tops) ""
     set vTcl(newtops) 1
     catch {unset widgetNums}
     vTcl:update_top_list
     foreach i $vTcl(vars) {
+        # don't erase aliases, they should be erased when
+        # closing the toplevels
+        if {$i == "widget"} continue
         catch {global $i; unset $i}
     }
     set vTcl(vars) ""
@@ -499,6 +509,9 @@ proc vTcl:quit {} {
     }
     set vTcl(quit) 0
     set vTcl(change) 0
+    if {[winfo exists .vTcl.tip]} {
+       eval [wm protocol .vTcl.tip WM_DELETE_WINDOW]
+    }
     vTcl:save_prefs
     vTcl:exit
 }
@@ -597,6 +610,8 @@ proc vTcl:restore {} {
     file copy -force -- $bakFile $file
     vTcl:open $file
 }
+
+
 
 
 

@@ -194,12 +194,15 @@ proc vTcl:select_widget {target} {
 #
 # Recurses a widget tree ignoring toplevels
 #
-proc vTcl:widget_tree {target} {
+proc vTcl:widget_tree {target {include_target 1}} {
     global vTcl classes
     if {$target == ".vTcl" || [string range $target 0 4] == ".__tk"} {
         return
     }
-    set output "$target "
+    set output ""
+    if {$include_target} {
+        set output "$target "
+    }    
     set class [winfo class $target]
     set dumpChildren 1
     if {[info exists classes($class,dumpChildren)]} {
@@ -676,6 +679,8 @@ proc vTcl:set_alias {target {alias ""} {noupdate ""}} {
 proc vTcl:unset_alias {w} {
     global widget widgetNums
 
+    # puts "unset_alias: $w"
+
     if {![info exists widget(rev,$w)]} { return }
     set alias $widget(rev,$w)
 
@@ -1037,6 +1042,8 @@ proc vTcl:widget:register_all_widgets {{w .}} {
     	vTcl:widget:register_widget $w
     }
 }
+
+
 
 
 

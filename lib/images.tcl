@@ -524,7 +524,7 @@ proc vTcl:image:dump_create_image {image} {
 
     if {$vTcl(pr,saveimagesinline)} {
 
-        set inline [::base64::encode_file $image]
+        set inline \n[::base64::encode_file $image]
     } else {
 
         set inline ""
@@ -785,6 +785,8 @@ proc vTcl:image:external_editor {imageName} {
     	vTcl:error "Could not execute external image editor"
     }
 }
+
+
 
 
 

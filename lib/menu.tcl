@@ -108,6 +108,8 @@ set vTcl(menu,help) {
     {{About Visual Tcl...}  {}         vTclWindow.vTcl.about      }
     {{Libraries...}         {}         vTclWindow.vTcl.infolibs   }
     {{Index of Help...}     {}         vTclWindow.vTcl.help       }
+    {separator              {}         {}                         }
+    {{Tip of the day...}    {}         {Window show .vTcl.tip}    }
 }
 
 proc vTcl:menu:insert {menu name {root ""}} {
@@ -204,3 +206,12 @@ proc vTcl:updateRcFileMenu {} {
 	incr i
     }
 }
+
+
+
+
+
+
+
+
+

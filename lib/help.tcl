@@ -43,9 +43,9 @@ proc vTclWindow.vTcl.help {args} {
         -xscrollcommand {.vTcl.help.fra18.scr23 set} \
         -yscrollcommand {.vTcl.help.fra18.scr24 set} -wrap none
     scrollbar .vTcl.help.fra18.scr23 \
-        -command {.vTcl.help.fra18.tex22 xview} -orient horiz -width 10 
+        -command {.vTcl.help.fra18.tex22 xview} -orient horiz
     scrollbar .vTcl.help.fra18.scr24 \
-        -command {.vTcl.help.fra18.tex22 yview} -orient vert -width 10 
+        -command {.vTcl.help.fra18.tex22 yview} -orient vert
     button .vTcl.help.but21 \
         -command {
             wm withdraw .vTcl.help
@@ -116,3 +116,260 @@ proc vTcl:Help {helpName} {
 proc vTcl:BindHelp {w help} {
     bind $w <Key-F1> "vTcl:Help $help"
 }
+
+proc vTclWindow.vTcl.tip {base {container 0}} {
+
+    global vTcl
+
+    if {$base == ""} {
+        set base .vTcl.tip
+    }
+    if {[winfo exists $base] && (!$container)} {
+        wm deiconify $base; return
+    }
+
+    image create photo light_bulb -data {
+        R0lGODdhNAA0APcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwMDcwKbK8AAA
+        AAAAKgAAVQAAfwAAqgAA1AAqAAAqKgAqVQAqfwAqqgAq1ABVAABVKgBVVQBV
+        fwBVqgBV1AB/AAB/KgB/VQB/fwB/qgB/1ACqAACqKgCqVQCqfwCqqgCq1ADU
+        AADUKgDUVQDUfwDUqgDU1CoAACoAKioAVSoAfyoAqioA1CoqACoqKioqVSoq
+        fyoqqioq1CpVACpVKipVVSpVfypVqipV1Cp/ACp/Kip/VSp/fyp/qip/1Cqq
+        ACqqKiqqVSqqfyqqqiqq1CrUACrUKirUVSrUfyrUqirU1FUAAFUAKlUAVVUA
+        f1UAqlUA1FUqAFUqKlUqVVUqf1UqqlUq1FVVAFVVKlVVVVVVf1VVqlVV1FV/
+        AFV/KlV/VVV/f1V/qlV/1FWqAFWqKlWqVVWqf1WqqlWq1FXUAFXUKlXUVVXU
+        f1XUqlXU1H8AAH8AKn8AVX8Af38Aqn8A1H8qAH8qKn8qVX8qf38qqn8q1H9V
+        AH9VKn9VVX9Vf39Vqn9V1H9/AH9/Kn9/VX9/f39/qn9/1H+qAH+qKn+qVX+q
+        f3+qqn+q1H/UAH/UKn/UVX/Uf3/Uqn/U1KoAAKoAKqoAVaoAf6oAqqoA1Koq
+        AKoqKqoqVaoqf6oqqqoq1KpVAKpVKqpVVapVf6pVqqpV1Kp/AKp/Kqp/Vap/
+        f6p/qqp/1KqqAKqqKqqqVaqqf6qqqqqq1KrUAKrUKqrUVarUf6rUqqrU1NQA
+        ANQAKtQAVdQAf9QAqtQA1NQqANQqKtQqVdQqf9QqqtQq1NRVANRVKtRVVdRV
+        f9RVqtRV1NR/ANR/KtR/VdR/f9R/qtR/1NSqANSqKtSqVdSqf9SqqtSq1NTU
+        ANTUKtTUVdTUf9TUqtTU1AAAAAwMDBkZGSYmJjMzMz8/P0xMTFlZWWZmZnJy
+        cn9/f4yMjJmZmaWlpbKysr+/v8zMzNjY2OXl5fLy8v/78KCgpICAgP8AAAD/
+        AP//AAAA//8A/wD//////ywAAAAANAA0AAAI/gD/CRxIsKDBgwgTKlzIsKHD
+        hxD/AYhIsaJFihMRZrxYcGNCjx05HgRpEABJiSdFojRoz57JljBbmlSpkWBM
+        lzddArBHc2TGnDtvvuTZs2NQoUd1Ji0qUKbJpDlx5kSZ0mHMp1GzXp3JUahW
+        rU+rWv1K1unLrmXTDiUaMezXsG7JVoQL9Om+u/viaqVoFikAvHe93dX5lS9M
+        qCYFe1vMeDDUmxHf7pNHGZxly43z7qXKFSFYAJXBtbwMrvFas3AZfg59E7M3
+        eZq3ij0IdrJonjEvU877mG3D2vJEs7RnmTLs3r5LwtXr8vVtg6R3I2+4POnf
+        4C0Lji4tPWpkpYdttwsfuL34ce8QsyYOfjs39+PWwz4Ejt29N3DyBCNePrZu
+        aNKXMXZaTIZFBcBr+QGYGXLJ/bZafowthldhFX0GGoQS3jUgTBf1JRtsgO0j
+        1VYNPsTcYReKeJiBT2FE3lvyoLiZQLMpBKNS0xUFVozMncXUPyseFiN4Zv1I
+        0GlB6SWfkVwFidNOR3bWk5Q0crhSlD+elNGSIRWV0kZPyWOkQ5SFJeaY1F1I
+        GZomtshmmzW+KeecdPYUEAA7}
+
+    global widget
+    set widget(rev,$base) {TipWindow}
+    set {widget(TipWindow)} "$base"
+    set widget(TipWindow,TipWindow) "$base"
+    interp alias {} TipWindow {} vTcl:Toplevel:WidgetProc $base
+    set widget(rev,$base.cpd25.03) {TipText}
+    set {widget(TipText)} "$base.cpd25.03"
+    set widget(TipWindow,TipText) "$base.cpd25.03"
+    interp alias {} TipText {} vTcl:WidgetProc $base.cpd25.03
+    interp alias {} TipWindow.TipText {} vTcl:WidgetProc $base.cpd25.03
+    set widget(rev,$base.fra20.che26) {DontShowTips}
+    set {widget(DontShowTips)} "$base.fra20.che26"
+    set widget(TipWindow,DontShowTips) "$base.fra20.che26"
+    interp alias {} DontShowTips {} vTcl:WidgetProc $base.fra20.che26
+    interp alias {} TipWindow.DontShowTips {} vTcl:WidgetProc $base.fra20.che26
+
+    if {[info exists vTcl(pr,dontshowtips)]} {
+        set ::tip::dontshow $vTcl(pr,dontshowtips)
+    }
+    if {[info exists vTcl(pr,tipindex)]} {
+        set ::tip::tipindex $vTcl(pr,tipindex)
+    }
+
+    ###################
+    # CREATING WIDGETS
+    ###################
+    if {!$container} {
+    toplevel $base -class Toplevel
+    wm focusmodel $base passive
+    wm withdraw $base
+    wm maxsize $base 1284 1010
+    wm minsize $base 100 1
+    wm overrideredirect $base 0
+    wm resizable $base 1 1
+    wm title $base "Tip of the day"
+    wm protocol $base WM_DELETE_WINDOW {
+         Window hide .vTcl.tip
+         set vTcl(pr,dontshowtips) $::tip::dontshow
+         set vTcl(pr,tipindex)     $::tip::tipindex}
+    }
+    frame $base.fra20 \
+        -borderwidth 2 -height 75 -width 125 
+    button $base.fra20.but22 \
+        -text Close -width 8 \
+        -command {
+             Window hide .vTcl.tip
+             set vTcl(pr,dontshowtips) $::tip::dontshow
+             set vTcl(pr,tipindex)     $::tip::tipindex
+         }
+    checkbutton $base.fra20.che26 \
+        -text {Don't show tips on startup} -variable ::tip::dontshow 
+    button $base.fra20.but19 \
+        \
+        -command {
+             TipWindow.TipText configure -state normal
+             TipWindow.TipText delete 0.0 end
+             TipWindow.TipText insert end [::tip::get_next_tip]
+             TipWindow.TipText configure -state disabled
+        } \
+        -text {Next >} -width 8 
+    frame $base.fra23 \
+        -borderwidth 2 
+    label $base.fra23.lab24 \
+        -borderwidth 1 \
+        -image light_bulb \
+        -relief raised -text label 
+    frame $base.cpd25 \
+        -borderwidth 1 -relief raised 
+    scrollbar $base.cpd25.01 \
+        -command "$base.cpd25.03 xview" -orient horizontal
+    scrollbar $base.cpd25.02 \
+        -command "$base.cpd25.03 yview"
+    text $base.cpd25.03 \
+        -font -Adobe-Helvetica-Medium-R-Normal-*-*-120-*-*-*-*-*-* -height 1 \
+        -xscrollcommand "$base.cpd25.01 set" \
+        -yscrollcommand "$base.cpd25.02 set" 
+    label $base.lab19 \
+        -borderwidth 1 -font [vTcl:font:get_font "vTcl:font8"] \
+        -text {Did you know ...?} 
+    ###################
+    # SETTING GEOMETRY
+    ###################
+    pack $base.fra20 \
+        -in $base -anchor e -expand 0 -fill x -side bottom 
+    pack $base.fra20.but22 \
+        -in $base.fra20 -anchor center -expand 0 -fill none -padx 5 -pady 5 \
+        -side right 
+    pack $base.fra20.che26 \
+        -in $base.fra20 -anchor center -expand 0 -fill none -side left 
+    pack $base.fra20.but19 \
+        -in $base.fra20 -anchor center -expand 0 -fill none -padx 5 -pady 5 \
+        -side right 
+    pack $base.fra23 \
+        -in $base -anchor center -expand 0 -fill y -side left 
+    pack $base.fra23.lab24 \
+        -in $base.fra23 -anchor center -expand 0 -fill none -padx 5 \
+        -side left 
+    pack $base.cpd25 \
+        -in $base -anchor center -expand 1 -fill both -padx 5 -pady 5 \
+        -side bottom 
+    grid columnconf $base.cpd25 0 -weight 1
+    grid rowconf $base.cpd25 0 -weight 1
+    grid $base.cpd25.01 \
+        -in $base.cpd25 -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew 
+    grid $base.cpd25.02 \
+        -in $base.cpd25 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns 
+    grid $base.cpd25.03 \
+        -in $base.cpd25 -column 0 -row 0 -columnspan 1 -rowspan 1 \
+        -sticky nesw 
+    pack $base.lab19 \
+        -in $base -anchor center -expand 0 -fill none -side top 
+
+    wm geometry $base 506x292
+    update
+    vTcl:center $base 506 292
+    wm deiconify $base
+
+    $base.fra20.but19 invoke
+}
+
+namespace eval ::tip {
+
+    proc {::tip::get_next_tip} {} {
+        
+        variable tipindex
+
+        if {! [info exists ::tip::tipindex] } {
+            set ::tip::tipindex 0
+        }
+
+        set tips {
+"The tip of the day dialog offers you valuable tips on Visual Tcl"
+"Aliases are symbolic names used to refer to widgets."
+"You can access a widget by it's alias using $widget(MyWidget)"
+{If you enable 'Widget command aliasing' in the Preferences dialog,
+you can refer to a widget by a command named after it's alias.
+
+For instance, if your alias is "MyButton", you can type:
+
+MyButton configure -state disabled}
+{To refer to aliased widgets inside a toplevel that also has an alias,
+you can use a command composed by adding the toplevel's alias,
+a period, and the widget's alias.
+
+For instance, if your toplevel alias is "MyToplevel", and
+your widget alias is "MyLabel", you can type:
+
+MyToplevel.MyLabel configure -text "MyLabel"}
+{Aliases make it very easy to refer to widgets in different toplevels.
+
+Suppose that you have top toplevels aliased Top1 and Top2.
+Suppose that each of these toplevel has a button aliased MyButton.
+
+You can use:
+Top1.MyButton
+
+and:
+Top2.MyButton}
+{If you need to get the window path name for an aliased widget
+inside an aliased toplevel, use the global variable widget.
+
+Suppose that you have an toplevel aliased Top1, and a
+widget whose alias is MyWidget. Then you can write:
+
+# inside a procedure, make sure you make widget global
+global widget
+
+...     $widget(Top1,MyWidget)       ...}
+{When creating a compound, all procedures inside a namespace named
+after the compound will be part of the compound.
+
+For example, suppose the following procedures are defined:
+
+::MyCompound::init
+::MyCompound::main
+::MyCompound::stuff
+
+Creating a compound named "MyCompound" will include all the
+procedures above.}
+{There are 2 special procedures with every compound. If this/these
+procedure(s) exist(s), it(they) will be called with the name of the 
+window as parameter.
+
+These procedures are, for a compound named "MyCompound":
+::MyCompound::init
+::MyCompound::main
+
+The init procedure will be called before the compound widgets are
+created.
+
+The main procedure will be invoked after all the compound's widgets 
+have been defined.}
+{When you create a compound, you may want to refer to its 
+subwidgets. You can check the "Ask for widget name on insert"
+option in the "Preferences" dialog. Then, everytime you insert
+a new widget, you will be prompted for a name.
+
+This is convenient to refer to subwidgets inside a compound with
+symbolic names instead of automatically generated names.
+
+It's easier to write
+%W.leftframe
+
+than
+%W.frame03}
+}
+
+        set length   [llength $tips]
+        set tipindex [expr ($tipindex + 1) % $length]
+
+        return [lindex $tips $tipindex]
+    }
+}
+
+
