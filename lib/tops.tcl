@@ -26,7 +26,8 @@ proc vTcl:wm_take_focus {target} {
     if {$vTcl(w,class) == "Toplevel"} {
         set vTcl(w,insert) $target
     }
-    vTcl:place_handles $vTcl(w,widget)
+
+    after idle "vTcl:place_handles \"$vTcl(w,widget)\""
 }
 
 proc vTcl:destroy_top {target} {

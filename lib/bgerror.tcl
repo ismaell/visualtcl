@@ -1,0 +1,517 @@
+namespace eval ::stack_trace {
+
+    proc {::stack_trace::add_stack} {top context} {
+
+        global widget
+
+        $top.$widget(child,stack_trace_callstack) insert end $context
+    }
+
+    proc {::stack_trace::extract_code} {top} {
+
+        global widget
+
+        # get current selection in listbox
+
+        set indices  [$top.$widget(child,stack_trace_callstack) curselection]
+
+        if { [llength $indices] == 0 } return
+
+        set index [lindex $indices 0]
+
+        set context  [$top.$widget(child,stack_trace_callstack) get $index]
+        set context [string trim $context]
+
+        if [string match "(procedure*)" $context] {
+
+        set procname [lindex $context 1]
+
+        if { [uplevel #0 "info proc $procname" ] != ""} {
+
+            ::stack_trace::set_details $top  [::stack_trace::get_proc_details $procname]
+
+            vTcl:syntax_color $top.$widget(child,stack_trace_details)  0 -1
+
+            regexp {([0-9]+)} [lindex $context 3] matchAll lineno
+
+            ::stack_trace::highlight_details $top $lineno
+
+        } else {
+            ::stack_trace::set_details $top "(no code available)"
+
+        }
+
+        } else {
+            ::stack_trace::set_details $top "(no code available)"
+
+        }
+    }
+
+    proc {::stack_trace::extract_error} {error} {
+
+        global widget
+
+        regexp (\[^\n\]+) $error matchAll message
+
+        return $message
+    }
+
+    proc {::stack_trace::extract_stack} {error} {
+
+        global widget
+
+        set items [split $error \n]
+        set result ""
+
+        foreach item $items {
+
+        if [string match (*) [string trim $item] ] {
+            lappend result [string trim $item]
+        }
+        }
+
+        return $result
+    }
+
+    proc {::stack_trace::get_proc_details} {procname} {
+
+        global widget
+
+        set args [uplevel #0 "info args $procname"]
+        set body [uplevel #0 "info body $procname"]
+
+        return "proc $procname [list $args] \{\n$body\n\}"
+    }
+
+    proc {::stack_trace::highlight_details} {top lineno} {
+
+        global widget vTcl
+
+        set t $top.$widget(child,stack_trace_details)
+        incr lineno
+
+        foreach tag $vTcl(syntax,tags) {
+
+        $t tag remove $tag $lineno.0 [expr $lineno + 1].0
+        }
+
+        $t tag add vTcl:highlight $lineno.0 [expr $lineno + 1].0
+
+        $t tag configure vTcl:highlight  \
+            -relief raised  \
+            -background white \
+            -foreground black  \
+            -borderwidth 2
+    }
+
+    proc {::stack_trace::init_bgerror} {top error errorInfo} {
+
+        global widget
+
+        ::stack_trace::set_error $top  [::stack_trace::extract_error $errorInfo]
+
+        set stack [::stack_trace::extract_stack $errorInfo]
+
+        ::stack_trace::reset_stack $top
+
+        foreach context $stack {
+        ::stack_trace::add_stack $top $context
+        }
+    }
+
+    proc {::stack_trace::reset_stack} {top} {
+
+        # this procedure resets the call stack
+
+        global widget
+
+        $top.$widget(child,stack_trace_callstack) delete 0 end
+    }
+
+    proc {::stack_trace::set_details} {top details} {
+
+        global widget
+
+        $top.$widget(child,stack_trace_details) delete 0.1 end
+        $top.$widget(child,stack_trace_details) insert 0.1 $details
+    }
+
+    proc {::stack_trace::set_error} {top error} {
+
+        global widget
+
+        $top.$widget(child,stack_trace_msg) delete 0.1 end
+        $top.$widget(child,stack_trace_msg) insert 0.1 $error
+    }
+
+    variable boxIndex 0
+}
+
+proc vTclWindow.vTcl.stack_trace {base {container 0}} {
+    if {$base == ""} {
+        set base .vTcl.stack_trace
+    }
+    if {[winfo exists $base] && (!$container)} {
+        wm deiconify $base; return
+    }
+
+    global widget
+    set widget(rev,$base) {stack_trace}
+    set {widget(stack_trace)} "$base"
+    set {widget(child,stack_trace)} ""
+    set widget(rev,$base.cpd18.01.cpd20.03) {stack_trace_msg}
+    set {widget(stack_trace_msg)} "$base.cpd18.01.cpd20.03"
+    set {widget(child,stack_trace_msg)} "cpd18.01.cpd20.03"
+    set widget(rev,$base.cpd18.02.cpd21.01.cpd22.01) {stack_trace_callstack}
+    set {widget(stack_trace_callstack)} "$base.cpd18.02.cpd21.01.cpd22.01"
+    set {widget(child,stack_trace_callstack)} "cpd18.02.cpd21.01.cpd22.01"
+    set widget(rev,$base.cpd18.02.cpd21.02.cpd23.03) {stack_trace_details}
+    set {widget(stack_trace_details)} "$base.cpd18.02.cpd21.02.cpd23.03"
+    set {widget(child,stack_trace_details)} "cpd18.02.cpd21.02.cpd23.03"
+
+    ###################
+    # CREATING WIDGETS
+    ###################
+    if {!$container} {
+    toplevel $base -class Toplevel \
+        -background #dcdcdc -highlightbackground #dcdcdc \
+        -highlightcolor #000000
+    wm focusmodel $base passive
+    wm geometry $base 585x456+139+158
+    wm maxsize $base 1009 738
+    wm minsize $base 1 1
+    wm overrideredirect $base 0
+    wm resizable $base 1 1
+    wm deiconify $base
+    wm title $base "Stack trace"
+    }
+    frame $base.cpd18 \
+        -background #000000 -height 100 -highlightbackground #dcdcdc \
+        -highlightcolor #000000 -width 200
+    frame $base.cpd18.01 \
+        -background #9900991B99FE -highlightbackground #dcdcdc \
+        -highlightcolor #000000
+    label $base.cpd18.01.lab19 \
+        -background #ffffff -borderwidth 1 -foreground #000000 \
+        -highlightbackground #dcdcdc -highlightcolor #000000 -relief raised \
+        -text Error
+    frame $base.cpd18.01.cpd20 \
+        -background #dcdcdc -borderwidth 1 -height 30 \
+        -highlightbackground #dcdcdc -highlightcolor #000000 -relief raised \
+        -width 30
+    scrollbar $base.cpd18.01.cpd20.01 \
+        -activebackground #dcdcdc -background #dcdcdc \
+        -command "$base.cpd18.01.cpd20.03 xview" -cursor left_ptr \
+        -highlightbackground #dcdcdc -highlightcolor #000000 -orient horiz \
+        -troughcolor #dcdcdc -width 10
+    scrollbar $base.cpd18.01.cpd20.02 \
+        -activebackground #dcdcdc -background #dcdcdc \
+        -command "$base.cpd18.01.cpd20.03 yview" -cursor left_ptr \
+        -highlightbackground #dcdcdc -highlightcolor #000000 -orient vert \
+        -troughcolor #dcdcdc -width 10
+    text $base.cpd18.01.cpd20.03 \
+        -background #dcdcdc \
+        -font [vTcl:font:get_font "vTcl:font8"] \
+        -foreground #000000 -height 1 -highlightbackground #ffffff \
+        -highlightcolor #000000 -selectbackground #008080 \
+        -selectforeground #ffffff -width 8 \
+        -xscrollcommand "$base.cpd18.01.cpd20.01 set" \
+        -yscrollcommand "$base.cpd18.01.cpd20.02 set"
+    frame $base.cpd18.02 \
+        -background #9900991B99FE -highlightbackground #dcdcdc \
+        -highlightcolor #000000
+    frame $base.cpd18.02.cpd21 \
+        -background #000000 -height 100 -highlightbackground #dcdcdc \
+        -highlightcolor #000000 -width 200
+    frame $base.cpd18.02.cpd21.01 \
+        -background #9900991B99FE -highlightbackground #dcdcdc \
+        -highlightcolor #000000
+    frame $base.cpd18.02.cpd21.01.cpd22 \
+        -background #dcdcdc -borderwidth 1 -height 30 \
+        -highlightbackground #dcdcdc -highlightcolor #000000 -relief raised \
+        -width 30
+    listbox $base.cpd18.02.cpd21.01.cpd22.01 \
+        -background #dcdcdc \
+        -font -Adobe-Helvetica-Medium-R-Normal-*-*-120-*-*-*-*-*-* \
+        -foreground #000000 -highlightbackground #ffffff \
+        -highlightcolor #000000 -selectbackground #008080 \
+        -selectforeground #ffffff \
+        -xscrollcommand "$base.cpd18.02.cpd21.01.cpd22.02 set" \
+        -yscrollcommand "$base.cpd18.02.cpd21.01.cpd22.03 set"
+    bind $base.cpd18.02.cpd21.01.cpd22.01 <ButtonRelease-1> {
+        set window %W
+        set components [split $window .]
+        set components [lrange $components 0 2]
+
+        ::stack_trace::extract_code [join $components .]
+    }
+    scrollbar $base.cpd18.02.cpd21.01.cpd22.02 \
+        -activebackground #dcdcdc -background #dcdcdc \
+        -command "$base.cpd18.02.cpd21.01.cpd22.01 xview" -cursor left_ptr \
+        -highlightbackground #dcdcdc -highlightcolor #000000 -orient horiz \
+        -troughcolor #dcdcdc -width 10
+    scrollbar $base.cpd18.02.cpd21.01.cpd22.03 \
+        -activebackground #dcdcdc -background #dcdcdc \
+        -command "$base.cpd18.02.cpd21.01.cpd22.01 yview" -cursor left_ptr \
+        -highlightbackground #dcdcdc -highlightcolor #000000 -orient vert \
+        -troughcolor #dcdcdc -width 10
+    frame $base.cpd18.02.cpd21.02 \
+        -background #9900991B99FE -highlightbackground #dcdcdc \
+        -highlightcolor #000000
+    frame $base.cpd18.02.cpd21.02.cpd23 \
+        -background #dcdcdc -borderwidth 1 -height 30 \
+        -highlightbackground #dcdcdc -highlightcolor #000000 -relief raised \
+        -width 30
+    scrollbar $base.cpd18.02.cpd21.02.cpd23.01 \
+        -activebackground #dcdcdc -background #dcdcdc \
+        -command "$base.cpd18.02.cpd21.02.cpd23.03 xview" -cursor left_ptr \
+        -highlightbackground #dcdcdc -highlightcolor #000000 -orient horiz \
+        -troughcolor #dcdcdc -width 10
+    scrollbar $base.cpd18.02.cpd21.02.cpd23.02 \
+        -activebackground #dcdcdc -background #dcdcdc \
+        -command "$base.cpd18.02.cpd21.02.cpd23.03 yview" -cursor left_ptr \
+        -highlightbackground #dcdcdc -highlightcolor #000000 -orient vert \
+        -troughcolor #dcdcdc -width 10
+    text $base.cpd18.02.cpd21.02.cpd23.03 \
+        -background #dcdcdc -font [vTcl:font:get_font "vTcl:font3"] \
+        -foreground #000000 -height 1 -highlightbackground #ffffff \
+        -highlightcolor #000000 -selectbackground #008080 \
+        -selectforeground #ffffff -width 8 -wrap none \
+        -xscrollcommand "$base.cpd18.02.cpd21.02.cpd23.01 set" \
+        -yscrollcommand "$base.cpd18.02.cpd21.02.cpd23.02 set"
+    frame $base.cpd18.02.cpd21.03 \
+        -background #ff0000 -borderwidth 2 -highlightbackground #dcdcdc \
+        -highlightcolor #000000 -relief raised
+    bind $base.cpd18.02.cpd21.03 <B1-Motion> {
+        set root [ split %W . ]
+    set nb [ llength $root ]
+    incr nb -1
+    set root [ lreplace $root $nb $nb ]
+    set root [ join $root . ]
+    set width [ winfo width $root ].0
+
+    set val [ expr (%X - [winfo rootx $root]) /$width ]
+
+    if { $val >= 0 && $val <= 1.0 } {
+
+        place $root.01 -relwidth $val
+        place $root.03 -relx $val
+        place $root.02 -relwidth [ expr 1.0 - $val ]
+    }
+    }
+    frame $base.cpd18.03 \
+        -background #ff0000 -borderwidth 2 -highlightbackground #dcdcdc \
+        -highlightcolor #000000 -relief raised
+    bind $base.cpd18.03 <B1-Motion> {
+        set root [ split %W . ]
+    set nb [ llength $root ]
+    incr nb -1
+    set root [ lreplace $root $nb $nb ]
+    set root [ join $root . ]
+    set height [ winfo height $root ].0
+
+    set val [ expr (%Y - [winfo rooty $root]) /$height ]
+
+    if { $val >= 0 && $val <= 1.0 } {
+
+        place $root.01 -relheight $val
+        place $root.03 -rely $val
+        place $root.02 -relheight [ expr 1.0 - $val ]
+    }
+    }
+    ###################
+    # SETTING GEOMETRY
+    ###################
+    pack $base.cpd18 \
+        -in $base -anchor center -expand 1 -fill both -side top
+    place $base.cpd18.01 \
+        -x 0 -y 0 -relwidth 1 -height -1 -relheight 0.2939 -anchor nw \
+        -bordermode ignore
+    pack $base.cpd18.01.lab19 \
+        -in $base.cpd18.01 -anchor center -expand 0 -fill x -side top
+    pack $base.cpd18.01.cpd20 \
+        -in $base.cpd18.01 -anchor center -expand 1 -fill both -side top
+    grid columnconf $base.cpd18.01.cpd20 0 -weight 1
+    grid rowconf $base.cpd18.01.cpd20 0 -weight 1
+    grid $base.cpd18.01.cpd20.01 \
+        -in $base.cpd18.01.cpd20 -column 0 -row 1 -columnspan 1 -rowspan 1 \
+        -sticky ew
+    grid $base.cpd18.01.cpd20.02 \
+        -in $base.cpd18.01.cpd20 -column 1 -row 0 -columnspan 1 -rowspan 1 \
+        -sticky ns
+    grid $base.cpd18.01.cpd20.03 \
+        -in $base.cpd18.01.cpd20 -column 0 -row 0 -columnspan 1 -rowspan 1 \
+        -sticky nesw
+    place $base.cpd18.02 \
+        -x 0 -y 0 -rely 1 -relwidth 1 -height -1 -relheight 0.7061 -anchor sw \
+        -bordermode ignore
+    pack $base.cpd18.02.cpd21 \
+        -in $base.cpd18.02 -anchor center -expand 1 -fill both -side top
+    place $base.cpd18.02.cpd21.01 \
+        -x 0 -y 0 -width -1 -relwidth 0.3467 -relheight 1 -anchor nw \
+        -bordermode ignore
+    pack $base.cpd18.02.cpd21.01.cpd22 \
+        -in $base.cpd18.02.cpd21.01 -anchor center -expand 1 -fill both \
+        -side top
+    grid columnconf $base.cpd18.02.cpd21.01.cpd22 0 -weight 1
+    grid rowconf $base.cpd18.02.cpd21.01.cpd22 0 -weight 1
+    grid $base.cpd18.02.cpd21.01.cpd22.01 \
+        -in $base.cpd18.02.cpd21.01.cpd22 -column 0 -row 0 -columnspan 1 \
+        -rowspan 1 -sticky nesw
+    grid $base.cpd18.02.cpd21.01.cpd22.02 \
+        -in $base.cpd18.02.cpd21.01.cpd22 -column 0 -row 1 -columnspan 1 \
+        -rowspan 1 -sticky ew
+    grid $base.cpd18.02.cpd21.01.cpd22.03 \
+        -in $base.cpd18.02.cpd21.01.cpd22 -column 1 -row 0 -columnspan 1 \
+        -rowspan 1 -sticky ns
+    place $base.cpd18.02.cpd21.02 \
+        -x 0 -relx 1 -y 0 -width -1 -relwidth 0.6533 -relheight 1 -anchor ne \
+        -bordermode ignore
+    pack $base.cpd18.02.cpd21.02.cpd23 \
+        -in $base.cpd18.02.cpd21.02 -anchor center -expand 1 -fill both \
+        -side top
+    grid columnconf $base.cpd18.02.cpd21.02.cpd23 0 -weight 1
+    grid rowconf $base.cpd18.02.cpd21.02.cpd23 0 -weight 1
+    grid $base.cpd18.02.cpd21.02.cpd23.01 \
+        -in $base.cpd18.02.cpd21.02.cpd23 -column 0 -row 1 -columnspan 1 \
+        -rowspan 1 -sticky ew
+    grid $base.cpd18.02.cpd21.02.cpd23.02 \
+        -in $base.cpd18.02.cpd21.02.cpd23 -column 1 -row 0 -columnspan 1 \
+        -rowspan 1 -sticky ns
+    grid $base.cpd18.02.cpd21.02.cpd23.03 \
+        -in $base.cpd18.02.cpd21.02.cpd23 -column 0 -row 0 -columnspan 1 \
+        -rowspan 1 -sticky nesw
+    place $base.cpd18.02.cpd21.03 \
+        -x 0 -relx 0.3467 -y 0 -rely 0.9 -width 10 -height 10 -anchor s \
+        -bordermode ignore
+    place $base.cpd18.03 \
+        -x 0 -relx 0.9 -y 0 -rely 0.2939 -width 10 -height 10 -anchor e \
+        -bordermode ignore
+}
+
+proc vTclWindow.vTcl.bgerror {base {container 0}} {
+    if {$base == ""} {
+        set base .vTcl.bgerror
+    }
+    if {[winfo exists $base] && (!$container)} {
+        wm deiconify $base; return
+    }
+
+    global [vTcl:rename $base.error]
+    global [vTcl:rename $base.errorInfo]
+
+    eval set error     $[vTcl:rename $base.error]
+    eval set errorInfo $[vTcl:rename $base.errorInfo]
+
+    global widget
+    set widget(rev,$base) {error_box}
+    set {widget(error_box)} "$base"
+    set {widget(child,error_box)} ""
+    set widget(rev,$base.fra20.cpd23.03) {error_box_text}
+    set {widget(error_box_text)} "$base.fra20.cpd23.03"
+    set {widget(child,error_box_text)} "fra20.cpd23.03"
+
+    ###################
+    # CREATING WIDGETS
+    ###################
+    if {!$container} {
+    toplevel $base -class Toplevel \
+        -background #dcdcdc -highlightbackground #dcdcdc \
+        -highlightcolor #000000
+    wm focusmodel $base passive
+    wm geometry $base 333x248+196+396
+    wm maxsize $base 1009 738
+    wm minsize $base 1 1
+    wm overrideredirect $base 0
+    wm resizable $base 1 1
+    wm deiconify $base
+    wm title $base "Error"
+    }
+    frame $base.fra20 \
+        -background #dcdcdc -borderwidth 2 -height 75 \
+        -highlightbackground #dcdcdc -highlightcolor #000000 -width 125
+    label $base.fra20.lab21 \
+        -background #dcdcdc -bitmap error -borderwidth 0 -foreground #000000 \
+        -highlightbackground #dcdcdc -highlightcolor #000000 -padx 0 -pady 0 \
+        -relief raised -text label
+    frame $base.fra20.cpd23 \
+        -background #dcdcdc -height 30 -highlightbackground #dcdcdc \
+        -highlightcolor #000000 -width 30
+    scrollbar $base.fra20.cpd23.02 \
+        -activebackground #dcdcdc -background #dcdcdc \
+        -command "$base.fra20.cpd23.03 yview" -cursor left_ptr \
+        -highlightbackground #dcdcdc -highlightcolor #000000 -orient vert \
+        -troughcolor #dcdcdc -width 10
+    text $base.fra20.cpd23.03 \
+        -background #dcdcdc -font [vTcl:font:get_font "vTcl:font8"] \
+        -foreground #000000 -height 1 -highlightbackground #ffffff \
+        -highlightcolor #000000 -selectbackground #008080 \
+        -selectforeground #ffffff -width 8 -wrap word \
+        -yscrollcommand "$base.fra20.cpd23.02 set"
+    frame $base.fra25 \
+        -background #dcdcdc -borderwidth 2 -height 75 \
+        -highlightbackground #dcdcdc -highlightcolor #000000 -width 125
+    button $base.fra25.but26 \
+        -activebackground #dcdcdc -activeforeground #000000 \
+        -background #dcdcdc -foreground #000000 -highlightbackground #dcdcdc \
+        -highlightcolor #000000 -padx 9 -pady 3 -text OK \
+        -command "destroy $base"
+    button $base.fra25.but27 \
+        -activebackground #dcdcdc -activeforeground #000000 \
+        -background #dcdcdc -foreground #000000 -highlightbackground #dcdcdc \
+        -highlightcolor #000000 -padx 9 -pady 3 -text {Skip messages}
+    button $base.fra25.but28 \
+        -activebackground #dcdcdc -activeforeground #000000 \
+        -background #dcdcdc -foreground #000000 -highlightbackground #dcdcdc \
+        -highlightcolor #000000 -padx 9 -pady 3 -text {Stack Trace...}  \
+        -command "
+            set newtop .vTcl.stack_trace$::stack_trace::boxIndex
+            vTclWindow.vTcl.stack_trace \$newtop
+            ::stack_trace::init_bgerror \$newtop [list $error] [list $errorInfo]
+            after idle \{destroy $base\}"
+
+    ###################
+    # SETTING GEOMETRY
+    ###################
+    pack $base.fra20 \
+        -in $base -anchor center -expand 1 -fill both -pady 2 -side top
+    pack $base.fra20.lab21 \
+        -in $base.fra20 -anchor e -expand 0 -fill none -padx 5 -side left
+    pack $base.fra20.cpd23 \
+        -in $base.fra20 -anchor center -expand 1 -fill both -padx 2 -side top
+    grid columnconf $base.fra20.cpd23 0 -weight 1
+    grid rowconf $base.fra20.cpd23 0 -weight 1
+    grid $base.fra20.cpd23.02 \
+        -in $base.fra20.cpd23 -column 1 -row 0 -columnspan 1 -rowspan 1 \
+        -sticky ns
+    grid $base.fra20.cpd23.03 \
+        -in $base.fra20.cpd23 -column 0 -row 0 -columnspan 1 -rowspan 1 \
+        -sticky nesw
+    pack $base.fra25 \
+        -in $base -anchor center -expand 0 -fill x -pady 4 -side top
+    pack $base.fra25.but26 \
+        -in $base.fra25 -anchor center -expand 1 -fill none -side left
+    pack $base.fra25.but27 \
+        -in $base.fra25 -anchor center -expand 1 -fill none -side left
+    pack $base.fra25.but28 \
+        -in $base.fra25 -anchor center -expand 1 -fill none -side left
+
+    $base.$widget(child,error_box_text) insert 1.0 $error
+}
+
+proc bgerror {error} {
+
+    global widget errorInfo
+
+    incr ::stack_trace::boxIndex
+
+    set top ".vTcl.bgerror$::stack_trace::boxIndex"
+
+    global [vTcl:rename $top.error]
+    global [vTcl:rename $top.errorInfo]
+
+    set [vTcl:rename $top.error] $error
+    set [vTcl:rename $top.errorInfo] $errorInfo
+
+    vTclWindow.vTcl.bgerror $top
+}

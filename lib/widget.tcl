@@ -547,19 +547,25 @@ proc vTcl:set_alias {target} {
     catch {
         unset widget($was)
         unset widget(rev,$target)
+        unset widget(child,$was)
     }
+
     if {$alias != ""} {
         set widget($alias) $target
         set widget(rev,$target) $alias
 
-	# @@change by Christian Gavin 5/2/2000
-	#
+	# .top38.cpd28 => {} top38 cpd28
+	set components [split $target .]
+
+        # {} top38 cpd28 fra21 => cpd28 fra21
+	set components [lrange $components 2 end]
+
+        set widget(child,$alias) [join $components .]
+
 	# refresh property manager after changing an alias
 
 	vTcl:update_widget_info $target
 	vTcl:prop:update_attr
-
-	# @@end_change
     }
 }
 

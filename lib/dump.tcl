@@ -557,6 +557,14 @@ proc vTcl:dump:aliases {target} {
     	    set alias $value
     	    set value $widget($alias)
     	    append output "$vTcl(tab)set \{widget($alias)\} \"[vTcl:base_name $value]\"\n"
+
+            # .top38.cpd28 => {} top38 cpd28
+            set components [split $value .]
+
+            # {} top38 cpd28 fra21 => cpd28 fra21
+            set components [lrange $components 2 end]
+
+            append output "$vTcl(tab)set \{widget(child,$alias)\} \"[join $components .]\"\n"
     	}
     }
 
