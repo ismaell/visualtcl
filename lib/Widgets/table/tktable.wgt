@@ -1,0 +1,10 @@
+Name		table
+Lib		table
+
+Class		Table
+Icon		icon_table.gif
+TreeLabel	tkTable
+
+DefaultOptions	-rows 3 -cols 3
+DumpChildren	no
+MegaWidget   no
