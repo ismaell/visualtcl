@@ -188,7 +188,16 @@ proc vTcl:font:get_font_dlg {base font_desc} {
         -text Overstrike \
         -variable vTcl(x,$base,overstrike)
     vTcl:entry $base.fra28.ent36 \
-        -textvariable vTcl(x,$base,size) -width 10
+        -textvariable vTcl(x,$base,size) -width 10 -bg white
+    bind $base.fra28.ent36 <KeyPress> {
+        if {! [regexp {[0-9]+} %A]                   &&
+            "%K" != "Left"      && "%K" != "Right"   &&
+            "%K" != "Up"        && "%K" != "Down"    &&
+            "%K" != "BackSpace" && "%K" != "Delete"} {
+            bell
+            break
+        }
+    }
     menubutton $base.fra28.men37 \
         -menu $base.fra28.men37.m -padx 4 -pady 3 \
         -relief raised -text normal -textvariable vTcl(x,$base,weight) \
@@ -235,6 +244,14 @@ proc vTcl:font:get_font_dlg {base font_desc} {
         -width 8 -wrap none \
         -xscrollcommand "$base.cpd43.01 set" \
         -yscrollcommand "$base.cpd43.02 set"
+    # we don't want syntax coloring, which is the default for
+    # text widgets in vTcl whose window path name starts with .vTcl
+    bind $base.cpd43.03 <KeyRelease> "break"
+    bind $base.cpd43.03 <KeyPress-Return> {
+        tkTextInsert %W "\n"
+        focus %W
+        break
+    }
     frame $base.fra27 \
         -relief flat
     button $base.fra27.but28 \
@@ -852,6 +869,7 @@ proc vTcl:font:get_manager_position {} {
     global vTcl
     return [lindex [$vTcl(fonts,font_mgr,win).cpd31.03 yview] 0]
 }
+
 
 
 

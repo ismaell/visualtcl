@@ -50,10 +50,11 @@ proc vTcl:delete {} {
     set class [winfo class $w]
 
     set buffer [vTcl:create_compound $vTcl(w,widget)]
-    set do "vTcl:unset_alias $vTcl(w,widget); "
+    set do ""
     foreach child $children {
     	append do "vTcl:unset_alias $child; "
     }
+    append do "vTcl:unset_alias $vTcl(w,widget); "
     append do "destroy $vTcl(w,widget)"
     set undo "vTcl:insert_compound $vTcl(w,widget) \{$buffer\} $vTcl(w,def_mgr)"
     vTcl:push_action $do $undo
@@ -121,3 +122,8 @@ proc vTcl:paste {{fromMouse ""}} {
 
     vTcl:active_widget $name
 }
+
+
+
+
+

@@ -207,7 +207,7 @@ proc {vTcl:image:init_img_manager} {} {
 	    set file [file join $vTcl(VTCL_HOME) images edit open.gif]
 	    button $base.${reference}_edit \
 		-image [vTcl:image:get_image $file] \
-		-command "vTcl:image:external_editor $realname"
+		-command "vTcl:image:external_editor [list $realname]"
 
 	    vTcl:set_balloon $base.${reference}_edit "Edit image"
 	}
@@ -785,3 +785,9 @@ proc vTcl:image:external_editor {imageName} {
     	vTcl:error "Could not execute external image editor"
     }
 }
+
+
+
+
+
+

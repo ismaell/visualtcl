@@ -71,7 +71,6 @@ proc vTcl:is_vtcl_prj {file} {
 	if [regexp {# Visual Tcl v(.?)\.(.?.?) Project} $line \
 	    matchAll vmajor vminor] {
 	    set found 1
-	    set version $vmajor.$vminor
 	}
     }
 
@@ -84,10 +83,14 @@ proc vTcl:is_vtcl_prj {file} {
 	return 0
     }
 
+    set versions [split $vTcl(version) .]
+    set actual_major [lindex $versions 0]
+    set actual_minor [lindex $versions 1]
+
     if {$vmajor != "" && $vminor != ""} {
-	# if {$version > $vTcl(version)} { }
-    	if {$vmajor > 1 ||
-    	    ($vmajor == 1 && $vminor > 40)} {
+
+    	if {$vmajor > $actual_major ||
+    	    ($vmajor == $actual_major && $vminor > $actual_minor)} {
 		tk_messageBox -title "Error loading file" \
 		              -message "You are trying to load a project created using Visual Tcl v$vmajor.$vminor\n\nPlease update to vTcl $vmajor.$vminor and try again." \
 	              -icon error \
@@ -594,4 +597,8 @@ proc vTcl:restore {} {
     file copy -force -- $bakFile $file
     vTcl:open $file
 }
+
+
+
+
 

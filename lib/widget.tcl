@@ -26,6 +26,13 @@
 # the first widget element.
 #
 proc vTcl:base_name {target} {
+
+    # don't change anything if the widget doesn't start with a
+    # period (.) because it could be an alias
+    if {[string range $target 0 0] != "."} {
+        return $target
+    }
+
     set l [split $target .]
     set name "\$base"
     foreach i [lrange $l 2 end] {
@@ -626,29 +633,36 @@ proc vTcl:set_alias {target {alias ""} {noupdate ""}} {
 
     if {![lempty $was]} {
 	## Unset the widget variables and delete the alias from the interpreter.
+      catch {
+	    unset widget([vTcl:get_top_level_or_alias $target],$was)
+      }
+      catch {
+	    interp alias {} $was {} {}
+          if {[winfo toplevel $target] != $target} {
+              interp alias {} [vTcl:get_top_level_or_alias $target].$was {}
+          }
+	}
 	catch {
 	    unset widget($was)
+      }
+      catch {
 	    unset widget(rev,$target)
-	    unset widget(child,$was)
-	    interp alias {} $was {} {}
-	}
+      }
     }
 
     if {![lempty $alias]} {
         set widget($alias) $target
         set widget(rev,$target) $alias
 
-	# .top38.cpd28 => {} top38 cpd28
-	set components [split $target .]
-
-        # {} top38 cpd28 fra21 => cpd28 fra21
-	set components [lrange $components 2 end]
-
-        set widget(child,$alias) [join $components .]
+        set widget([vTcl:get_top_level_or_alias $target],$alias) $target
 
 	## Create an alias in the interpreter.
 	if { $vTcl(pr,cmdalias) } { 
 	    interp alias {} $alias {} $classes($c,widgetProc) $target
+          if {[winfo toplevel $target] != $target} {
+              interp alias {} [vTcl:get_top_level_or_alias $target].$alias {} \
+                      $classes($c,widgetProc) $target
+          }
 	}
 
 	# Refresh property manager after changing an alias
@@ -666,10 +680,22 @@ proc vTcl:unset_alias {w} {
     set alias $widget(rev,$w)
 
     catch {
-	unset widget($alias)
-	unset widget(rev,$w)
-	unset widget(child,$alias)
-	interp alias {} $alias {} {}
+	  unset widget([vTcl:get_top_level_or_alias $w],$alias)
+    }
+    catch {
+        unset widget([winfo top level $w],$alias)
+    }
+    catch {
+	  interp alias {} $alias {} {}
+        if {[winfo toplevel $w] != $w} {
+            interp alias {} [vTcl:get_top_level_or_alias $w].$alias {}
+        }
+    }
+    catch {
+	  unset widget($alias)
+    }
+    catch {
+	  unset widget(rev,$w)
     }
 
     set class [vTcl:get_class $w]
@@ -679,6 +705,19 @@ proc vTcl:unset_alias {w} {
     ## when widgets are deleted.
     if {[regexp "$class\(\[0-9\]+\)" $alias trash num]} {
 	lremove widgetNums($class) $num
+    }
+}
+
+proc vTcl:get_top_level_or_alias {target} {
+
+    global widget
+
+    set top [winfo toplevel $target]
+
+    if {[info exists widget(rev,$top)]} {
+        return $widget(rev,$top)
+    } else {
+        return $top
     }
 }
 
@@ -924,7 +963,8 @@ proc vTcl:update_aliases {} {
     catch {unset widgetNums}
 
     set aliases [array names widget]
-    lremove aliases rev,* child,*
+#   lremove aliases rev,* child,*
+    lremove aliases *,*
 
     foreach alias [lsort $aliases] {
 	if {![regexp {([a-zA-Z]+)([0-9]+)} $alias trash class num]} { continue }
@@ -997,3 +1037,7 @@ proc vTcl:widget:register_all_widgets {{w .}} {
     	vTcl:widget:register_widget $w
     }
 }
+
+
+
+

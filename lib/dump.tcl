@@ -654,30 +654,34 @@ proc vTcl:dump:aliases {target} {
 
     foreach name $aliases {
 	set value $widget($name)
+      regexp {rev,(.*)} $name matchAll namenorev
 
 	append output $vTcl(tab)
-	append output "set widget(rev,[vTcl:base_name $name]) \{$value\}\n"
+	append output "set widget(rev,[vTcl:base_name $namenorev]) \{$value\}\n"
 
 	set alias $value
-	set value $widget($alias)
+      if {[info exists widget([vTcl:get_top_level_or_alias $target],$alias)]} {
+          set value $widget([vTcl:get_top_level_or_alias $target],$alias)
+      } else {
+          set value $widget($alias)
+      }
 
 	append output $vTcl(tab)
 	append output "set \{widget($alias)\} \"[vTcl:base_name $value]\"\n"
 
-	# .top38.cpd28 => {} top38 cpd28
-	set components [split $value .]
-
-	# {} top38 cpd28 fra21 => cpd28 fra21
-	set components [lrange $components 2 end]
-
 	append output $vTcl(tab)
-	append output "set \{widget(child,$alias)\} \"[join $components .]\"\n"
+	append output "set widget([vTcl:base_name [vTcl:get_top_level_or_alias $value]],$alias) \"[vTcl:base_name $value]\"\n"
 
 	if {$vTcl(pr,cmdalias)} {
 	    append output $vTcl(tab)
 	    set cmd [lindex [interp alias {} $alias] 0]
 	    set widg [vTcl:base_name $value]
 	    append output "interp alias {} $alias {} $cmd $widg\n"
+
+          if {[winfo toplevel $target] != $namenorev} {
+              append output $vTcl(tab)
+              append output "interp alias {} [vTcl:get_top_level_or_alias $namenorev].$alias {} $cmd $widg\n"
+          }
 	}
     }
 
@@ -811,6 +815,7 @@ proc vTcl:dump:project_info {basedir project} {
     close $fp
     return
 }
+
 
 
 
