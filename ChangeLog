@@ -1,6 +1,19 @@
 ChangeLog for Visual Tcl:
 
 1.51b2 -> 1.51b3
+    o Usability improvements:
+      - added "Set Variable" for checkbutton and radiobutton
+      - added "Set Value" for radiobutton
+      - added "Edit Menu" for toplevel
+    o Cosmectic improvements:
+      - regrouped toolbar buttons and close button in the same line in both
+        the menu and the bindings editor
+    o Tried to fix the not-totally-fixed cursor bug. Seems the
+      ButtonRelease-1 gets processed before ButtonPress-1 returns,
+      so if ButtonRelease-1 comes too soon, it is posted as an
+      "after" job. This prevents the cursor from changing to "fleur"
+      in some situations.
+    o Widget tree keeps highlighting the selection after refresh
     o TkCon restores position on vTcl startup
     o Set string input dialog entry field to white background and
       changed OK / Cancel buttons to icons (checkmark and red cross)
