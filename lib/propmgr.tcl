@@ -144,19 +144,19 @@ proc vTclWindow.vTcl.ae {args} {
 
     label $w.ln -text "Widget" -width 11 -anchor w
         vTcl:entry $w.en -width 12 -textvariable vTcl(w,widget) \
-        -relief sunken -bd 1 -state disabled
+        -relief sunken -bd 1 -bg $vTcl(pr,bgcolor) -state disabled
     label $w.lc -text "Class"  -width 11 -anchor w
         vTcl:entry $w.ec -width 12 -textvariable vTcl(w,class) \
-        -relief sunken -bd 1 -state disabled
+        -relief sunken -bd 1 -bg $vTcl(pr,bgcolor) -state disabled
     label $w.lm -text "Manager" -width 11 -anchor w
         vTcl:entry $w.em -width 12 -textvariable vTcl(w,manager) \
-        -relief sunken -bd 1 -state disabled
+        -relief sunken -bd 1 -bg $vTcl(pr,bgcolor) -state disabled
     label $w.la -text "Alias"  -width 11 -anchor w
         vTcl:entry $w.ea -width 12 -textvariable vTcl(w,alias) \
-        -relief sunken -bd 1 -state disabled
+        -relief sunken -bd 1 -bg $vTcl(pr,bgcolor) -state disabled
     label $w.li -text "Insert Point" -width 11 -anchor w
         vTcl:entry $w.ei -width 12 -textvariable vTcl(w,insert) \
-        -relief sunken -bd 1 -state disabled
+        -relief sunken -bd 1 -bg $vTcl(pr,bgcolor) -state disabled
 
     grid columnconf $w 1 -weight 1
 
@@ -489,9 +489,9 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
 	}
         color {
             frame $base
-            vTcl:entry ${base}.l -relief sunken -bd 1 \
+            vTcl:entry ${base}.l -relief sunken -bd 2 \
                 -textvariable $variable -width 8 \
-                -highlightthickness 1 -fg black -bg white
+                -highlightthickness 1 -fg black -bg $vTcl(pr,bgcolor)
             bind ${base}.l <KeyRelease-Return> \
                 "$config_cmd; ${base}.f conf -bg \$$variable"
             frame ${base}.f -relief raised -bd 1 \
@@ -508,9 +508,9 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
         }
         command {
             frame $base
-            vTcl:entry ${base}.l -relief sunken -bd 1 \
+            vTcl:entry ${base}.l -relief sunken -bd 2 \
                 -textvariable $variable -width 8 \
-                -highlightthickness 1 -fg black -bg white
+                -highlightthickness 1 -fg black -bg $vTcl(pr,bgcolor)
 
 	    if {[info tclversion] > 8.2} {
 		${base}.l configure -validate key \
@@ -533,9 +533,9 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
         }
         font {
             frame $base
-            vTcl:entry ${base}.l -relief sunken -bd 1 \
+            vTcl:entry ${base}.l -relief sunken -bd 2 \
                 -textvariable $variable -width 8 \
-                -highlightthickness 1 -fg black -bg white
+                -highlightthickness 1 -fg black -bg $vTcl(pr,bgcolor)
             button ${base}.f \
                 -image ellipses -bd 1 -width 12 \
                 -highlightthickness 1 -fg black -padx 0 -pady 1 \
@@ -550,9 +550,9 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
         }
         image {
             frame $base
-            vTcl:entry ${base}.l -relief sunken -bd 1 \
+            vTcl:entry ${base}.l -relief sunken -bd 2 \
                 -textvariable $variable -width 8 \
-                -highlightthickness 1 -fg black -bg white
+                -highlightthickness 1 -fg black -bg $vTcl(pr,bgcolor)
             button ${base}.f \
                 -image ellipses -bd 1 -width 12 \
                 -highlightthickness 1 -fg black -padx 0 -pady 1 \
@@ -567,8 +567,8 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
         }
         default {
             vTcl:entry $base \
-                -textvariable $variable -relief sunken -bd 1 -width 12 \
-                -highlightthickness 1 -bg white -fg black
+                -textvariable $variable -relief groove -bd 2 -width 12 \
+                -highlightthickness 1 -bg $vTcl(pr,bgcolor) -fg black
 
 	    if {[info tclversion] > 8.2} {
 		${base} configure -validate key \
@@ -621,7 +621,9 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
     "
 
     bind $focusControl <FocusIn>    $focus_in_cmd
+    bind $focusControl <FocusIn>    "+$focusControl configure -bg white"
     bind $focusControl <FocusOut>   $focus_out_cmd
+    bind $focusControl <FocusOut>   "+$focusControl configure -bg $vTcl(pr,bgcolor)"
     bind $focusControl <KeyRelease> $key_release_cmd
     bind $focusControl <KeyRelease-Return> $config_cmd
     bind $focusControl <Key-Up>     "vTcl:propmgr:focusPrev $label"

@@ -2574,7 +2574,6 @@ proc tkcon {cmd args} {
 	sh* - dei* {
 	    ## 'show|deiconify' - deiconifies the console.
 	    wm deiconify $::tkcon::PRIV(root)
-	    raise $::tkcon::PRIV(root)
 	    proc ::exit args {
 		vTcl:attrbar:toggle_console
 	    }

@@ -536,7 +536,7 @@ proc vTcl:quit {} {
     }
 
     if {$vTcl(quit)} {
-	if {[::vTcl::MessageBox -default no -icon question -message \
+	if {[::vTcl::MessageBox -default yes -icon question -message \
              "Are you sure you want to quit?" -title "Really Quit?" \
              -type yesno] == "no"} {
 	    return
