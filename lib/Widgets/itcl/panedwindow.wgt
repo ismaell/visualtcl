@@ -278,7 +278,8 @@ namespace eval vTcl::widgets::iwidgets::panedwindow::edit {
 	    incr index
 	}
         $target add pane$index
-        vTcl:init_wtree
+	update
+        after idle {vTcl:init_wtree}
         return "Pane $index"
     }
 
