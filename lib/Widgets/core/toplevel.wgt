@@ -48,6 +48,10 @@ Export          vTcl:DoCmdOption
 Export          vTcl:FireEvent
 
 proc vTcl:DoCmdOption {target cmd} {
+    ## This procedure may be used free of restrictions.
+    ##    Exception added by Christian Gavin on 08/08/02.
+    ## Other packages and widget toolkits have different licensing requirements.
+    ##    Please read their license agreements for details.
 
     ## menus are considered toplevel windows
     set parent $target
@@ -62,12 +66,22 @@ proc vTcl:DoCmdOption {target cmd} {
 }
 
 proc vTcl:toplevel {args} {
+    ## This procedure may be used free of restrictions.
+    ##    Exception added by Christian Gavin on 08/08/02.
+    ## Other packages and widget toolkits have different licensing requirements.
+    ##    Please read their license agreements for details.
+
     uplevel #0 eval toplevel $args
     set target [lindex $args 0]
     namespace eval ::$target {}
 }
 
 proc vTcl:Toplevel:WidgetProc {w args} {
+    ## This procedure may be used free of restrictions.
+    ##    Exception added by Christian Gavin on 08/08/02.
+    ## Other packages and widget toolkits have different licensing requirements.
+    ##    Please read their license agreements for details.
+
     if {[llength $args] == 0} {
         ## If no arguments, returns the path the alias points to
         return $w

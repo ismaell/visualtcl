@@ -22,6 +22,11 @@
 #
 
 proc Window {args} {
+    ## This procedure may be used free of restrictions.
+    ##    Exception added by Christian Gavin on 08/08/02.
+    ## Other packages and widget toolkits have different licensing requirements.
+    ##    Please read their license agreements for details.
+
     global vTcl
     set cmd     [lindex $args 0]
     set name    [lindex $args 1]
@@ -54,6 +59,11 @@ proc Window {args} {
 }
 
 proc vTcl:WidgetProc {w args} {
+    ## This procedure may be used free of restrictions.
+    ##    Exception added by Christian Gavin on 08/08/02.
+    ## Other packages and widget toolkits have different licensing requirements.
+    ##    Please read their license agreements for details.
+
     if {[llength $args] == 0} {
         ## If no arguments, returns the path the alias points to
         return $w
@@ -73,6 +83,11 @@ proc vTcl:WidgetProc {w args} {
 }
 
 proc vTcl:DefineAlias {target alias widgetProc top_or_alias cmdalias} {
+    ## This procedure may be used free of restrictions.
+    ##    Exception added by Christian Gavin on 08/08/02.
+    ## Other packages and widget toolkits have different licensing requirements.
+    ##    Please read their license agreements for details.
+
     global widget
     set widget($alias) $target
     set widget(rev,$target) $alias
@@ -88,6 +103,11 @@ proc vTcl:DefineAlias {target alias widgetProc top_or_alias cmdalias} {
 }
 
 proc vTcl:FireEvent {target event {params {}}} {
+    ## This procedure may be used free of restrictions.
+    ##    Exception added by Christian Gavin on 08/08/02.
+    ## Other packages and widget toolkits have different licensing requirements.
+    ##    Please read their license agreements for details.
+
     ## The window may have disappeared
     if {![winfo exists $target]} return
     ## Process each binding tag, looking for the event

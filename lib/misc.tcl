@@ -376,6 +376,11 @@ proc vTcl:show_bindings {} {
 # from long Windows 9x filenames with spaces
 
 proc vTcl:rename {name} {
+    ## This procedure may be used free of restrictions.
+    ##    Exception added by Christian Gavin on 08/08/02.
+    ## Other packages and widget toolkits have different licensing requirements.
+    ##    Please read their license agreements for details.
+
     regsub -all "\\." $name "_" ret
     regsub -all "\\-" $ret "_" ret
     regsub -all " " $ret "_" ret

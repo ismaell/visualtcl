@@ -79,6 +79,11 @@ proc vTcl:font:get_key {object} {
 }
 
 proc vTcl:font:get_font {key} {
+    ## This procedure may be used free of restrictions.
+    ##    Exception added by Christian Gavin on 08/08/02.
+    ## Other packages and widget toolkits have different licensing requirements.
+    ##    Please read their license agreements for details.
+
     global vTcl
     if {[info exists vTcl(fonts,$key,object)]} then {
         return $vTcl(fonts,$key,object)
@@ -88,6 +93,11 @@ proc vTcl:font:get_font {key} {
 }
 
 proc {vTcl:font:add_font} {font_descr font_type {newkey {}}} {
+    ## This procedure may be used free of restrictions.
+    ##    Exception added by Christian Gavin on 08/08/02.
+    ## Other packages and widget toolkits have different licensing requirements.
+    ##    Please read their license agreements for details.
+
      global vTcl
 
      incr vTcl(fonts,counter)

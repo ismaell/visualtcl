@@ -36,6 +36,11 @@ set vTcl(image,filetypes) {
 # returns "photo" if a GIF or "bitmap" if a xbm
 
 proc vTcl:image:get_creation_type {filename} {
+    ## This procedure may be used free of restrictions.
+    ##    Exception added by Christian Gavin on 08/08/02.
+    ## Other packages and widget toolkits have different licensing requirements.
+    ##    Please read their license agreements for details.
+
     switch [string tolower [file extension $filename]] {
         .ppm -
         .jpg -
@@ -47,6 +52,11 @@ proc vTcl:image:get_creation_type {filename} {
 }
 
 proc vTcl:image:broken_image {} {
+    ## This procedure may be used free of restrictions.
+    ##    Exception added by Christian Gavin on 08/08/02.
+    ## Other packages and widget toolkits have different licensing requirements.
+    ##    Please read their license agreements for details.
+
     return {
         R0lGODdhFAAUAPcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwICAgP8AAAD/
         AP//AAAA//8A/wD//////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -76,6 +86,11 @@ proc {vTcl:image:create_new_image} {filename
                                     {description {no description}}
                                     {type {}}
                                     {data {}}} {
+    ## This procedure may be used free of restrictions.
+    ##    Exception added by Christian Gavin on 08/08/02.
+    ## Other packages and widget toolkits have different licensing requirements.
+    ##    Please read their license agreements for details.
+
     global vTcl env
 
     # Does the image already exist?
@@ -130,6 +145,11 @@ proc {vTcl:image:get_type} {filename} {
 }
 
 proc {vTcl:image:get_image} {filename} {
+    ## This procedure may be used free of restrictions.
+    ##    Exception added by Christian Gavin on 08/08/02.
+    ## Other packages and widget toolkits have different licensing requirements.
+    ##    Please read their license agreements for details.
+
     set reference [vTcl:rename $filename]
 
     # Let's do some checking first
