@@ -1,0 +1,91 @@
+Class		Notebook
+Lib		itcl
+
+CreateCmd	::iwidgets::notebook
+Icon		icon_notebook.gif
+DumpChildren	no
+MegaWidget	yes
+InsertCmd	vTcl:widget:notebook:inscmd
+TagsCmd         vTcl:lib_itcl:tagscmd
+TreeChildrenCmd	{vTcl:widget:notebook:treeChildrenCmd
+		 vTcl:widget:notebook:treeChildrenChildsite}
+DumpCmd		vTcl:dump:notebook
+CompoundCmd     vTcl:compound:notebook
+
+proc vTcl:widget:notebook:inscmd {target} {
+
+    return "$target add -label {Page 1} ;\
+            $target add -label {Page 2} ;\
+            $target add -label {Page 3} ;\
+            $target select 0"
+}
+
+# All right, I explain it: -2 is the number of levels
+# in the window path between the megawidget and its
+# pages (childsites). This is used by the widget tree
+# to skip 2 levels (otherwise it would draw 2 vertical
+# lines)
+
+proc vTcl:widget:notebook:treeChildrenCmd {target {diff \#-2}} {
+
+    set children ""
+    set wantsdiff [expr {$diff != ""}]
+
+    foreach site [$target childsite] {
+        foreach child [vTcl:complete_widget_tree $site $wantsdiff] {
+            lappend children $child$diff
+        }
+    }
+
+    return $children
+}
+
+proc vTcl:widget:notebook:treeChildrenChildsite {target} {
+
+    return [$target childsite]
+}
+
+proc vTcl:dump:notebook {target basename} {
+
+    global vTcl
+    set result [vTcl:dump_widget_opt $target $basename]
+    set entries [$target childsite]
+    set size [llength $entries]
+    for {set i 0} {$i < $size} {incr i} {
+        set conf [$target pageconfigure $i]
+        set pairs [vTcl:conf_to_pairs $conf ""]
+        append result "$vTcl(tab)$basename add \\\n"
+        append result "[vTcl:clean_pairs $pairs]\n"
+    }
+    foreach page $entries {
+        append result [vTcl:lib_itcl:dump_subwidgets $page]
+    }
+    append result "$vTcl(tab)$basename select 0\n"
+    return $result
+}
+
+## this function returns the necessary code to insert all
+## the childsites into the notebook widget (basically
+## the returned code will be stored in a compound)
+##
+## the returned code makes the body of a procedure whose
+## parameter is 'target'; to insert the childsites into the
+## compound, this procedure should be called with target
+## pointing to the new widget
+
+proc vTcl:compound:notebook {target} {
+    set result ""
+
+    set entries [$target childsite]
+    set size [llength $entries]
+    for {set i 0} {$i < $size} {incr i} {
+        set conf [$target pageconfigure $i]
+        set pairs [vTcl:conf_to_pairs $conf ""]
+        append result "set site \[\$target add $pairs\]; "
+        set compound [vTcl:create_compound [lindex $entries $i]]
+        append result "vTcl:insert_compound \$site [list $compound] pack \{\}; "
+    }
+
+    append result "\$target select 0; "
+    return $result
+}
