@@ -36,11 +36,11 @@ proc vTcl:save_compounds {} {
     set file [vTcl:get_file save "Save Compound Library"]
     if {$file == ""} {return}
     set f [open $file w]
-    vTcl:log $f "set vTcl(cmpd,list) \"$vTcl(cmpd,list)\"\n"
+    puts $f "set vTcl(cmpd,list) \"$vTcl(cmpd,list)\"\n"
     set index 0
     set num [llength $vTcl(cmpd,list)]
     foreach i $vTcl(cmpd,list) {
-        vTcl:log $f "set \{vTcl(cmpd:$i)\} \{$vTcl(cmpd:$i)\}\n"
+        puts $f "set \{vTcl(cmpd:$i)\} \{$vTcl(cmpd:$i)\}\n"
         incr index
         vTcl:statbar [expr {($index * 100) / $num}]
     }
@@ -50,17 +50,17 @@ proc vTcl:save_compounds {} {
 
 proc vTcl:load_compounds {{file ""}} {
     global vTcl
-    
+
     # @@change by Christian Gavin 3/5/2000
     # if a file is given in file parameter, use it,
     # otherwise prompts for a file
-    
+
     if {$file == ""} {
 	    set file [vTcl:get_file open "Load Compound Library"]
     }
-    
+
     # @@end_change
-    
+
     if {$file == ""} {return}
     vTcl:statbar 10
     source $file
@@ -76,14 +76,14 @@ proc vTcl:put_compound {compound} {
     vTcl:setup_bind_tree $name
     vTcl:active_widget $name
     vTcl:update_proc_list
-    
+
     # @@change by Christian Gavin 3/5/2000
     #
     # when new compound inserted into window, automatically
     # refresh widget tree
-    
+
     after idle {vTcl:init_wtree}
-    
+
     # @@end_change
 }
 
@@ -239,15 +239,15 @@ proc vTcl:gen_compound {target {name ""} {cmpdname ""}} {
         return ""
     }
     set type [vTcl:get_class $target 1]
-    
+
     # @@change by Christian Gavin 3/6/2000
     # rename conf to configure because Iwidgets don't like
     # conf only
-    
+
     set opts [vTcl:get_opts [$target configure]]
-    
+
     # @@end_change
-    
+
     if {$type == "menu"} {
         set mnum [$target index end]
         if {$mnum != "none"} {
@@ -267,7 +267,7 @@ proc vTcl:gen_compound {target {name ""} {cmpdname ""}} {
         # @@debug
         vTcl:log "gen_compound: mgrt=\"$mgrt\""
         # @@end_debug
- 
+
  	# @@change by Christian Gavin 3/6/2000
  	# in Iwidgets, some controls are not yet packed/gridded/placed
  	# when they are in edit mode, therefore there is no manager at
@@ -286,7 +286,7 @@ proc vTcl:gen_compound {target {name ""} {cmpdname ""}} {
     foreach i $blst {
         lappend bind "$i \{[bind $target $i]\}"
     }
-        
+
     foreach i [vTcl:get_children $target] {
         incr vTcl(cmp,index)
         append chld "[vTcl:gen_compound $i $name.0$vTcl(cmp,index)] "
