@@ -46,13 +46,13 @@ proc vTclWindow.vTcl.help {args} {
         -command {.vTcl.help.fra18.tex22 xview} -orient horiz -width 10 
     scrollbar .vTcl.help.fra18.scr24 \
         -command {.vTcl.help.fra18.tex22 yview} -orient vert -width 10 
-    frame .vTcl.help.fra20 \
-        -borderwidth 1 -height 30 -relief sunken -width 30 
-    button .vTcl.help.fra20.but21 \
+    button .vTcl.help.but21 \
         -command {
             wm withdraw .vTcl.help
         } -highlightthickness 0 -padx 9 -pady 3 \
-        -text Done 
+        -image [vTcl:image:get_image ok.gif]
+    pack .vTcl.help.but21 \
+        -anchor e -expand 0 -fill none -padx 2 -pady 2 -side top 
     pack .vTcl.help.fra18 \
         -anchor center -expand 1 -fill both -padx 5 -pady 5 -side top 
     grid columnconf .vTcl.help.fra18 0 -weight 1
@@ -63,10 +63,6 @@ proc vTclWindow.vTcl.help {args} {
         -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew 
     grid .vTcl.help.fra18.scr24 \
         -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns 
-    pack .vTcl.help.fra20 \
-        -anchor center -expand 0 -fill x -padx 5 -pady 5 -side top 
-    pack .vTcl.help.fra20.but21 \
-        -anchor center -expand 1 -fill both -padx 2 -pady 2 -side top 
 
     catch {
         set f [open [file join $vTcl(VTCL_HOME) lib HELP] r]

@@ -173,10 +173,13 @@ proc vTclWindow.vTcl.infolibs {{base ""} {container 0}} {
     scrollbar $base.cpd39.03 \
         -command "$base.cpd39.01 yview" -orient vert
     button $base.but40 \
-        -padx 9 -pady 3 -text Close -command {wm withdraw .vTcl.infolibs}
+        -padx 9 -pady 3 -command {wm withdraw .vTcl.infolibs} \
+	-image [vTcl:image:get_image ok.gif]
     ###################
     # SETTING GEOMETRY
     ###################
+    pack $base.but40 \
+        -in $base -anchor center -expand 0 -fill none -side top -anchor e
     pack $base.lab38 \
         -in $base -anchor center -expand 0 -fill x -ipadx 1 -side top
     pack $base.cpd39 \
@@ -190,8 +193,6 @@ proc vTclWindow.vTcl.infolibs {{base ""} {container 0}} {
         -in $base.cpd39 -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew
     grid $base.cpd39.03 \
         -in $base.cpd39 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns
-    pack $base.but40 \
-        -in $base -anchor center -expand 0 -fill x -side top
 
     $widget(libraries_listbox) delete 0 end
 
