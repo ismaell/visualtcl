@@ -932,8 +932,9 @@ namespace eval ::widgets_bindings {
     }
 
     proc {::widgets_bindings::init} {} {
-
         global widget vTcl
+
+	if {![winfo exists .vTcl.bind]} { return }
                 
         ListboxBindings delete 0 end
 

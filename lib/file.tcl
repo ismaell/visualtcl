@@ -33,7 +33,7 @@ proc vTcl:new {} {
 
     set vTcl(mode) EDIT
 
-    set w [vTcl:auto_place_widget toplevel]
+    set w [vTcl:auto_place_widget Toplevel]
     wm geometry $w $vTcl(pr,geom_new)
 
     vTcl:setup_bind_tree .
