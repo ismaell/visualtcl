@@ -4,12 +4,13 @@ exec wish "$0" "$@"
 
 if {![info exists vTcl(sourcing)]} {
 
+    package require Tk
     switch $tcl_platform(platform) {
 	windows {
             option add *Button.padY 0
 	}
 	default {
-	    option add *Scrollbar.width 10
+            option add *Scrollbar.width 10
             option add *Scrollbar.highlightThickness 0
             option add *Scrollbar.elementBorderWidth 2
             option add *Scrollbar.borderWidth 2
@@ -231,30 +232,31 @@ proc vTcl:project:info {} {
     set base .top82
     namespace eval ::widgets::$base {
         set set,origin 1
-        set set,size 1
+        set set,size 0
+        set runvisible 1
     }
-    namespace eval ::widgets::$base.lab83 {
-        array set save {-text 1}
+    namespace eval ::widgets::$base.cpd72 {
+        array set save {-anchor 1 -justify 1 -text 1}
     }
-    namespace eval ::widgets::$base.ent84 {
+    namespace eval ::widgets::$base.cpd73 {
         array set save {-background 1 -textvariable 1}
     }
-    namespace eval ::widgets::$base.lab84 {
-        array set save {-text 1}
-    }
-    namespace eval ::widgets::$base.lab85 {
-        array set save {-anchor 1 -background 1 -text 1}
-    }
-    namespace eval ::widgets::$base.lab86 {
+    namespace eval ::widgets::$base.cpd74 {
         array set save {-anchor 1 -justify 1 -text 1}
     }
-    namespace eval ::widgets::$base.lab87 {
+    namespace eval ::widgets::$base.cpd75 {
         array set save {-anchor 1 -background 1 -justify 1 -text 1}
     }
-    namespace eval ::widgets::$base.lab88 {
+    namespace eval ::widgets::$base.cpd76 {
         array set save {-anchor 1 -justify 1 -text 1}
     }
-    namespace eval ::widgets::$base.cpd89 {
+    namespace eval ::widgets::$base.cpd77 {
+        array set save {-anchor 1 -background 1 -justify 1 -text 1}
+    }
+    namespace eval ::widgets::$base.cpd78 {
+        array set save {-anchor 1 -justify 1 -text 1}
+    }
+    namespace eval ::widgets::$base.cpd79 {
         array set save {-anchor 1 -background 1 -justify 1 -text 1}
     }
     namespace eval ::widgets_bindings {
@@ -302,7 +304,7 @@ proc vTclWindow. {base} {
     # CREATING WIDGETS
     ###################
     wm focusmodel $top passive
-    wm geometry $top 200x200+44+50; update
+    wm geometry $top 200x200+198+225; update
     wm maxsize $top 1284 1006
     wm minsize $top 111 1
     wm overrideredirect $top 0
@@ -333,7 +335,7 @@ proc vTclWindow.top82 {base} {
     ###################
     vTcl:toplevel $top -class Toplevel
     wm focusmodel $top passive
-    wm geometry $top 428x388+273+263; update
+    wm geometry $top +192+193; update
     wm maxsize $top 1284 1006
     wm minsize $top 111 1
     wm overrideredirect $top 0
@@ -345,63 +347,65 @@ proc vTclWindow.top82 {base} {
     vTcl:FireEvent $top <<Create>>
     wm protocol $top WM_DELETE_WINDOW "vTcl:FireEvent $top <<DeleteWindow>>"
 
-    label $top.lab83 \
+    label $top.cpd72 \
+        -anchor w -justify left \
         -text {The entry widget allows you to enter one line of text.} 
-    vTcl:DefineAlias "$top.lab83" "Label1" vTcl:WidgetProc "Toplevel1" 1
-    entry $top.ent84 \
+    vTcl:DefineAlias "$top.cpd72" "Label1" vTcl:WidgetProc "Toplevel1" 1
+    entry $top.cpd73 \
         -background white -textvariable "$top\::ent84" 
-    vTcl:DefineAlias "$top.ent84" "Entry1" vTcl:WidgetProc "Toplevel1" 1
-    label $top.lab84 \
+    vTcl:DefineAlias "$top.cpd73" "Entry1" vTcl:WidgetProc "Toplevel1" 1
+    label $top.cpd74 \
+        -anchor w -justify left \
         -text {The text typed in the entry widget is stored into a variable.} 
-    vTcl:DefineAlias "$top.lab84" "Label2" vTcl:WidgetProc "Toplevel1" 1
-    label $top.lab85 \
-        -anchor w -background #aa95e6f4ecec \
+    vTcl:DefineAlias "$top.cpd74" "Label2" vTcl:WidgetProc "Toplevel1" 1
+    label $top.cpd75 \
+        -anchor w -background #aa95e6f4ecec -justify left \
         -text {By default, vTcl assigns a default variable name to an entry.} 
-    vTcl:DefineAlias "$top.lab85" "Label3" vTcl:WidgetProc "Toplevel1" 1
-    label $top.lab86 \
+    vTcl:DefineAlias "$top.cpd75" "Label3" vTcl:WidgetProc "Toplevel1" 1
+    label $top.cpd76 \
         -anchor nw -justify left \
         -text {Using the toplevel alias, you can easily set or retrieve the
 value of a variable assigned to an entry widget.
 
 Try typing in the command console:} 
-    vTcl:DefineAlias "$top.lab86" "Label4" vTcl:WidgetProc "Toplevel1" 1
-    label $top.lab87 \
+    vTcl:DefineAlias "$top.cpd76" "Label4" vTcl:WidgetProc "Toplevel1" 1
+    label $top.cpd77 \
         -anchor nw -background #ffffff -justify left \
         -text {(vtcl) 1 % Toplevel1 setvar ent84 "hello world"
 hello world
 (vtcl) 2 % Toplevel1 setvar ent84
 hello world} 
-    vTcl:DefineAlias "$top.lab87" "Label5" vTcl:WidgetProc "Toplevel1" 1
-    label $top.lab88 \
+    vTcl:DefineAlias "$top.cpd77" "Label5" vTcl:WidgetProc "Toplevel1" 1
+    label $top.cpd78 \
         -anchor nw -justify left \
         -text {Now, type some text in the entry, for example: "The quick brown fox."
 
 Then, type in the command console:} 
-    vTcl:DefineAlias "$top.lab88" "Label6" vTcl:WidgetProc "Toplevel1" 1
-    label $top.cpd89 \
+    vTcl:DefineAlias "$top.cpd78" "Label6" vTcl:WidgetProc "Toplevel1" 1
+    label $top.cpd79 \
         -anchor nw -background #ffffff -justify left \
         -text {(vtcl) 3 % Toplevel1 setvar ent84
 The quick brown fox.} 
-    vTcl:DefineAlias "$top.cpd89" "Label7" vTcl:WidgetProc "Toplevel1" 1
+    vTcl:DefineAlias "$top.cpd79" "Label7" vTcl:WidgetProc "Toplevel1" 1
     ###################
     # SETTING GEOMETRY
     ###################
-    place $top.lab83 \
-        -x 10 -y 15 -anchor nw -bordermode ignore 
-    place $top.ent84 \
-        -x 10 -y 40 -width 406 -height 19 -anchor nw -bordermode ignore 
-    place $top.lab84 \
-        -x 10 -y 70 -anchor nw -bordermode ignore 
-    place $top.lab85 \
-        -x 10 -y 95 -width 402 -height 19 -anchor nw -bordermode ignore 
-    place $top.lab86 \
-        -x 10 -y 120 -width 398 -height 64 -anchor nw -bordermode ignore 
-    place $top.lab87 \
-        -x 10 -y 185 -width 403 -height 69 -anchor nw -bordermode ignore 
-    place $top.lab88 \
-        -x 10 -y 265 -anchor nw -bordermode ignore 
-    place $top.cpd89 \
-        -x 10 -y 315 -width 404 -height 58 -anchor nw 
+    pack $top.cpd72 \
+        -in $top -anchor center -expand 0 -fill x -padx 5 -pady 5 -side top 
+    pack $top.cpd73 \
+        -in $top -anchor center -expand 0 -fill x -padx 5 -pady 5 -side top 
+    pack $top.cpd74 \
+        -in $top -anchor center -expand 0 -fill x -padx 5 -pady 5 -side top 
+    pack $top.cpd75 \
+        -in $top -anchor center -expand 0 -fill x -padx 5 -pady 5 -side top 
+    pack $top.cpd76 \
+        -in $top -anchor center -expand 0 -fill x -padx 5 -pady 5 -side top 
+    pack $top.cpd77 \
+        -in $top -anchor center -expand 0 -fill x -padx 5 -pady 5 -side top 
+    pack $top.cpd78 \
+        -in $top -anchor center -expand 0 -fill x -padx 5 -pady 5 -side top 
+    pack $top.cpd79 \
+        -in $top -anchor center -expand 0 -fill x -padx 5 -pady 5 -side top 
 
     vTcl:FireEvent $base <<Ready>>
 }
@@ -423,3 +427,4 @@ Window show .
 Window show .top82
 
 main $argc $argv
+
