@@ -27,10 +27,10 @@
 # bitmap types accepted by Visual Tcl
 
 set vTcl(image,filetypes) {
+   {{All Files}          *            }
    {{GIF Files}          {.gif}       }
    {{Portable Pixel Map} {.ppm}       }
    {{X Windows Bitmap}   {.xbm}       }
-   {{All Files}          *            }
 }
 
 # returns "photo" if a GIF or "bitmap" if a xbm
@@ -38,6 +38,8 @@ set vTcl(image,filetypes) {
 proc vTcl:image:get_creation_type {filename} {
     switch [string tolower [file extension $filename]] {
         .ppm -
+        .jpg -
+        .bmp -
         .gif    {return photo}
         .xbm    {return bitmap}
         default {return photo}
@@ -253,6 +255,14 @@ proc {vTcl:image:init_img_manager} {} {
 
 proc {vTcl:image:init_stock} {} {
     global vTcl
+
+    catch {
+        package require Img
+        ## if Img is there, add more file types
+        lappend vTcl(image,filetypes) \
+                {{JPEG Images}     {.jpg}} \
+                {{Windows Bitmaps} {.bmp}}
+    }
 
     if [info exist vTcl(images,files)] {
 	foreach image $vTcl(images,files) {
@@ -605,6 +615,7 @@ proc vTcl:image:generate_image_user {fileID} {
 
     puts $fileID {#############################################################################}
     puts $fileID "\#\# vTcl Code to Load User Images\n"
+    puts $fileID "catch \{package require Img\}\n"
 
     puts $fileID [vTcl:image:dump_create_image_header]
 

@@ -1,6 +1,8 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o If the package Img can be found, adds more file types to the image
+      manager: JPEG, BMP.
     o Shift-click will now place the last widget placed.  This sort of bombs
       the shift-click scrollbar feature, but since it's in the widget menu
       of the scrollbar, we don't really lose functionality.
