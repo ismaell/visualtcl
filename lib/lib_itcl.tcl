@@ -36,9 +36,9 @@ proc vTcl:lib_itcl:init {} {
     global vTcl
 
     if {[catch {
-        package require Itcl 3.0
-        package require Itk 3.0
-        package require Iwidgets 3.0
+        package require Itcl
+        package require Itk
+        package require Iwidgets
     } errorText]} {
         vTcl:log $errorText
         lappend vTcl(libNames) \
@@ -57,13 +57,13 @@ proc vTcl:widget:lib:lib_itcl {args} {
 
     append vTcl(head,itcl,importheader) {
     # Needs Itcl
-    package require Itcl 3.0
+    package require Itcl
 
     # Needs Itk
-    package require Itk 3.0
+    package require Itk
 
     # Needs Iwidgets
-    package require Iwidgets 3.0
+    package require Iwidgets
 
     switch $tcl_platform(platform) {
 	windows {
@@ -180,7 +180,6 @@ proc vTcl:lib_itcl:dump_subwidgets {subwidget {sitebasename {}}} {
 }
 
 proc vTcl:lib_itcl:tagscmd {target} {
-
     global vTcl
 
     # workaround for special binding tags in IWidgets
@@ -195,4 +194,23 @@ proc vTcl:lib_itcl:tagscmd {target} {
     } else {
         return [list [lindex $tags $special] $target $class $toplevel all]
     }
+}
+
+proc vTcl:lib_itcl:get_pages {target} {
+}
+
+proc vTcl:lib_itcl:update_pages {target var} {
+    global vTcl
+
+    ## there is a trace on var to update the combobox
+    set sites [$target childsite]
+    set num_pages [llength $sites]
+    set ::$var {}
+    for {set i 0} {$i < $num_pages} {incr i} {
+        set label_opt [$target pageconfigure $i -label]
+        lappend ::$var [lindex $label_opt 4]
+    }
+}
+
+proc vTcl:lib_itcl:config_pages {target var} {
 }

@@ -363,6 +363,12 @@ proc vTcl:prop:update_attr {} {
     vTcl:prop:update_saves $vTcl(w,widget)
 }
 
+proc vTcl:prop:combo_update {w var args} {
+    if {[winfo exists $w]} {
+        $w configure -values [vTcl:at ::$var]
+    }
+}
+
 proc vTcl:prop:new_attr {top option variable config_cmd prefix {isGeomOpt ""}} {
     global vTcl $variable options specialOpts propmgrLabels
 
@@ -418,6 +424,14 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix {isGeomOpt ""}} {
                 -variable $variable -value 0 -text "No" -relief sunken  \
                 -command "$config_cmd" -padx 0 -pady 1
             pack ${base}.y ${base}.n -side left -expand 1 -fill both
+        }
+        combobox {
+            ComboBox $base -width 12
+            if {[trace vinfo ::$variable] == ""} {
+                trace variable ::$variable w "vTcl:prop:combo_update $base $variable"
+            } else {
+                vTcl:prop:combo_update $base $variable
+            }
         }
         choice {
             frame $base
