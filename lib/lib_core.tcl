@@ -283,7 +283,6 @@ proc vTcl:core:get_widget_tree_label {target} {
 		set t "LAB: $ttt1 var=$ttt2"
 	    }
 	}
-
 	radiobutton {
 	    set ttt1 [$target cget -text]
 	    set ttt2 [$target cget -variable]
@@ -295,7 +294,6 @@ proc vTcl:core:get_widget_tree_label {target} {
 		set t "RB: $ttt1 var=$ttt2\(val=$ttt3\)"
 	    }
 	}
-
 	checkbutton {
 	    set ttt1 [$target cget -text]
 	    set ttt2 [$target cget -variable]
@@ -308,7 +306,6 @@ proc vTcl:core:get_widget_tree_label {target} {
 		set t "CB: $ttt1 var=$ttt2\(on=$ttt3,off=$ttt4\)"
 	    }
 	}
-
 	button {
 	    set ttt1 [$target cget -text]
 	    set ttt2 [$target cget -textvariable]
@@ -319,11 +316,15 @@ proc vTcl:core:get_widget_tree_label {target} {
 		set t "BUT: $ttt1 var=$ttt2"
 	    }
 	}
-
 	entry {
 	    set val [$target cget -textvariable]
 	    if {[lempty $val]} { set val NONE }
 	    set t "VAR: $val"
+	}
+	listbox {
+	    set val [$target cget -listvariable]
+	    if {[lempty $val]} { set val NONE }
+	    set t "Listbox VAR: $val"
 	}
 
 	message    -

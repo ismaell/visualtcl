@@ -26,6 +26,7 @@
 Class		Listbox
 Lib		core
 
+TreeLabel	@vTcl:core:get_widget_tree_label
 Icon		icon_listbox.gif
 DoubleClickCmd	vTcl:set_list
 InsertCmd	vTcl:widget:listbox:inscmd
@@ -36,5 +37,9 @@ DefaultOptions  -background white
 ClassOption     -_tooltip
 
 proc vTcl:widget:listbox:inscmd {target} {
-    $target insert end listbox
+    set last [lindex [split $target .] end]
+    set last [vTcl:rename $last]
+    set name ::[winfo toplevel $target]::$last
+    set $name "listbox"
+    $target configure -listvariable $name
 }
