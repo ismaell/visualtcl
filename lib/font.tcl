@@ -256,9 +256,9 @@ proc vTcl:font:get_font_dlg {base font_desc} {
     pack $base.fra27 \
         -in $base -anchor e -side top -pady 2
     pack $base.fra27.but28 \
-        -in $base.fra27 -anchor center -padx 10 -pady 5 -side left
+        -in $base.fra27 -anchor center -side left
     pack $base.fra27.but29 \
-        -in $base.fra27 -anchor center -padx 10 -pady 5 -side right
+        -in $base.fra27 -anchor center -side right
 
     pack $base.fra28 \
         -in $base -anchor center -expand 1 -fill both -side top
