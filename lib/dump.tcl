@@ -21,6 +21,45 @@
 ##############################################################################
 #
 
+proc vTcl:dump_namespace {context} {
+
+    set output ""
+    set vars  [info vars ${context}::*]
+    set procs [info procs ${context}::*]
+
+    append output "namespace eval [list $context] \{\n\n"
+
+    foreach var $vars {
+        set name $var
+        regsub -all {\:\:} $name @ name
+        set name [lindex [split $name @] end]
+
+        append output "set $name [list [vTcl:at $var]]\n\n"
+    }
+
+    foreach proc $procs {
+        set name $proc
+        regsub -all {\:\:} $name @ name
+        set name [lindex [split $name @] end]
+
+        set args ""
+        foreach j [info args $proc] {
+            if {[info default $proc $j value]} {
+                lappend args [list $j $value]
+            } else {
+                lappend args $j
+            }
+        }
+
+        set body [info body $proc]
+        append output "\nproc [list $name] \{$args\} \{$body\}\n\n"
+    }
+
+    append output "\}\n"
+
+    return $output
+}
+
 proc vTcl:dump_proc {i {type ""}} {
     if {[info procs $i] == ""} {return ""}
 
@@ -744,6 +783,7 @@ proc vTcl:dump:sourcing_footer {varName} {
     if {![vTcl:streq [string index $var end] "\n"]} { append var "\n" }
     append var "\}\n"
 }
+
 
 
 

@@ -36,11 +36,11 @@ proc vTcl:save_compounds {} {
     set file [vTcl:get_file save "Save Compound Library"]
     if {$file == ""} {return}
     set f [open $file w]
-    puts $f "set vTcl(cmpd,list) \"$vTcl(cmpd,list)\"\n"
     set index 0
-    set num [llength $vTcl(cmpd,list)]
-    foreach i $vTcl(cmpd,list) {
-        puts $f "set \{vTcl(cmpd:$i)\} \{$vTcl(cmpd:$i)\}\n"
+    set all [vTcl::compounds::enumerateCompounds user]
+    set num [llength $all]
+    foreach i $all {
+        puts $f [vTcl:dump_namespace vTcl::compounds::user::$i]
         incr index
         vTcl:statbar [expr {($index * 100) / $num}]
     }
@@ -733,9 +733,78 @@ namespace eval ::vTcl::compounds {
         regsub -all :: $list : list
         set result ""
         foreach item $list {
-            append result [lindex [split $item :] end]
+            lappend result [lindex [split $item :] end]
         }
         return $result
+    }
+
+    ## inserts a compound
+    proc putCompound {type compoundName} {
+        set spc ${type}::[list $compoundName]
+        set rootclass [vTcl:at ${spc}::class]
+
+        if {$::vTcl(pr,autoplace) || $rootclass == "Toplevel"} {
+            autoPlaceCompound $type $compoundName wm {}
+            return
+        }
+
+        vTcl:status "Insert [join $compoundName]"
+
+        bind vTcl(b) <Button-1> \
+            "vTcl:store_cursor %W
+             vTcl::compounds::placeCompound $type [list $compoundName] $::vTcl(w,def_mgr) %X %Y %x %y"
+    }
+
+    ## auto place a compound at insertion point
+    proc autoPlaceCompound {type compoundName gmgr gopt} {
+        set spc ${type}::[list $compoundName]
+        set rootclass [vTcl:at ${spc}::class]
+
+        if {$rootclass == "Toplevel"} {
+            set namePrefix $rootclass
+        } else {
+            set namePrefix cpd
+        }
+
+        set target [vTcl:new_widget_name $namePrefix $::vTcl(w,insert)]
+
+        insertCompound $target $type $compoundName $gmgr $gopt
+        vTcl:active_widget $target
+        vTcl:init_wtree
+    }
+
+    proc insertCompound {target type compoundName {gmgr pack} {gopt ""}} {
+        set spc ${type}::[list $compoundName]
+        set cmd ""
+        append cmd "vTcl::compounds::mergeCompoundCode $type [list $compoundName]"
+        append cmd "; [list vTcl::compounds::${spc}::compoundCmd] $target"
+        if {$gmgr != "wm"} {
+            append cmd "; eval $gmgr $target $gopt"
+        } else {
+            append cmd "; lappend ::vTcl(tops) $target"
+            append cmd "; vTcl:update_top_list"
+        }
+        append cmd "; vTcl:setup_bind_tree $target"
+        append cmd "; vTcl:widget:register_all_widgets $target"
+           
+        set do "$cmd"
+        set undo "destroy $target"
+        vTcl:push_action $do $undo
+        lappend ::vTcl(widgets,[winfo toplevel $target]) $target
+    }
+
+    proc placeCompound {type compoundName gmgr rx ry x y} {
+        vTcl:status Status
+        vTcl:rebind_button_1
+
+        set ::vTcl(w,insert) [winfo containing $rx $ry]
+
+        set gopt {}
+        if {$gmgr == "place"} {
+             append gopt "-x $x -y $y"
+        }
+
+        autoPlaceCompound $type $compoundName $gmgr $gopt
     }
 }
 

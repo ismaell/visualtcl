@@ -403,8 +403,8 @@ proc vTcl:cmp_user_menu {} {
         "
     }
     foreach i [lsort [vTcl::compounds::enumerateCompounds user]] {
-        $m add command -label $i -command "
-            vTcl::compounds::put_compound user::$i
+        $m add command -label [join $i] -command "
+            vTcl::compounds::putCompound user $i
         "
     }
 }
@@ -414,9 +414,9 @@ proc vTcl:cmp_sys_menu {} {
     set m $vTcl(menu,system,m)
     catch {destroy $m}
     menu $m -tearoff 0
-    foreach i [lsort $vTcl(syscmpd,list)] {
-        $m add comm -label $i -comm "
-            vTcl:put_compound [list $i] \$vTcl(syscmpd:$i)
+    foreach i [lsort [vTcl::compounds::enumerateCompounds system]] {
+        $m add command -label [join $i] -command "
+            vTcl::compounds::putCompound system $i
         "
     }
 }
@@ -1461,4 +1461,5 @@ namespace eval ::vTcl::ui::attributes {
         }
     }
 }
+
 
