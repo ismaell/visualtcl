@@ -10,6 +10,7 @@ Resizable     horizontal
 TreeLabel     Combo Box
 AliasPrefix   Combo
 ResizeCmd     vTcl:Combobox2:Resize
+InsertCmd     vTcl:Combobox2:InsertCmd
 
 # New options for this widget
 NewOption -commandstate    "Command State"  choice {normal disabled}
@@ -17,6 +18,14 @@ NewOption -maxheight       "Max Height"     type
 
 proc vTcl:Combobox2:Resize {widget w h} {
     $widget configure -width $w
+}
+
+proc vTcl:Combobox2:InsertCmd {target} {
+    set last [lindex [split $target .] end]
+    set last [vTcl:rename $last]
+    set name "[winfo toplevel $target]::$last"
+
+    $target configure -textvariable $name
 }
 
 # Routines that need to be exported to a saved project
