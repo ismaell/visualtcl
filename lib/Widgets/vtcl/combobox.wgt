@@ -7,25 +7,37 @@ Balloon       vTcl combo box
 DumpChildren  no
 MegaWidget    yes
 Resizable     horizontal
-TreeLabel     Combo Box
+TreeLabel     @vTcl::widgets::vtcl::combobox2::getWidgetTreeLabel
 AliasPrefix   Combo
-ResizeCmd     vTcl:Combobox2:Resize
-InsertCmd     vTcl:Combobox2:InsertCmd
+ResizeCmd     vTcl::widgets::vtcl::combobox2::resizeCmd
+InsertCmd     vTcl::widgets::vtcl::combobox2::insertCmd
 
 # New options for this widget
 NewOption -commandstate    "Command State"  choice {normal disabled}
 NewOption -maxheight       "Max Height"     type
 
-proc vTcl:Combobox2:Resize {widget w h} {
-    $widget configure -width $w
-}
+namespace eval vTcl::widgets::vtcl::combobox2 {
 
-proc vTcl:Combobox2:InsertCmd {target} {
-    set last [lindex [split $target .] end]
-    set last [vTcl:rename $last]
-    set name "[winfo toplevel $target]::$last"
+    proc resizeCmd {widget w h} {
+        $widget configure -width $w
+    }
 
-    $target configure -textvariable $name
+    proc insertCmd {target} {
+        set last [lindex [split $target .] end]
+        set last [vTcl:rename $last]
+        set name "[winfo toplevel $target]::$last"
+
+        $target configure -textvariable $name
+    }
+
+    proc getWidgetTreeLabel {target} {
+        set var [$target cget -textvariable]
+	if {$var != ""} {
+	    return "Combo Box TEXTVAR=$var"
+	} else {
+	    return "Combo Box"
+	}
+    }
 }
 
 # Routines that need to be exported to a saved project

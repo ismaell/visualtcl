@@ -113,7 +113,9 @@ proc vTcl:toolbar_reflow {{base .vTcl.toolbar}} {
         set itemHeight 22
     }
     }
-    set w [expr [winfo width $base] / $itemWidth]
+    set oldw [winfo width $base]
+    set oldh [winfo height $base]
+    set w [expr $oldw / $itemWidth]
     if {$w == 0} {
         set w $vTcl(toolbar,width)
     }
@@ -142,5 +144,11 @@ proc vTcl:toolbar_reflow {{base .vTcl.toolbar}} {
     }
     update
     vTcl:setup_vTcl:bind $base
-    wm geometry $base [expr $w * $itemWidth]x[expr $h * $itemHeight]
+    set neww [expr $w * $itemWidth]
+    set newh [expr $h * $itemHeight]
+    if {$oldw == $neww && $oldh == $newh} {
+        # already the right size
+	return
+    }
+    wm geometry $base ${neww}x${newh}
 }

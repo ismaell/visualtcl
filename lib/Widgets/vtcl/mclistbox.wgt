@@ -39,6 +39,8 @@ ResizeCmd     vTcl::widgets::vtcl::mclistbox::resizeCmd
 InsertCmd     vTcl::widgets::vtcl::mclistbox::insertCmd
 DumpCmd       vTcl::widgets::vtcl::mclistbox::dumpCmd
 
+Function      "Edit Columns..." vTcl::widgets::vtcl::mclistbox::editColumns
+
 lappend vTcl(classes) MclistboxColumn
 
 ## New options for this widget
@@ -148,6 +150,11 @@ namespace eval ::vTcl::widgets::vtcl::mclistbox::edit {
 }
 
 namespace eval ::vTcl::widgets::vtcl::mclistbox {
+
+    proc editColumns {} {
+        set target $::vTcl(w,widget)
+	::vTcl::itemEdit::edit $target vTcl::widgets::vtcl::mclistbox::edit
+    }
 
     proc get_columns {target} {
     }

@@ -7,9 +7,10 @@ Balloon		3d progressbar
 DumpChildren	no
 MegaWidget  yes
 Resizable	horizontal
-TreeLabel	3D Progressbar
+TreeLabel	@vTcl::widgets::vtcl::progressbar1::getWidgetTreeLabel
 AliasPrefix	Progressbar
-ResizeCmd	vTcl:Progressbar1:Resize
+InsertCmd	vTcl::widgets::vtcl::progressbar1::insertCmd
+ResizeCmd	vTcl::widgets::vtcl::progressbar1::resizeCmd
 
 # New options for this widget.
 NewOption -color		"color"			type
@@ -18,8 +19,28 @@ NewOption -shape		"shape"			choice	"3d flat"
 NewOption -textvalue		"text value"		type
 NewOption -textcolor		"text color"		color	{}	Colors
 
-proc vTcl:Progressbar1:Resize {widget w h} {
-    $widget configure -width [expr $w - 10]
+namespace eval vTcl::widgets::vtcl::progressbar1 {
+
+    proc resizeCmd {widget w h} {
+        $widget configure -width [expr $w - 10]
+    }
+
+    proc insertCmd {target} {
+        set last [lindex [split $target .] end]
+        set last [vTcl:rename $last]
+        set name "[winfo toplevel $target]::$last"
+
+        $target configure -variable $name
+    }
+
+    proc getWidgetTreeLabel {target} {
+        set var [$target cget -variable]
+	if {$var != ""} {
+	    return "3D Progress Bar VAR=$var"
+	} else {
+	    return "3D Progress Bar"
+	}
+    }
 }
 
 # Routines that need to be exported to a saved project.
