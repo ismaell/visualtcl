@@ -1,7 +1,7 @@
 Name		progressbar1
-Lib		core
+Lib		vtcl
 
-Class		Progressbar
+Class		Progressbar1
 CreateCmd	::progressbar::progressbar
 Icon		icon_tixMeter.gif
 Balloon		3d progressbar
@@ -17,7 +17,7 @@ NewOption -textvalue		"text value"		type
 NewOption -textcolor		"text color"		color	{}	Colors
 
 # Routines that need to be exported to a saved project.
-Export	progressBarSetup
+Export	__progressbar_Setup
 Export	::progressbar::progressbar
 Export	::progressbar::Init
 Export	::progressbar::Build
@@ -29,7 +29,7 @@ Export	::progressbar::Configure
 Export	::progressbar::DestroyHandler
 Export	::progressbar::Draw
 
-proc progressBarSetup {} {
+proc __progressbar_Setup {} {
   namespace eval ::progressbar {
     # this is the public interface
     namespace export progressbar
@@ -50,7 +50,7 @@ proc progressBarSetup {} {
   }
 }
 
-::progressBarSetup
+__progressbar_Setup
 
 # ::progressbar::Init --
 #
@@ -189,22 +189,22 @@ proc ::progressbar::Init {} {
   label $tmpWidget
   foreach option [list Background Relief] {
     set values [$tmpWidget configure -[string tolower $option]]
-    option add *Progressbar.$option [lindex $values 3]
+    option add *Progressbar1.$option [lindex $values 3]
   }
   destroy $tmpWidget
 
   # these are unique to us...
-  option add *Progressbar.borderWidth	5		widgetDefault
-  option add *Progressbar.color		@blue0		widgetDefault
-  option add *Progressbar.percent	0		widgetDefault
-  option add *Progressbar.shape		3D		widgetDefault
-  option add *Progressbar.variable	{}		widgetDefault
-  option add *Progressbar.width		180		widgetDefault
-  option add *Progressbar.textColor	black		widgetDefault
+  option add *Progressbar1.borderWidth	5		widgetDefault
+  option add *Progressbar1.color	@blue0		widgetDefault
+  option add *Progressbar1.percent	0		widgetDefault
+  option add *Progressbar1.shape	3D		widgetDefault
+  option add *Progressbar1.variable	{}		widgetDefault
+  option add *Progressbar1.width	180		widgetDefault
+  option add *Progressbar1.textColor	black		widgetDefault
 
   # define the class bindings
   # this allows us to clean up some things when we go away
-  bind Progressbar <Destroy> [list ::progressbar::DestroyHandler %W]
+  bind Progressbar1 <Destroy> [list ::progressbar::DestroyHandler %W]
 }
 
 
@@ -232,7 +232,7 @@ proc ::progressbar::progressbar {args} {
 
   # perform a one time initialization
   if {![info exists widgetOptions]} {
-    ::progressBarSetup
+    __progressbar_Setup
     Init
   }
 
@@ -312,7 +312,7 @@ proc ::progressbar::Build {w args} {
   # this is our widget -- a frame of class Progressbar. Naturally,
   # it will contain other widgets. We create it here because
   # we need it to be able to set our default options.
-  set widgets(this) [frame $w -class Progressbar]
+  set widgets(this) [frame $w -class Progressbar1]
 
   # this defines all of the default options. We get the
   # values from the option database. Note that if an array
@@ -824,7 +824,7 @@ proc ::progressbar::DestroyHandler {w} {
   # crush the namespace and kill the proc. Get it? Crush. Kill. 
   # Destroy. Heh. Danger Will Robinson! Oh, man! I'm so funny it
   # brings tears to my eyes.
-  if {[string compare [winfo class $w] "Progressbar"] == 0} {
+  if {[string compare [winfo class $w] "Progressbar1"] == 0} {
     namespace delete ::progressbar::$w
     rename $w {}
   }
