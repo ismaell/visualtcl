@@ -825,6 +825,21 @@ proc vTcl:dump:project_info {basedir project} {
         if {[winfo manager $widget] == "wm"} {
             append out [vTcl:wm:dump_info $widget]
         }
+
+        ## suboptions for megawidgets
+        if {[info exists ::widgets::${widget}::subOptions::save]} {
+            upvar ::widgets::${widget}::subOptions::save subSave
+            set list {}
+            foreach var [lsort [array names subSave]] {
+                if {!$subSave($var)} { continue }
+                lappend list $var $subSave($var)
+            }
+            append out $vTcl(tab2)
+            append out "namespace eval subOptions \{\n"
+            append out $vTcl(tab)$vTcl(tab2)
+            append out "array set save [list $list]\n"
+            append out $vTcl(tab2)\}\n
+        }
         append out "$vTcl(tab)\}\n"
     }
 

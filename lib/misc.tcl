@@ -1218,7 +1218,7 @@ namespace eval ::vTcl::ui::attributes {
     }
 
     ## returns: a string used to enable/disable the option
-    proc newAttribute {target top option variable config_cmd} {
+    proc newAttribute {target top option variable config_cmd check_cmd} {
         variable pendingCmds
         variable checked
 
@@ -1343,12 +1343,21 @@ namespace eval ::vTcl::ui::attributes {
         ## Checkbox to save/not save the option
         set theCheck $top.${option}check
         checkbutton $theCheck -text "" \
-            -variable "::vTcl::ui::attributes::checked($base)"
+            -variable "::vTcl::ui::attributes::checked($base)" \
+            -command "$check_cmd $option ::vTcl::ui::attributes::checked($base)"
+        set [$theCheck cget -variable] [eval $check_cmd $option]
         bind $theCheck <Destroy> "unset ::vTcl::ui::attributes::checked($base)"
 
         grid $label $base $theCheck -sticky news
         grid columnconf $top 1 -weight 1
         return $enableData
+    }
+
+    ## Returns the variable to check or uncheck a checkbox for
+    ## saving/not saving an option
+    proc getCheckVariable {top option} {
+        set base $top.t${option}
+        return ::vTcl::ui::attributes::checked($base)
     }
 
     ## Sets all pending options (eg. for which user didn't press the <Return> key)

@@ -1,6 +1,9 @@
 ChangeLog for Visual Tcl:
 
 1.6.0a1 ->
+    o For megawidgets, saving checkboxes for saving suboptions or not.
+    o Fixed bug where setting geometry padx/y option would set regular
+      padx/y option for button widget.
     o If "autoload compounds" option is on, but file is not found, option
       is turned off.
     o If "autoload compounds" option is on, but no file has been specified,

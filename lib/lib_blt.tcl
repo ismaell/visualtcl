@@ -50,7 +50,7 @@ proc vTcl:widget:lib:lib_blt {args} {
     package require BLT
     }
 
-    lappend vTcl(proc,ignore) "blt::*"
+    IgnoreProc "::blt::*"
 }
 
 namespace eval vTcl::widgets::blt {

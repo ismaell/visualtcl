@@ -229,7 +229,11 @@ proc vTcl:key_release_cmd {k config_cmd target option variable args} {
     if {$k < 37 || $k > 40} {
         set value [vTcl:at $variable]
         set ::vTcl::config($target) [list $config_cmd $target $option $variable $value $args]
-        vTcl:prop:save_opt $target $option $variable
+
+        ## Geometry options do not have checkboxes to save/not save
+        if {$config_cmd != "vTcl:prop:geom_config_mgr"} {
+            vTcl:prop:save_opt $target $option $variable
+        }
     }
 }
 

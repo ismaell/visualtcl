@@ -670,6 +670,33 @@ namespace eval ::vTcl::itemEdit {
         init $top $target $cmds
     }
 
+    ## get initial values for the checkboxes
+    proc initBoxes {top} {
+        variable target
+        variable allOptions
+
+        set w $target($top)
+        set nm ::widgets::${w}::subOptions
+        namespace eval $nm {}
+    }
+
+    ## action to take when a box is checked
+    proc setGetBox {top option {var {}}} {
+        variable target
+
+        set w $target($top)
+        set nm ::widgets::${w}::subOptions
+        if {$var != ""} {
+            set ${nm}::save($option) [vTcl:at $var]
+        } else {
+            if {[info exists ${nm}::save($option)]} {
+                return [vTcl:at ${nm}::save($option)]
+            } else {
+                return 0
+            }
+        }
+    }
+
     proc init {top w cmdsEdit} {
         variable cmds
         variable target
@@ -685,6 +712,7 @@ namespace eval ::vTcl::itemEdit {
         set ::${top}::list_items $list_items
         initProperties $top
         selectItem $top $current($top)
+        initBoxes $top
         wm title $top [::$cmds($top)::getTitle $w]
     }
 
@@ -734,7 +762,8 @@ namespace eval ::vTcl::itemEdit {
                    $option \[vTcl:at $variable\]
                "
             set enableData($top,$option) [::vTcl::ui::attributes::newAttribute \
-                $target($top) $f $option $variable $config_cmd]
+                $target($top) $f $option $variable $config_cmd \
+                "::vTcl::itemEdit::setGetBox $top"]
             pack $f -side top -fill x -expand 0
         }
 
