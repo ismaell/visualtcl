@@ -118,85 +118,6 @@ namespace eval vTcl::widgets::iwidgets::toolbar {
     namespace export getSortedComponents
 }
 
-proc vTclWindow.vTcl.addToolbarItem {base} {
-    if {$base == ""} {
-        set base .vTcl.addToolbarItem
-    }
-    if {[winfo exists $base]} {
-        wm deiconify $base; return
-    }
-
-    global widget
-
-    vTcl:DefineAlias $base AddToolbarItem vTcl:Toplevel:WidgetProc "" 1
-    vTcl:DefineAlias $base.fra59.but60 AddButton vTcl:WidgetProc "AddToolbarItem" 1
-
-    ###################
-    # CREATING WIDGETS
-    ###################
-    vTcl:toplevel $base -class Toplevel
-    wm geometry $base 296x209
-    wm focusmodel $base passive
-    wm maxsize $base 1009 738
-    wm minsize $base 1 1
-    wm overrideredirect $base 0
-    wm resizable $base 1 1
-    wm withdraw $base
-    wm title $base "Add Toolbar Item"
-    bindtags $base "$base Toplevel all _TopLevel"
-    vTcl:FireEvent $base <<Create>>
-    wm protocol $base WM_DELETE_WINDOW "vTcl:FireEvent $base <<DeleteWindow>>"
-
-    frame $base.fra58 \
-        -borderwidth 2
-    label $base.fra58.lab65 \
-        -anchor w -justify left -text {Select the type of item to add:}
-    ScrolledWindow $base.fra58.scr56 \
-        -size 14
-    listbox $base.fra58.scr56._grid.f.lis57 \
-        -background white -height 0 -listvariable "$base\::classes"
-    bind $base.fra58.scr56._grid.f.lis57 <<ListboxSelect>> {
-        set index [lindex [%W curselection] 0]
-        if {$index != ""} {
-            set [winfo toplevel %W]::selected [%W get $index]
-            AddToolbarItem.AddButton configure -state normal
-        }
-    }
-
-    $base.fra58.scr56 setwidget $base.fra58.scr56._grid.f.lis57
-    frame $base.fra59 \
-        -borderwidth 2 -height 75 -width 125
-    button $base.fra59.but60 \
-        -text Add -width 8 -command "destroy $base" -state disabled
-    button $base.fra59.but61 \
-        -text Cancel -width 8 -command "set ${base}::selected {}; destroy $base"
-    ###################
-    # SETTING GEOMETRY
-    ###################
-    pack $base.fra58 \
-        -in $base -anchor center -expand 1 -fill both -side top
-    pack $base.fra58.lab65 \
-        -in $base.fra58 -anchor center -expand 0 -fill x -side top
-    pack $base.fra58.scr56 \
-        -in $base.fra58 -anchor center -expand 1 -fill both -side top
-    pack $base.fra59 \
-        -in $base -anchor center -expand 0 -fill none -ipady 5 -side top
-    pack $base.fra59.but60 \
-        -in $base.fra59 -anchor center -expand 0 -fill none -padx 5 \
-        -side left
-    pack $base.fra59.but61 \
-        -in $base.fra59 -anchor center -expand 0 -fill none -padx 5 \
-        -side left
-
-    ## Initialization
-    set ${base}::classes {Button Radiobutton Checkbutton Frame Label}
-    set ${base}::selected ""
-
-    vTcl:FireEvent $base <<Ready>>
-    vTcl:center $base 296 209
-    wm deiconify $base
-}
-
 namespace eval vTcl::widgets::iwidgets::toolbar::edit {
 
     namespace import ::vTcl::widgets::iwidgets::toolbar::getSortedComponents
@@ -240,9 +161,9 @@ namespace eval vTcl::widgets::iwidgets::toolbar::edit {
     }
 
     proc addItem {target} {
-        Window show .vTcl.addToolbarItem
-        AddToolbarItem ShowModal
-        set class [vTcl:at .vTcl.addToolbarItem::selected]
+        ## ask the user for type of item to insert
+        set class [::vTcl::input::listboxSelect::select \
+            {Button Radiobutton Checkbutton Frame Label} "Choose Item Class"]
         if {$class == ""} return ""
 
         ## find unique component name
@@ -300,4 +221,5 @@ namespace eval vTcl::widgets::iwidgets::toolbar::edit {
         error "Not implemented yet!"
     }
 }
+
 
