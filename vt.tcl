@@ -200,43 +200,25 @@ proc vTcl:setup_gui {} {
         set vTcl(balloon,on) 0
     }
 
-    if {$tk_version < 8} {
+    if {$vTcl(pr,font_dlg) == ""} {
+        set vTcl(pr,font_dlg) {Helvetica 14}
+    }
 
-        if {$vTcl(pr,font_dlg) == ""} {
-            set vTcl(pr,font_dlg) -Adobe-Helvetica-Medium-R-Normal-*-*-180-*-*-*-*-*-*
-        }
+    if {$vTcl(pr,font_fixed) == ""} {
+        set vTcl(pr,font_fixed) {Courier 10}
+    }
 
-        if {$vTcl(pr,font_fixed) == ""} {
-            set vTcl(pr,font_fixed) fixed
-        }
-
-        option add *vTcl*font \
-            -Adobe-Helvetica-Medium-R-Normal-*-*-120-*-*-*-*-*-*
-        option add *vTcl*Scrollbar.borderWidth 1
+    if {$tcl_platform(platform) == "unix"} {
         option add *vTcl*Scrollbar.width 10
         option add *Scrollbar.width 10
-
-    } else {
-
-        if {$vTcl(pr,font_dlg) == ""} {
-            set vTcl(pr,font_dlg) {Helvetica 14}
-        }
-
-        if {$vTcl(pr,font_fixed) == ""} {
-            set vTcl(pr,font_fixed) {Courier 10}
-        }
-
-        if {$tcl_platform(platform) == "unix"} {
-            option add *vTcl*Scrollbar.width 10
-	    option add *Scrollbar.width 10
-            option add *vTcl*font {Helvetica 12}
-        }
-
-        if {$tcl_platform(platform) == "windows"} {
-            option add *Scrollbar.width 16
-            option add *vTcl*Scrollbar.width 16
-        }
+        option add *vTcl*font {Helvetica 12}
     }
+
+    if {$tcl_platform(platform) == "windows"} {
+        option add *Scrollbar.width 16
+        option add *vTcl*Scrollbar.width 16
+    }
+
     option add *vTcl*Text*font $vTcl(pr,font_fixed)
 
     vTcl:setup_bind_tree .
