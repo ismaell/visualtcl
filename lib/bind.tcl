@@ -158,7 +158,7 @@ proc vTclWindow.vTcl.bind {args} {
         -image down \
         -padx 0 -pady 0 -text button -width 23 
     button $base.cpd21.01.fra22.but27 \
-        -command "Window show .vTcl.newtag" \
+        -command "vTcl:Toplevel:WidgetProc .vTcl.newtag ShowModal" \
         -height 23 \
         -highlightthickness 0 \
         -padx 0 -pady 0 -image icon_message.gif -width 23 
@@ -713,7 +713,7 @@ proc vTclWindow.vTcl.newtag {base} {
     label $base.fra24.lab27 \
         -text {Or name a new tag:} 
     entry $base.fra24.ent28 \
-        -textvariable NewBindingTagName 
+        -textvariable NewBindingTagName -bg white
     bind $base.fra24.ent28 <KeyRelease> {
         if {$NewBindingTagName == ""} {
             NewBindingTagOK configure -state disabled
@@ -1398,5 +1398,7 @@ namespace eval ::widgets_bindings {
     }
 
 } ; # namespace eval
+
+
 
 

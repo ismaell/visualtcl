@@ -231,7 +231,7 @@ proc vTcl:font:get_font_dlg {base font_desc} {
         -orient vert
     text $base.cpd43.03 \
         -font $vTcl(x,$base,font) \
-        -height 3 \
+        -height 3 -bg white \
         -width 8 -wrap none \
         -xscrollcommand "$base.cpd43.01 set" \
         -yscrollcommand "$base.cpd43.02 set"
@@ -852,3 +852,7 @@ proc vTcl:font:get_manager_position {} {
     global vTcl
     return [lindex [$vTcl(fonts,font_mgr,win).cpd31.03 yview] 0]
 }
+
+
+
+

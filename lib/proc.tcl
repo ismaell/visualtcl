@@ -285,35 +285,35 @@ proc vTclWindow.vTcl.proc {args} {
     pack $base.f2 \
         -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 3 -pady 3 \
         -side top
-    frame $base.f2.f8 -height 30 -width 30
+    frame $base.f2.f8 -height 30 -width 30 -relief flat
     pack $base.f2.f8 \
         -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 0 -pady 0 \
         -side top
     label $base.f2.f8.label10 -anchor w  \
-        -relief groove -text Function -width 9
+        -relief flat -text Function -width 9
     pack $base.f2.f8.label10 \
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 2 -pady 0 \
         -side left
     vTcl:entry $base.f2.f8.procname \
         -cursor {}  \
-        -highlightthickness 0
+        -highlightthickness 0 -bg white
     pack $base.f2.f8.procname \
         -anchor center -expand 1 -fill x -ipadx 0 -ipady 0 -padx 2 -pady 2 \
         -side left
     frame $base.f2.f9 \
-        -height 30 -width 30
+        -height 30 -width 30 -relief flat
     pack $base.f2.f9 \
         -anchor center -expand 0 -fill both -ipadx 0 -ipady 0 -padx 0 -pady 0 \
         -side top
     label $base.f2.f9.label12 \
         -anchor w  \
-        -relief groove -text Arguments -width 9
+        -relief flat -text Arguments -width 9
     pack $base.f2.f9.label12 \
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 2 -pady 0 \
         -side left
     vTcl:entry $base.f2.f9.args \
         -cursor {}  \
-        -highlightthickness 0
+        -highlightthickness 0 -bg white
     pack $base.f2.f9.args \
         -anchor center -expand 1 -fill x -ipadx 0 -ipady 0 -padx 2 -pady 2 \
         -side left
@@ -434,3 +434,5 @@ proc vTcl:proc:edit_cancel {base} {
         }
     }
 }
+
+

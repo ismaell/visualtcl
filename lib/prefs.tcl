@@ -315,7 +315,7 @@ proc {vTcl:prefs:basics} {tab} {
 	pack configure $form_entry -fill x
 
 	set entry [vTcl:formCompound:add $form_entry entry \
-		-textvariable prefs::autoloadcompfile]
+		-textvariable prefs::autoloadcompfile -bg white]
 	pack configure $entry -fill x -padx 5 -side left -expand 1
 
 	set browse_file [vTcl:formCompound:add $form_entry button \
@@ -402,7 +402,7 @@ proc {vTcl:prefs:images} {tab} {
 	pack configure $form_entry -fill x
 
 	set last [vTcl:formCompound:add $form_entry entry  \
-		-textvariable prefs::imageeditor]
+		-textvariable prefs::imageeditor -bg white]
 	pack configure $last -fill x -expand 1 -padx 5 -side left
 
 	set last [vTcl:formCompound:add $form_entry button \
@@ -452,3 +452,4 @@ proc {vTcl:prefs:project} {tab} {
 	vTcl:formCompound:add $tab radiobutton  \
 		-text "Place" -variable prefs::manager -value place
 }
+
