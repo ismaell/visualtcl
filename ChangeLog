@@ -5,7 +5,7 @@ ChangeLog for Visual Tcl:
     o Deleting a toplevel menu closes a possibly open menu editor
     o Editing a submenu brings menu editor for root menu and selects
       submenu
-    o Grooved the labels on the property manager.  As each individual option
+    o Raised the labels on the property manager.  As each individual option
       is selected, the label becomes sunken.  This is a cosmetic change
       that is in place for a future enhancement.
     o Added scrolling through the property manager using direction keys.

@@ -31,35 +31,20 @@ proc vTcl:log {msg} {
     return
     global vTcl tcl_platform
 
-     set outCmd vTcl:puts
-
-     if {$tcl_platform(platform) == "windows"} {
-          set outCmd puts
-     }
-
-     if { [info exists vTcl(LOG_FILE)] } {
-          $outCmd $vTcl(LOG_FD_W) "$msg"
-          flush $vTcl(LOG_FD_W)
-     } else {
-          $outCmd "$msg"
-     }
-
-     if {$tcl_platform(platform) != "windows"} {
-
-     	# don't display log info into the console window
-     	vTcl:console:get_output 0
-     }
+    if {![info exists vTcl(LOG_FD_W)]} {
+	## If we can't open the log files in HOME, try in the vTcl directory.
+	if {[catch {open $vTcl(LOG_FILE) "w"} vTcl(LOG_FD_W)] \
+	    || [catch {open $vTcl(LOG_FILE) "r"} vTcl(LOG_FD_R)]} {
+	    vTcl:error "Cannot open vTcl log file."
+	    vTcl:exit
+	}	
+	catch {fconfigure $vTcl(LOG_FD_R) -buffering line}
+    }
+	
+    puts $vTcl(LOG_FD_W) "$msg"
+    flush $vTcl(LOG_FD_W)
+    # tkcon_puts $msg
 }
-
-# this prevented Itcl from loading correctly
-
-# rename proc vTcl:proc
-#
-# vTcl:proc proc {name args body} {
-#    global vTcl
-#    if {$name == "Window" && $vTcl(sourcing) == "1"} {return}
-#    vTcl:proc $name $args $body
-# }
 
 proc vTcl:splash_status {string {nodots {}}} {
     global statusMsg
@@ -115,7 +100,6 @@ proc vTcl:load_widgets {} {
     # user wants to load (which can significantly reduce startup time)
 
     if {[file exists $vTcl(LIB_FILE)]} {
-
     	set toload ""
     	set inID [open $vTcl(LIB_FILE) r]
     	set contents [split [read $inID] \n]
@@ -159,7 +143,8 @@ proc vTcl:setup {} {
         set vTcl(VTCL_HOME) $env(VTCL_HOME)
     }
 
-    if {$env(HOME) == ""} {
+    ## See if we can write to a file in HOME.  If not, use VTCL_HOME
+    if {$env(HOME) == "" || [catch {open [file join $env(HOME) .tmp] w} fp]} {
         set vTcl(CONF_FILE) [file join $vTcl(VTCL_HOME) .vtclrc]
         set vTcl(LIB_FILE)  [file join $vTcl(VTCL_HOME) .vtcllibs]
         set vTcl(LOG_FILE)  [file join $vTcl(VTCL_HOME) .vtclog]
@@ -168,18 +153,10 @@ proc vTcl:setup {} {
         set vTcl(LIB_FILE)  [file join $env(HOME) .vtcllibs]
         set vTcl(LOG_FILE)  [file join $env(HOME) .vtclog]
     }
-
-    ## If we can't open the log files in HOME, try in the vTcl directory.
-    if {[catch {open $vTcl(LOG_FILE) "w"} vTcl(LOG_FD_W)] \
-    	|| [catch {open $vTcl(LOG_FILE) "r"} vTcl(LOG_FD_R)]} {
-        set vTcl(CONF_FILE) [file join $vTcl(VTCL_HOME) .vtclrc]
-        set vTcl(LIB_FILE)  [file join $vTcl(VTCL_HOME) .vtcllibs]
-        set vTcl(LOG_FILE)  [file join $vTcl(VTCL_HOME) .vtclog]
-    	catch {open $vTcl(LOG_FILE) "w"} vTcl(LOG_FD_W)
-    	catch {open $vTcl(LOG_FILE) "r"} vTcl(LOG_FD_R)
-    }	
-	
-    catch {fconfigure $vTcl(LOG_FD_R) -buffering line}
+    catch {
+    	close $fp
+	file delete -force [file join $env(HOME) .tmp]
+    }
 
     set vTcl(LIB_DIR)   [file join $vTcl(VTCL_HOME) lib]
     set vTcl(LIB_WIDG)  [glob -nocomplain [file join $vTcl(LIB_DIR) lib_*.tcl]]
@@ -663,9 +640,7 @@ proc vTcl:main {argc argv} {
                 }
             }
         }
-        if {![file isdir $env(VTCL_HOME)]} {
-            set vTcl(VTCL_HOME) [pwd]
-        }
+        if {![file isdir $env(VTCL_HOME)]} { set vTcl(VTCL_HOME) [pwd] }
         vTcl:setup
         if {$argc > 0} {
 	    set file [lindex $argv end]
@@ -680,9 +655,9 @@ proc vTcl:main {argc argv} {
 	# autoloading of compounds if "Preferences" options enabled
 
 	if [info exists vTcl(pr,autoloadcomp)] {
-        	if {$vTcl(pr,autoloadcomp)} {
-        		vTcl:load_compounds $vTcl(pr,autoloadcompfile)
-        	}
+	    if {$vTcl(pr,autoloadcomp)} {
+		vTcl:load_compounds $vTcl(pr,autoloadcompfile)
+	    }
         }
         # @@end_change
     }
@@ -691,10 +666,7 @@ proc vTcl:main {argc argv} {
     after 1000 "destroy .x"
 
     if {[info exists vTcl(pr,dontshowtips)]} {
-
-        if {! $vTcl(pr,dontshowtips) } {
-             Window show .vTcl.tip
-        }
+        if {!$vTcl(pr,dontshowtips) } { Window show .vTcl.tip }
     }
 }
 
