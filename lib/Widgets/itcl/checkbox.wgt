@@ -5,6 +5,8 @@ Icon icon_checkbox.gif
 DumpChildren  no
 MegaWidget    yes
 DumpCmd       vTcl:dump:checkbox
+InsertCmd     vTcl:widget:checkbox:inscmd
+DefaultOptions -labeltext "Checkbox"
 
 proc vTcl:dump:checkbox {target basename} {
 
