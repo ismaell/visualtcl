@@ -126,8 +126,8 @@ proc vTclWindow.vTcl.prefs {{base ""} {container 0}} {
 
     vTcl:prefs:init $base
 
-    wm geometry $base 450x400
-    vTcl:center $base 450 400
+    wm geometry $base 450x450
+    vTcl:center $base 450 450
     wm deiconify $base
 }
 
