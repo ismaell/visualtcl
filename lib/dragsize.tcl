@@ -21,28 +21,27 @@
 ##############################################################################
 #
 
+set vTcl(cursor,w) ""
+
 proc vTcl:store_cursor {target} {
     global vTcl
 
-    set vTcl(cursor,last) [$target cget -cursor]
-    set vTcl(cursor,w) $target
+    ## only store cursor once
+    if {$vTcl(cursor,w) == ""} {
+        #puts "Store cursor: $target $vTcl(cursor,last)"
+        set vTcl(cursor,last) [$target cget -cursor]
+        set vTcl(cursor,w) $target
+    }
 }
 
 proc vTcl:restore_cursor {target} {
     global vTcl
 
-    # if the widget has been registered (it should), it's cursor option
-    # has been stored
-    set stored [vTcl:WidgetVar $target options(-cursor) cursor]
-
-    if {!$stored} {
-        set cursor ""
-        if {$target == $vTcl(cursor,w)} {
-            set cursor "$vTcl(cursor,last)"
-        }
+    ## only restore cursor once
+    if {$vTcl(cursor,w) != ""} {
+        #puts "Restore cursor: $vTcl(cursor,w) $vTcl(cursor,last)"
+        $vTcl(cursor,w) configure -cursor $vTcl(cursor,last)
     }
-
-    $target configure -cursor $cursor
 
     set vTcl(cursor,w) ""
 }

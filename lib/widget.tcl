@@ -1071,12 +1071,10 @@ proc vTcl:new_widget {autoplace class button {options ""}} {
     vTcl:status "Insert $class"
 
     bind vTcl(b) <Button-1> "
-        vTcl:store_cursor %W
         vTcl:place_widget $class $button [list $options] %X %Y %x %y
     "
 
     bind vTcl(b) <Shift-Button-1> "
-        vTcl:store_cursor %W
         vTcl:place_widget $class $button [list $options] %X %Y %x %y
     "
 }

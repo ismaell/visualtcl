@@ -222,11 +222,11 @@ proc vTcl:prop:recalc_canvas {} {
     set vTcl(propmgr,frame,$f3) [expr $h + $h2]
 }
 
-proc vTcl:key_release_cmd {k w config_cmd} {
+proc vTcl:key_release_cmd {W k} {
 
     ## Don't change if the user presses a directional key.
     if {$k < 37 || $k > 40} {
-        set ::vTcl::config($w) $config_cmd
+        set ::vTcl::config($::vTcl(w,widget)) $::vTcl::apply($W)
     }
 }
 
@@ -238,7 +238,7 @@ proc vTcl:focus_out_cmd {} {
             continue
         }
         catch {
-            eval $::vTcl::config($w)
+            uplevel #0 $::vTcl::config($w)
         }
         unset ::vTcl::config($w)
     }
@@ -295,7 +295,7 @@ proc vTcl:prop:update_attr {} {
             }
             if {[lsearch $vTcl(w,optlist) $i] < 0} { continue }
 	    set variable "vTcl(w,opt,$i)"
-	    set config_cmd "\$vTcl(w,widget) configure $i \[list \$$variable\]; "
+	    set config_cmd "\$vTcl(w,widget) configure $i \[vTcl:at $variable\]; "
 
 	    vTcl:prop:new_attr $top $i $variable $config_cmd opt
         }
@@ -346,9 +346,9 @@ proc vTcl:prop:update_attr {} {
 		set cmd [lindex $vTcl(m,$mgr,$i) 4]
 
 		if {$cmd == ""} {
-		    set config_cmd "$mgr conf \$vTcl(w,widget) $i \[list \$$variable\]"
+		    set config_cmd "$mgr conf \$vTcl(w,widget) $i \[vTcl:at $variable\]"
 		} else {
-		    set config_cmd "$cmd \$vTcl(w,widget) $i \[list \$$variable\]"
+		    set config_cmd "$cmd \$vTcl(w,widget) $i \[vTcl:at $variable\]"
                 }
 		vTcl:prop:new_attr $top $i $variable $config_cmd m,$mgr -geomOpt
 	    }
@@ -627,7 +627,8 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix {isGeomOpt ""}} {
 
     bind $focusControl <FocusIn>    "vTcl:propmgr:select_attr $top $option"
     bind $focusControl <FocusOut>   vTcl:focus_out_cmd
-    bind $focusControl <KeyRelease> "vTcl:key_release_cmd %k \$vTcl(w,widget) \[subst [list $apply_cmd]\]"
+    set ::vTcl::apply($focusControl) $apply_cmd
+    bind $focusControl <KeyRelease> "vTcl:key_release_cmd %W %k"
     bind $focusControl <KeyRelease-Return> $config_cmd
     bind $focusControl <Key-Up>     "vTcl:propmgr:focusPrev $label"
     bind $focusControl <Key-Down>   "vTcl:propmgr:focusNext $label"
