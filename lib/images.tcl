@@ -51,37 +51,6 @@ proc vTcl:image:get_creation_type {filename} {
     }
 }
 
-proc vTcl:image:broken_image {} {
-    ## This procedure may be used free of restrictions.
-    ##    Exception added by Christian Gavin on 08/08/02.
-    ## Other packages and widget toolkits have different licensing requirements.
-    ##    Please read their license agreements for details.
-
-    return {
-        R0lGODdhFAAUAPcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwICAgP8AAAD/
-        AP//AAAA//8A/wD//////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-        AAAAAAAAAAAAAAAAAAAAACwAAAAAFAAUAAAIhAAPCBxIsKDBgwgPAljIUOBC
-        BAkBPJg4UeBEBBAVPkCI4EHGghIHChAwsKNHgyEPCFBA0mFDkBtVjiz4AADK
-        mAds0tRJMCVBBkAl8hwYMsFPBwyE3jzQwKhAoASUwmTagCjDmksbVDWIderC
-        g1174gQ71CHFigfOhrXKUGfbrwnjyp0bEAA7
-    }
-}
-
 proc {vTcl:image:create_new_image} {filename
                                     {description {no description}}
                                     {type {}}
@@ -91,14 +60,12 @@ proc {vTcl:image:create_new_image} {filename
     ## Other packages and widget toolkits have different licensing requirements.
     ##    Please read their license agreements for details.
 
-    global vTcl env
-
     # Does the image already exist?
-    if {[info exists vTcl(images,files)]} {
-        if {[lsearch -exact $vTcl(images,files) $filename] > -1} { return }
+    if {[info exists ::vTcl(images,files)]} {
+        if {[lsearch -exact $::vTcl(images,files) $filename] > -1} { return }
     }
 
-    if {![info exists vTcl(sourcing)] && [string length $data] > 0} {
+    if {![info exists ::vTcl(sourcing)] && [string length $data] > 0} {
         set object [image create \
             [vTcl:image:get_creation_type $filename] \
             -data $data]
@@ -112,7 +79,8 @@ proc {vTcl:image:create_new_image} {filename
 
         if {![file exists $filename]} {
             set description "file not found!"
-            set object [image create photo -data [vTcl:image:broken_image] ]
+            ## will add 'broken image' again when img is fixed, for now create empty
+            set object [image create photo -width 1 -height 1]
         } else {
             set object [image create \
                 [vTcl:image:get_creation_type $filename] \
@@ -121,14 +89,13 @@ proc {vTcl:image:create_new_image} {filename
     }
 
     set reference [vTcl:rename $filename]
+    set ::vTcl(images,$reference,image)       $object
+    set ::vTcl(images,$reference,description) $description
+    set ::vTcl(images,$reference,type)        $type
+    set ::vTcl(images,filename,$object)       $filename
 
-    set vTcl(images,$reference,image)       $object
-    set vTcl(images,$reference,description) $description
-    set vTcl(images,$reference,type)        $type
-    set vTcl(images,filename,$object)       $filename
-
-    lappend vTcl(images,files) $filename
-    lappend vTcl(images,$type) $object
+    lappend ::vTcl(images,files) $filename
+    lappend ::vTcl(images,$type) $object
 
     # return image name in case caller might want it
     return $object
@@ -613,8 +580,7 @@ proc vTcl:image:generate_image_stock {fileID} {
     foreach i {vTcl:rename
                vTcl:image:create_new_image
                vTcl:image:get_image
-               vTcl:image:get_creation_type
-               vTcl:image:broken_image} {
+               vTcl:image:get_creation_type} {
         puts $fileID [vTcl:dump_proc $i]
     }
 
@@ -832,5 +798,6 @@ proc vTcl:image:external_editor {imageName} {
         vTcl:error "Could not execute external image editor!"
     }
 }
+
 
 
