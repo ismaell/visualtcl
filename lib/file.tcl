@@ -56,9 +56,11 @@ proc vTcl:new {} {
 }
 
 proc vTcl:file_source {} {
+    global vTcl
     set file [vTcl:get_file open "Source File"]
     if {$file != ""} {
-        vTcl:source $file
+        vTcl:source $file newprocs
+        vTcl:list add $newprocs vTcl(procs)
         vTcl:update_proc_list
     }
 }
@@ -111,11 +113,12 @@ proc vTcl:is_vtcl_prj {file} {
     return 1
 }
 
-proc vTcl:source {file} {
+proc vTcl:source {file newprocs} {
     global vTcl
     set vTcl(sourcing) 1
     vTcl:statbar 15
     set op ""
+    upvar $newprocs np
 
     foreach context [vTcl:namespace_tree] {
 
@@ -156,7 +159,7 @@ proc vTcl:source {file} {
        }
     }
 
-    vTcl:list add [vTcl:diff_list $op $np] vTcl(procs)
+    set np [vTcl:diff_list $op $np]
     vTcl:statbar 45
     set vTcl(tops) [vTcl:find_new_tops];     vTcl:statbar 0
     set vTcl(sourcing) 0
@@ -179,32 +182,31 @@ proc vTcl:open {{file ""}} {
 
     # only open a Visual Tcl project and nothing else
     if ![vTcl:is_vtcl_prj $file] {return}
-    
+
     vTcl:addRcFile $file
 
     set vTcl(file,mode) ""
-    proc exit {args} {}
-    proc init {argc argv} {}
-    proc main {argc argv} {}
     vTcl:load_lib vtclib.tcl;            vTcl:statbar 10
     set vTcl(tops) ""
     set vTcl(vars) ""
     set vTcl(procs) ""
+    proc vTcl:project:info {} {}
+    namespace eval ::vTcl::modules::main {
+        variable procs
+        set procs ""
+    }
     vTcl:status "Loading Project"
-    vTcl:source $file;                   vTcl:statbar 55
+    vTcl:source $file newprocs;          vTcl:statbar 55
 
     # make sure the 'Window' procedure is the latest
     vTcl:load_lib vtclib.tcl;            vTcl:statbar 60
 
-    vTcl:list add "init main" vTcl(procs)
     vTcl:status "Updating top list"
     vTcl:update_top_list;                vTcl:statbar 68
-    vTcl:status "Updating proc list"
-    vTcl:update_proc_list;               vTcl:statbar 75
     vTcl:status "Updating aliases"
-    vTcl:update_aliases;                 vTcl:statbar 80
+    vTcl:update_aliases;                 vTcl:statbar 75
 
-    vTcl:status "Loading Project Info";  vTcl:statbar 85
+    vTcl:status "Loading Project Info";  vTcl:statbar 80
 
     set vTcl(project,file) $file
     set vTcl(project,name) [file tail $file]
@@ -226,10 +228,19 @@ proc vTcl:open {{file ""}} {
     ## Setup the bind tree after we have loaded project info, so
     ## that registration of children in childsites works OK
     vTcl:status "Setting up bind tree"
-    vTcl:setup_bind_tree .;              vTcl:statbar 90
+    vTcl:setup_bind_tree .;              vTcl:statbar 85
 
     vTcl:status "Registering widgets"
-    vTcl:widget:register_all_widgets;	 vTcl:statbar 97
+    vTcl:widget:register_all_widgets;	 vTcl:statbar 90
+
+    vTcl:status "Updating proc list"
+    if {$::vTcl::modules::main::procs != ""} {
+        vTcl:list add $::vTcl::modules::main::procs vTcl(procs)
+    } else {
+        vTcl:list add "init main" vTcl(procs)
+        vTcl:list add $newprocs   vTcl(procs)
+    }
+    vTcl:update_proc_list;               vTcl:statbar 95
 
     wm title .vTcl "Visual Tcl - $vTcl(project,name)"
     vTcl:status "Done Loading"
@@ -241,7 +252,6 @@ proc vTcl:open {{file ""}} {
 
     unset vTcl(sourcing)
 
-    # @@change by Christian Gavin 3/5/2000
     # refresh widget tree automatically after File Open...
     # refresh image manager and font manager too
 
@@ -250,8 +260,6 @@ proc vTcl:open {{file ""}} {
 	    vTcl:image:refresh_manager
 	    vTcl:font:refresh_manager
     }
-
-    # @@end_change
 }
 
 proc vTcl:close {} {
