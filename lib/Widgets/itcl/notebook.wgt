@@ -41,6 +41,11 @@ DumpCmd		vTcl::widgets::iwidgets::notebook::dumpCmd
 DumpInfoCmd	vTcl::widgets::iwidgets::notebook::dumpInfoCmd
 CompoundCmd     vTcl::widgets::iwidgets::notebook::compoundCmd
 
+#############################
+## Right-click menu
+
+Function        "Edit Pages..."         vTcl::widgets::iwidgets::notebook::editCmd
+
 ###################################################
 # for compatibility with 1.60 and previous versions
 
@@ -49,6 +54,11 @@ proc vTcl:widget:notebook:treeChildrenChildsite {target} {
 }
 
 namespace eval vTcl::widgets::iwidgets::notebook {
+
+    proc editCmd {} {
+        set target $::vTcl(w,widget)
+	::vTcl::itemEdit::edit $target vTcl::widgets::iwidgets::notebooks::edit
+    }
 
     proc insertCmd {target} {
         $target add -label {Page 1}

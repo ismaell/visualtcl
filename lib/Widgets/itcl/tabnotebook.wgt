@@ -42,6 +42,11 @@ DumpInfoCmd	vTcl::widgets::iwidgets::tabnotebook::dumpInfoCmd
 CompoundCmd     vTcl::widgets::iwidgets::tabnotebook::compoundCmd
 ResizeCmd       vTcl::widgets::iwidgets::tabnotebook::resizeCmd
 
+#############################
+## Right-click menu
+
+Function        "Edit Pages..."         vTcl::widgets::iwidgets::tabnotebook::editCmd
+
 AdditionalClasses Notebook Tabset Page
 
 #############################
@@ -52,6 +57,11 @@ proc vTcl:widget:tabnotebook:treeChildrenChildsite {target} {
 }
 
 namespace eval vTcl::widgets::iwidgets::tabnotebook {
+
+    proc editCmd {} {
+        set target $::vTcl(w,widget)
+	::vTcl::itemEdit::edit $target vTcl::widgets::iwidgets::notebooks::edit
+    }
 
     proc resizeCmd {target w h} {
         # need to find out why tabnotebook doesn't resize properly in vTcl

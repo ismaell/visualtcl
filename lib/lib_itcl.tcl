@@ -383,6 +383,16 @@ proc vTcl:lib_itcl:select_page {target index} {
 ##
 namespace eval vTcl::widgets::iwidgets::notebooks::edit {
 
+    proc saveBkgnd {w} {
+        namespace eval ::widgets::${w}::options {}
+        namespace eval ::widgets::${w}::save    {}
+        vTcl:WidgetVar $w options
+        vTcl:WidgetVar $w save
+	set value [$w cget -background]
+        set options(-background) $value
+	set save(-background) 1
+    }
+
     proc getTitle {target} {
         return "Edit pages for $target"
     }
@@ -410,6 +420,9 @@ namespace eval vTcl::widgets::iwidgets::notebooks::edit {
         $target add -label "New Page"
         $target select end
         vTcl:init_wtree
+	set page [lindex [$target childsite] end]
+        saveBkgnd $page
+
         return "New Page"
     }
 
