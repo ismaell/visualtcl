@@ -475,7 +475,8 @@ proc vTcl:setup_vTcl:bind {target} {
 
 proc vTcl:setup_bind {target} {
     global vTcl
-    if {[lsearch [bindtags $target] vTcl(b)] < 0} {
+    if {[lsearch [bindtags $target] vTcl(b)] < 0 &&
+        [lsearch [bindtags $target] vTcl(a)] < 0} {
         set vTcl(bindtags,$target) [bindtags $target]
         if {[vTcl:get_class $target] == "Toplevel"} {
             wm protocol $target WM_DELETE_WINDOW "vTcl:hide_top $target"
@@ -1005,8 +1006,10 @@ proc vTcl:widget:get_tree_label {w} {
 
 ###
 ## Register a widget and give it a containing namespace to hold data.
+#  save_options lists options that we absolutely want to be saved
+#  (e.g. for menus we want to save -menu, -label at least)
 ###
-proc vTcl:widget:register_widget {w} {
+proc vTcl:widget:register_widget {w {save_options ""}} {
     set opts [$w configure]
 
     if {![catch {namespace children ::widgets} namespaces]} {
@@ -1023,6 +1026,12 @@ proc vTcl:widget:register_widget {w} {
     	lassign $list opt x x def val
 	set ::widgets::${w}::options($opt) $val
 	set ::widgets::${w}::defaults($opt) $def
+
+      if {[lsearch -exact $save_options $opt] >=0 } {
+          set ::widgets::${w}::save($opt) 1
+          continue
+      }
+
 	if {[vTcl:streq $def $val]} {
 	    set ::widgets::${w}::save($opt) 0
 	} else {
@@ -1045,6 +1054,10 @@ proc vTcl:widget:register_all_widgets {{w .}} {
     	vTcl:widget:register_widget $w
     }
 }
+
+
+
+
 
 
 

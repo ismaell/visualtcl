@@ -1395,7 +1395,7 @@ namespace eval ::widgets_bindings {
         #        .top19.but22 => ".top19.but22 Button .top19 all"
 
         set class [winfo class $target]
-        if {$class == "Toplevel" || $class == "Vt"} {
+        if {$class == "Toplevel" || $class == "Vt" || $class == "Menu"} {
             return [list $target $class all]
         }
 
@@ -1404,6 +1404,10 @@ namespace eval ::widgets_bindings {
     }
 
 } ; # namespace eval
+
+
+
+
 
 
 

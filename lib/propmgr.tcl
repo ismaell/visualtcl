@@ -432,8 +432,10 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
                 -text "<click to edit>" -relief sunken -bd 1 -width 12 \
                 -highlightthickness 1 -fg black -padx 0 -pady 1 \
                 -command "
-                    vTcl:edit_target_menu \$vTcl(w,widget)
-		    vTcl:prop:save_opt \$vTcl(w,widget) $option $variable
+                    set current \$vTcl(w,widget)
+                    vTcl:edit_target_menu $\current
+                    set $variable \[$\current cget -menu\]
+                    vTcl:prop:save_opt $\current $option $variable
                 " -anchor w
         }
 	menuspecial {
@@ -441,8 +443,9 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
                 -text "<click to edit>" -relief sunken -bd 1 -width 12 \
                 -highlightthickness 1 -fg black -padx 0 -pady 1 \
                 -command "
-                    vTcl:edit_menu \$vTcl(w,widget)
-		    vTcl:prop:save_opt \$vTcl(w,widget) $option $variable
+                    set current \$vTcl(w,widget)
+                    vTcl:edit_menu \$current
+                    vTcl:prop:save_opt \$current $option $variable
                 " -anchor w
 	}
         color {
@@ -617,6 +620,10 @@ proc vTcl:prop:save_opt {w opt varName} {
 	set ::widgets::${w}::save($opt) 1
     }
 }
+
+
+
+
 
 
 

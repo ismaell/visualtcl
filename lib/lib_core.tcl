@@ -121,7 +121,7 @@ global vTcl
         cascade {
             set nmenu [vTcl:new_widget_name menu $target]
             menu $nmenu
-            vTcl:widget:register_widget $nmenu
+            vTcl:widget:register_widget $nmenu -tearoff
             vTcl:setup_vTcl:bind $nmenu
             $target add $type -label $label -accel $accel -menu $nmenu
         }
@@ -318,7 +318,7 @@ proc vTcl:edit_target_menu {target} {
     if {$menu == ""} {
         set menu [vTcl:new_widget_name m $target]
         menu $menu
-        vTcl:widget:register_widget $menu
+        vTcl:widget:register_widget $menu -tearoff
         vTcl:setup_vTcl:bind $menu
         $target conf -menu $menu
     }
@@ -696,3 +696,7 @@ proc vTcl:core:noencasewhenscroll {value} {
 		return 0
 	}
 }
+
+
+
+

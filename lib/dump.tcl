@@ -324,7 +324,7 @@ proc vTcl:get_opts {opts} {
 # converts image names to filenames before saving
 # converts font object names to font keys before saving
 
-proc vTcl:get_opts_special {opts w} {
+proc vTcl:get_opts_special {opts w {save_always ""}} {
     global vTcl
     upvar ::widgets::${w}::save save
 
@@ -333,7 +333,8 @@ proc vTcl:get_opts_special {opts w} {
 	lassign $i opt x x def val
 	if {[vTcl:streq $opt "-class"]} { continue }
 	if {![info exists save($opt)]} { set save($opt) 0 }
-	if {!$save($opt)} { continue }
+	if {!$save($opt) &&
+          [lsearch -exact $save_always $opt] == -1} { continue }
 
 	if [info exists vTcl(option,translate,$opt)] {
 	    set val [$vTcl(option,translate,$opt) $val]
@@ -491,9 +492,11 @@ proc vTcl:dump_widget_bind {target basename} {
         return ""
     }
     # well, let's see if we have to save the bindtags
-    if {$vTcl(bindtags,$target) !=
+    set tags $vTcl(bindtags,$target)
+    lremove tags vTcl(a) vTcl(b)
+    if {$tags !=
         [::widgets_bindings::get_standard_bindtags $target]} {
-            append result "$vTcl(tab)bindtags $target \"$vTcl(bindtags,$target)\"\n"
+            append result "$vTcl(tab)bindtags $target \"$tags\"\n"
     }
 
     set bindlist [lsort [bind $target]]
@@ -525,7 +528,8 @@ proc vTcl:dump_menu_widget {target basename} {
                 # set pairs [vTcl:conf_to_pairs $conf ""]
 
 		# to allow option translation
-		set pairs [vTcl:get_opts_special $conf $target]
+		set pairs [vTcl:get_opts_special $conf $target \
+                       "-menu -label -command -tearoff -accelerator"]
 
                 append result "$vTcl(tab)$basename add $type \\\n"
                 append result "[vTcl:clean_pairs $pairs]\n"
@@ -816,6 +820,10 @@ proc vTcl:dump:project_info {basedir project} {
     close $fp
     return
 }
+
+
+
+
 
 
 
