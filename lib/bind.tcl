@@ -174,7 +174,6 @@ proc vTclWindow.vTcl.bind {args} {
         -highlightbackground #dcdcdc -highlightcolor #000000 -relief raised \
         -width 30 
     listbox $base.cpd21.01.cpd25.01 \
-        -selectmode single \
         -xscrollcommand "$base.cpd21.01.cpd25.02 set" \
         -yscrollcommand "$base.cpd21.01.cpd25.03 set" 
     bind $base.cpd21.01.cpd25.01 <Button-3> {
@@ -1404,6 +1403,7 @@ namespace eval ::widgets_bindings {
     }
 
 } ; # namespace eval
+
 
 
 
