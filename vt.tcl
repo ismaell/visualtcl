@@ -60,6 +60,12 @@ proc vTcl:log {msg} {
      } else {
           $outCmd "$msg"
      }
+     
+     if {$tcl_platform(platform) != "windows"} {
+     	
+     	# don't display log info into the console window
+     	vTcl:console:get_output 0
+     }
 }
 
 # this prevented Itcl from loading correctly

@@ -110,7 +110,7 @@ proc vTclWindow.vTcl.con {args} {
     # @@end_change
 }
 
-proc vTcl:console:get_output {} {
+proc vTcl:console:get_output {{display 1}} {
     global vTcl
 
     # is the console actually visible ? if not, we'll show output later
@@ -119,7 +119,7 @@ proc vTcl:console:get_output {} {
     }
     
     set contents [read $vTcl(LOG_FD_R)]
-    if {$contents != ""} {
+    if {$contents != "" && $display} {
 
 	.vTcl.con.fra5.tex7 conf -state normal
         .vTcl.con.fra5.tex7 insert end "\n$contents" vTcl:return_value

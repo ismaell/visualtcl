@@ -1,8 +1,7 @@
 #!/bin/sh
 
 PATH_TO_WISH=/usr/bin/wish
-VTCL_HOME=`pwd`
-#VTCL_HOME=/usr/local/vtcl
+VTCL_HOME=/usr/local/vtcl-1.2.1
 
 export PATH_TO_WISH
 export VTCL_HOME
