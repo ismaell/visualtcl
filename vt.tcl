@@ -24,62 +24,53 @@
 
 set vTcl(sourcing) 0
 
-rename puts vTcl:puts
+# under Windows we are using the standard wish console
 
-proc puts {args} {
-    global vTcl
-	if { [llength $args] > 1 } {
+if {$tcl_platform(platform) != "windows"} {
+
+	rename puts vTcl:puts
+
+	proc puts {args} {
+	    global vTcl
+
+	    if { [llength $args] > 1 } {
 		eval vTcl:puts $args
-	} else {
+	    } else {
 		eval vTcl:puts $vTcl(LOG_FD_W) $args
 		flush $vTcl(LOG_FD_W)
 
 		# refresh the command console if visible
 		vTcl:console:get_output
-	}
+	    }
+        }
 }
 
 proc vTcl:log {msg} {
-    global vTcl
-	if { [info exists vTcl(LOG_FILE)] } {
-		vTcl:puts $vTcl(LOG_FD_W) "$msg"
-		flush $vTcl(LOG_FD_W)
-	} else {
-		vTcl:puts "$msg"
-	}
+    global vTcl tcl_platform
+
+     set outCmd vTcl:puts
+
+     if {$tcl_platform(platform) == "windows"} {
+          set outCmd puts
+     }
+
+     if { [info exists vTcl(LOG_FILE)] } {
+          $outCmd $vTcl(LOG_FD_W) "$msg"
+          flush $vTcl(LOG_FD_W)
+     } else {
+          $outCmd "$msg"
+     }
 }
 
-# @@change by Christian Gavin 3/6/2000
-# Itcl/tk and IWidgets support
+# this prevented Itcl from loading correctly
 
-catch {
-    package require Itcl 3.0
-    namespace import itcl::*
-    package require Itk 3.0
-    package require Iwidgets 3.0
-    namespace import iwidgets::entryfield
-    namespace import iwidgets::spinint
-    namespace import iwidgets::combobox
-    namespace import iwidgets::scrolledlistbox
-    namespace import iwidgets::calendar
-    namespace import iwidgets::dateentry
-    namespace import iwidgets::scrolledhtml
-    namespace import iwidgets::toolbar
-    namespace import iwidgets::feedback
-    namespace import iwidgets::optionmenu
-    namespace import iwidgets::hierarchy
-} errorText
-vTcl:log $errorText
-
-# @@end_change
-
-rename proc vTcl:proc
-
-vTcl:proc proc {name args body} {
-    global vTcl
-    if {$name == "Window" && $vTcl(sourcing) == "1"} {return}
-    vTcl:proc $name $args $body
-}
+# rename proc vTcl:proc
+#
+# vTcl:proc proc {name args body} {
+#    global vTcl
+#    if {$name == "Window" && $vTcl(sourcing) == "1"} {return}
+#    vTcl:proc $name $args $body
+# }
 
 proc vTcl:splash {} {
     global vTcl
