@@ -92,6 +92,9 @@ namespace eval NoteBook {
 
     proc ::NoteBook { path args } { return [eval NoteBook::create $path $args] }
     proc use {} {}
+
+    bind NoteBook <Configure> "NoteBook::_realize_or_resize %W"
+    bind NoteBook <Destroy>   "NoteBook::_destroy %W"
 }
 
 
@@ -140,8 +143,9 @@ proc NoteBook::create { path args } {
         -type button  -dir right \
         -armcommand [list "NoteBook::_xview $path 1"]
 
-    bind $path <Configure> "NoteBook::_realize $path"
-    bind $path <Destroy>   "NoteBook::_destroy $path"
+    ## not needed anymore; see class bindings above
+    ## bind $path <Configure> "NoteBook::_realize $path"
+    ## bind $path <Destroy>   "NoteBook::_destroy $path"
 
     rename $path ::$path:cmd
     proc ::$path { cmd args } "return \[eval NoteBook::\$cmd $path \$args\]"
@@ -1057,5 +1061,26 @@ proc NoteBook::_realize { path } {
     # Sven
     NoteBook::_redraw $path
     # Sven
-    bind $path <Configure> "NoteBook::_resize $path"
+    ## bind $path <Configure> "NoteBook::_resize $path"
+}
+
+## Change by Christian Gavin 10/25/2001.
+## Use class bindings instead of widget bindings.
+
+proc NoteBook::_realize_or_resize { path } {
+    variable $path
+    upvar 0  $path data
+
+    if {$data(realized)} {
+        NoteBook::_resize $path
+        return
+    }
+
+    if { [set width  [Widget::cget $path -width]]  == 0 ||
+         [set height [Widget::cget $path -height]] == 0 } {
+        compute_size $path
+    }
+
+    set data(realized) 1
+    NoteBook::_redraw $path
 }

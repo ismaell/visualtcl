@@ -1,6 +1,9 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Added support for BWidget combo box.
+    o Modified notebook class of BWidget to use class bindings instead of
+      widget bindings. This prevents saving bindings into the project.
     o Default insertion of three pages when creating new bwidgets tabnotebook.
     o Display of pages of bwidgets tabnotebook in attributes editor.
     o Dumping bwidgets tabnotebook in file.

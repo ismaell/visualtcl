@@ -25,7 +25,7 @@ namespace eval ComboBox {
     Widget::tkinclude ComboBox frame :cmd \
 	    include {-relief -borderwidth -bd -background} \
 	    initialize {-relief sunken -borderwidth 2} \
-	    
+
     Widget::bwinclude ComboBox Entry .e \
         remove {-relief -bd -borderwidth -bg} \
 	    rename {-background -entrybg}
@@ -47,6 +47,7 @@ namespace eval ComboBox {
 
     ::bind BwComboBox <FocusIn> [list after idle {BWidget::refocus %W %W.e}]
     ::bind BwComboBox <Destroy> {Widget::destroy %W; rename %W {}}
+    ::bind BwComboBox <ButtonPress-1> {ComboBox::_unmapliste %W}
 
     proc ::ComboBox { path args } { return [eval ComboBox::create $path $args] }
     proc use {} {}
@@ -109,7 +110,6 @@ proc ComboBox::create { path args } {
 	}
     }
 
-    ::bind $path  <ButtonPress-1> "ComboBox::_unmapliste $path"
     ::bind $entry <Key-Up>        "ComboBox::_unmapliste $path"
     ::bind $entry <Key-Down>      "ComboBox::_mapliste $path"
     ::bind $entry <Control-Up>        "ComboBox::_modify_value $path previous"

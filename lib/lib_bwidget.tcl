@@ -49,6 +49,7 @@ proc vTcl:widget:lib:lib_bwidget {args} {
 	ArrowButton
 	LabelEntry
 	LabelFrame
+        ComboBox
 	MainFrame
 	NoteBook
 	PagesManager

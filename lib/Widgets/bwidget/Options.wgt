@@ -46,6 +46,8 @@ NewOption -dropcmd		"drop cmd"		command
 NewOption -dropenabled		"drop enabled"		boolean {0 1}
 NewOption -dropovercmd		"drop over cmd"		command
 NewOption -droptypes		"drop types"		text
+NewOption -entrybg              {Entry Bkgnd}           color {} Colors
+NewOption -entryfg              {Entry Foregnd}         color {} Colors
 NewOption -editable		"editable"		boolean {0 1}
 NewOption -fill			"fill"			color
 NewOption -helptext		"help text"		text
