@@ -1,5 +1,5 @@
 Class		Graph
 Lib		blt
 
-CreateCmd	::BLT::graph
+CreateCmd	::blt::graph
 Icon		icon_graph.gif

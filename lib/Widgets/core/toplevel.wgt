@@ -11,6 +11,8 @@ WidgetProc	vTcl:Toplevel:WidgetProc
 Function        "Edit Menu..."              vTcl:widget:toplevel:edit_menu
 Function	"Set New Toplevel Geometry" vTcl:widget:toplevel:set_new_geom
 
+Export          vTcl:DefineAlias
+
 proc vTcl:widget:toplevel:edit_menu {} {
     global vTcl
     vTcl:widget:toplevel:dblclkcmd $vTcl(w,widget)

@@ -78,3 +78,23 @@ proc vTcl:WindowsCleanup {} {
     	wm protocol $w WM_DELETE_WINDOW { exit }
     }
 }
+
+proc vTcl:DefineAlias {target alias widgetProc top_or_alias cmdalias} {
+
+    global widget
+
+    set widget($alias) $target
+    set widget(rev,$target) $alias
+
+    if {$cmdalias} {
+        interp alias {} $alias {} $widgetProc $target
+    }
+
+    if {$top_or_alias != ""} {
+        set widget($top_or_alias,$alias) $target
+
+        if {$cmdalias} {
+            interp alias {} $top_or_alias.$alias {} $widgetProc $target
+        }
+    }
+}
