@@ -685,7 +685,11 @@ proc vTcl:dump:aliases {target} {
 
           if {[winfo toplevel $target] != $namenorev} {
               append output $vTcl(tab)
-              append output "interp alias {} [vTcl:get_top_level_or_alias $namenorev].$alias {} $cmd $widg\n"
+              set newalias [vTcl:get_top_level_or_alias $namenorev].$alias
+              if {[string match .top* $newalias]} {
+                  set newalias [vTcl:base_name $newalias]
+              }
+              append output "interp alias {} $newalias {} $cmd $widg\n"
           }
 	}
     }
@@ -820,6 +824,8 @@ proc vTcl:dump:project_info {basedir project} {
     close $fp
     return
 }
+
+
 
 
 
