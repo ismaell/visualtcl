@@ -32,6 +32,7 @@ DoubleClickCmd  vTcl:set_label
 TreeLabel       @vTcl:core:get_widget_tree_label
 DefaultValues   -activebackground -activeforeground -background \
                 -foreground -highlightbackground -highlightcolor
+ClassOption     -_tooltip
 
 Function        "Set Text"  vTcl:label:setText
 

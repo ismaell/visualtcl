@@ -33,6 +33,7 @@ DefaultValues   -foreground \
                 -highlightbackground -highlightcolor \
                 -selectbackground -selectforeground -font
 DefaultOptions  -background white
+ClassOption     -_tooltip
 
 proc vTcl:widget:listbox:inscmd {target} {
     $target insert end listbox

@@ -1,6 +1,9 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Laying out the foundation for custom class options. Current custom class
+      option is -_tooltip. Each custom class option has commands for config-
+      uring and updating the option in the attributes manager.
     o Better and simpler implementation of action to take when focus lost in
       attributes editor. Now, when the user presses a key in an attribute, the
       command to execute is stored until either he presses Return or the focus

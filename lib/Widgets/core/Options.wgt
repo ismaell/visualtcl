@@ -120,10 +120,9 @@ NewOption -yscrollincrement	"y increment"		type
 
 ## Tooltip support
 NewOption -_tooltip             "tooltip text"          type
-ClassOption Button     _tooltip
-ClassOption Label      _tooltip
-ClassOption Entry      _tooltip
-ClassOption Menubutton _tooltip
+OptionConfigCmd -_tooltip       config                  vTcl:config_balloon
+OptionConfigCmd -_tooltip       update                  vTcl:update_balloon
+OptionConfigCmd -_tooltip       get                     vTcl:get_balloon
 
 ## Tk 8.4 support
 NewOption -compound             "compound"              choice    "none bottom center left right top"

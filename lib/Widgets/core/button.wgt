@@ -30,6 +30,8 @@ Icon		icon_button.gif
 DefaultOptions	-text button
 DefaultValues   -activebackground -activeforeground -activeborderwidth \
                 -background -foreground -highlightbackground -highlightcolor
+ClassOption     -_tooltip
+
 DoubleClickCmd	vTcl:Button:DblClk
 TreeLabel	@vTcl:core:get_widget_tree_label
 

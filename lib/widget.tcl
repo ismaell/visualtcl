@@ -532,8 +532,12 @@ proc vTcl:update_widget_info {target} {
         set vTcl(w,alias) ""
     }
 
-    ## Balloon help support in attributes editor
-    vTcl:update_balloon $target vTcl(w,opt,-_tooltip)
+    ## special options support
+    if {[info exist ::classoption($vTcl(w,class))]} {
+        foreach spec_opt $::classoption($vTcl(w,class)) {
+            $::configcmd($spec_opt,update) $target vTcl(w,opt,$spec_opt)
+        }
+    }
 }
 
 proc vTcl:conf_to_pairs {conf opt} {
@@ -1193,10 +1197,17 @@ proc vTcl:widget:get_tree_label {w} {
 ####
 proc vTcl:widget:register_widget_custom {w} {
 
-    set val [vTcl:get_balloon $w]
-    set ::widgets::${w}::options(-_tooltip) $val
-    set ::widgets::${w}::defaults(-_tooltip) ""
-    set ::widgets::${w}::save(-_tooltip) [expr {$val != ""}]
+    set class [vTcl:get_class $w]
+
+    ## special options support
+    if {[info exist ::classoption($class)]} {
+        foreach spec_opt $::classoption($class) {
+            set val [$::configcmd($spec_opt,get) $w]
+            set ::widgets::${w}::options($spec_opt) $val
+            set ::widgets::${w}::defaults($spec_opt) ""
+            set ::widgets::${w}::save($spec_opt) [expr {$val != ""}]
+        }
+    }
 }
 
 proc vTcl:widget:register_widget_megachildren {w} {

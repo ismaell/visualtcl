@@ -33,6 +33,7 @@ TreeLabel	@vTcl:core:get_widget_tree_label
 DefaultValues   -foreground -highlightbackground \
                 -highlightcolor -selectbackground -selectforeground
 DefaultOptions  -background white
+ClassOption     -_tooltip
 Function        "Set Text Variable" vTcl:widget:entry:SetTextVariable
 
 ## If we're using Tcl 8.4, we need to add the readonly option.

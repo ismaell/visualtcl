@@ -305,9 +305,13 @@ proc vTcl:prop:update_attr {} {
 	    vTcl:prop:new_attr $top -menuspecial dummy "" opt ""
 	}
 
-        ## tooltip support
-        set config_cmd {vTcl:config_balloon $vTcl(w,widget) vTcl(w,opt,-_tooltip)}
-        vTcl:prop:new_attr $top -_tooltip vTcl(w,opt,-_tooltip) $config_cmd opt ""
+        ## special options support
+        if {[info exist ::classoption($vTcl(w,class))]} {
+            foreach spec_opt $::classoption($vTcl(w,class)) {
+                set config_cmd "$::configcmd($spec_opt,config) \$vTcl(w,widget) vTcl(w,opt,$spec_opt)"
+                vTcl:prop:new_attr $top $spec_opt vTcl(w,opt,$spec_opt) $config_cmd opt ""
+            }
+        }
     }
 
     if {$vTcl(w,manager) == ""} {
@@ -670,9 +674,15 @@ proc vTcl:prop:update_saves {w} {
     global vTcl
 
     set c $vTcl(gui,ae,canvas)
-
     set class [vTcl:get_class $w]
-    foreach opt [concat $vTcl(w,optlist) -_tooltip] {
+
+    ## special options support
+    set spec_opts ""
+    if {[info exist ::classoption($class)]} {
+        set spec_opts $::classoption($class)
+    }
+
+    foreach opt [concat $vTcl(w,optlist) $spec_opts] {
     	set check $c.f2.f._$class.t${opt}_save
 	if {![winfo exists $check]} { continue }
 	$check configure -variable ::widgets::${w}::save($opt)

@@ -290,8 +290,18 @@ proc NewOption {args} {
     set options($option,title) $title
 }
 
-proc ClassOption {name args} {
-    eval lappend ::classoption($name) $args
+proc ClassOption {args} {
+    eval lappend ::classoption($::tmp(class)) $args
+}
+
+## args contains the name of a proc to configure the option
+## the proc to configure receives two parameters:
+##   w     widget to configure
+##   var   name of the variable containing the value
+##
+## type is "set", "get", "config", or "update"
+proc OptionConfigCmd {opt type args} {
+    set ::configcmd($opt,$type) $args
 }
 
 proc Function {name command} {
