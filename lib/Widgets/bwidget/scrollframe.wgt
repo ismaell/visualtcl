@@ -1,7 +1,71 @@
 Class		ScrollableFrame
 Lib		bwidget
 
-Icon		unknown.gif
+Icon		../lib/Widgets/bwidget/scrollframe.gif
 TreeLabel	BWidget ScrollableFrame
+DefaultValues   -background
 CreateCmd	ScrollableFrame
 MegaWidget	yes
+CreateCmd   vTcl::widgets::bwidgets::scrollableframe::createCmd
+TreeChildrenCmd   {vTcl::widgets::bwidgets::scrollableframe::treeChildrenCmd
+                   vTcl::widgets::bwidgets::scrollableframe::treeChildrenChildsite}
+DumpCmd     vTcl::widgets::bwidgets::scrollableframe::dumpCmd
+CompoundCmd vTcl::widgets::bwidgets::scrollableframe::compoundCmd
+Export      ::vTcl::widgets::bwidgets::scrollableframe::createCmd
+IgnoreProc  ::ScrollableFrame::* ScrollableFrame
+
+NewOption   -areawidth  "area width"   type
+NewOption   -areaheight "area height"  type
+
+namespace eval vTcl::widgets::bwidgets::scrollableframe {
+
+    proc createCmd {path args} {
+        ## the ScrollableFrame widget is of 'Canvas' class, so we create
+        ## a wrapper frame around it that is of class 'ScrollableFrame' then
+        ## we forward all commands to the inner pages manager widget
+
+        frame $path -class ScrollableFrame
+        eval ScrollableFrame $path.p $args
+        pack $path.p -fill both -expand yes
+        rename $path ::$path:cmd
+        proc ::$path { cmd args } "return \[eval ScrollableFrame::\$cmd $path.p \$args\]"
+        bindtags $path [list $path ScrollableFrame [winfo toplevel $path] all]
+        return $path
+    }
+
+    proc treeChildrenCmd {target {diff \#-1}} {
+        set children ""
+        set wantsdiff [expr {$diff != ""}]
+
+        foreach site [treeChildrenChildsite $target] {
+            foreach child [::vTcl:complete_widget_tree $site $wantsdiff] {
+                lappend children $child$diff
+            }
+        }
+
+        return $children
+    }
+
+    proc treeChildrenChildsite {target} {
+        return [$target getframe]
+    }
+
+    proc dumpCmd {target basename} {
+        set result [vTcl:dump_widget_opt $target $basename]
+        set site [$target getframe]
+        append result "$::vTcl(tab)"
+        set sitevariable "site_[llength [split $site .]]_0"
+        append result "set $sitevariable "
+        append result "\[$basename getframe\]\n"
+        append result \
+                [vTcl::widgets::bwidgets::dump_subwidgets $site \$$sitevariable]
+    }
+
+    proc compoundCmd {target} {
+        set result ""
+        append result "set site \[\$target getframe\]; "
+        set compound [vTcl:create_compound [$target getframe]]
+        append result "vTcl:insert_compound \$site [list $compound] pack \{\}; "
+        return $result
+    }
+}

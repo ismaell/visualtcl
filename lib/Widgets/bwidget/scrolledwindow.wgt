@@ -3,6 +3,7 @@ Lib		      bwidget
 
 Icon		      ../lib/Widgets/bwidget/scrolledwindow.gif
 TreeLabel	      BWidget Scrolled Window
+DefaultValues         -background
 CreateCmd	      ScrolledWindow
 MegaWidget	      yes
 TreeChildrenCmd   {vTcl::widgets::bwidgets::scrolledwindow::treeChildrenCmd
@@ -46,7 +47,8 @@ namespace eval ::vTcl::widgets::bwidgets::scrolledwindow {
         set child [lindex [winfo children [treeChildrenChildsite $target]] 0]
         if {$child != ""} {
             set subbasename [vTcl:base_name $child]
-            append result [vTcl:dump_widget_opt $child $subbasename]
+            set class [vTcl:get_class $child]
+            append result [$::classes($class,dumpCmd) $child $subbasename]
             append result "$::vTcl(tab)$basename setwidget $subbasename\n"
         }
         return $result

@@ -10,6 +10,7 @@ DefaultValues   -background -foreground -activebackground -activeforeground \
 CreateCmd	LabelEntry
 MegaWidget	yes
 InsertCmd       ::vTcl::widgets::bwidgets::labelentry::insertCmd
+IgnoreProc      ::LabelEntry::* LabelEntry
 
 namespace eval ::vTcl::widgets::bwidgets::labelentry {
 

@@ -29,7 +29,8 @@ proc vTcl:store_cursor {target} {
     ## only store cursor once
     if {$vTcl(cursor,w) == ""} {
         #puts "Store cursor: $target $vTcl(cursor,last)"
-        set vTcl(cursor,last) [$target cget -cursor]
+        set vTcl(cursor,last) ""
+        catch {set vTcl(cursor,last) [$target cget -cursor]}
         set vTcl(cursor,w) $target
     }
 }
@@ -40,7 +41,7 @@ proc vTcl:restore_cursor {target} {
     ## only restore cursor once
     if {$vTcl(cursor,w) != "" && [winfo exists $vTcl(cursor,w)]} {
         #puts "Restore cursor: $vTcl(cursor,w) $vTcl(cursor,last)"
-        $vTcl(cursor,w) configure -cursor $vTcl(cursor,last)
+        catch {$vTcl(cursor,w) configure -cursor $vTcl(cursor,last)}
     }
 
     set vTcl(cursor,w) ""
@@ -66,7 +67,7 @@ proc vTcl:bind_button_1 {target X Y x y} {
     if {$parent != "." && [winfo class $parent] != "Toplevel"} {
 	vTcl:grab $target $X $Y
         vTcl:store_cursor $target
-	$target configure -cursor fleur
+	catch {$target configure -cursor fleur}
     } else {
         vTcl:store_cursor $target
     }
@@ -93,7 +94,7 @@ proc vTcl:bind_button_2 {target X Y x y} {
 
 	vTcl:grab $target $X $Y
         vTcl:store_cursor $target
-	$target configure -cursor fleur
+	catch {$target configure -cursor fleur}
     }
 }
 

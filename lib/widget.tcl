@@ -714,10 +714,12 @@ proc vTcl:create_widget {class options new_widg x y} {
     set do ""
     set undo ""
     set insert $vTcl(w,insert)
+    if {$class == "Toplevel"} {
+        set insert .
+    }
     if {$vTcl(pr,getname) == 1} {
         if { $vTcl(w,insert) == "." || $class == "Toplevel"} {
             set new_widg ".$new_widg"
-            set insert .
         } else {
             set new_widg "$vTcl(w,insert).$new_widg"
         }

@@ -59,6 +59,7 @@ proc vTcl:widget:lib:lib_bwidget {args} {
         PanedWindow
 	ProgressBar
 	ScrolledWindow
+      ScrollableFrame
 	Separator
 	TitleFrame
 	Tree

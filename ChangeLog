@@ -1,6 +1,7 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Support for scrolled window and scrolled frame in BWidgets
     o Support font option in menu editor.
     o Fixed closing brace bug.
     o Added scrolledcanvas for [Incr widgets]
