@@ -713,14 +713,24 @@ namespace eval ::vTcl::compounds {
         return $output
     }
 
-    proc mergeCompoundCode {type compoundName} {
+    proc mergeCompoundCode {type compoundName {mergeCode 0}} {
         set spc ${type}::[list $compoundName]
         if {![lempty [vTcl:at ${spc}::procs]]} {
             ${spc}::procsCmd
+            if {$mergeCode} {
+                set ::vTcl(procs) [concat $::vTcl(procs) [vTcl:at ${spc}::procs]]
+                set ::vTcl(procs) [vTcl:lrmdups $::vTcl(procs)]
+                vTcl:update_proc_list
+            }
         }
 
         if {![lempty [vTcl:at ${spc}::bindtags]]} {
             ${spc}::bindtagsCmd
+            if {$mergeCode} {
+                foreach tag [vTcl:at ${spc}::bindtags] {
+                    ::widgets_bindings::add_tag_to_tagslist $tag
+                }
+            }
         }
     }
 
@@ -777,7 +787,7 @@ namespace eval ::vTcl::compounds {
     proc insertCompound {target type compoundName {gmgr pack} {gopt ""}} {
         set spc ${type}::[list $compoundName]
         set cmd ""
-        append cmd "vTcl::compounds::mergeCompoundCode $type [list $compoundName]"
+        append cmd "vTcl::compounds::mergeCompoundCode $type [list $compoundName] 1"
         append cmd "; [list vTcl::compounds::${spc}::compoundCmd] $target"
         if {$gmgr != "wm"} {
             append cmd "; eval $gmgr $target $gopt"
@@ -813,5 +823,6 @@ namespace eval ::vTcl::compounds {
         return [vTcl:at ${spc}::class]
     }
 }
+
 
 

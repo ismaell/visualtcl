@@ -213,6 +213,9 @@ proc vTcl:setup {} {
     # initializes the stock fonts database
     vTcl:font:init_stock
 
+    # initializes the project
+    vTcl::project::initModule main
+
     # make sure TkCon doesn't see command line arguments here
     set argc $::argc
     set argv $::argv
@@ -721,3 +724,4 @@ proc vTcl:main {argc argv} {
 }
 
 vTcl:main $argc $argv
+

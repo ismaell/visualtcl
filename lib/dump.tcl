@@ -741,9 +741,14 @@ proc vTcl:dump:project_info {basedir project} {
     append out "$vTcl(tab)namespace eval ::vTcl::modules::main \{\n"
     append out "$vTcl(tab2)set procs \{\n"
     foreach item $vTcl(procs) {
-        append out "$vTcl(tab)$vTcl(tab2)$item\n"
+        append out "$vTcl(tab)$vTcl(tab2)[list $item]\n"
     }
     append out "$vTcl(tab2)\}\n"
+    append out "$vTcl(tab2)set compounds \{\n"
+    foreach item [vTcl:at ::vTcl::modules::main::compounds] {
+        append out "$vTcl(tab)$vTcl(tab2)[list $item]\n"
+    }
+    append out "$vTcl(tab2)\}\n"    
     append out "$vTcl(tab)\}\n"
     append out "\}\n"
 
@@ -781,6 +786,7 @@ proc vTcl:dump:sourcing_footer {varName} {
     if {![vTcl:streq [string index $var end] "\n"]} { append var "\n" }
     append var "\}\n"
 }
+
 
 
 

@@ -191,10 +191,7 @@ proc vTcl:open {{file ""}} {
     set vTcl(vars) ""
     set vTcl(procs) ""
     proc vTcl:project:info {} {}
-    namespace eval ::vTcl::modules::main {
-        variable procs
-        set procs ""
-    }
+
     vTcl:status "Loading Project"
     vTcl:source $file newprocs;          vTcl:statbar 55
 
@@ -254,13 +251,15 @@ proc vTcl:open {{file ""}} {
 
     unset vTcl(sourcing)
 
-    # refresh widget tree automatically after File Open...
-    # refresh image manager and font manager too
+    ## refresh widget tree automatically after File Open...
+    ## refresh image manager and font manager
+    ## refresh user compounds menu
 
     after idle {
 	    vTcl:init_wtree
 	    vTcl:image:refresh_manager
 	    vTcl:font:refresh_manager
+          vTcl:cmp_user_menu
     }
 }
 
@@ -341,6 +340,7 @@ proc vTcl:close {} {
     vTcl:prop:clear
     ::widgets_bindings::init
     ::menu_edit::close_all_editors
+    ::vTcl::project::initModule main
 
     after idle {vTcl:init_wtree}
 }
@@ -473,6 +473,9 @@ proc vTcl:save2 {file} {
 
     ## Project header
     puts $output "[subst $vTcl(head,proj)]\n"
+
+    ## Save compounds (if any)
+    puts $output [vTcl::project::saveCompounds main]
 
     ## Code to load images
     vTcl:image:generate_image_stock $output
@@ -650,4 +653,38 @@ proc vTcl:restore {} {
     vTcl:close
     file copy -force -- $bakFile $file
     vTcl:open $file
+}
+
+namespace eval vTcl::project {
+
+    proc initModule {moduleName} {
+        namespace eval ::vTcl::modules::${moduleName} {
+            variable procs
+            set procs ""
+            variable compounds
+            set compounds ""
+        }
+    }
+
+    proc addCompound {moduleName type compoundName} {
+        upvar ::vTcl::modules::${moduleName}::compounds compounds
+        lappend compounds [list $type $compoundName]
+    }
+
+    proc saveCompounds {moduleName} {
+        upvar ::vTcl::modules::${moduleName}::compounds compounds
+
+        set output ""
+        foreach compound $compounds {
+            set type         [lindex $compound 0]
+            set compoundName [lindex $compound 1]
+            append output {#############################################################################}
+            append output \n
+            append output {## Compound: }
+            append output "$type / $compoundName\n"
+            append output [vTcl:dump_namespace vTcl::compounds::${type}::${compoundName}]
+        }
+
+        return $output
+    }
 }
