@@ -33,9 +33,26 @@ MegaWidget	yes
 InsertCmd	vTcl:widget:buttonbox:inscmd
 TagsCmd         vTcl:widget:buttonbox:tagscmd
 DumpCmd		vTcl:dump:buttonbox
+CompoundCmd     vTcl:compound:buttonbox
 DefaultOptions	-padx 0 -pady 0
 
 AdditionalClasses Pushbutton
+
+proc vTcl:compound:buttonbox {target} {
+
+    set result ""
+    set last -1
+    catch {set last [$target index end]}
+
+    for {set i 0} {$i <= $last} {incr i} {
+        set conf [$target buttonconfigure $i]
+        set pairs [vTcl:conf_to_pairs $conf ""]
+
+        append result "\$target add but$i $pairs\n"
+    }
+
+    return $result
+}
 
 proc vTcl:dump:buttonbox {target basename} {
 

@@ -1,6 +1,8 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Added "Do not show news on startup" checkbox
+    o Support for copy/paste in itcl toolbar, buttonbox, checkbox, radiobox
     o Trying to compute approximate height of preferences dialog based on
       dialog font and a hidden radio button. Seems a good compromise.
     o Set font for notebook widget to vtcl dialog font so it looks uniform.

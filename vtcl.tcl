@@ -707,7 +707,11 @@ proc vTcl:main {argc argv} {
     ::widgets_bindings::init
 
     ## Show vTcl news.
-    set vTcl(tmp,newsAfter) [after 5000 ::vTcl::news::get_news]
+    set vTcl(tmp,newsAfter) [after 5000 {
+        if {!$vTcl(pr,dontshownews)} {
+            ::vTcl::news::get_news
+        }
+    }]
 }
 
 vTcl:main $argc $argv

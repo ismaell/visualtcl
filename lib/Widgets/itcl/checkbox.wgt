@@ -31,9 +31,26 @@ Icon		icon_checkbox.gif
 DumpChildren	no
 MegaWidget	yes
 DumpCmd		vTcl:dump:checkbox
+CompoundCmd     vTcl:compound:checkbox
 InsertCmd	vTcl:widget:checkbox:inscmd
 TagsCmd         vTcl:lib_itcl:tagscmd
 DefaultOptions	-labeltext "Checkbox"
+
+proc vTcl:compound:checkbox {target} {
+
+    set result ""
+    set last -1
+    catch {set last [$target index end]}
+
+    for {set i 0} {$i <= $last} {incr i} {
+        set conf [$target buttonconfigure $i]
+        set pairs [vTcl:conf_to_pairs $conf ""]
+
+        append result "\$target add but$i $pairs\n"
+    }
+
+    return $result
+}
 
 proc vTcl:dump:checkbox {target basename} {
     global vTcl

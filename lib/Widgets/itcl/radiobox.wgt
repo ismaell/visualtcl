@@ -31,9 +31,26 @@ Icon		icon_radiobox.gif
 DumpChildren	no
 MegaWidget	yes
 DumpCmd		vTcl:dump:radiobox
+CompoundCmd     vTcl:compound:radiobox
 InsertCmd	vTcl:widget:radiobox:inscmd
 TagsCmd         vTcl:lib_itcl:tagscmd
 DefaultOptions	-labeltext "Radiobox"
+
+proc vTcl:compound:radiobox {target} {
+
+    set result ""
+    set last -1
+    catch {set last [$target index end]}
+
+    for {set i 0} {$i <= $last} {incr i} {
+        set conf [$target buttonconfigure $i]
+        set pairs [vTcl:conf_to_pairs $conf ""]
+
+        append result "\$target add but$i $pairs\n"
+    }
+
+    return $result
+}
 
 proc vTcl:dump:radiobox {target basename} {
 

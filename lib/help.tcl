@@ -222,7 +222,7 @@ proc vTclWindow.vTcl.tip {base} {
         -in $base.fra20 -anchor center -expand 0 -fill none -padx 5 -pady 5 \
         -side right 
     pack $base.fra23 \
-        -in $base -anchor center -expand 0 -fill y -side left 
+        -in $base -anchor center -expand 0 -fill y -side left
     pack $base.fra23.lab24 \
         -in $base.fra23 -anchor center -expand 0 -fill none -padx 5 \
         -side left 
@@ -325,22 +325,25 @@ namespace eval ::vTcl::news {
 	wm title $base "Visual Tcl News"
 
 	ScrolledWindow $base.f
-	text $base.f.t -background white -wrap none -cursor arrow
+	text $base.f.t -background white -wrap none -cursor arrow -height 4
 	$base.f setwidget $base.f.t
 
 	::vTcl::OkButton $base.b -anchor center -command "Window hide $base"
 
 	label $base.l -anchor w
+        checkbutton $base.dontshow -text "Do not show news on startup" \
+            -anchor w -variable vTcl(pr,dontshownews)
 
 	###################
 	# SETTING GEOMETRY
 	###################
 	pack $base.b \
-	    -in $base -anchor e -expand 0 -fill none -side top 
-	pack $base.l -side bottom -fill x
+	    -in $base -anchor e -expand 0 -fill none -side top
 	pack $base.f \
 	    -in $base -anchor center -expand 1 -fill both -side top
 	pack $base.f.t
+        pack $base.dontshow -side bottom -fill x
+	pack $base.l -side bottom -fill x
 
 	wm protocol $base WM_DELETE_WINDOW "$base.b invoke"
 
