@@ -129,8 +129,8 @@ proc vTclWindow.vTcl.prefs {{base ""} {container 0}} {
 
     vTcl:BindHelp $base Preferences
 
-    wm geometry $base 450x450
-    vTcl:center $base 450 450
+    wm geometry $base 450x500
+    vTcl:center $base 450 500
     wm deiconify $base
 }
 

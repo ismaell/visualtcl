@@ -109,14 +109,13 @@ proc vTcl:update_proc {base} {
 
 proc vTcl:update_proc_list {{name {}}} {
     global vTcl
-    if { [winfo exists $vTcl(gui,proclist)] == 0 } { return }
+    if {![winfo exists $vTcl(gui,proclist)]} { return }
     $vTcl(gui,proclist).f2.list delete 0 end
     foreach i [lsort $vTcl(procs)] {
-        if {[vTcl:valid_procname $i] == 1} {
-            if {[info body $i] != "" || $i == "main" || $i == "init"} {
-                $vTcl(gui,proclist).f2.list insert end $i
-            }
-        }
+	if {![vTcl:valid_procname $i]} { continue }
+	if {[info body $i] != "" || $i == "main" || $i == "init"} {
+	    $vTcl(gui,proclist).f2.list insert end $i
+	}
     }
     if {$name != ""} {
         set plist [$vTcl(gui,proclist).f2.list get 0 end]
@@ -258,6 +257,8 @@ proc vTclWindow.vTcl.proclist {args} {
     catch {wm geometry $vTcl(gui,proclist) $vTcl(geometry,$vTcl(gui,proclist))}
     update idletasks
     wm deiconify $vTcl(gui,proclist)
+
+    vTcl:BindHelp $vTcl(gui,proclist) FunctionList
 }
 
 proc vTclWindow.vTcl.proc {args} {

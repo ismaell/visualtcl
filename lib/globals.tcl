@@ -114,7 +114,7 @@ set vTcl(numRcFiles)	 5
 set vTcl(proc,name)      ""
 set vTcl(proc,args)      ""
 set vTcl(proc,body)      ""
-set vTcl(proc,ignore)    "tcl.*|tk.*|auto_.*|bgerror|\\..*"
+set vTcl(proc,ignore)    "tcl.*|tk.*|auto_.*|vTcl:.*|bgerror|\\..*"
 set vTcl(project,name)   ""
 set vTcl(project,file)   ""
 set vTcl(quit)           1

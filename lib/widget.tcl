@@ -994,7 +994,6 @@ proc vTcl:widget:register_widget {w} {
 proc vTcl:widget:register_all_widgets {{w .}} {
     set widgets [vTcl:list_widget_tree $w]
     foreach w $widgets {
-	echo $w
     	vTcl:widget:register_widget $w
     }
 }

@@ -87,7 +87,12 @@ proc vTcl:Help {helpName} {
     global vTcl
 
     set file [file join $vTcl(VTCL_HOME) lib Help $helpName]
-    if {![file exist $file]} { return }
+    if {![file exist $file]} {
+	set helpName Main
+	set file [file join $vTcl(VTCL_HOME) lib Help Main]
+    }
+
+    if {[vTcl:streq $helpName "Main"]} { set helpName "Visual Tcl" }
 
     Window show .vTcl.help
 
