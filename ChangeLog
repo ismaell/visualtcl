@@ -1,6 +1,8 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Added basic support for more BWidgets.
+    o Fixed bug where handles would sometimes appear on the toplevel window.
     o Added propagate patch from Simon for pack/grid geometry managers.
     o Added call to tk_setPalette to set color scheme according to
       preferences.
