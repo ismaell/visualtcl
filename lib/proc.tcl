@@ -350,11 +350,6 @@ proc vTclWindow.vTcl.proc {args} {
     pack configure $butFind -side left
     vTcl:set_balloon $butFind "Find/Replace"
 
-    set butCancel [vTcl:formCompound:add $base.f3.toolbar ::vTcl::CancelButton \
-        -command "vTcl:proc:edit_cancel $base"]
-    pack configure $butCancel -side right
-    vTcl:set_balloon $butCancel "Discard changes"
-
     set butOK [vTcl:formCompound:add $base.f3.toolbar ::vTcl::OkButton \
         -command "vTcl:update_proc $base"]
     pack configure $butOK -side right
@@ -375,6 +370,7 @@ proc vTclWindow.vTcl.proc {args} {
     bind $base <Destroy> {
 	if {[winfo exists .vTcl.find]} { destroy .vTcl.find }
     }
+    wm protocol $base WM_DELETE_WINDOW "vTcl:update_proc $base"
 
     set pname $base.f2.f8.procname
     set pargs $base.f2.f9.args
