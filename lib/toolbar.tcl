@@ -57,7 +57,16 @@ proc vTcl:toolbar_add {class name image cmd_add} {
     set base .vTcl.toolbar
     if {![winfo exists $base]} { vTcl:toolbar_create }
     set f [vTcl:new_widget_name tb $base]
-    button $f -bd 1 -image $image -comm "vTcl:new_widget $class $f \"$cmd_add\""
+    button $f -bd 1 -image $image
+
+    bind $f <ButtonRelease-1> "vTcl:new_widget $class $f \"$cmd_add\""
+
+    bind $f <Shift-ButtonRelease-1> \
+        "set _temp $vTcl(pr,autoplace)
+         set vTcl(pr,autoplace) 1
+         vTcl:new_widget $class $f \"$cmd_add\"
+         set vTcl(pr,autoplace) \$_temp"
+
     vTcl:set_balloon $f $name
     lappend vTcl(tool,list) $f
 }

@@ -3,7 +3,7 @@ ChangeLog for Visual Tcl:
 1.51b3 -> 1.51b4
     o Now prevents the user from trying to assign the same alias to 2 or more
       widgets inside the same toplevel.
-    o Added <Shift-ButtonRelease-3> command in the toolbar to auto-place widgets
+    o Added <Shift-ButtonRelease-1> command in the toolbar to auto-place widgets
     o Added column and row stretch options to tkTable library
     o When a toplevel compound is inserted, do not require the user to click
       anywhere, because this does not make sense. Instead, insert the compound
