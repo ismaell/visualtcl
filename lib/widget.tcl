@@ -107,6 +107,12 @@ proc vTcl:show {target} {
 #
 proc vTcl:hide {} {
     global vTcl
+    set class [vTcl:get_class $vTcl(w,widget)]
+    if {[vTcl:streq $class Toplevel]} {
+        vTcl:hide_top $vTcl(w,widget)
+        return
+    }
+
     if {$vTcl(w,manager) != "wm" && $vTcl(w,widget) != ""} {
         lappend vTcl(hide) $vTcl(w,widget)
         set vTcl(hide,$vTcl(w,widget),m) $vTcl(w,manager)
@@ -1211,6 +1217,11 @@ proc vTcl:widget:register_widget {w {save_options ""}} {
                         set ::widgets::${w}::options($opt) $val
                         set ::widgets::${w}::defaults($opt) $def
                     }
+
+                    # if the option is not saved, make sure we keep the settings
+                    if {![info exists ::widgets::${w}::save($opt)]} {
+                        set ::widgets::${w}::save($opt) 0
+                    }
                 }
 
                 if {![lempty $newdefopts]} {
@@ -1240,11 +1251,7 @@ proc vTcl:widget:register_widget {w {save_options ""}} {
 
 	if {[info exists ::widgets::${w}::save($opt)]} { continue }
 
-        if {[vTcl:streq $def $val]} {
-            set ::widgets::${w}::save($opt) 0
-        } else {
-            set ::widgets::${w}::save($opt) 1
-        }
+        set ::widgets::${w}::save($opt) [expr ![vTcl:streq $def $val]]
     }
 }
 

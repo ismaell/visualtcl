@@ -45,12 +45,12 @@ proc vTcl:show_top {target} {
     if [winfo exists $target] {
         if {[vTcl:get_class $target] == "Toplevel"} {
             wm deiconify $target
-            raise $target
+            vTcl:raise $target
         }
     } else {
         Window show $target
         wm deiconify $target
-        raise $target
+        vTcl:raise $target
         vTcl:widget:register_all_widgets $target
         vTcl:setup_bind_tree $target
         vTcl:update_top_list

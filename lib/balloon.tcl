@@ -68,7 +68,9 @@ proc vTcl:balloon {target message} {
         set ::vTcl::balloon::first 2
         set x [expr {[winfo rootx $target] + ([winfo width $target]/2)}]
         set y [expr {[winfo rooty $target] + [winfo height $target] + 4}]
-        toplevel .vTcl.balloon -bg black
+        if {![winfo exists .vTcl.balloon]} {
+            toplevel .vTcl.balloon -bg black
+        }
         wm overrideredirect .vTcl.balloon 1
         label .vTcl.balloon.l \
             -text $message -relief flat \

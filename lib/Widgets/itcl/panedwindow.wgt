@@ -91,8 +91,13 @@ proc vTcl:dump:panedwindow {target basename} {
         append result "$vTcl(tab)$basename add pane$i \\\n"
         append result "[vTcl:clean_pairs $pairs]\n"
     }
-    foreach page $entries {
-        append result [vTcl:lib_itcl:dump_subwidgets $page]
+    for {set i 0} {$i < $size} {incr i} {
+        set page [lindex $entries $i]
+        append result "$vTcl(tab)"
+        set sitevariable "site_[llength [split $page .]]_$i"
+        append result "set $sitevariable "
+        append result "\[lindex \[$basename childsite\] $i\]\n"
+        append result [vTcl:lib_itcl:dump_subwidgets $page \$$sitevariable]
     }
     return $result
 }

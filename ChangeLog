@@ -1,6 +1,14 @@
 ChangeLog for Visual Tcl:
 
 1.51b4 -> 1.51rc0
+    o Made sure not-to-be-saved options won't be saved again after a
+      project is reloaded.
+    o Fixed bug for right-click context menu "Hide" doing nothing for
+      toplevels.
+    o Do not use the raise command on Linux, because it is too slow
+      (2 second delay waiting for faulty X-Windows implementation to
+       respond to message)
+    o Fixed balloon help already existing window bug.
     o Cleaned up dumping megawidgets and their childsites. There are
       no more absolute paths, instead the code asks for each childsite
       in turn and stores its path into a variable. Still need to figure
