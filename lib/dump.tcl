@@ -342,10 +342,9 @@ proc vTcl:get_opts_special {opts w {save_always ""}} {
         lassign $i opt x x def val
         if {[vTcl:streq $opt "-class"]} { continue }
         if {![info exists save($opt)]} { set save($opt) 0 }
-        if {!$save($opt) &&
-          [lsearch -exact $save_always $opt] == -1} { continue }
+        if {!$save($opt) && [lsearch -exact $save_always $opt] == -1} {continue}
 
-        if [info exists vTcl(option,translate,$opt)] {
+        if {[info exists vTcl(option,translate,$opt)]} {
             set val [$vTcl(option,translate,$opt) $val]
             vTcl:log "Translated option: $opt value: $val"
         }
@@ -367,7 +366,6 @@ proc vTcl:dump_widget_quick {target} {
 proc vTcl:dump_widget_opt {target basename} {
     global vTcl classes
     if {$target == "."} {
-        vTcl:log "root widget manager = [winfo manager .]"
         set mgr wm
     } else {
         set mgr [winfo manager $target]
