@@ -1,3 +1,29 @@
+##############################################################################
+#
+# Visual TCL - A cross-platform application development environment
+#
+# Copyright (C) 2001 Christian Gavin
+#
+# Description file for Multicolumn listbox
+# Copyright (C) 1999 Bryan Oakley for Multicolumn listbox code (see below).
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+##############################################################################
+#
+
 Class         Mclistbox
 Lib           vtcl
 
@@ -9,19 +35,13 @@ MegaWidget    yes
 Resizable     both
 TreeLabel     Multicolumn Listbox
 AliasPrefix   Mclistbox
-ResizeCmd     vTcl:Mclistbox:Resize
-InsertCmd     vTcl:widget:mclistbox:inscmd
-
-proc vTcl:widget:mclistbox:inscmd {target} {
-    $target column add col1 -label {Column 1}
-    $target column add col2 -label {Column 2}
-    $target insert end {{line1 col1} {line1 col2}}
-    $target insert end {{line2 col1} {line2 col2}}
-}
+ResizeCmd     vTcl::widgets::vtcl::mclistbox::resizeCmd
+InsertCmd     vTcl::widgets::vtcl::mclistbox::insertCmd
+DumpCmd       vTcl::widgets::vtcl::mclistbox::dumpCmd
 
 lappend vTcl(classes) MclistboxColumn
 
-# New options for this widget
+## New options for this widget
 NewOption -columnborderwidth {Col Brdr Width}   type
 NewOption -columnrelief      {Col Relief}       relief
 NewOption -fillcolumn        {Fill Col}         type
@@ -34,14 +54,67 @@ NewOption -labelrelief       {Label Relief}     relief
 NewOption -labels            {Show Labels}      boolean  {0 1}
 NewOption -resizablecolumns  {Resizable Cols}   boolean  {0 1}
 
-proc vTcl:Mclistbox:Resize {widget w h} {
-    $widget configure -width $w -height $h
+## Multicolumn listbox support
+NewOption -_mclistbox_columns  "columns"  combobox
+ClassOption -_mclistbox_columns
+OptionConfigCmd -_mclistbox_columns     config     vTcl::widgets::vtcl::mclistbox::config_columns
+OptionConfigCmd -_mclistbox_columns     update     vTcl::widgets::vtcl::mclistbox::update_columns
+OptionConfigCmd -_mclistbox_columns     get        vTcl::widgets::vtcl::mclistbox::get_columns
+OptionConfigCmd -_mclistbox_columns     select     vTcl::widgets::vtcl::mclistbox::select_column
+
+namespace eval ::vTcl::widgets::vtcl::mclistbox {
+
+    proc get_columns {target} {
+    }
+
+    proc update_columns {target var} {
+        ## there is a trace on var to update the combobox
+        ## first item in the list is the current index
+        set names [$target column names]
+        set values 0
+        foreach name $names {
+            set label_opt [$target column cget $name -label]
+            lappend values $label_opt
+        }
+
+        ## this will trigger the trace
+        set ::$var $values
+    }
+
+    proc config_columns {target var} {
+    }
+
+    proc select_column {target index} {
+    }
+
+    proc insertCmd {target} {
+        $target column add col1 -label {Column 1}
+        $target column add col2 -label {Column 2}
+        $target insert end {{line1 col1} {line1 col2}}
+        $target insert end {{line2 col1} {line2 col2}}
+    }
+
+    proc dumpCmd {target basename} {
+        set result [vTcl:dump_widget_opt $target $basename]
+        set names [$target column names]
+        foreach name $names {
+            set conf [$target column configure $name]
+            set pairs [vTcl:conf_to_pairs $conf ""]
+            append result "$::vTcl(tab)$basename column add \\\n"
+            append result "[vTcl:clean_pairs $pairs]\n"
+        }
+        return $result
+    }
+
+    proc resizeCmd {target w h} {
+        $target configure -width $w -height $h
+    }
 }
 
 # Routines that need to be exported to a saved project
 
 Export __mclistbox_Setup
-Export ::mclistbox::FindResizableNeighbor 
+Export ::mclistbox::FindResizableNeighbor
 Export ::mclistbox::WidgetProc
 Export ::mclistbox::SetClassBindings
 Export ::mclistbox::NewColumn
@@ -89,7 +162,7 @@ proc __mclistbox_Setup {} {
 __mclistbox_Setup
 
 # Copyright (c) 1999, Bryan Oakley
-# All Rights Reservered
+# All Rights Reserved
 #
 # Bryan Oakley
 # oakley@channelpoint.com
@@ -98,10 +171,10 @@ __mclistbox_Setup
 #
 # a multicolumn listbox written in pure tcl
 #
-# this code is freely distributable without restriction, but is 
-# provided as-is with no waranty expressed or implied. 
+# this code is freely distributable without restriction, but is
+# provided as-is with no waranty expressed or implied.
 #
-# basic usage: 
+# basic usage:
 #    
 #    mclistbox::mclistbox .listbox
 #    .listbox column add col1 -label "Column 1"
@@ -850,7 +923,7 @@ proc ::mclistbox::Column-add {w args} {
     # if the first argument doesn't have a "-" as the first
     # character, it is an id to associate with this column
     if {![string match {-*} [lindex $args 0]]} {
-	# the first arg must be an id. 
+	# the first arg must be an id.
 	set id [lindex $args 0]
 	set args [lrange $args 1 end]
 	if {[lsearch -exact $misc(columns) $id] != -1} {
@@ -862,6 +935,7 @@ proc ::mclistbox::Column-add {w args} {
     # values supplied by the user
     set opts(-bitmap)     {}
     set opts(-image)      {}
+    set opts(-labelrelief) raised
     set opts(-visible)    1
     set opts(-resizable)  1
     set opts(-position)   "end"

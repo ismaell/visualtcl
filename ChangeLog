@@ -1,6 +1,10 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Multicolumn listbox:
+      - fix for -labelrelief option
+      - dump columns into project
+      - new columns option in attributes editor
     o Fix in compound code for copy/paste of BWidget notebook.
     o Again use raise command if tk >= 8.3.4 where the 2-second delay on
       some X Windows managers has been fixed.
