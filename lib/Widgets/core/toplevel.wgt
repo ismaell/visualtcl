@@ -2,12 +2,20 @@ Class		Toplevel
 Lib		core
 
 Icon		icon_toplevel.gif
-DoubleClickCmd	vTcl:edit_target_menu
+DoubleClickCmd	vTcl:widget:toplevel:dblclkcmd
+
 TreeLabel	@vTcl:core:get_widget_tree_label
 InsertCmd	vTcl:widget:toplevel:inscmd
 WidgetProc	vTcl:Toplevel:WidgetProc
 
 Function	"Set New Toplevel Geometry" vTcl:widget:toplevel:set_new_geom
+
+proc vTcl:widget:toplevel:dblclkcmd {target} {
+    global vTcl
+    set vTcl(w,opt,-menu) [$target cget -menu]
+    vTcl:edit_target_menu $target
+    vTcl:prop:save_opt $target -menu vTcl(w,opt,-menu)
+}
 
 proc vTcl:widget:toplevel:inscmd {target} {
     global vTcl

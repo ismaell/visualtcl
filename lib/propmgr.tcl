@@ -428,9 +428,9 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
                 -highlightthickness 1 -fg black -padx 0 -pady 1 \
                 -command "
                     set current \$vTcl(w,widget)
-                    vTcl:edit_target_menu $\current
-                    set $variable \[$\current cget -menu\]
-                    vTcl:prop:save_opt $\current $option $variable
+                    vTcl:edit_target_menu \$current
+                    set $variable \[\$current cget -menu\]
+                    vTcl:prop:save_opt \$current $option $variable
                 " -anchor w
         }
 	menuspecial {
