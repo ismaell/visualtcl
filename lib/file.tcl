@@ -675,7 +675,8 @@ namespace eval vTcl::project {
     proc addCompound {moduleName type compoundName} {
         upvar ::vTcl::modules::${moduleName}::compounds compounds
         set compound $type
-        lappend compounds [list $type [join $compoundName]]
+        lappend compounds [list $type $compoundName]
+        set compounds [lsort -unique $compounds]
     }
 
     proc saveCompounds {moduleName} {
@@ -728,4 +729,5 @@ namespace eval vTcl::project {
         return [lsort -unique $result]
     }
 }
+
 
