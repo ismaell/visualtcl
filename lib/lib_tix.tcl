@@ -158,28 +158,6 @@ proc vTcl:lib_tix:setup {} {
     append vTcl(var,ignore)  "|tix"
 }
 
-proc vTcl:dump:TixOptionMenu {target basename} {
-    global vTcl
-    set result [vTcl:lib_tix:dump_widget_opt $target $basename]
-    set entries [$target entries]
-    foreach entry $entries {
-        set conf [$target entryconfigure $entry]
-        set pairs [vTcl:conf_to_pairs $conf ""]
-        append result "$vTcl(tab)$basename add "
-        if {[llength $pairs] == 0} {
-            append result "separator $entry\n"
-        } else {
-            set index [lsearch -glob $pairs -command*]
-            if {$index > -1} {
-                set pairs [lreplace $pairs $index [expr $index+1]]
-            }
-            append result "command $entry \\\n"
-            append result "[vTcl:clean_pairs $pairs]\n"
-        }
-    }
-    return $result
-}
-
 proc vTcl:dump:TixLabelEntry {target basename} {
     global vTcl
     set output [vTcl:lib_tix:dump_widget_opt $target $basename]
