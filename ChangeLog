@@ -7,9 +7,9 @@ ChangeLog for Visual Tcl:
       - widget paths are relative to their parent
       - this makes the projet file smaller
       - compounds will be managed using dumping code => bye bye complicated
+        compound structures with multilevel lists
       - easier copy/paste of code from vTcl to outside world (a frame can
         be now copied/pasted as one block)
-      compound structures with multilevel lists
     o Applied patch from Eric Taylor to allow setting an option for all
       widgets of the same class in the parent widget.
     o Added panedwindow widget for Tk 8.4. If Tk 8.4 is present, paned window
