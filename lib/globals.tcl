@@ -113,6 +113,7 @@ set vTcl(pr,projfile)    0
 set vTcl(pr,saveasexecutable) 1
 set vTcl(pr,dontshowtips) 0
 set vTcl(pr,bgcolor) "#d9d9d9"
+set vTcl(pr,entrybgcolor) #ffffff
 set vTcl(pr,texteditor)	 ""
 set vTcl(numRcFiles)	 5
 # end preferences
