@@ -171,9 +171,6 @@ namespace eval vTcl::widgets::core::menu {
             set type [$target type $index]
             switch $type {
                 tearoff {}
-                separator {
-                    append result "$vTcl(tab)$basename add separator\n"
-                }
 		cascade {
                     ## to allow option translation
                     set pairs [vTcl:get_subopts_special $conf $target]
@@ -241,3 +238,4 @@ namespace eval vTcl::widgets::core::menu {
         return $result
     }
 }
+

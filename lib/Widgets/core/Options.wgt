@@ -25,6 +25,7 @@
 
 ## Define all the default options.
 
+NewOption -accelerator		"accelerator"		type
 NewOption -activebackground	"active bg"		color	{}	Colors
 NewOption -activeforeground	"active fg"		color	{}	Colors
 NewOption -activerelief		"active relief"		relief
@@ -39,6 +40,7 @@ NewOption -bordermode		"border mode"		choice \
   "inside ignore outside"
 NewOption -borderwidth		"borderwidth"		type
 NewOption -closeenough		"closeness"		type
+NewOption -columnbreak		"col break"		type
 NewOption -command		"command"		command
 NewOption -confine		"confine"		boolean	"0 1"
 NewOption -cursor		"cursor"		choice \
@@ -62,6 +64,7 @@ NewOption -fg			"foreground"		synonym
 NewOption -foreground		"foreground"		color	{}	Colors
 NewOption -font			"font"			font
 NewOption -height		"height"		type
+NewOption       -hidemargin      "hide margin"    boolean  {0 1}
 NewOption -highlightbackground 	"highlight bg"		color	{}	Colors
 NewOption -highlightcolor	"highlight color"	color	{}	Colors
 NewOption -highlightthickness	"highlight bd"	type
@@ -140,3 +143,4 @@ OptionConfigCmd -_tooltip       get                     vTcl:get_balloon
 NewOption -compound             "compound"              choice    "none bottom center left right top"
 NewOption -disabledbackground   "disabled bg"           color     {}   Colors
 NewOption -overrelief           "over relief"           relief
+
