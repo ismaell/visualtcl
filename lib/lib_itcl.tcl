@@ -129,6 +129,8 @@ proc vTcl:widget:lib:lib_itcl {args} {
         }
         image create photo "ctl_$i" -file $img_file
         vTcl:toolbar_add $i $i ctl_$i ""
+
+	append vTcl(proc,ignore) "|$i"
     }
     # The Widget Browser needs images for all itcl classes.
     # The images need to be called, e.g. ctl_itclNoteBookFrame.
