@@ -212,13 +212,14 @@ proc vTcl:focus_out_cmd {option} {
     if {$vTcl(mode) == "TEST"} return
 
     if {$vTcl(w,last_widget_in) != "" && $vTcl(w,last_value) != ""} {
-	set back_last_widget_in $vTcl(w,last_widget_in)
-	set back_last_value $vTcl(w,last_value)
+	set w $vTcl(w,last_widget_in)
+	set val $vTcl(w,last_value)
 
 	set vTcl(w,last_widget_in) ""
 	set vTcl(w,last_value)     ""
 
-	$back_last_widget_in configure $option $back_last_value
+	$w configure $option $val
+	vTcl:prop:save_opt $w $option ::widgets::${w}::save($option)
 	vTcl:place_handles $vTcl(w,widget)
     } else {
 	vTcl:log "oops:$vTcl(w,widget),$vTcl(w,last_widget_in)!"
@@ -390,7 +391,8 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
     }
 
     set label $top.$option
-    label $label -text $text -anchor w -width 11 -fg black -relief raised
+    label $label -text $text -anchor w -width 11 -fg black \
+    	-relief $vTcl(propmgr,relief)
 
     # @@change by Christian Gavin 3/10/2000
     # added font browser for individual properties
@@ -498,9 +500,8 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
                 -image ellipses -bd 1 -width 12 \
                 -highlightthickness 1 -fg black -padx 0 -pady 1 \
                 -command "
-		vTcl:propmgr:select_attr $top $option
-		vTcl:set_command \$vTcl(w,widget) $option $variable
-		vTcl:prop:save_opt \$vTcl(w,widget) $option $variable
+		    vTcl:propmgr:select_attr $top $option
+		    vTcl:set_command \$vTcl(w,widget) $option $variable
 		"
             pack ${base}.l -side left -expand 1 -fill x
             pack ${base}.f -side right -fill y -pady 1 -padx 1
@@ -563,16 +564,24 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
     lappend vTcl(propmgr,$c) $label
     set propmgrLabels($label) $focusControl
 
-    bind $base <KeyRelease-Return> $config_cmd
-
     ## If they click the label, select the focus control.
     bind $label <Button-1> "focus $focusControl"
+    bind $label <Enter> "
+	if {\[vTcl:streq \[$label cget -relief] $vTcl(propmgr,relief)]} {
+	    $label configure -relief raised
+	} 
+    "
+    bind $label <Leave> "
+	if {\[vTcl:streq \[$label cget -relief] raised]} {
+	    $label configure -relief $vTcl(propmgr,relief)
+	}
+    "
 
     set focus_in_cmd "vTcl:propmgr:select_attr $top $option"
 
     ## Don't change if the user presses a directional key.
     set key_release_cmd "
-	if {%k < 37 && %k > 40} {
+	if {%k < 37 || %k > 40} {
 	    set vTcl(w,last_widget_in) \$vTcl(w,widget)
 	    set vTcl(w,last_value) \$$variable
 	}
@@ -581,6 +590,7 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
     bind $focusControl <FocusIn>    $focus_in_cmd
     bind $focusControl <FocusOut>   $focus_out_cmd
     bind $focusControl <KeyRelease> $key_release_cmd
+    bind $focusControl <KeyRelease-Return> $config_cmd
     bind $focusControl <Key-Up>     "vTcl:propmgr:focusPrev $label"
     bind $focusControl <Key-Down>   "vTcl:propmgr:focusNext $label"
 
@@ -681,7 +691,7 @@ proc vTcl:propmgr:select_attr {top opt} {
 proc vTcl:propmgr:deselect_attr {} {
     global vTcl
     if {![info exists vTcl(propmgr,lastAttr)]} { return }
-    [join $vTcl(propmgr,lastAttr) .] configure -relief raised
+    [join $vTcl(propmgr,lastAttr) .] configure -relief $vTcl(propmgr,relief)
     unset vTcl(propmgr,lastAttr)
 }
 

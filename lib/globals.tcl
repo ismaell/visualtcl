@@ -47,6 +47,7 @@ set vTcl(console)        0
 set vTcl(cursor,last)    ""
 set vTcl(procs)          "init main"
 set vTcl(state)		 "normal"
+set vTcl(propmgr,relief) "groove"
 set vTcl(file,base)      [pwd]
 set vTcl(file,mode)      ""
 set vTcl(file,type)      "*.tcl"

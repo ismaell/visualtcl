@@ -404,6 +404,7 @@ proc vTcl:dialog {mesg {options Ok} {root 0}} {
     set sh [winfo screenheight .]
     if {![winfo exists $base]} {
         toplevel $base -class vTcl
+	wm withdraw $base
         wm title $base "Visual Tcl Message"
         wm transient $base .vTcl
         frame $base.f -bd 2 -relief groove
@@ -423,7 +424,6 @@ proc vTcl:dialog {mesg {options Ok} {root 0}} {
         pack $base.f -side top -expand 1 -fill both -padx 2 -pady 2
         pack $base.o -side top -fill x -padx 2 -pady 2
     }
-    wm withdraw $base
     update idletasks
     set w [winfo reqwidth $base]
     set h [winfo reqheight $base]

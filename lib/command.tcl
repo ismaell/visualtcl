@@ -47,19 +47,19 @@ proc vTcl:set_command {target {option -command} {variable ""}} {
     global vTcl
     if {$target == ""} {return}
     set base ".vTcl.com_[vTcl:rename ${target}${option}]"
-    if {[catch {set cmd [$target cget $option]}] == 1} {
-        return
-    }
+
+    if {[catch {set cmd [$target cget $option]}] == 1} { return }
+
     set r [vTcl:get_command "$option for $target" $cmd $base]
-    if {$r == -1} {
-        return
-    } else {
-        $target configure $option [string trim $r]
-		if {$variable != ""} {
-		    global $variable
-		    set $variable [string trim $r]
-		}
+    if {$r == -1} { return }
+
+    $target configure $option [string trim $r]
+    if {[lempty $variable]} {
+    	set variable ::widgets::${target}::save($option)
     }
+    global $variable
+    set $variable [string trim $r]
+    vTcl:prop:save_opt $target $option $variable
 }
 
 proc vTcl:get_command {title initial base} {

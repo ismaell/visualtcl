@@ -441,6 +441,7 @@ proc vTcl:save2 {file} {
 	    append out "$vTcl(tab)set packageNames \[package names\]\n"
 	}
 	foreach lib $vTcl(dump,libraries) {
+	    if {![info exists vTcl(head,$lib,importheader)]} { continue }
 	    append out $vTcl(head,$lib,importheader)
 	}
 	vTcl:dump:sourcing_footer out
