@@ -451,6 +451,33 @@ proc vTcl:project:info {} {
     namespace eval ::widgets::.top18.but20 {
         array set save {-command 1 -text 1 -width 1}
     }
+    namespace eval ::widgets::.top19 {
+        array set save {}
+    }
+    namespace eval ::widgets::.top19.lab20 {
+        array set save {-anchor 1 -padx 1 -pady 1 -text 1}
+    }
+    namespace eval ::widgets::.top19.cpd22 {
+        array set save {-borderwidth 1 -height 1 -relief 1 -width 1}
+    }
+    namespace eval ::widgets::.top19.cpd22.01 {
+        array set save {-background 1 -highlightthickness 1 -relief 1 -xscrollcommand 1 -yscrollcommand 1}
+    }
+    namespace eval ::widgets::.top19.cpd22.02 {
+        array set save {-command 1 -highlightthickness 1 -orient 1}
+    }
+    namespace eval ::widgets::.top19.cpd22.03 {
+        array set save {-command 1 -highlightthickness 1}
+    }
+    namespace eval ::widgets::.top19.fra23 {
+        array set save {}
+    }
+    namespace eval ::widgets::.top19.fra23.but24 {
+        array set save {-command 1 -text 1 -width 1}
+    }
+    namespace eval ::widgets::.top19.fra23.but25 {
+        array set save {-command 1 -text 1 -width 1}
+    }
     namespace eval ::widgets::.top21 {
         array set save {-menu 1}
     }
@@ -644,7 +671,7 @@ proc vTcl:project:info {} {
         array set save {-command 1 -image 1 -relief 1 -text 1}
     }
     namespace eval ::widgets::.top21.cpd23.02.fra22.but24 {
-        array set save {-image 1 -relief 1 -text 1}
+        array set save {-command 1 -image 1 -relief 1 -text 1}
     }
     namespace eval ::widgets::.top21.cpd23.02.cpd22 {
         array set save {-borderwidth 1 -relief 1 -width 1}
@@ -976,6 +1003,45 @@ switch $S {
      $downframe configure -height 2
    }
 }
+}
+
+}
+###########################################################
+## Procedure:  ::delete_tag::do_modal
+
+namespace eval ::delete_tag {
+
+proc {::delete_tag::do_modal} {mainw w} {
+global widget
+set wa $widget(rev,$w)
+
+$wa.DeleteTagListbox delete 0 end
+set tags [$mainw.MainText tag names]
+foreach tag $tags {
+    if {$tag == "sel"} {continue}
+    $wa.DeleteTagListbox insert end $tag
+}
+
+set ::${w}::status ""
+Window show $w
+vwait ::${w}::status
+Window hide $w
+
+## did the user cancel ?
+upvar #0 ::${w}::status status
+if {$status == "cancel"} {return}
+
+## get the selected tag
+set index [$wa.DeleteTagListbox curselection]
+if {$index == ""} {return}
+
+## delete the tag in the main text widget
+set tag [$wa.DeleteTagListbox get $index]
+$mainw.MainText tag delete $tag
+
+## refresh the whole thing
+::visual_text::fill_tags $mainw
+::visual_text::show_tags_at_insert $mainw
 }
 
 }
@@ -1957,6 +2023,81 @@ proc vTclWindow.top18 {base {container 0}} {
         -in $base -anchor center -expand 0 -fill none -pady 5 -side top 
 }
 
+proc vTclWindow.top19 {base {container 0}} {
+    if {$base == ""} {
+        set base .top19
+    }
+    if {[winfo exists $base] && (!$container)} {
+        wm deiconify $base; return
+    }
+
+    global widget
+    vTcl:DefineAlias "$base" "DeleteTextTag" vTcl:Toplevel:WidgetProc "" 1
+    vTcl:DefineAlias "$base.cpd22.01" "DeleteTagListbox" vTcl:WidgetProc "DeleteTextTag" 1
+
+    ###################
+    # CREATING WIDGETS
+    ###################
+    if {!$container} {
+    vTcl:toplevel $base -class Toplevel
+    wm withdraw $base
+    wm focusmodel $base passive
+    wm geometry $base 394x328+337+187; update
+    wm maxsize $base 1009 738
+    wm minsize $base 1 1
+    wm overrideredirect $base 0
+    wm resizable $base 1 1
+    wm title $base "Delete Tag"
+    }
+    label $base.lab20 \
+        -anchor w -padx 1 -pady 1 \
+        -text {Select the tag you want to delete, then press "Delete".} 
+    frame $base.cpd22 \
+        -borderwidth 1 -height 30 -relief sunken -width 30 
+    listbox $base.cpd22.01 \
+        -background white -highlightthickness 0 -relief flat \
+        -xscrollcommand "$base.cpd22.02 set" \
+        -yscrollcommand "$base.cpd22.03 set" 
+    scrollbar $base.cpd22.02 \
+        -command "$base.cpd22.01 xview" -highlightthickness 0 \
+        -orient horizontal 
+    scrollbar $base.cpd22.03 \
+        -command "$base.cpd22.01 yview" -highlightthickness 0 
+    frame $base.fra23
+    button $base.fra23.but24 \
+        \
+        -command [list vTcl:DoCmdOption $base.fra23.but24 {set %top::status "delete"}] \
+        -text Delete -width 8 
+    button $base.fra23.but25 \
+        \
+        -command [list vTcl:DoCmdOption $base.fra23.but25 {set %top::status "cancel"}] \
+        -text Cancel -width 8 
+    ###################
+    # SETTING GEOMETRY
+    ###################
+    pack $base.lab20 \
+        -in $base -anchor center -expand 0 -fill x -padx 2 -pady 2 -side top 
+    pack $base.cpd22 \
+        -in $base -anchor center -expand 1 -fill both -padx 2 -side top 
+    grid columnconf $base.cpd22 0 -weight 1
+    grid rowconf $base.cpd22 0 -weight 1
+    grid $base.cpd22.01 \
+        -in $base.cpd22 -column 0 -row 0 -columnspan 1 -rowspan 1 \
+        -sticky nesw 
+    grid $base.cpd22.02 \
+        -in $base.cpd22 -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew 
+    grid $base.cpd22.03 \
+        -in $base.cpd22 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns 
+    pack $base.fra23 \
+        -in $base -anchor center -expand 0 -fill none -pady 5 -side top 
+    pack $base.fra23.but24 \
+        -in $base.fra23 -anchor center -expand 0 -fill none -padx 5 \
+        -side left 
+    pack $base.fra23.but25 \
+        -in $base.fra23 -anchor center -expand 0 -fill none -padx 5 \
+        -side right 
+}
+
 proc vTclWindow.top21 {base {container 0}} {
     if {$base == ""} {
         set base .top21
@@ -1983,7 +2124,7 @@ proc vTclWindow.top21 {base {container 0}} {
     vTcl:toplevel $base -class Toplevel \
         -menu "$base.m26" 
     wm focusmodel $base passive
-    wm geometry $base 678x575+129+83; update
+    wm geometry $base 678x575+125+64; update
     wm maxsize $base 1009 738
     wm minsize $base 100 1
     wm overrideredirect $base 0
@@ -2206,6 +2347,7 @@ proc vTclWindow.top21 {base {container 0}} {
     bindtags $base.cpd23.02.fra22.but23 "$base.cpd23.02.fra22.but23 Button $base all FlatToolbarButton"
     button $base.cpd23.02.fra22.but24 \
         \
+        -command [list vTcl:DoCmdOption $base.cpd23.02.fra22.but24 {::delete_tag::do_modal %top $widget(DeleteTextTag)}] \
         -image [vTcl:image:get_image [file join / home cgavin vtcl images edit remove.gif]] \
         -relief flat -text button 
     bindtags $base.cpd23.02.fra22.but24 "$base.cpd23.02.fra22.but24 Button $base all FlatToolbarButton"
@@ -2274,9 +2416,9 @@ break
         -command [list vTcl:DoCmdOption $base.m26.men27 {::visual_text::command-open %top}] \
         -image {} -label Open... 
     $base.m26.men27 add command \
-        -accelerator {Ctrl + S} -command {# TODO: Your menu handler here} \
+        -accelerator {Ctrl + S} \
         -command [list vTcl:DoCmdOption $base.m26.men27 {::visual_text::command-save %top}] \
-        -image {} -label Save
+        -image {} -label Save 
     $base.m26.men27 add command \
         -accelerator {} \
         -command [list vTcl:DoCmdOption $base.m26.men27 {::visual_text::command-save %top 1}] \
@@ -2382,7 +2524,7 @@ break
         -side bottom 
     pack $base.cpd23.01.fra18.fra24 \
         -in $base.cpd23.01.fra18 -anchor center -expand 0 -fill none \
-        -side left
+        -side left 
     pack $base.cpd23.01.fra18.cpd20 \
         -in $base.cpd23.01.fra18 -anchor center -expand 0 -fill none -padx 5 \
         -pady 5 -side left 
@@ -2640,7 +2782,7 @@ proc vTclWindow.top22 {base {container 0}} {
 ::edit_tag::update_sample [winfo toplevel %W]
     }
     label $base.fra27.fra29.lab23 \
-        -background #000000 -text Foregnd
+        -background #000000 -text Foregnd 
     bind $base.fra27.fra29.lab23 <Button-1> {
         %W configure -background [tk_chooseColor -initialcolor [%W cget -background]]
 ::edit_tag::update_sample [winfo toplevel %W]
@@ -2698,7 +2840,7 @@ proc vTclWindow.top22 {base {container 0}} {
         -in $base.fra27 -anchor center -expand 0 -fill y -side right 
     pack $base.fra27.fra29.fra30 \
         -in $base.fra27.fra29 -anchor center -expand 0 -fill none -ipadx 2 \
-        -ipady 2 -side top
+        -ipady 2 -side top 
     pack $base.fra27.fra29.fra30.lab34 \
         -in $base.fra27.fra29.fra30 -anchor center -expand 0 -fill none \
         -side left 
@@ -2726,7 +2868,7 @@ proc vTclWindow.top22 {base {container 0}} {
     pack $base.fra27.fra29.rad42 \
         -in $base.fra27.fra29 -anchor center -expand 0 -fill x -side top 
     pack $base.fra27.fra29.rad43 \
-        -in $base.fra27.fra29 -anchor center -expand 0 -fill x -side top
+        -in $base.fra27.fra29 -anchor center -expand 0 -fill x -side top 
     pack $base.fra27.fra29.lab22 \
         -in $base.fra27.fra29 -anchor center -expand 0 -fill x -padx 2 \
         -pady 1 -side top 
@@ -2740,7 +2882,7 @@ proc vTclWindow.top22 {base {container 0}} {
     grid columnconf $base.cpd44 0 -weight 1
     grid rowconf $base.cpd44 0 -weight 1
     grid $base.cpd44.01 \
-        -in $base.cpd44 -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew
+        -in $base.cpd44 -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew 
     grid $base.cpd44.02 \
         -in $base.cpd44 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns 
     grid $base.cpd44.03 \
@@ -2852,6 +2994,7 @@ bind "BitmapButtonSub3" <Motion> {
 
 Window show .
 Window show .top18
+Window show .top19
 Window show .top21
 Window show .top22
 
