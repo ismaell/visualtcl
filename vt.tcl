@@ -303,11 +303,16 @@ proc vTclWindow.vTcl {args} {
     wm command $vTcl(gui,main) "$vTcl(VTCL_HOME)/vtcl"
     wm iconname $vTcl(gui,main) "Visual Tcl"
     if {$tcl_platform(platform) == "macintosh"} {
-        wm geometry $vTcl(gui,main) $vTcl(pr,geom_vTcl)+0+20
+#        wm geometry $vTcl(gui,main) $vTcl(pr,geom_vTcl)+0+20
     } else {
-        wm geometry $vTcl(gui,main) $vTcl(pr,geom_vTcl)+0+0
+    	 puts $vTcl(pr,geom_vTcl)
+         wm geometry $vTcl(gui,main) +0+0
     }
-    catch {wm geometry .vTcl $vTcl(geometry,.vTcl)}
+    catch {
+        regsub -all {[0-9]+x[0-9]+} $vTcl(geometry,.vTcl) "" \
+            vTcl(geometry,.vTcl)
+        wm geometry .vTcl $vTcl(geometry,.vTcl)
+    }
     wm protocol .vTcl WM_DELETE_WINDOW {vTcl:quit}
     set tmp $vTcl(gui,main).menu
     frame $tmp -relief flat
@@ -592,6 +597,43 @@ proc vTcl:define_bindings {} {
 proc vTcl:main {argc argv} {
     global env vTcl tcl_version tcl_platform
 
+    if {[namespace children :: ::freewrap] == "::freewrap"} {
+        # folder name at the time it was wrapped
+        set env(VTCL_HOME) "C:/My Documents/vtcl"
+
+        # info about the list of files
+        set listID [open $env(VTCL_HOME)/wrap.txt r]
+        set vTcl(wrapped) [split [read $listID] \n]
+        close $listID
+
+        # special glob procedure
+        rename glob vTcl:glob
+
+        proc glob {args} {
+
+            global vTcl            
+            set index 0
+            if {[lindex $args 0] == "-nocomplain"} {
+                incr index
+            }
+
+            set pattern [lindex $args $index]
+            set result ""
+        
+            foreach wrapped $vTcl(wrapped) {
+                if [string match $pattern $wrapped] {
+                    lappend result $wrapped
+                }
+            }
+
+            if {$result == ""} {
+                return [eval vTcl:glob $args]
+            } else {
+                return $result
+            }
+        }
+    }
+
     catch {package require Unsafe} ; #for running in Netscape
     catch {package require dde}    ; #for windows
     catch {package require Tk}     ; #for dynamic loading tk
@@ -666,4 +708,6 @@ proc vTcl:main {argc argv} {
 }
 
 vTcl:main $argc $argv
+
+
 
