@@ -22,19 +22,15 @@
 #
 
 proc vTcl:entry_or_text {w} {
-    if {$w != "" &&
-        [string match .vTcl* $w] &&
-        ([vTcl:get_class $w] == "Text" ||
-         [vTcl:get_class $w] == "Entry")} then {
-		return 1
-    } else {
-		return 0
-	}
+    if {[lempty $w] || ![string match .vTcl* $w]} { return 0 }
+    set c [vTcl:get_class $w]
+    if {[vTcl:streq $c "Text"] || [vTcl:streq $c "Entry"]} { return 1 }
+    return 0
 }
 
 proc vTcl:copy {{w ""}} {
-    # cut/copy/paste handled by text widget only
-    if {[vTcl:entry_or_text $w]} then return
+    # Cut/copy/paste handled by text widget only
+    if {[vTcl:entry_or_text $w]} { return }
 
     global vTcl
     set vTcl(buffer) [vTcl:create_compound $vTcl(w,widget)]
@@ -42,8 +38,8 @@ proc vTcl:copy {{w ""}} {
 }
 
 proc vTcl:cut {{w ""}} {
-    # cut/copy/paste handled by text widget only
-    if {[vTcl:entry_or_text $w]} then return
+    # Cut/copy/paste handled by text widget only
+    if {[vTcl:entry_or_text $w]} { return }
 
     global vTcl
     if { $vTcl(w,widget) == "." } { return }
@@ -53,27 +49,25 @@ proc vTcl:cut {{w ""}} {
 }
 
 proc vTcl:delete {{w ""}} {
-    # cut/copy/paste handled by text widget only
-    if {[vTcl:entry_or_text $w]} then return
+    # Cut/copy/paste handled by text widget only
+    if {[vTcl:entry_or_text $w]} { return }
 
     global vTcl classes
+
     set w $vTcl(w,widget)
+
+    if {[lempty $w]} { return }
+    if {[vTcl:streq $w "."]} { return }
+
     set class [winfo class $w]
 
-    if {$class == "Toplevel" &&
-        ![lempty [vTcl:get_children $w]]} {
+    if {[vTcl:streq $class "Toplevel"] && ![lempty [vTcl:get_children $w]]} {
         set result [tk_messageBox -type yesno \
             -title "Visual Tcl" \
             -message "Are you sure you want to delete top-level window $w ?"]
 
-        if {$result == "no"} {
-            return 0
-        }
+        if {$result == "no"} { return 0 }
     }
-
-    if { $vTcl(w,widget) == "." } { return }
-
-    if {[lempty $w]} { return }
 
     vTcl:destroy_handles
 
@@ -144,8 +138,8 @@ proc vTcl:delete {{w ""}} {
 }
 
 proc vTcl:paste {{fromMouse ""} {w ""}} {
-    # cut/copy/paste handled by text widget only
-    if {[vTcl:entry_or_text $w]} then return
+    # Cut/copy/paste handled by text widget only
+    if {[vTcl:entry_or_text $w]} { return }
 
     global vTcl
 
