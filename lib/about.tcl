@@ -85,9 +85,11 @@ proc vTcl:fill_credits {} {
 
     global vTcl tcl_version tk_version
 
-    set inID [open [file join $vTcl(VTCL_HOME) lib Help About.txt]]
+    set inID [open [file join $vTcl(VTCL_HOME) lib Help about.ttd]]
+    set contents [read $inID]
     CreditsText delete 0.0 end
-    CreditsText insert 0.0 [read $inID]
+    ::ttd::insert [CreditsText] $contents
+
     CreditsText insert end \
         "\nTcl version $tcl_version\nTk version $tk_version"
     CreditsText configure -state disabled
@@ -128,10 +130,10 @@ proc vTclWindow.vTcl.credits {base} {
     }
 
     ::vTcl::OkButton $base.but23 -command "Window hide $base"
-    ScrolledWindow $base.cpd24
+    ScrolledWindow $base.cpd24 -auto vertical
     text $base.cpd24.03 -height 1 -background white \
         -font {-family helvetica -size 12} \
-        -width 8 -wrap none
+        -width 8 -wrap word
     $base.cpd24 setwidget $base.cpd24.03
     bind $base.cpd24.03 <KeyRelease> "break"
 
