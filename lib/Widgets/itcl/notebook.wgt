@@ -65,6 +65,9 @@ namespace eval vTcl::widgets::iwidgets::notebook {
         $target add -label {Page 2}
         $target add -label {Page 3}
         $target select 0
+	foreach site [$target childsite] {
+	    vTcl::widgets::iwidgets::notebooks::edit::saveBkgnd $site
+	}
     }
 
     proc deleteSiteCmd {target site} {

@@ -73,6 +73,9 @@ namespace eval vTcl::widgets::iwidgets::tabnotebook {
         $target add -label {Page 2}
         $target add -label {Page 3}
         $target select 0
+	foreach site [$target childsite] {
+	    vTcl::widgets::iwidgets::notebooks::edit::saveBkgnd $site
+	}
     }
 
     # All right, I explain it: -4 is the number of levels
