@@ -119,6 +119,7 @@ set vTcl(w,grabbed)      0
 set vTcl(w,info)         ""
 set vTcl(w,insert)       .
 set vTcl(w,libs)         ""
+set vTcl(w,libsnames)    ""
 set vTcl(w,manager)      ""
 set vTcl(w,mgrs)         "grid pack place wm"
 set vTcl(w,options)      ""
