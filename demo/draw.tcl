@@ -23,7 +23,8 @@ set tk_strictMotif 1
 global tool; 
 global x; 
 global y; 
-global img; 
+global img;
+set tool free 
 set img(line) {
     R0lGODdhKAAoAPUAAAAAADj4MEDsMEjkMFBQ+FDcMFjQMGDIMGjAMHB0cHC4MHikOHisMIB8
     eICAgICcOIiQOJCIOJiAOKB4OKC0yKDEyKgoGKhsOLBkOLhcOLi4uMBQOMDAwMhIOMjEwNBA
@@ -70,21 +71,9 @@ set img(free) {
     tyYterwod+5YpHWRlnzJVyfMm3hvwqVKuLDhw4gTNw0IADs=
 }
 
-if {$tcl_version < 7.7} {
-    if {[info exists vTcl(VTCL_HOME)]} {
-        set base [file join $vTcl(VTCL_HOME) demo]
-    } else {
-        set base [pwd]
-    }
-    image create photo free -file [file join $base images free.gif]
-    image create photo line -file [file join $base images line.gif]
-    image create photo rect -file [file join $base images rect.gif]
-    image create photo oval -file [file join $base images oval.gif]
-} else {
     foreach i {free line rect oval} {
         image create photo $i -data $img($i)
     }
-}
 }
 
 init $argc $argv
@@ -93,7 +82,7 @@ init $argc $argv
 proc {button-down} {sx sy} {
 global tool x y obj widget
 
-switch $tool {
+switch -- $tool {
     free -
     line {
         set x $sx
@@ -116,7 +105,7 @@ switch $tool {
 proc {button-motion} {nx ny} {
 global tool x y obj widget
 
-switch $tool {
+switch -- $tool {
     free {
         $widget(CANVAS) create line $x $y $nx $ny
         set x $nx
@@ -133,8 +122,6 @@ switch $tool {
 proc {button-release} {nx ny} {
 global tool x y
 
-switch $tool {
-}
 }
 
 proc {main} {argc argv} {
@@ -308,3 +295,4 @@ Window show .
 Window show .top28
 
 main $argc $argv
+
