@@ -268,10 +268,27 @@ proc vTcl:get_opts {opts} {
     return $ret
 }
 
-# @@change by Christian Gavin 3/18/2000
-# converts image names to filenames before saving
-# converts font object names to font keys before saving
+## This proc works as get_opts_special but is intended for widget
+## subcomponents (pages, columns, childsites) where the user cannot
+## save or not save an option.
+proc vTcl:get_subopts_special {opts w} {
+    global vTcl
+    set ret ""
+    foreach i $opts {
+        lassign $i opt x x def val
+        if {[vTcl:streq $opt "-class"] || [vTcl:streq $val $def]} { continue }
+        if {[info exists vTcl(option,translate,$opt)]} {
+            set val [$vTcl(option,translate,$opt) $val]
+        }
+        lappend ret $opt $val
+    }
+    return $ret
+}
 
+## This proc does option translation:
+## - converts image names to filenames before saving
+## - converts font object names to font keys before saving
+## - etc.
 proc vTcl:get_opts_special {opts w {save_always ""}} {
     global vTcl
     vTcl:WidgetVar $w save
@@ -282,17 +299,13 @@ proc vTcl:get_opts_special {opts w {save_always ""}} {
         if {[vTcl:streq $opt "-class"]} { continue }
         if {![info exists save($opt)]} { set save($opt) 0 }
         if {!$save($opt) && [lsearch -exact $save_always $opt] == -1} {continue}
-
         if {[info exists vTcl(option,translate,$opt)]} {
             set val [$vTcl(option,translate,$opt) $val]
-            vTcl:log "Translated option: $opt value: $val"
         }
         lappend ret $opt $val
     }
     return $ret
 }
-
-# @@end_change
 
 proc vTcl:dump_widget_quick {target} {
     global vTcl

@@ -144,7 +144,7 @@ namespace eval ::vTcl::widgets::vtcl::mclistbox {
         set index 1
         foreach name $names {
             set conf [$target column configure $name]
-            set pairs [vTcl:conf_to_pairs $conf ""]
+            set pairs [vTcl:get_subopts_special $conf $target]
             append result "$::vTcl(tab)$basename column add col$index \\\n"
             append result "[vTcl:clean_pairs $pairs]\n"
             incr index

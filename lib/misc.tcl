@@ -1132,13 +1132,48 @@ proc ::vTcl::MessageBox {args} {
 
 namespace eval ::vTcl::ui::attributes {
 
+    variable counter
+    set counter 0
+
     proc show_color {w variable args} {
-        $w configure -bg [vTcl:at $variable]
+        catch {
+            $w configure -bg [vTcl:at $variable]
+        }
     }
 
     proc select_color {w config_cmd variable} {
         set initial [::vTcl:at $variable]
         set $variable [::vTcl:get_color $initial $w]
+        eval $config_cmd
+    }
+
+    proc set_command {option config_cmd variable} {
+        variable counter
+
+        set cmd [::vTcl:at $variable]
+        incr counter
+        set result [::vTcl:get_command "Edit $option" $cmd .vTcl.cmdEdit_$counter]
+        if {$result == -1} {
+            return
+        }
+        set $variable [string trim $result]
+        eval $config_cmd
+    }
+
+    proc set_font {config_cmd variable} {
+        set font [::vTcl:at $variable]
+        set r [::vTcl:font:prompt_noborder_fontlist $font]
+        if {$r == ""} {
+            return
+        }
+        set $variable $r
+        eval $config_cmd
+    }
+
+    proc set_image {config_cmd variable} {
+        set image [::vTcl:at $variable]
+        set r [::vTcl:prompt_user_image2 $image]
+        set $variable $r
         eval $config_cmd
     }
 
@@ -1204,7 +1239,7 @@ namespace eval ::vTcl::ui::attributes {
                 button ${base}.f \
                     -image ellipses  -width 12 \
                     -highlightthickness 1 -fg black -padx 0 -pady 1 \
-                    -command "todo: complete code here"
+                    -command "::vTcl::ui::attributes::set_command $option [list $config_cmd] $variable"
                 pack ${base}.l -side left -expand 1 -fill x
                 pack ${base}.f -side right -fill y -pady 1 -padx 1
 	        set focusControl ${base}.l
@@ -1217,7 +1252,7 @@ namespace eval ::vTcl::ui::attributes {
                 button ${base}.f \
                     -image ellipses  -width 12 \
                     -highlightthickness 1 -fg black -padx 0 -pady 1 \
-                    -command "todo: complete code here"
+                    -command "::vTcl::ui::attributes::set_font [list $config_cmd] $variable"
                 pack ${base}.l -side left -expand 1 -fill x
                 pack ${base}.f -side right -fill y -pady 1 -padx 1
                 set focusControl ${base}.l
@@ -1230,7 +1265,7 @@ namespace eval ::vTcl::ui::attributes {
                 button ${base}.f \
                     -image ellipses  -width 12 \
                     -highlightthickness 1 -fg black -padx 0 -pady 1 \
-                    -command "todo: complete code here"
+                    -command "::vTcl::ui::attributes::set_image [list $config_cmd] $variable"
                 pack ${base}.l -side left -expand 1 -fill x
                 pack ${base}.f -side right -fill y -pady 1 -padx 1
 	        set focusControl ${base}.l

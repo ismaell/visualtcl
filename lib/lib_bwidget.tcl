@@ -67,6 +67,16 @@ proc vTcl:widget:lib:lib_bwidget {args} {
 	package require BWidget
     }
     }
+
+    ## Commands to ignore
+    append vTcl(proc,ignore) "|::ArrowButton::.*"
+    append vTcl(proc,ignore) "|::DynamicHelp::.*"
+    append vTcl(proc,ignore) "|::NoteBook::.*"
+    append vTcl(proc,ignore) "|::ComboBox::.*"
+    append vTcl(proc,ignore) "|::DragSite::.*"
+    append vTcl(proc,ignore) "|::DropSite::.*"
+    append vTcl(proc,ignore) "|::Entry::.*"
+    append vTcl(proc,ignore) "|ArrowButton|NoteBook|ComboBox|Entry"
 }
 
 namespace eval vTcl::widgets::bwidgets {
