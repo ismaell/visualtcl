@@ -233,9 +233,34 @@ proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
         set index 0
         incr level
         foreach j $bind {
-            set e [lindex $j 0]
-            set c [vTcl:name_replace $base [lindex $j 1]]
-            append todo "bind $name $e \{$c\}; "
+            # see if it is a list of bindtags, a binding for
+            # the target, or a binding for a bindtag (ya follow me?)
+            switch -exact -- [llength $j] {
+                1 {
+                    append todo "bindtags $name [list [vTcl:name_replace $base [lindex $j 0]]]; "
+                }
+
+                2 {
+                    set e [lindex $j 0]
+                    set c [vTcl:name_replace $base [lindex $j 1]]
+                    append todo "bind $name $e \{$c\}; "
+                }
+
+                3 {
+                    set bindtag [lindex $j 0]
+                    set event   [lindex $j 1]
+
+                    if {[lsearch -exact $::widgets_bindings::tagslist $bindtag] == -1} {
+                       lappend ::widgets_bindings::tagslist $bindtag
+                    }
+
+                    append todo "if \{\[bind $bindtag $event] == \"\"\} \{bind $bindtag $event \{[lindex $j 2]\}\}; "
+                }
+
+                default {
+                    oops "Internal error"
+                }
+            }
         }
         foreach j $menu {
             set t [lindex $j 0]
@@ -342,6 +367,23 @@ proc vTcl:gen_compound {target {name ""} {cmpdname ""}} {
     set blst [bind $target]
     foreach i $blst {
         lappend bind "$i \{[bind $target $i]\}"
+    }
+
+    # now, are bindtags non-standard ?
+    set bindtags $vTcl(bindtags,$target)
+    if {$bindtags != [::widgets_bindings::get_standard_bindtags $target] } {
+        # append the list of binding tags
+        lappend bind [list $bindtags]
+
+        # keep all bindings definitions with the compound
+        # (even if children define them too)
+        foreach bindtag $bindtags {
+            if {[lsearch -exact $::widgets_bindings::tagslist $bindtag] >= 0} {
+                foreach event [bind $bindtag] {
+                    lappend bind "$bindtag $event \{[bind $bindtag $event]\}"
+                }
+            }
+        }
     }
 
     foreach i [vTcl:get_children $target] {
