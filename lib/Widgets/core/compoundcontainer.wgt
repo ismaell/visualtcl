@@ -256,7 +256,6 @@ namespace eval vTcl::widgets::core::compoundcontainer {
         ## Other packages and widget toolkits have different licensing requirements.
         ##    Please read their license agreements for details.
 
-        set type user
         set spc ${type}::$compoundName
         if {[info exists ::vTcl(running)]} {
             ::vTcl::compounds::mergeCompoundCode $type [join $compoundName]
@@ -287,9 +286,16 @@ namespace eval vTcl::widgets::core::compoundcontainer {
         namespace eval ::$path "set compoundType {}; set compoundClass {}"
         
         ## compound class specified ?
-        if {[llength $args] == 2 && [lindex $args 0] == "-compoundClass"} {
+        if {[llength $args] >= 2} {
             set type user
-            set compoundName [lindex $args 1]
+            set compoundName unknown
+            foreach {option value} $args {            
+                if {$option == "-compoundClass"} {
+                    set compoundName $value
+                } elseif {$option == "-compoundType"} {
+                    set type $value
+                }
+            }
             insertCompound $path $type [list $compoundName]
         }
 
@@ -334,5 +340,4 @@ namespace eval vTcl::widgets::core::compoundcontainer {
         return [::vTcl::compounds::getFonts $compoundType [join $compoundClass]]
     }
 }
-
 
