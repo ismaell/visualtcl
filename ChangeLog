@@ -1,6 +1,9 @@
 ChangeLog for Visual Tcl:
 
 1.6.0b1 ->
+    o Saving fonts with description rather than a font key. This will
+      allow compounds to be merged into an existing project without
+      problems.
     o Megawidgets properties can now be edited by right-clicking and
       selecting the "Edit Megawidget..." option. Megawidgets properties
       now saved into project file.
@@ -998,6 +1001,7 @@ ChangeLog for Visual Tcl:
     o And much, much more :)
 
 1.01 released (December 5, 1996)
+
 
 
 

@@ -183,8 +183,8 @@ proc vTcl:setup {} {
     set LIBS            "globals.tcl about.tcl propmgr.tcl balloon.tcl
         		attrbar.tcl bgerror.tcl bind.tcl command.tcl color.tcl
 			tkcon.tcl compound.tcl compounds.tcl do.tcl
-			dragsize.tcl dump.tcl edit.tcl file.tcl font.tcl
-			handle.tcl input.tcl images.tcl loadwidg.tcl menu.tcl
+			dragsize.tcl dump.tcl edit.tcl file.tcl handle.tcl
+                  input.tcl loadwidg.tcl font.tcl images.tcl menu.tcl
 			misc.tcl name.tcl prefs.tcl proc.tcl tclet.tcl
 			toolbar.tcl tops.tcl tree.tcl var.tcl vtclib.tcl
 			widget.tcl help.tcl menus.tcl new.tcl ttd/ttd.tcl"
@@ -726,6 +726,7 @@ proc vTcl:main {argc argv} {
 }
 
 vTcl:main $argc $argv
+
 
 
 
