@@ -100,27 +100,26 @@ proc vTcl:export_procs {} {
     }
 
     foreach i [vTcl:lrmdups $list] {
-        if {[vTcl:ignore_procname_when_saving $i] == 0} {
-            set args ""
-            foreach j [info args $i] {
-                if {[info default $i $j value]} {
-                    lappend args [list $j $value]
-                } else {
-                    lappend args $j
-                }
+
+        set args ""
+        foreach j [info args $i] {
+            if {[info default $i $j value]} {
+                lappend args [list $j $value]
+            } else {
+                lappend args $j
             }
-            set body [string trim [info body $i]]
-            if {($body != "" || $i == "main") && $i != "init"} {
+        }
+        set body [string trim [info body $i]]
+        if {($body != "" || $i == "main") && $i != "init"} {
 
-                if {[regexp (.*):: $i matchAll context] } {
-                   append output "\nnamespace eval ${context} \{\n"
-                }
+            if {[regexp (.*):: $i matchAll context] } {
+               append output "\nnamespace eval ${context} \{\n"
+            }
 
-                append output "\nproc \{$i\} \{$args\} \{\n$body\n\}\n"
+            append output "\nproc \{$i\} \{$args\} \{\n$body\n\}\n"
 
-                if {[regexp (.*):: $i]} {
-                   append output "\n\}\n"
-                }
+            if {[regexp (.*):: $i]} {
+               append output "\n\}\n"
             }
         }
     }
@@ -812,4 +811,6 @@ proc vTcl:dump:project_info {basedir project} {
     close $fp
     return
 }
+
+
 
