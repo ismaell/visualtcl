@@ -74,14 +74,6 @@ proc vTcl:WidgetProc {w args} {
     eval $w $command $args
 }
 
-proc vTcl:WindowsCleanup {} {
-    global vTcl
-    if {[info exists vTcl(sourcing)]} { return }
-    foreach w [winfo children .] {
-    	wm protocol $w WM_DELETE_WINDOW { exit }
-    }
-}
-
 proc vTcl:DefineAlias {target alias widgetProc top_or_alias cmdalias} {
 
     global widget

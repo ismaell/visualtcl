@@ -111,10 +111,6 @@ proc vTcl:vtcl_library_procs {} {
         Window
     }
 
-    if {[vTcl:streq $tcl_platform(platform) "windows"]} {
-	lappend list vTcl:WindowsCleanup
-    }
-	
     vTcl:dump:not_sourcing_header output
     foreach proc $list {
         append output [vTcl:maybe_dump_proc $proc]

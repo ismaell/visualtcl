@@ -77,6 +77,21 @@ proc vTcl:widget:toplevel:dblclkcmd {target} {
     vTcl:prop:save_opt $target -menu vTcl(w,opt,-menu)
 }
 
+proc vTcl:widget:toplevel:set_bindings {} {
+
+    bind _TopLevel <<Create>> {
+        if {![info exists _topcount]} {set _topcount 0}; incr _topcount
+    }
+
+    bind _TopLevel <Destroy> {
+        if {[winfo toplevel %W] == "%W"} {incr _topcount -1}
+    }
+
+    bind _TopLevel <<DeleteWindow>> {
+        destroy %W; if {$_topcount == 0} {exit}
+    }
+}
+
 proc vTcl:widget:toplevel:inscmd {target} {
     global vTcl
     return "
@@ -90,6 +105,10 @@ proc vTcl:widget:toplevel:inscmd {target} {
 	set vTcl(w,insert) $target
 	lappend vTcl(tops) $target
 	vTcl:update_top_list
+        vTcl:widget:toplevel:set_bindings
+        bindtags $target \[concat \[bindtags $target\] _TopLevel\]
+        ::widgets_bindings::add_tag_to_tagslist _TopLevel
+        vTcl:FireEvent $target <<Create>>
     "
 }
 
@@ -115,6 +134,8 @@ proc vTcl:widget:toplevel:set_new_geom {} {
 }
 
 proc vTcl:Toplevel:WidgetProc {w args} {
+    global tcl_platform
+
     if {[llength $args] == 0} {
         return -code error "wrong # args: should be \"$w option ?arg arg ...?\""
     }
@@ -133,19 +154,17 @@ proc vTcl:Toplevel:WidgetProc {w args} {
     }
 
     switch -- $command {
-        "hide" -
-        "Hide" {
+        "hide" - "Hide" {
             Window hide $w
         }
 
-        "show" -
-        "Show" {
+        "show" - "Show" {
             Window show $w
         }
 
         "ShowModal" {
             Window show $w
-            raise $w
+            if {$tcl_platform(platform) != "unix"} {raise $w}
             grab $w
             tkwait window $w
             grab release $w

@@ -756,14 +756,19 @@ namespace eval ::widgets_bindings {
         ::widgets_bindings::enable_toolbar_buttons
     }
 
-    proc {::widgets_bindings::addtag} {tag} {
-
-        global vTcl widget
+    proc {::widgets_bindings::add_tag_to_tagslist} {tag} {
 
         # new tag ?
         if {[lsearch -exact $::widgets_bindings::tagslist $tag] == -1} {
             lappend ::widgets_bindings::tagslist $tag
         }
+    }
+
+    proc {::widgets_bindings::addtag} {tag} {
+
+        global vTcl widget
+
+        ::widgets_bindings::add_tag_to_tagslist $tag
 
         set target $widgets_bindings::target
 
