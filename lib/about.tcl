@@ -58,7 +58,7 @@ proc vTclWindow.vTcl.about {args} {
         -borderwidth 1 -font [vTcl:font:get_font "vTcl:font5"]
     label $base.lab21 \
         -borderwidth 1 -font [vTcl:font:get_font "vTcl:font5"] \
-        -text {Version 1.6.0b2} -foreground white -background black
+        -text {Version 1.6.0} -foreground white -background black
     ###################
     # SETTING GEOMETRY
     ###################
@@ -148,5 +148,6 @@ proc vTclWindow.vTcl.credits {base} {
 
     vTcl:FireEvent $base <<Ready>>
 }
+
 
 
