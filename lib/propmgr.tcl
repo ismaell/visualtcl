@@ -470,9 +470,7 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix {isGeomOpt ""}} {
         choice {
             ComboBox ${base} -editable 0 -width 12 -values $choices \
                 -modifycmd "vTcl:prop:choice_select ${base} $variable; $config_cmd"
-            if {[trace vinfo ::$variable] == ""} {
-                trace variable ::$variable w "vTcl:prop:choice_update ${base} $variable"
-            }
+            trace variable ::$variable w "vTcl:prop:choice_update ${base} $variable"
             vTcl:prop:choice_update ${base} $variable
         }
         menu {
