@@ -1,6 +1,12 @@
 ChangeLog for Visual Tcl:
 
 1.51b2 -> 1.51b3
+    o TkCon restores position on vTcl startup
+    o Set string input dialog entry field to white background and
+      changed OK / Cancel buttons to icons (checkmark and red cross)
+    o Activating a widget now automatically scrolls widget tree into view
+    o Fixed message text input dialog Escape bug
+    o Added "Set Text Variable" context menu item to message widget
     o Fixed problem where vTcl was saving duplicate fonts.
     o Fixed some bug where problems could occur from defining namespaces
       with a space in the name.
