@@ -21,13 +21,23 @@
 ##############################################################################
 #
 
-proc vTcl:copy {} {
+proc vTcl:copy {{w ""}} {
+    # cut/copy/paste handled by text widget only
+    if {$w != "" &&
+        [string match .vTcl* $w] &&
+        [vTcl:get_class $w] == "Text"} then return
+
     global vTcl
     set vTcl(buffer) [vTcl:create_compound $vTcl(w,widget)]
     set vTcl(buffer,type) [vTcl:lower_first $vTcl(w,class)]
 }
 
-proc vTcl:cut {} {
+proc vTcl:cut {{w ""}} {
+    # cut/copy/paste handled by text widget only
+    if {$w != "" &&
+        [string match .vTcl* $w] &&
+        [vTcl:get_class $w] == "Text"} then return
+
     global vTcl
     if { $vTcl(w,widget) == "." } { return }
 
@@ -35,7 +45,12 @@ proc vTcl:cut {} {
     vTcl:delete
 }
 
-proc vTcl:delete {} {
+proc vTcl:delete {{w ""}} {
+    # cut/copy/paste handled by text widget only
+    if {$w != "" &&
+        [string match .vTcl* $w] &&
+        [vTcl:get_class $w] == "Text"} then return
+
     global vTcl
     if { $vTcl(w,widget) == "." } { return }
 
@@ -59,7 +74,7 @@ proc vTcl:delete {} {
     append do "vTcl:setup_unbind $vTcl(w,widget); "
     append do "destroy $vTcl(w,widget); "
     append do "set _cmds \[info commands $vTcl(w,widget).*\]; "
-    append do "foreach _cmd \$_cmds \{rename \$_cmd \"\"\}"
+    append do {foreach _cmd $_cmds {catch {rename $_cmd ""}}}
     set undo "vTcl:insert_compound $vTcl(w,widget) \{$buffer\} $vTcl(w,def_mgr)"
     vTcl:push_action $do $undo
 
@@ -110,14 +125,19 @@ proc vTcl:delete {} {
     if {[winfo exists $n]} { vTcl:active_widget $n }
 }
 
-proc vTcl:paste {{fromMouse ""}} {
+proc vTcl:paste {{fromMouse ""} {w ""}} {
+    # cut/copy/paste handled by text widget only
+    if {$w != "" &&
+        [string match .vTcl* $w] &&
+        [vTcl:get_class $w] == "Text"} then return
+
     global vTcl
 
     if {![info exists vTcl(buffer)] || [lempty $vTcl(buffer)]} { return }
 
     set opts {}
     if {$fromMouse == "-mouse" && $vTcl(w,def_mgr) == "place"} {
-    	set opts "-x $vTcl(mouse,x) -y $vTcl(mouse,y)"	
+    	set opts "-x $vTcl(mouse,x) -y $vTcl(mouse,y)"
     }
 
     set name [vTcl:new_widget_name $vTcl(buffer,type) $vTcl(w,insert)]

@@ -459,16 +459,16 @@ proc vTcl:define_bindings {} {
     foreach i {a b} {
         bind vTcl($i) <Control-z>  { vTcl:pop_action }
         bind vTcl($i) <Control-r>  { vTcl:redo_action }
-        bind vTcl($i) <Control-x>  { vTcl:cut }
-        bind vTcl($i) <Control-c>  { vTcl:copy }
-        bind vTcl($i) <Control-v>  { vTcl:paste }
+        bind vTcl($i) <Control-x>  { vTcl:cut %W }
+        bind vTcl($i) <Control-c>  { vTcl:copy %W }
+        bind vTcl($i) <Control-v>  { vTcl:paste {} %W }
         bind vTcl($i) <Control-q>  { vTcl:quit }
         bind vTcl($i) <Control-n>  { vTcl:new }
         bind vTcl($i) <Control-o>  { vTcl:open }
         bind vTcl($i) <Control-s>  { vTcl:save }
         bind vTcl($i) <Control-w>  { vTcl:close }
 	bind vTcl($i) <Control-h>  { vTcl:hide }
-        bind vTcl($i) <Key-Delete> { vTcl:delete }
+        bind vTcl($i) <Key-Delete> { vTcl:delete %W }
         bind vTcl($i) <Alt-a>      { vTcl:set_alias $vTcl(w,widget) }
         bind vTcl($i) <Alt-f>      { vTcl:proclist:show flip }
         bind vTcl($i) <Alt-v>      { vTcl:varlist:show flip }
