@@ -37,7 +37,6 @@ TreeChildrenCmd	{
 		}
 DumpCmd		vTcl::widgets::iwidgets::labeledframe::dumpCmd
 DumpInfoCmd	vTcl::widgets::iwidgets::labeledframe::dumpInfoCmd
-CompoundCmd     vTcl::widgets::iwidgets::labeledframe::compoundCmd
 DefaultOptions	-labeltext "Labeled frame"
 
 ########################################
@@ -87,12 +86,5 @@ namespace eval vTcl::widgets::iwidgets::labeledframe {
 
         return $result
     }
-
-    proc compoundCmd {target} {
-        set result ""
-
-        set compound [vTcl:create_compound [$target childsite]]
-        append result "vTcl:insert_compound \[\$target childsite\] [list $compound] pack \{\}; "
-        return $result
-    }
 }
+

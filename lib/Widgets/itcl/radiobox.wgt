@@ -31,7 +31,6 @@ Icon		icon_radiobox.gif
 DumpChildren	no
 MegaWidget	yes
 DumpCmd		vTcl::widgets::iwidgets::radiobox::dumpCmd
-CompoundCmd     vTcl::widgets::iwidgets::radiobox::compoundCmd
 InsertCmd	vTcl::widgets::iwidgets::radiobox::insertCmd
 TagsCmd         vTcl:lib_itcl:tagscmd
 DefaultOptions	-labeltext "Radiobox"
@@ -46,21 +45,6 @@ namespace eval vTcl::widgets::iwidgets::radiobox {
 
     proc editCmd {} {
         vTcl::itemEdit::edit $::vTcl(w,widget) vTcl::widgets::iwidgets::boxes::edit
-    }
-
-    proc compoundCmd {target} {
-        set result ""
-        set last -1
-        catch {set last [$target index end]}
-
-        for {set i 0} {$i <= $last} {incr i} {
-            set conf [$target buttonconfigure $i]
-            set pairs [vTcl:conf_to_pairs $conf ""]
-
-            append result "\$target add but$i $pairs\n"
-        }
-
-        return $result
     }
 
     proc dumpCmd {target basename} {
@@ -92,3 +76,4 @@ namespace eval vTcl::widgets::iwidgets::radiobox {
              -highlightcolor -highlightthickness -selectcolor}
     }
 }
+

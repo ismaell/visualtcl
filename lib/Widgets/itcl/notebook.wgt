@@ -39,7 +39,6 @@ TreeChildrenCmd	{vTcl::widgets::iwidgets::notebook::treeChildrenCmd
 		 vTcl::widgets::iwidgets::notebook::treeChildrenChildsite}
 DumpCmd		vTcl::widgets::iwidgets::notebook::dumpCmd
 DumpInfoCmd	vTcl::widgets::iwidgets::notebook::dumpInfoCmd
-CompoundCmd     vTcl::widgets::iwidgets::notebook::compoundCmd
 
 #############################
 ## Right-click menu
@@ -148,30 +147,5 @@ namespace eval vTcl::widgets::iwidgets::notebook {
         }
         return $result
     }
-
-    ## this function returns the necessary code to insert all
-    ## the childsites into the notebook widget (basically
-    ## the returned code will be stored in a compound)
-    ##
-    ## the returned code makes the body of a procedure whose
-    ## parameter is 'target'; to insert the childsites into the
-    ## compound, this procedure should be called with target
-    ## pointing to the new widget
-
-    proc compoundCmd {target} {
-        set result ""
-
-        set entries [$target childsite]
-        set size [llength $entries]
-        for {set i 0} {$i < $size} {incr i} {
-            set conf [$target pageconfigure $i]
-            set pairs [vTcl:conf_to_pairs $conf ""]
-            append result "set site \[\$target add $pairs\]; "
-            set compound [vTcl:create_compound [lindex $entries $i]]
-            append result "vTcl:insert_compound \$site [list $compound] pack \{\}; "
-        }
-
-        append result "\$target select 0; "
-        return $result
-    }
 }
+

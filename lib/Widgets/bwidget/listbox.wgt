@@ -8,5 +8,6 @@ MegaWidget      yes
 DefaultValues   -foreground
 DefaultOptions  -background white
 
-lappend vTcl(proc,ignore) "::ListBox::*"
-lappend vTcl(proc,ignore) ListBox
+IgnoreProc "::ListBox::*"
+IgnoreProc ListBox
+

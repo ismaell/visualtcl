@@ -33,7 +33,6 @@ MegaWidget	yes
 InsertCmd	vTcl::widgets::iwidgets::buttonbox::insertCmd
 TagsCmd         vTcl::widgets::iwidgets::buttonbox::tagsCmd
 DumpCmd		vTcl::widgets::iwidgets::buttonbox::dumpCmd
-CompoundCmd     vTcl::widgets::iwidgets::buttonbox::compoundCmd
 DefaultOptions	-padx 0 -pady 0
 ClassOption     -_itcl_radiocheckboxes
 GetImagesCmd    vTcl::widgets::iwidgets::boxes::getImagesCmd
@@ -47,21 +46,6 @@ namespace eval vTcl::widgets::iwidgets::buttonbox {
 
     proc editCmd {} {
         vTcl::itemEdit::edit $::vTcl(w,widget) vTcl::widgets::iwidgets::boxes::edit
-    }
-
-    proc compoundCmd {target} {
-        set result ""
-        set last -1
-        catch {set last [$target index end]}
-
-        for {set i 0} {$i <= $last} {incr i} {
-            set conf [$target buttonconfigure $i]
-            set pairs [vTcl:conf_to_pairs $conf ""]
-
-            append result "\$target add but$i $pairs\n"
-        }
-
-        return $result
     }
 
     proc dumpCmd {target basename} {
@@ -120,3 +104,4 @@ namespace eval vTcl::widgets::iwidgets::buttonbox {
         return $result
     }
 }
+

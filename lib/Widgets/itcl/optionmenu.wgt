@@ -30,7 +30,6 @@ CreateCmd	::iwidgets::optionmenu
 InsertCmd       vTcl::widgets::iwidgets::optionmenu::insertCmd
 Icon		icon_optionmenu.gif
 DumpChildren	no
-CompoundCmd     vTcl::widgets::iwidgets::optionmenu::compoundCmd
 DumpCmd         vTcl::widgets::iwidgets::optionmenu::dumpCmd
 MegaWidget	yes
 TagsCmd         vTcl:lib_itcl:tagscmd
@@ -45,18 +44,6 @@ namespace eval vTcl::widgets::iwidgets::optionmenu {
 
     proc insertCmd {target} {
         $target insert 0 {Choice 1} {Choice 2} {Choice 3}
-    }
-
-    proc compoundCmd {target} {
-        set result ""
-        set last -1
-        catch {set last [$target index end]}
-
-        for {set i 0} {$i <= $last} {incr i} {
-            set item [$target get $i]
-            append result "\$target insert [expr $i+1] \{$item\}\n"
-        }
-        return $result
     }
 
     proc dumpCmd {target basename} {
@@ -121,3 +108,4 @@ namespace eval vTcl::widgets::iwidgets::optionmenu::edit {
         error "Not implemented yet!"
     }
 }
+

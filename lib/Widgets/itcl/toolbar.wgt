@@ -33,7 +33,6 @@ MegaWidget	yes
 TagsCmd         vTcl:lib_itcl:tagscmd
 InsertCmd       vTcl::widgets::iwidgets::toolbar::insertCmd
 DumpCmd         vTcl::widgets::iwidgets::toolbar::dumpCmd
-CompoundCmd     vTcl::widgets::iwidgets::toolbar::compoundCmd
 GetImagesCmd    vTcl::widgets::iwidgets::toolbar::getImagesCmd
 GetFontsCmd     vTcl::widgets::iwidgets::toolbar::getFontsCmd
 Function        "Edit Toolbar..." vTcl::widgets::iwidgets::toolbar::editToolbar
@@ -86,24 +85,6 @@ namespace eval vTcl::widgets::iwidgets::toolbar {
             append result "$::vTcl(tab)$basename add [string tolower $class]"
             append result " $component \\\n"
             append result "[vTcl:clean_pairs $pairs]\n"
-        }
-        return $result
-    }
-
-    ## this function returns the necessary code to insert all
-    ## the buttons into the toolbar widget (basically, the returned
-    ## code will be stored in a compound)
-    ##
-    proc compoundCmd {target} {
-        set result ""
-        foreach component [getSortedComponents $target] {
-            set path [$target component $component]
-            set class [string tolower [vTcl:get_class $path]]
-
-            set conf [$target itemconfigure $component]
-            set pairs [vTcl:conf_to_pairs $conf ""]
-
-            append result "\$target add $class $component $pairs\n"
         }
         return $result
     }
@@ -319,3 +300,4 @@ namespace eval vTcl::widgets::iwidgets::toolbar::edit {
         error "Not implemented yet!"
     }
 }
+

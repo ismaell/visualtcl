@@ -11,7 +11,6 @@ TreeChildrenCmd   {vTcl::widgets::bwidgets::labelframe::treeChildrenCmd
 InsertCmd         vTcl::widgets::bwidgets::labelframe::insertCmd
 DumpCmd           vTcl::widgets::bwidgets::labelframe::dumpCmd
 DumpInfoCmd       vTcl::widgets::bwidgets::labelframe::dumpInfoCmd
-CompoundCmd       vTcl::widgets::bwidgets::labelframe::compoundCmd
 
 namespace eval vTcl::widgets::bwidgets::labelframe {
 
@@ -59,13 +58,6 @@ namespace eval vTcl::widgets::bwidgets::labelframe {
         append result [$classes(Frame,dumpInfoCmd) $site \$$sitevariable]
 	return $result
     }
-
-    proc compoundCmd {target} {
-        set result ""
-        append result "set site \[\$target getframe\]; "
-        set compound [vTcl:create_compound [$target getframe]]
-        append result "vTcl:insert_compound \$site [list $compound] pack \{\}; "
-        return $result
-    }
 }
+
 

@@ -6,7 +6,6 @@ Icon            icon_tixNoteBook.gif
 TreeLabel       Tix NoteBook
 DumpCmd         vTcl::widgets::tix::notebook::dumpCmd
 DumpInfoCmd     vTcl::widgets::tix::notebook::dumpInfoCmd
-CompoundCmd     vTcl::widgets::tix::notebook::compoundCmd
 DumpChildren    no
 MegaWidget      yes
 DefaultValues   -background
@@ -222,23 +221,5 @@ namespace eval vTcl::widgets::tix::notebook {
         }
         return $result
     }
-
-    proc compoundCmd {target} {
-        set result ""
-        set entries [$target pages]
-
-        foreach page $entries {
-            set conf [$target pageconfigure $page]
-            set pairs [vTcl:conf_to_pairs $conf ""]
-            append result "\$target add $page $pairs; "
-        }
-
-        foreach page $entries {
-            set compound [vTcl:create_compound [$target subwidget $page]]
-            append result "vTcl:insert_compound "
-            append result "\[\$target subwidget $page\] [list $compound] pack \{\}; "
-        }
-
-        return $result
-    }
 }
+

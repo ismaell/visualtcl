@@ -39,7 +39,6 @@ TreeChildrenCmd	{vTcl::widgets::bwidgets::panedwindow::treeChildrenCmd
 		 vTcl::widgets::bwidgets::panedwindow::treeChildrenChildsite}
 DumpCmd         vTcl::widgets::bwidgets::panedwindow::dumpCmd
 DumpInfoCmd     vTcl::widgets::bwidgets::panedwindow::dumpInfoCmd
-CompoundCmd     vTcl::widgets::bwidgets::panedwindow::compoundCmd
 
 ## Special proc for setting up icons on the toolbar.
 proc vTcl:PanedWindow:ToolBarSetup {} {
@@ -124,17 +123,7 @@ namespace eval vTcl::widgets::bwidgets::panedwindow {
         }
         return $result
     }
-
-    proc compoundCmd {target} {
-        set result ""
-        foreach page {0 1} {
-            append result "\$target add; "
-            append result "set site \[\$target getframe $page\]; "
-            set compound [vTcl:create_compound [$target getframe $page]]
-            append result "vTcl:insert_compound \$site [list $compound] pack \{\}; "
-        }
-        return $result
-    }
 }
 
 }; ## if {[info tclversion < 8.4]}
+

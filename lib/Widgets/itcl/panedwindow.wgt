@@ -39,7 +39,6 @@ DumpInfoCmd	vTcl::widgets::iwidgets::panedwindow::dumpInfoCmd
 InsertCmd	vTcl::widgets::iwidgets::panedwindow::insertCmd
 DeleteSiteCmd   vTcl::widgets::iwidgets::panedwindow::deleteSiteCmd
 TagsCmd         vTcl::widgets::iwidgets::panedwindow::tagsCmd
-CompoundCmd     vTcl::widgets::iwidgets::panedwindow::compoundCmd
 
 AdditionalClasses Pane
 
@@ -206,39 +205,6 @@ namespace eval vTcl::widgets::iwidgets::panedwindow {
         return $result
     }
 
-    ## this function returns the necessary code to insert all
-    ## the childsites into the panedwindow widget (basically
-    ## the returned code will be stored in a compound)
-    ##
-    ## the returned code makes the body of a procedure whose
-    ## parameter is 'target'; to insert the childsites into the
-    ## compound, this procedure should be called with target
-    ## pointing to the new widget
-
-    proc compoundCmd {target} {
-        set result ""
-
-        set entries [$target childsite]
-        set size [llength $entries]
-        for {set i 0} {$i < $size} {incr i} {
-            set conf [$target paneconfigure $i]
-            set pairs [vTcl:conf_to_pairs $conf ""]
-            append result "set site($i) \[\$target add pane$i $pairs\]; "
-        }
-
-        ## we have to ask for the childsites list, because the add
-        ## command doesn't seem to be returning the correct path to the
-        ## pane it just added
-
-        for {set i 0} {$i < $size} {incr i} {
-            set compound [vTcl:create_compound [lindex $entries $i]]
-            append result "vTcl:insert_compound "
-            append result "\[lindex \[\$target childsite\] $i\] [list $compound] pack \{\}; "
-        }
-
-        return $result
-    }
-
     proc getPanes {target} {
     }
 
@@ -328,3 +294,4 @@ namespace eval vTcl::widgets::iwidgets::panedwindow::edit {
         error "Not implemented yet!"
     }
 }
+

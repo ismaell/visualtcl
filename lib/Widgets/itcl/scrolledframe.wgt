@@ -37,7 +37,6 @@ TreeChildrenCmd	{
 		}
 DumpCmd		vTcl::widgets::iwidgets::scrolledframe::dumpCmd
 DumpInfoCmd	vTcl::widgets::iwidgets::scrolledframe::dumpInfoCmd
-CompoundCmd     vTcl::widgets::iwidgets::scrolledframe::compoundCmd
 DefaultOptions	-labeltext "Scrolled frame"
 
 ## for compatibility with older versions
@@ -87,13 +86,5 @@ namespace eval vTcl::widgets::iwidgets::scrolledframe {
 
         return $result
     }
-
-    proc compoundCmd {target} {
-        set result ""
-
-        set compound [vTcl:create_compound [$target childsite]]
-        append result "vTcl:insert_compound \[\$target childsite\] [list $compound] pack \{\}; "
-
-        return $result
-    }
 }
+

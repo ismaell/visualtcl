@@ -35,7 +35,6 @@ TreeChildrenCmd   {vTcl::widgets::bwidgets::scrollableframe::treeChildrenCmd
                    vTcl::widgets::bwidgets::scrollableframe::treeChildrenChildsite}
 DumpCmd     vTcl::widgets::bwidgets::scrollableframe::dumpCmd
 DumpInfoCmd vTcl::widgets::bwidgets::scrollableframe::dumpInfoCmd
-CompoundCmd vTcl::widgets::bwidgets::scrollableframe::compoundCmd
 Export      ::vTcl::widgets::bwidgets::scrollableframe::createCmd
 IgnoreProc  ::ScrollableFrame::* ScrollableFrame
 
@@ -96,12 +95,5 @@ namespace eval vTcl::widgets::bwidgets::scrollableframe {
         append result "\[$basename getframe\]\n"
         append result [$classes(Frame,dumpInfoCmd) $site \$$sitevariable]
     }
-
-    proc compoundCmd {target} {
-        set result ""
-        append result "set site \[\$target getframe\]; "
-        set compound [vTcl:create_compound [$target getframe]]
-        append result "vTcl:insert_compound \$site [list $compound] pack \{\}; "
-        return $result
-    }
 }
+
