@@ -229,7 +229,8 @@ namespace eval ::stack_trace {
             }
 
         } elseif { [string match {("if" then script line *)} $context] ||
-                   [string match {("eval" body line *)} $context] } {
+                   [string match {("eval" body line *)} $context] ||
+                   [string match {(in namespace eval "*" script line *)} $context] } {
 
             set statement \
                 [::stack_trace::get_statement_at_level \
@@ -333,7 +334,8 @@ namespace eval ::stack_trace {
             }
 
         } elseif { [string match {("if" then script line *)} $context]  ||
-                   [string match {("eval" body line *)} $context] } {
+                   [string match {("eval" body line *)} $context] ||
+                   [string match {(in namespace eval "*" script line *)} $context] } {
 
             set statement \
                 [::stack_trace::get_statement_at_level $top [expr $index + 1] ]
@@ -609,23 +611,18 @@ proc vTclWindow.vTcl.stack_trace {base {container 0}} {
         -background #9900991B99FE -highlightbackground #dcdcdc \
         -highlightcolor #000000
     label $base.cpd18.01.lab19 \
-        -background #ffffff -borderwidth 1 -foreground #000000 \
-        -highlightbackground #dcdcdc -highlightcolor #000000 -relief raised \
+        -borderwidth 1 -relief raised \
         -text Error
     frame $base.cpd18.01.cpd20 \
         -background #dcdcdc -borderwidth 1 -height 30 \
         -highlightbackground #dcdcdc -highlightcolor #000000 -relief raised \
         -width 30
     scrollbar $base.cpd18.01.cpd20.01 \
-        -activebackground #dcdcdc -background #dcdcdc \
         -command "$base.cpd18.01.cpd20.03 xview" -cursor left_ptr \
-        -highlightbackground #dcdcdc -highlightcolor #000000 -orient horiz \
-        -troughcolor #dcdcdc 
+        -orient horiz
     scrollbar $base.cpd18.01.cpd20.02 \
-        -activebackground #dcdcdc -background #dcdcdc \
         -command "$base.cpd18.01.cpd20.03 yview" -cursor left_ptr \
-        -highlightbackground #dcdcdc -highlightcolor #000000 -orient vert \
-        -troughcolor #dcdcdc 
+        -orient vert
     text $base.cpd18.01.cpd20.03 \
         -background #dcdcdc \
         -font [vTcl:font:get_font "vTcl:font8"] \
@@ -648,11 +645,6 @@ proc vTclWindow.vTcl.stack_trace {base {container 0}} {
         -highlightbackground #dcdcdc -highlightcolor #000000 -relief raised \
         -width 30
     listbox $base.cpd18.02.cpd21.01.cpd22.01 \
-        -background #dcdcdc \
-        -font -Adobe-Helvetica-Medium-R-Normal-*-*-120-*-*-*-*-*-* \
-        -foreground #000000 -highlightbackground #ffffff \
-        -highlightcolor #000000 -selectbackground #008080 \
-        -selectforeground #ffffff \
         -xscrollcommand "$base.cpd18.02.cpd21.01.cpd22.02 set" \
         -yscrollcommand "$base.cpd18.02.cpd21.01.cpd22.03 set"
     bind $base.cpd18.02.cpd21.01.cpd22.01 <ButtonRelease-1> {
@@ -663,18 +655,22 @@ proc vTclWindow.vTcl.stack_trace {base {container 0}} {
         ::stack_trace::extract_code [join $components .]
     }
     scrollbar $base.cpd18.02.cpd21.01.cpd22.02 \
-        -activebackground #dcdcdc -background #dcdcdc \
         -command "$base.cpd18.02.cpd21.01.cpd22.01 xview" -cursor left_ptr \
-        -highlightbackground #dcdcdc -highlightcolor #000000 -orient horiz \
-        -troughcolor #dcdcdc 
+        -orient horiz
     scrollbar $base.cpd18.02.cpd21.01.cpd22.03 \
-        -activebackground #dcdcdc -background #dcdcdc \
         -command "$base.cpd18.02.cpd21.01.cpd22.01 yview" -cursor left_ptr \
-        -highlightbackground #dcdcdc -highlightcolor #000000 -orient vert \
-        -troughcolor #dcdcdc 
-    button $base.cpd18.02.cpd21.01.but1 \
-        -text "show errorInfo" \
+        -orient vert
+    frame $base.cpd18.02.cpd21.01.fra01 
+    button $base.cpd18.02.cpd21.01.fra01.but1 \
+        -image icon_message.gif \
         -command "::stack_trace::set_details $base \[vTcl:at [vTcl:rename $base.errorInfo] \]"
+    vTcl:set_balloon $base.cpd18.02.cpd21.01.fra01.but1 "Show errorInfo"
+    button $base.cpd18.02.cpd21.01.fra01.but2 \
+        -image up -width 20 -height 20
+    vTcl:set_balloon $base.cpd18.02.cpd21.01.fra01.but2 "Up one stack level"
+    button $base.cpd18.02.cpd21.01.fra01.but3 \
+        -image down -width 20 -height 20
+    vTcl:set_balloon $base.cpd18.02.cpd21.01.fra01.but3 "Down one stack level"
     frame $base.cpd18.02.cpd21.02 \
         -background #9900991B99FE -highlightbackground #dcdcdc \
         -highlightcolor #000000
@@ -683,20 +679,15 @@ proc vTclWindow.vTcl.stack_trace {base {container 0}} {
         -highlightbackground #dcdcdc -highlightcolor #000000 -relief raised \
         -width 30
     scrollbar $base.cpd18.02.cpd21.02.cpd23.01 \
-        -activebackground #dcdcdc -background #dcdcdc \
         -command "$base.cpd18.02.cpd21.02.cpd23.03 xview" -cursor left_ptr \
-        -highlightbackground #dcdcdc -highlightcolor #000000 -orient horiz \
-        -troughcolor #dcdcdc 
+        -orient horiz 
     scrollbar $base.cpd18.02.cpd21.02.cpd23.02 \
-        -activebackground #dcdcdc -background #dcdcdc \
         -command "$base.cpd18.02.cpd21.02.cpd23.03 yview" -cursor left_ptr \
-        -highlightbackground #dcdcdc -highlightcolor #000000 -orient vert \
-        -troughcolor #dcdcdc 
+        -orient vert 
     text $base.cpd18.02.cpd21.02.cpd23.03 \
         -background #dcdcdc -font $vTcl(pr,font_fixed) \
         -foreground #000000 -height 1 -highlightbackground #ffffff \
-        -highlightcolor #000000 -selectbackground #008080 \
-        -selectforeground #ffffff -width 8 -wrap none \
+        -width 8 -wrap none \
         -xscrollcommand "$base.cpd18.02.cpd21.02.cpd23.01 set" \
         -yscrollcommand "$base.cpd18.02.cpd21.02.cpd23.02 set"
     frame $base.cpd18.02.cpd21.03 \
@@ -770,6 +761,14 @@ proc vTclWindow.vTcl.stack_trace {base {container 0}} {
     place $base.cpd18.02.cpd21.01 \
         -x 0 -y 0 -width -1 -relwidth 0.3467 -relheight 1 -anchor nw \
         -bordermode ignore
+    pack $base.cpd18.02.cpd21.01.fra01 \
+        -in $base.cpd18.02.cpd21.01 -side top -fill x
+    pack $base.cpd18.02.cpd21.01.fra01.but1 \
+        -in $base.cpd18.02.cpd21.01.fra01 -side left
+    pack $base.cpd18.02.cpd21.01.fra01.but2 \
+        -in $base.cpd18.02.cpd21.01.fra01 -side left
+    pack $base.cpd18.02.cpd21.01.fra01.but3 \
+        -in $base.cpd18.02.cpd21.01.fra01 -side left
     pack $base.cpd18.02.cpd21.01.cpd22 \
         -in $base.cpd18.02.cpd21.01 -anchor center -expand 1 -fill both \
         -side top
@@ -784,8 +783,6 @@ proc vTclWindow.vTcl.stack_trace {base {container 0}} {
     grid $base.cpd18.02.cpd21.01.cpd22.03 \
         -in $base.cpd18.02.cpd21.01.cpd22 -column 1 -row 0 -columnspan 1 \
         -rowspan 1 -sticky ns
-    pack $base.cpd18.02.cpd21.01.but1 \
-        -in $base.cpd18.02.cpd21.01 -side bottom -fill x
     place $base.cpd18.02.cpd21.02 \
         -x 0 -relx 1 -y 0 -width -1 -relwidth 0.6533 -relheight 1 -anchor ne \
         -bordermode ignore
@@ -863,10 +860,8 @@ proc vTclWindow.vTcl.bgerror {base {container 0}} {
         -background #dcdcdc -height 30 -highlightbackground #dcdcdc \
         -highlightcolor #000000 -width 30
     scrollbar $base.fra20.cpd23.02 \
-        -activebackground #dcdcdc -background #dcdcdc \
         -command "$base.fra20.cpd23.03 yview" -cursor left_ptr \
-        -highlightbackground #dcdcdc -highlightcolor #000000 -orient vert \
-        -troughcolor #dcdcdc
+        -orient vert
     text $base.fra20.cpd23.03 \
         -background #dcdcdc -font [vTcl:font:get_font "vTcl:font8"] \
         -foreground #000000 -height 1 -highlightbackground #ffffff \
@@ -877,22 +872,16 @@ proc vTclWindow.vTcl.bgerror {base {container 0}} {
         -background #dcdcdc -borderwidth 2 -height 75 \
         -highlightbackground #dcdcdc -highlightcolor #000000 -width 125
     button $base.fra25.but26 \
-        -activebackground #dcdcdc -activeforeground #000000 \
-        -background #dcdcdc -foreground #000000 -highlightbackground #dcdcdc \
-        -highlightcolor #000000 -padx 9 -pady 3 -text OK \
+        -padx 9 -text OK \
         -command "
             set [vTcl:rename $base.dialogStatus] ok
             destroy $base"
     button $base.fra25.but27 \
-        -activebackground #dcdcdc -activeforeground #000000 \
-        -background #dcdcdc -foreground #000000 -highlightbackground #dcdcdc \
-        -highlightcolor #000000 -padx 9 -pady 3 -text {Skip messages} \
+        -padx 9 -text {Skip messages} \
         -command "set [vTcl:rename $base.dialogStatus] skip
                   destroy $base"
     button $base.fra25.but28 \
-        -activebackground #dcdcdc -activeforeground #000000 \
-        -background #dcdcdc -foreground #000000 -highlightbackground #dcdcdc \
-        -highlightcolor #000000 -padx 9 -pady 3 -text {Stack Trace...}  \
+        -padx 9 -text {Stack Trace...}  \
         -command "
             set newtop .vTcl.stack_trace$::stack_trace::boxIndex
             vTclWindow.vTcl.stack_trace \$newtop
