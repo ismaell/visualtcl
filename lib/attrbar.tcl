@@ -138,8 +138,32 @@ proc vTcl:attrbar_color {target} {
     }
 }
 
+proc vTcl:attrbar:toggle_console {} {
+	
+    global vTcl
+    
+    if {$vTcl(attrbar,console_state) == 1} {
+    	
+    	set vTcl(attrbar,console_state) 0
+    	vTcl:show_console hide
+    	.vTcl.attr.console.console_toggle configure -relief raised
+
+    } else {
+    
+        if {$vTcl(attrbar,console_state) == 0} {
+    	
+            set vTcl(attrbar,console_state) 1
+    	    vTcl:show_console show
+    	    .vTcl.attr.console.console_toggle configure -relief sunken
+    	}
+    }
+}
+
 proc vTcl:attrbar {args} {
     global vTcl tk_version
+    
+    set vTcl(attrbar,console_state) [info exists vTcl(geometry,.vTcl.con)]
+    
     set base .vTcl
     frame .vTcl.attr \
         -borderwidth 1 -height 30 -relief sunken -width 30 
@@ -170,6 +194,15 @@ proc vTcl:attrbar {args} {
     pack .vTcl.attr.01.03 \
         -anchor center -padx 2 -pady 2 -side left
 
+    frame .vTcl.attr.console -borderwidth 1 -relief raised
+    button .vTcl.attr.console.console_toggle -image tconsole -highlightthickness 0 \
+        -command vTcl:attrbar:toggle_console
+    if {$vTcl(attrbar,console_state)} {
+    	.vTcl.attr.console.console_toggle configure -relief sunken }
+    vTcl:set_balloon .vTcl.attr.console.console_toggle "show/hide console"
+    pack .vTcl.attr.console -side left -padx 5
+    pack .vTcl.attr.console.console_toggle -side left -padx 2 -pady 1
+    
     frame .vTcl.attr.04 \
         -borderwidth 1 -height 20 -relief raised -width 20 
     pack .vTcl.attr.04 \
