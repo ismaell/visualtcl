@@ -22,9 +22,10 @@
 #
 
 set vTcl(tree,last_selected) ""
+set vTcl(tree,last_yview) 0.0
 
 proc vTcl:show_selection_in_tree {widget_path} {
-	
+
     vTcl:show_selection .vTcl.tree.fra4.can8.[vTcl:rename $widget_path]
 }
 
@@ -34,16 +35,16 @@ proc vTcl:show_selection {button_path} {
 
     # do not refresh the widget tree if it does not exist
     if {![winfo exists .vTcl.tree]} return
-    
+
     vTcl:log "widget tree select: $button_path"
     set b .vTcl.tree.fra4.can8
 
     if {$vTcl(tree,last_selected)!=""} {
 	    $b itemconfigure "TEXT$vTcl(tree,last_selected)" -fill #000000
     }
-    
+
     $b itemconfigure "TEXT$button_path" -fill #ffffff
-    
+
     set vTcl(tree,last_selected) $button_path
 }
 
@@ -63,17 +64,22 @@ proc vTcl:clear_wtree {} {
 
 proc vTcl:init_wtree {{wants_destroy_handles 1}} {
     global vTcl
-    
+
     # do not refresh the widget tree if it does not exist
     if {![winfo exists .vTcl.tree]} return
-    
-    vTcl:destroy_handles
-  
-    vTcl:clear_wtree
+
     set b .vTcl.tree.fra4.can8
+
+    # save scrolling position first
+    set vTcl(tree,last_yview) [lindex [$b yview] 0]
+
+    vTcl:destroy_handles
+
+    vTcl:clear_wtree
     set y 10
     set tree [vTcl:list_widget_tree .]
     foreach i $tree {
+
         if {$i == "."} {
             set depth 1
         } else {
@@ -108,7 +114,7 @@ proc vTcl:init_wtree {{wants_destroy_handles 1}} {
             "
             vTcl:set_balloon $b.$j $i
             $b create window $x $y -window $b.$j -anchor nw -tags $b.$j
-            
+
             # @@change by Christian Gavin 3/5/2000
             # added "checkbutton" and "radiobutton" classes
             # added "entry" class
@@ -129,15 +135,15 @@ proc vTcl:init_wtree {{wants_destroy_handles 1}} {
                 	set t ""
                 	set tmpClass [string toupper [string range $c 0 0]]
                 	set tmpClass $tmpClass[string range $c 1 end]
-                	
+
                 	if [info exists vTcl($tmpClass,get_widget_tree_label)] {
-                		
+
                 		set t [$vTcl($tmpClass,get_widget_tree_label) $c $i]
                 	}
                 }
             }
             # @@end_change
-            
+
             $b create text $x2 $y2 -text $t -anchor w -tags "TEXT TEXT$b.$j"
             set d2 [expr $depth - 1]
             for {set k 1} {$k <= $d2} {incr k} {
@@ -165,12 +171,15 @@ proc vTcl:init_wtree {{wants_destroy_handles 1}} {
         incr y 30
     }
     $b configure -scrollregion "0 0 [expr $x + 200] $y"
-    
+
     if {!$wants_destroy_handles} {
-        
+
         vTcl:create_handles $vTcl(w,widget)
         vTcl:place_handles $vTcl(w,widget)
      }
+
+    # restore scrolling position
+    $b yview moveto $vTcl(tree,last_yview)
 }
 
 proc vTclWindow.vTcl.tree {args} {
@@ -190,57 +199,57 @@ proc vTclWindow.vTcl.tree {args} {
     wm deiconify .vTcl.tree
     wm title .vTcl.tree "Widget Tree"
     frame .vTcl.tree.fra4 \
-        -height 30 -width 30 
+        -height 30 -width 30
     pack .vTcl.tree.fra4 \
         -in .vTcl.tree -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 \
-        -padx 0 -pady 0 -side top 
+        -padx 0 -pady 0 -side top
     canvas .vTcl.tree.fra4.can8 \
         -borderwidth 2 -height 0 -highlightthickness 0 -relief ridge \
         -scrollregion {0 0 0 0} -width 0 \
         -xscrollcommand {.vTcl.tree.fra6.scr7 set} \
-        -yscrollcommand {.vTcl.tree.fra4.scr9 set} 
+        -yscrollcommand {.vTcl.tree.fra4.scr9 set}
     pack .vTcl.tree.fra4.can8 \
         -in .vTcl.tree.fra4 -anchor center -expand 1 -fill both -ipadx 0 \
-        -ipady 0 -padx 2 -pady 2 -side left 
+        -ipady 0 -padx 2 -pady 2 -side left
     scrollbar .vTcl.tree.fra4.scr9 \
         -borderwidth 1 -command {.vTcl.tree.fra4.can8 yview} \
         -highlightthickness 0
     pack .vTcl.tree.fra4.scr9 \
         -in .vTcl.tree.fra4 -anchor center -expand 0 -fill y -ipadx 0 \
-        -ipady 0 -padx 0 -pady 2 -side right 
+        -ipady 0 -padx 0 -pady 2 -side right
     frame .vTcl.tree.fra6 \
-        -height 30 -width 30 
+        -height 30 -width 30
     pack .vTcl.tree.fra6 \
         -in .vTcl.tree -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 \
-        -padx 2 -pady 0 -side top 
+        -padx 2 -pady 0 -side top
     scrollbar .vTcl.tree.fra6.scr7 \
         -borderwidth 1 -command {.vTcl.tree.fra4.can8 xview} \
-        -highlightthickness 0 -orient horizontal -width 10 
+        -highlightthickness 0 -orient horizontal -width 10
     pack .vTcl.tree.fra6.scr7 \
         -in .vTcl.tree.fra6 -anchor center -expand 1 -fill both -ipadx 0 \
-        -ipady 0 -padx 2 -pady 0 -side left 
+        -ipady 0 -padx 2 -pady 0 -side left
     frame .vTcl.tree.fra6.fra10 \
-        -borderwidth 1 -height 12 -relief raised -width 12 
+        -borderwidth 1 -height 12 -relief raised -width 12
     pack .vTcl.tree.fra6.fra10 \
         -in .vTcl.tree.fra6 -anchor center -expand 0 -fill none -ipadx 0 \
-        -ipady 0 -padx 0 -pady 0 -side right 
+        -ipady 0 -padx 0 -pady 0 -side right
     frame .vTcl.tree.fra11 \
-        -borderwidth 1 -height 30 -relief sunken -width 30 
+        -borderwidth 1 -height 30 -relief sunken -width 30
     pack .vTcl.tree.fra11 \
         -in .vTcl.tree -anchor center -expand 0 -fill both -ipadx 0 -ipady 0 \
-        -padx 2 -pady 2 -side top 
+        -padx 2 -pady 2 -side top
     button .vTcl.tree.fra11.but3 \
         -command vTcl:init_wtree \
-        -highlightthickness 0 -padx 5 -pady 2 -text Reload -width 5 
+        -highlightthickness 0 -padx 5 -pady 2 -text Reload -width 5
     pack .vTcl.tree.fra11.but3 \
         -in .vTcl.tree.fra11 -anchor center -expand 1 -fill both -ipadx 0 \
-        -ipady 0 -padx 2 -pady 2 -side left 
+        -ipady 0 -padx 2 -pady 2 -side left
     button .vTcl.tree.fra11.but1 \
         -command {destroy .vTcl.tree} \
-        -highlightthickness 0 -padx 5 -pady 2 -text Done -width 5 
+        -highlightthickness 0 -padx 5 -pady 2 -text Done -width 5
     pack .vTcl.tree.fra11.but1 \
         -in .vTcl.tree.fra11 -anchor center -expand 1 -fill both -ipadx 0 \
-        -ipady 0 -padx 2 -pady 2 -side left 
+        -ipady 0 -padx 2 -pady 2 -side left
 
     catch {wm geometry .vTcl.tree $vTcl(geometry,.vTcl.tree)}
     vTcl:init_wtree
