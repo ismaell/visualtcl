@@ -32,8 +32,7 @@ proc SetFolderFromName {} {
     variable ProjectFolder
     variable ProjectName
 
-    if {$DefaultFolder != $ProjectFolder} { return 1 }
-    set ProjectFolder [file join $ProjectFolder $ProjectName]
+    set ProjectFolder [file join $DefaultFolder $ProjectName]
     return 1
 }
 
@@ -69,12 +68,6 @@ proc Done {} {
     if {[file exists $ProjectFolder]} {
     	::vTcl::MessageBox -title "Folder Exists" -message \
 	    "A project already exists in '$ProjectFolder'"
-	return
-    }
-
-    if {![file isdirectory $ProjectFolder]} {
-    	::vTcl::MessageBox -title "Bad Folder" -message \
-	    "'$ProjectFolder' is not a directory"
 	return
     }
 
@@ -144,6 +137,7 @@ proc vTclWindow.vTcl.newProjectWizard {args} {
     entry $f.e1 -textvariable ::NewWizard::ProjectName \
    	 -validate focusout -vcmd "::NewWizard::SetFolderFromName"
     pack $f.e1 -fill x
+    bind $f.e1 <Key-Return> "::NewWizard::SetFolderFromName"
 
     pack [frame $f.spacer1 -height 10]
 
