@@ -21,6 +21,19 @@
 ##############################################################################
 #
 
+###
+## A workaround for the winfo toplevel problem. Menus are placed with wm
+## and winfo toplevel doesn't return the correct widget.
+proc vTcl:get_toplevel {target} {
+    set c [vTcl:get_class $target]
+    if {$c == "Menu"} {
+        # go up until we find the parent toplevel
+        return [vTcl:get_toplevel [winfo parent $target]]
+    } else {
+        return [winfo toplevel $target]
+    }
+}
+
 #
 # Given a full widget path, returns a name with "$base" replacing
 # the first widget element.
@@ -935,7 +948,7 @@ proc vTcl:unset_alias {w} {
         }
     }
 
-    namespace eval ::[winfo toplevel $w] "
+    namespace eval ::[vTcl:get_toplevel $w] "
 	variable _aliases
 	::vTcl::lremove _aliases $alias
     "
