@@ -530,6 +530,12 @@ proc vTcl:prefs:fillLibs {} {
 proc vTcl:prefs:saveLibs {} {
     set listbox [set ::prefs::libsListbox]
     set indices [$listbox curselection]
+    if {$indices == ""} {
+        ## selection cannot be empty because
+        ## 1) at least one lib must be selected
+        ## 2) if the listbox is not in focus it will lose the selection
+        return
+    }
 
     set libs ""
     foreach index $indices {
@@ -560,4 +566,5 @@ proc vTcl:prefs:external {tab} {
 	-command "vTcl:prefs:browse_file prefs::texteditor"]
     pack configure $x -side left -anchor nw
 }
+
 
