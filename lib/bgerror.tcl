@@ -22,6 +22,131 @@
 
 namespace eval ::stack_trace {
 
+    # this procedure regularizes the stack trace returned in the error info
+    #
+    # normally, each level in the call stack is separated by (procedure 
+    # blablah line 3) or ("b" arm line 76) etc.
+    #
+    # in some instances instead of the stack trace referring to a particular
+    # location in a procedure eg. (procedure blablah line 3) it directly 
+    # includes the code; example:
+    #
+    # invoked from within
+    # "switch b {
+    #		a {}
+    #		b {bingo error here}
+    #	}"
+    #    invoked from within
+    # "if {1} then {
+    #	switch b {
+    #		a {}
+    #		b {bingo error here}
+    #	}
+    # }
+    # "
+    #
+    # we transform it so that it becomes (we have added "(code segment 1)"):
+    #
+    # invoked from within
+    # "switch b {
+    #		a {}
+    #		b {bingo error here}
+    #	}"
+    #    (code segment 1)
+    #    invoked from within
+    # "if {1} then {
+    #	switch b {
+    #		a {}
+    #		b {bingo error here}
+    #	}
+    # }
+    # "
+    #
+    # this makes it easier for the code here to parse the errorinfo; note that 
+    # code segments are numbered in order to make the code simpler (hey, what
+    # don't we do these days)
+
+    proc {::stack_trace::regularize} {errorInfo} {
+
+	set info_list [split $errorInfo \n]
+	set last ""
+	set new_list ""
+	set num 1
+
+	foreach item $info_list {
+
+            if { [string match *\" $last] &&
+                 [string trim $item] == "invoked from within" } {
+
+                 lappend new_list "    (code segment $num)"
+                 incr num
+            }
+
+            lappend new_list $item
+
+            set last $item
+	}
+
+	return [join $new_list \n]
+    }
+
+    # returns the code from errorInfo between "invoked from within" and $line
+    # for example, with line = "(command bound to event)" :
+    #
+    #    invoked from within
+    #          "set foo $bar"
+    #    (command bound to event)
+    #
+    # will return "set foo $bar"
+
+    proc {::stack_trace::get_code_snippet_from_error_info} {errorInfo line} {
+
+	set info_list [split $errorInfo \n]
+
+	set index 0	
+	set start 0
+	set end [llength $info_list]
+	set line [string trim $line]
+
+	foreach item $info_list {
+
+            set trimmed [string trim $item]
+
+            if { $trimmed == "invoked from within" ||
+                 $trimmed == "while executing" ||
+                 $trimmed == "while compiling" } {
+		set start [expr $index + 1]
+            }
+
+            if { $trimmed == $line } {
+                set end [expr $index - 1]
+                break
+            }
+
+            incr index
+	}
+
+	set returned [lrange $info_list $start $end]
+	set returned [join $returned \n]
+
+	# strip the quotes
+	regexp {"(.*)"} $returned matchAll returned
+	return $returned
+    }
+
+    proc {::stack_trace::get_file_contents} {filename} {
+
+        if { ! [file exists $filename] } {
+            return "(no code available)"
+        }
+
+        set in [open $filename r]
+        set contents [read $in [file size $filename] ]
+        close $in
+
+        return $contents
+    }
+
     proc {::stack_trace::add_stack} {top context} {
 
         global widget
@@ -31,13 +156,31 @@ namespace eval ::stack_trace {
 
     proc {::stack_trace::get_statement_at_level} {top index} {
 
-        global widget
+        global widget [vTcl:rename $top.errorInfo]
 
         set context [$top.$widget(child,stack_trace_callstack) get $index]
         set context [string trim $context]
 
-        if { [string match "(procedure*)" $context] || 
-              [string match "(compiling body of proc*)" $context] } {
+        if { [string match "(file*)"  $context] } {
+
+            regexp {"([^"]+)"} $context matchAll filename
+            regexp {line ([0-9]+)} $context matchAll lineno
+
+            set statement [::stack_trace::get_file_contents $filename]
+            return [::stack_trace::get_bloc_instruction $statement $lineno]
+
+        } elseif { [string match "(command bound to event)" $context] || 
+                   [string match {("uplevel" body line 1)} $context] ||
+                   [string match {(code segment*)} $context] } {
+
+            set statement \
+               [::stack_trace::get_code_snippet_from_error_info \
+                [vTcl:at [vTcl:rename $top.errorInfo] ] $context]
+
+            return $statement
+
+        } elseif { [string match "(procedure*)" $context] || 
+                   [string match "(compiling body of proc*)" $context] } {
 
             regexp {"([^"]+)"} $context matchAll procname
 
@@ -45,64 +188,67 @@ namespace eval ::stack_trace {
 
                 regexp {line ([0-9]+)} $context matchAll lineno
 
-				return [::stack_trace::get_proc_instruction $procname $lineno]
+                return [::stack_trace::get_proc_instruction $procname $lineno]
 
-			} else {
+            } else {
 
-				return ""
-			}
+                return ""
+            }
 
-		} else {
+	} else {
 
             if [string match "(*arm line *)" $context] {
 
                 set statement \
-					[::stack_trace::get_statement_at_level $top [expr $index + 1] ]
+                    [::stack_trace::get_statement_at_level \
+                    $top [expr $index + 1] ]
 
                 if {$statement != ""} {
 
-                	set armindex [lindex [string range $context 1 end] 0]
+                    set armindex [lindex [string range $context 1 end] 0]
                     set arms     [::stack_trace::get_switch_arms $statement]
                     set arm      [::stack_trace::get_switch_arm $arms $armindex]
 
                     regexp {([0-9]+)} [lindex $context 3] matchAll lineno
 
-					return [::stack_trace::get_bloc_instruction $arm $lineno]
-
-				} else {
-
-					return ""
-				}
-
-			} else {
-
-                if [string match {("if" then script line *)} $context] {
-
-	                set statement \
-						[::stack_trace::get_statement_at_level $top [expr $index + 1] ]
-
-	                if {$statement != ""} {
-
-	                    regexp {([0-9]+)} [lindex $context 4] matchAll lineno
-
-						return [::stack_trace::get_bloc_instruction $statement $lineno]
-
-					} else {
-
-						return ""
-					}
+                    return [::stack_trace::get_bloc_instruction $arm $lineno]
 
                 } else {
 
-					return ""
-				}
-			}
-		}
+                    return ""
+                }
+
+            } else {
+
+                if [string match {("if" then script line *)} $context] {
+
+                    set statement \
+                        [::stack_trace::get_statement_at_level \
+                        $top [expr $index + 1] ]
+
+                    if {$statement != ""} {
+
+                        regexp {([0-9]+)} [lindex $context 4] matchAll lineno
+
+                        return [::stack_trace::get_bloc_instruction $statement $lineno]
+
+                    } else {
+
+                        return ""
+                    }
+
+                } else {
+
+                    return ""
+                }
+            }
+        }
     }
 
     proc {::stack_trace::extract_code} {top} {
 
         global widget
+        global [vTcl:rename $top.errorInfo]
 
         # get current selection in listbox
 
@@ -115,8 +261,17 @@ namespace eval ::stack_trace {
         set context [$top.$widget(child,stack_trace_callstack) get $index]
         set context [string trim $context]
 
-        if { [string match "(procedure*)" $context] || 
-              [string match "(compiling body of proc*)" $context] } {
+        if { [string match "(file*)"  $context] } {
+
+            regexp {"([^"]+)"} $context matchAll filename
+            regexp {line ([0-9]+)} $context matchAll lineno
+
+            ::stack_trace::set_details $top [::stack_trace::get_file_contents $filename]
+            vTcl:syntax_color $top.$widget(child,stack_trace_details) 0 -1
+            ::stack_trace::highlight_details $top $lineno
+
+        } elseif { [string match "(procedure*)" $context] || 
+                   [string match "(compiling body of proc*)" $context] } {
 
             regexp {"([^"]+)"} $context matchAll procname
 
@@ -124,7 +279,8 @@ namespace eval ::stack_trace {
 
                 regexp {line ([0-9]+)} $context matchAll lineno
 
-                ::stack_trace::set_details $top  [::stack_trace::get_proc_details $procname]
+                ::stack_trace::set_details $top  \
+                    [::stack_trace::get_proc_details $procname]
                 vTcl:syntax_color $top.$widget(child,stack_trace_details)  0 -1
                 ::stack_trace::highlight_details $top [expr $lineno +1]
 
@@ -133,16 +289,27 @@ namespace eval ::stack_trace {
                 ::stack_trace::set_details $top "(no code available)"
             }
 
+        } elseif { [string match "(command bound to event)" $context] || 
+                   [string match {("uplevel" body line 1)} $context] ||
+                   [string match {(code segment*)} $context] } {
+
+            set statement \
+                  [::stack_trace::get_code_snippet_from_error_info \
+                  [vTcl:at [vTcl:rename $top.errorInfo] ] $context]
+
+            ::stack_trace::set_details $top $statement
+            vTcl:syntax_color $top.$widget(child,stack_trace_details)  0 -1
+
         } else {
 
             if [string match "(*arm line *)" $context] {
 
                 set statement \
-					[::stack_trace::get_statement_at_level $top [expr $index + 1] ]
+                    [::stack_trace::get_statement_at_level $top [expr $index + 1] ]
 
                 if {$statement != ""} {
 
-                	set armindex [lindex [string range $context 1 end] 0]
+                    set armindex [lindex [string range $context 1 end] 0]
                     set arms     [::stack_trace::get_switch_arms $statement]
                     set arm      [::stack_trace::get_switch_arm $arms $armindex]
 
@@ -161,25 +328,25 @@ namespace eval ::stack_trace {
 
                 if [string match {("if" then script line *)} $context] {
 
-	                set statement \
-						[::stack_trace::get_statement_at_level $top [expr $index + 1] ]
+	              set statement \
+                          [::stack_trace::get_statement_at_level $top [expr $index + 1] ]
 
-	                if {$statement != ""} {
+	              if {$statement != ""} {
 
-	                    regexp {([0-9]+)} [lindex $context 4] matchAll lineno
+	                  regexp {([0-9]+)} [lindex $context 4] matchAll lineno
 
-	                    ::stack_trace::set_details $top $statement
-                    	vTcl:syntax_color $top.$widget(child,stack_trace_details)  0 -1
-                    	::stack_trace::highlight_details $top $lineno
+                          ::stack_trace::set_details $top $statement
+                          vTcl:syntax_color $top.$widget(child,stack_trace_details)  0 -1
+                          ::stack_trace::highlight_details $top $lineno
 
-					} else {
+                      } else {
 
-		                ::stack_trace::set_details $top "(no code available)"
-					}
+                          ::stack_trace::set_details $top "(no code available)"
+                      }
 
                 } else {
-	                ::stack_trace::set_details $top "(no code available)"
-				}
+                    ::stack_trace::set_details $top "(no code available)"
+                }
             }
         }
     }
@@ -285,6 +452,10 @@ namespace eval ::stack_trace {
         foreach context $stack {
         ::stack_trace::add_stack $top $context
         }
+
+        # save for future use
+        global [vTcl:rename $top.errorInfo]
+        set [vTcl:rename $top.errorInfo] $errorInfo
     }
 
     proc {::stack_trace::reset_stack} {top} {
@@ -388,7 +559,7 @@ proc vTclWindow.vTcl.stack_trace {base {container 0}} {
         wm deiconify $base; return
     }
 
-    global widget
+    global widget vTcl
     set widget(rev,$base) {stack_trace}
     set {widget(stack_trace)} "$base"
     set {widget(child,stack_trace)} ""
@@ -488,6 +659,9 @@ proc vTclWindow.vTcl.stack_trace {base {container 0}} {
         -command "$base.cpd18.02.cpd21.01.cpd22.01 yview" -cursor left_ptr \
         -highlightbackground #dcdcdc -highlightcolor #000000 -orient vert \
         -troughcolor #dcdcdc 
+    button $base.cpd18.02.cpd21.01.but1 \
+        -text "show errorInfo" \
+        -command "::stack_trace::set_details $base \[vTcl:at [vTcl:rename $base.errorInfo] \]"
     frame $base.cpd18.02.cpd21.02 \
         -background #9900991B99FE -highlightbackground #dcdcdc \
         -highlightcolor #000000
@@ -506,7 +680,7 @@ proc vTclWindow.vTcl.stack_trace {base {container 0}} {
         -highlightbackground #dcdcdc -highlightcolor #000000 -orient vert \
         -troughcolor #dcdcdc 
     text $base.cpd18.02.cpd21.02.cpd23.03 \
-        -background #dcdcdc -font [vTcl:font:get_font "vTcl:font3"] \
+        -background #dcdcdc -font $vTcl(pr,font_fixed) \
         -foreground #000000 -height 1 -highlightbackground #ffffff \
         -highlightcolor #000000 -selectbackground #008080 \
         -selectforeground #ffffff -width 8 -wrap none \
@@ -597,6 +771,8 @@ proc vTclWindow.vTcl.stack_trace {base {container 0}} {
     grid $base.cpd18.02.cpd21.01.cpd22.03 \
         -in $base.cpd18.02.cpd21.01.cpd22 -column 1 -row 0 -columnspan 1 \
         -rowspan 1 -sticky ns
+    pack $base.cpd18.02.cpd21.01.but1 \
+        -in $base.cpd18.02.cpd21.01 -side bottom -fill x
     place $base.cpd18.02.cpd21.02 \
         -x 0 -relx 1 -y 0 -width -1 -relwidth 0.6533 -relheight 1 -anchor ne \
         -bordermode ignore
@@ -750,7 +926,7 @@ proc bgerror {error} {
     global [vTcl:rename $top.dialogStatus]
 
     set [vTcl:rename $top.error] $error
-    set [vTcl:rename $top.errorInfo] $errorInfo
+    set [vTcl:rename $top.errorInfo] [::stack_trace::regularize $errorInfo]
     set [vTcl:rename $top.dialogStatus] 0
 
     vTclWindow.vTcl.bgerror $top
@@ -758,6 +934,11 @@ proc bgerror {error} {
 	vwait [vTcl:rename $top.dialogStatus]
 
     eval set status $[vTcl:rename $top.dialogStatus]
+
+    # don't leak memory, please !
+    unset [vTcl:rename $top.error]
+    unset [vTcl:rename $top.errorInfo]
+    unset [vTcl:rename $top.dialogStatus]
 
     if {$status == "skip"} {
 
@@ -768,3 +949,4 @@ proc bgerror {error} {
         return
     }
 }
+

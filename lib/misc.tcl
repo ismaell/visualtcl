@@ -21,6 +21,11 @@
 ##############################################################################
 #
 
+proc vTcl:at {varname} {
+    upvar $varname localvar
+    return $localvar
+}
+
 proc vTcl:util:greatest_of {numlist} {
     set max 0
     foreach i $numlist {
@@ -747,6 +752,8 @@ proc incr0 {varName {num 1}} {
 # decoding from Pascual Alonso,
 # namespace'ing and bugs from Parand Tony Darugar
 # (tdarugar@binevolve.com)
+#
+# $Id: misc.tcl,v 1.14 2000/10/18 04:24:34 cgavin Exp $
 # -------------------------------------------------------------------
 
 namespace eval base64 {
