@@ -1,0 +1,7 @@
+Class		ScrollableFrame
+Lib		bwidget
+
+Icon		unknown.gif
+TreeLabel	BWidget ScrollableFrame
+CreateCmd	ScrollableFrame
+MegaWidget	yes

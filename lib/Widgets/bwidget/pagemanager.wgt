@@ -1,0 +1,7 @@
+Class		PagesManager
+Lib		bwidget
+
+Icon		unknown.gif
+TreeLabel	BWidget PagesManager
+CreateCmd	PagesManager
+MegaWidget	yes

@@ -1,0 +1,6 @@
+Class		Entry
+Lib		bwidget
+
+Icon		icon_entry.gif
+TreeLabel	BWidget Entry
+CreateCmd	Entry

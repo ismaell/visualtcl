@@ -1,0 +1,9 @@
+Class		TitleFrame
+Lib		bwidget
+
+Icon		unknown.gif
+TreeLabel	BWidget TitleFrame
+CreateCmd	TitleFrame
+MegaWidget	yes
+
+SpecialOpt -side	"side"		choice	{left center right}

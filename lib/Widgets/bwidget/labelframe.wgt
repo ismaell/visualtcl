@@ -1,0 +1,7 @@
+Class		LabelFrame
+Lib		bwidget
+
+Icon		unknown.gif
+TreeLabel	BWidget LabelFrame
+CreateCmd	LabelFrame
+MegaWidget	yes

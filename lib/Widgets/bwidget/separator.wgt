@@ -1,0 +1,9 @@
+Class		Separator
+Lib		bwidget
+
+Icon		unknown.gif
+TreeLabel	BWidget Separator
+CreateCmd	Separator
+MegaWidget	yes
+
+SpecialOpt -relief	"relief"	choice	{groove ridge}

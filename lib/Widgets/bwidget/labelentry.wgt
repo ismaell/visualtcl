@@ -1,0 +1,7 @@
+Class		LabelEntry
+Lib		bwidget
+
+Icon		unknown.gif
+TreeLabel	BWidget LabelEntry
+CreateCmd	LabelEntry
+MegaWidget	yes
