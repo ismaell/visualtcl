@@ -14,7 +14,6 @@ Function        "Edit Option Menu..." vTcl::widgets::tix::optionmenu::editMenu
 
 NewOption       -accelerator     "accelerator"    type
 NewOption       -columnbreak     "col break"      type
-NewOption       -hidemargin      "hide margin"    boolean  {0 1}
 
 namespace eval vTcl::widgets::tix::optionmenu {
 
@@ -101,3 +100,4 @@ namespace eval vTcl::widgets::tix::optionmenu::edit {
         error "Not implemented yet!"
     }
 }
+
