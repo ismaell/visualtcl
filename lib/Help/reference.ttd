@@ -1008,8 +1008,7 @@ ttd.text {The widget(s) below (contained by) a widget is(are) called child(child
 }
 ttd.text {
 }
-ttd.text {When you click on a widget in the widget tree, it becomes the current selection. You can }
-ttd.text {also right-click on a widget in the widget tree to show a context menu with operations available for that widget.
+ttd.text {When you click on a widget in the widget tree, it becomes the current selection. You can also right-click on a widget in the widget tree to show a context menu with operations available for that widget.
 }
 ttd.text {
 }
@@ -1051,10 +1050,16 @@ ttd.text {You can even define virtual bindings, whose names are enclosed with <<
 }
 ttd.text {
 }
+ttd.text {In the bindings editor, events that appear as black text cannot be modified. They are shown so that you can examine a widget's internals. Events that appear as blue text can be edited or deleted.
+}
+ttd.text {
+}
 ttd.tagon {Level 2 Title}
 ttd.text {8.1 Insert}
 ttd.tagoff {Level 2 Title}
 ttd.text {
+}
+ttd.text {Inserts a new binding for the widget. A list of bindings is proposed in the menu. If you don't find the binding you want to insert, select "Advanced...".
 }
 ttd.text {
 }
@@ -1063,6 +1068,12 @@ ttd.text {8.2 Move}
 ttd.tagoff {Level 2 Title}
 ttd.text {
 }
+ttd.text {This menu allows you to move up or down a binding tag. You need to understand binding tags well before you use this option. Binding tags allow you to process group of events in a certain order, and this order can be modified by moving tags up or down in the list of tags for the widget.
+}
+ttd.text {
+}
+ttd.text {For example, in some cases, a toplevel handles all the keyboard accelerators, so its tag appears for all the widgets in that toplevel. Sometimes, when a particular widget does not react the same way to an accelerator key as the toplevel window, you can override the behavior in that widget. Tk by default places the toplevel tag at the end of the list for a widget, so a widget can override the behavior that it inherits from the toplevel window easily.
+}
 ttd.text {
 }
 ttd.tagon {Level 2 Title}
@@ -1070,11 +1081,25 @@ ttd.text {8.3 Add}
 ttd.tagoff {Level 2 Title}
 ttd.text {
 }
+ttd.text {Add allows you to add an existing binding tag to the selected widget or create a new tag. You need to understand binding tags well before using this option.
+}
 ttd.text {
 }
 ttd.tagon {Level 2 Title}
 ttd.text {8.4 Delete}
 ttd.tagoff {Level 2 Title}
+ttd.text {
+}
+ttd.text {Delete can remove events or tags. When you remove a binding tag, the tag is only removed from the list in the current widget. The tag is not actually deleted.
+}
+ttd.text {
+}
+ttd.tagon {Level 2 Title}
+ttd.text {8.5 Context Menu}
+ttd.tagoff {Level 2 Title}
+ttd.text {
+}
+ttd.text {When you type code for an event, special sequences can be inserted and will be replaced at execution time. For example, %W will be replaced by the path of the widget. If you right-click in the code area of the bindings editor, a menu appear that lists the most common % substitutions.}
 ttd.text {
 }
 ttd.text {
