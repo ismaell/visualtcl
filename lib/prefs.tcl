@@ -76,11 +76,6 @@ proc vTclWindow.vTcl.prefs {{base ""}} {
         -foreground #000000 -highlightbackground #bcbcbc \
         -highlightcolor #000000 -highlightthickness 0 \
         -text {Save global variable values} -variable vTcl(pr,saveglob)
-    checkbutton $base.fra18.che39 \
-        -activebackground #bcbcbc -activeforeground #000000 -anchor w \
-        -foreground #000000 -highlightbackground #bcbcbc \
-        -highlightcolor #000000 -highlightthickness 0 \
-        -text {Window focus selects window} -variable vTcl(pr,winfocus)
     checkbutton $base.fra18.che40 \
         -activebackground #bcbcbc -activeforeground #000000 -anchor w \
         -foreground #000000 -highlightbackground #bcbcbc \
@@ -214,7 +209,7 @@ proc vTclWindow.vTcl.prefs {{base ""}} {
         -highlightbackground #bcbcbc -highlightcolor #000000 -relief sunken
     label $base.fra22.lab0 \
         -foreground #000000 -highlightbackground #bcbcbc \
-        -highlightcolor #000000 -relief raised -text {Helper applications}
+        -highlightcolor #000000 -relief raised -text {Images}
     label $base.fra22.lab1 \
         -text "Editor for images:"
     entry $base.fra22.ent1 \
@@ -222,6 +217,11 @@ proc vTclWindow.vTcl.prefs {{base ""}} {
         -foreground #000000 -highlightbackground #f3f3f3 \
         -selectbackground #000080 -selectforeground #ffffff \
         -textvariable vTcl(pr,imageeditor)
+    checkbutton $base.fra22.che1 \
+        -activebackground #bcbcbc -activeforeground #000000 -anchor w \
+        -foreground #000000 -highlightbackground #bcbcbc \
+        -highlightcolor #000000 -highlightthickness 0 \
+        -text {Save images as inline} -variable vTcl(pr,saveimagesinline)
 
     ###################
     # SETTING GEOMETRY
@@ -343,6 +343,9 @@ proc vTclWindow.vTcl.prefs {{base ""}} {
     grid $base.fra22.ent1 \
     	-in $base.fra22 -column 1 -row 1 -columnspan 1 -rowspan 1 -padx 3 \
     	-pady 3 -sticky news
+    grid $base.fra22.che1  \
+    	-in $base.fra22 -column 0 -row 2 -columnspan 2 -rowspan 1 -padx 3 \
+    	-pady 3 -sticky news
     grid $base.fra23 \
         -in $base -column 0 -row 3 -columnspan 2 -rowspan 1 -padx 5 -pady 5 \
         -sticky nesw
@@ -350,6 +353,11 @@ proc vTclWindow.vTcl.prefs {{base ""}} {
     grid $base.fra23.but18 \
         -in $base.fra23 -column 0 -row 0 -columnspan 1 -rowspan 1 -padx 3 \
         -pady 3 -sticky nesw
+
+  	vTcl:set_balloon $base.fra22.che1 \
+"Use this option when you do not want to ship external image
+files with your application. All images will be encoded within
+the main project file"
 
     update idletasks
     set sw [winfo screenwidth .]
