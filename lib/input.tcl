@@ -313,18 +313,17 @@ proc select {contents title {selectMode single} args} {
     vTcl:DefineAlias "$site_3_0.lab88" "SelectLabel" vTcl:WidgetProc "$top" 1
     pack $site_3_0.lab88 \
         -in $site_3_0 -anchor center -expand 0 -fill none -side left
-    frame $top.fra82 \
-        -borderwidth 2
+    ScrolledWindow $top.fra82 \
+        -borderwidth 2 -auto horizontal
     set site_3_0 $top.fra82
     listbox $site_3_0.lis83 \
         -background white -listvariable "::${top}::listContents" \
         -selectmode $selectMode -height 2
     vTcl:DefineAlias "$site_3_0.lis83" "SelectListbox" vTcl:WidgetProc "$top" 1
+    $top.fra82 setwidget $site_3_0.lis83
     bind $site_3_0.lis83 <<ListboxSelect>> {
         ::vTcl::input::listboxSelect::updateSelection [winfo toplevel %W]
     }
-    pack $site_3_0.lis83 \
-        -in $site_3_0 -anchor center -expand 1 -fill both -padx 2 -side top
     frame $top.fra84 \
         -borderwidth 2
     set site_3_0 $top.fra84
@@ -391,4 +390,5 @@ proc select {contents title {selectMode single} args} {
     return [vTcl:at ::${top}::selectedItems]
 }
 } ; ## namespace eval ::vTcl::input::listboxSelect
+
 
