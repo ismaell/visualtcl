@@ -511,7 +511,7 @@ proc vTclWindow.vTcl.newbind {base} {
         -side top 
 
     pack $base.fra23.cpd34 \
-        -in $base.fra23 -anchor center -expand 1 -fill both -side right 
+        -in $base.fra23 -anchor center -expand 1 -fill both -side right
     pack $base.fra23.cpd34.01
 
     pack $base.fra23.cpd35 \
@@ -597,9 +597,9 @@ proc vTclWindow.vTcl.newtag {base} {
         -text OK -width 8 \
         -command {
             if {$NewBindingTagName != ""} {
-                ::widgets_bindings::addtag $NewBindingTagName
+                ::widgets_bindings::add_tag $NewBindingTagName
             } else {
-                ::widgets_bindings::addtag \
+                ::widgets_bindings::add_tag \
                      [ListboxTags get [lindex [ListboxTags curselection] 0] ]
             }
             Window destroy .vTcl.newtag } \
@@ -759,7 +759,18 @@ namespace eval ::widgets_bindings {
         }
     }
 
-    proc {::widgets_bindings::addtag} {tag} {
+    proc {::widgets_bindings::remove_tag_from_widget} {target tag} {
+        vTcl::lremove ::vTcl(bindtags,$target) $tag
+    }
+
+    proc {::widgets_bindings::add_tag_to_widget} {target tag} {
+        # target has tag in its list ?
+        if {[lsearch -exact ::vTcl(bindtags,$target) $tag] == -1} {
+            lappend ::vTcl(bindtags,$target) $tag
+        }
+    }
+
+    proc {::widgets_bindings::add_tag} {tag} {
 
         global vTcl widget
 
@@ -767,13 +778,9 @@ namespace eval ::widgets_bindings {
 
         set target $widgets_bindings::target
 
-        # target has tag in its list ?
-        if {[lsearch -exact $vTcl(bindtags,$target) $tag] == -1} {
-            lappend vTcl(bindtags,$target) $tag
-        }
-
+        ::widgets_bindings::add_tag_to_widget $target $tag
         ::widgets_bindings::fill_bindings $target
-        ::widgets_bindings::select_show_binding $tag ""     
+        ::widgets_bindings::select_show_binding $tag ""
         ::widgets_bindings::enable_toolbar_buttons
     }
 
@@ -891,7 +898,7 @@ namespace eval ::widgets_bindings {
         bind $tag $event ""
         set ::widgets_bindings::lasttag ""
         set ::widgets_bindings::lastevent ""
-        
+
         ::widgets_bindings::fill_bindings $target
     }
 
@@ -1233,7 +1240,7 @@ namespace eval ::widgets_bindings {
             regsub -all Button_ $event Button- event
             regsub -all ButtonRelease_ $event ButtonRelease- event
             regsub -all Key_ $event Key- event
-        
+
             if {$lastmodifier == -1} {
                 return $event
             }

@@ -117,3 +117,6 @@ NewOption -xscrollcommand	"x scroll cmd"		command
 NewOption -xscrollincrement	"x increment"		type
 NewOption -yscrollcommand	"y scroll cmd"		command
 NewOption -yscrollincrement	"y increment"		type
+
+## Tooltip support
+NewOption -_tooltip             "tooltip text"          type

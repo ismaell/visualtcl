@@ -455,8 +455,6 @@ proc vTcl:update_widget_info {target} {
     if {![winfo exists $target]} {return}
     foreach i $vTcl(attr,winfo) {
         if {$i == "manager" && $target == "."} {
-            vTcl:log "target $target manager = [winfo $i $target]"
-
             # root placer problem
             set vTcl(w,$i) wm
         } else {
@@ -534,6 +532,9 @@ proc vTcl:update_widget_info {target} {
     if {[catch {set vTcl(w,alias) $widget(rev,$target)}]} {
         set vTcl(w,alias) ""
     }
+
+    ## Balloon help support in attributes editor
+    vTcl:update_balloon $target vTcl(w,opt,-_tooltip)
 }
 
 proc vTcl:conf_to_pairs {conf opt} {

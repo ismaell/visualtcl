@@ -66,6 +66,42 @@ proc vTcl:widget:lib:lib_core {args} {
 }
 
 ####################################################################
+# Tooltip support
+#
+
+proc vTcl:get_balloon {target} {
+    set events [bind $target]
+    if {[lsearch -exact $events <<SetBalloon>>] == -1} {
+        return ""
+    }
+    set event [string trim [bind $target <<SetBalloon>>]]
+    if {[string match {set ::vTcl::balloon::%W*} $event]} {
+        return [lindex $event 2]
+    }
+    return ""
+}
+
+proc vTcl:update_balloon {target var} {
+    set ::$var [vTcl:get_balloon $target]
+}
+
+proc vTcl:config_balloon {target var} {
+    set old [vTcl:get_balloon $target]
+    set new [vTcl:at ::$var]
+    if {$old == "" && $new == ""} {
+        return
+    }
+    if {$old != "" && $new == ""} {
+        bind $target <<SetBalloon>> {}
+        ::widgets_bindings::remove_tag_from_widget $target _vTclBalloon
+        return
+    }
+    bind $target <<SetBalloon>> "set ::vTcl::balloon::%W \{$new\}"
+    ::widgets_bindings::add_tag_to_widget $target _vTclBalloon
+    ::widgets_bindings::add_tag_to_tagslist _vTclBalloon
+}
+
+####################################################################
 # Procedures to support extra geometry mgr configuration
 #
 

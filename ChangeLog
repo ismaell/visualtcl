@@ -1,6 +1,7 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Added tooltip text property in attributes window.
     o Done a bit of compacting in some library routines.
     o Preparing support for balloon help in projects by making all balloon
       help code self contained in a binding tag. This way, to set the balloon

@@ -274,7 +274,6 @@ proc vTcl:prop:update_attr {} {
 	return
     }
 
-    vTcl:log "vTcl:prop:update_attr"
     #
     # Update Widget Attributes
     #
@@ -320,12 +319,16 @@ proc vTcl:prop:update_attr {} {
 	    vTcl:prop:new_attr $top $i $variable $config_cmd opt $focus_out_cmd
         }
 
-	# special stuff to edit menu items (cascaded items)
+	## special stuff to edit menu items (cascaded items)
 	if {$vTcl(w,class) == "Menu"} {
         global dummy
         set dummy ""
 	    vTcl:prop:new_attr $top -menuspecial dummy "" opt ""
 	}
+
+        ## tooltip support
+        set config_cmd {vTcl:config_balloon $vTcl(w,widget) vTcl(w,opt,-_tooltip)}
+        vTcl:prop:new_attr $top -_tooltip vTcl(w,opt,-_tooltip) $config_cmd opt ""
     }
 
     if {$vTcl(w,manager) == ""} {
@@ -342,7 +345,6 @@ proc vTcl:prop:update_attr {} {
     set mgr $vTcl(w,manager)
     update idletasks
     if {[winfo exists $top]} {
-    	vTcl:log "here!"
         if {$vTcl(w,manager) != $vTcl(w,last_manager)} {
             catch {pack forget $fr._$vTcl(w,last_manager)}
             pack $top -side left -fill both -expand 1
@@ -420,9 +422,6 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
     set label $top.$option
     label $label -text $text -anchor w -width 11 -fg black \
     	-relief $vTcl(pr,proprelief)
-
-    # @@change by Christian Gavin 3/10/2000
-    # added font browser for individual properties
 
     set focusControl $base
 
@@ -513,7 +512,7 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
             frame $base
             vTcl:entry ${base}.l -relief sunken  \
                 -textvariable $variable -width 8 \
-                -highlightthickness 1 -fg black 
+                -highlightthickness 1 -fg black
 
 	    if {[info tclversion] > 8.2} {
 		${base}.l configure -validate key \
@@ -538,7 +537,7 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
             frame $base
             vTcl:entry ${base}.l -relief sunken  \
                 -textvariable $variable -width 8 \
-                -highlightthickness 1 -fg black 
+                -highlightthickness 1 -fg black
             button ${base}.f \
                 -image ellipses  -width 12 \
                 -highlightthickness 1 -fg black -padx 0 -pady 1 \
@@ -581,7 +580,6 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
 	    }
         }
     }
-    # @@end_change
 
     ## Append the label to the list for this widget and add the focusControl
     ## to the lookup table.  This is used when scrolling through the property
