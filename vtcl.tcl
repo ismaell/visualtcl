@@ -136,8 +136,9 @@ proc vTcl:load_libs {} {
 
 proc ::vTcl::load_bwidgets {} {
     vTcl:splash_status "Loading BWidgets"
+
     uplevel #0 {
-	set dir [file join $vTcl(LIB_DIR) bwidget]
+    	set dir [file join $vTcl(LIB_DIR) bwidget]
 	source  [file join $dir pkgIndex.tcl]
     }
 }
@@ -188,6 +189,12 @@ proc vTcl:setup {} {
     wm withdraw .
     vTcl:splash
     vTcl:load_libs
+
+    ## Make sure lib_core loads before all other widget libraries.
+    ::vTcl::lremove vTcl(LIB_WIDG) *lib_core.tcl
+    set vTcl(LIB_WIDG) [linsert $vTcl(LIB_WIDG) 0 lib_core.tcl]
+
+    ::vTcl::load_bwidgets
     vTcl:load_widgets
     ::vTcl::load_bwidgets
     if {[file exists $vTcl(CONF_FILE)]} {

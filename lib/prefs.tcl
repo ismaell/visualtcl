@@ -50,6 +50,7 @@ proc vTcl:prefs:init {base} {
        variable projfile         ""
        variable saveasexecutable ""
        variable bgcolor		 ""
+       variable texteditor	 ""
     }
 
     set prefs::font_dlg [eval font create [font actual $vTcl(pr,font_dlg)]]
@@ -58,22 +59,19 @@ proc vTcl:prefs:init {base} {
     # set the variables for the dialog
     vTcl:prefs:data_exchange 0
 
-    # destroy the notebook if already existing
+    ## Destroy the notebook if already existing
     vTcl:prefs:uninit $base
-    set tb [vTcl:tabnotebook_create $base.tb]
+    set tb [NoteBook $base.tb]
     pack $tb -fill both -expand 1
 
-    set tb_basics  [vTcl:tabnotebook_page $tb "Basics"]
-    set tb_project [vTcl:tabnotebook_page $tb "Project"]
-    set tb_fonts   [vTcl:tabnotebook_page $tb "Fonts"]
-    set tb_bgcolor [vTcl:tabnotebook_page $tb "Colors"]
-    set tb_images  [vTcl:tabnotebook_page $tb "Images"]
+    vTcl:prefs:basics  [$tb insert end "Basics" -text "Basics"]
+    vTcl:prefs:project [$tb insert end "Project" -text "Project"]
+    vTcl:prefs:fonts   [$tb insert end "Fonts" -text "Fonts"]
+    vTcl:prefs:bgcolor [$tb insert end "Colors" -text "Colors"]
+    vTcl:prefs:images  [$tb insert end "Images" -text "Images"]
+    #vTcl:prefs:external [$tb insert end "External" -text "External"]
 
-    vTcl:prefs:basics  $tb_basics
-    vTcl:prefs:project $tb_project
-    vTcl:prefs:fonts   $tb_fonts
-    vTcl:prefs:bgcolor $tb_bgcolor
-    vTcl:prefs:images  $tb_images
+    $tb raise Basics
 }
 
 proc vTclWindow.vTcl.prefs {{base ""} {container 0}} {
@@ -90,6 +88,7 @@ proc vTclWindow.vTcl.prefs {{base ""} {container 0}} {
     ###################
     if {!$container} {
     toplevel $base -class Toplevel
+    wm geometry   $base 400x400
     wm focusmodel $base passive
     wm withdraw $base
     wm maxsize $base 1284 1010
@@ -105,25 +104,22 @@ proc vTclWindow.vTcl.prefs {{base ""} {container 0}} {
         wm withdraw [winfo toplevel %W]; vTcl:prefs:data_exchange 0
     }
     }
-    frame $base.fra19 \
-        -borderwidth 2 -height 75 -width 125
-    button $base.fra19.but20 \
-        -command "vTcl:prefs:data_exchange 1; wm withdraw $base" \
-        -padx 9 -text OK -width 8
-    button $base.fra19.but21 \
-        -command "wm withdraw $base; vTcl:prefs:data_exchange 0" \
-        -padx 9 -text Cancel -width 8
+    # frame $base.fra19 \
+        # -borderwidth 2 -height 75 -width 125
+    frame $base.fra19
+    ::vTcl::OkButton $base.fra19.but20 \
+    	-command "vTcl:prefs:data_exchange 1; wm withdraw $base"
+    ::vTcl::CancelButton $base.fra19.but21 \
+    	-command "vTcl:prefs:data_exchange 0; wm withdraw $base"
     ###################
     # SETTING GEOMETRY
     ###################
     pack $base.fra19 \
-        -in $base -anchor center -expand 0 -fill none -pady 5 -side bottom
+        -in $base -anchor e -expand 0 -fill none -pady 5 -side top
     pack $base.fra19.but20 \
-        -in $base.fra19 -anchor center -expand 0 -fill none -padx 10 \
-        -side left
+        -in $base.fra19 -side left
     pack $base.fra19.but21 \
-        -in $base.fra19 -anchor center -expand 0 -fill none -padx 10 \
-        -side right
+        -in $base.fra19 -side left
 
     vTcl:prefs:init $base
 
@@ -131,10 +127,11 @@ proc vTclWindow.vTcl.prefs {{base ""} {container 0}} {
 
     update
 
-#   let's have Tk determine what size it needs (it works!)
-
-    vTcl:center $base
+    ## Let's have Tk determine what size it needs (it works!)
+    ## We have to deiconify first for Tk to figure out its size.  In
+    ## withdrawn mode, Tk inaccurately determines the geometry of a widget.
     wm deiconify $base
+    vTcl:center $base
 }
 
 proc vTclWindow.vTcl.infolibs {{base ""} {container 0}} {
@@ -258,6 +255,8 @@ proc {vTcl:prefs:data_exchange} {save_and_validate} {
         prefs::saveasexecutable $save_and_validate
     vTcl:data_exchange_var vTcl(pr,bgcolor) \
         prefs::bgcolor $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,texteditor) \
+        prefs::texteditor $save_and_validate
 
     if {$save_and_validate} {
     	set vTcl(pr,font_dlg)   [font configure $prefs::font_dlg]
@@ -413,28 +412,6 @@ proc {vTcl:prefs:bgcolor} {tab} {
 	}
 } 
 
-proc {vTcl:prefs:images} {tab} {
-
-	global widget
-
-	vTcl:formCompound:add $tab label \
-		-text "Editor for images"
-
-	set form_entry [vTcl:formCompound:add $tab frame]
-	pack configure $form_entry -fill x
-
-	set last [vTcl:formCompound:add $form_entry entry  \
-		-textvariable prefs::imageeditor]
-	pack configure $last -fill x -expand 1 -padx 5 -side left
-
-	set last [vTcl:formCompound:add $form_entry button \
-		-text "Browse..." -command "vTcl:prefs:browse_file prefs::imageeditor"]
-	pack configure $last -side right
-
-	vTcl:formCompound:add $tab checkbutton \
-		-text "Save images as inline" -variable prefs::saveimagesinline
-}
-
 proc {vTcl:prefs:project} {tab} {
 
 	global widget
@@ -482,4 +459,40 @@ proc {vTcl:prefs:project} {tab} {
 
 	vTcl:formCompound:add $tab checkbutton  \
 		-text "Save as executable" -variable prefs::saveasexecutable
+}
+
+proc {vTcl:prefs:images} {tab} {
+
+	global widget
+
+	vTcl:formCompound:add $tab label \
+		-text "Editor for images"
+
+	set form_entry [vTcl:formCompound:add $tab frame]
+	pack configure $form_entry -fill x
+
+	set last [vTcl:formCompound:add $form_entry entry  \
+		-textvariable prefs::imageeditor]
+	pack configure $last -fill x -expand 1 -padx 4 -side left
+
+	set last [vTcl:formCompound:add $form_entry button \
+		-text "Browse..." -command "vTcl:prefs:browse_file prefs::imageeditor"]
+	pack configure $last -side right
+
+	vTcl:formCompound:add $tab checkbutton \
+		-text "Save images as inline" -variable prefs::saveimagesinline
+}
+
+proc vTcl:prefs:external {tab} {
+    global widget
+
+    vTcl:formCompound:add $tab label -text "External Editor"
+    set f [vTcl:formCompound:add $tab frame]
+    pack configure $f -fill x
+    set x [vTcl:formCompound:add $f entry -textvariable prefs::texteditor]
+    pack configure $x -fill x -expand 1 -side left -padx 4
+
+    set x [vTcl:formCompound:add $f button -text "Browse" \
+	-command "vTcl:prefs:browse_file prefs::texteditor"]
+    pack configure $x -side left -anchor nw
 }

@@ -308,13 +308,13 @@ namespace eval ::vTcl::news {
 
 	vTcl:status "Getting news..."
 
-    	if {![::vTcl::news::Init]} { return }
+    	if {![::vTcl::news::Init]} { vTcl:status; return }
 
-	if {[catch {$http $URL -timeout 30000} token]} { return }
+	if {[catch {$http $URL -timeout 30000} token]} { vTcl:status; return }
 	upvar #0 $token state
 
 	## If we didn't get the file successfully, bail out.
-	if {[lindex $state(http) 1] != 200} { return }
+	if {[lindex $state(http) 1] != 200} { vTcl:status; return }
 
 	::vTcl::news::display_news $state(body)
 
