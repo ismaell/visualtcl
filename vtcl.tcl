@@ -199,7 +199,7 @@ proc vTcl:setup {} {
 
 proc vTcl:setup_meta {} {
     global vTcl tcl_platform
-    rename exit vTcl:exit
+
     proc exit {args} {}
     proc init {argc argv} {}
     proc main {argc argv} {}
@@ -219,7 +219,7 @@ vTcl:WindowsCleanup
 proc vTcl:setup_gui {} {
     global vTcl tcl_platform tk_version
 
-    # rename exit vTcl:exit
+    rename exit vTcl:exit
 
     vTcl:splash_status "Setting Up Workspace"
 
@@ -249,12 +249,12 @@ proc vTcl:setup_gui {} {
         option add *Button.padY 0
     }
 
-    option add *vTcl*Checkbutton.highlightBackground #d9d9d9
-    option add *vTcl*Radiobutton.highlightBackground #d9d9d9
     option add *vTcl*Text*font $vTcl(pr,font_fixed)
 
     if {[info exists vTcl(pr,bgcolor)] && ![lempty $vTcl(pr,bgcolor)]} {
 	option add *vTcl*background $vTcl(pr,bgcolor)
+        option add *vTcl*Checkbutton.highlightBackground $vTcl(pr,bgcolor)
+        option add *vTcl*Radiobutton.highlightBackground $vTcl(pr,bgcolor)
     }
     option add *vTcl*Listbox.background #ffffff
 
@@ -664,7 +664,7 @@ proc vTcl:main {argc argv} {
     }
     if {![file isdir $env(VTCL_HOME)]} { set vTcl(VTCL_HOME) [pwd] }
     vTcl:setup
-    if {$argc > 1} {
+    if {$argc > 0 && [lindex $argv end] != ""} {
 	set file [lindex $argv end]
 	if {[file exists $file]} {
 	    vTcl:open $file

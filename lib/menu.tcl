@@ -34,7 +34,7 @@ set vTcl(menu,file) {
     {@vTcl:initRcFileMenu}
     {separator        {}           {}                         }
     {Sou&rce...       {}           vTcl:file_source           }
-    {&Preferences...  {}           vTclWindow.vTcl.prefs      }
+    {&Preferences...  {}           {Window show .vTcl.prefs}  }
     {separator        {}           {}                         }
     {&Quit            Ctrl+Q       vTcl:quit                  }
 }
@@ -106,9 +106,9 @@ set vTcl(menu,window) {
 }
 
 set vTcl(menu,help) {
-    {{&About Visual Tcl...} {}         vTclWindow.vTcl.about      }
-    {{&Libraries...}        {}         vTclWindow.vTcl.infolibs   }
-    {{Index of &Help...}    {}         vTclWindow.vTcl.help       }
+    {{&About Visual Tcl...} {}         {Window show .vTcl.about}      }
+    {{&Libraries...}        {}         {Window show .vTcl.infolibs}   }
+    {{Index of &Help...}    {}         {Window show .vTcl.help}       }
     {separator              {}         {}                         }
     {{&Tip of the day...}   {}         {Window show .vTcl.tip}    }
     {{Visual Tcl &News}     {}         {::vTcl::news::get_news}   }

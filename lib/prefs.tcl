@@ -89,9 +89,7 @@ proc vTclWindow.vTcl.prefs {{base ""} {container 0}} {
     # CREATING WIDGETS
     ###################
     if {!$container} {
-    toplevel $base -class Toplevel \
-    	-background #dcdcdc -highlightbackground #dcdcdc \
-	-highlightcolor #000000
+    toplevel $base -class Toplevel
     wm focusmodel $base passive
     wm withdraw $base
     wm maxsize $base 1284 1010
@@ -100,21 +98,21 @@ proc vTclWindow.vTcl.prefs {{base ""} {container 0}} {
     wm resizable $base 1 1
     wm title $base "Visual Tcl Preferences"
     wm protocol $base WM_DELETE_WINDOW "wm withdraw $base"
+    bind $base <Key-Return> {
+        vTcl:prefs:data_exchange 1; wm withdraw [winfo toplevel %W]
+    }
+    bind $base <Key-Escape> {
+        wm withdraw [winfo toplevel %W]; vTcl:prefs:data_exchange 0
+    }
     }
     frame $base.fra19 \
-        -background #dcdcdc -borderwidth 2 -height 75 \
-        -highlightbackground #dcdcdc -highlightcolor #000000 -width 125
+        -borderwidth 2 -height 75 -width 125
     button $base.fra19.but20 \
-        -activebackground #dcdcdc -activeforeground #000000 \
-        -background #dcdcdc \
         -command "vTcl:prefs:data_exchange 1; wm withdraw $base" \
-        -foreground #000000 -highlightbackground #dcdcdc \
-        -highlightcolor #000000 -padx 9 -text OK -width 8
+        -padx 9 -text OK -width 8
     button $base.fra19.but21 \
-        -activebackground #dcdcdc -activeforeground #000000 \
         -command "wm withdraw $base; vTcl:prefs:data_exchange 0" \
-        -background #dcdcdc -foreground #000000 -highlightbackground #dcdcdc \
-        -highlightcolor #000000 -padx 9 -text Cancel -width 8
+        -padx 9 -text Cancel -width 8
     ###################
     # SETTING GEOMETRY
     ###################
@@ -134,9 +132,6 @@ proc vTclWindow.vTcl.prefs {{base ""} {container 0}} {
     update
 
 #   let's have Tk determine what size it needs (it works!)
-#
-#    wm geometry $base 450x500
-#    vTcl:center $base 450 500
 
     vTcl:center $base
     wm deiconify $base

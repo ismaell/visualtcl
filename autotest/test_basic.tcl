@@ -27,7 +27,7 @@ vTcl:test_case "Application Windows: Command Console" \
         do {vTcl:show_console} \
         expect {winfo exist .vTcl.tkcon}
 vTcl:test_case "Application Windows: About Box" \
-        do {vTclWindow.vTcl.about} \
+        do {Window show .vTcl.about} \
         expect {winfo exist .vTcl.about}
 vTcl:test_case "Application Windows: Closing About Box" \
         do {
@@ -35,6 +35,36 @@ vTcl:test_case "Application Windows: Closing About Box" \
                 vTcl:test_trace ".vTcl.about => [wm state .vTcl.about]"
         } \
         expect {expr {[wm state .vTcl.about] == "withdrawn"}}
+vTcl:test_case "Application Windows: Libraries" \
+        do {Window show .vTcl.infolibs} \
+        expect {winfo exist .vTcl.infolibs}
+vTcl:test_case "Application Windows: Closing Libraries Window" \
+        do {
+                .vTcl.infolibs.but40 invoke
+                vTcl:test_trace ".vTcl.infolibs => [wm state .vTcl.infolibs]"
+        } \
+        expect {expr {[wm state .vTcl.infolibs] == "withdrawn"}}
+vTcl:test_case "Application Windows: Preferences" \
+        do {Window show .vTcl.prefs} \
+        expect {winfo exist .vTcl.prefs}
+vTcl:test_case "Preferences: Basics tab" \
+        do {vTcl:tabnotebook_display .vTcl.prefs.tb "Basics"} \
+        expect {set toto 1}
+vTcl:test_case "Preferences: Project tab" \
+        do {vTcl:tabnotebook_display .vTcl.prefs.tb "Project"} \
+        expect {set toto 1}
+vTcl:test_case "Preferences: Fonts tab" \
+        do {vTcl:tabnotebook_display .vTcl.prefs.tb "Fonts"} \
+        expect {set toto 1}
+vTcl:test_case "Preferences: Colors tab" \
+        do {vTcl:tabnotebook_display .vTcl.prefs.tb "Colors"} \
+        expect {set toto 1}
+vTcl:test_case "Preferences: Images tab" \
+        do {vTcl:tabnotebook_display .vTcl.prefs.tb "Images"} \
+        expect {set toto 1}
+vTcl:test_case "Preferences: closing preferences" \
+        do {.vTcl.prefs.fra19.but21 invoke} \
+        expect {expr {[wm state .vTcl.prefs] == "withdrawn"}}
 vTcl:test_case "New project" \
         do {
                 vTcl:test_trace "vTcl(tops)=$vTcl(tops)"

@@ -1,6 +1,12 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Added Escape and Return key bindings to preferences window.
+    o Added more tests to automated test script.
+    o Restored vTcl:exit stuff like it was in 1.5.2 because vTcl
+      wouldn't exit if the command console was open. Need to figure out how
+      to make the exit command work inside the command console.
+    o Set highlight color to what the preference is.
     o Cleaned up the tk_strictMotif code.  Added a ::vTcl::MessageBox proc.
     o Replaced all instances of Ok buttons with the ::vTcl::OkButton command.
     o Replaced all instances of Cancel buttons with the ::vTcl::CancelButton
