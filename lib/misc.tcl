@@ -109,9 +109,26 @@ proc vTcl:clean_pairs {list {indent 8}} {
             # special case to handle image filenames
             # 3/26/2000
             # special case to handle font keys
-        	
-            if [info exists vTcl(option,noencase,$last)] {
+
+	    set noencase 0
+	    
+	    if {[info exists vTcl(option,noencase,$last)]} {
+	        
+	        if [string match *font* $last] {
+	       	
+	       		if [string match {\[*\]} $i] {
+	       			set noencase 1
+	       		}
+	       		
+		} else {
+			set noencase 1
+		}
+	    }
+	    
+            if {$noencase} {
+            	
             	    set i "$last $i "
+            	
             } else {
 	            switch $vTcl(pr,encase) {
  	               list {
