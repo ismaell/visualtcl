@@ -48,25 +48,25 @@ proc vTclWindow.vTcl.bind {args} {
     set {widget(ListboxBindings)} "$base.cpd21.01.cpd25.01"
     set {widget(child,ListboxBindings)} "cpd21.01.cpd25.01"
     interp alias {} ListboxBindings {} vTcl:WidgetProc $base.cpd21.01.cpd25.01
-    set widget(rev,$base.cpd21.01.fra22.but24) {RemoveBinding}
-    set {widget(RemoveBinding)} "$base.cpd21.01.fra22.but24"
+    set widget(rev,$base.fra22.but24) {RemoveBinding}
+    set {widget(RemoveBinding)} "$base.fra22.but24"
     set {widget(child,RemoveBinding)} "cpd21.01.fra22.but24"
-    interp alias {} RemoveBinding {} vTcl:WidgetProc $base.cpd21.01.fra22.but24
-    set widget(rev,$base.cpd21.01.fra22.men20) {AddBinding}
-    set {widget(AddBinding)} "$base.cpd21.01.fra22.men20"
+    interp alias {} RemoveBinding {} vTcl:WidgetProc $base.fra22.but24
+    set widget(rev,$base.fra22.men20) {AddBinding}
+    set {widget(AddBinding)} "$base.fra22.men20"
     set {widget(child,AddBinding)} "cpd21.01.fra22.men20"
-    interp alias {} AddBinding {} vTcl:WidgetProc $base.cpd21.01.fra22.men20
+    interp alias {} AddBinding {} vTcl:WidgetProc $base.fra22.men20
     set widget(rev,$base.cpd21.02.cpd21.03) {TextBindings}
     set {widget(TextBindings)} "$base.cpd21.02.cpd21.03"
     set {widget(child,TextBindings)} "cpd21.02.cpd21.03"
     interp alias {} TextBindings {} vTcl:WidgetProc $base.cpd21.02.cpd21.03
-    set widget(MoveTagUp) $base.cpd21.01.fra22.but25
-    interp alias {} MoveTagUp {} vTcl:WidgetProc $base.cpd21.01.fra22.but25
-    set widget(MoveTagDown) $base.cpd21.01.fra22.but26
-    interp alias {} MoveTagDown {} vTcl:WidgetProc $base.cpd21.01.fra22.but26
-    set widget(AddTag) $base.cpd21.01.fra22.but27
-    set widget(DeleteTag) $base.cpd21.01.fra22.but28
-    interp alias {} DeleteTag {} vTcl:WidgetProc $base.cpd21.01.fra22.but28
+    set widget(MoveTagUp) $base.fra22.but25
+    interp alias {} MoveTagUp {} vTcl:WidgetProc $base.fra22.but25
+    set widget(MoveTagDown) $base.fra22.but26
+    interp alias {} MoveTagDown {} vTcl:WidgetProc $base.fra22.but26
+    set widget(AddTag) $base.fra22.but27
+    set widget(DeleteTag) $base.fra22.but28
+    interp alias {} DeleteTag {} vTcl:WidgetProc $base.fra22.but28
 
     ###################
     # CREATING WIDGETS
@@ -138,83 +138,80 @@ proc vTclWindow.vTcl.bind {args} {
     frame $base.fra22 \
         -borderwidth 2 -height 75 \
         -width 125
-    button $base.fra22.but24 \
+    button $base.fra22.but34 \
         -image [vTcl:image:get_image "ok.gif"] \
         -padx 9 -pady 3 -text button -command "Window hide .vTcl.bind"
-    vTcl:set_balloon $base.fra22.but24 "Close"
+    vTcl:set_balloon $base.fra22.but34 "Close"
     frame $base.cpd21 \
         -background #000000 -height 100 -highlightbackground #dcdcdc \
         -highlightcolor #000000 -width 200
     frame $base.cpd21.01 \
         -background #9900991B99FE -highlightbackground #dcdcdc \
         -highlightcolor #000000
-    frame $base.cpd21.01.fra22 \
-        -background #dcdcdc -borderwidth 2 -height 75 \
-        -highlightbackground #dcdcdc -highlightcolor #000000 -width 125
-    menubutton $base.cpd21.01.fra22.men20 \
+    menubutton $base.fra22.men20 \
         -height 23 \
         -image [vTcl:image:get_image "add.gif"] \
-        -menu "$base.cpd21.01.fra22.men20.m" -padx 0 -pady 0 -relief raised \
+        -menu "$base.fra22.men20.m" -padx 0 -pady 0 -relief raised \
         -text menu -width 23
-    menu $base.cpd21.01.fra22.men20.m \
+    menu $base.fra22.men20.m \
         -borderwidth 1 \
         -tearoff 0
-    $base.cpd21.01.fra22.men20.m add command \
+    $base.fra22.men20.m add command \
         -command {::widgets_bindings::add_binding <Button-1>} -label Button-1
-    $base.cpd21.01.fra22.men20.m add command \
+    $base.fra22.men20.m add command \
         -command {::widgets_bindings::add_binding <Button-2>} -label Button-2
-    $base.cpd21.01.fra22.men20.m add command \
-        -command {::widgets_bindings::add_binding <Button-3>} -label Button-3 
-    $base.cpd21.01.fra22.men20.m add command \
+    $base.fra22.men20.m add command \
+        -command {::widgets_bindings::add_binding <Button-3>} -label Button-3
+    $base.fra22.men20.m add command \
         -command {::widgets_bindings::add_binding <ButtonRelease-1>} \
         -label ButtonRelease-1
-    $base.cpd21.01.fra22.men20.m add command \
+    $base.fra22.men20.m add command \
         -command {::widgets_bindings::add_binding <ButtonRelease-2>} \
         -label ButtonRelease-2
-    $base.cpd21.01.fra22.men20.m add command \
+    $base.fra22.men20.m add command \
         -command {::widgets_bindings::add_binding <ButtonRelease-3>} \
         -label ButtonRelease-3 
-    $base.cpd21.01.fra22.men20.m add command \
+    $base.fra22.men20.m add command \
         -command {::widgets_bindings::add_binding <Motion>} -label Motion 
-    $base.cpd21.01.fra22.men20.m add command \
+    $base.fra22.men20.m add command \
         -command {::widgets_bindings::add_binding <Enter>} -label Enter 
-    $base.cpd21.01.fra22.men20.m add command \
+    $base.fra22.men20.m add command \
         -command {::widgets_bindings::add_binding <Leave>} -label Leave 
-    $base.cpd21.01.fra22.men20.m add command \
+    $base.fra22.men20.m add command \
         -command {::widgets_bindings::add_binding <KeyPress>} -label KeyPress
-    $base.cpd21.01.fra22.men20.m add command \
+    $base.fra22.men20.m add command \
         -command {::widgets_bindings::add_binding <KeyRelease>} \
         -label KeyRelease 
-    $base.cpd21.01.fra22.men20.m add command \
+    $base.fra22.men20.m add command \
         -command {::widgets_bindings::add_binding <FocusIn>} -label FocusIn
-    $base.cpd21.01.fra22.men20.m add command \
+    $base.fra22.men20.m add command \
         -command {::widgets_bindings::add_binding <FocusOut>} -label FocusOut
-    $base.cpd21.01.fra22.men20.m add command \
+    $base.fra22.men20.m add command \
         -command {Window show .vTcl.newbind} -label Advanced...
-    button $base.cpd21.01.fra22.but24 \
+    button $base.fra22.but24 \
         -command ::widgets_bindings::delete_binding \
         -height 23 \
         -highlightthickness 0 \
         -image [vTcl:image:get_image "remove.gif"] \
         -padx 0 -pady 0 -text button -width 23
-    button $base.cpd21.01.fra22.but25 \
+    button $base.fra22.but25 \
         -command "::widgets_bindings::movetag up" \
         -height 23 \
         -highlightthickness 0 \
         -image up \
         -padx 0 -pady 0 -text button -width 23
-    button $base.cpd21.01.fra22.but26 \
+    button $base.fra22.but26 \
         -command "::widgets_bindings::movetag down" \
         -height 23 \
         -highlightthickness 0 \
         -image down \
         -padx 0 -pady 0 -text button -width 23
-    button $base.cpd21.01.fra22.but27 \
+    button $base.fra22.but27 \
         -command "vTcl:Toplevel:WidgetProc .vTcl.newtag ShowModal" \
         -height 23 \
         -highlightthickness 0 \
         -padx 0 -pady 0 -image icon_message.gif -width 23
-    button $base.cpd21.01.fra22.but28 \
+    button $base.fra22.but28 \
         -command "::widgets_bindings::delete_tag" \
         -height 23 \
         -highlightthickness 0 \
@@ -297,7 +294,7 @@ proc vTclWindow.vTcl.bind {args} {
     scrollbar $base.cpd21.01.cpd25.03 \
         -activebackground #dcdcdc -background #dcdcdc \
         -command "$base.cpd21.01.cpd25.01 yview" \
-        -troughcolor #dcdcdc  
+        -troughcolor #dcdcdc
     frame $base.cpd21.02 \
         -background #9900991B99FE -highlightbackground #dcdcdc \
         -highlightcolor #000000 
@@ -380,32 +377,30 @@ proc vTclWindow.vTcl.bind {args} {
     ###################
     pack $base.fra22 \
         -in $base -anchor center -expand 0 -fill x -side top 
-    pack $base.fra22.but24 \
+    pack $base.fra22.but34 \
         -in $base.fra22 -anchor center -expand 0 -fill none -side right
     pack $base.cpd21 \
         -in $base -anchor center -expand 1 -fill both -side top
     place $base.cpd21.01 \
         -x 0 -y 0 -width -1 -relwidth 0.3681 -relheight 1 -anchor nw \
-        -bordermode ignore 
-    pack $base.cpd21.01.fra22 \
-        -in $base.cpd21.01 -anchor center -expand 0 -fill x -side top 
-    pack $base.cpd21.01.fra22.men20 \
-        -in $base.cpd21.01.fra22 -anchor center -expand 0 -fill none \
+        -bordermode ignore
+    pack $base.fra22.men20 \
+        -in $base.fra22 -anchor center -expand 0 -fill none \
         -side left
-    pack $base.cpd21.01.fra22.but24 \
-        -in $base.cpd21.01.fra22 -anchor center -expand 0 -fill none \
+    pack $base.fra22.but24 \
+        -in $base.fra22 -anchor center -expand 0 -fill none \
         -side left 
-    pack $base.cpd21.01.fra22.but27  \
-        -in $base.cpd21.01.fra22 -anchor center -expand 0 -fill none \
+    pack $base.fra22.but27  \
+        -in $base.fra22 -anchor center -expand 0 -fill none \
         -side left
-    pack $base.cpd21.01.fra22.but28  \
-        -in $base.cpd21.01.fra22 -anchor center -expand 0 -fill none \
+    pack $base.fra22.but28  \
+        -in $base.fra22 -anchor center -expand 0 -fill none \
         -side left
-    pack $base.cpd21.01.fra22.but25  \
-        -in $base.cpd21.01.fra22 -anchor center -expand 0 -fill none \
+    pack $base.fra22.but25  \
+        -in $base.fra22 -anchor center -expand 0 -fill none \
         -side left 
-    pack $base.cpd21.01.fra22.but26  \
-        -in $base.cpd21.01.fra22 -anchor center -expand 0 -fill none \
+    pack $base.fra22.but26  \
+        -in $base.fra22 -anchor center -expand 0 -fill none \
         -side left 
     pack $base.cpd21.01.cpd25 \
         -in $base.cpd21.01 -anchor center -expand 1 -fill both -side top 

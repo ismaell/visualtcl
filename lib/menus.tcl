@@ -866,26 +866,26 @@ proc vTclWindow.vTclMenuEdit {base menu} {
     set {widget(NewMenuContextPopup)} "$base.cpd24.01.cpd25.01.m25"
     set widget(NewMenuContextPopup,NewMenuContextPopup) \
         "$base.cpd24.01.cpd25.01.m25"
-    set widget(rev,$base.cpd24.01.fra20.but21) {NewMenu}
-    set {widget(NewMenu)} "$base.cpd24.01.fra20.but21"
-    set widget($base,NewMenu) "$base.cpd24.01.fra20.but21"
+    set widget(rev,$base.fra21.but21) {NewMenu}
+    set {widget(NewMenu)} "$base.fra21.but21"
+    set widget($base,NewMenu) "$base.fra21.but21"
     interp alias {} $base.NewMenu {} \
-        vTcl:WidgetProc $base.cpd24.01.fra20.but21
-    set widget(rev,$base.cpd24.01.fra20.but22) {DeleteMenu}
-    set {widget(DeleteMenu)} "$base.cpd24.01.fra20.but22"
-    set widget($base,DeleteMenu) "$base.cpd24.01.fra20.but22"
+        vTcl:WidgetProc $base.fra21.but21
+    set widget(rev,$base.fra21.but22) {DeleteMenu}
+    set {widget(DeleteMenu)} "$base.fra21.but22"
+    set widget($base,DeleteMenu) "$base.fra21.but22"
     interp alias {} $base.DeleteMenu {} \
-        vTcl:WidgetProc $base.cpd24.01.fra20.but22
-    set widget(rev,$base.cpd24.01.fra20.but23) {MoveMenuUp}
-    set {widget(MoveMenuUp)} "$base.cpd24.01.fra20.but23"
-    set widget($base,MoveMenuUp) "$base.cpd24.01.fra20.but23"
+        vTcl:WidgetProc $base.fra21.but22
+    set widget(rev,$base.fra21.but23) {MoveMenuUp}
+    set {widget(MoveMenuUp)} "$base.fra21.but23"
+    set widget($base,MoveMenuUp) "$base.fra21.but23"
     interp alias {} $base.MoveMenuUp {} \
-        vTcl:WidgetProc $base.cpd24.01.fra20.but23
-    set widget(rev,$base.cpd24.01.fra20.but24) {MoveMenuDown}
-    set {widget(MoveMenuDown)} "$base.cpd24.01.fra20.but24"
-    set widget($base,MoveMenuDown) "$base.cpd24.01.fra20.but24"
+        vTcl:WidgetProc $base.fra21.but23
+    set widget(rev,$base.fra21.but24) {MoveMenuDown}
+    set {widget(MoveMenuDown)} "$base.fra21.but24"
+    set widget($base,MoveMenuDown) "$base.fra21.but24"
     interp alias {} $base.MoveMenuDown {} \
-        vTcl:WidgetProc $base.cpd24.01.fra20.but24
+        vTcl:WidgetProc $base.fra21.but24
     set widget(rev,$base.cpd24.02.but27) {BrowseImage}
     set {widget(BrowseImage)} "$base.cpd24.02.but27"
     set widget($base,BrowseImage) "$base.cpd24.02.but27"
@@ -1014,28 +1014,26 @@ proc vTclWindow.vTclMenuEdit {base menu} {
 
     frame $base.fra21 \
         -borderwidth 2 -height 75 -width 125
-    button $base.fra21.but22 \
+    button $base.fra21.but32 \
         -image [vTcl:image:get_image "ok.gif"] \
         -text button -command "destroy $base"
     frame $base.cpd24 \
         -background #000000 -height 100 -width 200
     frame $base.cpd24.01 \
         -background #9900991B99FE
-    frame $base.cpd24.01.fra20 \
-        -borderwidth 2 -height 75 -width 125
-    label $base.cpd24.01.fra20.but21 -width 20 -height 20 \
+    label $base.fra21.but21 -width 20 -height 20 \
         -image [vTcl:image:get_image "add.gif"] -relief raised
-    bind $base.cpd24.01.fra20.but21 <ButtonPress-1> {
+    bind $base.fra21.but21 <ButtonPress-1> {
         ::menu_edit::post_new_menu [winfo toplevel %W]
     }
-    button $base.cpd24.01.fra20.but22 \
+    button $base.fra21.but22 \
         -command "::menu_edit::ask_delete_menu $base" \
         -image [vTcl:image:get_image "remove.gif"] \
         -text button
-    button $base.cpd24.01.fra20.but23 \
+    button $base.fra21.but23 \
         -command "::menu_edit::move_item $base up" -height 20 -image up \
         -text button -width 20
-    button $base.cpd24.01.fra20.but24 \
+    button $base.fra21.but24 \
         -command "::menu_edit::move_item $base down" -height 20 -image down \
         -text button -width 20
     frame $base.cpd24.01.cpd25 \
@@ -1231,26 +1229,24 @@ proc vTclWindow.vTclMenuEdit {base menu} {
     ###################
     pack $base.fra21 \
         -in $base -anchor center -expand 0 -fill x -side top
-    pack $base.fra21.but22 \
+    pack $base.fra21.but32 \
         -in $base.fra21 -anchor center -expand 0 -fill none -side right
     pack $base.cpd24 \
         -in $base -anchor center -expand 1 -fill both -side top
     place $base.cpd24.01 \
         -x 0 -y 0 -width -1 -relwidth 0.3612 -relheight 1 -anchor nw \
         -bordermode ignore
-    pack $base.cpd24.01.fra20 \
-        -in $base.cpd24.01 -anchor center -expand 0 -fill x -side top
-    pack $base.cpd24.01.fra20.but21 \
-        -in $base.cpd24.01.fra20 -anchor center -expand 0 -fill none \
+    pack $base.fra21.but21 \
+        -in $base.fra21 -anchor center -expand 0 -fill none \
         -side left
-    pack $base.cpd24.01.fra20.but22 \
-        -in $base.cpd24.01.fra20 -anchor center -expand 0 -fill none \
+    pack $base.fra21.but22 \
+        -in $base.fra21 -anchor center -expand 0 -fill none \
         -side left
-    pack $base.cpd24.01.fra20.but23 \
-        -in $base.cpd24.01.fra20 -anchor center -expand 0 -fill none \
+    pack $base.fra21.but23 \
+        -in $base.fra21 -anchor center -expand 0 -fill none \
         -side left
-    pack $base.cpd24.01.fra20.but24 \
-        -in $base.cpd24.01.fra20 -anchor center -expand 0 -fill none \
+    pack $base.fra21.but24 \
+        -in $base.fra21 -anchor center -expand 0 -fill none \
         -side left
     pack $base.cpd24.01.cpd25 \
         -in $base.cpd24.01 -anchor center -expand 1 -fill both -side top
