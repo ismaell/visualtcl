@@ -161,10 +161,11 @@ proc vTcl:font:delete_font {key} {
      unset vTcl(fonts,$font_descr,object)
 }
 
-proc vTcl:font:ask_delete_font {key} {
+proc vTcl:font:ask_delete_font {base} {
      global vTcl
 
-     set object $vTcl(fonts,$key,object)
+     set object [vTcl:font:get_selected_font $base.cpd31]
+     set key [vTcl:font:get_key $object]
      set descr [font configure $object]
 
      set result [
@@ -207,7 +208,7 @@ proc {vTcl:font:create_link} {t tag link_cmd} {
 }
 
 proc vTcl:font:display_fonts {base} {
-     set t $base.cpd31.03
+     set t $base.cpd31
 
      if {![winfo exists $t]} {
      	return
@@ -217,53 +218,39 @@ proc vTcl:font:display_fonts {base} {
 }
 
 proc {vTcl:font:display_fonts_in_text} {t} {
-     global vTcl
+    global vTcl
 
-     $t configure -state normal
-     $t delete 0.0 end
+    $t widget delete [$t widget items]
 
-     foreach object $vTcl(fonts,objects) {
+    set imageTextList {}
+    foreach object $vTcl(fonts,objects) {
 
-        # add short font description
+        set family [font configure $object -family]
+        set size   [font configure $object -size]
+        set weight [font configure $object -weight]
+        set slant  [font configure $object -slant]
+        set type   [vTcl:font:get_type $object]
 
-        $t insert end "[font configure $object -family] " vTcl:fontname
-        $t insert end "[font configure $object -size] " vTcl:fontname
-        $t insert end "[font configure $object -weight] " vTcl:fontname
-        $t insert end "[font configure $object -slant]" vTcl:fontname
-        $t insert end " ($vTcl(fonts,$object,type))\n"
+        ## no image on left side, just a text
+        lappend imageTextList "" "$family $size $weight $slant ($type)"
+    }
 
-        $t insert end "\n"
-        $t insert end "Abcdefghijklmnopqrstuvwxyz 0123456789\n"  vTcl:$object
-        $t insert end "\n"
+    $t widget fill $imageTextList
 
-	if {$vTcl(fonts,$object,type) == "user"} {
-	    $t insert end "Delete" "vTcl:hilite_delete_$object"
-	    vTcl:font:create_link $t vTcl:hilite_delete_$object \
-		    "vTcl:font:ask_delete_font $vTcl(fonts,$object,key)"
-	    $t insert end " "
-
-	    $t insert end "Change" "vTcl:hilite_change_$object"
-	    vTcl:font:create_link $t vTcl:hilite_change_$object \
-		    "vTcl:font:font_change $object"
-	    $t insert end "\n"
-	}
-
-        $t insert end \
-        "_________________________________________________________________\n"
-
-        $t tag configure vTcl:$object -font $object -justify left
-        $t insert end "\n"
-     }
-
-     $t tag configure vTcl:fontname \
-     	-font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1
-
-     $t configure -state disabled
+    ## we can now set the font for each item
+    set items [$t widget items]
+    set i 0
+    foreach object $vTcl(fonts,objects) {
+        set item [lindex $items $i]
+        $t widget itemconfigure $item -font $object
+        incr i
+    }
 }
 
-proc {vTcl:font:font_change} {object} {
+proc {vTcl:font:font_change} {base} {
      global vTcl
 
+     set object [vTcl:font:get_selected_font $base.cpd31]
      set font_desc [font configure $object]
      vTcl:log "going to change: $font_desc"
 
@@ -277,6 +264,30 @@ proc {vTcl:font:font_change} {object} {
         set pos [vTcl:font:get_manager_position]
         vTcl:font:refresh_manager $pos
      }
+}
+
+proc vTcl:font:get_selected_font {imageListbox} {
+    set item [$imageListbox widget selection get]
+    if {$item == ""} { 
+        return ""
+    }
+
+    return [$imageListbox widget itemcget $item -font]
+}
+
+proc vTcl:font:enableButtons {base} {
+    set font [vTcl:font:get_selected_font $base.cpd31]
+    if {$font == ""} {
+         set type stock
+    } else {
+         set type [vTcl:font:get_type $font]
+    }
+
+    set enabled(stock) disabled
+    set enabled(user)  normal
+
+    $base.butfr.but32 configure -state $enabled($type)
+    $base.butfr.but33 configure -state $enabled($type)
 }
 
 proc vTclWindow.vTcl.fontManager {args} {
@@ -320,18 +331,26 @@ if {$font_desc != ""} {
    vTcl:log "new font: $font_desc"
    vTcl:font:add_font $font_desc user
    vTcl:font:display_fonts $vTcl(fonts,font_mgr,win)
-   $vTcl(fonts,font_mgr,win).cpd31.03 yview end
+   $vTcl(fonts,font_mgr,win).cpd31 widget yview moveto 1.0
 }} \
-        -padx 9 -pady 3 -image [vTcl:image:get_image add.gif]
+        -padx 3 -pady 3 -image [vTcl:image:get_image add.gif]
+    vTcl:toolbar_button $base.butfr.but32 \
+         -command "vTcl:font:ask_delete_font $base" \
+         -image [vTcl:image:get_image remove.gif] \
+         -padx 3 -pady 3
+    vTcl:toolbar_button $base.butfr.but33 \
+         -command "vTcl:font:font_change $base" \
+         -image [vTcl:image:get_image replace.gif] \
+         -padx 3 -pady 3
 
     ::vTcl::OkButton $base.butfr.but31 -command "Window hide $base"
 
-    ScrolledWindow $base.cpd31
-    text $base.cpd31.03 \
-        -background white -cursor left_ptr \
-        -foreground #000000 -height 1 -borderwidth 0 \
-        -state disabled -width 8 -wrap none
-    $base.cpd31 setwidget $base.cpd31.03
+    vTcl::widgets::core::compoundcontainer::createCmd $base.cpd31 \
+        -compoundType internal -compoundClass {Image Listbox} 
+    $base.cpd31 widget configure -padx 0
+    bind $base.cpd31 <<ListboxSelect>> "
+        vTcl:font:enableButtons $base
+    "
 
     ###################
     # SETTING GEOMETRY
@@ -340,13 +359,18 @@ if {$font_desc != ""} {
     pack $base.butfr.but30 \
         -anchor nw -expand 0 -fill none -side left
     vTcl:set_balloon $base.butfr.but30 "Add new font"
+    pack $base.butfr.but32 \
+        -anchor nw -expand 0 -fill none -side left
+    vTcl:set_balloon $base.butfr.but32 "Delete selected font"
+    pack $base.butfr.but33 \
+        -anchor nw -expand 0 -fill none -side left
+    vTcl:set_balloon $base.butfr.but33 "Change selected font"
     pack $base.butfr.but31 \
         -anchor nw -expand 0 -fill none -side right
     vTcl:set_balloon $base.butfr.but31 "Close"
 
     pack $base.cpd31 \
         -in $base -anchor center -expand 1 -fill both -side top
-    pack $base.cpd31.03
 
     wm geometry $base 491x544+314+132
     vTcl:center $base 491 544
@@ -354,6 +378,7 @@ if {$font_desc != ""} {
     wm deiconify $base
 
     vTcl:font:display_fonts $base
+    vTcl:font:enableButtons $base
     wm protocol $base WM_DELETE_WINDOW "wm withdraw $base"
     vTcl:setup_vTcl:bind $base
 }
@@ -447,14 +472,6 @@ proc vTcl:font:create_noborder_fontlist {base} {
     bind $base.cpd29 <<ListboxSelect>> {
         vTcl:font:listboxSelect %W
     }
-
-##    ScrolledWindow $base.cpd29 -background #bcbcbc
-##    text $base.cpd29.03 \
-##        -background white \
-##        -foreground #000000 -highlightbackground #f3f3f3 \
-##        -highlightcolor #000000 -selectbackground #000080 \
-##        -selectforeground #ffffff -state disabled \
-##        -cursor left_ptr
 
     ###################
     # SETTING GEOMETRY
@@ -554,14 +571,14 @@ proc vTcl:font:refresh_manager {{position 0.0}} {
     if [info exists vTcl(fonts,font_mgr,win)] {
 	if [winfo exists $vTcl(fonts,font_mgr,win)] {
 	    vTcl:font:display_fonts $vTcl(fonts,font_mgr,win)
-	    $vTcl(fonts,font_mgr,win).cpd31.03 yview moveto $position
+	    $vTcl(fonts,font_mgr,win).cpd31 widget yview moveto $position
 	}
     }
 }
 
 proc vTcl:font:get_manager_position {} {
     global vTcl
-    return [lindex [$vTcl(fonts,font_mgr,win).cpd31.03 yview] 0]
+    return [lindex [$vTcl(fonts,font_mgr,win).cpd31 widget yview] 0]
 }
 
 TranslateOption    -font vTcl:font:translate
@@ -574,7 +591,4 @@ proc vTcl:font:translate {value} {
 
     return $value
 }
-
-
-
 
