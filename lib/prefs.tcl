@@ -305,7 +305,7 @@ proc {vTcl:prefs:basics} {tab} {
 	pack configure $form_entry -fill x
 
 	set entry [vTcl:formCompound:add $form_entry entry \
-		-textvariable prefs::autoloadcompfile -bg white]
+		-textvariable prefs::autoloadcompfile]
 	pack configure $entry -fill x -padx 5 -side left -expand 1
 
 	set browse_file [vTcl:formCompound:add $form_entry button \
@@ -424,7 +424,7 @@ proc {vTcl:prefs:images} {tab} {
 	pack configure $form_entry -fill x
 
 	set last [vTcl:formCompound:add $form_entry entry  \
-		-textvariable prefs::imageeditor -bg white]
+		-textvariable prefs::imageeditor]
 	pack configure $last -fill x -expand 1 -padx 5 -side left
 
 	set last [vTcl:formCompound:add $form_entry button \

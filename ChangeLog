@@ -1,20 +1,9 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
-    o Added wheel mouse support to the property manager.
-    o Cleaned up some of the BWidget support.
-    o Added Escape and Return key bindings to preferences window.
-    o Added more tests to automated test script.
-    o Restored vTcl:exit stuff like it was in 1.5.2 because vTcl
-      wouldn't exit if the command console was open. Need to figure out how
-      to make the exit command work inside the command console.
-    o Set highlight color to what the preference is.
-    o Cleaned up the tk_strictMotif code.  Added a ::vTcl::MessageBox proc.
-    o Replaced all instances of Ok buttons with the ::vTcl::OkButton command.
-    o Replaced all instances of Cancel buttons with the ::vTcl::CancelButton
-      command.
-    o If a toolbar button, label or menubutton is disabled, it will not
-      raise when the mouse passes over it.
+    o Added call to tk_setPalette to set color scheme according to
+      preferences.
+    o Fix for correctly dumping labeledframe with contained widgets.
     o Using transparent GIF images.
     o Added background color tab in preferences.
     o Messages boxes don't use tk_strictMotif

@@ -493,6 +493,44 @@ namespace eval ::inspector {
         vTcl:syntax_color $widget(InspectorValue) 0 -1
         InspectorValue configure -state disabled
     }
+
+    proc {::inspector::expand_or_contract} {W {x -1} {y -1}} {
+
+        set listbox $W
+        if {$x == -1} {
+           set index [$W curselection]
+        } else {
+           set index [$W index @$x,$y]
+        }
+
+        set content_line [lindex [vTcl:at ::${W}::contents] $index]
+
+        lassign $content_line has_children  node_info  item_commands  level  expanded
+
+        if {$has_children && (!$expanded)} {
+
+            ::inspector::expand_node $listbox $index
+        } elseif {$has_children && $expanded} {
+
+            ::inspector::contract_node $listbox $index
+        }
+    }
+
+    proc {::inspector::listbox_select} {W} {
+
+        set listbox $W
+        set index [$W curselection]
+
+        set content_line [lindex [vTcl:at ::${W}::contents] $index]
+
+        lassign $content_line has_children  node_info  item_commands  level  expanded
+
+        if {[llength $item_commands] >= 2} {
+
+            set click_cmd [lindex $item_commands 1]
+            $click_cmd $node_info
+        }
+    }
 }
 
 proc vTclWindow.vTcl.inspector {base {container 0}} {
@@ -557,34 +595,13 @@ proc vTclWindow.vTcl.inspector {base {container 0}} {
         -yscrollcommand "$base.cpd26.01.cpd27.03 set"
     bindtags $base.cpd26.01.cpd27.01 "Listbox $base.cpd26.01.cpd27.01 $base all"
     bind $base.cpd26.01.cpd27.01 <<ListboxSelect>> {
-        set listbox %W
-        set index [%W curselection]
-
-        set content_line [lindex [vTcl:at ::%W::contents] $index]
-
-        lassign $content_line has_children  node_info  item_commands  level  expanded
-
-        if {[llength $item_commands] >= 2} {
-
-            set click_cmd [lindex $item_commands 1]
-            $click_cmd $node_info
-        }
+        ::inspector::listbox_select %W
     }
     bind $base.cpd26.01.cpd27.01 <Double-Button-1> {
-        set listbox %W
-        set index [%W index @%x,%y]
-
-        set content_line [lindex [vTcl:at ::%W::contents] $index]
-
-        lassign $content_line has_children  node_info  item_commands  level  expanded
-
-        if {$has_children && (!$expanded)} {
-
-            ::inspector::expand_node $listbox $index
-        } elseif {$has_children && $expanded} {
-
-            ::inspector::contract_node $listbox $index
-        }
+        ::inspector::expand_or_contract %W %x %y
+    }
+    bind $base.cpd26.01.cpd27.01 <Key-Return> {
+        ::inspector::expand_or_contract %W
     }
     scrollbar $base.cpd26.01.cpd27.02 \
         -command "$base.cpd26.01.cpd27.01 xview" \

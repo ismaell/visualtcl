@@ -252,11 +252,11 @@ proc vTcl:setup_gui {} {
     option add *vTcl*Text*font $vTcl(pr,font_fixed)
 
     if {[info exists vTcl(pr,bgcolor)] && ![lempty $vTcl(pr,bgcolor)]} {
+        tk_setPalette $vTcl(pr,bgcolor)
 	option add *vTcl*background $vTcl(pr,bgcolor)
-        option add *vTcl*Checkbutton.highlightBackground $vTcl(pr,bgcolor)
-        option add *vTcl*Radiobutton.highlightBackground $vTcl(pr,bgcolor)
     }
     option add *vTcl*Listbox.background #ffffff
+    option add *vTcl*Entry.background #ffffff
 
     vTcl:setup_bind_tree .
     vTcl:load_images
