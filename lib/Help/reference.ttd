@@ -8,6 +8,7 @@ ttd.tagdef {Level 1 Title} -background white -font {-family Arial -weight bold -
 ttd.tagdef {Level 2 Title} -background white -font {-family Arial -weight bold -slant roman -size 10 -underline 0 -overstrike 0} -foreground #000000 -justify left
 ttd.tagdef {Level 3 Title} -background white -font {-family Arial -weight bold -slant roman -size 9 -underline 0 -overstrike 0} -foreground #000000 -justify left
 ttd.tagdef {Level 4 Title} -background white -font {-family Arial -weight bold -slant roman -size 8 -underline 0 -overstrike 0} -foreground #000000 -justify left
+ttd.tagdef Listing -background #e2e2e2 -font {-family {Courier New} -weight normal -slant roman -size 10 -underline 0 -overstrike 0} -foreground #000000 -justify left
 
 
 
@@ -376,19 +377,32 @@ ttd.tagon {Level 4 Title}
 ttd.text {1.4.2.2 Insert User Compound
 }
 ttd.tagoff {Level 4 Title}
-ttd.text {Compounds you have created with the Create... menu item will appear in this }
-ttd.text {list.
+ttd.text {Compounds you have created with the Create... menu item will appear in this list.
 }
 ttd.text {
 }
 ttd.tagon {Level 3 Title}
 ttd.text {1.4.3 Save Compounds...
 }
+ttd.tagoff {Level 3 Title}
+ttd.text {Saves all the compounds listed in the user compounds menu into a file. The file can be loaded later into another project by using the Load Compounds... menu option.
+}
+ttd.text {
+}
+ttd.tagon {Level 3 Title}
 ttd.text {1.4.4 Load Compounds...
 }
+ttd.tagoff {Level 3 Title}
+ttd.text {Loads compounds from a file. Once the file has been loaded, compounds will appear in the user compounds menu.
+}
+ttd.text {
+}
+ttd.tagon {Level 3 Title}
 ttd.text {1.4.5 Save As Tclet...}
 ttd.tagoff {Level 3 Title}
 ttd.text {
+}
+ttd.text {Saves the currently selected widget as a tclet. Tclets are applets that can be run inside a browser with the help of a Tcl browser plugin.
 }
 ttd.text {
 }
@@ -400,27 +414,145 @@ ttd.text {
 ttd.tagon {Level 3 Title}
 ttd.text {1.5.1 Set Insert
 }
+ttd.tagoff {Level 3 Title}
+ttd.text {Sets the current widget as the insertion point. This is obsolete since the current widget is always the insertion point.
+}
+ttd.tagon {Level 3 Title}
+ttd.text {
+}
 ttd.text {1.5.2 Set Alias...
 }
+ttd.tagoff {Level 3 Title}
+ttd.text {Widgets can be referred to using aliases. Instead of a complicated and difficult to remember widget path (for example, .top79.fra32.but21), a widget can be assigned an alias.
+}
+ttd.text {
+}
+ttd.text {The simplest but not the most recommended way to use an alias is via the widget array, which is a global array. For an alias named MyButton, you can type:
+}
+ttd.tagon Listing
+ttd.text {puts $widget(MyButton)
+}
+ttd.tagoff Listing
+ttd.text {    this will return the path to the widget
+}
+ttd.text {
+}
+ttd.text {It is always safer to specify the toplevel too, in the case there are several widgets having the same alias but in different toplevels. For example:
+}
+ttd.tagon Listing
+ttd.text {puts $widget(Toplevel1,MyButton)
+}
+ttd.text {puts $widget(Toplevel2,MyButton)
+}
+ttd.tagoff Listing
+ttd.text {
+}
+ttd.text {Assuming widget command aliasing has been turned on (see the Preferences dialog), it is better to use the command associated with the alias. You can type:
+}
+ttd.tagon Listing
+ttd.text {MyButton configure -background red
+}
+ttd.tagoff Listing
+ttd.text {    and
+}
+ttd.tagon Listing
+ttd.text {puts [MyButton]
+}
+ttd.tagoff Listing
+ttd.text {    (note that the alias without parameters or a subcommand will return the widget path)
+}
+ttd.text {
+}
+ttd.text {Similarly, for the same alias within several toplevels, you can use:
+}
+ttd.tagon Listing
+ttd.text {Toplevel1.MyButton configure -background red
+}
+ttd.tagoff Listing
+ttd.text {    and
+}
+ttd.tagon Listing
+ttd.text {puts [Toplevel1.MyButton]
+}
+ttd.tagoff Listing
+ttd.text {
+}
+ttd.text {then, for the other toplevel
+}
+ttd.tagon Listing
+ttd.text {Toplevel2.MyButton configure -background red
+}
+ttd.tagoff Listing
+ttd.text {    and
+}
+ttd.tagon Listing
+ttd.text {puts [Toplevel2.MyButton]
+}
+ttd.tagoff Listing
+ttd.text {
+}
+ttd.text {It is best to always have widget command aliasing on and never use the global widget array. This way you avoid global variables and make your program easier to read.
+}
+ttd.text {
+}
+ttd.tagon {Level 3 Title}
 ttd.text {1.5.3 Manager}
 ttd.tagoff {Level 3 Title}
+ttd.text {
+}
+ttd.text {There are several ways to arrange widgets with the Tk toolkit. For details about each of the managers, please see a good Tcl/Tk book, for example "Efficient Tcl/Tk Programming" at McGraw/Hill.
+}
 ttd.text {
 }
 ttd.tagon {Level 4 Title}
 ttd.text {1.5.3.1 Place
 }
+ttd.tagoff {Level 4 Title}
+ttd.text {Sets place as the current geometry manager. The next widget that you insert will be managed by the "place" manager.
+}
+ttd.text {
+}
+ttd.tagon {Level 4 Title}
 ttd.text {1.5.3.2 Pack
 }
+ttd.tagoff {Level 4 Title}
+ttd.text {Sets pack as the current geometry manager. The next widget that you insert will be managed by the packer.
+}
+ttd.text {
+}
+ttd.tagon {Level 4 Title}
 ttd.text {1.5.3.3 Grid}
 ttd.tagoff {Level 4 Title}
+ttd.text {
+}
+ttd.text {Sets grid as the current geometry manager. The next widget that you insert will be managed by the "grid" manager.
+}
 ttd.text {
 }
 ttd.tagon {Level 3 Title}
 ttd.text {1.5.4 Select Toplevel
 }
+ttd.tagoff {Level 3 Title}
+ttd.text {This will select the toplevel to which the currently selected widget belongs.
+}
+ttd.tagon {Level 3 Title}
+ttd.text {
+}
 ttd.text {1.5.5 Select Parent
 }
+ttd.tagoff {Level 3 Title}
+ttd.text {This will select the parent of the currently selected widget.
+}
+ttd.tagon {Level 3 Title}
+ttd.text {
+}
 ttd.text {1.5.6 Bindings
+}
+ttd.tagoff {Level 3 Title}
+ttd.text {Shows the bindings editor. See "8. Widgets Bindings" below for more information on how to use the bindings editor.
+}
+ttd.tagon {Level 3 Title}
+ttd.text {
 }
 ttd.text {1.5.7 Hide}
 ttd.tagoff {Level 3 Title}
@@ -434,7 +566,8 @@ ttd.tagoff {Level 2 Title}
 ttd.text {
 }
 ttd.tagon {Level 3 Title}
-ttd.text {1.6.1 Attribute Editor
+ttd.text {1.6.1 Attribute Editor}
+ttd.text {
 }
 ttd.text {1.6.2 Function List
 }
