@@ -406,11 +406,11 @@ proc vTcl:dump_top {target} {
         return
     }
     vTcl:update_widget_info $target
-    append output "\nproc $vTcl(winname)$target \{base\} \{\n"
+    append output "\nproc $vTcl(winname)$target \{base \{container 0\}\} \{\n"
     append output "$vTcl(tab)if {\$base == \"\"} {\n"
     append output "$vTcl(tab2)set base $target\n$vTcl(tab)}\n"
     if { $target != "." } {
-        append output "$vTcl(tab)if \{\[winfo exists \$base\]\} \{\n"
+        append output "$vTcl(tab)if \{\[winfo exists \$base\] && (!\$container)\} \{\n"
         append output "$vTcl(tab2)wm deiconify \$base; return\n"
         append output "$vTcl(tab)\}\n"
     }
@@ -437,7 +437,17 @@ proc vTcl:dump:widgets {target} {
     foreach i $tree {
         set basename [vTcl:base_name $i]
         set class [vTcl:get_class $i]
+        
+        if {[string tolower $class] == "toplevel"} {
+        	append output "$vTcl(tab)if \{!\$container\} \{\n"
+        }
+        
         append output [$vTcl($class,dump_opt) $i $basename]
+        
+        if {[string tolower $class] == "toplevel"} {
+        	append output "$vTcl(tab)\}\n"
+	}
+	        
         incr vTcl(num,index)
         vTcl:statbar [expr {($vTcl(num,index) * 100) / $vTcl(num,total)}]
     }
