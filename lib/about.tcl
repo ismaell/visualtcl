@@ -50,7 +50,7 @@ proc vTclWindow.vTcl.about {args} {
         -padx 0 -pady 0 -side top 
     label .vTcl.about.lab21 \
         -borderwidth 0 \
-        -text "Maintained by:\nChristian Gavin, March 2000"
+        -text "Maintained by Christian Gavin (cgavin@dnai.com)\nfreeWrap is Copyright (C) 1998\nby Dennis R. LaBelle (dlabelle@albany.net)\nAll Rights Reserved."
     pack .vTcl.about.lab21 \
         -in .vTcl.about -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 \
         -padx 0 -pady 0 -side top 
@@ -61,7 +61,7 @@ proc vTclWindow.vTcl.about {args} {
         -padx 2 -pady 2 -side top 
     label .vTcl.about.fra8.lab9 \
         -borderwidth 0 \
-        -text Version 
+        -text "Visual Tcl Version "
     pack .vTcl.about.fra8.lab9 \
         -in .vTcl.about.fra8 -anchor center -expand 0 -fill none -ipadx 0 \
         -ipady 0 -padx 0 -pady 0 -side left 
