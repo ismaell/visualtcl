@@ -188,7 +188,7 @@ proc vTcl:updateRcFileMenu {} {
     if {![info exists vTcl(rcFiles)]} { set vTcl(rcFiles) {} }
 
     ## Remove duplicate entries in the file list.
-    set vTcl(rcFiles) [vTcl:lrmdups $vTcl(rcFiles)]
+    ## set vTcl(rcFiles) [vTcl:lrmdups $vTcl(rcFiles)]
 
     if {[info tclversion] >= 8} {
         set w .vTcl.m.file.projects
