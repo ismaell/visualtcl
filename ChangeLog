@@ -1,6 +1,7 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Using the BWidget font selector
     o Support for dump/copy/paste of Iwidget optionmenu
     o Added patch from Don Porter <dgp@users.sourceforge.net> to support Tk8.4.
       This is a short term solution until we stop using internal Tk variables

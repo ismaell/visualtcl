@@ -34,8 +34,8 @@ namespace eval SelectFont {
         {-bg		Synonym		-background}
     }
 
-    proc ::SelectFont { path args } { 
-	return [eval SelectFont::create $path $args] 
+    proc ::SelectFont { path args } {
+	return [eval SelectFont::create $path $args]
     }
     proc use {} {}
 
@@ -43,7 +43,7 @@ namespace eval SelectFont {
     variable _styleOff
     array set _styleOff [list bold normal italic roman]
     variable _sizes     {4 5 6 7 8 9 10 11 12 13 14 15 16 \
-	    17 18 19 20 21 22 23 24}
+	    17 18 19 20 21 22 23 24 25 26 27 28 32 36 48}
     
     # Set up preset lists of fonts, so the user can avoid the painfully slow
     # loadfont process if desired.
@@ -128,7 +128,7 @@ proc SelectFont::create { path args } {
 
     if { ![info exists _families(all)] && \
 	    [Widget::getoption "$path#SelectFont" -querysystem] } {
-        loadfont
+        loadfont $path
     }
 
     set bg [Widget::getoption "$path#SelectFont" -background]
@@ -322,22 +322,43 @@ proc SelectFont::cget { path option } {
 # ----------------------------------------------------------------------------
 #  Command SelectFont::loadfont
 # ----------------------------------------------------------------------------
-proc SelectFont::loadfont { } {
+proc SelectFont::loadfont {path} {
     variable _families
+
+    toplevel .vTcl.wait
+    wm overrideredirect .vTcl.wait 1
+    wm withdraw .vTcl.wait
+    wm geometry .vTcl.wait 250x50
+    label .vTcl.wait.lab -text "Loading fonts. Please wait..." \
+        -padx 4 -pady 4 -highlightbackground black -highlightthickness 2
+    pack .vTcl.wait.lab -expand 1 -fill both
+    vTcl:center .vTcl.wait
+    wm deiconify .vTcl.wait
+    update
 
     # initialize families
     set _families(all) {}
     set _families(fixed) {}
     set _families(variable) {}
     set lfont     [font families]
-    lappend lfont times courier helvetica
+    # why?
+    # lappend lfont times courier helvetica
     foreach font $lfont {
         set family [font actual [list $font] -family]
         if { [lsearch -exact $_families(all) $family] == -1 } {
             lappend _families(all) $family
         }
     }
+
     set _families(all) [lsort $_families(all)]
+
+    # don't waste time sorting families if we want them all
+    set fam [Widget::getoption "$path#SelectFont" -families]
+    if {$fam == "all"} {
+        destroy .vTcl.wait
+        return
+    }
+
     foreach family $_families(all) {
 	if { [font metrics [list $family] -fixed] } {
 	    lappend _families(fixed) $family
@@ -345,6 +366,7 @@ proc SelectFont::loadfont { } {
 	    lappend _families(variable) $family
 	}
     }
+    destroy .vTcl.wait
     return
 }
 
