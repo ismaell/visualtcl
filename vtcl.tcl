@@ -173,23 +173,15 @@ proc vTcl:load_libs {} {
 proc vTcl:setup {} {
     global tk_strictMotif env vTcl tcl_platform __vtlog
 
-    # @@change by Christian Gavin 3/7/2000
-    # support for Itcl mega widgets
-    set vTcl(megaWidget) ""
-    set vTcl(head,importheader) ""
-    # @@end_change
-
-    # @@change by Christian Gavin 3/14/2000
-    # text widget children should not be saved/seen
-    lappend vTcl(megaWidget) Text
     set vTcl(version)   1.51
+
     if {$env(VTCL_HOME) == ""} {
         set vTcl(VTCL_HOME) [pwd]
     } else {
         set vTcl(VTCL_HOME) $env(VTCL_HOME)
     }
 
-    if {$env(HOME) == ""} {
+    if {$env(HOME) == "" || ![file exists $env(HOME)]} {
         set vTcl(CONF_FILE) [file join $env(VTCL_HOME) .vtclrc]
         set vTcl(LIB_FILE)  [file join $env(VTCL_HOME) .vtcllibs]
         set vTcl(LOG_FILE)  [file join $env(VTCL_HOME) .vtclog]
