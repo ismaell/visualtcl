@@ -460,6 +460,7 @@ proc vTcl:vtcl:remap {w} {
         vTcl:show_top $i
     }
 
+    wm deiconify .vTcl.toolbar
     set vTcl(tops,unmapped) ""
 }
 
