@@ -123,8 +123,6 @@ proc vTcl:font:get_font_dlg {base font_desc} {
 
     set widget($base.listbox)            "$base.fra28.cpd29.01"
     set widget($base.text)               "$base.cpd43.03"
-    set widget(rev,$base.cpd43.03)       "$base.text"
-    set widget(rev,$base.fra28.cpd29.01) "$base.listbox"
 
     eval set font_desc \"[font actual $font_desc]\"
 

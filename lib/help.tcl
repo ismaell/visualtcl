@@ -155,20 +155,9 @@ proc vTclWindow.vTcl.tip {base {container 0}} {
         GZomtshmmzW+KeecdPYUEAA7}
 
     global widget
-    set widget(rev,$base) {TipWindow}
-    set {widget(TipWindow)} "$base"
-    set widget(TipWindow,TipWindow) "$base"
-    interp alias {} TipWindow {} vTcl:Toplevel:WidgetProc $base
-    set widget(rev,$base.cpd25.03) {TipText}
-    set {widget(TipText)} "$base.cpd25.03"
-    set widget(TipWindow,TipText) "$base.cpd25.03"
-    interp alias {} TipText {} vTcl:WidgetProc $base.cpd25.03
-    interp alias {} TipWindow.TipText {} vTcl:WidgetProc $base.cpd25.03
-    set widget(rev,$base.fra20.che26) {DontShowTips}
-    set {widget(DontShowTips)} "$base.fra20.che26"
-    set widget(TipWindow,DontShowTips) "$base.fra20.che26"
-    interp alias {} DontShowTips {} vTcl:WidgetProc $base.fra20.che26
-    interp alias {} TipWindow.DontShowTips {} vTcl:WidgetProc $base.fra20.che26
+    vTcl:DefineAlias $base TipWindow vTcl:TopLevel:WidgetProc "" 1
+    vTcl:DefineAlias $base.cpd25.03 TipText vTcl:WidgetProc TipWindow 1
+    vTcl:DefineAlias $base.fra20.che26 DontShowTips vTcl:WidgetProc TipWindow 1
 
     if {[info exists vTcl(pr,dontshowtips)]} {
         set ::tip::dontshow $vTcl(pr,dontshowtips)
