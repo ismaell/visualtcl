@@ -42,7 +42,33 @@ Export          vTcl::widgets::core::megawidget::configureProc
 
 NewOption -widgetProc  "Widget Proc"  type
 
+## Right-click menu
+Function        "Save Megawidget..."         vTcl::widgets::core::megawidget::saveCmd
+
 namespace eval vTcl::widgets::core::megawidget {
+
+    proc saveCmd {} {
+        set w $::vTcl(w,widget)
+        set newName [vTcl:name_compound $w]
+
+        ## user cancelled?
+        if {[lempty $newName]} {
+            return
+        }
+
+        set file [vTcl:get_file save "Save Megawidget To a File"]
+        if {$file == ""} {return}
+
+        set f [open $file w]
+
+        puts $f [subst $::vTcl(head,compounds)]
+        set compoundName [lindex $newName 1]
+        puts $f [::vTcl:dump_namespace vTcl::compounds::user::[list $compoundName]]
+        vTcl:statbar 100
+
+        close $f
+        vTcl:statbar 0
+    }
 
     proc cgetProc {w args} {
         ## This procedure may be used free of restrictions.
@@ -162,4 +188,5 @@ namespace eval vTcl::widgets::core::megawidget {
         return "MegaWidget widgetProc: $widgetProc"
     }
 }
+
 

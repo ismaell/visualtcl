@@ -36,8 +36,8 @@ TreeLabel	@vTcl::widgets::core::radiobutton::getWidgetTreeLabel
 GetImagesCmd    vTcl::widgets::core::radiobutton::getImagesCmd
 ClassOption     -_tooltip
 
-Function        "Set Variable" vTcl::widgets::core::radiobutton::setVariable
-Function        "Set Value"    vTcl::widgets::core::radiobutton::setValue
+Function        "Set Variable..." vTcl::widgets::core::radiobutton::setVariable
+Function        "Set Value..."    vTcl::widgets::core::radiobutton::setValue
 
 namespace eval vTcl::widgets::core::radiobutton {
 
@@ -86,4 +86,5 @@ namespace eval vTcl::widgets::core::radiobutton {
         return $result
     }
 }
+
 

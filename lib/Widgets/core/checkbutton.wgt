@@ -35,7 +35,7 @@ DoubleClickCmd	vTcl:set_command
 TreeLabel	@vTcl::widgets::core::checkbutton::getWidgetTreeLabel
 ClassOption     -_tooltip
 
-Function        "Set Variable" vTcl::widgets::core::checkbutton::setVariable
+Function        "Set Variable..." vTcl::widgets::core::checkbutton::setVariable
 
 namespace eval vTcl::widgets::core::checkbutton {
 
@@ -68,3 +68,4 @@ namespace eval vTcl::widgets::core::checkbutton {
 	}
     }
 }
+

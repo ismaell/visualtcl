@@ -34,7 +34,7 @@ DefaultValues   -foreground -highlightbackground \
                 -highlightcolor -selectbackground -selectforeground
 DefaultOptions  -background white
 ClassOption     -_tooltip
-Function        "Set Text Variable" vTcl::widgets::core::entry::setTextVariable
+Function        "Set Text Variable..." vTcl::widgets::core::entry::setTextVariable
 
 ## If we're using Tcl 8.4, we need to add the readonly option.
 if {[info tclversion] > 8.3} {
@@ -68,3 +68,4 @@ namespace eval vTcl::widgets::core::entry {
 	return "VAR: $val"
     }
 }
+
