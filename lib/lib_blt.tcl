@@ -39,6 +39,7 @@ proc vTcl:widget:lib:lib_blt {args} {
     set order {
 	Graph
 	Hierbox
+	Barchart
 	Stripchart
       Tabset
     }
