@@ -208,7 +208,19 @@ proc vTcl:open {{file ""}} {
     vTcl:widget:register_all_widgets;	 vTcl:statbar 97
 
     set vTcl(project,file) $file
-    set vTcl(project,name) [lindex [file split $file] end]
+    set vTcl(project,name) [file tail $file]
+
+    ## Determine if there is a multifile project file and source it.
+    set basedir [file dir $file]
+    set multidir [vTcl:dump:get_multifile_project_dir $vTcl(project,name)]
+    set file [file root $vTcl(project,name)].vtp
+
+    if {[file exists [file join $basedir $file]]} {
+    	source [file join $basedir $file]
+    } elseif {[file exists [file join $basedir $multidir $file]]} {
+    	source [file join $basedir $multidir $file]
+    }
+
     wm title .vTcl "Visual Tcl - $vTcl(project,name)"
     vTcl:status "Done Loading"
     vTcl:statbar 0
@@ -427,6 +439,8 @@ proc vTcl:save2 {file} {
 	puts $output $vTcl(head,exports)
 	puts $output [vTcl:vtcl_library_procs]
 	puts $output [vTcl:export_procs]
+	puts $output [vTcl:dump:project_info \
+	    [file dirname $file] $vTcl(project,name)]
         puts $output $vTcl(head,procs)
         puts $output [vTcl:save_procs]
         puts $output "proc init \{argc argv\} \{\n$body\n\}\n"

@@ -100,8 +100,15 @@ set vTcl(pr,show_top)    -1
 set vTcl(pr,winfocus)    0
 set vTcl(pr,autoplace)	 0
 set vTcl(pr,autoalias)	 1
-set vTcl(pr,multiplace)  1
+set vTcl(pr,multiplace)  0
 set vTcl(pr,cmdalias)    1
+set vTcl(pr,fullcfg)     0
+set vTcl(pr,autoloadcomp) 0
+set vTcl(pr,autoloadcompfile) ""
+set vTcl(pr,projecttype) "single"
+set vTcl(pr,imageeditor) ""
+set vTcl(pr,saveimagesinline) 0
+set vTcl(pr,projfile)    0
 set vTcl(numRcFiles)	 5
 # end preferences
 set vTcl(proc,name)      ""

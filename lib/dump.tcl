@@ -156,19 +156,13 @@ proc vTcl:dump:get_files_list {basedir project_name} {
 
     global vTcl
 
-    if {! [info exists vTcl(pr,projecttype)]} {
-	return ""
-    }
-
-    if {$vTcl(pr,projecttype) == "single"} {
-        return ""
-    }
+    if {![info exists vTcl(pr,projecttype)]} { return }
+    if {$vTcl(pr,projecttype) == "single"}   { return }
 
     set result ""
     set tops ". $vTcl(tops)"
 
     foreach i $tops {
-
         lappend result [vTcl:dump:get_top_filename $i $basedir $project_name]
     }
 
@@ -739,4 +733,44 @@ proc vTcl:dump:widget_fonts_and_images {} {
 	    }
 	}
     }
+}
+
+proc vTcl:dump:project_info {basedir project} {
+    global vTcl
+
+    set widgets [vTcl:list_widget_tree .]
+
+    set out "proc vTcl:project:info \{\} \{\n"
+
+    foreach widget $widgets {
+	if {[vTcl:streq $widget "."]} { continue }
+	upvar ::widgets::${widget}::save save
+	set list {}
+	foreach var [lsort [array names save]] {
+	    if {!$save($var)} { continue }
+	    lappend list $var $save($var)
+	}
+    	append out $vTcl(tab)
+	append out "namespace eval ::widgets::$widget \{\n"
+	append out $vTcl(tab2)
+	append out "array set save [list $list]\n"
+	append out "$vTcl(tab)\}\n"
+    }
+
+    append out "\}\n"
+
+    if {[vTcl:streq $vTcl(pr,projecttype) "single"]} {
+	if {!$vTcl(pr,projfile)} { return $out }
+	set file [file root $project].vtp
+    } else {
+	set file [file root $project].vtp
+	set dir [vTcl:dump:get_multifile_project_dir $project]
+	file mkdir [file join $basedir $dir]
+	set file [file join $basedir $dir $file]
+    }
+
+    set fp [open $file w]
+    puts $fp $out
+    close $fp
+    return
 }

@@ -49,6 +49,7 @@ proc vTcl:prefs:init {base} {
        variable projecttype      ""
        variable imageeditor      ""
        variable saveimagesinline ""
+       variable projfile         ""
     }
 
     set prefs::font_dlg [eval font create [font actual $vTcl(pr,font_dlg)]]
@@ -247,12 +248,14 @@ proc {vTcl:prefs:data_exchange} {save_and_validate} {
 	prefs::imageeditor      $save_and_validate
     vTcl:data_exchange_var vTcl(pr,saveimagesinline) \
 	prefs::saveimagesinline $save_and_validate
-    vTcl:data_exchange_var vTcl(pr,cmdalias)        \
-	prefs::cmdalias        $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,cmdalias)         \
+	prefs::cmdalias         $save_and_validate
     vTcl:data_exchange_var vTcl(pr,autoalias)        \
 	prefs::autoalias        $save_and_validate
-    vTcl:data_exchange_var vTcl(pr,multiplace)        \
-	prefs::multiplace        $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,multiplace)       \
+	prefs::multiplace       $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,projfile)         \
+    	prefs::projfile         $save_and_validate
 
     if {$save_and_validate} {
     	set vTcl(pr,font_dlg)   [font configure $prefs::font_dlg]
@@ -295,6 +298,9 @@ proc {vTcl:prefs:basics} {tab} {
 	vTcl:formCompound:add $tab checkbutton \
 		-text "Use continuous widget placement" \
 		-variable prefs::multiplace
+	vTcl:formCompound:add $tab checkbutton \
+		-text "Save project info in project file" \
+		-variable prefs::projfile
 	vTcl:formCompound:add $tab checkbutton \
 		-text "Auto load compounds from file:" \
 		-variable prefs::autoloadcomp

@@ -101,6 +101,7 @@ proc vTcl:auto_place_compound {compound gmgr gopt} {
 
     vTcl:insert_compound $name $compound $gmgr $gopt
     vTcl:setup_bind_tree $name
+    vTcl:widget:register_all_widgets $name
     vTcl:active_widget $name
     vTcl:update_proc_list
 

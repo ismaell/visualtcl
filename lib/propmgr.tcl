@@ -534,6 +534,7 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
 
     if {[vTcl:streq $prefix "opt"]} {
     	set saveCheck [checkbutton ${base}_save]
+	vTcl:set_balloon $saveCheck "Check to save option"
 	grid $top.$option $base $saveCheck -sticky news
     } else {
 	grid $top.$option $base -sticky news
