@@ -25,7 +25,9 @@
 proc vTcl:lib_bwidget:init {} {
     global vTcl
 
-    if {[catch {package require BWidget}]} {
+    ## We use our own version of Bwidgets with some bug fixes. Will submit them the
+    ## bugs when time permits.
+    if {[catch {package require -exact BWidget 1.3.1}]} {
 	lappend vTcl(libNames) "(not detected) BWidget Widget Support Library"
 	return 0
     }

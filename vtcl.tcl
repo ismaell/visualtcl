@@ -237,7 +237,10 @@ proc vTcl:setup_gui {} {
     rename exit vTcl:exit
 
     vTcl:splash_status "Setting Up Workspace"
-    package require BWidget
+
+    ## We use our own version of Bwidgets with some bug fixes. Will submit them the
+    ## bugs when time permits.
+    package require -exact BWidget 1.3.1
 
     if {$tcl_platform(platform) == "macintosh"} {
         set vTcl(pr,balloon) 0
@@ -279,6 +282,9 @@ proc vTcl:setup_gui {} {
     option add *__tk__messagebox*font $vTcl(pr,font_dlg)
 
     if {[info exists vTcl(pr,bgcolor)] && ![lempty $vTcl(pr,bgcolor)]} {
+        ## On some systems, the . window has an empty {} background option,
+	## and this makes the tk_setPalette code fail
+	. configure -background gray
         tk_setPalette $vTcl(pr,bgcolor)
 	option add *vTcl*background $vTcl(pr,bgcolor)
     }
