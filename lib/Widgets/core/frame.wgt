@@ -33,6 +33,7 @@ TreeLabel	Frame
 DeleteCmd       ::vTcl::widgets::core::frame::deleteCmd
 SelectCmd       ::vTcl::widgets::core::frame::selectCmd
 InsertChildCmd  ::vTcl::widgets::core::frame::insertChildCmd
+Insertable
 
 NewOption -class     "class"      type
 NewOption -colormap  "color map"  type

@@ -26,7 +26,7 @@
 Class		Spinbox
 Lib		core
 
-Icon		icon_spinint.gif
+Icon		../lib/Widgets/core/spinbox.gif
 DoubleClickCmd	vTcl:set_string
 TreeLabel	Spinbox
 

@@ -1,0 +1,8 @@
+Class		Labelframe
+Lib		bwidget
+
+Icon		../lib/Widgets/core/labelframe.gif
+TreeLabel	Labelframe
+CreateCmd       labelframe
+DefaultOptions   -text "Label"
+Insertable

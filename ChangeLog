@@ -1,6 +1,8 @@
 ChangeLog for Visual Tcl:
 
 1.6.0a2 ->
+    o Changed spinbox icon to gray (Tk 8.4)
+    o Added labelframe widget (Tk 8.4)
     o Fixed problem where an alias would be defined twice when doing
       copy/paste in the same toplevel.
     o Prevents the user from using pack and grid in the same container. This

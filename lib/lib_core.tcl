@@ -50,6 +50,7 @@ proc vTcl:widget:lib:lib_core {args} {
 
     if {[info tclversion] >= 8.4} {
 	lappend order Spinbox
+	lappend order Labelframe
     }
 
     vTcl:lib:add_widgets_to_toolbar $order

@@ -201,7 +201,7 @@ proc vTcl:active_widget {target} {
         } else {
             vTcl:create_handles $target
             vTcl:place_handles $target
-            if {$vTcl(w,class) == "Frame" || $vTcl(w,class) == "Canvas"} {
+	    if {[info exists classes($class,insertable)] && $classes($class,insertable)} {
                 set vTcl(w,insert) $target
             } else {
                 set vTcl(w,insert) [winfo parent $target]

@@ -420,3 +420,7 @@ proc NoEncaseOption {option value} {
 proc NoEncaseOptionWhen {option proc} {
     set ::vTcl(option,noencasewhen,$option) $proc
 }
+
+proc Insertable {} {
+    set ::classes($::tmp(class),insertable) 1
+}
