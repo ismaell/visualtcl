@@ -518,7 +518,7 @@ proc ::tkcon::InitUI {title} {
 	set PRIV(menubar) [frame $w.mbar -relief raised -bd 1]
     }
     ## Scrollbar
-    set PRIV(scrolly) [scrollbar $w.sy -takefocus 0 -bd 1 \
+    set PRIV(scrolly) [scrollbar $w.sy -takefocus 0 \
 	    -command [list $con yview]]
 
     InitMenus $PRIV(menubar) $title
