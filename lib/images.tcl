@@ -246,7 +246,7 @@ proc {vTcl:image:init_img_manager} {} {
 
 		   catch {
 		   	button $base.${reference}_delete \
-		   	-image [vTcl:image:get_image $env(VTCL_HOME)/images/edit/cut.gif] \
+		   	-image [vTcl:image:get_image $env(VTCL_HOME)/images/edit/remove.gif] \
 	 	  	-command "vTcl:image:ask_delete_image \"$image\""
 
 	 	  	vTcl:set_balloon $base.${reference}_delete "Remove image from list"
@@ -305,6 +305,11 @@ proc {vTcl:image:init_stock} {} {
 	vTcl:image:create_new_image "$env(VTCL_HOME)/images/edit/open.gif"    "" stock
 	vTcl:image:create_new_image "$env(VTCL_HOME)/images/edit/save.gif"    "" stock
 	vTcl:image:create_new_image "$env(VTCL_HOME)/images/edit/replace.gif" "" stock
+	vTcl:image:create_new_image "$env(VTCL_HOME)/images/edit/add.gif" "" stock
+	vTcl:image:create_new_image "$env(VTCL_HOME)/images/edit/remove.gif" "" stock
+	vTcl:image:create_new_image "$env(VTCL_HOME)/images/edit/show.gif" "" stock
+	vTcl:image:create_new_image "$env(VTCL_HOME)/images/edit/hide.gif" "" stock
+	vTcl:image:create_new_image "$env(VTCL_HOME)/images/edit/refresh.gif" "" stock
 }
 
 proc {vTcl:image:new_image_file} {} {
@@ -686,9 +691,6 @@ proc vTclWindow.vTcl.imgManager {args} {
     wm protocol $base WM_DELETE_WINDOW "wm withdraw $base"
     wm transient .vTcl.imgManager .vTcl
 
-    label $base.lab28 \
-        -borderwidth 1 \
-        -relief sunken -text Images
     frame $base.cpd29 \
         -borderwidth 1 -height 30 \
         -relief raised \
@@ -705,23 +707,14 @@ proc vTclWindow.vTcl.imgManager {args} {
         -state disabled -tabs {0.2i 3i 3.75i} \
         -width 8 -wrap none -xscrollcommand "$base.cpd29.01 set" \
         -yscrollcommand "$base.cpd29.02 set"
-    frame $base.fra30 \
-        -borderwidth 2 -height 75 \
-        -relief groove \
-        -width 125
-    button $base.fra30.but31 \
-        -padx 9 -pady 3 -text Close \
-        -command "wm withdraw $base"
     button $base.but32 \
         -command vTcl:image:new_image_file \
-        -padx 9 -pady 3 -text {Add new image...}
+        -padx 9 -pady 3 -image [vTcl:image:get_image add.gif]
     ###################
     # SETTING GEOMETRY
     ###################
-    pack $base.lab28 \
-        -in $base -anchor center -expand 0 -fill x -side top
     pack $base.cpd29 \
-        -in $base -anchor center -expand 1 -fill both -side top
+        -in $base -anchor center -expand 1 -fill both -side bottom
     grid columnconf $base.cpd29 0 -weight 1
     grid rowconf $base.cpd29 0 -weight 1
     grid $base.cpd29.01 \
@@ -731,13 +724,9 @@ proc vTclWindow.vTcl.imgManager {args} {
     grid $base.cpd29.03 \
         -in $base.cpd29 -column 0 -row 0 -columnspan 1 -rowspan 1 \
         -sticky nesw
-    pack $base.fra30 \
-        -in $base -anchor center -expand 0 -fill x -side bottom
-    pack $base.fra30.but31 \
-        -in $base.fra30 -anchor center -expand 0 -fill x -side bottom
     pack $base.but32 \
-        -in $base -anchor center -expand 0 -fill x -side top
-
+        -in $base -anchor nw -expand 0 -fill none -side top
+    vTcl:set_balloon $base.but32 "Add new image"
     catch {wm geometry $base $vTcl(geometry,$base)}
 
     vTcl:image:init_img_manager

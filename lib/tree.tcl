@@ -206,6 +206,12 @@ proc vTclWindow.vTcl.tree {args} {
     wm resizable .vTcl.tree 1 1
     wm deiconify .vTcl.tree
     wm title .vTcl.tree "Widget Tree"
+
+    frame .vTcl.tree.fra11 \
+        -relief flat
+    pack .vTcl.tree.fra11 \
+        -in .vTcl.tree -anchor center -expand 0 -fill both -ipadx 0 -ipady 0 \
+        -padx 2 -pady 2 -side top
     frame .vTcl.tree.fra4 \
         -height 30 -width 30
     pack .vTcl.tree.fra4 \
@@ -232,32 +238,22 @@ proc vTclWindow.vTcl.tree {args} {
         -padx 2 -pady 0 -side top
     scrollbar .vTcl.tree.fra6.scr7 \
         -command {.vTcl.tree.fra4.can8 xview} \
-        -highlightthickness 0 -orient horizontal -width 10
+        -highlightthickness 0 -orient horizontal
     pack .vTcl.tree.fra6.scr7 \
         -in .vTcl.tree.fra6 -anchor center -expand 1 -fill both -ipadx 0 \
         -ipady 0 -padx 2 -pady 0 -side left
     frame .vTcl.tree.fra6.fra10 \
-        -borderwidth 1 -height 12 -relief raised -width 12
+        -borderwidth 1 -height 12 -relief flat -width 12
     pack .vTcl.tree.fra6.fra10 \
         -in .vTcl.tree.fra6 -anchor center -expand 0 -fill none -ipadx 0 \
         -ipady 0 -padx 0 -pady 0 -side right
-    frame .vTcl.tree.fra11 \
-        -borderwidth 1 -height 30 -relief sunken -width 30
-    pack .vTcl.tree.fra11 \
-        -in .vTcl.tree -anchor center -expand 0 -fill both -ipadx 0 -ipady 0 \
-        -padx 2 -pady 2 -side top
     button .vTcl.tree.fra11.but3 \
         -command vTcl:init_wtree \
-        -highlightthickness 0 -padx 5 -pady 2 -text Reload -width 5
+        -highlightthickness 0 -padx 5 -pady 2 -image [vTcl:image:get_image refresh.gif]
     pack .vTcl.tree.fra11.but3 \
-        -in .vTcl.tree.fra11 -anchor center -expand 1 -fill both -ipadx 0 \
+        -in .vTcl.tree.fra11 -anchor nw -expand 0 -fill none -ipadx 0 \
         -ipady 0 -padx 2 -pady 2 -side left
-    button .vTcl.tree.fra11.but1 \
-        -command {destroy .vTcl.tree} \
-        -highlightthickness 0 -padx 5 -pady 2 -text Done -width 5
-    pack .vTcl.tree.fra11.but1 \
-        -in .vTcl.tree.fra11 -anchor center -expand 1 -fill both -ipadx 0 \
-        -ipady 0 -padx 2 -pady 2 -side left
+    vTcl:set_balloon .vTcl.tree.fra11.but3 "Refreshes the widget tree"
 
     catch {wm geometry .vTcl.tree $vTcl(geometry,.vTcl.tree)}
     vTcl:init_wtree

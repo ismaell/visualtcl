@@ -23,6 +23,14 @@
 
 proc vTcl:delete_proc {name} {
     global vTcl
+    set result [tk_messageBox -type yesno \
+        -title "Visual Tcl" \
+        -message "Are you sure you want to delete procedure $name ?"]
+
+    if {$result == "no"} {
+        return
+    }
+
     if {$name != ""} {
         rename $name ""
         vTcl:list delete "{$name}" vTcl(procs)
@@ -182,14 +190,15 @@ proc vTclWindow.vTcl.proclist {args} {
         -borderwidth 1 -height 30 -relief sunken -width 30
     pack $base.frame7 \
         -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 \
-        -side bottom
+        -side top
     button $base.frame7.button8 \
         -command {vTcl:show_proc ""} \
          -padx 9 \
-        -pady 3 -text Add -width 4
+        -pady 3 -image [vTcl:image:get_image add.gif]
     pack $base.frame7.button8 \
-        -anchor center -expand 1 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 \
+        -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 0 -pady 0 \
         -side left
+    vTcl:set_balloon $base.frame7.button8 "Add a new procedure"
     button $base.frame7.button9 \
         -command {
             set vTcl(x) [.vTcl.proclist.f2.list curselection]
@@ -198,10 +207,11 @@ proc vTclWindow.vTcl.proclist {args} {
             }
         } \
         -padx 9 \
-        -pady 3 -text Edit -width 4
+        -pady 3 -image [vTcl:image:get_image open.gif]
     pack $base.frame7.button9 \
-        -anchor center -expand 1 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 \
+        -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 0 -pady 0 \
         -side left
+    vTcl:set_balloon $base.frame7.button9 "Edit selected procedure"
     button $base.frame7.button10 \
         -command {
             set vTcl(x) [.vTcl.proclist.f2.list curselection]
@@ -210,15 +220,11 @@ proc vTclWindow.vTcl.proclist {args} {
             }
         } \
         -padx 9 \
-        -pady 3 -text Delete -width 4
+        -pady 3 -image [vTcl:image:get_image remove.gif]
     pack $base.frame7.button10 \
-        -anchor center -expand 1 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 \
+        -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 0 -pady 0 \
         -side left
-    button $base.frame7.button11 \
-        -command { vTcl:proclist:show 0 }\
-         -padx 9 -pady 3 -text Done -width 4
-    pack $base.frame7.button11 \
-        -anchor center -expand 1 -fill x -side left
+    vTcl:set_balloon $base.frame7.button10 "Remove selected procedure"
     frame $base.f2 \
         -borderwidth 1 -height 30 -relief sunken -width 30
     pack $base.f2 \

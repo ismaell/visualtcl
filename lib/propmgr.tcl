@@ -102,12 +102,9 @@ proc vTclWindow.vTcl.ae {args} {
     scrollbar $ae.sh -orient horiz -command "$ae.c xview" -takefocus 0
     scrollbar $ae.sv -orient vert  -command "$ae.c yview" -takefocus 0
 
-	button $ae.b -command "wm withdraw $ae" -text "Done"
-
     grid $ae.c  -column 0 -row 0 -sticky news
     grid $ae.sh -column 0 -row 1 -sticky ew
     grid $ae.sv -column 1 -row 0 -sticky ns
-	grid $ae.b  -column 0 -row 2 -columnspan 2 -sticky news
 
     grid columnconf $ae 0 -weight 1
     grid rowconf    $ae 0 -weight 1

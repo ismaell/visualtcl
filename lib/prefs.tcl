@@ -106,12 +106,12 @@ proc vTclWindow.vTcl.prefs {{base ""} {container 0}} {
         -background #dcdcdc \
         -command "vTcl:prefs:data_exchange 1; destroy $base" \
         -foreground #000000 -highlightbackground #dcdcdc \
-        -highlightcolor #000000 -padx 9 -pady 3 -text OK -width 10 
+        -highlightcolor #000000 -padx 9 -text OK -width 10 
     button $base.fra19.but21 \
         -activebackground #dcdcdc -activeforeground #000000 \
         -command "destroy $base" \
         -background #dcdcdc -foreground #000000 -highlightbackground #dcdcdc \
-        -highlightcolor #000000 -padx 9 -pady 3 -text Cancel -width 10 
+        -highlightcolor #000000 -padx 9 -text Cancel -width 10 
     ###################
     # SETTING GEOMETRY
     ###################

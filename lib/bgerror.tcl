@@ -344,6 +344,15 @@ namespace eval ::stack_trace {
                           ::stack_trace::set_details $top "(no code available)"
                       }
 
+                } elseif [string match {("if" test expression)} $context] {
+
+	              set statement \
+                          [::stack_trace::get_statement_at_level $top [expr $index + 1] ]
+
+                          ::stack_trace::set_details $top $statement
+                          vTcl:syntax_color $top.$widget(child,stack_trace_details)  0 -1
+                          ::stack_trace::highlight_details $top 1
+
                 } else {
                     ::stack_trace::set_details $top "(no code available)"
                 }

@@ -600,9 +600,6 @@ proc vTclWindow.vTcl.fontManager {args} {
     wm title $base "Font manager"
     wm transient .vTcl.fontManager .vTcl
 
-    button $base.but29 \
-        -padx 9 -pady 3 -text Close \
-        -command "wm withdraw $base"
     button $base.but30 \
         -command {set font_desc "-family {Helvetica} -size 12"
 
@@ -615,7 +612,7 @@ if {$font_desc != ""} {
    vTcl:font:display_fonts $vTcl(fonts,font_mgr,win)
    $vTcl(fonts,font_mgr,win).cpd31.03 yview end
 }} \
-        -padx 9 -pady 3 -text {Add new font...}
+        -padx 9 -pady 3 -image [vTcl:image:get_image add.gif]
     frame $base.cpd31 \
         -borderwidth 1 -height 30 \
         -relief raised \
@@ -635,10 +632,9 @@ if {$font_desc != ""} {
     ###################
     # SETTING GEOMETRY
     ###################
-    pack $base.but29 \
-        -in $base -anchor center -expand 0 -fill x -side bottom
     pack $base.but30 \
-        -in $base -anchor center -expand 0 -fill x -side bottom
+        -in $base -anchor nw -expand 0 -fill none -side top
+    vTcl:set_balloon $base.but30 "Add new font"
     pack $base.cpd31 \
         -in $base -anchor center -expand 1 -fill both -side top
     grid columnconf $base.cpd31 0 -weight 1
