@@ -8,6 +8,7 @@ DefaultOptions  -maximum 100 -foreground blue
 DefaultValues   -background -troughcolor
 MegaWidget	yes
 InsertCmd       vTcl::widgets::bwidgets::progressbar::insertCmd
+IgnoreProc      ::ProgressBar::* ProgressBar
 
 SpecialOpt -type	"type"	choice {normal incremental infinite}
 
