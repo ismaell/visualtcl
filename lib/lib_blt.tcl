@@ -22,6 +22,9 @@
 # Implementation by James Kramer usinge ideas from
 # Kenneth H. Cox <kcox@senteinc.com>
 
+proc vTcl:lib_blt:init {} {
+}
+
 proc vTcl:widget:lib:lib_blt {args} {
     global vTcl
 
