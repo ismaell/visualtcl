@@ -1,6 +1,14 @@
 ChangeLog for Visual Tcl:
 
 1.22   -> 1.4 (not released yet)
+        o added an option in the Preferences... dialog to save all images as
+          inline using Base64. Allows for self contained projects without any
+          dependencies on external images. However, while editing the project,
+          external files are used as usual. When saving the project, external
+          image files are then converted to Base64 and included inside the main
+          file.
+	o if a widget is of an unknown class, just ignore it, instead
+	  of generating an exception
 	o changed the way widget placement is handled.  It is now more like a
 	  traditional GUI builder.  This can be turned off in the preferences
 	  menu.
