@@ -1,6 +1,18 @@
 ChangeLog for Visual Tcl:
 
-1.6.0a3 ->
+1.6.0b1 ->
+    o Fixed problem where was not dumping grid geometry for BWidget and
+      Itcl notebook pages.
+    o Added more tutorial samples.
+    o Replaced inline light bulb image by .gif image because of problem
+      with Tcl/Tk 8.4.2
+    o Undo support for adding/removing a binding.
+    o Fixed troublesome auto indentation.
+    o First saves to temp file, then if saving succeeds replaces target
+      file. This prevents generating corrupt project files when saving
+      fails.
+
+1.6.0a3 -> 1.6.0b1
     o Added "Run Visible" property for toplevels. What it does is always
       show the toplevel in EDIT mode but hide it in TEST mode and when
       project is run outside vTcl. Overrides the "state" property when
@@ -979,6 +991,7 @@ ChangeLog for Visual Tcl:
     o And much, much more :)
 
 1.01 released (December 5, 1996)
+
 
 
 
