@@ -1,6 +1,10 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Added vTcl(pr,entryactivecolor) preference to set the bgcolor when
+      the mouse pointer is over entry fields.
+    o Renamed vTcl(propmgr,relief) to vTcl(pr,proprelief) so it gets
+      saved in .vtclrc, and the user can change it to his liking
     o Operation cleanup: insert commands for widgets no longer return
       a string to execute. Instead, the insert proc is run with the target
       as a parameter.

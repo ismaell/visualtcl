@@ -114,6 +114,7 @@ set vTcl(pr,saveasexecutable) 1
 set vTcl(pr,dontshowtips) 0
 set vTcl(pr,bgcolor) "#d9d9d9"
 set vTcl(pr,entrybgcolor) #ffffff
+set vTcl(pr,entryactivecolor) #ffffff
 set vTcl(pr,texteditor)	 ""
 set vTcl(numRcFiles)	 5
 # end preferences
@@ -166,7 +167,7 @@ set vTcl(images,user)    ""
 set vTcl(fonts,stock)    ""
 set vTcl(fonts,user)     ""
 
-set vTcl(propmgr,relief) "groove"
+set vTcl(pr,proprelief)  "groove"
 
 set vTcl(reliefs)        "flat groove raised ridge sunken"
 

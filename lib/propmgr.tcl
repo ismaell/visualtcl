@@ -414,7 +414,7 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
 
     set label $top.$option
     label $label -text $text -anchor w -width 11 -fg black \
-    	-relief $vTcl(propmgr,relief)
+    	-relief $vTcl(pr,proprelief)
 
     # @@change by Christian Gavin 3/10/2000
     # added font browser for individual properties
@@ -593,13 +593,13 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
     ## If they click the label, select the focus control.
     bind $label <Button-1> "focus $focusControl"
     bind $label <Enter> "
-	if {\[vTcl:streq \[$label cget -relief] $vTcl(propmgr,relief)]} {
+	if {\[vTcl:streq \[$label cget -relief] $vTcl(pr,proprelief)]} {
 	    $label configure -relief raised
 	}
     "
     bind $label <Leave> "
 	if {\[vTcl:streq \[$label cget -relief] raised]} {
-	    $label configure -relief $vTcl(propmgr,relief)
+	    $label configure -relief $vTcl(pr,proprelief)
 	}
     "
 
@@ -618,11 +618,7 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
     "
 
     bind $focusControl <FocusIn>    $focus_in_cmd
-    #TODO: the following binding should be set in vTcl:entry instead
-    #bind $focusControl <FocusIn>    "+$focusControl configure -bg white"
     bind $focusControl <FocusOut>   $focus_out_cmd
-    #TODO: the following binding should be set in vTcl:entry instead
-    #bind $focusControl <FocusOut>   "+$focusControl configure -bg $vTcl(pr,bgcolor)"
     bind $focusControl <KeyRelease> $key_release_cmd
     bind $focusControl <KeyRelease-Return> $config_cmd
     bind $focusControl <Key-Up>     "vTcl:propmgr:focusPrev $label"
@@ -737,7 +733,7 @@ proc vTcl:propmgr:select_attr {top opt} {
 proc vTcl:propmgr:deselect_attr {} {
     global vTcl
     if {![info exists vTcl(propmgr,lastAttr)]} { return }
-    [join $vTcl(propmgr,lastAttr) .] configure -relief $vTcl(propmgr,relief)
+    [join $vTcl(propmgr,lastAttr) .] configure -relief $vTcl(pr,proprelief)
     unset vTcl(propmgr,lastAttr)
 }
 

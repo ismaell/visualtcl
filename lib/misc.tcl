@@ -1208,7 +1208,23 @@ proc vTcl:streq {s1 s2} {
 
 proc vTcl:entry {w args} {
     eval entry $w $args
-    bind $w <Control-Key-u> "$w delete 0 end"
+
+    global vTcl
+
+    # shall we add some default bindings ?
+    if {[bind _Entry] == ""} {
+
+        # only if background color and highlight color are different
+        if {$vTcl(pr,entrybgcolor) != $vTcl(pr,entryactivecolor)} {
+            bind _Entry <FocusIn>  "%W configure -bg $vTcl(pr,entryactivecolor)"
+            bind _Entry <FocusOut> "%W configure -bg $vTcl(pr,entrybgcolor)"
+        }
+
+        # this one is always defined
+        bind _Entry <Control-Key-u> "%W delete 0 end"
+    }
+
+    bindtags $w "[bindtags $w] _Entry"
 }
 
 proc vTcl:read_file {file} {
