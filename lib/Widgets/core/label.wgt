@@ -35,12 +35,16 @@ DefaultValues   -activebackground -activeforeground -background \
 ClassOption     -_tooltip
 
 Function        "Set Text"  vTcl::widgets::core::label::setText
+Function        "Set Multiline Text"  vTcl::widgets::core::label::setMultilineText
 
 namespace eval vTcl::widgets::core::label {
 
     proc setText {} {
-        global vTcl
-        vTcl:set_label $vTcl(w,widget)
+        vTcl:set_label $::vTcl(w,widget)
+    }
+
+    proc setMultilineText {} {
+        vTcl:set_text $::vTcl(w,widget)
     }
 
     proc getWidgetTreeLabel {target} {
@@ -54,3 +58,4 @@ namespace eval vTcl::widgets::core::label {
 	}
     }
 }
+
