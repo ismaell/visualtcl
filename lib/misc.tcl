@@ -112,24 +112,31 @@ proc vTcl:clean_pairs {list {indent 8}} {
             # special case to handle font keys
 
 	    set noencase 0
-	    
+
 	    if {[info exists vTcl(option,noencase,$last)]} {
-	        
+
 	        if [string match *font* $last] {
-	       	
+
 	       		if [string match {\[*\]} $i] {
 	       			set noencase 1
 	       		}
-	       		
+
 		} else {
-			set noencase 1
+			if [info exists vTcl(option,noencasewhen,$last)] {
+
+				set noencase [$vTcl(option,noencasewhen,$last) $i]
+				# vTcl:puts "noencase :$noencase, $i"
+			} else {
+
+				set noencase 1
+			}
 		}
 	    }
-	    
+
             if {$noencase} {
-            	
+
             	    set i "$last $i "
-            	
+
             } else {
 	            switch $vTcl(pr,encase) {
  	               list {
@@ -143,7 +150,7 @@ proc vTcl:clean_pairs {list {indent 8}} {
          	       }
          	   }
             }
-            
+
             # @@end_change
             set last ""
             set len [string length $i]
@@ -310,17 +317,17 @@ proc vTcl:cmp_sys_menu {} {
 
 proc vTcl:get_children {target} {
     global vTcl
-    
+
     # @@change by Christian Gavin 3/7/2000
     # mega-widgets children should not be copied
- 
+
     foreach megawidget $vTcl(megaWidget) {
 
 	    if [string match $megawidget [vTcl:get_class $target]] {
   	  	return ""
 	    }
     }
-    
+
     # @@end_change
 
     set r ""
@@ -428,35 +435,35 @@ proc vTcl:dialog {mesg {options Ok} {root 0}} {
 ##############################################################################
 
 proc vTcl:dialog_wait {win varName {nopos 0}} {
-	
+
 	vTcl:dialog_safeguard $win
-	
+
 	if {$nopos==0} {
-	
+
 		set x [expr [winfo rootx .] + 50]
 		set y [expr [winfo rooty .] + 50]
-	
+
 		wm geometry $win "+$x+$y"
 		wm deiconify $win
 	}
-	
+
 	grab set $win
 	vwait $varName
 	grab release $win
-	
+
 	wm withdraw $win
 }
 
 bind vTcl:modalDialog <ButtonPress> {
-	
+
 	wm deiconify %W
 	raise %W
 }
 
 proc vTcl:dialog_safeguard {win} {
-	
+
 	if {[lsearch [bindtags $win] vTcl:modalDialog] < 0} {
-		
+
 		bindtags $win [linsert [bindtags $win] 0 modalDialog]
 	}
 }
@@ -473,7 +480,7 @@ proc vTcl:forAllMatches {w tags callback} {
 	scan [$w index end] %d numLines
 
 	for {set i 1} {$i <= $numLines} {incr i} {
-              
+
 		# get the line only once
 		set currentLine [$w get $i.0 $i.end]
 
@@ -482,35 +489,35 @@ proc vTcl:forAllMatches {w tags callback} {
 
                         $w mark set first $i.0
                         $w mark set last "$i.end"
-                             
+
 		        $callback $w vTcl:comment
 		        continue
 		}
 
                 foreach tag $tags {
-						
+
 			set lastMark 0
 			$w mark set last $i.0
-			
+
 			while {[regexp -indices $vTcl(syntax,$tag) \
 			       [string range $currentLine $lastMark end] indices]} {
-		       	
+
 		 	     $w mark set first "last + [lindex $indices 0] chars"
-		           
+
 		   	     $w mark set last "last + 1 chars + [lindex $indices 1] chars"
-		           
+
 		             set lastMark [expr $lastMark + 1 + [lindex $indices 1]]
-		             
+
 		             if [info exists vTcl(syntax,$tag,validate)] {
-		             	
+
 		             	 if {! [$vTcl(syntax,$tag,validate) [$w get first last] ] } {
-		             	      	
+
 		             	      	continue
 		             	 }
 		             }
-		             
-		     	     $callback $w $tag 
-			}			
+
+		     	     $callback $w $tag
+			}
 		}
 	}
 }
@@ -523,23 +530,23 @@ proc vTcl:syntax_item {w tag} {
 
 	# already a tag there ?
 	if { [$w tag names first] != ""} return
-	
+
 	$w tag add $tag first last
 }
 
 proc vTcl:syntax_color {w} {
-	
+
 	global vTcl
 
 	set patterns ""
 
 	foreach tag $vTcl(syntax,tags) {
 
-		$w tag remove $tag 0.0 end	
+		$w tag remove $tag 0.0 end
 	}
-	
+
 	vTcl:forAllMatches $w $vTcl(syntax,tags) vTcl:syntax_item
-	
+
 	foreach tag $vTcl(syntax,tags) {
 
 		eval $w tag configure $tag $vTcl(syntax,$tag,configure)
@@ -562,11 +569,11 @@ proc vTcl:syntax_color {w} {
 proc vTcl:prepare_pulldown {base xl yl} {
 
     global tcl_platform
-    
+
     set size $xl
     set size [append size x]
     set size [append size $yl]
-    
+
     if {$tcl_platform(platform)=="windows"} {
 
         wm geometry $base $size+1600+1200
@@ -589,7 +596,7 @@ proc vTcl:prepare_pulldown {base xl yl} {
 proc vTcl:display_pulldown {base xl yl} {
 
     global tcl_platform
-    
+
     wm withdraw $base
 
     wm overrideredirect $base 1
@@ -600,7 +607,7 @@ proc vTcl:display_pulldown {base xl yl} {
     set ym [winfo pointery $base]
 
     vTcl:log "mouse=$xm,$ym"
-    
+
     set x0 [expr $xm - $xl ]
     set y0 $ym
 

@@ -41,7 +41,7 @@ proc vTcl:widget:lib:lib_core {args} {
             vTcl:toolbar_add $i $i ctl_$i ""
         }
     }
-    
+
     lappend vTcl(w,libsnames) "Tcl/Tk Core Widgets Library"
 }
 
@@ -68,7 +68,7 @@ set vTcl(toplevel,insert)     ""
 #
 lappend vTcl(classes) Button Canvas Checkbutton Entry Frame Label
 lappend vTcl(classes) Listbox Menu Menubutton Message Radiobutton
-lappend vTcl(classes) Scale Scrollbar Text Toplevel 
+lappend vTcl(classes) Scale Scrollbar Text Toplevel
 
 foreach c {Button Canvas Checkbutton Entry Frame Label
            Listbox Menu Menubutton Message Radiobutton
@@ -104,9 +104,9 @@ proc vTcl:widget:text:inscmd {target} {
 proc vTcl:widget:toplevel:inscmd {target} {
     global vTcl
     return "
-        wm protocol $target WM_DELETE_WINDOW {vTcl:hide_top $target} 
+        wm protocol $target WM_DELETE_WINDOW {vTcl:hide_top $target}
         if {$vTcl(pr,winfocus) == 1} {
-            wm protocol $target WM_TAKE_FOCUS {vTcl:wm_take_focus $target} 
+            wm protocol $target WM_TAKE_FOCUS {vTcl:wm_take_focus $target}
         }
         wm title $target \"New Toplevel $vTcl(newtops)\"
         incr vTcl(newtops)
@@ -454,27 +454,27 @@ proc vTcl:edit_menu {target} {
     wm deiconify $base
     wm title $base "Editing Menu"
     frame $base.fra16 \
-        -borderwidth 2 -height 30 -relief groove -width 30 
+        -borderwidth 2 -height 30 -relief groove -width 30
     pack $base.fra16 \
         -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 2 -pady 2 \
-        -side top 
+        -side top
     label $base.fra16.lab20 \
         -anchor w  \
-        -relief groove -text Menu -width 7 
+        -relief groove -text Menu -width 7
     pack $base.fra16.lab20 \
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 2 -pady 2 \
-        -side left 
+        -side left
     entry $base.fra16.ent21 \
         -highlightthickness 0 -textvariable vTcl(menu,$target,name) \
-        -width 14 
+        -width 14
     pack $base.fra16.ent21 \
         -anchor center -expand 1 -fill x -ipadx 0 -ipady 0 -padx 2 -pady 2 \
-        -side left 
+        -side left
     frame $base.fra3 \
-        -borderwidth 1 -height 30 -relief sunken -width 30 
+        -borderwidth 1 -height 30 -relief sunken -width 30
     pack $base.fra3 \
         -anchor center -expand 0 -fill both -ipadx 0 -ipady 0 -padx 2 -pady 2 \
-        -side top 
+        -side top
     checkbutton $base.fra3.che4 \
         -borderwidth 1 \
         -command "
@@ -484,79 +484,79 @@ proc vTcl:edit_menu {target} {
         -variable vTcl(menu,$target,tear) -selectcolor #ed7291
     pack $base.fra3.che4 \
         -anchor center -expand 0 -fill both -ipadx 0 -ipady 0 -padx 2 -pady 2 \
-        -side top 
+        -side top
     frame $base.fra17 \
-        -borderwidth 1 -height 70 -relief sunken -width 30 
+        -borderwidth 1 -height 70 -relief sunken -width 30
     pack $base.fra17 \
         -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 2 -pady 2 \
-        -side top 
+        -side top
     label $base.fra17.lab11 \
         -anchor w  \
-        -relief groove -text {Entry Type} 
+        -relief groove -text {Entry Type}
     place $base.fra17.lab11 \
         -x 5 -relx 0 -y 5 -rely 0 -width 75 -height 20 -anchor nw \
-        -bordermode ignore 
+        -bordermode ignore
     label $base.fra17.lab12 \
         -anchor w  \
-        -relief groove -text Accelerator 
+        -relief groove -text Accelerator
     place $base.fra17.lab12 \
         -x 5 -relx 0 -y 45 -rely 0 -width 75 -height 20 -anchor nw \
-        -bordermode ignore 
+        -bordermode ignore
     label $base.fra17.lab13 \
         -anchor w  \
-        -relief groove -text {Entry Label} 
+        -relief groove -text {Entry Label}
     place $base.fra17.lab13 \
         -x 5 -relx 0 -y 25 -rely 0 -width 75 -height 20 -anchor nw \
-        -bordermode ignore 
+        -bordermode ignore
     entry $base.fra17.ent15 \
-        -highlightthickness 0 -textvariable vTcl(menu,$target,label) 
+        -highlightthickness 0 -textvariable vTcl(menu,$target,label)
     place $base.fra17.ent15 \
         -x 85 -relx 0 -y 25 -rely 0 -width 161 -height 19 -anchor nw \
-        -bordermode ignore 
+        -bordermode ignore
     entry $base.fra17.ent16 \
-        -highlightthickness 0 -textvariable vTcl(menu,$target,accel) 
+        -highlightthickness 0 -textvariable vTcl(menu,$target,accel)
     bind $base.fra17.ent16 <Return> "
         vTcl:menu_item_add $base $target
     "
     place $base.fra17.ent16 \
         -x 85 -relx 0 -y 45 -rely 0 -width 161 -height 19 -anchor nw \
-        -bordermode ignore 
+        -bordermode ignore
     menubutton $base.fra17.men17 \
         -borderwidth 1 \
         -menu $base.fra17.men17.m -padx 5 -pady 4 -relief raised \
-        -textvariable vTcl(menu,$target,type) 
+        -textvariable vTcl(menu,$target,type)
     place $base.fra17.men17 \
         -x 85 -relx 0 -y 5 -rely 0 -width 160 -height 19 -anchor nw \
-        -bordermode ignore 
+        -bordermode ignore
     menu $base.fra17.men17.m \
-         -tearoff 0 
+         -tearoff 0
     $base.fra17.men17.m add command \
         -command "set vTcl(menu,$target,type) cascade" \
-        -label cascade 
+        -label cascade
     $base.fra17.men17.m add command \
         -command "set vTcl(menu,$target,type) command" \
-        -label command 
+        -label command
     $base.fra17.men17.m add command \
         -command "set vTcl(menu,$target,type) checkbutton" \
-        -label checkbutton 
+        -label checkbutton
     $base.fra17.men17.m add command \
         -command "set vTcl(menu,$target,type) radiobutton" \
-        -label radiobutton 
+        -label radiobutton
     $base.fra17.men17.m add command \
         -command "set vTcl(menu,$target,type) separator" \
-        -label separator 
+        -label separator
     frame $base.fra19 \
-        -height 30 -width 30 
+        -height 30 -width 30
     pack $base.fra19 \
         -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 2 -pady 2 \
-        -side top 
+        -side top
     listbox $base.fra19.lis35 \
          -height 5 \
         -highlightthickness 0 -yscrollcommand "$base.fra19.scr36 set" \
         -exportselection 0
     pack $base.fra19.lis35 \
         -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 0 -pady 0 \
-        -side left 
+        -side left
     vTcl:set_balloon $base.fra19.lis35 "Double-Click to edit"
     bind $base.fra19.lis35 <Double-Button-1> "
         vTcl:menu_item_act $base $target
@@ -572,39 +572,39 @@ proc vTcl:edit_menu {target} {
     "
     scrollbar $base.fra19.scr36 \
         -borderwidth 1 -command "$base.fra19.lis35 yview" \
-        -highlightthickness 0 -width 10 
+        -highlightthickness 0 -width 10
     pack $base.fra19.scr36 \
         -anchor center -expand 0 -fill y -ipadx 0 -ipady 0 -padx 0 -pady 0 \
-        -side right 
+        -side right
     frame $base.fra2 \
-        -borderwidth 1 -height 30 -relief sunken -width 30 
+        -borderwidth 1 -height 30 -relief sunken -width 30
     pack $base.fra2 \
         -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 2 -pady 2 \
-        -side top 
+        -side top
     button $base.fra2.01 \
         -command "vTcl:menu_item_add $base $target" \
-        -highlightthickness 0 -padx 11 -pady 3 -text Add -width 4 
+        -highlightthickness 0 -padx 11 -pady 3 -text Add -width 4
     pack $base.fra2.01 \
         -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 2 -pady 2 \
-        -side left 
+        -side left
     button $base.fra2.02 \
         -command "vTcl:menu_item_update $base $target" \
-        -highlightthickness 0 -padx 11 -pady 3 -text Update -width 4 
+        -highlightthickness 0 -padx 11 -pady 3 -text Update -width 4
     pack $base.fra2.02 \
         -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 2 -pady 2 \
-        -side left 
+        -side left
     button $base.fra2.03 \
         -command "vTcl:menu_item_delete $base $target" \
-        -highlightthickness 0 -padx 11 -pady 3 -text Delete -width 4 
+        -highlightthickness 0 -padx 11 -pady 3 -text Delete -width 4
     pack $base.fra2.03 \
         -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 2 -pady 2 \
-        -side left 
+        -side left
     button $base.fra2.04 \
         -command "destroy $base" \
-        -highlightthickness 0 -padx 11 -pady 3 -text Done -width 4 
+        -highlightthickness 0 -padx 11 -pady 3 -text Done -width 4
     pack $base.fra2.04 \
         -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 2 -pady 2 \
-        -side left 
+        -side left
     vTcl:menu_setup $base $target
 }
 
@@ -616,7 +616,7 @@ set vTcl(Label,get_widget_tree_label)       vtcl:core:get_widget_tree_label
 proc vtcl:core:get_widget_tree_label {class {target ""}} {
 
 	set t ""
-	
+
 	switch [string tolower $class] {
 
 	   label {
@@ -628,37 +628,37 @@ proc vtcl:core:get_widget_tree_label {class {target ""}} {
                     } else {
                           set t "LAB: $ttt1 var=$ttt2"
                     }
-                                
+
            }
-                                		
+
            radiobutton {
-  
+
   	            set ttt1 [$target cget -text]
                     set ttt2 [$target cget -variable]
                     set ttt3 [$target cget -value]
-   
+
                     if {$ttt2 == ""} {
                           set t "RB: $ttt1"
                     } else {
                           set t "RB: $ttt1 var=$ttt2\(val=$ttt3\)"
                     }
-                                
+
            }
- 
+
            checkbutton {
- 
+
                     set ttt1 [$target cget -text]
                     set ttt2 [$target cget -variable]
                     set ttt3 [$target cget -onvalue]
                     set ttt4 [$target cget -offvalue]
-  
+
                     if {$ttt2 == ""} {
                            set t "CB: $ttt1"
                     } else {
                            set t "CB: $ttt1 var=$ttt2\(on=$ttt3,off=$ttt4\)"
                     }
            }
-           
+
 	   button {
                     set ttt1 [$target cget -text]
                     set ttt2 [$target cget -textvariable]
@@ -668,11 +668,78 @@ proc vtcl:core:get_widget_tree_label {class {target ""}} {
                     } else {
                            set t "BUT: $ttt1 var=$ttt2"
                     }
-                                
+
            }
-           
+
            default {}
         }
 
-	return $t    
+	return $t
+}
+
+# translation for options when saving files
+
+set vTcl(option,translate,-xscrollcommand) vTcl:core:scrolltranslate
+set vTcl(option,noencase,-xscrollcommand) 1
+
+set vTcl(option,translate,-yscrollcommand) vTcl:core:scrolltranslate
+set vTcl(option,noencase,-yscrollcommand) 1
+
+set vTcl(option,noencasewhen,-xscrollcommand) vTcl:core:noencasewhen
+set vTcl(option,noencasewhen,-yscrollcommand) vTcl:core:noencasewhen
+
+set vTcl(option,translate,-command) vTcl:core:scrollviewtranslate
+set vTcl(option,noencase,-command) 1
+
+set vTcl(option,noencasewhen,-command) vTcl:core:noencasewhenscroll
+
+proc vTcl:core:scrolltranslate {value} {
+
+	global vTcl
+
+	if [regexp {((\.[a-zA-Z0-9]+)+) set} $value matchAll path] {
+
+               	set path [vTcl:base_name $path]
+
+		return "\"$path set\""
+	}
+
+      	return $value
+}
+
+proc vTcl:core:scrollviewtranslate {value} {
+
+	global vTcl
+
+	if [regexp {((\.[a-zA-Z0-9]+)+) xview} $value matchAll path] {
+
+               	set path [vTcl:base_name $path]
+
+		return "\"$path xview\""
+	} else {
+
+		if [regexp {((\.[a-zA-Z0-9]+)+) yview} $value matchAll path] {
+
+        	       	set path [vTcl:base_name $path]
+
+			return "\"$path yview\""
+		}
+	}
+
+      	return $value
+}
+
+proc vTcl:core:noencasewhen {value} {
+
+	return [string match {"$base*} $value]
+}
+
+proc vTcl:core:noencasewhenscroll {value} {
+
+	if { [string match {"$base*xview"} $value] ||
+             [string match {"$base*yview"} $value] } {
+		return 1
+	} else {
+		return 0
+	}
 }
