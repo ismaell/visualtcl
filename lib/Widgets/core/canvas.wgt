@@ -3,3 +3,4 @@ Lib		core
 
 Icon		icon_canvas.gif
 DefaultOptions	-bd 2 -relief ridge
+DefaultValues   -background -highlightbackground -highlightcolor

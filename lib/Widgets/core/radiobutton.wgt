@@ -3,6 +3,8 @@ Lib		core
 
 Icon		icon_radiobutton.gif
 DefaultOptions	-text radio
+DefaultValues   -activebackground -activeforeground -activeborderwidth \
+                -background -foreground -highlightbackground -highlightcolor
 DoubleClickCmd	vTcl:set_command
 TreeLabel	@vTcl:core:get_widget_tree_label
 

@@ -7,6 +7,7 @@ DoubleClickCmd	vTcl:widget:toplevel:dblclkcmd
 TreeLabel	@vTcl:core:get_widget_tree_label
 InsertCmd	vTcl:widget:toplevel:inscmd
 WidgetProc	vTcl:Toplevel:WidgetProc
+DefaultValues   -background -highlightbackground -highlightcolor
 
 Function        "Edit Menu..."              vTcl:widget:toplevel:edit_menu
 Function	"Set New Toplevel Geometry" vTcl:widget:toplevel:set_new_geom

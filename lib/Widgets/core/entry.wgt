@@ -5,6 +5,8 @@ Icon		icon_entry.gif
 DoubleClickCmd	vTcl:set_textvar
 InsertCmd	vTcl:widget:entry:inscmd
 TreeLabel	@vTcl:core:get_widget_tree_label
+DefaultValues   -background -foreground -highlightbackground \
+                -highlightcolor -selectbackground -selectforeground
 
 Function        "Set Text Variable" vTcl:widget:entry:SetTextVariable
 

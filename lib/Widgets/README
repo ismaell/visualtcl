@@ -47,8 +47,13 @@ Icon		<icon name>
 Balloon		<text>
 		Text of the toolbar balloon
 
-DefaultOptions	<option>..<option>..
+DefaultOptions	<option> <value> [<option> <value>]*
 		Options to <Command> as the widget is created.
+
+DefaultValues   <option> <option>
+                Specifies that the given options will take their default
+                value instead of the value given by the option database
+                at the time the widget is created
 
 DumpCmd		<proc>
 		Proc to dump the widget when saving.
@@ -122,5 +127,6 @@ ResizeCmd	<proc>
 		(default is vTcl:adjust_widget_size)
 
 AdditionalClasses <class> <class> ...
-        Lists classes of children that vTcl should know of (eg.
-        Notebook, Tabset, Page, ... for Iwidgets)
+                Lists classes of children that vTcl should know of (eg.
+                Notebook, Tabset, Page, ... for Iwidgets)
+

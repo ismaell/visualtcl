@@ -4,6 +4,9 @@ Lib		core
 Icon		icon_listbox.gif
 DoubleClickCmd	vTcl:set_list
 InsertCmd	vTcl:widget:listbox:inscmd
+DefaultValues   -background -foreground \
+                -highlightbackground -highlightcolor \
+                -selectbackground -selectforeground
 
 proc vTcl:widget:listbox:inscmd {target} {
     return "$target insert end listbox"
