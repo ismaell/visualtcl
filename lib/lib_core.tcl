@@ -364,7 +364,8 @@ proc vTcl:core:noencasecommandwhen {value} {
 
 	if { [string match {"$base*?view"} $value] ||
              [string match {"$site*?view"} $value] ||
-             [string match {\[list vTcl:DoCmdOption $base*} $value] } {
+             [string match {\[list vTcl:DoCmdOption $base*} $value] ||
+	     [string match {\[list vTcl:DoCmdOption $site*} $value] } {
 		return 1
 	} else {
 		return 0

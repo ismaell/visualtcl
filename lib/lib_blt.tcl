@@ -65,7 +65,7 @@ namespace eval vTcl::widgets::blt {
         global vTcl basenames classes
         set output ""
         set geometry ""
-        set widget_tree [vTcl:widget_tree $subwidget]
+        set widget_tree [vTcl:get_children $subwidget]
         set length      [string length $subwidget]
         set basenames($subwidget) $sitebasename
 
@@ -79,12 +79,12 @@ namespace eval vTcl::widgets::blt {
                 set class [vTcl:get_class $i]
                 append output [$classes($class,dumpCmd) $i $basename]
                 append geometry [vTcl:dump_widget_geom $i $basename]
-                unset basenames($i)
+                catch {unset basenames($i)}
             }
         }
         append output $geometry
 
-        unset basenames($subwidget)
+        catch {unset basenames($subwidget)}
         return $output
     }
 }

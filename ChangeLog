@@ -1,6 +1,15 @@
 ChangeLog for Visual Tcl:
 
 1.6.0a2 ->
+    o Aliases are dumped alongside each widget.
+    o New way of dumping widgets: frames recursively dump themselves,
+      same for menus. Goals:
+      - widget paths are relative to their parent
+      - this makes the projet file smaller
+      - compounds will be managed using dumping code => bye bye complicated
+      - easier copy/paste of code from vTcl to outside world (a frame can
+        be now copied/pasted as one block)
+      compound structures with multilevel lists
     o Applied patch from Eric Taylor to allow setting an option for all
       widgets of the same class in the parent widget.
     o Added panedwindow widget for Tk 8.4. If Tk 8.4 is present, paned window

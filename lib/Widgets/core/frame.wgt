@@ -33,6 +33,7 @@ TreeLabel	Frame
 DeleteCmd       ::vTcl::widgets::core::frame::deleteCmd
 SelectCmd       ::vTcl::widgets::core::frame::selectCmd
 InsertChildCmd  ::vTcl::widgets::core::frame::insertChildCmd
+DumpCmd         ::vTcl::widgets::core::frame::dumpCmd
 Insertable
 
 NewOption -class     "class"      type
@@ -41,6 +42,35 @@ NewOption -container "container"  boolean
 NewOption -visual    "visual"     type
 
 namespace eval ::vTcl::widgets::core::frame {
+
+    proc dumpCmd {target basename} {
+        global vTcl basenames classes
+        set result [vTcl:dump_widget_opt $target $basename]
+
+	set children [vTcl:get_children $target]
+	if {$children == ""} {
+	    ## the frame is empty, don't bother
+	    return $result
+	}
+
+        append result "$::vTcl(tab)"
+        set sitevariable "site_[llength [split $target .]]_0"
+        append result "set $sitevariable [vTcl:base_name $target]\n"
+	set basenames($target) \$$sitevariable
+        set geometry ""
+
+	foreach i $children {
+            set basename [vTcl:base_name $i]
+            set basenames($i) $basename
+            set class [vTcl:get_class $i]
+            append result [$classes($class,dumpCmd) $i $basename]
+            append geometry [vTcl:dump_widget_geom $i $basename]
+            catch {unset basenames($i)}
+        }
+	catch {unset basenames($target)}
+        append result $geometry
+        return $result
+    }
 
     proc containing_megawidget {target} {
         global classes

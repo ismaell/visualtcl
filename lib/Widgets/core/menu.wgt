@@ -155,7 +155,7 @@ namespace eval vTcl::widgets::core::menu {
         if {[string first .# $target] >= 0} {
             return ""
         }
-        global vTcl
+        global vTcl basenames
         set entries [$target index end]
         if {$entries == "none"} {return}
 
@@ -171,6 +171,23 @@ namespace eval vTcl::widgets::core::menu {
                 separator {
                     append result "$vTcl(tab)$basename add separator\n"
                 }
+		cascade {
+                    ## to allow option translation
+                    set pairs [vTcl:get_subopts_special $conf $target]
+                    append result "$vTcl(tab)$basename add $type \\\n"
+                    append result "[vTcl:clean_pairs $pairs]\n"
+
+	            set sitevariable "site_[llength [split $target .]]_0"
+		    append result "$vTcl(tab)"
+                    append result "set $sitevariable [vTcl:base_name $target]\n"
+	            set basenames($target) \$$sitevariable
+
+		    ## dump menu recursively
+		    set childMenu [$target entrycget $index -menu]
+		    set childBasename [vTcl:base_name $childMenu]
+		    append result [dumpCmd $childMenu $childBasename]
+                    catch {unset basenames($target)}
+		}
                 default {
                     # to allow option translation
                     set pairs [vTcl:get_subopts_special $conf $target]

@@ -73,6 +73,7 @@ proc vTcl:widget:lib:lib_itcl {args} {
 	    option add *Scrolledhtml.sbWidth    10
 	    option add *Scrolledtext.sbWidth    10
 	    option add *Scrolledlistbox.sbWidth 10
+	    option add *Scrolledframe.sbWidth   10
 	    option add *Hierarchy.sbWidth       10
             option add *Pushbutton.padY         2
         }
@@ -139,6 +140,7 @@ proc vTcl:lib_itcl:setup {} {
             option add *Scrolledhtml.sbWidth    10
             option add *Scrolledtext.sbWidth    10
             option add *Scrolledlistbox.sbWidth 10
+	    option add *Scrolledframe.sbWidth   10
             option add *Hierarchy.sbWidth       10
             option add *Pushbutton.padY         2
         }
@@ -168,7 +170,7 @@ proc vTcl:lib_itcl:dump_subwidgets {subwidget {sitebasename {}}} {
     global vTcl basenames classes
     set output ""
     set geometry ""
-    set widget_tree [vTcl:widget_tree $subwidget]
+    set widget_tree [vTcl:get_children $subwidget]
     set length      [string length $subwidget]
     set basenames($subwidget) $sitebasename
 
@@ -182,12 +184,12 @@ proc vTcl:lib_itcl:dump_subwidgets {subwidget {sitebasename {}}} {
             set class [vTcl:get_class $i]
             append output [$classes($class,dumpCmd) $i $basename]
             append geometry [vTcl:dump_widget_geom $i $basename]
-            unset basenames($i)
+            catch {unset basenames($i)}
         }
     }
     append output $geometry
 
-    unset basenames($subwidget)
+    catch {unset basenames($subwidget)}
     return $output
 }
 

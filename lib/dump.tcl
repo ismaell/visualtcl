@@ -398,8 +398,30 @@ proc vTcl:dump_widget_opt {target basename} {
         return ""
     }
 
+    append result [vTcl:dump_widget_alias $target $basename]
     append result [vTcl:dump_widget_bind $target $basename]
     return $result
+}
+
+proc vTcl:dump_widget_alias {target basename} {
+    global vTcl widget classes
+    if {![info exists widget(rev,$target)]} {
+        return ""
+    }
+    set alias $widget(rev,$target)
+    set top_or_alias [vTcl:get_top_level_or_alias $target]
+
+    if {[winfo toplevel $target] == $target} {
+        set top_or_alias ""
+    }
+
+    set c [vTcl:get_class $target]
+    append output $vTcl(tab)
+    append output "vTcl:DefineAlias \"[vTcl:base_name $target]\" \"$alias\""
+    append output " $classes($c,widgetProc)"
+    append output " \"[vTcl:base_name $top_or_alias]\" $vTcl(pr,cmdalias)\n"
+
+    return $output
 }
 
 proc vTcl:dump_widget_geom {target basename} {
@@ -677,9 +699,13 @@ proc vTcl:dump:widgets {target} {
     global vTcl classes
 
     set output ""
-    append output "[vTcl:dump:aliases $target]"
+    # append output "[vTcl:dump:aliases $target]"
 
+    # for dumping widgets recursively using relative paths
+    set classes(Frame,dumpChildren) 0
+    set classes(Menu,dumpChildren) 0
     set tree [vTcl:widget_tree $target]
+
     append output $vTcl(head,proc,widgets)
     foreach i $tree {
         set basename [vTcl:base_name $i]
@@ -701,6 +727,11 @@ proc vTcl:dump:widgets {target} {
         set basename [vTcl:base_name $i]
         append output [vTcl:dump_widget_geom $i $basename]
     }
+
+    # end of dumping widgets with relative paths
+    set classes(Frame,dumpChildren) 1
+    set classes(Menu,dumpChildren) 1
+
     return $output
 }
 
