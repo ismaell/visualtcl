@@ -32,13 +32,13 @@
 #
 
 proc vTcl:save_compounds {} {
-    global vTcl
     set file [vTcl:get_file save "Save Compound Library"]
     if {$file == ""} {return}
     set f [open $file w]
     set index 0
     set all [vTcl::compounds::enumerateCompounds user]
     set num [llength $all]
+    puts $f [subst $::vTcl(head,compounds)]
     foreach i $all {
         puts $f [vTcl:dump_namespace vTcl::compounds::user::$i]
         incr index
@@ -495,6 +495,14 @@ namespace eval ::vTcl::compounds {
             append output "\n"
         }
 
+        ## a list of vTcl libraries which are used by the compound
+        set libraries [::vTcl::widgets::usedLibraries $target]
+        append output "    set libraries \{\n"
+        foreach library $libraries {
+            append output "    $library\n"
+        }
+        append output "\}\n\n"
+
         ## code to actually create the compound
         append output "proc compoundCmd \{target\} \{\n"
         if {$initCmd != ""} {
@@ -739,4 +747,5 @@ namespace eval ::vTcl::compounds {
         namespace delete $spc
     }
 }
+
 

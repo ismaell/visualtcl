@@ -1484,5 +1484,47 @@ namespace eval vTcl::widgets {
         set options($optionName) $value
         set save($optionName) 1
     }
+
+    ## actionProc takes as parameter the widget path and an additional param
+    ##
+    ## returnVal array is set with as index the widget path and as value the
+    ## value returned by actionProc
+    ##
+    ## for example:
+    ##    returnVal(.)  core
+    ##    returnVal(.top32) core
+    ##    returnVal(.top32.arrow28) bwidget
+    ##    ...
+    proc iterateCompleteWidgetTree {root actionProc actionParam returnVal} {
+        upvar $returnVal _returnVal
+        set children [vTcl:complete_widget_tree $root 0]
+        foreach child $children {
+            set _returnVal($child) [$actionProc $child $actionParam]
+        }
+    }
+
+    proc getLibrary {w arg} {
+        set c [vTcl:get_class $w]
+        return $::classes($c,lib)
+    }
+
+    ## return the list of libraries used by a compound
+    proc usedLibraries {root} {
+        array set libraries {}
+        iterateCompleteWidgetTree $root getLibrary {} libraries
+
+        set result ""
+        foreach index [array names libraries] {
+            lappend result $libraries($index)
+        }
+
+        ## return a list without duplicates
+        return [lsort -unique $result]
+    }
+
+    ## return the list of libraries that have been successfully loaded
+    proc loadedLibraries {} {
+        return $::vTcl(w,libs)
+    }
 }
 

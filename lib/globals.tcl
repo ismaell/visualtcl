@@ -277,6 +277,13 @@ set vTcl(head,projfile) [string trim {
 #
 }]
 
+set vTcl(head,compounds) [string trim {
+#############################################################################
+# Visual Tcl v$::vTcl(version) Compound Library
+#
+}]
+
+
 set vTcl(head,exports) [string trim {
 #################################
 # VTCL LIBRARY PROCEDURES
@@ -343,4 +350,5 @@ proc vTcl:syntax:iscommand {command} {
 
 # special case for -in option
 set vTcl(option,noencase,-in) 1
+
 
