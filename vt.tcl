@@ -204,7 +204,7 @@ proc vTcl:setup {} {
 			handle.tcl input.tcl images.tcl loadwidg.tcl menu.tcl
 			misc.tcl name.tcl prefs.tcl proc.tcl tclet.tcl
 			toolbar.tcl tops.tcl tree.tcl var.tcl vtclib.tcl
-			widget.tcl help.tcl"
+			widget.tcl help.tcl menus.tcl"
 
     set tk_strictMotif    1
     wm withdraw .
