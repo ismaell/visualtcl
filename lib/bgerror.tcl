@@ -22,6 +22,15 @@
 
 namespace eval ::stack_trace {
 
+    # adds the :: namespace to the proc name if needed
+    proc ::stack_trace::make_unique procname {
+        if { ! [string match ::* $procname] } {
+            return ::$procname
+        } else {
+            return $procname
+        }
+    }
+
     # this procedure regularizes the stack trace returned in the error info
     #
     # normally, each level in the call stack is separated by (procedure 
@@ -185,8 +194,9 @@ namespace eval ::stack_trace {
                    [string match "(compiling body of proc*)" $context] } {
 
             regexp {"([^"]+)"} $context matchAll procname
+            set procname [::stack_trace::make_unique $procname]
 
-            if { [uplevel #0 "info proc $procname" ] != ""} {
+            if { [ info proc $procname ] != ""} {
 
                 regexp {line ([0-9]+)} $context matchAll lineno
 
@@ -271,8 +281,9 @@ namespace eval ::stack_trace {
                    [string match "(compiling body of proc*)" $context] } {
 
             regexp {"([^"]+)"} $context matchAll procname
+            set procname [::stack_trace::make_unique $procname]
 
-            if { [uplevel #0 "info proc $procname" ] != ""} {
+            if { [ info proc $procname ] != ""} {
 
                 regexp {line ([0-9]+)} $context matchAll lineno
 
@@ -384,15 +395,15 @@ namespace eval ::stack_trace {
 
         global widget
 
-        set args [uplevel #0 "info args $procname"]
-        set body [uplevel #0 "info body $procname"]
+        set args [info args $procname]
+        set body [info body $procname]
 
         return "proc $procname [list $args] \{\n$body\n\}"
     }
 
     proc {::stack_trace::get_proc_instruction} {procname lineno} {
 
-        set body [uplevel #0 "info body $procname"]
+        set body [info body $procname]
 
         return [::stack_trace::get_bloc_instruction $body $lineno]
     }
@@ -954,4 +965,5 @@ proc bgerror {error} {
         return
     }
 }
+
 
