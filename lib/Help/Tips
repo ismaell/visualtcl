@@ -84,7 +84,12 @@ to events, etc.
 
 TEST mode does not allow you to place widgets, but enables you
 to interact with them, as if you were running your application
-outside Visual Tcl.}
+outside Visual Tcl.
+
+HINT:  You can switch between modes by clicking the label on the main
+toolbar that says what mode you're currently in.  If it says "EDIT" then
+clicking it will put you in TEST mode.}
+
 
 {Widgets in Tk are characterized by their properties.
 
