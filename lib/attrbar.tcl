@@ -90,6 +90,7 @@ proc vTcl:widget_set_relief {relief} {
     if {$vTcl(w,widget) == ""} {return}
     if {[catch {$vTcl(w,widget) cget -relief}]} {return}
     $vTcl(w,widget) conf -relief $relief
+    vTcl:prop:save_opt $vTcl(w,widget) -relief vTcl(w,opt,-relief)
 }
 
 proc vTcl:widget_set_border {border} {
@@ -104,6 +105,7 @@ proc vTcl:widget_set_anchor {anchor} {
     if {$vTcl(w,widget) == ""} {return}
     if {[catch {$vTcl(w,widget) cget -anchor}]} {return}
     $vTcl(w,widget) conf -anchor $anchor
+    vTcl:prop:save_opt $vTcl(w,widget) -anchor vTcl(w,opt,-anchor)
 }
 
 proc vTcl:widget_set_pack_side {side} {

@@ -43,7 +43,7 @@
 #    }
 # }
 
-proc vTcl:set_command {target {option -command} {variable ""}} {
+proc vTcl:set_command {target {option -command} {variable vTcl(w,opt,-command)}} {
     global vTcl
     if {$target == ""} {return}
     set base ".vTcl.com_[vTcl:rename ${target}${option}]"
@@ -54,9 +54,7 @@ proc vTcl:set_command {target {option -command} {variable ""}} {
     if {$r == -1} { return }
 
     $target configure $option [string trim $r]
-    if {[lempty $variable]} {
-        set variable ::widgets::${target}::save($option)
-    }
+
     global $variable
     set $variable [string trim $r]
     vTcl:prop:save_opt $target $option $variable

@@ -340,11 +340,17 @@ proc vTcl:core:noencasewhenscroll {value} {
 
 proc vTcl:core:set_option {target option description} {
 
+    global vTcl
+
     set value [$target cget $option]
     set newvalue [vTcl:get_string $description $target $value]
 
     if {! [vTcl:streq $value $newvalue]} {
         $target configure $option $newvalue
+
+        # we better save that option, too
+        set vTcl(w,opt,$option) $newvalue
+        vTcl:prop:save_opt $target $option vTcl(w,opt,$option)
 
         # keep showing the selection in the toplevel
         # (do not destroy the selection handles)
