@@ -136,18 +136,29 @@ proc vTcl:text_window {base title target} {
         -font -Adobe-Helvetica-Medium-R-Normal-*-*-120-*-*-*-*-*-* -height 1 \
         -width 8 -xscrollcommand "$base.cpd48.01 set" \
         -yscrollcommand "$base.cpd48.02 set" 
-    button $base.but52 \
-        -text Done -command "
+
+    frame $base.butfr
+
+    button $base.butfr.but52 -image [vTcl:image:get_image ok.gif] \
+        -command "
 	    vTcl:get_text $base $base.cpd48.03
 	"
+    vTcl:set_balloon $base.butfr.but52 "Save Changes"
+
+    button $base.butfr.but53 -image [vTcl:image:get_image remove.gif] \
+    	-command "destroy $base"
+    vTcl:set_balloon $base.butfr.but53 "Discard Changes"
 
     bind $base <Key-Escape> "$base.but52 invoke"
 
     ###################
     # SETTING GEOMETRY
     ###################
-    place $base.cpd48 \
-        -x 5 -y 5 -width 262 -height 245 -anchor nw 
+    pack $base.butfr -side top -anchor e
+    pack $base.butfr.but53 -side right
+    pack $base.butfr.but52 -side right
+    pack $base.cpd48 -fill both -expand 1
+
     grid columnconf $base.cpd48 0 -weight 1
     grid rowconf $base.cpd48 0 -weight 1
     grid $base.cpd48.01 \
@@ -157,8 +168,6 @@ proc vTcl:text_window {base title target} {
     grid $base.cpd48.03 \
         -in $base.cpd48 -column 0 -row 0 -columnspan 1 -rowspan 1 \
         -sticky nesw 
-    place $base.but52 \
-        -x 100 -y 255 -anchor nw -bordermode ignore 
 
     $base.cpd48.03 insert end [$target cget -text]
     focus $base.cpd48.03

@@ -166,5 +166,3 @@ proc vTcl:command:edit_cancel {base} {
         }
     }
 }
-
-
