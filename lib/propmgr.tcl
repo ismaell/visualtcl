@@ -180,7 +180,7 @@ proc vTclWindow.vTcl.ae {args} {
     update idletasks
     vTcl:prop:recalc_canvas
 
-    vTcl:BindHelp $ae PropManager
+    bind $ae <Key-F1> ::vTcl::PropertyHelp
 
     wm deiconify $ae
 }

@@ -239,7 +239,7 @@ proc vTcl:grid_snap {xy pos} {
     }
 }
 
-proc vTcl:status {message} {
+proc vTcl:status {{message "Status"}} {
     global vTcl
     set vTcl(status) $message
     update idletasks
@@ -733,17 +733,13 @@ proc vTcl:namespace_tree {{root "::"}} {
 }
 
 proc vTcl:copy_widgetname {} {
-    global fakeClipboard vTcl
-    set fakeClipboard $vTcl(w,widget)
-    .vTcl.widgetname selection range 0 end
+    global vTcl
+    clipboard clear
+    clipboard append $vTcl(w,widget)
 }
 
-# proc error {string} {
-#   tk_messageBox -title Error -icon error -type ok -message $string
-# }
-
 proc echo {args} {
-    ::vTcl::InitTkcon
+    vTcl:show_console
     tkcon_puts $args
 }
 

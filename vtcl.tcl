@@ -388,7 +388,7 @@ proc vTclWindow.vTcl {args} {
 
     ## Create a hidden entry widget that holds the name of the current widget.
     ## We use this for copying the widget name and using it globally.
-    entry .vTcl.widgetname -textvariable vTcl(fakeClipboard)
+    entry .vTcl.widgetname -textvariable vTcl(w,widget)
 }
 
 proc vTcl:vtcl:remap {w} {

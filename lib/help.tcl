@@ -117,6 +117,19 @@ proc vTcl:BindHelp {w help} {
     bind $w <Key-F1> "vTcl:Help $help"
 }
 
+proc ::vTcl::PropertyHelp {} {
+    global vTcl
+
+    if {![info exists vTcl(propmgr,opt)]} {
+    	vTcl:Help PropManager
+	return
+    }
+    ## Remove the - from the option.
+    set opt [string range $vTcl(propmgr,opt) 1 end]
+
+    vTcl:Help [file join Properties $opt]
+}
+
 proc vTclWindow.vTcl.tip {base {container 0}} {
 
     global vTcl
@@ -310,13 +323,15 @@ namespace eval ::vTcl::news {
         if {[catch {package require http} error]} { return 0 }
 
 	set http ::http::geturl
-	if {$error < 2.3} { set http http_get }
+	if {$error < 2.0} { set http http_get }
 	return 1
     }
 
     proc ::vTcl::news::get_news {} {
 	variable http
 	variable URL
+
+	vTcl:status "Getting news..."
 
     	if {![::vTcl::news::Init]} { return }
 
@@ -327,6 +342,8 @@ namespace eval ::vTcl::news {
 	if {[lindex $state(http) 1] != 200} { return }
 
 	::vTcl::news::display_news $state(body)
+
+	vTcl:status
     }
 
     proc ::vTcl::news::display_news {string} {
@@ -417,7 +434,7 @@ namespace eval ::vTcl::news {
 		    	-background white -foreground blue -font link \
 			-cursor hand1]
 		    bind $l <Button-1> "exec [::vTcl::web_browser] $link &"
-		    $base.f.t window create $i.0 -window $l
+		    $base.f.t window create end -window $l
 		    $base.f.t insert end \n
 		}
 	    }

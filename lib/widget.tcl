@@ -383,16 +383,20 @@ proc vTcl:get_grid_stickies {sticky} {
 }
 
 proc vTcl:update_widget_info {target} {
+    global vTcl widget
 
     vTcl:log "update_widget_info $target"
 
-    global vTcl widget
     update idletasks
     set vTcl(w,widget) $target
     set vTcl(w,didmove) 0
     set vTcl(w,options) ""
     set vTcl(w,optlist) ""
     if {![winfo exists $target]} {return}
+
+    ## Select the widget name so that the middle mouse button can paste it.
+    .vTcl.widgetname selection range 0 end
+
     foreach i $vTcl(attr,winfo) {
         if {$i == "manager" && $target == "."} {
             vTcl:log "target $target manager = [winfo $i $target]"
