@@ -1,5 +1,5 @@
 Name		notebook
-Lib		BWidget
+Lib		bwidget
 
 Class		NoteBook
 Icon		icon_tabnotebook.gif
