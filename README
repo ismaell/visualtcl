@@ -42,7 +42,7 @@
        Change VTCL_HOME to the directory from step 1.
 
     o  Put vtcl in your path (/usr/local/bin or /usr/bin) or change your
-       path to include ${VTCL_HOME)
+       path to include $(VTCL_HOME)
 
     o  Make sure your DISPLAY environment variable is set and type "vtcl".
 
