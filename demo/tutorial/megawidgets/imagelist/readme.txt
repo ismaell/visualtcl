@@ -20,5 +20,25 @@ Here is how the "imagelist.tcl" file was created:
   tree, create a compound, name it "Image List" and select all
   the procedures in the ::imagelist namespace
 
-- to save the megawidget, save the compound as "imagelist.tcl"
+- to save the megawidget, select "Save Compounds" from the 
+  Compounds menu and save as "imagelist.tcl"
+
+Here is how to use the test project:
+
+- open it in vTcl
+
+- switch to TEST mode
+
+- type in a path in the entry box; this path must contain .jpg images
+
+- click on "View"
+
+- now go to the command console, and try a few commands:
+
+  ImageList1 configure
+  ImageList1 cget -directory
+  ImageList1 configure -background red
+
+NOTE: you need to have the TableList package installed in order to run
+      this sample. You can get TableList from www.nemethi.de
 

@@ -285,7 +285,7 @@ proc ::vTcl:Toplevel:WidgetProc {w args} {
     }
     set command [lindex $args 0]
     set args [lrange $args 1 end]
-    switch -- $command {
+    switch -- [string tolower $command] {
         "setvar" {
             set varname [lindex $args 0]
             set value [lindex $args 1]
@@ -295,15 +295,24 @@ proc ::vTcl:Toplevel:WidgetProc {w args} {
                 return [set ::${w}::${varname} $value]
             }
         }
-        "hide" - "Hide" - "show" - "Show" {
+        "hide" - "show" {
             Window [string tolower $command] $w
         }
-        "ShowModal" {
-            Window show $w
-            raise $w
-            grab $w
-            tkwait window $w
-            grab release $w
+        "showmodal" {
+            ## modal dialog ends when window is destroyed
+            Window show $w; raise $w
+            grab $w; tkwait window $w; grab release $w
+        }
+        "startmodal" {
+            ## ends when endmodal called
+            Window show $w; raise $w
+            set ::${w}::_modal 1
+            grab $w; tkwait variable ::${w}::_modal; grab release $w
+        }
+        "endmodal" {
+            ## ends modal dialog started with startmodal, argument is var name
+            set ::${w}::_modal 0
+            Window hide $w
         }
         default {
             uplevel $w $command $args
@@ -347,7 +356,7 @@ proc ::vTcl:toplevel {args} {
 
     uplevel #0 eval toplevel $args
     set target [lindex $args 0]
-    namespace eval ::$target {}
+    namespace eval ::$target {set _modal 0}
 }
 }
 
@@ -387,6 +396,9 @@ proc vTcl:project:info {} {
             init
             main
             ::imagelist::init
+            ::imagelist::configureCmd
+            ::imagelist::configureAllCmd
+            ::imagelist::cgetCmd
         }
         set compounds {
         }
@@ -480,19 +492,18 @@ set command [lindex $args 0]
 set args [lrange $args 1 end]
 
 if {$command == "configure"} {
-    foreach {option value} $args {
-        if {$option == "-directory"} {
-            cleanList $w.tab73
-            fillList $w.tab73 $value
-        }
-    }
+    return [eval configureCmd $w $args]
+} elseif {$command == "cget"} {
+    return [eval cgetCmd $w $args]
 }
 }
 }
 #############################################################################
 ## Procedure:  main
 
-proc ::main {argc argv} {}
+proc ::main {argc argv} {
+
+}
 #############################################################################
 ## Procedure:  ::imagelist::init
 
@@ -500,6 +511,61 @@ namespace eval ::imagelist {
 proc init {target} {
 ## this megawidget requires the Img extension for handling JPEG images
 package require Img
+
+## used to store the directory path
+namespace eval ::imagelist::${target} {set _path ""}
+}
+}
+#############################################################################
+## Procedure:  ::imagelist::configureCmd
+
+namespace eval ::imagelist {
+proc configureCmd {w args} {
+if {[llength $args] == 0} {
+    return [configureAllCmd $w]
+}
+
+foreach {option value} $args {
+    if {$option == "-directory"} {
+        cleanList $w.tab73
+        fillList $w.tab73 $value
+        namespace eval ::imagelist::${w} [list set _path $value]
+    } else {
+        ## delegate other options to tablelist
+        $w.tab73 configure $option $value
+    }
+}
+}
+}
+#############################################################################
+## Procedure:  ::imagelist::configureAllCmd
+
+namespace eval ::imagelist {
+proc configureAllCmd {w} {
+upvar ::imagelist::${w}::_path path
+
+set result ""
+set opt [list -directory directory Directory {} $path]
+lappend result $opt
+
+set opt [$w.tab73 configure]
+set result [concat $result $opt]
+
+return $result
+}
+}
+#############################################################################
+## Procedure:  ::imagelist::cgetCmd
+
+namespace eval ::imagelist {
+proc cgetCmd {w args} {
+set option $args
+if {$option == "-directory"} {
+    upvar ::imagelist::${w}::_path path
+    return $path
+} else {
+    return [$w.tab73 cget $option]
+}
 }
 }
 
@@ -522,7 +588,7 @@ proc vTclWindow. {base} {
     # CREATING WIDGETS
     ###################
     wm focusmodel $top passive
-    wm geometry $top 200x200+22+25; update
+    wm geometry $top 200x200+176+200; update
     wm maxsize $top 1284 1006
     wm minsize $top 111 1
     wm overrideredirect $top 0
@@ -589,7 +655,8 @@ proc vTclWindow.top72 {base} {
     # SETTING GEOMETRY
     ###################
     place $top.cpd73 \
-        -x 19 -y 15 -width 288 -height 228 -anchor nw 
+        -in $top -x 19 -y 15 -width 288 -height 228 -anchor nw \
+        -bordermode inside 
 
     vTcl:FireEvent $base <<Ready>>
 }
@@ -601,7 +668,11 @@ bind "_TopLevel" <<Create>> {
     if {![info exists _topcount]} {set _topcount 0}; incr _topcount
 }
 bind "_TopLevel" <<DeleteWindow>> {
-    destroy %W; if {$_topcount == 0} {exit}
+    if {[set ::%W::_modal]} {
+                vTcl:Toplevel:WidgetProc %W endmodal
+            } else {
+                destroy %W; if {$_topcount == 0} {exit}
+            }
 }
 bind "_TopLevel" <Destroy> {
     if {[winfo toplevel %W] == "%W"} {incr _topcount -1}
