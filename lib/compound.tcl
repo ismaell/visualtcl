@@ -806,5 +806,10 @@ namespace eval ::vTcl::compounds {
 
         autoPlaceCompound $type $compoundName $gmgr $gopt
     }
+
+    proc getClass {type compoundName} {
+        set spc ${type}::[list $compoundName]
+        return [vTcl:at ${spc}::class]
+    }
 }
 

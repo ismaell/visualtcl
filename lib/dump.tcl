@@ -80,12 +80,10 @@ proc vTcl:dump_proc {i {type ""}} {
 
     if {[regexp (.*):: $i matchAll context] } {
         append output "\nnamespace eval [list ${context}] \{\n"
-    }
-
-    append output "\nproc [list ::$i] \{$args\} \{$body\}\n"
-
-    if {[regexp (.*):: $i]} {
+        append output "\nproc [list [lindex [split $i ::] end]] \{$args\} \{$body\}\n"
         append output "\n\}\n"
+    } else {
+        append output "\nproc [list ::$i] \{$args\} \{$body\}\n"
     }
 
     return $output
@@ -783,6 +781,7 @@ proc vTcl:dump:sourcing_footer {varName} {
     if {![vTcl:streq [string index $var end] "\n"]} { append var "\n" }
     append var "\}\n"
 }
+
 
 
 

@@ -33,11 +33,98 @@ MegaWidget      yes
 DumpChildren    no
 InsertCmd       vTcl::widgets::core::compoundcontainer::insertCmd
 CreateCmd       vTcl::widgets::core::compoundcontainer::createCmd
+WidgetProc      vTcl::widgets::core::compoundcontainer::widgetProc
+Export          vTcl::widgets::core::compoundcontainer::cgetProc
+Export          vTcl::widgets::core::compoundcontainer::configureProc
 Export          vTcl::widgets::core::compoundcontainer::createCmd
+Export          vTcl::widgets::core::compoundcontainer::insertCompound
 TreeChildrenCmd	{vTcl::widgets::core::compoundcontainer::treeChildrenCmd
 		       vTcl::widgets::core::compoundcontainer::treeChildrenChildsite}
 
+NewOption -compoundClass  "Cmpd Class"  type
+NewOption -compoundType   "Cmpd Type"   type
+
 namespace eval vTcl::widgets::core::compoundcontainer {
+
+    proc cgetProc {w args} {
+        ## This procedure may be used free of restrictions.
+        ##    Exception added by Christian Gavin on 08/08/02.
+        ## Other packages and widget toolkits have different licensing requirements.
+        ##    Please read their license agreements for details.
+
+        upvar ::${w}::compoundType  compoundType
+        upvar ::${w}::compoundClass compoundClass
+
+        set option [lindex $args 0]
+        switch -- $option {
+            -class         {return CompoundContainer}
+            -compoundType  {return $compoundType}
+            -compoundClass {return $compoundClass}
+            default        {error "unknown option $option"}
+        }
+    }
+
+    proc configureProc {w args} {
+        ## This procedure may be used free of restrictions.
+        ##    Exception added by Christian Gavin on 08/08/02.
+        ## Other packages and widget toolkits have different licensing requirements.
+        ##    Please read their license agreements for details.
+
+        upvar ::${w}::compoundType  compoundType
+        upvar ::${w}::compoundClass compoundClass
+
+        if {[lempty $args]} {
+            return [concat [configureProc $w -class] \
+                           [configureProc $w -compoundType] \
+                           [configureProc $w -compoundClass]]
+        }
+        if {[llength $args] == 1} {
+            set option [lindex $args 0]
+            switch -- $option {
+                -class {
+                    return [list "-class class Class Frame CompoundContainer"]
+                }
+                -compoundClass {
+                    return [list "-compoundClass compoundClass CompoundClass {} [list $compoundClass]"]
+                }
+                -compoundType {
+                    return [list "-compoundType compoundType CompoundType user $compoundType"]
+                }
+                default {
+                    error "unknown option $option"
+                }
+            }
+        }
+        ## this widget is not modifiable afterward
+        error "cannot configure this widget after it is created"
+    }
+
+    proc widgetProc {w args} {
+        ## This procedure may be used free of restrictions.
+        ##    Exception added by Christian Gavin on 08/08/02.
+        ## Other packages and widget toolkits have different licensing requirements.
+        ##    Please read their license agreements for details.
+
+        if {[llength $args] == 0} {
+            ## If no arguments, returns the path the alias points to
+            return $w
+        }
+
+        set command [lindex $args 0]
+        set args [lrange $args 1 end]
+        switch $command {
+            configure {
+                return [eval configureProc $w $args]
+            }
+            cget {
+                return [eval cgetProc $w $args]
+            }
+            default {
+                ## we have renamed the default widgetProc _<widgetpath>
+                uplevel _$w $command $args
+            }
+        }
+    }
 
     proc insertCmd {target} {
         set userCmpds [lsort [vTcl::compounds::enumerateCompounds user]]
@@ -55,24 +142,42 @@ namespace eval vTcl::widgets::core::compoundcontainer {
         set compoundName [::vTcl::input::listboxSelect::select $items]
         if {$compoundName == ""} {
             return
-         }
+        }
 
+        insertCompound $target user $compoundName
+    }
+
+    proc insertCompound {target type compoundName} {
         set type user
         set spc ${type}::$compoundName
-        set cmd ""
-        append cmd "::vTcl::compounds::mergeCompoundCode $type $compoundName"
-        append cmd "; [list ::vTcl::compounds::${spc}::compoundCmd] ${target}.cmpd"
-        append cmd "; pack $target.cmpd -fill both -expand 1"
-        append cmd "; ::vTcl:setup_bind_tree $target"
-        append cmd "; ::vTcl:widget:register_all_widgets $target"
+        if {[info exists ::vTcl(running)]} {
+            ::vTcl::compounds::mergeCompoundCode $type [join $compoundName]
+        } else {
+            ::vTcl::compounds::${spc}::procsCmd
+            ::vTcl::compounds::${spc}::bindtagsCmd
+        }
+        ::vTcl::compounds::${spc}::compoundCmd ${target}.cmpd
+        pack $target.cmpd -fill both -expand 1
 
-        set do "$cmd"
-        set undo "destroy $target.cmpd"
-        vTcl:push_action $do $undo
+        ## register some info about ourself
+        namespace eval ::$target "set compoundType $type; set compoundClass $compoundName"
+
+        ## change the widget procedure
+        rename ::$target ::_$target
+        proc ::$target {command args} \
+	     "eval ::vTcl::widgets::core::compoundcontainer::widgetProc $target \$command \$args"
     }
 
     proc createCmd {path args} {
         frame $path -class CompoundContainer
+        
+        ## compound class specified ?
+        if {[llength $args] == 2 && [lindex $args 0] == "-compoundClass"} {
+            set type user
+            set compoundName [lindex $args 1]
+            insertCompound $path $type [list $compoundName]
+        }
+
         return $path
     }
 
@@ -84,4 +189,5 @@ namespace eval vTcl::widgets::core::compoundcontainer {
         return {}
     }
 }
+
 

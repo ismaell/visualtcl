@@ -36,6 +36,7 @@
 global vTcl
 namespace eval ::vTcl::balloon {}
 
+set vTcl(running)        1
 set vTcl(action)         ""
 set vTcl(action_index)   -1
 set vTcl(action_limit)   -1
@@ -342,3 +343,4 @@ proc vTcl:syntax:iscommand {command} {
 
 # special case for -in option
 set vTcl(option,noencase,-in) 1
+
