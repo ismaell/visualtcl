@@ -687,7 +687,7 @@ proc vTclWindow.vTcl.stack_trace {base} {
         -background #9900991B99FE -highlightbackground #dcdcdc \
         -highlightcolor #000000
 
-    ScrolledWindow $base.cpd18.02.cpd21.02.cpd23 -background #dcdcdc
+    ScrolledWindow $base.cpd18.02.cpd21.02.cpd23 -background #dcdcdc -auto vertical
     text $base.cpd18.02.cpd21.02.cpd23.03 \
         -background #dcdcdc \
         -foreground #000000 -height 1 -highlightbackground #ffffff \

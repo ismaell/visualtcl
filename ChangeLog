@@ -1,6 +1,7 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Editing for tixPanedWindow.
     o Fixed scrollbar bug, when right-click / Attach to widget
       wouldn't save the -command and -x/yscrollcommand options into
       the project.

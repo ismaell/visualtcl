@@ -311,7 +311,7 @@ $vTcl(tab)###################
 
 set vTcl(syntax,tags) "vTcl:dollar vTcl:bracket vTcl:command vTcl:option vTcl:parenthesis vTcl:window vTcl:string vTcl:comment"
 
-set vTcl(syntax,vTcl:parenthesis)            {\(.+\)}
+set vTcl(syntax,vTcl:parenthesis)            {\([^ ]+\)}
 set vTcl(syntax,vTcl:parenthesis,configure)  {-foreground #00A000}
 
 set vTcl(syntax,vTcl:dollar)            {\$[a-zA-Z0-9_]+}

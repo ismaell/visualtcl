@@ -2,9 +2,10 @@ Name            tixPanedWindow
 Lib             tix
 
 Class           TixPanedWindow
-Icon            icon_tixPanedWindow.gif
+Icon            @vTcl::widgets::tix::panedwindow::getIcon
 TreeLabel       Tix PanedWindow
 DefaultOptions  -orient vertical
+DefaultValues   -background
 DumpCmd         vTcl:dump:TixPanedWindow
 CompoundCmd     vTcl:compound:tixPanedWindow
 DumpChildren    no
@@ -14,14 +15,136 @@ DeleteSiteCmd   vTcl:widget:tixPanedWindow:deleteSiteCmd
 TreeChildrenCmd     "vTcl:widget:tixPanedWindow:treeChildrenCmd \
                      vTcl:widget:tixPanedWindow:treeChildrenChildsite"
 
+NewOption -allowresize "allow resize" boolean
+NewOption -orientation "orientation" choice {vertical horizontal}
+
+## Special proc for setting up icons on the toolbar.
+proc vTcl:TixPanedWindow:ToolBarSetup {} {
+
+    vTcl:toolbar_add TixPanedWindow \
+	"vertical paned window" \
+	icon_tixPanedWindow.gif "-orientation vertical"
+
+    vTcl:toolbar_add TixPanedWindow \
+    	"horizontal paned window" \
+	../lib/Widgets/tix/tixPanedWindowHoriz.gif "-orientation horizontal"
+}
+
+## Panes editing support
+NewOption -_tix_panes  "panes"  combobox
+ClassOption -_tix_panes
+OptionConfigCmd -_tix_panes     config     vTcl::widgets::tix::panedwindow::config_panes
+OptionConfigCmd -_tix_panes     update     vTcl::widgets::tix::panedwindow::update_panes
+OptionConfigCmd -_tix_panes     get        vTcl::widgets::tix::panedwindow::get_panes
+OptionConfigCmd -_tix_panes     select     vTcl::widgets::tix::panedwindow::select_pane
+OptionConfigCmd -_tix_panes     edit       vTcl::itemEdit::edit
+OptionConfigCmd -_tix_panes     editArg    vTcl::widgets::tix::panedwindow::edit
+
+namespace eval vTcl::widgets::tix::panedwindow::edit {
+
+    proc getTitle {target} {
+        return "Edit panes for $target"
+    }
+
+    proc getLabelOption {} {
+        return {}
+    }
+
+    proc getItems {target} {
+        ## first item in the list is the current index
+        set panes [$target panes]
+        set current 0
+        set values $current
+        for {set i 0} {$i < [llength $panes]} {incr i} {
+            lappend values "Pane [expr $i + 1]"
+        }
+        return $values
+    }
+
+    proc addItem {target} {
+        set index 0
+        set panes [$target panes]
+        ## repeat until we find an unused pane number
+        while {1} {
+            incr index
+            set newpane "pane$index"
+            if {[lsearch -exact $panes $newpane] == -1} break
+        }
+        $target add $newpane
+        vTcl:init_wtree
+        return "Pane $index"
+    }
+
+    proc removeItem {target index} {
+        set panes [$target panes]
+        set pane [lindex $panes $index]
+        $target delete $pane
+        vTcl:init_wtree
+    }
+
+    proc itemConfigure {target index args} {
+        set panes [$target panes]
+        set pane [lindex $panes $index]
+        if {$args == ""} {
+            return [$target paneconfigure $pane]
+        } else {
+            eval $target paneconfigure $pane $args
+        }
+    }
+
+    proc moveUpOrDown {target index direction} {
+        error "Not implemented"
+    }
+}
+
+namespace eval vTcl::widgets::tix::panedwindow {
+
+    proc getIcon {{w ""}} {
+        if {[lempty $w]} {
+            return [list icon_tixPanedWindow.gif ../lib/Widgets/tix/tixPanedWindowHoriz.gif]
+        }
+        switch [$w cget -orientation] {
+            vertical {
+                return icon_tixPanedWindow.gif
+            }
+            horizontal {
+                return ../lib/Widgets/tix/tixPanedWindowHoriz.gif
+            }
+        }
+    }
+
+    proc update_panes {target var} {
+        ## there is a trace on var to update the combobox
+        ## first item in the list is the current index
+        set panes [$target panes]
+        set current 0
+        set values $current
+        for {set i 0} {$i < [llength $panes]} {incr i} {
+            lappend values "Pane [expr $i + 1]"
+        }
+
+        ## this will trigger the trace
+        set ::$var $values
+   }
+
+    proc config_panes {target var} {
+    }
+
+    proc get_panes {target} {
+    }
+
+    proc select_pane {target index} {
+    }
+}
+
 proc vTcl:widget:tixPanedWindow:inscmd {target} {
     # Add two pages to start with.  Unfortunately, additional pages have
     # to be added manually by the user, and the project re-read into vtcl.
 
-    $target add page1
-    $target add page2
-    $target subwidget page1 configure -width 30 -height 30
-    $target subwidget page2 configure -width 30 -height 30
+    $target add pane1
+    $target add pane2
+    $target subwidget pane1 configure -width 30 -height 30
+    $target subwidget pane2 configure -width 30 -height 30
 }
 
 proc vTcl:widget:tixPanedWindow:treeChildrenCmd {target {diff ""}} {
