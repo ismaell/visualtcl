@@ -1,4 +1,4 @@
-#!/opt/tcltk/bin/tclsh8.3
+#!/usr/bin/tclsh
 ##############################################################################
 #
 # build.tcl
@@ -27,8 +27,8 @@
 
 ##############################################################################
 
-set version 1.6.0a1
-set bldroot /home/cgavin/vtcl2-0
+set version 1.6.0a2
+set bldroot /home/cgavin/vtcl2-0/vtcl
 set bldtmp $bldroot/build/tmp
 
 file delete -force $bldtmp
@@ -105,9 +105,9 @@ exec tar cf - -C $bldtmp vtcl-$version | gzip >vtcl-$version.tar.gz
 cd $copyroot/..
 exec tar cf - -C . vtcl-$version | gzip >vtcl-$version.tar.gz
 
-cd $bldroot/build
-file copy -force vtcl-$version-1.spec         /root/RPM/SPECS
-file copy -force $bldtmp/vtcl-$version.tar.gz /root/RPM/SOURCES
-file copy -force $bldroot/images/title.gif    /root/RPM/SOURCES
-
-exec /bin/rpm -ba /root/RPM/SPECS/vtcl-$version-1.spec
+# cd $bldroot/build
+# file copy -force vtcl-$version-1.spec         /root/RPM/SPECS
+# file copy -force $bldtmp/vtcl-$version.tar.gz /root/RPM/SOURCES
+# file copy -force $bldroot/images/title.gif    /root/RPM/SOURCES
+#
+# exec /bin/rpm -ba /root/RPM/SPECS/vtcl-$version-1.spec

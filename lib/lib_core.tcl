@@ -563,6 +563,9 @@ proc vTclWindow.vTcl.itemEdit {base} {
     $base.cpd37.02.sw.c create window 0 0 -window $base.cpd37.02.sw.c.f \
         -anchor nw -tag properties
 
+    ## set up visual Tcl keyboard accelerators
+    vTcl:setup_vTcl:bind $base
+
     if {$defaultGeometry} {
        vTcl:center $base 490 343
     }
@@ -743,6 +746,9 @@ namespace eval ::vTcl::itemEdit {
         set w [winfo width  [$top.PropertiesFrame]]
         set h [winfo height [$top.PropertiesFrame]]
         ${top}.PropertiesCanvas configure -scrollregion [list 0 0 $w $h]
+
+	## keyboard accelerators
+        vTcl:setup_vTcl:bind [$top.PropertiesFrame]
     }
 
     proc setLabel {top option variable args} {

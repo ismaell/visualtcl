@@ -670,6 +670,27 @@ proc vTcl:setup_unbind_tree {target} {
     ::menu_edit::enable_all_editors 0
 }
 
+##
+## This routine checks that we don't mix pack and grid in the same container.
+##
+proc vTcl:can_insert {parent manager} {
+
+    ## Enumerates children
+    foreach child [winfo children $parent] {
+        set child_manager [winfo manager $child]
+
+	## Don't mix pack and grid together (it's a Tk bug). However, you can
+	## mix pack or grid with place.
+	if {($child_manager == "grid" && $manager == "pack") ||
+	    ($child_manager == "pack" && $manager == "grid")} {
+	    return 0
+	}
+    }
+
+    ## All clear.
+    return 1
+}
+
 ##############################################################################
 # INSERT NEW WIDGET ROUTINE
 ##############################################################################
@@ -685,6 +706,13 @@ proc vTcl:auto_place_widget {class {options ""}} {
             -title "Error!" -type ok
         return
     }
+    ## grid and pack managers cannot be mixed in the same container
+    if {![vTcl:can_insert $vTcl(w,insert) $vTcl(w,def_mgr)]} {
+        ::vTcl::MessageBox -icon error \
+	    -message "You cannot mix pack and grid in the same container." \
+            -title "Error!" -type ok
+        return
+    }
     set vTcl(mgrs,update) no
     if $vTcl(pr,getname) {
         set new_widg [vTcl:get_name $class]
@@ -696,11 +724,10 @@ proc vTcl:auto_place_widget {class {options ""}} {
 
     set created_widget [vTcl:create_widget $class $options $new_widg 0 0]
 
-    # when new widget is inserted, automatically refresh
-    # widget tree
-    # we do not destroy the handles that were just created
-    # (remember, the handles are used to grab and move a widget around)
-
+    ## when new widget is inserted, automatically refresh
+    ## widget tree
+    ## we do not destroy the handles that were just created
+    ## (remember, the handles are used to grab and move a widget around)
     after idle "\
         vTcl:init_wtree 0
         vTcl:show_selection_in_tree $created_widget"
@@ -1107,6 +1134,14 @@ proc vTcl:place_widget {class button options rx ry x y} {
         ::vTcl::MessageBox -title "Insert Widget" \
             -message "You cannot insert a widget here!" -type ok
         return ""
+    }
+
+    ## grid and pack managers cannot be mixed in the same container
+    if {![vTcl:can_insert $try_insert $vTcl(w,def_mgr)]} {
+        ::vTcl::MessageBox -icon error \
+	    -message "You cannot mix pack and grid in the same container." \
+            -title "Error!" -type ok
+        return
     }
 
     set vTcl(w,insert) $try_insert

@@ -1,5 +1,8 @@
 ChangeLog for Visual Tcl:
 
+1.6.0a2 ->
+    o Prevents the user from using pack and grid in the same container. This
+      hangs the program completely (Tk bug).
 1.6.0a1 -> 1.6.0a2
     o Fixed tooltips bindings bug.
     o Added tooltip option to checkbutton, radiobutton, message, scale,
