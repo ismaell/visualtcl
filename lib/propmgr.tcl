@@ -584,13 +584,17 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
     bind $label <Enter> "
 	if {\[vTcl:streq \[$label cget -relief] $vTcl(propmgr,relief)]} {
 	    $label configure -relief raised
-	} 
+	}
     "
     bind $label <Leave> "
 	if {\[vTcl:streq \[$label cget -relief] raised]} {
 	    $label configure -relief $vTcl(propmgr,relief)
 	}
     "
+
+    ## If they right-click the label, show the context menu
+    bind $label <ButtonRelease-3> \
+	"vTcl:propmgr:show_rightclick_menu $vTcl(gui,ae) $option $variable %X %Y"
 
     set focus_in_cmd "vTcl:propmgr:select_attr $top $option"
 
@@ -751,4 +755,244 @@ proc vTcl:propmgr:scrollToLabel {c w} {
     lassign [vTcl:split_geom [winfo geometry $w]] foo foo ix iy
     set y [expr ($iy.0 + $vTcl(propmgr,frame,$frame)) / $cy]
     $c yview moveto $y
+}
+
+proc vTcl:propmgr:show_rightclick_menu {base option variable X Y} {
+
+    if {![winfo exists $base.menu_rightclk]} {
+
+        menu $base.menu_rightclk -tearoff 0
+        $base.menu_rightclk add cascade \
+                -menu "$base.menu_rightclk.men22" -accelerator {} -command {} -font {} \
+                -label {Reset to default}
+        $base.menu_rightclk add separator
+        $base.menu_rightclk add cascade \
+                -menu "$base.menu_rightclk.men24" -accelerator {} -command {} -font {} \
+                -label {Do not save option for}
+        $base.menu_rightclk add cascade \
+                -menu "$base.menu_rightclk.men25" -accelerator {} -command {} -font {} \
+                -label {Save option for}
+        $base.menu_rightclk add separator
+        $base.menu_rightclk add cascade \
+                -menu "$base.menu_rightclk.men26" -accelerator {} -command {} -font {} \
+                -label {Apply to}
+        menu $base.menu_rightclk.men24 -tearoff 0
+        $base.menu_rightclk.men24 add command \
+                -accelerator {} \
+		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
+			$::vTcl::_rclick_option $::vTcl::_rclick_variable \
+			subwidgets vTcl:prop:save_or_unsave_opt \
+                        0} \
+                -label {Similar Subwidgets}
+        $base.menu_rightclk.men24 add command \
+                -accelerator {} \
+		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
+			$::vTcl::_rclick_option $::vTcl::_rclick_variable \
+			toplevel vTcl:prop:save_or_unsave_opt \
+                        0} \
+                -label {All Similar Widgets in toplevel}
+        $base.menu_rightclk.men24 add command \
+                -accelerator {} \
+		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
+			$::vTcl::_rclick_option $::vTcl::_rclick_variable \
+			all vTcl:prop:save_or_unsave_opt \
+                        0} \
+                -label {All Similar Widgets in this project}
+        menu $base.menu_rightclk.men25 -tearoff 0
+        $base.menu_rightclk.men25 add command \
+                -accelerator {} \
+		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
+			$::vTcl::_rclick_option $::vTcl::_rclick_variable \
+			subwidgets vTcl:prop:save_or_unsave_opt \
+                        1} \
+                -label {Similar Subwidgets}
+        $base.menu_rightclk.men25 add command \
+                -accelerator {} \
+		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
+			$::vTcl::_rclick_option $::vTcl::_rclick_variable \
+			toplevel vTcl:prop:save_or_unsave_opt \
+                        1} \
+                -label {All Similar Widgets in toplevel}
+        $base.menu_rightclk.men25 add command \
+                -accelerator {} \
+		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
+			$::vTcl::_rclick_option $::vTcl::_rclick_variable \
+			all vTcl:prop:save_or_unsave_opt \
+                        1} \
+                -label {All Similar Widgets in this project}
+        menu $base.menu_rightclk.men26 -tearoff 0
+        $base.menu_rightclk.men26 add command \
+                -accelerator {} \
+		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
+			$::vTcl::_rclick_option $::vTcl::_rclick_variable \
+			subwidgets vTcl:prop:set_opt \
+                        [vTcl:at $::vTcl::_rclick_variable]} \
+                -label {Similar Subwidgets}
+        $base.menu_rightclk.men26 add command \
+                -accelerator {} \
+		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
+			$::vTcl::_rclick_option $::vTcl::_rclick_variable \
+			toplevel vTcl:prop:set_opt \
+                        [vTcl:at $::vTcl::_rclick_variable]} \
+                -label {All Similar Widgets in toplevel}
+        $base.menu_rightclk.men26 add command \
+                -accelerator {} \
+		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
+			$::vTcl::_rclick_option $::vTcl::_rclick_variable \
+			all vTcl:prop:set_opt \
+                        [vTcl:at $::vTcl::_rclick_variable]} \
+                -label {All Similar Widgets in this project}
+        menu $base.menu_rightclk.men22 -tearoff 0
+        $base.menu_rightclk.men22 add command \
+                -accelerator {} \
+		-command {vTcl:prop:default_opt $vTcl(w,widget) \
+			$::vTcl::_rclick_option $::vTcl::_rclick_variable} \
+                -label {This Widget}
+        $base.menu_rightclk.men22 add command \
+                -accelerator {} \
+		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
+			$::vTcl::_rclick_option $::vTcl::_rclick_variable \
+			subwidgets vTcl:prop:default_opt} \
+                -label {Similar Subwidgets}
+        $base.menu_rightclk.men22 add command \
+                -accelerator {} \
+		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
+			$::vTcl::_rclick_option $::vTcl::_rclick_variable \
+			toplevel vTcl:prop:default_opt} \
+                -label {All Similar Widgets in toplevel}
+        $base.menu_rightclk.men22 add command \
+                -accelerator {} \
+		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
+			$::vTcl::_rclick_option $::vTcl::_rclick_variable \
+			all vTcl:prop:default_opt} \
+                -label {All Similar Widgets in this project}
+    }
+
+    set ::vTcl::_rclick_option   $option
+    set ::vTcl::_rclick_variable $variable
+
+    tk_popup $base.menu_rightclk $X $Y
+}
+
+# This proc resets a given option to its default value
+# The goal is to help making cross-platform applications easier by
+# only saving options that are necessary
+
+proc vTcl:prop:default_opt {w opt varName {user_param {}}} {
+
+    global vTcl
+    upvar #0 $varName var
+    vTcl:WidgetVar $w options
+    vTcl:WidgetVar $w defaults
+
+    if {![info exists options($opt)]} { return }
+    if {![info exists defaults($opt)]} { return }
+
+    # only refresh the attribute editor if this is the
+    # current widget, otherwise we'll get into trouble
+
+    if {$w == $vTcl(w,widget)} {
+	set var $defaults($opt)
+    }
+
+    $w configure $opt $defaults($opt)
+    set ::widgets::${w}::options($opt) $defaults($opt)
+    set ::widgets::${w}::save($opt) 0
+
+    ::vTcl::change
+}
+
+# This proc applies an option to a widget
+
+proc vTcl:prop:set_opt {w opt varName value} {
+
+    global vTcl
+    upvar #0 $varName var
+    vTcl:WidgetVar $w options
+    vTcl:WidgetVar $w defaults
+
+    if {![info exists options($opt)]} { return }
+    if {![info exists defaults($opt)]} { return }
+
+    $w configure $opt $value
+    set ::widgets::${w}::options($opt) $value
+
+    # only refresh the attribute editor if this is the
+    # current widget, otherwise we'll get into trouble
+
+    if {$w == $vTcl(w,widget)} {
+	set var $value
+    }
+
+    if {$value == $defaults($opt)} {
+        set ::widgets::${w}::save($opt) 0
+    } else {
+        set ::widgets::${w}::save($opt) 1
+    }
+}
+
+proc vTcl:prop:save_or_unsave_opt {w opt varName save_or_not} {
+
+    vTcl:WidgetVar $w options
+
+    if {![info exists options($opt)]} { return }
+
+    set ::widgets::${w}::save($opt) $save_or_not
+    ::vTcl::change
+}
+
+# Apply options settings to a range of widgets of the same
+# class as w
+#
+# Parameters:
+#   w         currently selected widget
+#   opt       the option to change (eg. -background)
+#   varName   name of variable for display in attributes editor
+#   extent    which widgets to modify; can be one of
+#             subwidgets
+#                 apply to given widget and all its subwidgets
+#             toplevel
+#                 apply to all widgets in toplevel containing given widget
+#             all
+#                 apply to all widgets in the current project
+#   action    name of proc to call for each widget
+#             this callback proc should have the following parameters:
+#                 w          widget to modify
+#                 opt        option name (eg. -cursor)
+#                 varName    name of variable in attributes editor
+#                 user_param optional parameter
+#   user_param
+#             value of optional user parameter
+
+proc vTcl:prop:apply_opt {w opt varName extent action {user_param {}}} {
+
+    global vTcl
+
+    # let's do it, but before that, we need to destroy the handles
+    vTcl:destroy_handles
+
+    set class [vTcl:get_class $w]
+
+    switch $extent {
+    subwidgets {
+	# 0 because we don't want information for widget tree display
+	set widgets [vTcl:complete_widget_tree $w 0]
+    }
+    toplevel {
+	set top [winfo toplevel $w]
+        set widgets [vTcl:complete_widget_tree $top 0]
+    }
+    all {
+        set widgets [vTcl:complete_widget_tree . 0]
+    }
+    }
+
+    foreach widget $widgets {
+        if {[vTcl:get_class $widget] == $class} {
+	    $action $widget $opt $varName $user_param
+	}
+    }
+
+    # we are all set
+    vTcl:create_handles $vTcl(w,widget)
 }
