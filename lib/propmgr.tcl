@@ -151,8 +151,10 @@ proc vTclWindow.vTcl.ae {args} {
         vTcl:entry $w.em -width 12 -textvariable vTcl(w,manager) \
         -relief sunken   -state disabled
     label $w.la -text "Alias"  -width 11 -anchor w
-        vTcl:entry $w.ea -width 12 -textvariable vTcl(w,alias) \
-        -relief sunken   -state disabled
+    vTcl:entry $w.ea -width 12 -textvariable vTcl(w,alias) \
+        -relief sunken
+    bind $w.ea <KeyRelease-Return> {
+        ::vTcl::properties::setAlias $::vTcl(w,widget) ::vTcl(w,alias)}
     label $w.li -text "Insert Point" -width 11 -anchor w
         vTcl:entry $w.ei -width 12 -textvariable vTcl(w,insert) \
         -relief sunken   -state disabled
@@ -1227,4 +1229,15 @@ proc vTcl:propmgr:scrollWheelMouse {delta label} {
     }
 }
 
+namespace eval ::vTcl::properties {
 
+    proc setAlias {target aliasVar} {
+        set alias [set $aliasVar]
+        set valid [vTcl:valid_alias $target $alias]
+        if {!$valid} {
+            ::vTcl::MessageBox -message "Alias '$alias' already exists"
+            return
+        }
+        vTcl:set_alias $target $alias
+    }
+}
