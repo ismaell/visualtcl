@@ -16,26 +16,29 @@ Function	"Add toolbar button" vTcl:widget:toolbar:addButton
 proc vTcl:widget:toolbar:inscmd {target} {
     global vTcl
 
-    $target add button new \
+    set comp [$target add button new \
     -balloonstr "New" \
     -image [vTcl:image:get_image $vTcl(VTCL_HOME)/images/edit/new.gif] \
-    -command {tk_messageBox -message {TODO: Command handler here!}}
+    -command {tk_messageBox -message {TODO: Command handler here!}}]
+    vTcl:widget:toolbar:bindComponent $target new $comp
 
-    $target add button open \
+    set comp [$target add button open \
     -balloonstr "Open" \
     -image [vTcl:image:get_image $vTcl(VTCL_HOME)/images/edit/open.gif] \
-    -command {tk_messageBox -message {TODO: Command handler here!}}
+    -command {tk_messageBox -message {TODO: Command handler here!}}]
+    vTcl:widget:toolbar:bindComponent $target open $comp
 
-    $target add button save \
+    set comp [$target add button save \
     -balloonstr "Save" \
     -image [vTcl:image:get_image $vTcl(VTCL_HOME)/images/edit/save.gif] \
-    -command {tk_messageBox -message {TODO: Command handler here!}}
+    -command {tk_messageBox -message {TODO: Command handler here!}}]
+    vTcl:widget:toolbar:bindComponent $target save $comp
 }
 
-## Helper function to bind a component when it is created.  When it is
-## destroyed, we call Itcl's proper delete function.
-proc vTcl:widget:toolbar:bindComponent {w comp} {
-    # bind $comp <Destroy> "$w delete [$w index $comp]"
+## Helper function to bind a component when it is created.
+## When it is destroyed, we call Itcl's proper delete function.
+proc vTcl:widget:toolbar:bindComponent {w name comp} {
+    bind $comp <Destroy> "$w delete [$w index $name]"
 }
 
 proc vTcl:widget:toolbar:addButton {{string ""}} {
@@ -47,7 +50,7 @@ proc vTcl:widget:toolbar:addButton {{string ""}} {
 
     set component [$t add button $string]
 
-    vTcl:widget:toolbar:bindComponent $t $string
+    vTcl:widget:toolbar:bindComponent $t $string $component
     vTcl:place_handles $t
     vTcl:setup_bind $component
     vTcl:widget:register_widget_megachildren $t
