@@ -1,6 +1,9 @@
 ChangeLog for Visual Tcl:
 
 1.51b4 -> 1.51
+    o Added GPL copyright for Tk widgets description files.
+    o Fixed find/replace bug with dollar sign in text to find.
+    o Find/Replace highlights text when a match is found.
     o Fixed bug when copy/paste widgets with non-standard binding tags
     o When a toplevel is destroyed, refresh the bindings editor
     o Added bitmapbutton compound and test app in demo folder

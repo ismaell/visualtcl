@@ -396,7 +396,7 @@ proc ::vTcl::findReplace::find {{replace 0}} {
     set text [$base.fra22.findEnt get]
     if {[llength $text] == 0} { return }
 
-    set i [eval $txtbox search $switches $text $index $stop]
+    set i [eval $txtbox search $switches [list $text] $index $stop]
     if {[llength $i] == 0} {
 	if {!$replace} {
 	    set x [tk_messageBox -title "No match" -parent $base -type yesno \
@@ -416,12 +416,10 @@ proc ::vTcl::findReplace::find {{replace 0}} {
     set index $selLast
     if {$up} { set index $selFirst }
 
-    if {!$replace} {
 	$txtbox tag remove sel 0.0 end
 	$txtbox tag add sel $i "$i + $count chars"
 	$txtbox see $i
 	focus $txtbox
-    }
 
     return $i
 }
@@ -440,14 +438,12 @@ proc ::vTcl::findReplace::replace {} {
     while {[::vTcl::findReplace::find 1] > -1} {
 	set ln [lindex [split $selFirst .] 0]
 	$txtbox see $selFirst
-	set x [tk_dialog .__replace__ "Match found" \
-	    "Match found on line $ln\nReplace this instance?" {} 0 Yes No Cancel]
+	set x [tk_messageBox -title "Match found" -parent $base -type yesnocancel \
+	       -message "Match found on line $ln\nReplace this instance?" \
+               -icon question]
 
-	switch $x {
-	    "-1" -
-	    "1"  { continue }
-	    "2"  { break }
-	}
+	if {$x != "yes"} { continue }
+
 	$txtbox delete $selFirst $selLast
 	$txtbox insert $selFirst $text
     }
