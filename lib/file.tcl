@@ -380,7 +380,7 @@ proc vTcl:save_as_binary {} {
     ## Guess the ostag and look for an appropriate freewrap binary.
     ##
     if {[string tolower $tcl_platform(platform)] == "windows"} {
-	set freewrap [file join $env(VTCL_HOME) Freewrap Windows freewrap]
+	set freewrap [file join $env(VTCL_HOME) Freewrap Windows bin freewrap.exe]
     } else {
 	set ostag [exec $env(VTCL_HOME)/Freewrap/config.guess]
 	set freewrap [file join $env(VTCL_HOME) Freewrap $ostag bin freewrap]
