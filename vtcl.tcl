@@ -544,7 +544,7 @@ proc vTcl:define_bindings {} {
     	vTcl:syntax_color %W
         set pos [%W index "insert linestart"]
         # change by Nelson 3.9.2003: better auto indent
-        set nos [%W search -regexp -nocase "\[^#\ \]|$" $pos]
+        set nos [%W search -regexp "\[^#\ \]|$" $pos]
         # set nos [%W search -regexp -nocase "\[a-z0-9\]" $pos]
         if {$nos != ""} {
             set ct [%W get $pos $nos]
@@ -726,5 +726,6 @@ proc vTcl:main {argc argv} {
 }
 
 vTcl:main $argc $argv
+
 
 
