@@ -82,7 +82,7 @@ proc vTcl:proclist:show {{on ""}} {
     set vTcl(pr,show_func) $on
 }
 
-proc vTcl:update_proc {base} {
+proc vTcl:update_proc {base {close 1}} {
     global vTcl
     set vTcl(pr,geom_proc) [wm geometry $base]
     set name [$base.f2.f8.procname get]
@@ -98,8 +98,11 @@ proc vTcl:update_proc {base} {
     proc $name $args \n$body\n
 
     vTcl:list add "{$name}" vTcl(procs)
-    grab release $base
-    destroy $base
+    if {$close} {
+        destroy $base
+    } else {
+        ::vTcl::proc::edit_reset $base
+    }
     vTcl:update_proc_list $name
     ::vTcl::change
 }
@@ -346,7 +349,7 @@ proc vTclWindow.vTcl.proc {args} {
 
     set butFind [vTcl:formCompound:add $base.f3.toolbar vTcl:toolbar_button \
         -image [vTcl:image:get_image [file join $vTcl(VTCL_HOME) images edit search.gif] ] \
-	-command "::vTcl::findReplace::show $base.f4.text \"vTcl::proc_edit_change $base Space\""]
+	-command "::vTcl::findReplace::show $base.f4.text \"vTcl::proc::edit_change $base Space\""]
     pack configure $butFind -side left
     vTcl:set_balloon $butFind "Find/Replace"
 
@@ -364,7 +367,7 @@ proc vTclWindow.vTcl.proc {args} {
     pack $base.f4 -in $base -anchor center -expand 1 -fill both -side top
     pack $base.f4.text
 
-    bind $base.f4.text <KeyPress> "+::vTcl::proc_edit_change $base %K"
+    bind $base.f4.text <KeyPress> "+::vTcl::proc::edit_change $base %K"
     bind $base.f4.text <Control-Key-i> "$butInsert invoke"
     bind $base.f4.text <Control-Key-f> "$butFind invoke"
     bind $base <Destroy> {
@@ -397,55 +400,59 @@ proc vTclWindow.vTcl.proc {args} {
     	      $butOK configure -state normal \
     	\}"
 
-    # @@change by Christian Gavin 3/19/2000
-    # syntax colouring
-
     vTcl:syntax_color $base.f4.text
 
-    # @@end_change
-}
+    ## be notified when we switch between edit and test mode
+    ::vTcl::notify::subscribe edit_mode $base ::vTcl::proc::edit_mode
+    ::vTcl::notify::subscribe test_mode $base ::vTcl::proc::test_mode
 
-proc vTcl:proc:edit_cancel {base} {
-    global vTcl
-    if {$vTcl(proc,$base,chg) == 0} {
+    bind $base <Destroy> "
         grab release $base
-    	set vTcl(pr,geom_proc) [wm geometry $base]
-        destroy $base
-    } else {
-        set result [::vTcl::MessageBox -default yes -icon question -message \
-            "Buffer has changed. Do you wish to save the changes?" \
-            -parent $base -title "Save Changes?" -type yesnocancel]
-        switch $result {
-            no {
-                grab release $base
-                destroy $base
-            }
-            yes {
-                vTcl:update_proc $base
-            }
-            cancel {}
-        }
-    }
+        ::vTcl::notify::unsubscribe edit_mode $base
+        ::vTcl::notify::unsubscribe test_mode $base
+    "
 }
 
-proc ::vTcl::proc_edit_change {w k} {
-    ## We don't want to mark the text as changed when we're just moving around.
-    switch -- $k {
-	"Up"	-
-	"Down"	-
-	"Right"	-
-	"Left"	-
-	"Prior"	-
-	"Next"	-
-	"Home"	-
-	"End"	-
-	"Insert" -
-	"Delete" { return }
-    }
-    global vTcl
-    if {!$vTcl(proc,$w,chg)} {
-        wm title $w "[wm title $w]*"
+namespace eval ::vTcl::proc {
+
+    proc edit_mode {base args} {
     }
 
-    set vTcl(proc,$w,chg) 1
+    proc test_mode {base args} {
+        vTcl:update_proc $base 0;   # do not close the window
+    }
+
+    proc edit_reset {base} {
+        global vTcl
+        set vTcl(proc,$base,chg) 0
+        set name [$base.f2.f8.procname get]
+        wm title $base $name
+    }
+
+    proc edit_change {w k} {
+        ## We don't want to mark the text as changed when we're just moving around.
+        switch -- $k {
+	   "Up"        -
+	   "Down"      -
+	   "Right"     -
+	   "Left"      -
+	   "Prior"     -
+	   "Next"      -
+	   "Home"      -
+	   "End"       -
+	   "Insert"    -
+	   "Shift_L"   -
+	   "Shift_R"   -
+	   "Control_L"    -
+	   "Control_R"
+	       { return }
+        }
+
+        global vTcl
+        if {!$vTcl(proc,$w,chg)} {
+            wm title $w "[wm title $w]*"
+        }
+
+        set vTcl(proc,$w,chg) 1
+    }
 }

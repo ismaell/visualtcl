@@ -634,6 +634,9 @@ proc vTcl:setup_bind_tree {target} {
     set vTcl(mode) "EDIT"
     ::widgets_bindings::enable_editor 1
     ::menu_edit::enable_all_editors 1
+
+    ## inform subscribers
+    ::vTcl::notify::publish edit_mode
 }
 
 proc vTcl:setup_bind_widget {target} {
@@ -667,6 +670,9 @@ proc vTcl:setup_unbind_tree {target} {
     set vTcl(mode) "TEST"
     ::widgets_bindings::enable_editor 0
     ::menu_edit::enable_all_editors 0
+
+    ## inform subscribers
+    ::vTcl::notify::publish test_mode
 }
 
 proc vTcl:setup_unbind_widget {target} {

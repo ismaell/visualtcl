@@ -1,6 +1,11 @@
 ChangeLog for Visual Tcl:
 
 1.6.0a2 ->
+    o Added publish/subscribe design pattern to have an elegant way to
+      send events throughout vTcl. Among these events are "test_mode" and
+      "edit_mode".
+    o Used this new notification mechanism to update all proc windows when
+      switching from edit mode to test mode.
     o Support for tablelist widget.
     o Getting rid of the old stack trace dialog and using TkCon instead.
     o Added unmanaged frame widget. This is a frame where you can

@@ -1175,6 +1175,44 @@ proc ::vTcl::MessageBox {args} {
 }
 
 ##############################################################################
+## Notification system
+
+namespace eval ::vTcl::notify {
+
+    proc publish {event args} {
+        variable subscribers
+	if {[info exists subscribers($event)]} {
+            set recipients $subscribers($event)
+	    foreach recipient $recipients {
+	        lassign $recipient id callback
+	        uplevel #0 $callback $id $args
+	    }
+	}
+    }
+
+    proc subscribe {event id callback} {
+        variable subscribers
+        lappend subscribers($event) [list $id $callback]
+    }
+
+    proc unsubscribe {event id} {
+        variable subscribers
+	set recipients $subscribers($event)
+	set i 0
+	foreach recipient $recipients {
+	    lassign $recipient rid callback
+	    if {$rid == $id} {
+	        set subscribers($event) [lreplace $subscribers($event) $i $i]
+		break
+	    }
+	    incr i
+	}
+    }
+
+    variable subscribers
+}
+
+##############################################################################
 ## Attributes editing
 
 namespace eval ::vTcl::ui::attributes {
