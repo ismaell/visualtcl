@@ -266,7 +266,7 @@ proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
             set t [lindex $j 0]
             set o [lindex $j 1]
             if {$t != "tearoff"} {
-                append todo "$name add $t $o; "
+                append todo "$name add $t [vTcl:name_replace $base $o]; "
             }
         }
 	if {$classes($class,dumpChildren)} {
