@@ -295,6 +295,12 @@ proc vTcl:prop:update_attr {} {
                 vTcl:prop:new_attr $top $i $variable $config_cmd opt $focus_out_cmd
             }
         }
+
+	# special stuff to edit menu items (cascaded items)
+	if {$vTcl(w,class) == "Menu"} {
+
+		vTcl:prop:new_attr $top -menuspecial "" "" opt ""
+	}
     }
 
     if {$vTcl(w,manager) == ""} {
@@ -393,6 +399,14 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
                     vTcl:edit_target_menu $vTcl(w,widget)
                 } -anchor w
         }
+	menuspecial {
+            button $base \
+                -text "<click to edit>" -relief sunken -bd 1 -width 12 \
+                -highlightthickness 1 -fg black -padx 0 -pady 1 \
+                -command {
+                    vTcl:edit_menu $vTcl(w,widget)
+                } -anchor w
+	}
         color {
             frame $base
             entry ${base}.l -relief sunken -bd 1 \

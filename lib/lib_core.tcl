@@ -248,6 +248,8 @@ global vTcl
     }
     set vTcl(menu,$target,label) ""
     set vTcl(menu,$target,accel) ""
+
+    vTcl:init_wtree
     focus $base.fra17.ent15
 }
 
@@ -306,6 +308,8 @@ global vTcl
     set vTcl(menu,$target,label) ""
     set vTcl(menu,$target,accel) ""
     $list select set $newnum
+
+    vTcl:init_wtree
     focus $base.fra17.ent15
 }
 
@@ -327,6 +331,8 @@ global vTcl
     $list delete $num
     set vTcl(menu,$target,label) ""
     set vTcl(menu,$target,accel) ""
+
+    vTcl:init_wtree
 }
 
 proc vTcl:menu_set_tear {base target} {
@@ -637,6 +643,10 @@ proc vtcl:core:get_menu_label {class {target ""}} {
 
 	for {set i 0} {$i <= [$parent index end]} {incr i} {
 
+		if { [$parent type $i] != "cascade" } {
+			continue
+		}
+
 		set menuwindow [$parent entrycget $i -menu]
 
 		if {$menuwindow == $target} {
@@ -803,3 +813,12 @@ proc vTcl:core:noencasewhenscroll {value} {
 		return 0
 	}
 }
+
+lappend vTcl(opt,list) -menuspecial -tearoff \
+                       -postcommand -tearoffcommand -title
+
+set vTcl(opt,-menuspecial)     { menu            {}       menuspecial    {} }
+set vTcl(opt,-tearoff)         { tearoff         {}       boolean        {0 1} }
+set vTcl(opt,-postcommand)     { {post cmd}      {}       command        {} }
+set vTcl(opt,-tearoffcommand)  { {tearoff cmd}   {}       command        {} }
+set vTcl(opt,-title)           { {title}         {}       type           {} }
