@@ -87,4 +87,17 @@ namespace eval vTcl::widgets::blt {
         catch {unset basenames($subwidget)}
         return $output
     }
+
+    proc pathTranslate {value} {
+        if [regexp {((\.[a-zA-Z0-9_]+)+)} $value matchAll path] {
+            set path [vTcl:base_name $path]
+            return "\"$path\""
+        }
+        return $value
+    }
 }
+
+TranslateOption    -window vTcl::widgets::blt::pathTranslate
+NoEncaseOption     -window 1
+NoEncaseOptionWhen -window vTcl:core:noencasewhen
+

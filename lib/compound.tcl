@@ -367,14 +367,6 @@ proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
     return $todo
 }
 
-proc vTcl:create_compound {target {cmpdname ""}} {
-    global vTcl
-    set vTcl(cmp,alias) ""
-    set ret [vTcl:gen_compound $target "" $cmpdname]
-    lappend ret $vTcl(cmp,alias)
-    return $ret
-}
-
 # in a list of bindtags, replace a toplevel bindtag by %top
 # for example:
 #    target   = ".top18.cpd19"
@@ -416,132 +408,6 @@ proc vTcl:unnormalize_bindtags {target bindtags} {
     }
 
     return $result
-}
-
-proc vTcl:gen_compound {target {name ""} {cmpdname ""}} {
-    global vTcl widget classes
-    set ret ""
-    set mgr ""
-    set bind ""
-    set menu ""
-    set chld ""
-    set alias ""
-    set grid ""
-    set proc ""
-    if {![winfo exists $target]} {
-        return ""
-    }
-    set class [vTcl:get_class $target]
-
-    # rename conf to configure because Iwidgets don't like conf only
-    set opts [vTcl:get_opts [$target configure]]
-
-    if {$class == "Menu"} {
-        set mnum [$target index end]
-        if {$mnum != "none"} {
-            for {set i 0} {$i <= $mnum} {incr i} {
-                set t [$target type $i]
-                set c [vTcl:get_opts [$target entryconf $i]]
-                lappend menu "$t \{$c\}"
-            }
-        }
-        set mgrt {}
-        set mgri {}
-    } elseif {$class == "Toplevel"} {
-        set mgrt "wm"
-        set mgri ""
-    } else {
-        set mgrt [winfo manager $target]
-
-        ## in Iwidgets, some controls are not yet packed/gridded/placed when
-        ## they are in edit mode, therefore there is no manager at this time
-        ##
-        ## in BWidgets, pages in a notebook either don't have a manager or have
-        ## the 'canvas' manager
-
-	if {[lempty $mgrt] || [lempty [info commands $mgrt]] || $mgrt == "canvas"} {
-	    set mgri {}
-        } else {
-	    set mgri [vTcl:get_mgropts [$mgrt info $target]]
-	}
-    }
-    lappend mgr $mgrt $mgri
-    set blst [bind $target]
-    foreach i $blst {
-        lappend bind "$i \{[bind $target $i]\}"
-    }
-
-    # now, are bindtags non-standard ?
-    set bindtags $vTcl(bindtags,$target)
-    if {$bindtags != [::widgets_bindings::get_standard_bindtags $target] } {
-        # append the list of binding tags
-        lappend bind [list [vTcl:normalize_bindtags $target $bindtags]]
-
-        # keep all bindings definitions with the compound
-        # (even if children define them too)
-        foreach bindtag $bindtags {
-            if {[lsearch -exact $::widgets_bindings::tagslist $bindtag] >= 0} {
-                foreach event [bind $bindtag] {
-                    lappend bind "$bindtag $event \{[bind $bindtag $event]\}"
-                }
-            }
-        }
-    }
-
-    foreach i [vTcl:get_children $target] {
-
-      if {[string match {*#*} $i]} {continue}
-
-      # retain children names while creating a compound
-      set windowpath [split $i .]
-      set lastpath [lindex $windowpath end]
-
-	append chld "[vTcl:gen_compound $i $name.$lastpath] "
-    }
-
-    catch {set alias $widget(rev,$target)}
-    set pre g
-    set gcolumn [lindex [grid size $target] 0]
-    set grow [lindex [grid size $target] 1]
-    foreach a {column row} {
-        foreach b {weight minsize} {
-            set num [subst $$pre$a]
-            for {set i 0} {$i < $num} {incr i} {
-                if {[catch {
-                    set x [expr {round([grid ${a}conf $target $i -$b])}]
-                }]} {set x 0}
-                if {$x > 0} {
-                    lappend grid "${a}conf $i -$b $x"
-                }
-            }
-        }
-    }
-    if {$cmpdname != ""} {
-        foreach i $vTcl(procs) {
-            if {[string match ::${cmpdname}::* $i]} {
-                lappend proc [list $i [vTcl:proc:get_args $i] [info body $i]]
-            }
-        }
-    }
-
-    ## special case for megawidgets: code to recreate all the childsites
-    if {$classes($class,compoundCmd) != ""} {
-        set compoundCode [$classes($class,compoundCmd) $target]
-        lappend proc [list __insert$target target $compoundCode]
-    }
-
-    set topopt ""
-    if {$class == "Toplevel"} {
-        foreach i $vTcl(attr,tops) {
-            set v [wm $i $target]
-            if {$v != ""} {
-                lappend topopt [list $i $v]
-            }
-        }
-    }
-    lappend ret $class $opts $mgr $bind $menu $chld $name $alias $grid $proc $cmpdname $topopt
-    vTcl:append_alias $target $name
-    return \{$ret\}
 }
 
 proc vTcl:append_alias {name alias} {
@@ -858,4 +724,5 @@ namespace eval ::vTcl::compounds {
         namespace delete $spc
     }
 }
+
 

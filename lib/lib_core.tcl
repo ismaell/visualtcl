@@ -364,6 +364,7 @@ proc vTcl:core:noencasewhen {value} {
 
     if { [string match {"$base*} $value] ||
          [string match {"$site*} $value] ||
+         [string match {"$target*} $value] ||
 	 [string match {"$top*} $value] } {
         return 1
     }
@@ -954,4 +955,5 @@ namespace eval ::vTcl::itemEdit {
 	$top.ItemsEditMenuAddDelete entryconfigure 1 -state $state($enabled)
     }
 }
+
 
