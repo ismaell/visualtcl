@@ -43,6 +43,13 @@ ResizeCmd       vTcl::widgets::iwidgets::tabnotebook::resizeCmd
 
 AdditionalClasses Notebook Tabset Page
 
+#############################
+## for compatibility with 1.5
+##
+proc vTcl:widget:tabnotebook:treeChildrenChildsite {target} {
+    return [vTcl::widgets::iwidgets::tabnotebook::treeChildrenChildsite $target]
+}
+
 namespace eval vTcl::widgets::iwidgets::tabnotebook {
 
     proc resizeCmd {target w h} {
