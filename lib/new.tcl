@@ -55,25 +55,25 @@ proc Done {} {
     variable ProjectFolder
 
     if {[lempty [$listbox selection get]]} {
-    	tk_messageBox -title "Specify Project Type" -message \
+    	::vTcl::MessageBox -title "Specify Project Type" -message \
 	    "You must specify a Project Type"
 	return
     }
 
     if {[lempty $ProjectName]} {
-    	tk_messageBox -title "Specify Project Name" -message \
+    	::vTcl::MessageBox -title "Specify Project Name" -message \
 	    "You must specify a Project Name"
 	return
     }
 
     if {[file exists $ProjectFolder]} {
-    	tk_messageBox -title "Folder Exists" -message \
+    	::vTcl::MessageBox -title "Folder Exists" -message \
 	    "A project already exists in '$ProjectFolder'"
 	return
     }
 
     if {![file isdirectory $ProjectFolder]} {
-    	tk_messageBox -title "Bad Folder" -message \
+    	::vTcl::MessageBox -title "Bad Folder" -message \
 	    "'$ProjectFolder' is not a directory"
 	return
     }
