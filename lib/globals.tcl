@@ -241,6 +241,7 @@ set vTcl(m,grid,propagate)         { propagate       {}       boolean {0 1} {vTc
 set vTcl(m,wm,list) ""
 set vTcl(m,wm,extlist) "set,origin geometry,x geometry,y set,size geometry,w geometry,h
                         resizable,w resizable,h minsize,x minsize,y maxsize,x maxsize,y state title"
+set vTcl(m,wm,savelist) "set,origin set,size"
 set vTcl(m,wm,set,origin)          { {set origin}    {}       boolean {0 1}  {vTcl:wm:conf_geom} }
 set vTcl(m,wm,geometry,x)          { {x position}    {}       type    {} {vTcl:wm:conf_geom} }
 set vTcl(m,wm,geometry,y)          { {y position}    {}       type    {} {vTcl:wm:conf_geom} }

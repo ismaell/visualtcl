@@ -88,6 +88,19 @@ proc vTcl:pack:conf_ext {target var value} {
     grid propagate  $target $vTcl(w,pack,propagate)
 }
 
+proc vTcl:wm:enable_geom {} {
+    global vTcl
+    # Enable/disable UI elements
+    array set state {0 disabled 1 normal}
+    set origin_state $state($vTcl(w,wm,set,origin))
+    set size_state   $state($vTcl(w,wm,set,size))
+
+    vTcl:prop:enable_manager_entry geometry,x $origin_state
+    vTcl:prop:enable_manager_entry geometry,y $origin_state
+    vTcl:prop:enable_manager_entry geometry,w $size_state
+    vTcl:prop:enable_manager_entry geometry,h $size_state
+}
+
 proc vTcl:wm:conf_geom {target var value} {
     global vTcl
     set ::widgets::${target}::set,origin $vTcl(w,wm,set,origin)
@@ -97,6 +110,7 @@ proc vTcl:wm:conf_geom {target var value} {
     set w $vTcl(w,wm,geometry,w)
     set h $vTcl(w,wm,geometry,h)
     wm geometry $target ${w}x${h}+${x}+${y}
+    vTcl:wm:enable_geom
 }
 
 proc vTcl:wm:conf_resize {target var value} {
@@ -124,6 +138,18 @@ proc vTcl:wm:conf_state {target var value} {
 proc vTcl:wm:conf_title {target var value} {
     global vTcl
     wm title $target "$vTcl(w,wm,title)"
+}
+
+proc vTcl:wm:dump_info {target} {
+    global vTcl
+    set out ""
+    foreach wm_option $vTcl(m,wm,savelist) {
+        if {[info exists ::widgets::${target}::${wm_option}]} {
+            append out $vTcl(tab2)
+            append out "set $wm_option [vTcl:at ::widgets::${target}::${wm_option}]\n"
+        }
+    }
+    return $out
 }
 
 ####################################################################

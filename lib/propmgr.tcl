@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# propmgr.tcl - procedures used by the widget properites manager
+# propmgr.tcl - procedures used by the widget properties manager
 #
 # Copyright (C) 1996-1998 Stewart Allen
 #
@@ -371,6 +371,11 @@ proc vTcl:prop:update_attr {} {
 	}
     }
 
+    if {$vTcl(w,manager) == "wm"} {
+        # enable/disable position/size values depending on settings
+        vTcl:wm:enable_geom
+    }
+
     update idletasks
     vTcl:prop:recalc_canvas
     vTcl:prop:update_saves $vTcl(w,widget)
@@ -550,7 +555,7 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
             frame $base
             vTcl:entry ${base}.l -relief sunken  \
                 -textvariable $variable -width 8 \
-                -highlightthickness 1 -fg black 
+                -highlightthickness 1 -fg black
             button ${base}.f \
                 -image ellipses  -width 12 \
                 -highlightthickness 1 -fg black -padx 0 -pady 1 \
@@ -638,6 +643,20 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
 	    $label configure -pady 4
 	}
     }
+}
+
+proc vTcl:prop:enable_manager_entry {option state} {
+    global vTcl
+
+    if {![winfo exists $vTcl(gui,ae)]} return
+
+    set fr $vTcl(gui,ae,canvas).f3.f
+    set top $fr._$vTcl(w,manager)
+
+    set base $top.t${option}
+
+    array set background [list normal $vTcl(pr,entrybgcolor) disabled gray]
+    $base configure -state $state -bg $background($state)
 }
 
 proc vTcl:prop:clear {} {

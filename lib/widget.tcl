@@ -504,7 +504,6 @@ proc vTcl:update_widget_info {target} {
                 }
                 set vTcl(w,wm,$special) [vTcl:at ::widgets::${target}::${special}]
             }
-
         }
         default {
             set vTcl(w,opt,-text) ""
