@@ -732,8 +732,8 @@ ttd.tagon {Level 4 Title}
 ttd.tagon {Level 3 Title}
 ttd.text {1.9.2 Command Console
 }
-ttd.tagoff {Level 4 Title}
 ttd.tagoff {Level 3 Title}
+ttd.tagoff {Level 4 Title}
 ttd.text {This button shows or hide the command console. The command console allows you to enter interactive commands and the see the results right away.
 }
 ttd.tagon {Level 3 Title}
@@ -772,8 +772,8 @@ ttd.text {
 }
 ttd.text {1.9.6 Foreground Color
 }
-ttd.tagoff {Level 3 Title}
 ttd.tagoff {Level 4 Title}
+ttd.tagoff {Level 3 Title}
 ttd.text {Sets the foreground color of the currently selected widget.}
 ttd.tagon {Level 4 Title}
 ttd.tagon {Level 3 Title}
@@ -783,8 +783,8 @@ ttd.text {
 }
 ttd.text {1.9.7 Background Color
 }
-ttd.tagoff {Level 4 Title}
 ttd.tagoff {Level 3 Title}
+ttd.tagoff {Level 4 Title}
 ttd.text {Sets the background color of the currently selected widget.}
 ttd.tagon {Level 3 Title}
 ttd.tagon {Level 4 Title}
@@ -794,8 +794,8 @@ ttd.text {
 }
 ttd.text {1.9.8 Font Selection
 }
-ttd.tagoff {Level 3 Title}
 ttd.tagoff {Level 4 Title}
+ttd.tagoff {Level 3 Title}
 ttd.text {The font selection buttons in the toolbar specify the font for the currently selected widget. It is recommended to use the Visual Tcl font mechanism instead, accessible from within the attributes editor font option. The Visual Tcl font system allows you to change the size and or typeface of a font, and all widgets displaying this font will automatically change to reflect the new font.
 }
 ttd.text {
@@ -847,17 +847,41 @@ ttd.text {
 }
 ttd.tagon {Level 4 Title}
 ttd.tagon {Level 3 Title}
-ttd.text {1.9.10 Geometry Manager}
+ttd.text {1.9.10 Geometry Manager
+}
+ttd.tagoff {Level 4 Title}
+ttd.tagoff {Level 3 Title}
+ttd.text {In Tk, a geometry manager controls how widgets are arranged in a window. There are three geometry managers currently available with Tk.
+}
 ttd.text {
 }
-ttd.tagoff {Level 3 Title}
+ttd.tagon {Level 4 Title}
 ttd.text {1.9.10.1 Grid
+}
+ttd.tagoff {Level 4 Title}
+ttd.text {The grid geometry manager arranges widgets in a grid of rows and columns. See a good Tcl/Tk book for details on the grid geometry manager.
+}
+ttd.tagon {Level 4 Title}
+ttd.text {
 }
 ttd.text {1.9.10.2 Pack
 }
+ttd.tagoff {Level 4 Title}
+ttd.text {The pack geometry manager arranges widgets next to each other from top to bottom or from left to right. Widgets can expand to fill the available space. See a good Tcl/Tk book for details on }
+ttd.text {the pack geometry manager.
+}
+ttd.text {
+}
+ttd.tagon {Level 4 Title}
 ttd.text {1.9.10.3 Place
 }
 ttd.tagoff {Level 4 Title}
+ttd.text {The place geometry manager arranges widgets freely. You can place widgets anywhere you like, and define a fixed size for them. Widgets sizes can also be a certain percentage of the width or height of their parent.
+}
+ttd.text {
+}
+ttd.text {The placer is the simplest geometry manager, but you should use pack or grid instead for better results. Both pack and grid automatically resize widgets to accodomate their labels. Pack and grid also accodomate changing font sizes on various platforms very well. The drawback in using pack and grid is that you need to spend more time designing your windows and thinking how your widgets will expand or contract as their size (font, text, etc.) changes.
+}
 ttd.text {
 }
 ttd.tagon {Level 2 Title}
@@ -865,11 +889,20 @@ ttd.text {1.10 Status Bar}
 ttd.tagoff {Level 2 Title}
 ttd.text {
 }
+ttd.text {The status bar displays the class of the next widget that you are about to insert, as well as the current mode (EDIT or TEST).
+}
 ttd.text {
 }
 ttd.tagon {Level 1 Title}
 ttd.text {2. Widget Toolbar}
 ttd.tagoff {Level 1 Title}
+ttd.text {
+}
+ttd.text {The widget toolbar lists all the widgets available for you to insert into your project. In vTcl, widgets are grouped into "widgets libraries", the default widget library being the standard Tcl/Tk widgets library.
+}
+ttd.text {
+}
+ttd.text {When you select a widget to insert, the status bar will display its class. To actually insert the widget, click anywhere in your project where you want the widget to be inserted.}
 ttd.text {
 }
 ttd.text {
