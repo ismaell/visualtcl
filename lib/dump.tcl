@@ -537,66 +537,6 @@ proc vTcl:dump_widget_bind {target basename {include_bindtags 1}} {
     return $result
 }
 
-proc vTcl:dump_top_widget {target basename} {
-    global vTcl
-    set result ""
-    foreach i $vTcl(attr,tops) {
-        if { $vTcl(w,wm,$i) != "" } {
-            switch $i {
-                class {}
-                title {
-                    append result "$vTcl(tab)wm $i $basename"
-                    append result " \"[wm title $target]\"\n"
-                }
-                state {
-                    # switch $vTcl(w,wm,state) { }
-                    switch [wm state $target] {
-                        iconic {
-                            append result "$vTcl(tab)wm iconify $basename\n"
-                        }
-                        normal {
-                            append result "$vTcl(tab)wm deiconify $basename\n"
-                        }
-                        withdrawn {
-                            if {$target == "."} {
-                                append result "$vTcl(tab)wm withdraw $basename\n"
-                            }
-                        }
-                    }
-                }
-                geometry {
-                    set dump_origin 1
-                    set dump_size 1
-                    if {[info exists ::widgets::${target}::set,origin]} {
-                        set dump_origin [vTcl:at ::widgets::${target}::set,origin]
-                    }
-                    if {[info exists ::widgets::${target}::set,size]} {
-                        set dump_size [vTcl:at ::widgets::${target}::set,size]
-                    }
-                    set geom_list [split [wm $i $target] x+]
-                    set geom_dump ""
-                    if {$dump_size} {
-                        append geom_dump [join [lrange $geom_list 0 1] x]
-                    }
-                    if {$dump_origin} {
-                        append geom_dump +[join [lrange $geom_list 2 3] +]
-                    }
-                    if {$geom_dump != ""} {
-                        append result "$vTcl(tab)wm $i $basename $geom_dump"
-                        append result "\; update\n"
-                    }
-                }
-                default {
-                    ## Let's get the current values of the target.
-                    append result "$vTcl(tab)wm $i $basename [wm $i $target]\n"
-                }
-            }
-        }
-    }
-
-    return $result
-}
-
 proc vTcl:dump_top {target} {
     return [vTcl::widgets::core::toplevel::dumpTop $target]
 }
@@ -804,3 +744,4 @@ proc vTcl:dump:sourcing_footer {varName} {
     if {![vTcl:streq [string index $var end] "\n"]} { append var "\n" }
     append var "\}\n"
 }
+
