@@ -497,9 +497,6 @@ proc vTcl:dump:dump_user_bind {} {
 proc vTcl:dump_widget_bind {target basename {include_bindtags 1}} {
     global vTcl
     set result ""
-    if {[catch {bindtags $target \{$vTcl(bindtags,$target)\}}]} {
-        return ""
-    }
     # well, let's see if we have to save the bindtags
     if {$include_bindtags} {
         set tags $vTcl(bindtags,$target)
