@@ -34,7 +34,8 @@ DumpInfoCmd     ::vTcl::widgets::core::megawidget::dumpInfoCmd
 CreateCmd       vTcl::widgets::core::megawidget::createCmd
 WidgetProc      vTcl::widgets::core::megawidget::widgetProc
 TreeLabel       @vTcl::widgets::core::megawidget::getWidgetTreeLabel
-
+QueryInsertOptionsCmd \
+                vTcl::widgets::core::megawidget::queryInsertOptionsCmd
 Export          vTcl::widgets::core::megawidget::widgetProc
 Export          vTcl::widgets::core::megawidget::createCmd
 Export          vTcl::widgets::core::megawidget::cgetProc
@@ -47,6 +48,70 @@ Function        "Save Megawidget..."         vTcl::widgets::core::megawidget::sa
 
 namespace eval vTcl::widgets::core::megawidget {
 
+set template {
+proc myWidgetProc {w args} {
+    ## this is the widget procedure that receives all the commands
+    ## for the megawidget
+    set command [lindex $args 0]
+    set args [lrange $args 1 end]
+
+    if {$command == "configure"} {
+        return [eval configureCmd $w $args]
+    } elseif {$command == "cget"} {
+        return [eval cgetCmd $w $args]
+    }
+
+    ## TODO: handle your own commands here
+}
+
+proc init {w} {
+    ## this procedure is executed before the megawidget UI gets created
+    ## you can prepare any internal data here
+}
+
+proc main {w} {
+    ## this procedure is called after the megawidget UI gets created
+}
+
+proc configureCmd {w args} {
+    ## TODO: handle megawidget configuration here
+    ##
+    ## examples of args:
+    ##    -background white -foreground red
+    ##        configure the -background and -foreground options
+    ##    {}
+    ##        empty list to return all options
+    ##    -background
+    ##        returns the -background configuration option
+}
+
+proc cgetCmd {w args} {
+    set option $args
+    ## TODO: return the value for the option $option
+}
+}
+
+    proc queryInsertOptionsCmd {addOptions refOptions} {
+        set newName [::vTcl::input::lineInput::getLine \
+             "Create New Megawidget" \
+             "Please enter the name of the megawidget you wish to create.\nThe name cannot contain the quotes { or } or colons." \
+             "Megawidget name:"]
+
+        if {$newName == ""} {
+            ## user canceled
+            return 0
+        }
+
+        set implementNamespace [vTcl:rename $newName]
+        variable template
+        namespace eval ::$implementNamespace $template
+        vTcl::proc::add_procs [info procs ::${implementNamespace}::*]
+
+        upvar $refOptions refOptions_
+        set refOptions_ "-widgetProc ::${implementNamespace}::myWidgetProc"
+        return 1
+    }
+
     proc dumpInfoCmd {target basename} {
         set out [$::classes(Frame,dumpInfoCmd) $target $basename]
         if {![info exists ::widgets::${target}::sourceFilename]} {
@@ -54,11 +119,14 @@ namespace eval vTcl::widgets::core::megawidget {
         }
 
         upvar ::widgets::${target}::sourceFilename  sourceFilename
+        upvar ::widgets::${target}::compoundName  compoundName
 
         append out $::vTcl(tab)
         append out "namespace eval ::widgets::$basename \{\n"
         append out $::vTcl(tab2)
         append out "set sourceFilename \"$sourceFilename\"\n"
+        append out $::vTcl(tab2)
+        append out "set compoundName [list $compoundName]\n"
         append out $::vTcl(tab)\}\n
 
         return $out
@@ -86,8 +154,9 @@ namespace eval vTcl::widgets::core::megawidget {
         close $f
         vTcl:statbar 0
 
-        ## save the path to propose it on the next save
+        ## save the path to propose it on the next save, and the compound name
         namespace eval ::widgets::${w} [list set sourceFilename $file]
+        namespace eval ::widgets::${w} [list set compoundName $compoundName]
     }
 
     proc cgetProc {w args} {
@@ -208,6 +277,7 @@ namespace eval vTcl::widgets::core::megawidget {
         return "MegaWidget widgetProc: $widgetProc"
     }
 }
+
 
 
 
