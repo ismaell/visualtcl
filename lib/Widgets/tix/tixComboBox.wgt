@@ -6,3 +6,4 @@ Icon		icon_tixComboBox.gif
 TreeLabel	Tix ComboBox
 DumpCmd		vTcl:lib_tix:dump_widget_opt
 DumpChildren	no
+MegaWidget   yes

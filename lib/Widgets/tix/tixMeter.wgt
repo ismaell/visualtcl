@@ -6,6 +6,7 @@ Icon		icon_tixMeter.gif
 TreeLabel	Tix Meter
 DumpCmd		vTcl:lib_tix:dump_widget_opt
 DumpChildren	no
+MegaWidget   yes
 InsertCmd	vTcl:widget:tixMeter:inscmd
 
 proc vTcl:widget:tixMeter:inscmd {target} {

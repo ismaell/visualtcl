@@ -7,6 +7,8 @@ TreeLabel	Tix FileEntry
 DefaultOptions	-label "FileEntry:" -options {label.anchor e}
 DumpCmd		vTcl:dump:TixFileEntry
 DumpChildren	no
+MegaWidget   yes
+AdditionalClasses TixFileSelectBox TixStdButtonBox TixInputOnly
 InsertCmd	vTcl:widget:tixFileEntry:inscmd
 
 proc vTcl:widget:tixFileEntry:inscmd {target} {

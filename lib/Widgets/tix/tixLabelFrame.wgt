@@ -7,6 +7,7 @@ TreeLabel	Tix LabelFrame
 DefaultOptions	-label "Label"
 DumpCmd		vTcl:dump:TixLabelFrame
 DumpChildren	no
+MegaWidget   yes
 InsertCmd	vTcl:widget:tixLabelFrame:inscmd
 
 proc vTcl:widget:tixLabelFrame:inscmd {target} {

@@ -6,6 +6,7 @@ TreeLabel	Tix PopupMenu
 DefaultOptions	-title PopupMenu
 DumpCmd		vTcl:lib_tix:dump_widget_opt
 DumpChildren	no
+MegaWidget   yes
 InsertCmd	vTcl:widget:tixPopupMenu:inscmd
 
 proc vTcl:widget:tixPopupMenu:inscmd {target} {

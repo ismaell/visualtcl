@@ -6,6 +6,7 @@ Icon		icon_tixNoteBook.gif
 TreeLabel	Tix NoteBook
 DumpCmd		vTcl:dump:TixNoteBook
 DumpChildren	no
+MegaWidget   yes
 InsertCmd	vTcl:widget:tixNoteBook:inscmd
 
 proc vTcl:widget:tixNoteBook:inscmd {target} {

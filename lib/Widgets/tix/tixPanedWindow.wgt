@@ -7,6 +7,7 @@ TreeLabel	Tix PanedWindow
 DefaultOptions	-orient vertical
 DumpCmd		vTcl:dump:TixPanedWindow
 DumpChildren	no
+MegaWidget   yes
 InsertCmd	vTcl:widget:tixPanedWindow:inscmd
 
 proc vTcl:widget:tixPanedWindow:inscmd {target} {

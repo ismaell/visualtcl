@@ -7,6 +7,7 @@ TreeLabel	Tix OptionMenu
 DefaultOptions	-label "OptionMenu:" -options {label.anchor e}
 DumpCmd		vTcl:dump:TixOptionMenu
 DumpChildren	no
+MegaWidget   yes
 InsertCmd	vTcl:widget:tixOptionMenu:inscmd
 
 proc vTcl:widget:tixOptionMenu:inscmd {target} {
