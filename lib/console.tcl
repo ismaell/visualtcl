@@ -21,14 +21,6 @@
 ##############################################################################
 #
 
-proc vTcl:show_console {{show show}} {
-    if {[catch {winfo exists $::tkcon::PRIV(root)}]} {
-    	::tkcon::Init
-	tkcon title "Visual Tcl"
-    }	
-    tkcon $show
-}
-
 namespace eval ::console {
     variable MRU         ""
     variable current_MRU 0
