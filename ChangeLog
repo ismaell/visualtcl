@@ -1,5 +1,14 @@
 ChangeLog for Visual Tcl:
 
+1.51b4 -> 1.51rc0
+    o Added necessary compound code to allow copy/paste of megawidgets with
+      childsites. Enabled tabnotebook and panedwindow [Iwidgets] with this
+      functionality.
+    o Fixed copy/paste bug where megawidgets would lose their options after
+      saving.
+    o Added code to prevent special IWidgets binding tags from beeing saved
+      in the project.
+
 1.51b3 -> 1.51b4
     o Now prevents the user from trying to assign the same alias to 2 or more
       widgets inside the same toplevel.
