@@ -580,7 +580,7 @@ proc vTcl:name_compound {t} {
 
 namespace eval ::vTcl::compounds {
 
-    proc createCompound {target compoundName} {
+    proc createCompound {target compoundName {procs {}}} {
 
         set output ""
         append output "namespace eval ::vTcl::compounds::$compoundName \{\n"
@@ -603,17 +603,38 @@ namespace eval ::vTcl::compounds {
             append output "\n"
         }
 
+        ## code to actually create the compound
         append output "proc compoundCmd \{target\} \{\n"
         if {$class == "Toplevel"} {
             append output "    vTclWindow$target \$target\n"
         } else {
+            append output "    set top \[winfo toplevel \$target\]\n"
             append output "[$::classes($class,dumpCmd) $target \$target]\n"
         }
+        append output "\}\n\n"
+
+        ## remembers which options to save/not save
+        append output "proc infoCmd \{target\} \{\n"
+        append output "[$::classes($class,dumpInfoCmd) $target \$target]\n"
         append output "\}\n"
+
+        ## optional list of procs to include with the compound
+        if {![lempty $procs]} {
+            append output "\nset procs \{\n"
+            foreach procname $procs {
+                append output "    $procname\n"
+            }
+            append output "\}\n"
+
+            append output "\nprocsCmd \{\n"
+            foreach procname $procs {
+                append output "[vTcl:dump_proc $procname]\n"
+            }
+            append output "\}\n"
+        }
 
         ## closing brace of namespace statement
         append output "\}\n"
         return $output
     }
 }
-

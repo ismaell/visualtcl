@@ -506,7 +506,7 @@ proc vTcl:dump_widget_bind {target basename {include_bindtags 1}} {
             set reltags ""
             foreach tag $tags {
                 if {"$tag" == "$target"} {
-                    set tag [vTcl:base_name $target]
+                    set tag $basename
                 } elseif {"$tag" == "[winfo toplevel $target]"} {
                     set tag \$top
                 }
@@ -519,7 +519,7 @@ proc vTcl:dump_widget_bind {target basename {include_bindtags 1}} {
                     append reltags " $tag"
                 }
             }
-            append result "$vTcl(tab)bindtags [vTcl:base_name $target] \"$reltags\"\n"
+            append result "$vTcl(tab)bindtags $basename \"$reltags\"\n"
         }
     }
 
@@ -744,5 +744,6 @@ proc vTcl:dump:sourcing_footer {varName} {
     if {![vTcl:streq [string index $var end] "\n"]} { append var "\n" }
     append var "\}\n"
 }
+
 
 
