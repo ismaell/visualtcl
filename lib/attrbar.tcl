@@ -187,7 +187,8 @@ proc vTcl:attrbar {args} {
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 3 -pady 2 \
         -side left
     vTcl:entry .vTcl.attr.01.02 \
-        -highlightthickness 0 -width 15 -textvariable vTcl(w,opt,-text)
+        -highlightthickness 0 -width 15 -textvariable vTcl(w,opt,-text) \
+        -bg white
     bind .vTcl.attr.01.02 <Return> {
         .vTcl.attr.01.02 insert end "\n"
         vTcl:update_label $vTcl(w,widget)
