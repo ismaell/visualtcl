@@ -36,6 +36,7 @@ InsertCmd       vTcl::widgets::core::panedwindow::insertCmd
 TreeChildrenCmd	{vTcl::widgets::core::panedwindow::treeChildrenCmd
 		 vTcl::widgets::core::panedwindow::treeChildrenChildsite}
 DumpCmd         vTcl::widgets::core::panedwindow::dumpCmd
+DumpInfoCmd     vTcl::widgets::core::panedwindow::dumpInfoCmd
 
 ## Special proc for setting up icons on the toolbar.
 proc vTcl:PanedWindow:ToolBarSetup {} {
@@ -94,6 +95,17 @@ namespace eval vTcl::widgets::core::panedwindow {
 		append result "$::vTcl(tab)after idle \"update; $basename sash place $i $x $y\"\n"
 	    }
 	    incr i
+        }
+        return $result
+    }
+
+    proc dumpInfoCmd {target basename} {
+        global classes
+        set result [vTcl:dump:widget_info $target $basename]
+	set i 0
+	set panes [$target panes]
+        foreach pane $panes {
+            append result [$classes(Frame,dumpInfoCmd) $pane [vTcl:base_name $pane]]
         }
         return $result
     }

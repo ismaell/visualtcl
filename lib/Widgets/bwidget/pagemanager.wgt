@@ -7,6 +7,7 @@ CreateCmd	    ::vTcl::widgets::bwidgets::pagesmanager::createCmd
 MegaWidget	    yes
 InsertCmd       ::vTcl::widgets::bwidgets::pagesmanager::insertCmd
 DumpCmd         ::vTcl::widgets::bwidgets::pagesmanager::dumpCmd
+DumpInfoCmd     ::vTcl::widgets::bwidgets::pagesmanager::dumpInfoCmd
 CompoundCmd     ::vTcl::widgets::bwidgets::pagesmanager::compoundCmd
 Export          ::vTcl::widgets::bwidgets::pagesmanager::createCmd
 TreeChildrenCmd	{vTcl::widgets::bwidgets::pagesmanager::treeChildrenCmd
@@ -74,6 +75,22 @@ namespace eval ::vTcl::widgets::bwidgets::pagesmanager {
                 [vTcl::widgets::bwidgets::dump_subwidgets $site \$$sitevariable]
         }
         append result "$::vTcl(tab)$basename raise [lindex $pages 0]\n"
+        return $result
+    }
+
+    proc dumpInfoCmd {target basename} {
+        global classes
+        set result [vTcl:dump:widget_info $target $basename]
+        set pages [$target pages]
+        set size  [llength $pages]
+        for {set i 0} {$i < $size} {incr i} {
+            set site [$target getframe [lindex $pages $i]]
+            append result "$::vTcl(tab)"
+            set sitevariable "site_[llength [split $site .]]_$i"
+            append result "set $sitevariable "
+            append result "\[$basename getframe [lindex $pages $i]\]\n"
+            append result [$classes(Frame,dumpInfoCmd) $site \$$sitevariable]
+        }
         return $result
     }
 

@@ -36,6 +36,7 @@ TreeChildrenCmd	{
 		vTcl::widgets::iwidgets::scrolledframe::treeChildrenChildsite
 		}
 DumpCmd		vTcl::widgets::iwidgets::scrolledframe::dumpCmd
+DumpInfoCmd	vTcl::widgets::iwidgets::scrolledframe::dumpInfoCmd
 CompoundCmd     vTcl::widgets::iwidgets::scrolledframe::compoundCmd
 DefaultOptions	-labeltext "Scrolled frame"
 
@@ -70,6 +71,19 @@ namespace eval vTcl::widgets::iwidgets::scrolledframe {
         append result "$vTcl(tab)set $sitevariable "
         append result "\[$basename childsite\]\n"
         append result [vTcl:lib_itcl:dump_subwidgets $page \$$sitevariable]
+
+        return $result
+    }
+
+    proc dumpInfoCmd {target basename} {
+        global vTcl classes
+
+        set result [vTcl:dump:widget_info $target $basename]
+        set page   [$target childsite]
+        set sitevariable "site_[llength [split $page .]]_0"
+        append result "$vTcl(tab)set $sitevariable "
+        append result "\[$basename childsite\]\n"
+        append result [$classes(Frame,dumpInfoCmd) $page \$$sitevariable]
 
         return $result
     }

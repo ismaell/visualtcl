@@ -347,54 +347,29 @@ proc vTcl:dump_widget_quick {target} {
 
 proc vTcl:dump_widget_opt {target basename} {
     global vTcl classes
-    if {$target == "."} {
-        set mgr wm
-    } else {
-        set mgr [winfo manager $target]
-    }
 
     set result ""
+    set mgr [winfo manager $target]
     set class [vTcl:get_class $target]
     set opt [$target configure]
 
-    ## Let's be safe and force wm for toplevel windows.  Just in case...
-    if {$class == "Toplevel"} { set mgr wm }
+    set result "$vTcl(tab)$classes($class,createCmd) "
+    append result "$basename"
 
-    if {$target != "."} {
-        set result "$vTcl(tab)$classes($class,createCmd) "
-        append result "$basename"
-
-        if {$mgr == "wm" && $class != "Menu"} {
-            append result " -class [winfo class $target]"
-        }
-
-        # use special proc to convert image names to filenames before
-        # saving to disk
-        set p [vTcl:get_opts_special $opt $target]
-
-        if {$p != ""} {
-            append result " \\\n[vTcl:clean_pairs $p]\n"
-        } else {
-            append result "\n"
-        }
-
-        if {$class == "Toplevel"} {
-            if {![lempty [wm transient $target]]} {
-                append result $vTcl(tab)
-                append result "wm transient $basename [wm transient $target]"
-                append result "\; update\n"
-            }
-            if {[wm state $target] == "withdrawn"} {
-                append result $vTcl(tab)
-                append result "wm withdraw $basename\n"
-            }
-        }
+    if {$mgr == "wm" && $class != "Menu"} {
+        append result " -class [winfo class $target]"
     }
-    if {$mgr == "wm"} then {
-        if {$class == "Toplevel"} then {
-            append result [vTcl:dump_top_widget $target $basename]
-        }
-    } elseif {$mgr == "menubar"} then {
+
+    # use special proc to convert image names to filenames before saving to disk
+    set p [vTcl:get_opts_special $opt $target]
+
+    if {$p != ""} {
+        append result " \\\n[vTcl:clean_pairs $p]\n"
+    } else {
+        append result "\n"
+    }
+
+    if {$mgr == "menubar"} then {
         return ""
     }
 
@@ -620,42 +595,7 @@ proc vTcl:dump_top_widget {target basename} {
 }
 
 proc vTcl:dump_top {target} {
-    global vTcl
-    set output ""
-    set proc_base $vTcl(winname)$target
-    if {![winfo exists $target]} {
-        if {[info procs $proc_base] == ""} {
-            return ""
-        }
-        append output [vTcl:dump_proc $proc_base]
-        return $output
-    }
-    if {[winfo class $target] != "Toplevel" && $target != "."} {
-        return
-    }
-    vTcl:update_widget_info $target
-    append output "\nproc $vTcl(winname)$target \{base\} \{\n"
-    append output "$vTcl(tab)if {\$base == \"\"} {\n"
-    append output "$vTcl(tab2)set base $target\n$vTcl(tab)}\n"
-    if { $target != "." } {
-        append output "$vTcl(tab)if \{\[winfo exists \$base\]\} \{\n"
-        append output "$vTcl(tab2)wm deiconify \$base; return\n"
-        append output "$vTcl(tab)\}\n"
-	append output "$vTcl(tab)set top \$base\n"
-    }
-    if {[wm state $target] == "normal" ||
-        [wm state $target] == "iconic" ||
-        $target == "."} {
-        lappend vTcl(showtops) $target
-    }
-    incr vTcl(num,index)
-    vTcl:statbar [expr {($vTcl(num,index) * 100) / $vTcl(num,total)}]
-
-    append output [vTcl:dump:widgets $target]
-    append output "\n$vTcl(tab)vTcl:FireEvent \$base <<Ready>>\n"
-    append output "\}\n"
-
-    return $output
+    return [vTcl::widgets::core::toplevel::dumpTop $target]
 }
 
 proc vTcl:dump:aliases {target} {
@@ -795,62 +735,43 @@ proc vTcl:dump:gather_widget_info {} {
     set vTcl(dump,libraries) [vTcl:lrmdups $vTcl(dump,libraries)]
 }
 
-## tries to eliminate as many absolute paths as possible with childsites
-proc vTcl:dump:make_relative_paths {widget} {
+proc vTcl:dump:widget_info {target basename} {
+    global vTcl
 
-    global classes
+    set testing [namespace children ::widgets ::widgets::${target}]
+    if {$testing == ""} { return }
 
-    ## Let's try to find a parent and it's childsites
-    set path ""
-    if {[vTcl:WidgetVar $widget parent_widget tmp]} {
-        set path $tmp
-        if {$path == $widget} {
-            if {[vTcl:WidgetVar [winfo parent $widget] parent_widget tmp]} {
-               set path $tmp
-            }
+    vTcl:WidgetVar $target save
+    set list {}
+    foreach var [lsort [array names save]] {
+       if {!$save($var)} { continue }
+       lappend list $var $save($var)
+    }
+
+    append out $vTcl(tab)
+    append out "namespace eval ::widgets::$basename \{\n"
+    append out $vTcl(tab2)
+    append out "array set save [list $list]\n"
+
+    ## suboptions for megawidgets
+    if {[info exists ::widgets::${target}::subOptions::save]} {
+        upvar ::widgets::${target}::subOptions::save subSave
+        set list {}
+        foreach var [lsort [array names subSave]] {
+            if {!$subSave($var)} { continue }
+            lappend list $var $subSave($var)
+        }
+        if {![lempty $list]} {
+            append out $vTcl(tab2)
+            append out "namespace eval subOptions \{\n"
+            append out $vTcl(tab)$vTcl(tab2)
+            append out "array set save [list $list]\n"
+            append out $vTcl(tab2)\}\n
         }
     }
 
-    ## At this stage path either is "" (which means there is no
-    ## parent that is a megawidget) or contains the path of the
-    ## closest megawidget parent
-    if {$path == ""} {return $widget}
-
-    ## ask for the childsites
-    set class [vTcl:get_class $path]
-    if {[info exists classes($class,megaWidget)] &&
-        $classes($class,megaWidget)} {
-
-        ## it is a megawidget, ask for its childsites
-        set childsiteCmd [lindex $classes($class,treeChildrenCmd) 1]
-
-        ## no childsites in megawidget ? shouldn't happen at this point but...
-        set sites ""
-        if {$childsiteCmd != ""} {
-        set sites [$childsiteCmd $path]
-        }
-
-        ## let's see what we can do to substitute absolute paths
-        set index 0
-        foreach site $sites {
-            if {(![string match $site $widget]) && (![string match $site.* $widget])} {
-	        incr index; continue
-            }
-
-            set first [string first $site $widget]
-
-            ## all right, let's replace!
-            set length [string length $site]
-            set widget [string replace $widget \
-                $first [expr $first + $length - 1] \
-                "\[lindex \[$childsiteCmd [vTcl:dump:make_relative_paths $path]\] $index\]"]
-
-            ## we'are done replacing
-            break
-        }
-    }
-
-    return $widget
+    append out "$vTcl(tab)\}\n"
+    return $out
 }
 
 proc vTcl:dump:project_info {basedir project} {
@@ -860,10 +781,6 @@ proc vTcl:dump:project_info {basedir project} {
     set multi 0
     if {![vTcl:streq $vTcl(pr,projecttype) "single"]} { set multi 1 }
 
-    # We don't want information for the displayed widget tree
-    #                                        v
-    set widgets [vTcl:complete_widget_tree . 0]
-
     ## It's a single project without a project file.
     if {!$multi && !$vTcl(pr,projfile)} {
     	vTcl:dump:sourcing_header out
@@ -872,45 +789,9 @@ proc vTcl:dump:project_info {basedir project} {
 
     append out "proc vTcl:project:info \{\} \{\n"
 
-    foreach widget $widgets {
-        if {[vTcl:streq $widget "."]} { continue }
-        set testing [namespace children ::widgets ::widgets::${widget}]
-        if {$testing == ""} { continue }
-
-	vTcl:WidgetVar $widget save
-        set list {}
-        foreach var [lsort [array names save]] {
-            if {!$save($var)} { continue }
-            lappend list $var $save($var)
-        }
-
-        set relative [vTcl:dump:make_relative_paths $widget]
-
-        append out $vTcl(tab)
-        append out "namespace eval ::widgets::$relative \{\n"
-        append out $vTcl(tab2)
-        append out "array set save [list $list]\n"
-        if {[winfo manager $widget] == "wm"} {
-            append out [vTcl:wm:dump_info $widget]
-        }
-
-        ## suboptions for megawidgets
-        if {[info exists ::widgets::${widget}::subOptions::save]} {
-            upvar ::widgets::${widget}::subOptions::save subSave
-            set list {}
-            foreach var [lsort [array names subSave]] {
-                if {!$subSave($var)} { continue }
-                lappend list $var $subSave($var)
-            }
-	    if {![lempty $list]} {
-                append out $vTcl(tab2)
-                append out "namespace eval subOptions \{\n"
-                append out $vTcl(tab)$vTcl(tab2)
-                append out "array set save [list $list]\n"
-                append out $vTcl(tab2)\}\n
-	    }
-        }
-        append out "$vTcl(tab)\}\n"
+    foreach i $vTcl(tops) {
+        append out "$vTcl(tab)set base $i\n"
+        append out [$classes(Toplevel,dumpInfoCmd) $i {$base}]
     }
 
     append out $vTcl(tab)

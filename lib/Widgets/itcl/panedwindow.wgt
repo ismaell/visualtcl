@@ -35,6 +35,7 @@ TreeChildrenCmd	{
 		vTcl::widgets::iwidgets::panedwindow::treeChildrenChildsite
 		}
 DumpCmd		vTcl::widgets::iwidgets::panedwindow::dumpCmd
+DumpInfoCmd	vTcl::widgets::iwidgets::panedwindow::dumpInfoCmd
 InsertCmd	vTcl::widgets::iwidgets::panedwindow::insertCmd
 DeleteSiteCmd   vTcl::widgets::iwidgets::panedwindow::deleteSiteCmd
 TagsCmd         vTcl::widgets::iwidgets::panedwindow::tagsCmd
@@ -165,9 +166,9 @@ namespace eval vTcl::widgets::iwidgets::panedwindow {
     }
 
     proc dumpCmd {target basename} {
-
         global vTcl
-        set result [vTcl:dump_widget_opt $target $basename]
+
+	set result [vTcl:dump_widget_opt $target $basename]
         set entries [$target childsite]
         set size [llength $entries]
         for {set i 0} {$i < $size} {incr i} {
@@ -184,6 +185,23 @@ namespace eval vTcl::widgets::iwidgets::panedwindow {
             append result "set $sitevariable "
             append result "\[lindex \[$basename childsite\] $i\]\n"
             append result [vTcl:lib_itcl:dump_subwidgets $page \$$sitevariable]
+        }
+        return $result
+    }
+
+    proc dumpInfoCmd {target basename} {
+        global vTcl classes
+
+	set result [vTcl:dump:widget_info $target $basename]
+        set entries [$target childsite]
+        set size [llength $entries]
+        for {set i 0} {$i < $size} {incr i} {
+            set page [lindex $entries $i]
+            append result "$vTcl(tab)"
+            set sitevariable "site_[llength [split $page .]]_$i"
+            append result "set $sitevariable "
+            append result "\[lindex \[$basename childsite\] $i\]\n"
+            append result [$classes(Frame,dumpInfoCmd) $page \$$sitevariable]
         }
         return $result
     }

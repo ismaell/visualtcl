@@ -34,6 +34,7 @@ DeleteCmd       ::vTcl::widgets::core::frame::deleteCmd
 SelectCmd       ::vTcl::widgets::core::frame::selectCmd
 InsertChildCmd  ::vTcl::widgets::core::frame::insertChildCmd
 DumpCmd         ::vTcl::widgets::core::frame::dumpCmd
+DumpInfoCmd     ::vTcl::widgets::core::frame::dumpInfoCmd
 Insertable
 
 NewOption -class     "class"      type
@@ -55,7 +56,7 @@ namespace eval ::vTcl::widgets::core::frame {
 
         append result "$::vTcl(tab)"
         set sitevariable "site_[llength [split $target .]]_0"
-        append result "set $sitevariable [vTcl:base_name $target]\n"
+        append result "set $sitevariable $basename\n"
 	set basenames($target) \$$sitevariable
         set geometry ""
 
@@ -66,9 +67,37 @@ namespace eval ::vTcl::widgets::core::frame {
             append result [$classes($class,dumpCmd) $i $basename]
             append geometry [vTcl:dump_widget_geom $i $basename]
             catch {unset basenames($i)}
+            incr vTcl(num,index)
         }
 	catch {unset basenames($target)}
         append result $geometry
+        return $result
+    }
+
+    proc dumpInfoCmd {target basename} {
+        global vTcl basenames classes
+        set result [vTcl:dump:widget_info $target $basename]
+
+	set children [vTcl:get_children $target]
+	if {$children == ""} {
+	    ## the frame is empty, don't bother
+	    return $result
+	}
+
+        append result "$::vTcl(tab)"
+        set sitevariable "site_[llength [split $target .]]_0"
+        append result "set $sitevariable $basename\n"
+	set basenames($target) \$$sitevariable
+        set geometry ""
+
+	foreach i $children {
+            set basename [vTcl:base_name $i]
+            set basenames($i) $basename
+            set class [vTcl:get_class $i]
+            append result [$classes($class,dumpInfoCmd) $i $basename]
+            catch {unset basenames($i)}
+        }
+	catch {unset basenames($target)}
         return $result
     }
 

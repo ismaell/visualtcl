@@ -335,7 +335,12 @@ proc vTcl:prop:update_attr {} {
 	    if {$type == "synonym"} { continue }
             if {[lsearch $vTcl(w,optlist) $i] >= 0} {
 		if {$type == "color"} {
-                    $top.t${i}.f configure -bg $vTcl(w,opt,$i)
+		    set val $vTcl(w,opt,$i)
+		    if {$val == ""} {
+		        ## if empty color use default background
+                        set val [lindex [$top.t${i}.f configure -bg] 3]
+		    }
+                    $top.t${i}.f configure -bg $val
                 }
             }
         }
@@ -459,6 +464,14 @@ proc vTcl:prop:choice_select {w var} {
     }
 }
 
+proc vTcl:prop:color_update {w val} {
+    if {$val == ""} {
+        ## if empty color use default background
+        set val [lindex [$w configure -bg] 3]
+    }
+    $w configure -bg $val
+}
+
 proc vTcl:prop:new_attr {top option variable config_cmd config_args prefix {isGeomOpt ""}} {
     global vTcl $variable options specialOpts propmgrLabels
 
@@ -573,6 +586,7 @@ proc vTcl:prop:new_attr {top option variable config_cmd config_args prefix {isGe
 		    vTcl:show_color $top.t${option}.f $option $variable ${base}.f
 		    vTcl:prop:save_opt \$vTcl(w,widget) $option $variable
 		"
+	    vTcl:prop:color_update ${base}.f [vTcl:at $variable]
             pack ${base}.l -side left -expand 1 -fill x
             pack ${base}.f -side right -fill y -pady 1 -padx 1
 	    set focusControl ${base}.l

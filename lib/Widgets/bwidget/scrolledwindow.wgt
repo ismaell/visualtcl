@@ -1,3 +1,27 @@
+##############################################################################
+#
+# Visual TCL - A cross-platform application development environment
+#
+# Copyright (C) 2001 Christian Gavin
+#
+# Description file for Bwidgets scrolled window
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+#
+##############################################################################
+
 Class		      ScrolledWindow
 Lib		      bwidget
 
@@ -9,6 +33,7 @@ MegaWidget	      yes
 TreeChildrenCmd   {vTcl::widgets::bwidgets::scrolledwindow::treeChildrenCmd
                    vTcl::widgets::bwidgets::scrolledwindow::treeChildrenChildsite}
 DumpCmd           vTcl::widgets::bwidgets::scrolledwindow::dumpCmd
+DumpInfoCmd       vTcl::widgets::bwidgets::scrolledwindow::dumpInfoCmd
 IgnoreProc        ::ScrolledWindow::* ScrolledWindow
 InsertChildCmd    vTcl::widgets::bwidgets::scrolledwindow::insertChildCmd
 DeleteCmd         vTcl::widgets::bwidgets::scrolledwindow::deleteCmd
@@ -50,6 +75,17 @@ namespace eval ::vTcl::widgets::bwidgets::scrolledwindow {
             set class [vTcl:get_class $child]
             append result [$::classes($class,dumpCmd) $child $subbasename]
             append result "$::vTcl(tab)$basename setwidget $subbasename\n"
+        }
+        return $result
+    }
+
+    proc dumpInfoCmd {target basename} {
+        set result [vTcl:dump:widget_info $target $basename]
+        set child [lindex [winfo children [treeChildrenChildsite $target]] 0]
+        if {$child != ""} {
+            set subbasename [vTcl:base_name $child]
+            set class [vTcl:get_class $child]
+            append result [$::classes($class,dumpInfoCmd) $child $subbasename]
         }
         return $result
     }

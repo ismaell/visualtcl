@@ -194,15 +194,18 @@ proc vTcl:wm:conf_title {target var value} {
     wm title $target "$vTcl(w,wm,title)"
 }
 
-proc vTcl:wm:dump_info {target} {
+proc vTcl:wm:dump_info {target basename} {
     global vTcl
     set out ""
+    append out $vTcl(tab)
+    append out "namespace eval ::widgets::$basename \{\n"
     foreach wm_option $vTcl(m,wm,savelist) {
         if {[info exists ::widgets::${target}::${wm_option}]} {
             append out $vTcl(tab2)
             append out "set $wm_option [vTcl:at ::widgets::${target}::${wm_option}]\n"
         }
     }
+    append out "$vTcl(tab)\}\n"
     return $out
 }
 
@@ -407,14 +410,14 @@ namespace eval vTcl::widgets::core {
     ## itself (`vTcl:dump:widgets $subwidget' doesn't do the right thing if
     ## the grid geometry manager is used to manage children of $subwidget.
     proc dump_subwidgets {subwidget {sitebasename {}}} {
+        puts "dump_subwidgets $subwidget"
         global vTcl basenames classes
         set output ""
         set geometry ""
-        set widget_tree [vTcl:widget_tree $subwidget]
         set length      [string length $subwidget]
         set basenames($subwidget) $sitebasename
 
-        foreach i $widget_tree {
+        foreach i [vTcl:get_children $subwidget] {
 
             set basename [vTcl:base_name $i]
 

@@ -1,6 +1,11 @@
 ChangeLog for Visual Tcl:
 
 1.6.0a2 ->
+    o Saving project info (eg. which options are saved) now uses fully
+      relative widget paths. Each widget class can now be responsible for
+      saving its own info into the project file.
+    o In attributes editor, the color selection dialog appears on button
+      release, not on button press.
     o Added publish/subscribe design pattern to have an elegant way to
       send events throughout vTcl. Among these events are "test_mode" and
       "edit_mode".

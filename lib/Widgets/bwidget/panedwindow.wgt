@@ -38,6 +38,7 @@ InsertCmd       vTcl::widgets::bwidgets::panedwindow::insertCmd
 TreeChildrenCmd	{vTcl::widgets::bwidgets::panedwindow::treeChildrenCmd
 		 vTcl::widgets::bwidgets::panedwindow::treeChildrenChildsite}
 DumpCmd         vTcl::widgets::bwidgets::panedwindow::dumpCmd
+DumpInfoCmd     vTcl::widgets::bwidgets::panedwindow::dumpInfoCmd
 CompoundCmd     vTcl::widgets::bwidgets::panedwindow::compoundCmd
 
 ## Special proc for setting up icons on the toolbar.
@@ -106,6 +107,20 @@ namespace eval vTcl::widgets::bwidgets::panedwindow {
             append result "\[$basename getframe $i\]\n"
             append result \
                 [vTcl::widgets::bwidgets::dump_subwidgets $site \$$sitevariable]
+        }
+        return $result
+    }
+
+    proc dumpInfoCmd {target basename} {
+        global classes
+        set result [vTcl:dump:widget_info $target $basename]
+        for {set i 0} {$i < 2} {incr i} {
+            set site [$target getframe $i]
+            append result "$::vTcl(tab)"
+            set sitevariable "site_[llength [split $site .]]_$i"
+            append result "set $sitevariable "
+            append result "\[$basename getframe $i\]\n"
+            append result [$classes(FrameCmd,dumpInfoCmd) $site \$$sitevariable]
         }
         return $result
     }

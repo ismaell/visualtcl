@@ -85,6 +85,7 @@ proc SetClassArray {} {
         $tmp(class),dumpChildren    1
         $tmp(class),megaWidget      0
         $tmp(class),dumpCmd         vTcl:dump_widget_opt
+	$tmp(class),dumpInfoCmd     vTcl:dump:widget_info
         $tmp(class),compoundCmd     {}
         $tmp(class),tagsCmd         {}
         $tmp(class),options         {}
@@ -423,4 +424,9 @@ proc NoEncaseOptionWhen {option proc} {
 
 proc Insertable {} {
     set ::classes($::tmp(class),insertable) 1
+}
+
+proc DumpInfoCmd {val} {
+    global tmp
+    set tmp(dumpInfoCmd) $val
 }

@@ -38,6 +38,7 @@ TagsCmd         vTcl:lib_itcl:tagscmd
 TreeChildrenCmd	{vTcl::widgets::iwidgets::tabnotebook::treeChildrenCmd
 		 vTcl::widgets::iwidgets::tabnotebook::treeChildrenChildsite}
 DumpCmd		vTcl::widgets::iwidgets::tabnotebook::dumpCmd
+DumpInfoCmd	vTcl::widgets::iwidgets::tabnotebook::dumpInfoCmd
 CompoundCmd     vTcl::widgets::iwidgets::tabnotebook::compoundCmd
 ResizeCmd       vTcl::widgets::iwidgets::tabnotebook::resizeCmd
 
@@ -123,6 +124,24 @@ namespace eval vTcl::widgets::iwidgets::tabnotebook {
             append result "set $sitevariable "
             append result "\[lindex \[$basename childsite\] $i\]\n"
             append result [vTcl:lib_itcl:dump_subwidgets $page \$$sitevariable]
+        }
+        append result "$vTcl(tab)$basename select 0\n"
+        return $result
+    }
+
+    proc dumpInfoCmd {target basename} {
+        global vTcl classes
+
+        set result [vTcl:dump:widget_info $target $basename]
+        set entries [$target childsite]
+        set size    [llength $entries]
+        for {set i 0} {$i < $size} {incr i} {
+            set page [lindex $entries $i]
+            append result "$vTcl(tab)"
+            set sitevariable "site_[llength [split $page .]]_$i"
+            append result "set $sitevariable "
+            append result "\[lindex \[$basename childsite\] $i\]\n"
+            append result [$classes(Frame,dumpInfoCmd) $page \$$sitevariable]
         }
         append result "$vTcl(tab)$basename select 0\n"
         return $result

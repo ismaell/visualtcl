@@ -8,8 +8,9 @@ DefaultOptions   -text "Label" -borderwidth 1
 MegaWidget	yes
 TreeChildrenCmd   {vTcl::widgets::bwidgets::labelframe::treeChildrenCmd
                    vTcl::widgets::bwidgets::labelframe::treeChildrenChildsite}
-DumpCmd     vTcl::widgets::bwidgets::labelframe::dumpCmd
-CompoundCmd vTcl::widgets::bwidgets::labelframe::compoundCmd
+DumpCmd           vTcl::widgets::bwidgets::labelframe::dumpCmd
+DumpInfoCmd       vTcl::widgets::bwidgets::labelframe::dumpInfoCmd
+CompoundCmd       vTcl::widgets::bwidgets::labelframe::compoundCmd
 
 namespace eval vTcl::widgets::bwidgets::labelframe {
 
@@ -39,6 +40,19 @@ namespace eval vTcl::widgets::bwidgets::labelframe {
         append result "\[$basename getframe\]\n"
         append result \
                 [vTcl::widgets::bwidgets::dump_subwidgets $site \$$sitevariable]
+	return $result
+    }
+
+    proc dumpInfoCmd {target basename} {
+        global classes
+        set result [vTcl:dump:widget_info $target $basename]
+        set site [$target getframe]
+        append result "$::vTcl(tab)"
+        set sitevariable "site_[llength [split $site .]]_0"
+        append result "set $sitevariable "
+        append result "\[$basename getframe\]\n"
+        append result [$classes(Frame,dumpInfoCmd) $site \$$sitevariable]
+	return $result
     }
 
     proc compoundCmd {target} {

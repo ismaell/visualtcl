@@ -35,6 +35,7 @@ MegaWidget  yes
 TreeChildrenCmd	      {vTcl::widgets::blt::tabset::treeChildrenCmd
 		       vTcl::widgets::blt::tabset::treeChildrenChildsite}
 DumpCmd               vTcl::widgets::blt::tabset::dumpCmd
+DumpInfoCmd           vTcl::widgets::blt::tabset::dumpInfoCmd
 CompoundCmd           vTcl::widgets::blt::tabset::compoundCmd
 GetImagesCmd          vTcl::widgets::blt::tabset::getImagesCmd
 GetFontsCmd           vTcl::widgets::blt::tabset::getFontsCmd
@@ -257,6 +258,19 @@ namespace eval vTcl::widgets::blt::tabset {
             append result "\[$basename tab cget \[$basename get $i\] -window\]\n"
             append result \
                 [vTcl::widgets::blt::dump_subwidgets $site \$$sitevariable]
+        }
+        return $result
+    }
+
+    proc dumpInfoCmd {target basename} {
+        global classes
+        set result [vTcl:dump:widget_info $target $basename]
+        set pages [treeChildrenChildsite $target]
+        set size [$target size]
+        for {set i 0} {$i < $size} {incr i} {
+            set page [lindex $pages $i]
+            set last [lindex [split $page .] end]
+            append result [$classes(Frame,dumpInfoCmd) $page $basename.$last]
         }
         return $result
     }

@@ -31,6 +31,8 @@ CreateCmd       vTcl:toplevel
 DoubleClickCmd	vTcl::widgets::core::toplevel::dblClkCmd
 
 TreeLabel	@vTcl::widgets::core::toplevel::getWidgetTreeLabel
+DumpCmd         vTcl::widgets::core::toplevel::dumpCmd
+DumpInfoCmd     vTcl::widgets::core::toplevel::dumpInfoCmd
 InsertCmd	vTcl::widgets::core::toplevel::insertCmd
 DeleteCmd       vTcl::widgets::core::toplevel::deleteCmd
 WidgetProc	vTcl:Toplevel:WidgetProc
@@ -173,5 +175,100 @@ namespace eval vTcl::widgets::core::toplevel {
         global vTcl
 
         set vTcl(pr,geom_new) [wm geometry $vTcl(w,widget)]
+    }
+
+    proc dumpTop {target} {
+        global vTcl
+        set output ""
+        set proc_base $vTcl(winname)$target
+        if {![winfo exists $target]} {
+            if {[info procs $proc_base] == ""} {
+                return ""
+            }
+            append output [vTcl:dump_proc $proc_base]
+            return $output
+        }
+        if {[winfo class $target] != "Toplevel" && $target != "."} {
+            return
+        }
+        vTcl:update_widget_info $target
+        append output "\nproc $proc_base \{base\} \{\n"
+        append output "$vTcl(tab)if {\$base == \"\"} {\n"
+        append output "$vTcl(tab2)set base $target\n$vTcl(tab)}\n"
+        if { $target != "." } {
+            append output "$vTcl(tab)if \{\[winfo exists \$base\]\} \{\n"
+            append output "$vTcl(tab2)wm deiconify \$base; return\n"
+            append output "$vTcl(tab)\}\n"
+	    append output "$vTcl(tab)set top \$base\n"
+        }
+        if {[wm state $target] == "normal" ||
+            [wm state $target] == "iconic" ||
+            $target == "."} {
+            lappend vTcl(showtops) $target
+        }
+        incr vTcl(num,index)
+        vTcl:statbar [expr {($vTcl(num,index) * 100) / $vTcl(num,total)}]
+
+        append output [vTcl:dump:widgets $target]
+        append output "\n$vTcl(tab)vTcl:FireEvent \$base <<Ready>>\n"
+        append output "\}\n"
+
+        return $output
+    }
+
+    proc dumpCmd {target basename} {
+        global vTcl classes
+
+	## Let's be safe and force wm for toplevel windows.  Just in case...
+        set mgr wm
+        set opt [$target configure]
+	set class [vTcl:get_class $target]
+
+        if {$target != "."} {
+            set result "$vTcl(tab)$classes($class,createCmd) "
+            append result "$basename"
+            append result " -class [winfo class $target]"
+
+            # special proc to convert image names to filenames before saving to disk
+            set p [vTcl:get_opts_special $opt $target]
+
+            if {$p != ""} {
+                append result " \\\n[vTcl:clean_pairs $p]\n"
+            } else {
+                append result "\n"
+            }
+
+            if {![lempty [wm transient $target]]} {
+                append result $vTcl(tab)
+                append result "wm transient $basename [wm transient $target]"
+                append result "\; update\n"
+            }
+
+            if {[wm state $target] == "withdrawn"} {
+                append result $vTcl(tab)
+                append result "wm withdraw $basename\n"
+            }
+        }
+
+	append result [vTcl:dump_top_widget $target $basename]
+        append result [vTcl:dump_widget_alias $target $basename]
+        append result [vTcl:dump_widget_bind $target $basename]
+
+        return $result
+    }
+
+    proc dumpInfoCmd {target basename} {
+        global vTcl basenames classes
+
+	set basenames($target) $basename
+        append out [vTcl:wm:dump_info $target $basename]
+
+	set children [vTcl:get_children $target]
+        foreach widget $children {
+	    set class [vTcl:get_class $widget]
+	    append out [$classes($class,dumpInfoCmd) $widget [vTcl:base_name $widget]]
+        }
+	catch {unset basenames($target)}
+	return $out
     }
 }
