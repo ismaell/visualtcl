@@ -1,6 +1,12 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Toplevel now links the WM_DELETE_WINDOW protocol event to the
+      <<DeleteWindow>> virtual event.
+    o Option for dialog font now works using the option database, allowing
+      to change the font for the entire application
+    o Option for fixed font also works using only option database
+    o More cleanup for alias definitions.
     o Added basic support for more BWidgets.
     o Fixed bug where handles would sometimes appear on the toplevel window.
     o Added propagate patch from Simon for pack/grid geometry managers.

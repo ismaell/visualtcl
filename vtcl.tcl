@@ -249,6 +249,7 @@ proc vTcl:setup_gui {} {
         option add *Button.padY 0
     }
 
+    option add *vTcl*font $vTcl(pr,font_dlg)
     option add *vTcl*Text*font $vTcl(pr,font_fixed)
 
     if {[info exists vTcl(pr,bgcolor)] && ![lempty $vTcl(pr,bgcolor)]} {

@@ -318,12 +318,15 @@ namespace eval ::inspector {
         InspectorArgumentsLabel configure -state normal
         InspectorArguments      configure -state normal
 
+        set theargs [::vTcl:proc:get_args $node_info]
         InspectorArguments delete 0 end
-        InspectorArguments insert end [::vTcl:proc:get_args $node_info]
+        InspectorArguments insert end $theargs
 
         InspectorValue configure -state normal
         InspectorValue delete 0.0 end
+        InspectorValue insert end "proc $node_info \{$theargs\} \{"
         InspectorValue insert end [info body $node_info]
+        InspectorValue insert end \n\}
         InspectorValue configure -state disabled -wrap none
 
         vTcl:syntax_color $widget(InspectorValue) 0 -1
@@ -706,8 +709,6 @@ proc vTclWindow.vTcl.inspector {base {container 0}} {
     ::inspector::insert_node $widget(InspectorListbox)  end  "::"  0  yes  "::"  ::inspector::expand_namespace
     ::inspector::insert_node $widget(InspectorListbox)  end  "Packages"  0  yes  "Packages"  ::inspector::expand_packages
     ::inspector::insert_node $widget(InspectorListbox)  end  "Windows"  0 yes "Windows" ::inspector::expand_windows
-
-    InspectorValue configure -font $vTcl(pr,font_fixed)
 
     catch {wm geometry $base $vTcl(geometry,$base)}
     wm deiconify $base

@@ -719,6 +719,8 @@ proc vTcl:dump:widgets {target} {
 
         if {[string tolower $class] == "toplevel"} {
             append output "$vTcl(tab)vTcl:FireEvent $basename <<Create>>\n"
+            append output "$vTcl(tab)wm protocol $basename WM_DELETE_WINDOW \""
+            append output "vTcl:FireEvent $basename <<DeleteWindow>>\"\n"
             append output "$vTcl(tab)\}\n"
         }
 

@@ -176,7 +176,7 @@ proc vTclWindow.vTcl.bind {args} {
     $base.fra22.men20.m add command \
         -command {Window show .vTcl.newbind} -label Advanced...
     ::vTcl::CancelButton $base.fra22.but24 \
-	-command "::widget_bindings::delete_binding"
+	-command "::widgets_bindings::delete_binding"
     vTcl:toolbar_button $base.fra22.but25 \
         -command "::widgets_bindings::movetag up" \
         -image up \
@@ -975,15 +975,15 @@ namespace eval ::widgets_bindings {
 
         set indices [ListboxBindings curselection]
         set index [lindex $indices 0]
-        
+
         if {$index == ""} return
-        
+
         set tag ""
         set event ""
-        
+
         ::widgets_bindings::find_tag_event \
             $widget(ListboxBindings) $index tag event
-        
+
         set target $widgets_bindings::target
 
         if {![::widgets_bindings::is_editable_tag $tag] ||
@@ -1185,8 +1185,7 @@ namespace eval ::widgets_bindings {
 
         TextBindings configure -state normal
         TextBindings delete 0.0 end
-        TextBindings configure -font $vTcl(pr,font_fixed) \
-                               -background gray -state disabled
+        TextBindings configure -background gray -state disabled
 
         variable lastselected 0
         variable lasttag ""

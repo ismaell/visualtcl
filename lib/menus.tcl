@@ -886,63 +886,29 @@ proc vTclWindow.vTclMenuEdit {base menu} {
     ###################
     # DEFINING ALIASES
     ###################
-    set widget($base,MenuListbox) "$base.cpd24.01.cpd25.01"
-    interp alias {} $base.MenuListbox {} \
-        vTcl:WidgetProc $base.cpd24.01.cpd25.01
-    set widget($base,NewMenuToolbarPopup) \
-        "$base.cpd24.01.cpd25.01.m24"
-    set widget($base,NewMenuContextPopup) \
-        "$base.cpd24.01.cpd25.01.m25"
-    set widget($base,NewMenu) "$base.fra21.but21"
-    interp alias {} $base.NewMenu {} \
-        vTcl:WidgetProc $base.fra21.but21
-    set widget($base,DeleteMenu) "$base.fra21.but22"
-    interp alias {} $base.DeleteMenu {} \
-        vTcl:WidgetProc $base.fra21.but22
-    set widget($base,MoveMenuUp) "$base.fra21.but23"
-    interp alias {} $base.MoveMenuUp {} \
-        vTcl:WidgetProc $base.fra21.but23
-    set widget($base,MoveMenuDown) "$base.fra21.but24"
-    interp alias {} $base.MoveMenuDown {} \
-        vTcl:WidgetProc $base.fra21.but24
-    set widget($base,BrowseImage) "$base.cpd24.02.but27"
-    interp alias {} $base.BrowseImage {} vTcl:WidgetProc $base.cpd24.02.but27
-    set widget($base,EntryLabel) "$base.cpd24.02.ent23"
-    interp alias {} $base.EntryLabel {} vTcl:WidgetProc $base.cpd24.02.ent23
-    set widget($base,EntryImage) "$base.cpd24.02.ent24"
-    interp alias {} $base.EntryImage {} vTcl:WidgetProc $base.cpd24.02.ent24
-    set widget($base,EntryVariable) "$base.cpd24.02.ent25"
-    interp alias {} $base.EntryVariable {} \
-        vTcl:WidgetProc $base.cpd24.02.ent25
-    set widget($base,EntryValueOn) "$base.cpd24.02.ent27"
-    interp alias {} $base.EntryValueOn {} vTcl:WidgetProc $base.cpd24.02.ent27
-    set widget($base,EntryAccelerator) "$base.cpd24.02.ent29"
-    interp alias {} $base.EntryAccelerator {} \
-        vTcl:WidgetProc $base.cpd24.02.ent29
-    set widget($base,EntryValueOff) "$base.cpd24.02.ent30"
-    interp alias {} $base.EntryValueOff {} \
-        vTcl:WidgetProc $base.cpd24.02.ent30
-    set widget($base,MenuText) "$base.cpd24.02.fra22.cpd32.03"
-    interp alias {} $base.MenuText {} \
-        vTcl:WidgetProc $base.cpd24.02.fra22.cpd32.03
-    set widget($base,LabelCommand) "$base.cpd24.02.fra22.lab31"
-    interp alias {} $base.LabelCommand {} \
-        vTcl:WidgetProc $base.cpd24.02.fra22.lab31
-    set widget($base,LabelVariable) "$base.cpd24.02.lab22"
-    interp alias {} $base.LabelVariable {} vTcl:WidgetProc $base.cpd24.02.lab22
-    set widget($base,LabelValueOn) "$base.cpd24.02.lab26"
-    interp alias {} $base.LabelValueOn {} vTcl:WidgetProc $base.cpd24.02.lab26
-    set widget($base,LabelAccelerator) "$base.cpd24.02.lab28"
-    interp alias {} $base.LabelAccelerator {} \
-        vTcl:WidgetProc $base.cpd24.02.lab28
-    set widget($base,LabelValueOff) "$base.cpd24.02.lab29"
-    interp alias {} $base.LabelValueOff {} vTcl:WidgetProc $base.cpd24.02.lab29
-    set widget($base,RadioLabel) "$base.cpd24.02.rad20"
-    interp alias {} $base.RadioLabel {} vTcl:WidgetProc $base.cpd24.02.rad20
-    set widget($base,RadioImage) "$base.cpd24.02.rad21"
-    interp alias {} $base.RadioImage {} vTcl:WidgetProc $base.cpd24.02.rad21
-    set widget($base,MenuOK) "$base.fra21.but22"
-    interp alias {} $base.MenuOK {} vTcl:WidgetProc $base.fra21.but22
+    vTcl:DefineAlias $base.cpd24.01.cpd25.01 MenuListbox vTcl:WidgetProc $base 1
+    vTcl:DefineAlias $base.cpd24.01.cpd25.01.m24 NewMenuToolbarPopup vTcl:WidgetProc $base 1
+    vTcl:DefineAlias $base.cpd24.01.cpd25.01.m25 NewMenuContextPopup vTcl:WidgetProc $base 1
+    vTcl:DefineAlias $base.fra21.but21 NewMenu vTcl:WidgetProc $base 1
+    vTcl:DefineAlias $base.fra21.but22 DeleteMenu vTcl:WidgetProc $base 1
+    vTcl:DefineAlias $base.fra21.but23 MoveMenuUp vTcl:WidgetProc $base 1
+    vTcl:DefineAlias $base.fra21.but24 MoveMenuDown vTcl:WidgetProc $base 1
+    vTcl:DefineAlias $base.cpd24.02.but27 BrowseImage vTcl:WidgetProc $base 1
+    vTcl:DefineAlias $base.cpd24.02.ent23 EntryLabel vTcl:WidgetProc $base 1
+    vTcl:DefineAlias $base.cpd24.02.ent24 EntryImage vTcl:WidgetProc $base 1
+    vTcl:DefineAlias $base.cpd24.02.ent25 EntryVariable vTcl:WidgetProc $base 1
+    vTcl:DefineAlias $base.cpd24.02.ent27 EntryValueOn vTcl:WidgetProc $base 1
+    vTcl:DefineAlias $base.cpd24.02.ent29 EntryAccelerator vTcl:WidgetProc $base 1
+    vTcl:DefineAlias $base.cpd24.02.ent30 EntryValueOff vTcl:WidgetProc $base 1
+    vTcl:DefineAlias $base.cpd24.02.fra22.cpd32.03 MenuText vTcl:WidgetProc $base 1
+    vTcl:DefineAlias $base.cpd24.02.fra22.lab31 LabelCommand vTcl:WidgetProc $base 1
+    vTcl:DefineAlias $base.cpd24.02.lab22 LabelVariable vTcl:WidgetProc $base 1
+    vTcl:DefineAlias $base.cpd24.02.lab26 LabelValueOn vTcl:WidgetProc $base 1
+    vTcl:DefineAlias $base.cpd24.02.lab28 LabelAccelerator vTcl:WidgetProc $base 1
+    vTcl:DefineAlias $base.cpd24.02.lab29 LabelValueOff vTcl:WidgetProc $base 1
+    vTcl:DefineAlias $base.cpd24.02.rad20 RadioLabel vTcl:WidgetProc $base 1
+    vTcl:DefineAlias $base.cpd24.02.rad21 RadioImage vTcl:WidgetProc $base 1
+    vTcl:DefineAlias $base.fra21.but22 MenuOK vTcl:WidgetProc $base 1
 
     ###################
     # CREATING WIDGETS
@@ -1117,7 +1083,6 @@ proc vTclWindow.vTclMenuEdit {base menu} {
         -command "$base.cpd24.02.fra22.cpd32.03 yview"
     text $base.cpd24.02.fra22.cpd32.03 \
         -background gray \
-        -font $vTcl(pr,font_fixed) \
         -width 20 -xscrollcommand "$base.cpd24.02.fra22.cpd32.01 set" \
         -yscrollcommand "$base.cpd24.02.fra22.cpd32.02 set"
     bind $base.cpd24.02.fra22.cpd32.03 <FocusOut> {

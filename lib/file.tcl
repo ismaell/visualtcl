@@ -43,9 +43,6 @@ proc vTcl:new {} {
     vTcl:update_proc_list
     set vTcl(project,name) "unknown.tcl"
     wm title $vTcl(gui,main) "Visual Tcl - $vTcl(project,name)"
-    if {$w != ""} {
-        proc main {argc argv} "wm protocol $vTcl(w,insert) WM_DELETE_WINDOW {exit}\n"
-    }
 }
 
 proc vTcl:file_source {} {

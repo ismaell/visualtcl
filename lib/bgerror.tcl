@@ -704,7 +704,7 @@ proc vTclWindow.vTcl.stack_trace {base {container 0}} {
         -command "$base.cpd18.02.cpd21.02.cpd23.03 yview" -cursor left_ptr \
         -orient vert
     text $base.cpd18.02.cpd21.02.cpd23.03 \
-        -background #dcdcdc -font $vTcl(pr,font_fixed) \
+        -background #dcdcdc \
         -foreground #000000 -height 1 -highlightbackground #ffffff \
         -width 8 -wrap none \
         -xscrollcommand "$base.cpd18.02.cpd21.02.cpd23.01 set" \
