@@ -689,11 +689,9 @@ proc vTcl:main {argc argv} {
     }
 
     ## Show vTcl news.
-    set vTcl(tmp,newsAfter) [after 5000 {
-        if {!$vTcl(pr,dontshownews)} {
-            ::vTcl::news::get_news
-        }
-    }]
+    if {!$vTcl(pr,dontshownews)} {
+	set vTcl(tmp,newsAfter) [after 5000 ::vTcl::news::get_news]
+    }
 }
 
 vTcl:main $argc $argv

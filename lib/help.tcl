@@ -282,28 +282,30 @@ namespace eval ::vTcl::news {
 	variable http
 	variable URL
 
-	after cancel $vTcl(tmp,newsAfter)
+	catch {after cancel $vTcl(tmp,newsAfter)}
 
 	vTcl:status "Getting news..."
 
     	if {![::vTcl::news::Init]} { vTcl:status; return }
 
-	if {[catch {$http $URL -timeout 30000} token]} { vTcl:status; return }
-	upvar #0 $token state
-
-	## If we didn't get the file successfully, bail out.
-	if {[lindex $state(http) 1] != 200} { vTcl:status; return }
-
-	::vTcl::news::display_news $state(body)
-
-	vTcl:status
+	if {[catch {
+	    $http $URL -timeout 30000 -command ::vTcl::news::display_news
+	    } token]} {
+	    vTcl:status
+	}
     }
 
-    proc ::vTcl::news::display_news {string} {
+    proc ::vTcl::news::display_news {token} {
+	upvar #0 $token state
+
+	vTcl:status
+
+	if {[lindex $state(http) 1] != 200} { return }
+
 	set base .vTcl.news
 
 	if {[winfo exists $base]} {
-	    ::vTcl::news::parse_news $base $string
+	    ::vTcl::news::parse_news $base $state(body)
 	    wm deiconify $base
 	    return
 	}
@@ -349,7 +351,7 @@ namespace eval ::vTcl::news {
 
 	font create link -family Arial -size 10 -underline 1
 
-	::vTcl::news::parse_news $base $string
+	::vTcl::news::parse_news $base $state(body)
     }
 
     proc ::vTcl::news::parse_news {base string} {

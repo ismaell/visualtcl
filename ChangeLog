@@ -1,6 +1,8 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Made news return immediately and fetch in the background so that vTcl
+      doesn't hang while waiting for news to come back.
     o Fixed saving bug introduced when adding "save position" and "save size"
       options for toplevels. This broke projects with Iwidgets childsites.
     o Saving balloon help code with conditional statement so it does not get
