@@ -3,6 +3,8 @@ Class		Scrollbar
 DoubleClickCmd	vTcl:set_command
 Icon		@vTcl:Scrollbar:GetIcon
 TreeLabel	@vTcl:Scrollbar:GetTreeLabel
+DefaultValues   -activebackground -background -cursor -highlightbackground \
+                -highlightcolor -troughcolor
 
 Function	"Attach to Widget"	vTcl:Scrollbar:Attach
 

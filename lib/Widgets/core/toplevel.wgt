@@ -11,6 +11,7 @@ DefaultValues   -background -highlightbackground -highlightcolor
 
 Function        "Edit Menu..."              vTcl:widget:toplevel:edit_menu
 Function	"Set New Toplevel Geometry" vTcl:widget:toplevel:set_new_geom
+Function        "Adjust Size To Children"   vTcl:widget:toplevel:adjust_size
 
 Export          vTcl:DefineAlias
 
@@ -40,6 +41,12 @@ proc vTcl:widget:toplevel:inscmd {target} {
 	lappend vTcl(tops) $target
 	vTcl:update_top_list
     "
+}
+
+proc vTcl:widget:toplevel:adjust_size {} {
+    global vTcl
+
+    wm geometry $vTcl(w,widget) {}
 }
 
 proc vTcl:widget:toplevel:set_new_geom {} {
