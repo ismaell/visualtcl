@@ -562,6 +562,18 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
 proc vTcl:prop:clear {} {
     global vTcl
 
+    if {![winfo exists $vTcl(gui,ae).c]} {
+	frame $vTcl(gui,ae).c
+	pack $vTcl(gui,ae).c
+    }
+    foreach fr {f2 f3} {
+	set fr $vTcl(gui,ae).c.$fr
+	if {![winfo exists $fr]} {
+	    frame $fr
+	    pack $fr -side top -expand 1 -fill both
+	}
+    }
+
     ## Destroy and rebuild the Attributes frame
     set fr $vTcl(gui,ae).c.f2.f
     catch {destroy $fr}

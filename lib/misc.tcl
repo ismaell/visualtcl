@@ -1148,6 +1148,11 @@ proc vTcl:tabnotebook_refresh {win} {
     set maxh 0
     set bevel 3
 
+    if {[lempty $margin]} { set margin 4 }
+    if {[lempty $font]} {
+	set font [font create -family times -weight bold -size 14]
+    }
+
     foreach name $tnInfo($win-tabs) {
         set id [$win.tabs create text  [expr $x+$margin+2] [expr -0.5*$margin]  -anchor sw -text $name -font $font  -tags [list $name]]
 
@@ -1193,18 +1198,9 @@ proc vTcl:entry {w args} {
     bind $w <Control-Key-u> "$w delete 0 end"
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+proc vTcl:read_file {file} {
+    set fp [open $file]
+    set x [read $fp]
+    close $fp
+    return $x
+}

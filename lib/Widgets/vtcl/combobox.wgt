@@ -134,7 +134,7 @@ proc ::combobox::combobox {w args} {
 
     # perform a one time initialization
     if {![info exists widgetOptions]} {
-	    __combobox_Setup
+	__combobox_Setup
         Init
     }
 
@@ -782,7 +782,7 @@ proc ::combobox::HandleEvent {w event} {
 
 proc ::combobox::DestroyHandler {w} {
 
-    # if the widget actually being destroyed is of class Combobox,
+    # If the widget actually being destroyed is of class Combobox,
     # crush the namespace and kill the proc. Get it? Crush. Kill. 
     # Destroy. Heh. Danger Will Robinson! Oh, man! I'm so funny it
     # brings tears to my eyes.
@@ -793,10 +793,9 @@ proc ::combobox::DestroyHandler {w} {
 	# delete the namespace and the proc which represents
 	# our widget
 	namespace delete ::combobox::$w
-	rename $w {}
+	rename ::$w {}
     }   
-
-    return ""
+    return
 }
 
 # ::combobox::Find

@@ -74,9 +74,9 @@
 	icon from the toolbar.
 
 	While using continuous widget placement, you can use your middle mouse
-	button to grab widgets and move them around.  Note that click on the
-	resize handle of a widget does not place a new widget even when one
-	is checked on the toolbar.
+	button to grab widgets and move them around.  Note that clicking on
+	the resize handle of a widget does not place a new widget even when
+	one is checked on the toolbar.
 
 	Note that this option does nothing if auto widget placement is turned
 	on.

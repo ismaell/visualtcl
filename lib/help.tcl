@@ -178,7 +178,7 @@ proc vTclWindow.vTcl.tip {base {container 0}} {
         set ::tip::dontshow $vTcl(pr,dontshowtips)
     }
     if {[info exists vTcl(pr,tipindex)]} {
-        set ::tip::tipindex $vTcl(pr,tipindex)
+        set ::tip::Index $vTcl(pr,tipindex)
     }
 
     ###################
@@ -196,7 +196,7 @@ proc vTclWindow.vTcl.tip {base {container 0}} {
     wm protocol $base WM_DELETE_WINDOW {
          Window hide .vTcl.tip
          set vTcl(pr,dontshowtips) $::tip::dontshow
-         set vTcl(pr,tipindex)     $::tip::tipindex}
+         set vTcl(pr,tipindex)     $::tip::Index}
     }
     frame $base.fra20 \
         -borderwidth 2 -height 75 -width 125 
@@ -205,7 +205,7 @@ proc vTclWindow.vTcl.tip {base {container 0}} {
         -command {
              Window hide .vTcl.tip
              set vTcl(pr,dontshowtips) $::tip::dontshow
-             set vTcl(pr,tipindex)     $::tip::tipindex
+             set vTcl(pr,tipindex)     $::tip::Index
          }
     checkbutton $base.fra20.che26 \
         -text {Don't show tips on startup} -variable ::tip::dontshow 
@@ -279,97 +279,24 @@ proc vTclWindow.vTcl.tip {base {container 0}} {
 }
 
 namespace eval ::tip {
+    variable Tips ""
+    variable Index 0
 
     proc {::tip::get_next_tip} {} {
-        
-        variable tipindex
+	variable Tips
+        variable Index
 
-        if {! [info exists ::tip::tipindex] } {
-            set ::tip::tipindex 0
-        }
+	if {[lempty $Tips]} {
+	    global vTcl
+	    set tipFile [file join $vTcl(VTCL_HOME) lib Help Tips]
+	    foreach tip [vTcl:read_file $tipFile] {
+		lappend Tips [string trim $tip]
+	    }
+	}
 
-        set tips {
-"The tip of the day dialog offers you valuable tips on Visual Tcl"
-"Aliases are symbolic names used to refer to widgets."
-"You can access a widget by it's alias using $widget(MyWidget)"
-{If you enable 'Widget command aliasing' in the Preferences dialog,
-you can refer to a widget by a command named after it's alias.
+        set length [llength $Tips]
+        set Index  [expr ($Index + 1) % $length]
 
-For instance, if your alias is "MyButton", you can type:
-
-MyButton configure -state disabled}
-{To refer to aliased widgets inside a toplevel that also has an alias,
-you can use a command composed by adding the toplevel's alias,
-a period, and the widget's alias.
-
-For instance, if your toplevel alias is "MyToplevel", and
-your widget alias is "MyLabel", you can type:
-
-MyToplevel.MyLabel configure -text "MyLabel"}
-{Aliases make it very easy to refer to widgets in different toplevels.
-
-Suppose that you have top toplevels aliased Top1 and Top2.
-Suppose that each of these toplevel has a button aliased MyButton.
-
-You can use:
-Top1.MyButton
-
-and:
-Top2.MyButton}
-{If you need to get the window path name for an aliased widget
-inside an aliased toplevel, use the global variable widget.
-
-Suppose that you have an toplevel aliased Top1, and a
-widget whose alias is MyWidget. Then you can write:
-
-# inside a procedure, make sure you make widget global
-global widget
-
-...     $widget(Top1,MyWidget)       ...}
-{When creating a compound, all procedures inside a namespace named
-after the compound will be part of the compound.
-
-For example, suppose the following procedures are defined:
-
-::MyCompound::init
-::MyCompound::main
-::MyCompound::stuff
-
-Creating a compound named "MyCompound" will include all the
-procedures above.}
-{There are 2 special procedures with every compound. If this/these
-procedure(s) exist(s), it(they) will be called with the name of the 
-window as parameter.
-
-These procedures are, for a compound named "MyCompound":
-::MyCompound::init
-::MyCompound::main
-
-The init procedure will be called before the compound widgets are
-created.
-
-The main procedure will be invoked after all the compound's widgets 
-have been defined.}
-{When you create a compound, you may want to refer to its 
-subwidgets. You can check the "Ask for widget name on insert"
-option in the "Preferences" dialog. Then, everytime you insert
-a new widget, you will be prompted for a name.
-
-This is convenient to refer to subwidgets inside a compound with
-symbolic names instead of automatically generated names.
-
-It's easier to write
-%W.leftframe
-
-than
-%W.frame03}
-}
-
-        set length   [llength $tips]
-        set tipindex [expr ($tipindex + 1) % $length]
-
-        return [lindex $tips $tipindex]
+        return [lindex $Tips $Index]
     }
 }
-
-
