@@ -220,7 +220,13 @@ proc vTcl:dump_widget_quick {target} {
 
 proc vTcl:dump_widget_opt {target basename} {
     global vTcl
-    set mgr [winfo manager $target]
+    if {$target == "."} {
+        vTcl:log "root widget manager = [winfo manager .]"
+	set mgr wm
+    } else {
+        set mgr [winfo manager $target]
+    }
+
 #    if {$mgr == ""} {return}
     set result ""
     set class [vTcl:get_class $target]
@@ -263,7 +269,11 @@ proc vTcl:dump_widget_opt {target basename} {
 
 proc vTcl:dump_widget_geom {target basename} {
     global vTcl
-    set mgr [winfo manager $target]
+    if {$target == "."} {
+	set mgr wm
+    } else {
+        set mgr [winfo manager $target]
+    }
     if {$mgr == ""} {return}
     set class [winfo class $target]
     set result ""

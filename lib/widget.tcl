@@ -308,6 +308,9 @@ proc vTcl:get_grid_stickies {sticky} {
 }
 
 proc vTcl:update_widget_info {target} {
+
+    vTcl:log "update_widget_info $target"
+
     global vTcl widget
     update idletasks
     set vTcl(w,widget) $target
@@ -316,7 +319,14 @@ proc vTcl:update_widget_info {target} {
     set vTcl(w,optlist) ""
     if {![winfo exists $target]} {return}
     foreach i $vTcl(attr,winfo) {
-        set vTcl(w,$i) [winfo $i $target]
+	if {$i == "manager" && $target == "."} {
+		vTcl:log "target $target manager = [winfo $i $target]"
+
+		# root placer problem
+		set vTcl(w,$i) wm
+	} else {
+	        set vTcl(w,$i) [winfo $i $target]
+	}
     }
     set vTcl(w,class) [vTcl:get_class $target]
     set vTcl(w,r_class) [winfo class $target]

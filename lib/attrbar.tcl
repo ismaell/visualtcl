@@ -23,11 +23,25 @@
 
 proc vTcl:fill_font_menu {menu} {
     global vTcl
-    set fams [font families]
-    foreach i $fams {
-        $menu add radiobutton -label $i -variable vTcl(w,font) \
-        -value $i -command "vTcl:set_font base \$vTcl(w,widget) \{$i\}"
-    }
+    set fams [lsort [font families]]
+        if { [llength $fams] > 26 } {
+                foreach i "a b c d e f g h i j k l m n o p q r s t u v w x y z" {
+                        set submenu "$menu.$i"
+                        menu $submenu -tearoff 0
+                        $menu add cascade -label $i -menu $submenu
+                        foreach x $fams {
+                                if { [string first $i [string tolower $x]] == 0 } {
+                                        $submenu add radiobutton -label $x -variable vTcl(w,font) \
+                                        -value $x -command "vTcl:set_font base \$vTcl(w,widget) \{$x\}"
+                                }
+                        }
+                }
+        } else {
+                foreach i $fams {
+                        $menu add radiobutton -label $i -variable vTcl(w,font) \
+                        -value $i -command "vTcl:set_font base \$vTcl(w,widget) \{$i\}"
+                }
+        }
 }
 
 proc vTcl:fill_fontsize_menu {menu} {
@@ -111,7 +125,7 @@ proc vTcl:widget_set_bg {target} {
 proc vTcl:set_manager {mgr} {
     global vTcl
     foreach i $vTcl(w,mgrs) {
-        if { $i == $mgr } { 
+        if { $i == $mgr } {
             $vTcl(mgrs,$i,widget) configure -relief sunken
         } else {
             $vTcl(mgrs,$i,widget) configure -relief raised
@@ -139,19 +153,19 @@ proc vTcl:attrbar_color {target} {
 }
 
 proc vTcl:attrbar:toggle_console {} {
-	
+
     global vTcl
-    
+
     if {$vTcl(attrbar,console_state) == 1} {
-    	
+
     	set vTcl(attrbar,console_state) 0
     	vTcl:show_console hide
     	.vTcl.attr.console.console_toggle configure -relief raised
 
     } else {
-    
+
         if {$vTcl(attrbar,console_state) == 0} {
-    	
+
             set vTcl(attrbar,console_state) 1
     	    vTcl:show_console show
     	    .vTcl.attr.console.console_toggle configure -relief sunken
@@ -161,19 +175,19 @@ proc vTcl:attrbar:toggle_console {} {
 
 proc vTcl:attrbar {args} {
     global vTcl tk_version
-    
+
     set vTcl(attrbar,console_state) [info exists vTcl(geometry,.vTcl.con)]
-    
+
     set base .vTcl
     frame .vTcl.attr \
-        -borderwidth 1 -height 30 -relief sunken -width 30 
+        -borderwidth 1 -height 30 -relief sunken -width 30
     pack .vTcl.attr \
-        -expand 1 -fill x -side top 
+        -expand 1 -fill x -side top
     frame .vTcl.attr.01 \
-        -borderwidth 1 -height 20 -relief raised -width 20 
+        -borderwidth 1 -height 20 -relief raised -width 20
     pack .vTcl.attr.01 \
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 3 -pady 2 \
-        -side left 
+        -side left
     entry .vTcl.attr.01.02 \
         -highlightthickness 0 -width 15 -textvariable vTcl(w,opt,-text)
     bind .vTcl.attr.01.02 <Return> {
@@ -202,9 +216,9 @@ proc vTcl:attrbar {args} {
     vTcl:set_balloon .vTcl.attr.console.console_toggle "show/hide console"
     pack .vTcl.attr.console -side left -padx 5
     pack .vTcl.attr.console.console_toggle -side left -padx 2 -pady 1
-    
+
     frame .vTcl.attr.04 \
-        -borderwidth 1 -height 20 -relief raised -width 20 
+        -borderwidth 1 -height 20 -relief raised -width 20
     pack .vTcl.attr.04 \
         -anchor center -expand 0 -fill none -padx 3 -pady 2 -side left
     menubutton .vTcl.attr.04.relief -bd 1 -relief raised -image relief \
@@ -283,10 +297,10 @@ proc vTcl:attrbar {args} {
     pack .vTcl.attr.04.anchor -side left -padx 2 -pady 2
 
     frame .vTcl.attr.010 \
-        -borderwidth 1 -height 20 -relief raised -width 20 
+        -borderwidth 1 -height 20 -relief raised -width 20
     pack .vTcl.attr.010 \
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 3 -pady 2 \
-        -side left 
+        -side left
     button .vTcl.attr.010.lab41 \
         -bd 1 -image fg -pady 3 -padx 2 -highlightthickness 0 -command {
             vTcl:widget_set_fg .vTcl.attr.010.lab41
@@ -294,7 +308,7 @@ proc vTcl:attrbar {args} {
     vTcl:set_balloon .vTcl.attr.010.lab41 "foreground"
     pack .vTcl.attr.010.lab41 \
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 2 -pady 2 \
-        -side left 
+        -side left
     button .vTcl.attr.010.lab42 \
         -bd 1 -pady 3 -image bg -padx 2 -highlightthickness 0 -command {
             vTcl:widget_set_bg .vTcl.attr.010.lab42
@@ -302,17 +316,17 @@ proc vTcl:attrbar {args} {
     vTcl:set_balloon .vTcl.attr.010.lab42 "background"
     pack .vTcl.attr.010.lab42 \
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 2 -pady 2 \
-        -side left 
+        -side left
 
     # Font Browsing in tk8.0 or later
     #
     if {$tk_version >= 8} {
 
     frame .vTcl.attr.011 \
-        -borderwidth 1 -height 20 -relief raised -width 20 
+        -borderwidth 1 -height 20 -relief raised -width 20
     pack .vTcl.attr.011 \
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 3 -pady 2 \
-        -side left 
+        -side left
     menubutton .vTcl.attr.011.lab41 \
         -bd 1 -relief raised -image fontbase -pady 3 -padx 2 \
         -highlightthickness 0 -menu .vTcl.attr.011.lab41.m
@@ -350,39 +364,39 @@ proc vTcl:attrbar {args} {
     pack .vTcl.attr.011.lab41 .vTcl.attr.011.lab42 .vTcl.attr.011.lab43 \
         .vTcl.attr.011.lab44 \
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 2 -pady 2 \
-        -side left 
+        -side left
 
     }
 
     frame .vTcl.attr.016 \
-        -borderwidth 1 -height 20 -relief raised -width 20 
+        -borderwidth 1 -height 20 -relief raised -width 20
     pack .vTcl.attr.016 \
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 3 -pady 2 \
-        -side left 
+        -side left
     set vTcl(mgrs,grid,widget) .vTcl.attr.016.017
     button .vTcl.attr.016.017 \
         -command {vTcl:set_manager grid} \
-        -highlightthickness 0 -image mgr_grid -padx 0 -pady 0 
+        -highlightthickness 0 -image mgr_grid -padx 0 -pady 0
     vTcl:set_balloon .vTcl.attr.016.017 "use grid manager"
     pack .vTcl.attr.016.017 \
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 2 -pady 2 \
-        -side left 
+        -side left
     set vTcl(mgrs,pack,widget) .vTcl.attr.016.018
     button .vTcl.attr.016.018 \
         -command {vTcl:set_manager pack} \
-        -highlightthickness 0 -image mgr_pack -padx 0 -pady 0 
+        -highlightthickness 0 -image mgr_pack -padx 0 -pady 0
     vTcl:set_balloon .vTcl.attr.016.018 "use packer manager"
     pack .vTcl.attr.016.018 \
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 2 -pady 2 \
-        -side left 
+        -side left
     set vTcl(mgrs,place,widget) .vTcl.attr.016.019
     button .vTcl.attr.016.019 \
         -command {vTcl:set_manager place} \
-        -highlightthickness 0 -image mgr_place -padx 0 -pady 0 
+        -highlightthickness 0 -image mgr_place -padx 0 -pady 0
     vTcl:set_balloon .vTcl.attr.016.019 "use place manager"
     pack .vTcl.attr.016.019 \
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 2 -pady 2 \
-        -side left 
+        -side left
     set vTcl(mgrs,wm,widget) .vTcl.attr.016.020
     button .vTcl.attr.016.020
 }
