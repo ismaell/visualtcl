@@ -27,13 +27,14 @@
 
 ##############################################################################
 
+set version 1.2.2b1
 set bldroot /home/work/vtcl_new
 set bldtmp $bldroot/build/tmp
 
 file delete -force $bldtmp
 file mkdir $bldtmp
 
-set copyroot $bldtmp/vtcl-1.2.2/usr/local/vtcl-1.2.2
+set copyroot $bldtmp/vtcl-$version/usr/local/vtcl-$version
 
 file mkdir $copyroot
 file mkdir $copyroot/lib
@@ -66,14 +67,14 @@ eval exec cp [glob $bldroot/demo/images/*.*]   $copyroot/demo/images
 eval exec cp [glob $bldroot/sample/*.*]        $copyroot/sample
 
 cd $bldtmp
-exec tar cf - -C $bldtmp vtcl-1.2.2 | gzip >vtcl-1.2.2.tar.gz
+exec tar cf - -C $bldtmp vtcl-$version | gzip >vtcl-$version.tar.gz
 
 cd $copyroot/..
-exec tar cf - -C . vtcl-1.2.2 | gzip >vtcl-1.2.2.tar.gz
+exec tar cf - -C . vtcl-$version | gzip >vtcl-$version.tar.gz
 
 cd $bldroot/build
-file copy -force vtcl-1.2.2-1.spec /root/RPM/SPECS
-file copy -force $bldtmp/vtcl-1.2.2.tar.gz /root/RPM/SOURCES
+file copy -force vtcl-$version-1.spec /root/RPM/SPECS
+file copy -force $bldtmp/vtcl-$version.tar.gz /root/RPM/SOURCES
 file copy -force $bldroot/images/title.gif /root/RPM/SOURCES
 
-exec /bin/rpm -bb /root/RPM/SPECS/vtcl-1.2.2-1.spec
+exec /bin/rpm -bb /root/RPM/SPECS/vtcl-$version-1.spec
