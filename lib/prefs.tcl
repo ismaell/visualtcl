@@ -50,6 +50,9 @@ proc vTcl:prefs:init {base} {
        variable projfile         ""
        variable saveasexecutable ""
        variable bgcolor		 ""
+       variable entrybgcolor     ""
+       variable entryactivecolor ""
+       variable listboxbgcolor   ""
        variable texteditor	 ""
     }
 
@@ -181,6 +184,12 @@ proc {vTcl:prefs:data_exchange} {save_and_validate} {
         prefs::saveasexecutable $save_and_validate
     vTcl:data_exchange_var vTcl(pr,bgcolor) \
         prefs::bgcolor $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,entrybgcolor) \
+        prefs::entrybgcolor $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,entryactivecolor) \
+        prefs::entryactivecolor $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,listboxbgcolor) \
+        prefs::listboxbgcolor $save_and_validate
     vTcl:data_exchange_var vTcl(pr,texteditor) \
         prefs::texteditor $save_and_validate
 
@@ -305,7 +314,43 @@ proc {vTcl:prefs:fonts} {tab} {
 	pack configure $last -side right
 }
 
-proc {vTcl:prefs:bgcolor} {tab} { 
+proc vTcl:prefs:bgcolor_get {w} {
+    if {[string equal $::prefs::bgcolor ""]} {
+        set initial "#d9d9d9"
+    } else {
+        set initial $::prefs::bgcolor
+    }
+    set color [vTcl:get_color $initial $w]
+    if {![string equal $color ""]} {
+        set prefs::bgcolor $color
+    }
+}
+
+proc vTcl:prefs:color_pref_get {w visual variable} {
+    set initial [vTcl:at $variable]
+    set color [vTcl:get_color $initial $w]
+    if {![string equal $color ""]} {
+        set $variable $color
+        $visual configure -bg $color
+    }
+}
+
+proc vTcl:prefs:color_pref {w text variable} {
+
+    set color_frame [vTcl:formCompound:add $w frame]
+    pack configure $color_frame -fill x
+    set last [vTcl:formCompound:add $color_frame label \
+        -text $text -justify left]
+    pack configure $last -side left
+    set browse [vTcl:formCompound:add $color_frame ::vTcl::BrowseButton]
+    pack configure $browse -side right
+    set last [vTcl:formCompound:add $color_frame label \
+                -text "" -bg [vTcl:at $variable] -width 8]
+    pack configure $last -side right -padx 1 -pady 1
+    $browse configure -command "vTcl:prefs:color_pref_get $last $last $variable"
+}
+
+proc {vTcl:prefs:bgcolor} {tab} {
     switch $prefs::bgcolor {
 	""        {set prefs::bgcolortype auto}
 	"#d9d9d9" {set prefs::bgcolortype default}
@@ -326,16 +371,28 @@ proc {vTcl:prefs:bgcolor} {tab} {
 	-variable prefs::bgcolortype -value default \
 	-command "set prefs::bgcolor #d9d9d9"
 
-    vTcl:formCompound:add $tab radiobutton \
+    set last [vTcl:formCompound:add $tab radiobutton \
 	-text "Choose a custom color" \
-	-variable prefs::bgcolortype -value custom \
-	-command {
-	    set color [tk_chooseColor] 
-	    if {![string equal $color ""]} { 
-		set prefs::bgcolor $color
-	    }
-	}
-} 
+	-variable prefs::bgcolortype -value custom]
+    $last configure -command "vTcl:prefs:bgcolor_get $last"
+
+    ##-----------------------------------------------------------------------
+
+    set last  [vTcl:formCompound:add $tab  label \
+	-text "Entries" -background gray -relief raised]
+    pack configure $last -fill x
+
+    vTcl:prefs:color_pref $tab "Entry background color" ::prefs::entrybgcolor
+    vTcl:prefs:color_pref $tab "Entry active color" ::prefs::entryactivecolor
+
+    ##-----------------------------------------------------------------------
+
+    set last  [vTcl:formCompound:add $tab  label \
+	-text "Listboxes" -background gray -relief raised]
+    pack configure $last -fill x
+
+    vTcl:prefs:color_pref $tab "Listbox background color" ::prefs::listboxbgcolor
+}
 
 proc {vTcl:prefs:project} {tab} {
 

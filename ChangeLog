@@ -1,6 +1,16 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Added a bunch of options in the preferences to make Luke happy :-)
+      - entry background color
+      - entry active color
+      - listbox background color
+    o Background color in preferences uses BWidget color selection.
+    o Default font for Windows now {MS Sans Serif} 8. Default font for Unix
+      is Helvetica 12.
+    o Tooltip option still hardcoded now but custom options will eventually be
+      programmable. Added special registration proc to register options not
+      available with configure.
     o Fix to allow saving projects using the ::blt::busy command (not the most
       elegant one but the easiest one that required the less retesting)
     o Using the BWidget font selector

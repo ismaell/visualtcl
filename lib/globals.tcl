@@ -116,6 +116,7 @@ set vTcl(pr,dontshownews) 0
 set vTcl(pr,bgcolor) "#d9d9d9"
 set vTcl(pr,entrybgcolor) #ffffff
 set vTcl(pr,entryactivecolor) #ffffff
+set vTcl(pr,listboxbgcolor) #ffffff
 set vTcl(pr,texteditor)	 ""
 set vTcl(numRcFiles)	 5
 # end preferences

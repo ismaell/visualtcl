@@ -227,8 +227,7 @@ proc vTclWindow.vTcl.proclist {args} {
         -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 0 -pady 0 \
         -side top
     listbox $base.f2.list \
-        -yscrollcommand {.vTcl.proclist.f2.sb4  set} \
-        -background white
+        -yscrollcommand {.vTcl.proclist.f2.sb4  set}
     bind $base.f2.list <Double-Button-1> {
         set vTcl(x) [.vTcl.proclist.f2.list curselection]
         if {$vTcl(x) != ""} {
@@ -284,7 +283,7 @@ proc vTclWindow.vTcl.proc {args} {
         -side left
     vTcl:entry $base.f2.f8.procname \
         -cursor {}  \
-        -highlightthickness 0 -bg white
+        -highlightthickness 0
     pack $base.f2.f8.procname \
         -anchor center -expand 1 -fill x -ipadx 0 -ipady 0 -padx 2 -pady 2 \
         -side left
@@ -301,7 +300,7 @@ proc vTclWindow.vTcl.proc {args} {
         -side left
     vTcl:entry $base.f2.f9.args \
         -cursor {}  \
-        -highlightthickness 0 -bg white
+        -highlightthickness 0
     pack $base.f2.f9.args \
         -anchor center -expand 1 -fill x -ipadx 0 -ipady 0 -padx 2 -pady 2 \
         -side left

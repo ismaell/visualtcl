@@ -244,7 +244,14 @@ proc vTcl:setup_gui {} {
     }
 
     if {$vTcl(pr,font_dlg) == ""} {
-        set vTcl(pr,font_dlg) {Helvetica 14}
+        switch $tcl_platform(platform) {
+            windows {
+                set vTcl(pr,font_dlg) {{MS Sans Serif} 8}
+            }
+            default {
+                set vTcl(pr,font_dlg) {Helvetica 12}
+            }
+        }
     }
 
     if {$vTcl(pr,font_fixed) == ""} {
@@ -259,7 +266,6 @@ proc vTcl:setup_gui {} {
         option add *Scrollbar.width 10
         option add *vTcl*font {Helvetica 12}
         option add *ScrolledWindow.size 14
-        option add *NoteBook.font $vTcl(pr,font_dlg)
     }
 
     if {$tcl_platform(platform) == "windows"} {
@@ -268,6 +274,7 @@ proc vTcl:setup_gui {} {
 
     option add *vTcl*font $vTcl(pr,font_dlg)
     option add *vTcl*Text*font $vTcl(pr,font_fixed)
+    option add *NoteBook.font $vTcl(pr,font_dlg)
 
     if {[info exists vTcl(pr,bgcolor)] && ![lempty $vTcl(pr,bgcolor)]} {
         tk_setPalette $vTcl(pr,bgcolor)
@@ -275,7 +282,7 @@ proc vTcl:setup_gui {} {
     }
 
     option add *vTcl*Entry.background $vTcl(pr,entrybgcolor)
-    option add *vTcl*Listbox.background #ffffff
+    option add *vTcl*Listbox.background $vTcl(pr,listboxbgcolor)
 
     vTcl:setup_bind_tree .
     vTcl:load_images
@@ -699,15 +706,11 @@ proc vTcl:main {argc argv} {
 	}
     }
 
-    # @@change by Christian Gavin 3/5/2000
-    # autoloading of compounds if "Preferences" options enabled
-
     if [info exists vTcl(pr,autoloadcomp)] {
 	if {$vTcl(pr,autoloadcomp)} {
 	    vTcl:load_compounds $vTcl(pr,autoloadcompfile)
 	}
     }
-    # @@end_change
 
     vTcl:splash_status "              vTcl Loaded" -nodots
     after 1000 "destroy .x"

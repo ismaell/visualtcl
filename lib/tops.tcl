@@ -177,7 +177,7 @@ proc vTclWindow.vTcl.toplist {args} {
     pack $base.f2 \
         -in $base -anchor center -expand 1 -fill both -ipadx 0 \
         -ipady 0 -padx 0 -pady 0 -side top
-    listbox $base.f2.list -exportselection 0 -background white
+    listbox $base.f2.list -exportselection 0
     $base.f2 setwidget $base.f2.list
     pack $base.f2.list
 

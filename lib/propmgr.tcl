@@ -710,7 +710,7 @@ proc vTcl:prop:update_saves {w} {
     set c $vTcl(gui,ae,canvas)
 
     set class [vTcl:get_class $w]
-    foreach opt $vTcl(w,optlist) {
+    foreach opt [concat $vTcl(w,optlist) -_tooltip] {
     	set check $c.f2.f._$class.t${opt}_save
 	if {![winfo exists $check]} { continue }
 	$check configure -variable ::widgets::${w}::save($opt)

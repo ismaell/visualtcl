@@ -1181,6 +1181,18 @@ proc vTcl:widget:get_tree_label {w} {
     return $t
 }
 
+####
+## Register special widget options not available with configure
+##
+####
+proc vTcl:widget:register_widget_custom {w} {
+
+    set val [vTcl:get_balloon $w]
+    set ::widgets::${w}::options(-_tooltip) $val
+    set ::widgets::${w}::defaults(-_tooltip) ""
+    set ::widgets::${w}::save(-_tooltip) [expr {$val != ""}]
+}
+
 proc vTcl:widget:register_widget_megachildren {w} {
 
     global classes
@@ -1288,6 +1300,7 @@ proc vTcl:widget:register_widget {w {save_options ""}} {
                     eval $w configure $newdefopts
                 }
 
+                vTcl:widget:register_widget_custom $w
                 return
             }
         }
@@ -1313,6 +1326,8 @@ proc vTcl:widget:register_widget {w {save_options ""}} {
 
         set ::widgets::${w}::save($opt) [expr ![vTcl:streq $def $val]]
     }
+
+    vTcl:widget:register_widget_custom $w
 }
 
 ###
