@@ -301,6 +301,46 @@ proc ::Window {args} {
     }
 }
 #############################################################################
+## Library Procedure:  ::vTcl::widgets::bwidgets::scrollchildsite::widgetProc
+
+namespace eval ::vTcl::widgets::bwidgets::scrollchildsite {
+proc widgetProc {w args} {
+        set command [lindex $args 0]
+        set args [lrange $args 1 end]
+        set children [winfo children $w]
+        set child [lindex $children 0]
+
+        ## we have renamed the default widgetProc _<widgetpath>
+        if {$command == "configure" && $args == ""} {
+            if {$children == ""} {
+                return [concat [uplevel _$w configure]  [list {-xscrollcommand xScrollCommand ScrollCommand {} {}}]  [list {-yscrollcommand yScrollCommand ScrollCommand {} {}}]]
+            } else {
+                return [concat [uplevel _$w configure]  [list [$child configure -xscrollcommand]]  [list [$child configure -yscrollcommand]]]
+            }
+        } elseif {$command == "configure" && [llength $args] > 1} {
+            return [uplevel $child configure $args]
+        } elseif {[string match ?view $command]} {
+            return [uplevel $child $command $args]
+        }
+
+        uplevel _$w $command $args
+    }
+}
+#############################################################################
+## Library Procedure:  vTcl::widgets::bwidgets::scrolledwindow::createCmd
+
+namespace eval vTcl::widgets::bwidgets::scrolledwindow {
+proc createCmd {target args} {
+        eval ScrolledWindow $target $args
+        ## create a frame where user can insert widget to scroll
+        frame $target.f -class ScrollChildsite
+
+        ## change the widget procedure
+        rename ::$target.f ::_$target.f
+        proc ::$target.f {command args}  "eval ::vTcl::widgets::bwidgets::scrollchildsite::widgetProc $target.f \$command \$args"
+    }
+}
+#############################################################################
 ## Library Procedure:  vTcl::widgets::core::compoundcontainer::cgetProc
 
 namespace eval vTcl::widgets::core::compoundcontainer {
@@ -442,6 +482,9 @@ proc widgetProc {w args} {
             }
             innerClass {
                 return [winfo class $w.cmpd]
+            }
+            innerWidget {
+                return $w.cmpd
             }
             default {
                 ## we have renamed the default widgetProc _<widgetpath>
@@ -694,6 +737,24 @@ proc ::vTcl:Toplevel:WidgetProc {w args} {
     }
 }
 #############################################################################
+## Library Procedure:  vTcl:WidgetProc
+
+proc ::vTcl:WidgetProc {w args} {
+    ## This procedure may be used free of restrictions.
+    ##    Exception added by Christian Gavin on 08/08/02.
+    ## Other packages and widget toolkits have different licensing requirements.
+    ##    Please read their license agreements for details.
+
+    if {[llength $args] == 0} {
+        ## If no arguments, returns the path the alias points to
+        return $w
+    }
+
+    set command [lindex $args 0]
+    set args [lrange $args 1 end]
+    uplevel $w $command $args
+}
+#############################################################################
 ## Library Procedure:  vTcl:toplevel
 
 proc ::vTcl:toplevel {args} {
@@ -767,7 +828,7 @@ proc vTclWindow. {base} {
     # CREATING WIDGETS
     ###################
     wm focusmodel $top passive
-    wm geometry $top 200x200+66+75; update
+    wm geometry $top 200x200+88+100; update
     wm maxsize $top 1284 1006
     wm minsize $top 111 1
     wm overrideredirect $top 0
