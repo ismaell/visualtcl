@@ -82,6 +82,9 @@ proc vTcl:update_proc {base} {
     set body [string trim [$base.f3.text get 0.0 end] "\n"]
     if {$name != ""} {
         proc $name $args $body
+    } else {
+    	# user hasn't entered a proc name yet
+    	return
     }
     vTcl:list add "{$name}" vTcl(procs)
     grab release $base
@@ -347,10 +350,19 @@ proc vTclWindow.vTcl.proc {args} {
     $pbody mark set insert 0.0
     if {$iproc == ""} {
         focus $pname
+        $base.frame14.button15 configure -state disabled
     } else {
         focus $pbody
     }
-    
+
+    # don't allow empty procedure name
+    bind $pname <KeyRelease> "\
+    	if \{\[$pname get\] == \"\"\} \{ \
+    	      $base.frame14.button15 configure -state disabled \
+    	\} else \{ \
+    	      $base.frame14.button15 configure -state normal \
+    	\}"
+    	
     # @@change by Christian Gavin 3/19/2000
     # syntax colouring
     
