@@ -52,7 +52,7 @@ proc vTcl:get_color {color w} {
     global vTcl tk_version
     set oldcolor $color
 
-    set newcolor [SelectColor::menu .color [list below $w] -color $color]
+    set newcolor [SelectColor::menu [winfo toplevel $w].color [list below $w] -color $color]
     # set newcolor [tk_chooseColor -initialcolor $color]
     if {$newcolor != ""} {
         return $newcolor

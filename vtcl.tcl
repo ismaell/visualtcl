@@ -398,7 +398,15 @@ proc vTclWindow.vTcl {args} {
         -textvariable vTcl(status)
     label .vTcl.stat.mo \
         -width 6 -relief groove -bd 2 -textvariable vTcl(mode)
-    bind .vTcl.stat.mo <ButtonRelease> vTcl:switch_mode
+    bind .vTcl.stat.mo <Button-1> {
+        %W configure -relief sunken
+    }
+    bind .vTcl.stat.mo <ButtonRelease-1> {
+        if {[%W cget -relief] == "sunken"} {
+            vTcl:switch_mode
+        }
+        %W configure -relief groove
+    }
     vTcl:set_balloon .vTcl.stat.mo "application mode"
     frame .vTcl.stat.f -relief sunken -bd 1 -width 150 -height 15
     frame .vTcl.stat.f.bar -relief raised -bd 1 -bg #ff4444
