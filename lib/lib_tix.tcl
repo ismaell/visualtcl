@@ -24,6 +24,16 @@
 #
 # Initializes this library
 #
+
+catch {
+	# provoke name search
+	package require schmillblick
+}
+
+# catch {
+#	package require Tix
+# }
+
 proc vTcl:widget:lib:lib_tix {args} {
     global vTcl
     #
