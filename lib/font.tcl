@@ -402,6 +402,8 @@ proc {vTcl:font:add_font} {font_descr font_type {newkey {}}} {
      set vTcl(fonts,$newfont,key)                       $newkey
      set vTcl(fonts,$vTcl(fonts,$newfont,key),object)   $newfont
 
+     lappend vTcl(fonts,$font_type) font$vTcl(fonts,counter)
+
      # in case caller needs it
      return $newfont
 }
@@ -650,6 +652,11 @@ proc vTcl:font:dump_proc {fileID name} {
 proc vTcl:font:generate_font_stock {fileID} {
     global vTcl
 
+    ## We didn't use any fonts.  We don't need this code.
+    if {[lempty $vTcl(dump,stockFonts)] && [lempty $vTcl(dump,userFonts)]} {
+    	return
+    }
+
     puts $fileID {############################}
     puts $fileID "\# vTcl Code to Load Stock Fonts\n"
     puts $fileID "\nif {!\[info exist vTcl(sourcing)\]} \{"
@@ -658,13 +665,11 @@ proc vTcl:font:generate_font_stock {fileID} {
     vTcl:font:dump_proc $fileID "vTcl:font:add_font"
     vTcl:font:dump_proc $fileID "vTcl:font:get_font"
 
-    foreach font $vTcl(fonts,objects) {
-	if {[vTcl:font:get_type $font] == "stock"} {
-	    puts $fileID "vTcl:font:add_font \\"
-	    puts $fileID "    \"[font configure $font]\" \\"
-	    puts $fileID "    [vTcl:font:get_type $font] \\"
-	    puts $fileID "    [vTcl:font:get_key $font]"
-	}
+    foreach font $vTcl(dump,stockFonts) {
+	puts $fileID "vTcl:font:add_font \\"
+	puts $fileID "    \"[font configure $font]\" \\"
+	puts $fileID "    [vTcl:font:get_type $font] \\"
+	puts $fileID "    [vTcl:font:get_key $font]"
     }
 
     puts $fileID "\}"
@@ -673,16 +678,16 @@ proc vTcl:font:generate_font_stock {fileID} {
 proc vTcl:font:generate_font_user {fileID} {
     global vTcl
 
+    if {[lempty $vTcl(dump,userFonts)]} { return }
+
     puts $fileID {############################}
     puts $fileID "\# vTcl Code to Load User Fonts\n"
 
-    foreach font $vTcl(fonts,objects) {
-	if {[vTcl:font:get_type $font] == "user"} {
-	    puts $fileID "vTcl:font:add_font \\"
-	    puts $fileID "    \"[font configure $font]\" \\"
-	    puts $fileID "    [vTcl:font:get_type $font] \\"
-	    puts $fileID "    [vTcl:font:get_key $font]"
-	}
+    foreach font $vTcl(dump,userFonts) {
+	puts $fileID "vTcl:font:add_font \\"
+	puts $fileID "    \"[font configure $font]\" \\"
+	puts $fileID "    [vTcl:font:get_type $font] \\"
+	puts $fileID "    [vTcl:font:get_key $font]"
     }
 }
 

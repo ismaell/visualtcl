@@ -400,6 +400,9 @@ proc vTcl:save2 {file} {
     puts $output $vTcl(head,importheader)
     puts $output "\}"
 
+    ## Gather information about fonts and images.
+    vTcl:dump:widget_fonts_and_images
+
     vTcl:image:generate_image_stock $output
     vTcl:image:generate_image_user  $output
     vTcl:font:generate_font_stock   $output

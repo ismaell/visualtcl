@@ -145,7 +145,7 @@ proc vTclWindow.vTcl.bind {args} {
         -highlightbackground #dcdcdc -highlightcolor #000000 \
         -image [vTcl:image:get_image "/home/cgavin/vtcl/images/edit/add.gif"] \
         -menu "$base.cpd21.01.fra22.men20.m" -padx 0 -pady 0 -relief raised \
-        -text menu -width 23 
+        -text menu -width 23
     menu $base.cpd21.01.fra22.men20.m \
         -activebackground #dcdcdc -activeborderwidth 1 \
         -activeforeground #000000 -background #dcdcdc -borderwidth 1 \
@@ -792,7 +792,6 @@ namespace eval ::widgets_bindings {
         eval set target $${n}::target
         
         if {$tag == $target} {
-        
             AddBinding configure -state normal
             
             if {$event == ""} {
@@ -801,7 +800,6 @@ namespace eval ::widgets_bindings {
                 RemoveBinding configure -state normal
             }
         } else {
-        
             AddBinding    configure -state disabled
             RemoveBinding configure -state disabled
         }

@@ -402,9 +402,16 @@ proc vTcl:dump_widget_opt {target basename} {
             append result "\n"
         }
 
-	if {$class == "Toplevel" && [wm state $target] == "withdrawn"} {
-	    append result $vTcl(tab)
-	    append result "wm withdraw $target\n"
+	if {$class == "Toplevel"} {
+	    if {![lempty [wm transient $target]]} {
+	    	append result $vTcl(tab)
+		append result "wm transient $target [wm transient $target]"
+		append result "\; update\n"
+	    }
+	    if {[wm state $target] == "withdrawn"} {
+		append result $vTcl(tab)
+		append result "wm withdraw $target\n"
+	    }
 	}
     }
     if {$mgr == "wm"} {
@@ -535,15 +542,14 @@ proc vTcl:dump_top_widget {target basename} {
                     }
                 }
 		geometry {
-                    append result "$vTcl(tab)wm $i $basename [wm $i $target]\n"
-		    append result "$vTcl(tab)update\n"
+                    append result "$vTcl(tab)wm $i $basename [wm $i $target]"
+		    append result "\; update\n"
 		}
                 default {
 		    ## Let's get the current values of the target.
                     # append result "$vTcl(tab)wm $i $basename $vTcl(w,wm,$i)\n"
 
-                    append result "$vTcl(tab)wm $i $basename "
-		    append result [wm $i $target]\n
+                    append result "$vTcl(tab)wm $i $basename [wm $i $target]\n"
                 }
             }
         }
@@ -670,7 +676,7 @@ proc vTcl:dump:widgets {target} {
         set class [vTcl:get_class $i]
 
         if {[string tolower $class] == "toplevel"} {
-        	append output "$vTcl(tab)if \{!\$container\} \{\n"
+	    append output "$vTcl(tab)if \{!\$container\} \{\n"
         }
 
 	append output [$classes($class,dumpCmd) $i $basename]
@@ -708,4 +714,33 @@ proc vTcl:dump:save_tops {} {
     }
 
     return $string
+}
+
+proc vTcl:dump:widget_fonts_and_images {} {
+    global vTcl
+
+    if {[info exists vTcl(images,stock)]} { lappend vars stockImages }
+    if {[info exists vTcl(images,user)]}  { lappend vars userImages  }
+    if {[info exists vTcl(fonts,stock)]}  { lappend vars stockFonts  }
+    if {[info exists vTcl(fonts,user)]}   { lappend vars userFonts   }
+
+    if {[lempty $vars]} { return }
+
+    foreach var $vars { set vTcl(dump,$var) {} }
+
+    set children [vTcl:list_widget_tree .]
+
+    foreach type [list stock user] {
+	foreach child $children {
+	    if {![catch {$child cget -image} image] 
+	    	&& [lsearch $vTcl(images,$type) $image] > -1} {
+		lappend vTcl(dump,${type}Images) $image
+	    }
+
+	    if {![catch {$child cget -font} font] 
+	    	&& [lsearch $vTcl(fonts,$type) $font] > -1} {
+		lappend vTcl(dump,${type}Fonts) $font
+	    }
+	}
+    }
 }

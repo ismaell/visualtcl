@@ -245,7 +245,7 @@ proc vTclWindow.top38 {base {container 0}} {
     if {!$container} {
     toplevel $base -class Toplevel
     wm focusmodel $base passive
-    wm geometry $base 364x260+179+199
+    wm geometry $base 364x300+179+199
     wm maxsize $base 1009 738
     wm minsize $base 1 1
     wm overrideredirect $base 0

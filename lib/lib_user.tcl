@@ -2,7 +2,7 @@
 #
 # lib_user.tcl - User-defined tcl/tk widget support library
 #
-# Copyright (C) 1996-1998 Stewart Allen
+# Copyright (C) 1996-1998 Damon Courtney
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License

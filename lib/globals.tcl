@@ -146,6 +146,11 @@ set vTcl(save)           ""
 set vTcl(tab)            "    "
 set vTcl(tab2)           "$vTcl(tab)$vTcl(tab)"
 
+set vTcl(images,stock)   ""
+set vTcl(images,user)    ""
+set vTcl(fonts,stock)    ""
+set vTcl(fonts,user)     ""
+
 set vTcl(cmpd,list)      ""
 set vTcl(syscmpd,list)   ""
 

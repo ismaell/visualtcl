@@ -37,8 +37,6 @@ proc vTcl:create_tclet {target} {
             vTcl:error "Error saving to file: $error"
             return
         }
-        puts $out $vTcl(head,vars)                           ;vTcl:statbar 5
-        puts $out [vTcl:save_vars]                           ;vTcl:statbar 15
         set body [string trim [info body init]]              ;vTcl:statbar 20
         puts $out $vTcl(head,procs)                          ;vTcl:statbar 25
         puts $out "proc init \{argc argv\} \{\n$body\n\}\n"  ;vTcl:statbar 30
@@ -52,10 +50,10 @@ proc vTcl:create_tclet {target} {
 }
 
 proc vTcl:tclet_from_cmpd {base name compound {level 0}} {
-    global vTcl widget
+    global vTcl widget classes
     set todo ""
     foreach i $compound {
-        set type [string trim [lindex $i 0]]
+        set class [string trim [lindex $i 0]]
         set opts [string trim [lindex $i 1]]
         set mgr  [string trim [lindex $i 2]]
         set mgrt [string trim [lindex $mgr 0]]
@@ -76,8 +74,8 @@ proc vTcl:tclet_from_cmpd {base name compound {level 0}} {
         if {$level > 0} {
             set name "$base$wdgt"
         }
-        if {$type != "toplevel"} {
-            append todo "$type $name \\\n"
+        if {$class != "Toplevel"} {
+	    append todo "$classes($class,createCmd) $name \\\n"
             append todo "[vTcl:clean_pairs [vTcl:name_replace $base $opts] 4]\n"
         }
         if {$mgrt != "" && $mgrt != "wm" && $name != " "} {
@@ -128,5 +126,3 @@ proc vTcl:tclet_from_cmpd {base name compound {level 0}} {
     }
     return $todo
 }
-
-

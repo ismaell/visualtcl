@@ -48,7 +48,6 @@ proc vTcl:image:get_creation_type {filename} {
 }
 
 proc vTcl:image:broken_image {} {
-
     return {
         R0lGODdhFAAUAPcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwICAgP8AAAD/
         AP//AAAA//8A/wD//////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -78,45 +77,29 @@ proc {vTcl:image:create_new_image} {filename
                                     {description {no description}}
                                     {type {}}
                                     {data {}}} {
+    global vTcl env
 
-	global vTcl env
-
-    # image already existing ?
-    if [info exists vTcl(images,files)] {
-	set index [lsearch -exact $vTcl(images,files) $filename]
-	if {$index != "-1"} {
-	    # cool, no more work to do
-	    return
-	}
+    # Does the image already exist?
+    if {[info exists vTcl(images,files)]} {
+	if {[lsearch -exact $vTcl(images,files) $filename] > -1} { return }
     }
 
-    if {! [info exists vTcl(sourcing)] &&
-        [string length $data] > 0} {
-
-		set object [image create \
-			[vTcl:image:get_creation_type $filename] \
-			-data $data]
-
+    if {![info exists vTcl(sourcing)] && [string length $data] > 0} {
+	set object [image create \
+	    [vTcl:image:get_creation_type $filename] \
+	    -data $data]
     } else {
-
-        # wait a minute... does the file actually exist?
+        # Wait a minute... Does the file actually exist?
         if {! [file exists $filename] } {
-
-            # try current directory
+            # Try current directory
             set script [file dirname [info script]]
             set filename [file join $script [file tail $filename] ]
-
-            # puts "looking for $filename..."
         }
 
-        if {! [file exists $filename] } {
-
+        if {![file exists $filename]} {
             set description "file not found!"
-
             set object [image create photo -data [vTcl:image:broken_image] ]
-
         } else {
-
             set object [image create \
                 [vTcl:image:get_creation_type $filename] \
                 -file $filename]
@@ -131,6 +114,7 @@ proc {vTcl:image:create_new_image} {filename
     set vTcl(images,filename,$object)       $filename
 
     lappend vTcl(images,files) $filename
+    lappend vTcl(images,$type) $object
 
     # return image name in case caller might want it
     return $object
@@ -152,21 +136,20 @@ proc {vTcl:image:get_image} {filename} {
     global vTcl
     set reference [vTcl:rename $filename]
 
-    # let's do some checking first
-    if {![info exists vTcl(images,$reference,image)] } {
-	# well, the path may be wrong; in that case check
-	# only the filename instead, without the path
+    # Let's do some checking first
+    if {![info exists vTcl(images,$reference,image)]} {
+	# Well, the path may be wrong; in that case check
+	# only the filename instead, without the path.
 
 	set imageTail [file tail $filename]
 
 	foreach oneFile $vTcl(images,files) {
-	    if { [file tail $oneFile] == $imageTail } {
+	    if {[file tail $oneFile] == $imageTail} {
 		set reference [vTcl:rename $oneFile]
 		break
 	    }
 	}
     }
-
     return $vTcl(images,$reference,image)
 }
 
@@ -568,9 +551,9 @@ proc vTcl:image:dump_create_image_footer {} {
     global vTcl
 
     set result ""
-    append result "$vTcl(tab)\} \{\n"
-    append result "$vTcl(tab)$vTcl(tab)vTcl:image:create_new_image\\\n"
-    append result "$vTcl(tab)$vTcl(tab)$vTcl(tab)"
+    append result "\n$vTcl(tab)$vTcl(tab)$vTcl(tab)\} \{\n"
+    append result "$vTcl(tab)vTcl:image:create_new_image\\\n"
+    append result "$vTcl(tab)$vTcl(tab)"
     append result "\[lindex \$img 0\] \[lindex \$img 1\] "
     append result "\[lindex \$img 2\] \[lindex \$img 3\]\n"
     append result "\}\n"
@@ -578,6 +561,11 @@ proc vTcl:image:dump_create_image_footer {} {
 
 proc vTcl:image:generate_image_stock {fileID} {
     global vTcl
+
+    ## We're not using any images.  We don't need this code.
+    if {[lempty $vTcl(dump,stockImages)] && [lempty $vTcl(dump,userImages)]} {
+    	return
+    }
 
     puts $fileID "\n"
     puts $fileID {############################}
@@ -592,13 +580,10 @@ proc vTcl:image:generate_image_stock {fileID} {
 
     puts $fileID [vTcl:image:dump_create_image_header]
 
-	foreach image $vTcl(images,files) {
-
-		if {[vTcl:image:get_type $image] == "stock"} {
-
-			puts $fileID [vTcl:image:dump_create_image $image]
-		}
-	}
+    foreach image $vTcl(dump,stockImages) {
+	set file $vTcl(images,filename,$image)
+	puts $fileID [vTcl:image:dump_create_image $file]
+    }
 
     puts $fileID [vTcl:image:dump_create_image_footer]
     puts $fileID "\}"
@@ -607,17 +592,16 @@ proc vTcl:image:generate_image_stock {fileID} {
 proc vTcl:image:generate_image_user {fileID} {
     global vTcl
 
+    if {[lempty $vTcl(dump,userImages)]} { return }
+
     puts $fileID {############################}
     puts $fileID "\# vTcl Code to Load User Images\n"
 
     puts $fileID [vTcl:image:dump_create_image_header]
 
-    foreach image $vTcl(images,files) {
-
-		if {[vTcl:image:get_type $image] == "user"} {
-
-			puts $fileID [vTcl:image:dump_create_image $image]
-		}
+    foreach image $vTcl(dump,userImages) {
+	set file $vTcl(images,filename,$image)
+	puts $fileID [vTcl:image:dump_create_image $file]
     }
 
     puts $fileID [vTcl:image:dump_create_image_footer]
