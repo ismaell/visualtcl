@@ -379,6 +379,7 @@ proc vTcl:core:noencasecommandwhen {value} {
 
 	if { [string match {"$base*?view"} $value] ||
              [string match {"$site*?view"} $value] ||
+             [string match {"$top*?view"} $value] ||
              [string match {\[list vTcl:DoCmdOption $base*} $value] ||
              [string match {\[list vTcl:DoCmdOption $top*} $value] ||
              [string match {\[list vTcl:DoCmdOption $site*} $value] } {
@@ -990,11 +991,4 @@ namespace eval ::vTcl::itemEdit {
 	$top.ItemsEditMenuAddDelete entryconfigure 1 -state $state($enabled)
     }
 }
-
-
-
-
-
-
-
 
