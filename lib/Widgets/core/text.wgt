@@ -34,5 +34,5 @@ DefaultValues   -foreground -highlightbackground -highlightcolor \
                 -selectbackground -selectforeground -font
 
 proc vTcl:widget:text:inscmd {target} {
-    return "$target insert end text"
+    $target insert end text
 }

@@ -46,8 +46,8 @@ proc vTcl:widget:entry:inscmd {target} {
     set last [lindex [split $target .] end]
     set last [vTcl:rename $last]
 
-    return "$target configure -textvariable \"\[winfo toplevel $target\]::$last\"
-            $target insert end entry"
+    $target configure -textvariable "[winfo toplevel $target]::$last"
+    $target insert end entry
 }
 
 proc vTcl:widget:entry:SetTextVariable {} {

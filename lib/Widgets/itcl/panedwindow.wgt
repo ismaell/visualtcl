@@ -43,7 +43,8 @@ CompoundCmd     vTcl:compound:panedwindow
 AdditionalClasses Pane
 
 proc vTcl:widget:panedwindow:inscmd {target} {
-    return "$target add pane1; $target add pane2"
+    $target add pane1
+    $target add pane2
 }
 
 proc vTcl:widget:panedwindow:tagscmd {target} {

@@ -147,48 +147,6 @@ proc vTcl:lib_itcl:setup {} {
     # this creates problems while sourcing a Iwidgets project in vTcl
 }
 
-#
-# individual widget commands executed after insert
-#
-
-proc vTcl:widget:optionmenu:inscmd {target} {
-
-    return "$target insert 0 {Choice 1} {Choice 2} {Choice 3}"
-}
-
-proc vTcl:widget:buttonbox:inscmd {target} {
-
-    return "$target add ok     -text OK ;\
-            $target add cancel -text Cancel ;\
-            $target add help   -text Help"
-}
-
-proc vTcl:widget:checkbox:inscmd {target} {
-
-    return "$target add check1   -text {Check 1} ;\
-            $target add check2   -text {Check 2} ;\
-            $target add check3   -text {Check 3}"
-}
-
-proc vTcl:widget:radiobox:inscmd {target} {
-
-    return "$target add radio1   -text {Radio 1} ;\
-            $target add radio2   -text {Radio 2} ;\
-            $target add radio3   -text {Radio 3}"
-}
-
-proc vTcl:widget:panedwindow:inscmd {target} {
-
-    return "$target add pane1; $target add pane2"
-}
-
-proc vTcl:widget:combobox:inscmd {target} {
-
-    return "$target insert list end {Item 1}; \
-            $target insert list end {Item 2}; \
-            $target insert list end {Item 3}"
-}
-
 # Utility proc.  Dump a megawidget's children, but not those that are
 # part of the megawidget itself.  Differs from vTcl:dump:widgets in that
 # it dumps the geometry of $subwidget, but it doesn't dump $subwidget

@@ -57,7 +57,7 @@ proc vTcl:widget:radiobutton:SetValue {} {
 
 proc vTcl:widget:radiobutton:inscmd {target} {
 
-    return "global \[$target cget -variable\]
-            unset  \[$target cget -variable\]
-            $target configure -variable \"\[winfo toplevel $target\]::selectedButton\""
+    global [$target cget -variable]
+    unset  [$target cget -variable]
+    $target configure -variable "[winfo toplevel $target]::selectedButton"
 }

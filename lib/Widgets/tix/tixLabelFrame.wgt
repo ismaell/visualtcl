@@ -13,9 +13,7 @@ TreeChildrenCmd     "vTcl:widget:tixLabelFrame:treeChildrenCmd \
                      vTcl:widget:tixLabelFrame:treeChildrenChildsite"
 
 proc vTcl:widget:tixLabelFrame:inscmd {target} {
-    return "
-        $target subwidget frame configure -width 30 -height 20
-    "
+    $target subwidget frame configure -width 30 -height 20
 }
 
 proc vTcl:widget:tixLabelFrame:treeChildrenCmd {target {diff \#-1}} {

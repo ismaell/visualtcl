@@ -35,5 +35,5 @@ DefaultValues   -foreground \
 DefaultOptions  -background white
 
 proc vTcl:widget:listbox:inscmd {target} {
-    return "$target insert end listbox"
+    $target insert end listbox
 }

@@ -53,3 +53,10 @@ proc vTcl:dump:radiobox {target basename} {
 
     return $result
 }
+
+proc vTcl:widget:radiobox:inscmd {target} {
+
+    $target add radio1   -text {Radio 1}
+    $target add radio2   -text {Radio 2}
+    $target add radio3   -text {Radio 3}
+}

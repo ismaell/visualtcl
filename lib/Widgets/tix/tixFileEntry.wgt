@@ -12,9 +12,7 @@ AdditionalClasses TixFileSelectBox TixStdButtonBox TixInputOnly
 InsertCmd	vTcl:widget:tixFileEntry:inscmd
 
 proc vTcl:widget:tixFileEntry:inscmd {target} {
-    return "
-    	$target subwidget frame configure -highlightthickness 2
-    "
+    $target subwidget frame configure -highlightthickness 2
 }
 
 proc vTcl:dump:TixFileEntry {target basename} {

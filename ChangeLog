@@ -1,6 +1,11 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Operation cleanup: insert commands for widgets no longer return
+      a string to execute. Instead, the insert proc is run with the target
+      as a parameter.
+    o Moved all insert cmds to their individual widget files where they
+      belong.
     o Added default scrollbar size of 14 for Linux/Unix users. For some
       reason when using pack/grid, nice scrollbars with a width of 10
       having a border width of 2 have a total width of 14. But, using the

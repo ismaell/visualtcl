@@ -53,3 +53,10 @@ proc vTcl:dump:checkbox {target basename} {
 
     return $result
 }
+
+proc vTcl:widget:checkbox:inscmd {target} {
+
+    $target add check1   -text {Check 1}
+    $target add check2   -text {Check 2}
+    $target add check3   -text {Check 3}
+}

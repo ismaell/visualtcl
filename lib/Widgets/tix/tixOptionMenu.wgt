@@ -13,9 +13,8 @@ InsertCmd	vTcl:widget:tixOptionMenu:inscmd
 proc vTcl:widget:tixOptionMenu:inscmd {target} {
     # Add two options to start with.  Unfortunately, additional options have
     # to be added manually by the user, and the project re-read into vtcl.
-    return "
-        $target add command opt1 -label {Option 1}
-        $target add separator sep
-        $target add command opt2 -label {Option 2}
-    "
+
+    $target add command opt1 -label {Option 1}
+    $target add separator sep
+    $target add command opt2 -label {Option 2}
 }

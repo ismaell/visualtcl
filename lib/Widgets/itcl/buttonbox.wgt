@@ -56,6 +56,13 @@ proc vTcl:dump:buttonbox {target basename} {
     return $result
 }
 
+proc vTcl:widget:buttonbox:inscmd {target} {
+
+    $target add ok     -text OK
+    $target add cancel -text Cancel
+    $target add help   -text Help
+}
+
 proc vTcl:widget:buttonbox:tagscmd {target} {
 
     global vTcl

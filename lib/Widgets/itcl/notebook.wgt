@@ -41,10 +41,10 @@ CompoundCmd     vTcl:compound:notebook
 
 proc vTcl:widget:notebook:inscmd {target} {
 
-    return "$target add -label {Page 1} ;\
-            $target add -label {Page 2} ;\
-            $target add -label {Page 3} ;\
-            $target select 0"
+    $target add -label {Page 1}
+    $target add -label {Page 2}
+    $target add -label {Page 3}
+    $target select 0
 }
 
 proc vTcl:widget:notebook:deleteSiteCmd {target site} {

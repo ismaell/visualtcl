@@ -705,7 +705,7 @@ proc vTcl:create_widget {class options new_widg x y} {
     append do "$classes($c,defaultOptions) $options;"
 
     if {![lempty $classes($c,insertCmd)]} {
-        append do "[$classes($c,insertCmd) $new_widg];"
+        append do "$classes($c,insertCmd) $new_widg;"
     }
     if {$class != "Toplevel"} {
         append do "$vTcl(w,def_mgr) $new_widg $vTcl($vTcl(w,def_mgr),insert)"
