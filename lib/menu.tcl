@@ -87,7 +87,7 @@ set vTcl(menu,manager) {
 
 set vTcl(menu,options) {
     {{Set &Insert}     Alt+I        vTcl:set_insert            }
-    {{Set &Alias}      Alt+A        {vTcl:set_alias $vTcl(w,widget)}     }
+    {{Set &Alias...}   Alt+A        {vTcl:set_alias $vTcl(w,widget)}     }
     {{Manager}         {menu manager} {} }
     {separator         {}           {}                         }
     {{Select &Toplevel} {}          vTcl:select_toplevel       }
@@ -240,6 +240,7 @@ proc vTcl:enable_entries {menu state} {
         $menu entryconfigure $i -state $state
     }
 }
+
 
 
 
