@@ -10,6 +10,15 @@ Resizable     both
 TreeLabel     Multicolumn Listbox
 AliasPrefix   Mclistbox
 ResizeCmd     vTcl:Mclistbox:Resize
+InsertCmd	  vTcl:widget:mclistbox:inscmd
+
+proc vTcl:widget:mclistbox:inscmd {target} {
+    return \
+       "$target column add col1 -label {Column 1}
+        $target column add col2 -label {Column 2}
+        $target insert end {{line1 col1} {line1 col2}}
+        $target insert end {{line2 col1} {line2 col2}}"
+}
 
 lappend vTcl(classes) MclistboxColumn
 
