@@ -1,6 +1,9 @@
 ChangeLog for Visual Tcl:
 
 1.51b4 -> 1.51
+    o Filter dynamically created proc for progress bar widgets
+    o Used uplevel instead of eval for evaluation of scrollbar command in
+      multicolumn listbox
     o Replaced vTcl:dialog by tk_messageBox everywhere.
     o Modified demo app Visual Text to support tag names with spaces.
     o Fixed problem when Tcl/Tk 8.3.3 from ActiveState passes a {} parameter

@@ -83,6 +83,7 @@ proc vTcl:bind_scrollbar {t1 t2} {
         default  { set scr_cmd -xscrollcommand; set v_cmd xview }
     }
     switch $c1 {
+        Mclistbox -
         Listbox -
         Canvas  -
         Table   -

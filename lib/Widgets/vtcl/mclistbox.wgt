@@ -2267,13 +2267,13 @@ proc ::mclistbox::UpdateScrollbars {w} {
 	if {[string length $options(-yscrollcommand)] != 0} {
 	    set col0 [lindex $misc(columns) 0]
 	    set yview [$widgets(listbox$col0) yview]
-	    eval $options(-yscrollcommand) $yview
+	    uplevel #0 $options(-yscrollcommand) $yview
 	}
 
 	if {[string length $options(-xscrollcommand)] != 0} {
 	    set col0 [lindex $misc(columns) 0]
 	    set xview [$widgets(text) xview]
-	    eval $options(-xscrollcommand) $xview
+	    uplevel #0 $options(-xscrollcommand) $xview
 	}
     }
     catch {unset misc(afterid)}
