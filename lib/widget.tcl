@@ -164,13 +164,15 @@ proc vTcl:select_toplevel {} {
 }
 
 proc vTcl:raise {target} {
-    global tcl_platform
 
     # go figure, but on Unix raise introduces delays of one to
     # 2 seconds at least, which grays out the whole app for a
     # while
 
-    if {$tcl_platform(platform) != "unix"} {
+    if {$::tcl_platform(platform) != "unix"} {
+        raise $target
+    } elseif {$::tk_patchLevel >= "8.3.4"} {
+        ## tk 8.3.4 fixes the problem
         raise $target
     }
 }
