@@ -1,0 +1,85 @@
+
+                                   Visual Tcl
+
+
+ TABLE OF CONTENTS
+
+   I. Preferences
+
+
+ I. PREFERENCES
+
+    Use Balloon Help
+    	If this option is checked, balloons will help to guide you through
+	the process of some creation.  They will appear if you hold your
+	mouse over a particular area for half a second.
+
+    Ask for Widget name on insert
+    	By default, widgets are created with a name determined by vTcl.  If
+	this option is checked, rather than creating a name when a widget is
+	inserted, you will be prompted for the new widget's name.
+
+    Short automatic widget names
+    	This option makes widget names even shorter, using a sort of
+	abbreviation method.  This option only matters if widgetnames are
+	being created automatically.
+
+    Save verbose widget configuration
+    	Not sure what this does.
+
+    Save global variable values
+    	Not sure what this does.
+
+    Window focus selects window.
+    	Not sure what this does.
+
+    Auto place new widgets
+    	If this option is checked, widgets are automatically placed at the
+	insertion point when a toolbar icon is clicked.  If this option is
+	off, vTcl waits for you to select a point on any insertion widget
+	before placing the widget.
+
+    Use widget command aliasing
+    	Setting an alias in vTcl creates a variable within the widget array
+	that makes using widgets later on easier.  If this command is enabled,
+	setting an alias will also create a command in the global interpreter
+	for this widget.  So, if you gave an alias of 'FOO' to a new button
+	you created, a command called 'FOO' would be created in Tcl.  You
+	could then use that command to execute widget functions.  Like so:
+
+	FOO configure -text "FOO"
+	FOO configure -background blue
+
+    Use auto-aliasing for new widgets
+    	If this option is checked, widgets are automatically given an alias
+	when they are created.  The name of the alias is based on the widget's
+	class and it's order of creation.  So, if you created a new button,
+	the alias might be called 'Button1'.  Or, a new label might be
+	called 'Label3'.  vTcl will automatically choose a name for the
+	widget and create the alias.
+
+	If used in conjunction with command aliasing, this can become very
+	useful.  When new widgets are created, they will automatically have
+	aliases and commands associated with them, like 'Label1', 'Label2',
+	'Button1', etc...  This makes using widgets within your program
+	much easier.  Example:
+
+	Button1 -command "Label1 configure -text [Entry1 get]"
+
+    Use continuous widget placement
+    	With this option checked, placing a widget does not cause the toolbar
+	to uncheck the widget.  This means that after you've placed a widget,
+	clicking your left button again will place another widget of the same
+	kind.  You will continue to place widgets until you select the pointer
+	icon from the toolbar.
+
+	While using continuous widget placement, you can use your middle mouse
+	button to grab widgets and move them around.  Note that click on the
+	resize handle of a widget does not place a new widget even when one
+	is checked on the toolbar.
+
+	Note that this option does nothing if auto widget placement is turned
+	on.
+
+    Auto load compounds
+    	Not sure what this does.

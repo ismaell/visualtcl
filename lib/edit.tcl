@@ -29,46 +29,37 @@ proc vTcl:copy {} {
 
 proc vTcl:cut {} {
     global vTcl
-    if { $vTcl(w,widget) == "." } {
-        return
-    }
-    vTcl:destroy_handles
+    if { $vTcl(w,widget) == "." } { return }
+
     vTcl:copy
-    set parent [winfo parent $vTcl(w,widget)]
-    set do "destroy $vTcl(w,widget)"
-    set undo "vTcl:insert_compound $vTcl(w,widget) \{$vTcl(buffer)\} $vTcl(w,def_mgr)"
-    vTcl:push_action $do $undo
-    if { $vTcl(w,manager) == "wm" } {
-        vTcl:select_widget .
-        set vTcl(w,insert) .
-    } else {
-        vTcl:select_widget $parent
-        set vTcl(w,insert) $parent
-    }
-    
-    # @@change by Christian Gavin 3/5/2000
-    # automatically refresh widget tree after cut operation
-    
-    after idle {vTcl:init_wtree}
-    
-    # @@end_change
+    vTcl:delete
 }
 
 proc vTcl:delete {} {
     global vTcl
-    if { $vTcl(w,widget) == "." } {
-        return
-    }
+    if { $vTcl(w,widget) == "." } { return }
+
     set w $vTcl(w,widget)
-    set top [winfo toplevel $w]
-    set children [winfo children $w]
+    if {[lempty $w]} { return }
 
     vTcl:destroy_handles
+
+    set top [winfo toplevel $w]
+    set children [winfo children $w]
     set parent [winfo parent $vTcl(w,widget)]
+    set class [winfo class $w]
+
     set buffer [vTcl:create_compound $vTcl(w,widget)]
-    set do "destroy $vTcl(w,widget)"
+    set do "vTcl:unset_alias $vTcl(w,widget); "
+    foreach child $children {
+    	append do "vTcl:unset_alias $child; "
+    }
+    append do "destroy $vTcl(w,widget)"
     set undo "vTcl:insert_compound $vTcl(w,widget) \{$buffer\} $vTcl(w,def_mgr)"
     vTcl:push_action $do $undo
+
+    ## If it's a toplevel window, remove it from the tops list.
+    if {$class == "Toplevel"} { lremove vTcl(tops) $w }
 
     if {![info exists vTcl(widgets,$top)]} { set vTcl(widgets,$top) {} }
     ## Activate the widget created before this one in the widget order.
@@ -102,7 +93,7 @@ proc vTcl:paste {{fromMouse ""}} {
 
     set opts {}
     if {$fromMouse == "-mouse" && $vTcl(w,def_mgr) == "place"} {
-    	set opts "-x $vTcl(mouseX) -y $vTcl(mouseY)"	
+    	set opts "-x $vTcl(mouse,x) -y $vTcl(mouse,y)"	
     }
 
     set name [vTcl:new_widget_name $vTcl(buffer,type) $vTcl(w,insert)]

@@ -60,7 +60,7 @@ proc vTcl:set_command {target {option -command}} {
 
 proc vTcl:get_command {title initial base} {
     global vTcl
-    if {[winfo exists $base]} {wm deiconify $base; return -1}
+    if {[winfo exists $base]} {wm deiconify $base; raise $base; return -1}
     set vTcl(x,$base) -1
     toplevel $base -class vTcl
     wm transient $base .vTcl

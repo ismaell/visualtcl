@@ -21,9 +21,6 @@
 ##############################################################################
 #
 
-# widget data record format:
-# {type} {name} {alias} {option list} {manager record} {bind record} {child widget list}
-
 # bind record format:
 # { {bindtag} {bind list record} }  ...
 
@@ -49,9 +46,14 @@ set vTcl(change)         0
 set vTcl(console)        0
 set vTcl(cursor,last)    ""
 set vTcl(procs)          "init main"
+set vTcl(state)		 "normal"
 set vTcl(file,base)      [pwd]
 set vTcl(file,mode)      ""
 set vTcl(file,type)      "*.tcl"
+set vTcl(mouse,X)	 0
+set vTcl(mouse,Y)	 0
+set vTcl(mouse,x)	 0
+set vTcl(mouse,y)	 0
 set vTcl(grid,x)         5
 set vTcl(grid,y)         5
 set vTcl(gui,main)       ".vTcl"
@@ -97,6 +99,9 @@ set vTcl(pr,show_var)    -1
 set vTcl(pr,show_top)    -1
 set vTcl(pr,winfocus)    0
 set vTcl(pr,autoplace)	 0
+set vTcl(pr,autoalias)	 1
+set vTcl(pr,multiplace)  1
+set vTcl(pr,cmdalias)    1
 set vTcl(numRcFiles)	 5
 # end preferences
 set vTcl(proc,name)      ""
@@ -226,196 +231,6 @@ set vTcl(m,wm,title)               { title           {}       type    {} {vTcl:w
 set vTcl(m,menebar,list) ""
 set vTcl(m,menubar,extlist) ""
 
-#
-# Widget Attributes
-#
-set vTcl(opt,list) "
-    -background
-    -foreground
-    -activebackground
-    -activeforeground
-    -highlightbackground
-    -highlightcolor
-    -selectcolor
-    -selectbackground
-    -selectforeground
-    -disabledforeground
-    -insertbackground
-    -troughcolor
-
-    -activerelief
-    -relief
-    -sliderrelief
-
-    -bordermode
-    -borderwidth
-    -elementborderwidth
-    -insertborderwidth
-    -selectborderwidth
-    -highlightthickness
-    -padx
-    -pady
-
-    -height
-    -width
-    -orient
-    -insertwidth
-
-    -bitmap
-    -cursor
-    -image
-    -selectimage
-
-    -command
-    -selectcommand
-    -xscrollcommand
-    -yscrollcommand
-
-    -text
-    -textvariable
-    -font
-    -labelfont
-    -justify
-    -wrap
-    -wraplength
-    -spacing1
-    -spacing2
-    -spacing3
-    -closeenough
-    -underline
-    -aspect
-    -anchor
-    -tabs
-    -insertofftime
-    -insertontime
-
-    -exportselection
-    -indicatoron
-    -label
-    -repeatdelay
-    -repeatinterval
-    -tickinterval
-    -jump
-    -showvalue
-    -resolution
-    -from
-    -to
-
-    -confine
-    -menu
-    -selectmode
-    -setgrid
-
-    -variable
-    -offvalue
-    -onvalue
-    -value
-    -editable
-    -validate
-    -validatecommand
-    -invalidcommand
-
-    -screen
-    -show
-    -state
-    -takefocus
-
-    -sliderlength
-    -scrollregion
-    -xscrollincrement
-    -yscrollincrement
-"
-
-set vTcl(opt,-activebackground)    { {active bg}     Colors   color   {} }
-set vTcl(opt,-activeforeground)    { {active fg}     Colors   color   {} }
-set vTcl(opt,-activerelief)        { {active relief} {}       choice  {flat groove raised ridge sunken} }
-set vTcl(opt,-anchor)              { anchor          {}       choice  {n ne e se s sw w nw center} }
-set vTcl(opt,-aspect)              { aspect          {}       type    {} }
-set vTcl(opt,-bd)                  { {borderwidth}   {}       type    {} }
-set vTcl(opt,-borderwidth)         { {borderwidth}   {}       type    {} }
-set vTcl(opt,-bg)                  { background      {}       color   {} }
-set vTcl(opt,-background)          { background      {}       color   {} }
-set vTcl(opt,-bitmap)              { bitmap          {}       type    {} }
-set vTcl(opt,-bordermode)          { {border mode}   {}       choice  {inside ignore outside} }
-set vTcl(opt,-closeenough)         { closeness       {}       type    {} }
-set vTcl(opt,-command)             { command         {}       command {} }
-set vTcl(opt,-confine)             { confine         {}       boolean {0 1} }
-set vTcl(opt,-cursor)              { cursor          {}       type    {} }
-set vTcl(opt,-disabledforeground)  { {disabled fg}   Colors   color   {} }
-set vTcl(opt,-editable)	           { {editable}      {}       boolean {0 1} }
-set vTcl(opt,-elementborderwidth)  { {element bd}    {}       type    {} }
-set vTcl(opt,-exportselection)     { export          {}       boolean {0 1} }
-set vTcl(opt,-fg)                  { foreground      Colors   color   {} }
-set vTcl(opt,-foreground)          { foreground      Colors   color   {} }
-set vTcl(opt,-font)                { font            {}       font    {} }
-set vTcl(opt,-height)              { height          {}       type    {} }
-set vTcl(opt,-highlightbackground) { {hilight bg}    Colors   color   {} }
-set vTcl(opt,-highlightcolor)      { {hilight color} Colors   color   {} }
-set vTcl(opt,-highlightthickness)  { {hilight bd}    {}       type    {} }
-set vTcl(opt,-image)               { image           {}       image   {} }
-set vTcl(opt,-indicatoron)         { indicator       {}       boolean {0 1} }
-set vTcl(opt,-insertbackground)    { {insert bg}     Colors   color   {} }
-set vTcl(opt,-insertborderwidth)   { {insert bd}     {}       type    {} }
-set vTcl(opt,-insertofftime)       { {insert off time} {}     type    {} }
-set vTcl(opt,-insertontime)        { {insert on time} {}      type    {} }
-set vTcl(opt,-insertwidth)         { {insert wd}     {}       type    {} }
-set vTcl(opt,-invalidcommand)      { {Inv. Cmd}      {}       command {} }
-set vTcl(opt,-jump)                { jump            {}       boolean {0 1} }
-set vTcl(opt,-justify)             { justify         {}       choice  {left right center} }
-set vTcl(opt,-labelfont)           { {Label Font}    {}       font    {} }
-set vTcl(opt,-menu)                { menu            {}       menu    {} }
-set vTcl(opt,-offvalue)            { {off value}     {}       type    {} }
-set vTcl(opt,-onvalue)             { {on value}      {}       type    {} }
-set vTcl(opt,-orient)              { orient          {}       choice  {vertical horizontal} }
-set vTcl(opt,-padx)                { {x pad}         {}       type    {} }
-set vTcl(opt,-pady)                { {y pad}         {}       type    {} }
-set vTcl(opt,-relief)              { relief          {}       choice  {flat groove raised ridge sunken} }
-set vTcl(opt,-repeatdelay)         { {repeat delay}  {}       type    {} }
-set vTcl(opt,-repeatinterval)      { {repeat intrvl} {}       type    {} }
-set vTcl(opt,-screen)              { screen          {}       type    {} }
-set vTcl(opt,-scrollregion)        { {scroll region} {}       type    {} }
-set vTcl(opt,-selectbackground)    { {select bg}     Colors   color   {} }
-set vTcl(opt,-selectborderwidth)   { {select bd}     {}       type    {} }
-set vTcl(opt,-selectcolor)         { {select color}  Colors   color   {} }
-set vTcl(opt,-selectcommand)       { {Select Cmd}    {}       command {} }
-set vTcl(opt,-selectforeground)    { {select fg}     Colors   color   {} }
-set vTcl(opt,-selectimage)         { {select image}  {}       image   {} }
-set vTcl(opt,-selectmode)          { {select mode}   {}       choice  {single browse multiple extended
-                                                                       normal immediate} }
-set vTcl(opt,-setgrid)             { {set grid}      {}       boolean {0 1} }
-set vTcl(opt,-show)                { show            {}       type    {} }
-set vTcl(opt,-showvalue)           { {show value}    {}       boolean {0 1} }
-set vTcl(opt,-sliderlength)        { {slider length} {}       type    {} }
-set vTcl(opt,-sliderrelief)        { {slider relief} {}       choice  {flat groove raised ridge sunken} }
-set vTcl(opt,-spacing1)            { spacing1        {}       type    {} }
-set vTcl(opt,-spacing2)            { spacing2        {}       type    {} }
-set vTcl(opt,-spacing3)            { spacing3        {}       type    {} }
-set vTcl(opt,-state)               { state           {}       choice  {normal active disabled} }
-set vTcl(opt,-tabs)                { tabs            {}       type    {} }
-set vTcl(opt,-takefocus)           { {take focus}    {}       type    {} }
-set vTcl(opt,-text)                { text            {}       type    {} }
-set vTcl(opt,-textvariable)        { {text var}      {}       type    {} }
-set vTcl(opt,-tickinterval)        { {tic interval}  {}       type    {} }
-set vTcl(opt,-from)                { {from value}    {}       type    {} }
-set vTcl(opt,-to)                  { {to value}      {}       type    {} }
-set vTcl(opt,-label)               { label           {}       type    {} }
-set vTcl(opt,-resolution)          { resolution      {}       type    {} }
-set vTcl(opt,-troughcolor)         { {trough color}  Colors   color   {} }
-set vTcl(opt,-underline)           { underline       {}       type    {} }
-set vTcl(opt,-value)               { value           {}       type    {} }
-set vTcl(opt,-variable)            { variable        {}       type    {} }
-set vTcl(opt,-validatecommand)     { {validate Cmd}  {}       command {} }
-set vTcl(opt,-validate)            { validate        {}       type    {} }
-set vTcl(opt,-width)               { width           {}       type    {} }
-set vTcl(opt,-wrap)                { wrap            {}       choice  {char none word} }
-set vTcl(opt,-wraplength)          { {wrap length}   {}       type    {} }
-set vTcl(opt,-xscrollincrement)    { {x increment}   {}       type    {} }
-set vTcl(opt,-yscrollincrement)    { {y increment}   {}       type    {} }
-set vTcl(opt,-xscrollcommand)      { {x scroll cmd}  {}       command {} }
-set vTcl(opt,-yscrollcommand)      { {y scroll cmd}  {}       command {} }
-
-set vTcl(option,translate,-labelfont) vTcl:font:translate
-set vTcl(option,noencase,-labelfont) 1
 
 set vTcl(head,proj) [string trim {
 #############################################################################
@@ -429,9 +244,9 @@ set vTcl(head,projfile) [string trim {
 #
 }]
 
-set vTcl(head,vars) [string trim {
+set vTcl(head,exports) [string trim {
 #################################
-# GLOBAL VARIABLES
+# VTCL LIBRARY PROCEDURES
 #
 }]
 
@@ -490,8 +305,7 @@ set vTcl(syntax,vTcl:window)            {\.[a-zA-Z0-9_\.]+}
 set vTcl(syntax,vTcl:window,configure)  {-foreground #800060}
 
 proc vTcl:syntax:iscommand {command} {
-
-	return [ expr { [info command $command] == $command } ]
+    return [ expr { [info command $command] == $command } ]
 }
 
 # special case for -in option

@@ -21,28 +21,17 @@
 #
 # initializes this library
 #
-proc vTcl:widget:lib:lib_core {args} {
+proc vTcl:widget:lib:lib_bwidget {args} {
     global vTcl widgets classes
 
-    lappend vTcl(libNames) "Tcl/Tk Core Widget Library"
+    if {[catch {package require BWidget}]} { return }
+
+    lappend vTcl(libNames) "BWidget Widget Library"
 
     set order {
-    	toplevel
-	message
-	frame
-	canvas
-	button
-	entry
-	label
-	listbox
-	text
-	checkbutton
-	radiobutton
-	scrollbar_h
-	scrollbar_v
-	scale_h
-	scale_v
-	menubutton
+	notebook
+	tree
+	progressbar2
     } 
 
     vTcl:lib:add_widgets_to_toolbar $order

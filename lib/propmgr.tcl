@@ -248,7 +248,7 @@ proc vTcl:focus_out_geometry_cmd {option cmd {cmd2 ""}} {
 }
 
 proc vTcl:prop:update_attr {} {
-    global vTcl
+    global vTcl options
     if {$vTcl(var_update) == "no"} {
         return
     }
@@ -263,11 +263,12 @@ proc vTcl:prop:update_attr {} {
     if {[winfo exists $top]} {
         if {$vTcl(w,class) != $vTcl(w,last_class)} {
             catch {pack forget $fr._$vTcl(w,last_class)}
+	    update
             pack $top -side left -fill both -expand 1
         }
-        foreach i $vTcl(opt,list) {
+        foreach i $vTcl(options) {
             if {[lsearch $vTcl(w,optlist) $i] >= 0} {
-                if { [lindex $vTcl(opt,$i) 2] == "color" } {
+		if {$options($i,type) == "color"} {
                     $top.t${i}.f configure -bg $vTcl(w,opt,$i)
                 }
             }
@@ -278,19 +279,18 @@ proc vTcl:prop:update_attr {} {
         pack $top -side top -expand 1 -fill both
         grid columnconf $top 1 -weight 1
         set type ""
-        foreach i $vTcl(opt,list) {
-            set newtype [lindex $vTcl(opt,$i) 1]
+        foreach i $vTcl(options) {
+	    set newtype $options($i,title)
             if {$type != $newtype} {
                 set type $newtype
             }
-            if {[lsearch $vTcl(w,optlist) $i] >= 0} {
-                set variable "vTcl(w,opt,$i)"
-                set config_cmd "\$vTcl(w,widget) configure $i \$$variable; "
-                set focus_out_cmd "vTcl:focus_out_cmd $i"
+            if {[lsearch $vTcl(w,optlist) $i] < 0} { continue }
+	    set variable "vTcl(w,opt,$i)"
+	    set config_cmd "\$vTcl(w,widget) configure $i \$$variable; "
+	    set focus_out_cmd "vTcl:focus_out_cmd $i"
 
-                append config_cmd "vTcl:place_handles \$vTcl(w,widget)"
-                vTcl:prop:new_attr $top $i $variable $config_cmd opt $focus_out_cmd
-            }
+	    append config_cmd "vTcl:place_handles \$vTcl(w,widget)"
+	    vTcl:prop:new_attr $top $i $variable $config_cmd opt $focus_out_cmd
         }
 
 	# special stuff to edit menu items (cascaded items)
@@ -347,21 +347,29 @@ proc vTcl:prop:update_attr {} {
 }
 
 proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
-    global vTcl $variable
+    global vTcl $variable options
     set base $top.t${option}
-	# hack for Tix
-	if {[ winfo exists $top.$option ] == 1} {
-		return
-	}
-    label $top.$option \
-        -text "[lindex $vTcl($prefix,$option) 0]" -anchor w -width 11 -fg black
+    # hack for Tix
+    if {[ winfo exists $top.$option ] == 1} { return }
+
+    if {$prefix == "opt"} {
+    	set text $options($option,text)
+	set type $options($option,type)
+	set choices $options($option,choices)
+    } else {
+    	set text [lindex $vTcl($prefix,$option) 0]
+	set type [lindex $vTcl($prefix,$option) 2]
+	set choices [lindex $vTcl($prefix,$option) 3]
+    }
+
+    label $top.$option -text $text -anchor w -width 11 -fg black
 
     # @@change by Christian Gavin 3/10/2000
     # added font browser for individual properties
 
     set focusControl $base
 
-    switch [lindex $vTcl($prefix,$option) 2] {
+    switch $type {
         boolean {
             frame $base
             radiobutton ${base}.y \
@@ -379,7 +387,7 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
                 -highlightthickness 1 -relief sunken -anchor w -fg black \
                 -padx 0 -pady 1
             menu ${base}.l.m -tearoff 0
-            foreach i [lindex $vTcl($prefix,$option) 3] {
+            foreach i $choices {
                 ${base}.l.m add command -label "$i" -command \
                     "set $variable $i; $config_cmd; "
             }

@@ -1,4 +1,4 @@
-##############################################################################
+#############################################################################
 #
 # widget.tcl - procedures for manipulating widget information
 #
@@ -133,6 +133,8 @@ proc vTcl:active_widget {target} {
         if {$vTcl(w,class) == "Toplevel"} {
             vTcl:destroy_handles
             set vTcl(w,insert) $target
+	    wm deiconify $target
+	    raise $target
         } else {
             vTcl:create_handles $target
             vTcl:place_handles $target
@@ -144,6 +146,8 @@ proc vTcl:active_widget {target} {
         }
     } elseif {$vTcl(w,class) == "Toplevel"} {
         set vTcl(w,insert) $target
+	wm deiconify $target
+	raise $target
     }
     set widgetSelected 1
 }
@@ -177,14 +181,18 @@ proc vTcl:select_widget {target} {
 # Recurses a widget tree ignoring toplevels
 #
 proc vTcl:widget_tree {target} {
-    global vTcl
+    global vTcl classes
     if {$target == ".vTcl" || [string range $target 0 4] == ".__tk"} {
         return
     }
     set output "$target "
-    if {$vTcl([vTcl:get_class $target],dump_children) == "0"} {
-        return $output
+    set class [winfo class $target]
+    set dumpChildren 1
+    if {[info exists classes($class,dumpChildren)]} {
+    	set dumpChildren $classes($class,dumpChildren)
     }
+    if {!$dumpChildren} { return $output }
+
     set c [vTcl:get_children $target]
     foreach i $c {
         set mgr [winfo manager $i]
@@ -214,11 +222,10 @@ proc vTcl:list_widget_tree {target {which ""}} {
 	    continue
 	}
 
-	# don't include unknown widgets
-	set c [winfo class $i]
-	if {! [vTcl:valid_class $c] } {
-	    continue
-	}
+	# Don't include unknown widgets
+	set c [vTcl:get_class $i]
+
+	if {![vTcl:valid_class $c]} { continue }
 
         append w_tree "[vTcl:list_widget_tree $i $which] "
     }
@@ -332,12 +339,12 @@ proc vTcl:update_widget_info {target} {
     if {![winfo exists $target]} {return}
     foreach i $vTcl(attr,winfo) {
 	if {$i == "manager" && $target == "."} {
-		vTcl:log "target $target manager = [winfo $i $target]"
+	    vTcl:log "target $target manager = [winfo $i $target]"
 
-		# root placer problem
-		set vTcl(w,$i) wm
+	    # root placer problem
+	    set vTcl(w,$i) wm
 	} else {
-	        set vTcl(w,$i) [winfo $i $target]
+	    set vTcl(w,$i) [winfo $i $target]
 	}
     }
     set vTcl(w,class) [vTcl:get_class $target]
@@ -521,31 +528,32 @@ proc vTcl:auto_place_widget {type {options ""}} {
     } else {
         set new_widg [vTcl:new_widget_name $type $vTcl(w,insert)]
     }
-    if {$new_widg != ""} {
 
-    	set created_widget [vTcl:create_widget $type $options $new_widg 0 0]
+    if {[lempty $new_widg]} { return }
 
-        # @@change by Christian Gavin 3/5/2000
-        #
-        # when new widget is inserted, automatically refresh
-        # widget tree
+    set created_widget [vTcl:create_widget $type $options $new_widg 0 0]
 
-        # we do not destroy the handles that were just created
-        # (remember, the handles are used to grab and move a widget
-        # around)
+    # @@change by Christian Gavin 3/5/2000
+    #
+    # when new widget is inserted, automatically refresh
+    # widget tree
 
-        after idle "\
-	        vTcl:init_wtree 0
-	        vTcl:show_selection_in_tree $created_widget"
-        
-        # @@end_change
+    # we do not destroy the handles that were just created
+    # (remember, the handles are used to grab and move a widget
+    # around)
 
-	return $created_widget
-    }
+    after idle "\
+	    vTcl:init_wtree 0
+	    vTcl:show_selection_in_tree $created_widget"
+    
+    # @@end_change
+
+    return $created_widget
 }
 
 proc vTcl:create_widget {type options new_widg x y} {
-    global vTcl
+    global vTcl widgets classes widgetNums
+
     set do ""
     set undo ""
     if {$vTcl(pr,getname) == 1} {
@@ -555,9 +563,13 @@ proc vTcl:create_widget {type options new_widg x y} {
             set new_widg "$vTcl(w,insert).$new_widg"
         }
     }
-    append do "$type $new_widg $vTcl($type,insert) $options;"
-    if {[info procs vTcl:widget:$type:inscmd] != ""} {
-        append do "[vTcl:widget:$type:inscmd $new_widg];"
+
+    set c $widgets($type,class)
+    append do "$classes($c,createCmd) $new_widg "
+    append do "$classes($c,defaultOptions) $options;"
+
+    if {![lempty $classes($c,insertCmd)]} {
+	append do "[$classes($c,insertCmd) $new_widg];"
     }
     if {$type != "toplevel"} {
         append do "$vTcl(w,def_mgr) $new_widg $vTcl($vTcl(w,def_mgr),insert)"
@@ -573,32 +585,47 @@ proc vTcl:create_widget {type options new_widg x y} {
     update idletasks
     set vTcl(mgrs,update) yes
 
-    if {$type != "toplevel"} {
-	lappend vTcl(widgets,[winfo toplevel $new_widg]) $new_widg
-    } else {
+    if {$type == "toplevel"} {
     	set vTcl(widgets,$new_widg) {}
+    } else {
+	lappend vTcl(widgets,[winfo toplevel $new_widg]) $new_widg
     }
+
+    if { $vTcl(pr,autoalias) } {
+	set alias [vTcl:next_widget_name $c]
+	vTcl:set_alias $new_widg $alias
+    }
+
     return $new_widg
 }
 
-proc vTcl:set_alias {target} {
+proc vTcl:set_alias {target {alias ""} {noupdate ""}} {
     global vTcl widget
-    if {$target == ""} {return}
-    set was ""
-    if {![llength [array get widget "rev,$target"]]} {
-        set alias [vTcl:get_string "Widget alias for $vTcl(w,class)" $target]
-    } else {
-        set was $widget(rev,$target)
-        set alias \
-            [vTcl:get_string "Widget alias for $vTcl(w,class)" $target $was]
-    }
-    catch {
-        unset widget($was)
-        unset widget(rev,$target)
-        unset widget(child,$was)
+
+    if {[lempty $target]} { return }
+
+    set was {}
+    if {[lempty $alias]} {
+	set c $vTcl(w,class)
+	if {![info exists widget(rev,$target)]} {
+	    set alias [vTcl:get_string "Widget alias for $c" $target]
+	} else {
+	    set was $widget(rev,$target)
+	    set alias [vTcl:get_string "Widget alias for $c" $target $was]
+	}
     }
 
-    if {$alias != ""} {
+    if {![lempty $was]} {
+	## Unset the widget variables and delete the alias from the interpreter.
+	catch {
+	    unset widget($was)
+	    unset widget(rev,$target)
+	    unset widget(child,$was)
+	    interp alias {} $was {} {}
+	}
+    }
+
+    if {![lempty $alias]} {
         set widget($alias) $target
         set widget(rev,$target) $alias
 
@@ -610,10 +637,39 @@ proc vTcl:set_alias {target} {
 
         set widget(child,$alias) [join $components .]
 
-	# refresh property manager after changing an alias
+	## Create an alias in the interpreter.
+	if { $vTcl(pr,cmdalias) } { 
+	    interp alias {} $alias {} vTcl:WidgetProc $target
+	}
 
-	vTcl:update_widget_info $target
-	vTcl:prop:update_attr
+	# Refresh property manager after changing an alias
+	if {[lempty $noupdate]} { vTcl:update_widget_info $target }
+
+	## This is not really necesary.
+	# vTcl:prop:update_attr
+    }
+}
+
+proc vTcl:unset_alias {w} {
+    global widget widgetNums
+
+    if {![info exists widget(rev,$w)]} { return }
+    set alias $widget(rev,$w)
+
+    catch {
+	unset widget($alias)
+	unset widget(rev,$w)
+	unset widget(child,$alias)
+	interp alias {} $alias {} {}
+    }
+
+    set class [vTcl:get_class $w]
+
+    ## If the alias is something like Button1, we try to remove its number
+    ## from the widgetNums($class) variable.  This lets us re-use aliases
+    ## when widgets are deleted.
+    if {[regexp "$class\(\[0-9\]+\)" $alias trash num]} {
+	lremove widgetNums($class) $num
     }
 }
 
@@ -657,12 +713,14 @@ proc vTcl:set_textvar {t} {
 }
 
 proc vTcl:widget_dblclick {target x y} {
-    global vTcl
+    global vTcl classes
     set vTcl(mouseX) $x
     set vTcl(mouseY) $y
     set c [vTcl:get_class $target 1]
-    if {[info procs vTcl:widget:$c:dblclick] != ""} {
-        eval vTcl:widget:$c:dblclick $target
+    set class [winfo class $target]
+
+    if {![lempty $classes($class,dblClickCmd)]} {
+        eval $classes($class,dblClickCmd) $target
     }
 }
 
@@ -758,32 +816,29 @@ proc vTcl:insert_widget_in_text {t} {
 }
 
 proc vTcl:add_functions_to_rc_menu {} {
-    global vTcl
+    global vTcl classes
 
-    set class [string tolower $vTcl(w,class)]
     $vTcl(gui,rc_widget_menu) delete 0 end
-    if {![info exists vTcl($class,functions)]} { return }
 
-    foreach line $vTcl($class,functions) {
-    	lassign $line text function
-	$vTcl(gui,rc_widget_menu) add command -label $text -command $function
+    set c $vTcl(w,class)
+    if {[lempty $classes($c,functionCmds)]} { return }
+
+    foreach cmd $classes($c,functionCmds) text $classes($c,functionText) {
+	$vTcl(gui,rc_widget_menu) add command -label $text -command $cmd
     }
 }
 
 proc vTcl:new_widget {type button {options ""}} {
-    global vTcl
+    global vTcl widgets
     if {$vTcl(mode) == "TEST"} {
         vTcl:error "Inserting widgets is not\nallowed in Test mode."
         return
     }
 
-    if {[info exists vTcl(x,lastButton)]} {
-    	$vTcl(x,lastButton) configure -relief raised
-    }
-    set vTcl(x,lastButton) $button
+    vTcl:raise_last_button $button
 
-    if {$vTcl(pr,autoplace) || $type == "toplevel"} {
-	bind vTcl(b) <Button-1> {vTcl:bind_button_1 %W %X %Y}
+    if {$vTcl(pr,autoplace) || $type == "toplevel" \
+    	|| $widgets($type,autoPlace)} {
     	return [vTcl:auto_place_widget $type $options]
     }
 
@@ -798,9 +853,11 @@ proc vTcl:new_widget {type button {options ""}} {
 proc vTcl:place_widget {type button options rx ry x y} {
     global vTcl
 
-    $button configure -relief raised
-    vTcl:status "Status"
-    bind vTcl(b) <Button-1> {vTcl:bind_button_1 %W %X %Y}
+    if { !$vTcl(pr,multiplace) } {
+	$button configure -relief raised
+	vTcl:status "Status"
+	vTcl:rebind_button_1
+    }
 
     vTcl:active_widget [winfo containing $rx $ry]
 
@@ -810,7 +867,8 @@ proc vTcl:place_widget {type button options rx ry x y} {
     } else {
         set new_widg [vTcl:new_widget_name $type $vTcl(w,insert)]
     }
-    if {$new_widg == ""} { return }
+
+    if {[lempty $new_widg]} { return }
 
     set created_widget [vTcl:create_widget $type $options $new_widg $x $y]
 
@@ -830,4 +888,33 @@ proc vTcl:place_widget {type button options rx ry x y} {
     # @@end_change
 
     return $created_widget
+}
+
+proc vTcl:next_widget_name {class} {
+    global widgetNums
+
+    ## Get the next available widget number for this class.
+    ## IE: Edit1, Edit2, Edit3...
+    if {![info exists widgetNums($class)] || [lempty $widgetNums($class)]} {
+    	set widgetNums($class) 0
+    }
+    set num [lindex [lsort -decreasing -integer $widgetNums($class)] 0]
+    incr num
+    lappend widgetNums($class) $num
+    return $class$num
+}
+
+proc vTcl:update_aliases {} {
+    global widgetNums widget
+
+    catch {unset widgetNums}
+
+    set aliases [array names widget]
+    lremove aliases rev,* child,*
+
+    foreach alias [lsort $aliases] {
+	if {![regexp {([a-zA-Z]+)([0-9]+)} $alias trash class num]} { continue }
+	if {![vTcl:valid_class $class]} { continue }
+	lappend widgetNums($class) $num
+    }
 }

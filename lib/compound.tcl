@@ -118,9 +118,9 @@ proc vTcl:place_compound {compound gmgr rx ry x y} {
 
     vTcl:status Status
 
-    bind vTcl(b) <Button-1> {vTcl:bind_button_1 %W %X %Y}
+    vTcl:rebind_button_1
 
-    vTcl:active_widget [winfo containing $rx $ry]
+    set vTcl(w,insert) [winfo containing $rx $ry]
 
     set gopt {}
     if {$gmgr == "place"} { append gopt "-x $x -y $y" }
@@ -129,7 +129,7 @@ proc vTcl:place_compound {compound gmgr rx ry x y} {
 }
 
 proc vTcl:insert_compound {name compound {gmgr pack} {gopt ""}} {
-    global vTcl
+    global vTcl widgets
 
     set cpd \{[lindex $compound 0]\}
     set alias [lindex $compound 1]
@@ -142,7 +142,8 @@ proc vTcl:insert_compound {name compound {gmgr pack} {gopt ""}} {
 }
 
 proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
-    global vTcl widget
+    global vTcl widget classes widgets
+
     set todo ""
     foreach i $compound {
         set type [string trim [lindex $i 0]]
@@ -190,7 +191,15 @@ proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
             lappend vTcl(tops) $name
             vTcl:update_top_list
         }
-        append todo "$type $name [vTcl:name_replace $base $opts]; "
+
+	if {[info exists widgets($type,class)]} {
+	    set class $widgets($type,class)
+	} else {
+	    set class [vTcl:upper_first $type]
+	}
+
+        append todo "$classes($class,createCmd) $name "
+	append todo "[vTcl:name_replace $base $opts]; "
         if {$mgrt != "" && $mgrt != "wm"} {
             if {$mgrt == "place" && $mgri == ""} {
                 set mgri "-x 5 -y 5"
@@ -229,10 +238,12 @@ proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
                 append todo "$name add $t $o; "
             }
         }
-        foreach j $chld {
-            append todo "[vTcl:extract_compound $base $name \{$j\} $level]; "
-            incr index
-        }
+	if {$classes($class,dumpChildren)} {
+	    foreach j $chld {
+	       append todo "[vTcl:extract_compound $base $name \{$j\} $level]; "
+		incr index
+	    }
+	}
         if {$alis != "" && ![llength [array get widget $alis]]} {
             set widget($alis) $name
             set widget(rev,$name) "$alis"
@@ -244,10 +255,15 @@ proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
             set val [lindex $j 3]
             append todo "grid $cmd $name $num $prop $val; "
         }
+
+	set next [vTcl:next_widget_name $class]
+    	append todo "vTcl:set_alias $name $next -noupdate; "
+
         if {[info procs "${cmpdname}:main"] != ""} {
             eval ${cmpdname}:main
         }
     }
+
     return $todo
 }
 
@@ -273,7 +289,8 @@ proc vTcl:gen_compound {target {name ""} {cmpdname ""}} {
     if {![winfo exists $target]} {
         return ""
     }
-    set type [vTcl:get_class $target 1]
+    set class [vTcl:get_class $target]
+    set type [vTcl:get_type $target 1]
 
     # @@change by Christian Gavin 3/6/2000
     # rename conf to configure because Iwidgets don't like
@@ -299,6 +316,7 @@ proc vTcl:gen_compound {target {name ""} {cmpdname ""}} {
         set mgri ""
     } else {
         set mgrt [winfo manager $target]
+
         # @@debug
         vTcl:log "gen_compound: mgrt=\"$mgrt\""
         # @@end_debug
@@ -308,10 +326,10 @@ proc vTcl:gen_compound {target {name ""} {cmpdname ""}} {
  	# when they are in edit mode, therefore there is no manager at
  	# this time
 
-        if {$mgrt==""} {
-        	set mgri {}
+	if {[lempty $mgrt] || [lempty [info commands $mgrt]]} {
+	    set mgri {}
         } else {
-	        set mgri [vTcl:get_mgropts [$mgrt info $target]]
+	    set mgri [vTcl:get_mgropts [$mgrt info $target]]
 	}
 
  	# @@end_change
@@ -323,9 +341,10 @@ proc vTcl:gen_compound {target {name ""} {cmpdname ""}} {
     }
 
     foreach i [vTcl:get_children $target] {
-        incr vTcl(cmp,index)
-        append chld "[vTcl:gen_compound $i $name.0$vTcl(cmp,index)] "
+	incr vTcl(cmp,index)
+	append chld "[vTcl:gen_compound $i $name.0$vTcl(cmp,index)] "
     }
+
     catch {set alias $widget(rev,$target)}
     set pre g
     set gcolumn [lindex [grid size $target] 0]
@@ -394,5 +413,3 @@ proc vTcl:name_compound {t} {
     set vTcl(cmpd:$name) [vTcl:create_compound $t $name]
     vTcl:cmp_user_menu
 }
-
-

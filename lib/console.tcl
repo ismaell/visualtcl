@@ -93,7 +93,13 @@ proc vTclWindow.vTcl.con {args} {
         .vTcl.con.fra5.tex7 conf -state disabled
         
 	set cmd [.vTcl.con.fra6.ent10 get]
-	set caught [expr [catch $cmd vTcl(err)] == 1]
+	if {$cmd == "exit" || $cmd == "quit"} {
+	    vTcl:attrbar:toggle_console
+	    set caught 0
+	    set vTcl(err) $cmd
+	} else {
+	    set caught [expr [catch $cmd vTcl(err)] == 1]
+	}
 
 	# not needed, since the redefined "puts" command calls this function
         # vTcl:console:get_output

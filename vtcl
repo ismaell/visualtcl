@@ -1,6 +1,7 @@
 #!/bin/sh
 
-PATH_TO_WISH=/opt/local/bin/wish
+# PATH_TO_WISH=/opt/local/bin/wish
+PATH_TO_WISH=/usr/local/bin/wish8.1
 VTCL_HOME=/opt/local/src/vtcl
 
 export PATH_TO_WISH

@@ -22,56 +22,54 @@
 #
 
 proc vTcl:prefs:uninit {base} {
-
-	global widget
-
-	catch {destroy $base.tb}
+    catch {destroy $base.tb}
 }
 
 proc vTcl:prefs:init {base} {
-	
-	global widget
+    # this is to store all variables
+    namespace eval prefs {
+       variable balloon          ""
+       variable getname          ""
+       variable shortname        ""
+       variable fullcfg          ""
+       variable saveglob         ""
+       variable winfocus         ""
+       variable autoplace        ""
+       variable cmdalias         ""
+       variable autoalias        ""
+       variable multiplace       ""
+       variable autoloadcomp     ""
+       variable autoloadcompfile ""
+       variable font_dlg         ""
+       variable font_fixed       ""
+       variable manager          ""
+       variable encase           ""
+       variable projecttype      ""
+       variable imageeditor      ""
+       variable saveimagesinline ""
+    }
 
-	# this is to store all variables
-	namespace eval prefs {
-	   variable balloon          ""
-	   variable getname          ""
-	   variable shortname        ""
-	   variable fullcfg          ""
-	   variable saveglob         ""
-	   variable winfocus         ""
-	   variable autoplace        ""
-	   variable autoloadcomp     ""
-	   variable autoloadcompfile ""
-	   variable font_dlg         ""
-	   variable font_fixed       ""
-	   variable manager          ""
-	   variable encase           ""
-	   variable projecttype      ""
-	   variable imageeditor      ""
-	   variable saveimagesinline ""
-	}
+    # set the variables for the dialog
+    vTcl:prefs:data_exchange 0
 
-	# set the variables for the dialog
-	vTcl:prefs:data_exchange 0
+    # destroy the notebook if already existing
+    vTcl:prefs:uninit $base
+    set tb [vTcl:tabnotebook_create $base.tb]
+    pack $tb -fill both -expand 1
 
-	# destroy the notebook if already existing
-	vTcl:prefs:uninit $base
-	set tb [vTcl:tabnotebook_create $base.tb]
-	pack $tb -fill both -expand 1
+    set tb_basics  [vTcl:tabnotebook_page $tb "Basics"]
+    set tb_project [vTcl:tabnotebook_page $tb "Project"]
+    set tb_fonts   [vTcl:tabnotebook_page $tb "Fonts"]
+    set tb_images  [vTcl:tabnotebook_page $tb "Images"]
 
-	set tb_basics  [vTcl:tabnotebook_page $tb "Basics"]
-	set tb_project [vTcl:tabnotebook_page $tb "Project"]
-	set tb_fonts   [vTcl:tabnotebook_page $tb "Fonts"]
-	set tb_images  [vTcl:tabnotebook_page $tb "Images"]
-
-	vTcl:prefs:basics  $tb_basics
-	vTcl:prefs:project $tb_project
-	vTcl:prefs:fonts   $tb_fonts
-	vTcl:prefs:images  $tb_images
+    vTcl:prefs:basics  $tb_basics
+    vTcl:prefs:project $tb_project
+    vTcl:prefs:fonts   $tb_fonts
+    vTcl:prefs:images  $tb_images
 }
 
 proc vTclWindow.vTcl.prefs {{base ""} {container 0}} {
+    global widget
 
     if {$base == ""} {
         set base .vTcl.prefs
@@ -79,61 +77,53 @@ proc vTclWindow.vTcl.prefs {{base ""} {container 0}} {
     if {[winfo exists $base]} {
         wm deiconify $base; return
     }
-
-    global widget
-
     ###################
     # CREATING WIDGETS
     ###################
     if {!$container} {
-    toplevel $base -class Toplevel \
-        -background #dcdcdc -highlightbackground #dcdcdc \
-        -highlightcolor #000000 
+    toplevel $base -class Topleve \
+    	-background #dcdcdc -highlightbackground #dcdcdc \
+	-highlightcolor #000000
     wm focusmodel $base passive
-    wm geometry $base 409x389+240+159
+    wm geometry $base 409x500+240+159
+    vTcl:center $base 409 500
     wm maxsize $base 1284 1010
     wm minsize $base 100 1
     wm overrideredirect $base 0
     wm resizable $base 1 1
     wm withdraw $base
     wm title $base "Visual Tcl Preferences"
+    wm protocol $base WM_DELETE_WINDOW "wm withdraw $base"
     }
     frame $base.fra19 \
         -background #dcdcdc -borderwidth 2 -height 75 \
-        -highlightbackground #dcdcdc -highlightcolor #000000 -width 125 
+        -highlightbackground #dcdcdc -highlightcolor #000000 -width 125
     button $base.fra19.but20 \
         -activebackground #dcdcdc -activeforeground #000000 \
         -background #dcdcdc \
-        -command "vTcl:prefs:data_exchange 1; destroy $base" \
+        -command "vTcl:prefs:data_exchange 1; wm withdraw $base" \
         -foreground #000000 -highlightbackground #dcdcdc \
-        -highlightcolor #000000 -padx 9 -text OK -width 10 
+        -highlightcolor #000000 -padx 9 -text OK -width 10
     button $base.fra19.but21 \
         -activebackground #dcdcdc -activeforeground #000000 \
-        -command "destroy $base" \
+        -command "wm withdraw $base" \
         -background #dcdcdc -foreground #000000 -highlightbackground #dcdcdc \
-        -highlightcolor #000000 -padx 9 -text Cancel -width 10 
+        -highlightcolor #000000 -padx 9 -text Cancel -width 10
     ###################
     # SETTING GEOMETRY
     ###################
     pack $base.fra19 \
-        -in $base -anchor center -expand 0 -fill none -pady 5 -side bottom 
+        -in $base -anchor center -expand 0 -fill none -pady 5 -side bottom
     pack $base.fra19.but20 \
         -in $base.fra19 -anchor center -expand 0 -fill none -padx 10 \
-        -side left 
+        -side left
     pack $base.fra19.but21 \
         -in $base.fra19 -anchor center -expand 0 -fill none -padx 10 \
-        -side right 
+        -side right
 
     vTcl:prefs:init $base
-    
+
     update idletasks
-    set sw [winfo screenwidth .]
-    set sh [winfo screenheight .]
-    set w [winfo reqwidth $base]
-    set h [winfo reqheight $base]
-    set x [expr {($sw - $w)/2}]
-    set y [expr {($sh - $h)/2}]
-    wm geometry $base ${w}x${h}+$x+$y
     wm deiconify $base
 }
 
@@ -160,7 +150,8 @@ proc vTclWindow.vTcl.infolibs {{base ""} {container 0}} {
     if {!$container} {
     toplevel $base -class Toplevel
     wm focusmodel $base passive
-    wm geometry $base 446x322+157+170
+    wm geometry $base 446x322
+    vTcl:center $base 446 322
     wm maxsize $base 1009 738
     wm minsize $base 1 1
     wm overrideredirect $base 0
@@ -202,8 +193,7 @@ proc vTclWindow.vTcl.infolibs {{base ""} {container 0}} {
 
     $widget(libraries_listbox) delete 0 end
 
-    foreach name $vTcl(w,libsnames) {
-
+    foreach name $vTcl(libNames) {
         $widget(libraries_listbox) insert end $name
     }
 }
@@ -252,6 +242,12 @@ proc {vTcl:prefs:data_exchange} {save_and_validate} {
 		prefs::imageeditor      $save_and_validate
 	vTcl:data_exchange_var vTcl(pr,saveimagesinline) \
 		prefs::saveimagesinline $save_and_validate
+	vTcl:data_exchange_var vTcl(pr,cmdalias)        \
+		prefs::cmdalias        $save_and_validate
+	vTcl:data_exchange_var vTcl(pr,autoalias)        \
+		prefs::autoalias        $save_and_validate
+	vTcl:data_exchange_var vTcl(pr,multiplace)        \
+		prefs::multiplace        $save_and_validate
 }
 
 proc {vTcl:prefs:basics} {tab} {
@@ -277,6 +273,15 @@ proc {vTcl:prefs:basics} {tab} {
 	vTcl:formCompound:add $tab checkbutton \
 		-text "Auto place new widgets" \
 		-variable prefs::autoplace
+	vTcl:formCompound:add $tab checkbutton \
+		-text "Use widget command aliasing" \
+		-variable prefs::cmdalias
+	vTcl:formCompound:add $tab checkbutton \
+		-text "Use auto-aliasing for new widgets" \
+		-variable prefs::autoalias
+	vTcl:formCompound:add $tab checkbutton \
+		-text "Use continuous widget placement" \
+		-variable prefs::multiplace
 	vTcl:formCompound:add $tab checkbutton \
 		-text "Auto load compounds from file:" \
 		-variable prefs::autoloadcomp

@@ -85,6 +85,70 @@ proc vTcl:save_procs {} {
     return $output
 }
 
+proc vTcl:export_procs {} {
+    global vTcl classes
+
+    set output ""
+    set children [vTcl:list_widget_tree .]
+
+    foreach child $children {
+    	lappend classList [vTcl:get_class $child]
+    }
+
+    foreach class [vTcl:lrmdups $classList] {
+	eval lappend list $classes($class,exportCmds)
+    }
+
+    foreach i $list {
+        if {[vTcl:ignore_procname_when_saving $i] == 0} {
+            set args ""
+            foreach j [info args $i] {
+                if {[info default $i $j value]} {
+                    lappend args [list $j $value]
+                } else {
+                    lappend args $j
+                }
+            }
+            set body [string trim [info body $i]]
+            if {($body != "" || $i == "main") && $i != "init"} {
+
+                if {[regexp (.*):: $i matchAll context] } {
+                   append output "\nnamespace eval ${context} \{\n"
+                }
+
+                append output "\nproc \{$i\} \{$args\} \{\n$body\n\}\n"
+
+                if {[regexp (.*):: $i]} {
+                   append output "\n\}\n"
+                }
+            }
+        }
+    }
+    return $output
+}
+
+proc vTcl:vtcl_library_procs {} {
+    global vTcl classes
+
+    set list vTcl:WidgetProc
+
+    set children [vTcl:list_widget_tree .]
+
+    foreach child $children {
+	lappend classList [vTcl:get_class $child]
+    }
+
+    foreach class [vTcl:lrmdups $classList] {
+	if {[lempty $classes($class,widgetProc)]} { continue }
+	lappend list $classes($class,widgetProc)
+    }
+
+    foreach proc $list {
+	append output [vTcl:maybe_dump_proc vTcl:WidgetProc]
+    }
+    return $output
+}
+
 proc vTcl:dump:get_multifile_project_dir {project_name} {
 
     return [file rootname $project_name]_
@@ -184,9 +248,9 @@ proc vTcl:save_tree {target {basedir ""} {project_name ""}} {
     append output "\n"
 
     vTcl:status "Saving: collecting options"
-    foreach i $vTcl(showtops) {
-        append output "Window show $i\n"
-    }
+
+    append output [vTcl:dump:save_tops]
+
     set vTcl(var_update) "yes"
     vTcl:statbar 0
     vTcl:status "Saving: writing data"
@@ -202,14 +266,31 @@ proc vTcl:valid_class {class} {
     }
 }
 
+proc vTcl:get_type {target {lower 0}} {
+    global widgets classes
+
+    set class [vTcl:get_class $target]
+
+    ## If we have a type cmd, execute it.
+    if {![lempty $classes($class,typeCmd)]} {
+    	set type [$classes($class,typeCmd) $target]
+    } else {
+	foreach elem [array names widgets *,class] {
+	    if {$widgets($elem) != $class} { continue }
+	    set type [lindex [split $elem ,] 0]
+	    break
+	}
+    }
+
+    if {$lower == 1} { set type [vTcl:lower_first $type] }
+    return $type
+}
+
 proc vTcl:get_class {target {lower 0}} {
     set class [winfo class $target]
-    if {![vTcl:valid_class $class]} {
-        set class Toplevel
-    }
-    if {$lower == 1} {
-        set class [vTcl:lower_first $class]
-    }
+
+    if {![vTcl:valid_class $class]} { set class Toplevel }
+    if {$lower == 1} { set class [vTcl:lower_first $class] }
     return $class
 }
 
@@ -312,7 +393,7 @@ proc vTcl:dump_widget_quick {target} {
 }
 
 proc vTcl:dump_widget_opt {target basename} {
-    global vTcl
+    global vTcl classes
     if {$target == "."} {
         vTcl:log "root widget manager = [winfo manager .]"
 	set mgr wm
@@ -320,15 +401,18 @@ proc vTcl:dump_widget_opt {target basename} {
         set mgr [winfo manager $target]
     }
 
-#    if {$mgr == ""} {return}
     set result ""
     set class [vTcl:get_class $target]
     set opt [$target conf]
+
+    ## Let's be safe and force wm for toplevel windows.  Just incase...
+    if {$class == "Toplevel"} { set mgr wm }
+    
     if {$target != "."} {
-	    if {$class == "Menu" && [string first .# $target] >= 0} {
-			return
-		}
-        set result "$vTcl(tab)[vTcl:lower_first $class] $basename"
+	if {$class == "Menu" && [string first .# $target] >= 0} { return }
+        set result "$vTcl(tab)[vTcl:lower_first $classes($class,createCmd)] "
+	append result "$basename"
+
         if {$mgr == "wm" && $class != "Menu"} {
             append result " -class [winfo class $target]"
         }
@@ -369,8 +453,15 @@ proc vTcl:dump_widget_geom {target basename} {
     }
     if {$mgr == ""} {return}
     set class [winfo class $target]
+
+    ## Let's be safe and force wm for toplevel windows.  Just incase...
+    if {$class == "Toplevel"} { set mgr wm }
+
     set result ""
-    if {$mgr != "wm" && $mgr != "menubar" && $mgr != "tixGeometry" && $mgr != "tixForm"} {
+    if {$mgr != "wm" \
+    	&& $mgr != "menubar" \
+	&& $mgr != "tixGeometry" \
+	&& $mgr != "tixForm"} {
         set opts [$mgr info $target]
         set result "$vTcl(tab)$mgr $basename \\\n"
         append result "[vTcl:clean_pairs [vTcl:get_mgropts $opts 1]]\n"
@@ -448,10 +539,12 @@ proc vTcl:dump_top_widget {target basename} {
                 class {}
                 title {
                     append result "$vTcl(tab)wm $i $basename"
-                    append result " \"$vTcl(w,wm,$i)\"\n"
+                    # append result " \"$vTcl(w,wm,$i)\"\n"
+		    append result " \"[wm title $target]\"\n"
                 }
                 state {
-                    switch $vTcl(w,wm,state) {
+                    # switch $vTcl(w,wm,state) { }
+		    switch [wm state $target] {
                         iconic {
                             append result "$vTcl(tab)wm iconify $basename\n"
                         }
@@ -466,11 +559,16 @@ proc vTcl:dump_top_widget {target basename} {
                     }
                 }
                 default {
-                    append result "$vTcl(tab)wm $i $basename $vTcl(w,wm,$i)\n"
+		    ## Let's get the current values of the target.
+                    # append result "$vTcl(tab)wm $i $basename $vTcl(w,wm,$i)\n"
+
+                    append result "$vTcl(tab)wm $i $basename "
+		    append result [wm $i $target]\n
                 }
             }
         }
     }
+
     return $result
 }
 
@@ -545,34 +643,38 @@ proc vTcl:dump:aliases {target} {
     global vTcl
 
     set output "\n$vTcl(tab)global widget\n"
-    set aliases [lsort [array names widget] ]
+    set aliases [lsort [array names widget rev,$target*] ]
 
     foreach name $aliases {
+	set value $widget($name)
 
-    	if [string match rev,$target* $name] {
+	append output $vTcl(tab)
+	append output "set widget(rev,[vTcl:base_name $name]) \{$value\}\n"
 
-    	    set value $widget($name)
-    	    append output "$vTcl(tab)set widget(rev,[vTcl:base_name $name]) \{$value\}\n"
+	set alias $value
+	set value $widget($alias)
 
-    	    set alias $value
-    	    set value $widget($alias)
-    	    append output "$vTcl(tab)set \{widget($alias)\} \"[vTcl:base_name $value]\"\n"
+	append output $vTcl(tab)
+	append output "set \{widget($alias)\} \"[vTcl:base_name $value]\"\n"
 
-            # .top38.cpd28 => {} top38 cpd28
-            set components [split $value .]
+	# .top38.cpd28 => {} top38 cpd28
+	set components [split $value .]
 
-            # {} top38 cpd28 fra21 => cpd28 fra21
-            set components [lrange $components 2 end]
+	# {} top38 cpd28 fra21 => cpd28 fra21
+	set components [lrange $components 2 end]
 
-            append output "$vTcl(tab)set \{widget(child,$alias)\} \"[join $components .]\"\n"
-    	}
+	append output $vTcl(tab)
+	append output "set \{widget(child,$alias)\} \"[join $components .]\"\n"
+
+	append output $vTcl(tab)
+	append output "interp alias {} $alias {} vTcl:WidgetProc $value\n"
     }
 
     return "$output\n"
 }
 
 proc vTcl:dump:widgets {target} {
-    global vTcl
+    global vTcl classes
 
     set output ""
     append output "[vTcl:dump:aliases $target]"
@@ -587,7 +689,7 @@ proc vTcl:dump:widgets {target} {
         	append output "$vTcl(tab)if \{!\$container\} \{\n"
         }
 
-        append output [$vTcl($class,dump_opt) $i $basename]
+	append output [$classes($class,dumpCmd) $i $basename]
 
         if {[string tolower $class] == "toplevel"} {
         	append output "$vTcl(tab)\}\n"
@@ -604,4 +706,19 @@ proc vTcl:dump:widgets {target} {
     return $output
 }
 
+## These are commands we want executed when we re-source the project.
+proc vTcl:dump:save_tops {} {
+    global vTcl
 
+    foreach top [concat . $vTcl(tops)] {
+	if {[lsearch $vTcl(showtops) $top] > -1} {
+	    append string "Window show $top\n"
+	    continue
+	}
+	append string "if {\[info exists vTcl(sourcing)\]} \{"
+	append string "Window show $top; update; Window hide $top"
+	append string "\}\n"
+    }
+
+    return $string
+}

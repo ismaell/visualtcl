@@ -30,13 +30,14 @@ proc vTclWindow.vTcl.help {args} {
     toplevel .vTcl.help -class Toplevel
     wm transient .vTcl.help .vTcl
     wm focusmodel .vTcl.help passive
-    wm geometry .vTcl.help 497x425
+    wm geometry .vTcl.help 600x425
+    vTcl:center .vTcl.help 600 425
+    wm title .vTcl.help "Help for Visual Tcl"
     wm maxsize .vTcl.help 1137 870
     wm minsize .vTcl.help 1 1
     wm overrideredirect .vTcl.help 0
     wm resizable .vTcl.help 1 1
     wm deiconify .vTcl.help
-    wm title .vTcl.help "Help for Visual Tcl"
     frame .vTcl.help.fra18 \
         -borderwidth 1 -height 30 -relief raised -width 30 
     text .vTcl.help.fra18.tex22 \
@@ -70,7 +71,7 @@ proc vTclWindow.vTcl.help {args} {
         -anchor center -expand 1 -fill both -padx 2 -pady 2 -side top 
 
     catch {
-        set f [open [file join $vTcl(VTCL_HOME) README] r]
+        set f [open [file join $vTcl(VTCL_HOME) lib HELP] r]
         .vTcl.help.fra18.tex22 insert end [read $f]
         close $f
     }

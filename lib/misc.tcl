@@ -21,11 +21,6 @@
 ##############################################################################
 #
 
-proc vTcl:at {varname} {
-    upvar $varname localvar
-    return $localvar
-}
-
 proc vTcl:util:greatest_of {numlist} {
     set max 0
     foreach i $numlist {
@@ -37,15 +32,11 @@ proc vTcl:util:greatest_of {numlist} {
 }
 
 proc vTcl:upper_first {string} {
-    set s [string toupper [string range $string 0 0]]
-    set l [string range $string 1 end]
-    return "${s}${l}"
+    return [string toupper [string index $string 0]][string range $string 1 end]
 }
 
 proc vTcl:lower_first {string} {
-    set s [string tolower [string range $string 0 0]]
-    set l [string range $string 1 end]
-    return "${s}${l}"
+    return [string tolower [string index $string 0]][string range $string 1 end]
 }
 
 proc vTcl:load_images {} {
@@ -245,17 +236,17 @@ proc vTcl:status {message} {
     update idletasks
 }
 
-proc vTcl:right_click {widget rx ry x y} {
+proc vTcl:right_click {widget X Y x y} {
     global vTcl
 
-    set vTcl(mouseX) $x
-    set vTcl(mouseY) $y
+    vTcl:set_mouse_coords $X $Y $x $y
 
     vTcl:active_widget $widget
-    $vTcl(gui,rc_menu) post $rx $ry
+    $vTcl(gui,rc_menu) post $X $Y
     grab $vTcl(gui,rc_menu)
     bind $vTcl(gui,rc_menu) <ButtonRelease> {
         grab release $vTcl(gui,rc_menu)
+	vTcl:set_mouse_coords %X %Y %x %y
         $vTcl(gui,rc_menu) unpost
     }
 }
@@ -737,6 +728,80 @@ proc incr0 {varName {num 1}} {
     incr var $num
 }
 
+proc vTcl:WrongNumArgs {string} {
+    return "wrong # args: should be \"$string\""
+}
+
+proc vTcl:set_mouse_coords {X Y x y} {
+    global vTcl
+    foreach var [list X Y x y] {
+    	set vTcl(mouse,$var) [set $var]
+    }
+}
+
+proc vTcl:rebind_button_1 {} {
+    global vTcl
+    bind vTcl(b) <Button-1> {vTcl:bind_button_1 %W %X %Y %x %y}
+}
+
+proc vTcl:lib:add_widgets_to_toolbar {list} {
+    global widgets
+
+    foreach i $list {
+	if {![info exists widgets($i,class)]} { continue }
+	vTcl:toolbar_add $i $widgets($i,balloon) \
+	    $widgets($i,image) $widgets($i,addOptions)
+    }
+}
+
+proc vTcl:lrmdups {list} {
+    if {[lempty $list]} { return }
+    if {[info tclversion] > 8.2} { return [lsort -unique $list] }
+    set list [lsort $list]
+    set last [lindex $list 0]
+    set list [lrange $list 1 end]
+    lappend result $last
+    foreach elem $list {
+    	if {[string compare $last $elem] != 0} {
+	    lappend result $elem
+	    set last $elem
+	}
+    }
+    return $result
+}
+
+proc vTcl:center {target {w 0} {h 0}} {
+    if {[vTcl:get_class $target] != "Toplevel"} { return }
+    update
+    if {$w == 0} { set w [winfo reqwidth $target] }
+    if {$h == 0} { set h [winfo reqheight $target] }
+    set sw [winfo screenwidth $target]
+    set sh [winfo screenheight $target]
+    set x0 [expr ([winfo screenwidth $target] - $w)/2 - [winfo vrootx $target]]
+    set y0 [expr ([winfo screenheight $target] - $h)/2 - [winfo vrooty $target]]
+    set x "+$x0"
+    set y "+$y0"
+    if { $x0+$w > $sw } {set x "-0"; set x0 [expr {$sw-$w}]}
+    if { $x0 < 0 }      {set x "+0"}
+    if { $y0+$h > $sh } {set y "-0"; set y0 [expr {$sh-$h}]}
+    if { $y0 < 0 }      {set y "+0"}
+
+    wm geometry $target $x$y
+    update
+}
+
+proc vTcl:raise_last_button {newButton} {
+    global vTcl
+
+    if {![info exists vTcl(x,lastButton)]} { return }
+
+    if {$vTcl(x,lastButton) == $newButton} { return }
+
+    $vTcl(x,lastButton) configure -relief raised
+
+    set vTcl(x,lastButton) $newButton
+}
+
 #####################################################################
 #                                                                   #
 # The following routines are used for in-line images support        #
@@ -752,8 +817,6 @@ proc incr0 {varName {num 1}} {
 # decoding from Pascual Alonso,
 # namespace'ing and bugs from Parand Tony Darugar
 # (tdarugar@binevolve.com)
-#
-# $Id: misc.tcl,v 1.14 2000/10/18 04:24:34 cgavin Exp $
 # -------------------------------------------------------------------
 
 namespace eval base64 {
@@ -1074,6 +1137,7 @@ proc vTcl:tabnotebook_refresh {win} {
     set font [option get $win tabFont Font]
     set x 2
     set maxh 0
+    set bevel 3
 
     foreach name $tnInfo($win-tabs) {
         set id [$win.tabs create text  [expr $x+$margin+2] [expr -0.5*$margin]  -anchor sw -text $name -font $font  -tags [list $name]]
@@ -1085,7 +1149,7 @@ proc vTcl:tabnotebook_refresh {win} {
             set maxh $ht
         }
 
-        $win.tabs create polygon 0 0  $x 0  [expr $x+$margin] [expr -$ht-$margin]  [expr $x+$margin+$wd] [expr -$ht-$margin]  [expr $x+$wd+2*$margin] 0  2000 0  2000 10  0 10  -outline black -fill $color  -tags [list $name tab tab-$name]
+        $win.tabs create polygon 0 0  $x 0  [expr $x+$margin-$bevel] [expr -$ht-$margin+$bevel] [expr $x+$margin] [expr -$ht-$margin]  [expr $x+$margin+$wd] [expr -$ht-$margin] [expr $x+$margin+$wd+$bevel] [expr -$ht-$margin+$bevel] [expr $x+$wd+2*$margin] 0  2000 0  2000 10  0 10  -outline black -fill $color  -tags [list $name tab tab-$name]
 
         $win.tabs raise $id
 

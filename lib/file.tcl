@@ -22,7 +22,7 @@
 #
 
 proc vTcl:new {} {
-    global vTcl
+    global vTcl widgetNums
     if { [vTcl:close] == -1 } { return }
 
     set vTcl(mode) EDIT
@@ -116,6 +116,7 @@ proc vTcl:source {file} {
     vTcl:statbar 20
     if [catch {uplevel #0 [list source $file]} err] {
         vTcl:dialog "Error Sourcing Project\n$err"
+	global errorInfo
     }
     vTcl:statbar 35
 
@@ -162,53 +163,64 @@ proc vTcl:open {{file ""}} {
 
     if {![info exists vTcl(rcFiles)]} { set vTcl(rcFiles) {} }
 
-    if {$file != ""} {
-    	# only open a Visual Tcl project and nothing else
-    	if ![vTcl:is_vtcl_prj $file] {return}
-    	
-	vTcl:addRcFile $file
+    if {[lempty $file]} { return }
 
-        set vTcl(file,mode) ""
-        proc exit {args} {}
-        proc init {argc argv} {}
-        proc main {argc argv} {}
-        vTcl:load_lib vtclib.tcl;            vTcl:statbar 10
-        set vTcl(tops) ""
-        set vTcl(vars) ""
-        set vTcl(procs) ""
-        vTcl:source $file;                   vTcl:statbar 55
+    set vTcl(sourcing) 1
 
-        # make sure the 'Window' procedure is the latest
-        vTcl:load_lib vtclib.tcl;            vTcl:statbar 60
+    # only open a Visual Tcl project and nothing else
+    if ![vTcl:is_vtcl_prj $file] {return}
+    
+    vTcl:addRcFile $file
 
-        vTcl:list add "init main" vTcl(procs)
-        vTcl:setup_bind_tree .;              vTcl:statbar 65
-        vTcl:update_top_list;                vTcl:statbar 75
-        vTcl:update_var_list;                vTcl:statbar 85
-        vTcl:update_proc_list;               vTcl:statbar 95
-        set vTcl(project,file) $file
-        set vTcl(project,name) [lindex [file split $file] end]
-        wm title .vTcl "Visual Tcl - $vTcl(project,name)"
-        vTcl:status "Done Loading"
-        vTcl:statbar 0
-		set vTcl(newtops) [expr [llength $vTcl(tops)] + 1]
+    set vTcl(file,mode) ""
+    proc exit {args} {}
+    proc init {argc argv} {}
+    proc main {argc argv} {}
+    vTcl:load_lib vtclib.tcl;            vTcl:statbar 10
+    set vTcl(tops) ""
+    set vTcl(vars) ""
+    set vTcl(procs) ""
+    vTcl:status "Loading Project"
+    vTcl:source $file;                   vTcl:statbar 55
 
-	# @@change by Christian Gavin 3/5/2000
-	# refresh widget tree automatically after File Open...
-	# refresh image manager and font manager too
+    # make sure the 'Window' procedure is the latest
+    vTcl:load_lib vtclib.tcl;            vTcl:statbar 60
 
-	after idle {
-		vTcl:init_wtree
-		vTcl:image:refresh_manager
-		vTcl:font:refresh_manager
-	}
+    vTcl:list add "init main" vTcl(procs)
+    vTcl:status "Setting up bind tree"
+    vTcl:setup_bind_tree .;              vTcl:statbar 65
+    vTcl:status "Updating top list"
+    vTcl:update_top_list;                vTcl:statbar 75
+    vTcl:status "Updating variable list"
+    vTcl:update_var_list;                vTcl:statbar 85
+    vTcl:status "Updating proc list"
+    vTcl:update_proc_list;               vTcl:statbar 95
+    vTcl:status "Updating aliases"
+    vTcl:update_aliases
+    set vTcl(project,file) $file
+    set vTcl(project,name) [lindex [file split $file] end]
+    wm title .vTcl "Visual Tcl - $vTcl(project,name)"
+    vTcl:status "Done Loading"
+    vTcl:statbar 0
+    set vTcl(newtops) [expr [llength $vTcl(tops)] + 1]
 
-	# @@end_change
+    unset vTcl(sourcing)
+
+    # @@change by Christian Gavin 3/5/2000
+    # refresh widget tree automatically after File Open...
+    # refresh image manager and font manager too
+
+    after idle {
+	    vTcl:init_wtree
+	    vTcl:image:refresh_manager
+	    vTcl:font:refresh_manager
     }
+
+    # @@end_change
 }
 
 proc vTcl:close {} {
-    global vTcl
+    global vTcl widgetNums
     if {$vTcl(change) > 0} {
         switch [vTcl:dialog "Your application has unsaved changes.\nDo you wish to save?" "Yes No Cancel"] {
             Yes {
@@ -257,6 +269,8 @@ proc vTcl:close {} {
         if {$i != ".vTcl" && $i != ".__tk_filedialog"} {destroy $i}
     }
     set vTcl(tops) ""
+    set vTcl(newtops) 1
+    catch {unset widgetNums}
     vTcl:update_top_list
     foreach i $vTcl(vars) {
         catch {global $i; unset $i}
@@ -397,9 +411,10 @@ proc vTcl:save2 {file} {
     # proc can call any user proc
 
     if {$vTcl(save) == "all"} {
-        puts $output $vTcl(head,vars)
-        puts $output [vTcl:save_vars]
         set body [string trim [info body init]]
+	puts $output $vTcl(head,exports)
+	puts $output [vTcl:vtcl_library_procs]
+	puts $output [vTcl:export_procs]
         puts $output $vTcl(head,procs)
         puts $output [vTcl:save_procs]
         puts $output "proc init \{argc argv\} \{\n$body\n\}\n"
@@ -533,4 +548,17 @@ proc vTcl:get_file {mode {title File} {ext .tcl}} {
     return $file
 }
 
+proc vTcl:restore {} {
+    global vTcl
 
+    set file $vTcl(project,file)
+
+    if {[lempty $file]} { return }
+
+    set bakFile $file.bak
+    if {![file exists $bakFile]} { return }
+
+    vTcl:close
+    file copy -force -- $bakFile $file
+    vTcl:open $file
+}

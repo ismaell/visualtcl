@@ -84,13 +84,8 @@ All Rights Reserved."
         -in .vTcl.about -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 \
         -padx 0 -pady 0 -side top
     update idletasks
-    set sw [winfo screenwidth .]
-    set sh [winfo screenheight .]
-    set w [winfo reqwidth .vTcl.about]
-    set h [winfo reqheight .vTcl.about]
-    set x [expr {($sw - $w)/2}]
-    set y [expr {($sh - $h)/2}]
-    wm geometry .vTcl.about ${w}x${h}+$x+$y
+
+    vTcl:center .vTcl.about
     wm deiconify .vTcl.about
 }
 

@@ -27,410 +27,369 @@
 # bitmap types accepted by Visual Tcl
 
 set vTcl(image,filetypes) {
-
-	   {{GIF Files}          {.gif}       }
-	   {{Portable Pixel Map} {.ppm}       }
-	   {{X Windows Bitmap}   {.xbm}       }
-	   {{All Files}          *            }
+   {{GIF Files}          {.gif}       }
+   {{Portable Pixel Map} {.ppm}       }
+   {{X Windows Bitmap}   {.xbm}       }
+   {{All Files}          *            }
 }
 
 # returns "photo" if a GIF or "bitmap" if a xbm
 
 proc vTcl:image:get_creation_type {filename} {
+    set ext [file extension $filename]
+    set ext [string tolower $ext]
 
-	set ext [file extension $filename]
-	set ext [string tolower $ext]
-
-	switch $ext {
-
-		.ppm -
-		.gif    {return photo}
-		.xbm    {return bitmap}
-
-		default {return photo}
-	}
+    switch $ext {
+	.ppm -
+	.gif    {return photo}
+	.xbm    {return bitmap}
+	default {return photo}
+    }
 }
 
 proc {vTcl:image:create_new_image} {filename
                                     {description {no description}}
-                                    {type {}}
-                                    {data {}}} {
+                                    {type {}}} {
+    global vTcl
 
-	global vTcl env
-
-	# image already existing ?
-	if [info exists vTcl(images,files)] {
-
-		set index [lsearch -exact $vTcl(images,files) $filename]
-
-		if {$index != "-1"} {
-			# cool, no more work to do
-			return
-		}
+    # image already existing ?
+    if [info exists vTcl(images,files)] {
+	set index [lsearch -exact $vTcl(images,files) $filename]
+	if {$index != "-1"} {
+	    # cool, no more work to do
+	    return
 	}
+    }
 
-    if {! [info exists vTcl(sourcing)] &&
-        [string length $data] > 0} {
+    # wait a minute... does the file actually exist?
+    if {![file exists $filename] } {
+	# try current directory
+	set script [file dirname [info script]]
+	set filename [file join $script [file tail $filename] ]
+	# puts "looking for $filename..."
+    }
 
-		set object [image create \
-			[vTcl:image:get_creation_type $filename] \
-			-data $data]
+    if {![file exists $filename] } {
+	set description "file not found!"
 
+	set object [image create bitmap -data {
+	    #define open_width 16
+	    #define open_height 16
+	    static char open_bits[] = {
+		0x7F, 0xFE,
+		0x41, 0x82,
+		0x21, 0x81,
+		0x41, 0x82,
+		0x21, 0x81,
+		0x21, 0x81,
+		0x21, 0x81,
+		0x91, 0x80,
+		0x21, 0x81,
+		0x91, 0x80,
+		0x21, 0x81,
+		0x21, 0x81,
+		0x21, 0x81,
+		0x41, 0x82,
+		0x41, 0x82,
+		0x7F, 0xFE};}]
     } else {
+	set object [image create \
+	    [vTcl:image:get_creation_type $filename] -file $filename]
+    }
 
-        # wait a minute... does the file actually exist?
-        if {! [file exists $filename] } {
+    set reference [vTcl:rename $filename]
 
-            # try current directory
-            set script [file dirname [info script]]
-            set filename [file join $script [file tail $filename] ]
+    set vTcl(images,$reference,image)       $object
+    set vTcl(images,$reference,description) $description
+    set vTcl(images,$reference,type)        $type
+    set vTcl(images,filename,$object)       $filename
 
-            # puts "looking for $filename..."
-        }
+    lappend vTcl(images,files) $filename
 
-        if {! [file exists $filename] } {
-
-            set description "file not found!"
-
-            set object [image create bitmap -data {
-                #define open_width 16
-                #define open_height 16
-                static char open_bits[] = {
-                0x7F, 0xFE,
-                0x41, 0x82,
-                0x21, 0x81,
-                0x41, 0x82,
-                0x21, 0x81,
-                0x21, 0x81,
-                0x21, 0x81,
-                0x91, 0x80,
-                0x21, 0x81,
-                0x91, 0x80,
-                0x21, 0x81,
-                0x21, 0x81,
-                0x21, 0x81,
-                0x41, 0x82,
-                0x41, 0x82,
-                0x7F, 0xFE};}]
-
-        } else {
-
-            set object [image create \
-                [vTcl:image:get_creation_type $filename] \
-                -file $filename]
-        }
-	}
-
-	set reference [vTcl:rename $filename]
-
-	set vTcl(images,$reference,image)       $object
-	set vTcl(images,$reference,description) $description
-	set vTcl(images,$reference,type)        $type
-	set vTcl(images,filename,$object)       $filename
-
-	lappend vTcl(images,files) $filename
-
-	# return image name in case caller might want it
-	return $object
+    # return image name in case caller might want it
+    return $object
 }
 
 proc {vTcl:image:get_description} {filename} {
-
-	global vTcl
-	set reference [vTcl:rename $filename]
-
-	return $vTcl(images,$reference,description)
+    global vTcl
+    set reference [vTcl:rename $filename]
+    return $vTcl(images,$reference,description)
 }
 
 proc {vTcl:image:get_type} {filename} {
-
-	global vTcl
-	set reference [vTcl:rename $filename]
-
-	return $vTcl(images,$reference,type)
+    global vTcl
+    set reference [vTcl:rename $filename]
+    return $vTcl(images,$reference,type)
 }
 
 proc {vTcl:image:get_image} {filename} {
+    global vTcl
+    set reference [vTcl:rename $filename]
 
-	global vTcl
-	set reference [vTcl:rename $filename]
+    # let's do some checking first
+    if {![info exists vTcl(images,$reference,image)] } {
+	# well, the path may be wrong; in that case check
+	# only the filename instead, without the path
 
-	# let's do some checking first
-	if {! [info exists vTcl(images,$reference,image)] } {
+	set imageTail [file tail $filename]
 
-		# well, the path may be wrong; in that case check
-		# only the filename instead, without the path
-
-		set imageTail [file tail $filename]
-
-		foreach oneFile $vTcl(images,files) {
-
-			if { [file tail $oneFile] == $imageTail } {
-
-				set reference [vTcl:rename $oneFile]
-				break
-			}
-		}
+	foreach oneFile $vTcl(images,files) {
+	    if { [file tail $oneFile] == $imageTail } {
+		set reference [vTcl:rename $oneFile]
+		break
+	    }
 	}
+    }
 
-	return $vTcl(images,$reference,image)
+    return $vTcl(images,$reference,image)
 }
 
 proc {vTcl:image:init_img_manager} {} {
+    global vTcl tcl_platform
 
-	global vTcl env tcl_platform
+    # in case an image editor has not been specified yet,
+    # set a default
 
-	# in case an image editor has not been specified yet,
-	# set a default
+    set noeditor 0
 
-	set noeditor 0
+    if {![info exists vTcl(pr,imageeditor)]} {
+	set noeditor 1
+    } elseif {$vTcl(pr,imageeditor) == ""} {
+	set noeditor 1
+    }
 
-	if {![info exists vTcl(pr,imageeditor)]} {
+    if {$noeditor} {
+	switch $tcl_platform(platform) {
+	    "unix" {
+		set vTcl(pr,imageeditor) "gimp"
+	    }
 
-		set noeditor 1
+	    "windows" {
+		set vTcl(pr,imageeditor) \
+		    "C:/Program Files/Accessories/mspaint.exe"
+	    }
 
-	} elseif {$vTcl(pr,imageeditor) == ""} {
+	    "default" {
+		set vTcl(pr,imageeditor) ""
+	    }
+	}
+    }
 
-		set noeditor 1
+    set base $vTcl(images,manager_dlg,win).cpd29.03
+
+    $base configure -state normal -tabs {0.2i 3i 3.75i}
+    $base delete 0.0 end
+
+    foreach image $vTcl(images,files) {
+	set reference [vTcl:rename $image]
+	set object $vTcl(images,$reference,image)
+
+	catch {
+	    label $base.$reference -image $object
+	    vTcl:set_balloon $base.$reference "$image"
 	}
 
-	if {$noeditor} {
+	catch {
+	    set realname $image
+	    if {$tcl_platform(platform) == "windows"} {
+		 regsub -all / $realname {\\\\} realname
+	    }
 
-		switch $tcl_platform(platform) {
+	    set file [file join $vTcl(VTCL_HOME) images edit open.gif]
+	    button $base.${reference}_edit \
+		-image [vTcl:image:get_image $file] \
+		-command "exec \"\$vTcl(pr,imageeditor)\" \"$realname\" &"
 
-			"unix" {
-				set vTcl(pr,imageeditor) "gimp"
-			}
-
-			"windows" {
-				set vTcl(pr,imageeditor) "C:/Program Files/Accessories/mspaint.exe"
-			}
-
-			"default" {
-				set vTcl(pr,imageeditor) ""
-			}
-		}
+	    vTcl:set_balloon $base.${reference}_edit "Edit image"
 	}
 
-	set base $vTcl(images,manager_dlg,win).cpd29.03
+	if {$vTcl(images,$reference,type) == "user"} {
+	    catch {
+		set file [file join $vTcl(VTCL_HOME) images edit remove.gif]
+		button $base.${reference}_delete \
+		-image [vTcl:image:get_image $file] \
+		-command "vTcl:image:ask_delete_image \"$image\""
 
-	$base configure -state normal -tabs {0.2i 3i 3.75i}
-	$base delete 0.0 end
+		vTcl:set_balloon $base.${reference}_delete "Delete image"
+	    }
 
-	foreach image $vTcl(images,files) {
+	    catch {
+		set file [file join $vTcl(VTCL_HOME) images edit replace.gif]
+		button $base.${reference}_replace \
+		-image [vTcl:image:get_image $file] \
+		-command "vTcl:image:replace_image \"$image\""
 
-	   set reference [vTcl:rename $image]
-	   set object $vTcl(images,$reference,image)
-
-	   catch {
-	   	label $base.$reference -image $object
-
- 	  	vTcl:set_balloon $base.$reference "$image"
-
+		vTcl:set_balloon $base.${reference}_replace "Replace image"
 	   }
+       }
 
-	   catch {
-                set realname $image
-                if {$tcl_platform(platform) == "windows"} {
-                     regsub -all / $realname {\\\\} realname
-                }
+       $base insert end "$image: $vTcl(images,$reference,description)"
+       $base insert end " ($vTcl(images,$reference,type))\n"
+       $base insert end "[image type $object] [image width $object] x [image height $object]"
+       $base insert end " ($object)\n\n\t"
 
-                button $base.${reference}_edit \
-                    -image [vTcl:image:get_image $env(VTCL_HOME)/images/edit/open.gif] \
-                    -command "exec \"\$vTcl(pr,imageeditor)\" \"$realname\" &"
+       $base window create end -window $base.$reference
+       $base insert end "\t"
+       $base window create end -window $base.${reference}_edit
 
-                vTcl:set_balloon $base.${reference}_edit "Edit image"
-           }
+       if {$vTcl(images,$reference,type) == "user"} {
+	   $base insert end " "
+	   $base window create end -window $base.${reference}_delete
+	   $base insert end " "
+	   $base window create end -window $base.${reference}_replace
+       }
 
-	   if {$vTcl(images,$reference,type) == "user"} {
+       $base insert end "\n\n___________________________________________________________________\n\n"
+    }
 
-		   catch {
-		   	button $base.${reference}_delete \
-		   	-image [vTcl:image:get_image $env(VTCL_HOME)/images/edit/remove.gif] \
-	 	  	-command "vTcl:image:ask_delete_image \"$image\""
-
-	 	  	vTcl:set_balloon $base.${reference}_delete "Remove image from list"
-	 	   }
-
-		   catch {
-		   	button $base.${reference}_replace \
-		   	-image [vTcl:image:get_image $env(VTCL_HOME)/images/edit/replace.gif] \
-		   	-command "vTcl:image:replace_image \"$image\""
-
-	 	  	vTcl:set_balloon $base.${reference}_replace "Replace image by another"
-		   }
-	   }
-
-	   $base insert end "$image: $vTcl(images,$reference,description)"
-	   $base insert end " ($vTcl(images,$reference,type))\n"
-	   $base insert end "[image type $object] [image width $object] x [image height $object]"
-	   $base insert end " ($object)\n\n\t"
-
-	   $base window create end -window $base.$reference
-	   $base insert end "\t"
-	   $base window create end -window $base.${reference}_edit
-
-	   if {$vTcl(images,$reference,type) == "user"} {
-		   $base insert end " "
-		   $base window create end -window $base.${reference}_delete
-		   $base insert end " "
-		   $base window create end -window $base.${reference}_replace
-	   }
-
-	   $base insert end "\n\n___________________________________________________________________\n\n"
-	}
-
-	$base configure -state disabled
+    $base configure -state disabled
 }
 
 proc {vTcl:image:init_stock} {} {
+    global vTcl
 
-	global vTcl env
-
-	if [info exist vTcl(images,files)] {
-
-	   foreach image $vTcl(images,files) {
-	      catch {
-	         image delete $image
-	      }
-	   }
+    if [info exist vTcl(images,files)] {
+	foreach image $vTcl(images,files) {
+	    catch { image delete $image }
 	}
+    }
 
-	set vTcl(images,files) ""
+    set vTcl(images,files) ""
 
-	vTcl:image:create_new_image "$env(VTCL_HOME)/images/edit/copy.gif"    "" stock
-	vTcl:image:create_new_image "$env(VTCL_HOME)/images/edit/cut.gif"     "" stock
-	vTcl:image:create_new_image "$env(VTCL_HOME)/images/edit/paste.gif"   "" stock
-	vTcl:image:create_new_image "$env(VTCL_HOME)/images/edit/new.gif"     "" stock
-	vTcl:image:create_new_image "$env(VTCL_HOME)/images/edit/open.gif"    "" stock
-	vTcl:image:create_new_image "$env(VTCL_HOME)/images/edit/save.gif"    "" stock
-	vTcl:image:create_new_image "$env(VTCL_HOME)/images/edit/replace.gif" "" stock
-	vTcl:image:create_new_image "$env(VTCL_HOME)/images/edit/add.gif" "" stock
-	vTcl:image:create_new_image "$env(VTCL_HOME)/images/edit/remove.gif" "" stock
-	vTcl:image:create_new_image "$env(VTCL_HOME)/images/edit/show.gif" "" stock
-	vTcl:image:create_new_image "$env(VTCL_HOME)/images/edit/hide.gif" "" stock
-	vTcl:image:create_new_image "$env(VTCL_HOME)/images/edit/refresh.gif" "" stock
+    set images {
+    	copy
+	cut
+	paste
+	new
+	open
+	save
+	replace
+	add
+	remove
+	show
+	hide
+	refresh
+    }
+
+    foreach file $images {
+	set file [file join $vTcl(VTCL_HOME) images edit $file.gif]
+    	vTcl:image:create_new_image $file {} stock
+    }
 }
 
 proc {vTcl:image:new_image_file} {} {
+    global vTcl tk_strictMotif
 
-	global vTcl tk_strictMotif
+    set types $vTcl(image,filetypes)
 
-	set types $vTcl(image,filetypes)
+    set tk_strictMotif 0
+    set newImageFile [tk_getOpenFile -filetypes $types  -defaultextension .gif]
+    set tk_strictMotif 1
 
-	set tk_strictMotif 0
-	set newImageFile [tk_getOpenFile -filetypes $types  -defaultextension .gif]
-	set tk_strictMotif 1
+    set object ""
 
-	set object ""
+    if {[lempty $newImageFile]} { return }
 
-	if {$newImageFile != ""} {
+    # just double-check that it doesn't exist!
 
-	    # just double-check that it doesn't exist!
+    if {[lsearch -exact $vTcl(images,files) $newImageFile] != -1} {
+	tk_messageBox -title "New image" \
+	    -message "Image already imported!" \
+	    -icon error
 
-	    if {[lsearch -exact $vTcl(images,files) $newImageFile] != -1} {
+	return
+    }
+    set object [vTcl:image:create_new_image $newImageFile "user image" "user"]
 
-	        tk_messageBox -title "New image" \
-	                      -message "Image already imported!" \
-	                      -icon error
+    # let's refresh!
+    vTcl:image:refresh_manager 1.0
 
-	    } else {
-
-	         set object [vTcl:image:create_new_image $newImageFile "user image" "user"]
-
-	         # let's refresh!
-	         vTcl:image:refresh_manager 1.0
-
-		 return $object
-	    }
-	}
+    return $object
 }
 
 proc vTcl:image:replace_image {filename} {
+    global vTcl tk_strictMotif
 
-	global vTcl tk_strictMotif
+    set types $vTcl(image,filetypes)
 
-	set types $vTcl(image,filetypes)
+    set tk_strictMotif 0
+    set newImageFile [tk_getOpenFile -filetypes $types  -defaultextension .gif]
+    set tk_strictMotif 1
 
-	set tk_strictMotif 0
-	set newImageFile [tk_getOpenFile -filetypes $types  -defaultextension .gif]
-	set tk_strictMotif 1
+    if {[lempty $newImageFile]} { return }
 
-	if {$newImageFile != ""} {
+    # just double-check that it doesn't exist!
 
-	    # just double-check that it doesn't exist!
+    if {[lsearch -exact $vTcl(images,files) $newImageFile] != -1} {
+	tk_messageBox \
+	    -title "New image" \
+	    -message "Image already imported!" \
+	    -icon error
+	return
+    }
 
-	    if {[lsearch -exact $vTcl(images,files) $newImageFile] != -1} {
+    lremove vTcl(images,files) $filename
 
-	        tk_messageBox -title "New image"  -message "Image already imported!"  -icon error
-	    } else {
+    set object [vTcl:image:get_image $filename]
 
-	    	set index [lsearch -exact $vTcl(images,files) $filename]
-	    	set vTcl(images,files) \
-	    	   [lreplace $vTcl(images,files) $index $index $newImageFile]
+    set oldreference [vTcl:rename $filename]
+    set reference    [vTcl:rename $newImageFile]
 
-    		set object    [vTcl:image:get_image $filename]
+    image create [vTcl:image:get_creation_type $newImageFile] \
+        $object -file $newImageFile
 
-    		set oldreference [vTcl:rename $filename]
-		set reference    [vTcl:rename $newImageFile]
+    set vTcl(images,$reference,image)       $object
+    set vTcl(images,$reference,description) \
+        [vTcl:image:get_description $filename]
+    set vTcl(images,$reference,type)        [vTcl:image:get_type $filename]
+    set vTcl(images,filename,$object)       $newImageFile
 
-		image create [vTcl:image:get_creation_type $newImageFile] $object -file $newImageFile
+    unset vTcl(images,$oldreference,image)
+    unset vTcl(images,$oldreference,description)
+    unset vTcl(images,$oldreference,type)
 
-	        set vTcl(images,$reference,image)       $object
-	        set vTcl(images,$reference,description) [vTcl:image:get_description $filename]
-	        set vTcl(images,$reference,type)        [vTcl:image:get_type $filename]
-	        set vTcl(images,filename,$object)       $newImageFile
-
-		unset vTcl(images,$oldreference,image)
-		unset vTcl(images,$oldreference,description)
-		unset vTcl(images,$oldreference,type)
-
-		set pos [vTcl:image:get_manager_position]
-		vTcl:image:refresh_manager $pos
-	    }
-	}
+    set pos [vTcl:image:get_manager_position]
+    vTcl:image:refresh_manager $pos
 }
 
 proc vTcl:image:fill_noborder_image_list {t} {
+    global vTcl
 
-	global vTcl
+    update
+    $t configure -state normal -tabs "[winfo width $t]p"
+    $t delete 0.0 end
 
-	update
-	$t configure -state normal -tabs "[winfo width $t]p"
-	$t delete 0.0 end
+    foreach image $vTcl(images,files) {
+	set object [vTcl:image:get_image $image]
+	set reference [vTcl:rename $image]
 
-	foreach image $vTcl(images,files) {
+	$t image create end -image $object
+	$t insert end " $image\t" vTcl:image_list:$object
+	$t insert end "\n\n"
 
-            set object [vTcl:image:get_image $image]
-	    set reference [vTcl:rename $image]
+	$t tag bind vTcl:image_list:$object <Enter> \
+	    "$t tag configure vTcl:image_list:$object -relief raised -borderwidth 2"
 
-	    $t image create end -image $object
-	    $t insert end " $image\t" vTcl:image_list:$object
-	    $t insert end "\n\n"
+	$t tag bind vTcl:image_list:$object <Leave> \
+	    "$t tag configure vTcl:image_list:$object -relief flat -borderwidth 0"
 
-	    $t tag bind vTcl:image_list:$object <Enter> \
-	        "$t tag configure vTcl:image_list:$object -relief raised -borderwidth 2"
+	$t tag bind vTcl:image_list:$object <ButtonPress-1> \
+	    "set vTcl(images,selector_dlg,current) $object"
+    }
 
-	    $t tag bind vTcl:image_list:$object <Leave> \
-	        "$t tag configure vTcl:image_list:$object -relief flat -borderwidth 0"
+    # add additional item to create a new image
+    $t insert end "\nNew image...\t\n\t" vTcl:image_list:new
 
- 	    $t tag bind vTcl:image_list:$object <ButtonPress-1> \
-	        "set vTcl(images,selector_dlg,current) $object"
-	}
+    $t tag bind vTcl:image_list:new <Enter> \
+	    "$t tag configure vTcl:image_list:new -relief raised -borderwidth 2"
 
-	# add additional item to create a new image
-	$t insert end "\nNew image...\t\n\t" vTcl:image_list:new
+    $t tag bind vTcl:image_list:new <Leave> \
+	    "$t tag configure vTcl:image_list:new -relief flat -borderwidth 0"
 
-	$t tag bind vTcl:image_list:new <Enter> \
-		"$t tag configure vTcl:image_list:new -relief raised -borderwidth 2"
+    $t tag bind vTcl:image_list:new <ButtonPress-1> \
+	    "set vTcl(images,selector_dlg,current) <new>"
 
-	$t tag bind vTcl:image_list:new <Leave> \
-		"$t tag configure vTcl:image_list:new -relief flat -borderwidth 0"
-
-	$t tag bind vTcl:image_list:new <ButtonPress-1> \
-		"set vTcl(images,selector_dlg,current) <new>"
-
-	$t configure -state disabled
+    $t configure -state disabled
 }
 
 proc vTcl:image:create_selector_dlg {base} {
@@ -537,129 +496,94 @@ proc vTcl:prompt_user_image {target option} {
 }
 
 proc vTcl:image:dump_proc {fileID name} {
-
-	puts $fileID "proc $name {" nonewline
-	puts $fileID "[info args $name]} {" nonewline
-	puts $fileID "[info body $name]}"
-
-	puts $fileID ""
-}
-
-proc vTcl:image:dump_create_image {fileID image} {
-
-	global vTcl
-
-	puts $fileID "vTcl:image:create_new_image \"$image\" \\"
-	puts $fileID "    \"[vTcl:image:get_description $image]\" \\"
-	puts $fileID "    \"[vTcl:image:get_type $image]\"" nonewline
-
-    if { ! [info exists vTcl(pr,saveimagesinline)] } {
-
-    	set vTcl(pr,saveimagesinline) 0
-    }
-
-    if {$vTcl(pr,saveimagesinline)} {
-
-        puts $fileID "\\\n\"[::base64::encode_file $image]\"\n"
-
-    } else {
-
-        puts $fileID " {}\n"
-
-    }
+    puts $fileID "proc $name {" nonewline
+    puts $fileID "[info args $name]} {" nonewline
+    puts $fileID "[info body $name]}"
+    puts $fileID ""
 }
 
 proc vTcl:image:generate_image_stock {fileID} {
+    global vTcl
 
-	global vTcl
+    puts $fileID "\n"
+    puts $fileID {############################}
+    puts $fileID "\# vTcl Code to Load Stock Images\n"
+    puts $fileID "\nif {!\[info exist vTcl(sourcing)\]} \{"
 
-	puts $fileID {############################}
-	puts $fileID "\# code to load stock images\n"
-        puts $fileID "\nif {!\[info exist vTcl(sourcing)\]} \{"
+    vTcl:image:dump_proc $fileID "vTcl:rename"
+    vTcl:image:dump_proc $fileID "vTcl:image:create_new_image"
+    vTcl:image:dump_proc $fileID "vTcl:image:get_image"
+    vTcl:image:dump_proc $fileID "vTcl:image:get_creation_type"
 
-	vTcl:image:dump_proc $fileID "vTcl:rename"
-	vTcl:image:dump_proc $fileID "vTcl:image:create_new_image"
-	vTcl:image:dump_proc $fileID "vTcl:image:get_image"
-	vTcl:image:dump_proc $fileID "vTcl:image:get_creation_type"
-
-	foreach image $vTcl(images,files) {
-
-		if {[vTcl:image:get_type $image] == "stock"} {
-
-			vTcl:image:dump_create_image $fileID $image
-		}
+    foreach image $vTcl(images,files) {
+	if {[vTcl:image:get_type $image] == "stock"} {
+	    puts $fileID "vTcl:image:create_new_image \"$image\" \\"
+	    puts $fileID "    \"[vTcl:image:get_description $image]\" \\"
+	    puts $fileID "    \"[vTcl:image:get_type $image]\""
 	}
+    }
 
-	puts $fileID "\}"
+    puts $fileID "\}"
 }
 
 proc vTcl:image:generate_image_user {fileID} {
+    global vTcl
 
-	global vTcl
+    puts $fileID {############################}
+    puts $fileID "\# vTcl Code to Load User Images\n"
 
-	puts $fileID {############################}
-	puts $fileID "\# code to load user images\n"
-
-	foreach image $vTcl(images,files) {
-
-		if {[vTcl:image:get_type $image] == "user"} {
-
-			vTcl:image:dump_create_image $fileID $image
-		}
+    foreach image $vTcl(images,files) {
+	if {[vTcl:image:get_type $image] == "user"} {
+	    puts $fileID "vTcl:image:create_new_image \"$image\" \\"
+	    puts $fileID "    \"[vTcl:image:get_description $image]\" \\"
+	    puts $fileID "    \"[vTcl:image:get_type $image]\""
 	}
+    }
 }
 
 proc vTcl:image:delete_image {image} {
+    global vTcl
 
-	global vTcl
+    set object [vTcl:image:get_image $image]
+    set reference [vTcl:rename $image]
 
-	set object [vTcl:image:get_image $image]
-	set reference [vTcl:rename $image]
+    image delete $object
 
-	image delete $object
+    set index [lsearch -exact $vTcl(images,files) $image]
+    set vTcl(images,files) [lreplace $vTcl(images,files) $index $index]
 
-	set index [lsearch -exact $vTcl(images,files) $image]
-	set vTcl(images,files) [lreplace $vTcl(images,files) $index $index]
-
-	unset vTcl(images,$reference,image)
-	unset vTcl(images,$reference,description)
-	unset vTcl(images,$reference,type)
-	unset vTcl(images,filename,$object)
+    unset vTcl(images,$reference,image)
+    unset vTcl(images,$reference,description)
+    unset vTcl(images,$reference,type)
+    unset vTcl(images,filename,$object)
 }
 
 proc vTcl:image:ask_delete_image {image} {
+    set result [
+	tk_messageBox \
+	    -message "Do you want to remove $image from the project?" \
+	    -title "Visual Tcl" \
+	    -type yesno \
+	    -icon question
+    ]
 
-	set result [
-
-		tk_messageBox \
-			-message "Do you want to remove $image from the project?" \
-			-title "Visual Tcl" \
-			-type yesno \
-			-icon question
-	]
-
-	if {$result == "yes"} {
-
-		set pos [vTcl:image:get_manager_position]
-
-		vTcl:image:delete_image $image
-		vTcl:image:refresh_manager $pos
-	}
+    if {$result == "yes"} {
+	set pos [vTcl:image:get_manager_position]
+	vTcl:image:delete_image $image
+	vTcl:image:refresh_manager $pos
+    }
 }
 
 proc vTcl:image:remove_user_images {} {
+    global vTcl
 
-	global vTcl
-
-	foreach image $vTcl(images,files) {
-
-		if {[vTcl:image:get_type $image] == "user"} {
-
-			vTcl:image:delete_image $image
-		}
+    foreach image $vTcl(images,files) {
+	if {[vTcl:image:get_type $image] == "user"} {
+	    vTcl:image:delete_image $image
 	}
+    }
 
-	vTcl:image:refresh_manager
+    vTcl:image:refresh_manager
 }
 
 proc vTclWindow.vTcl.imgManager {args} {
@@ -681,7 +605,8 @@ proc vTclWindow.vTcl.imgManager {args} {
     ###################
     toplevel $base -class Toplevel
     wm focusmodel $base passive
-    wm geometry $base 494x581+405+156
+    wm geometry $base 494x581
+    vTcl:center $base 494 581
     wm maxsize $base 1009 738
     wm minsize $base 1 1
     wm overrideredirect $base 0
@@ -727,6 +652,7 @@ proc vTclWindow.vTcl.imgManager {args} {
     pack $base.but32 \
         -in $base -anchor nw -expand 0 -fill none -side top
     vTcl:set_balloon $base.but32 "Add new image"
+
     catch {wm geometry $base $vTcl(geometry,$base)}
 
     vTcl:image:init_img_manager
@@ -738,16 +664,8 @@ proc vTcl:image:prompt_image_manager {} {
 }
 
 proc vTcl:image:get_files_list {} {
-
-	global vTcl
-
-    if {$vTcl(pr,saveimagesinline)} {
-
-        # if we save images inline we don't need to wrap them
-        return ""
-    }
-
-	return $vTcl(images,files)
+    global vTcl
+    return $vTcl(images,files)
 }
 
 # translation for options when saving files
@@ -755,34 +673,26 @@ set vTcl(option,translate,-image) vTcl:image:translate
 set vTcl(option,noencase,-image) 1
 
 proc vTcl:image:translate {value} {
+    global vTcl
 
-	global vTcl
-
-       	if [info exists vTcl(images,filename,$value)] {
-
-      		set value "\[vTcl:image:get_image \"$vTcl(images,filename,$value)\"\]"
-      	}
-
-      	return $value
+    if [info exists vTcl(images,filename,$value)] {
+	set value "\[vTcl:image:get_image \"$vTcl(images,filename,$value)\"\]"
+    }
+    return $value
 }
 
 proc vTcl:image:refresh_manager {{position 0.0}} {
+    global vTcl
 
-	global vTcl
-
-        if [info exists vTcl(images,manager_dlg,win)] {
-
-	       	if [winfo exists $vTcl(images,manager_dlg,win)] {
-
-	         	vTcl:image:init_img_manager
-			$vTcl(images,manager_dlg,win).cpd29.03 yview moveto $position
-		}
+    if [info exists vTcl(images,manager_dlg,win)] {
+	if [winfo exists $vTcl(images,manager_dlg,win)] {
+	    vTcl:image:init_img_manager
+	    $vTcl(images,manager_dlg,win).cpd29.03 yview moveto $position
 	}
+    }
 }
 
 proc vTcl:image:get_manager_position {} {
-
 	global vTcl
-
 	return [lindex [$vTcl(images,manager_dlg,win).cpd29.03 yview] 0]
 }

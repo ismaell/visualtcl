@@ -21,16 +21,15 @@
 ##############################################################################
 #
 
-proc vTcl:bind_button_1 {target x y} {
+proc vTcl:bind_button_1 {target X Y x y} {
     global vTcl
 
-    set vTcl(mouseX) $x
-    set vTcl(mouseY) $y
+    vTcl:set_mouse_coords $X $Y $x $y
 
     if {[lindex [split %W .] 1] != "vTcl"} {
         if {$target != "." && [winfo class $target] != "Toplevel"} {
             vTcl:active_widget $target
-            vTcl:grab $target $x $y
+            vTcl:grab $target $X $Y
             set vTcl(cursor,last) [$target cget -cursor]
             $target configure -cursor fleur
         } else {
@@ -39,16 +38,17 @@ proc vTcl:bind_button_1 {target x y} {
     }
 }
 
-proc vTcl:bind_button_2 {target x y} {
+proc vTcl:bind_button_2 {target X Y x y} {
     global vTcl
 
-    set vTcl(mouseX) $x
-    set vTcl(mouseY) $y
+    vTcl:set_mouse_coords $X $Y $x $y
+
+    vTcl:active_widget $target
 
     if {$vTcl(w,widget) != "." && \
         [winfo class $vTcl(w,widget)] != "Toplevel" && \
         $vTcl(w,widget) != ""} {
-            vTcl:grab $vTcl(w,widget) $x $y
+            vTcl:grab $vTcl(w,widget) $X $Y
             set vTcl(cursor,last) [$vTcl(w,widget) cget -cursor]
             $vTcl(w,widget) configure -cursor fleur
     }
@@ -61,11 +61,10 @@ proc vTcl:bind_motion {x y} {
     }
 }
 
-proc vTcl:bind_release {x y} {
+proc vTcl:bind_release {X Y x y} {
     global vTcl
 
-    set vTcl(mouseX) $x
-    set vTcl(mouseY) $y
+    vTcl:set_mouse_coords $X $Y $x $y
 
     if {$vTcl(w,widget) == ""} {return}
     $vTcl(w,widget) configure -cursor "$vTcl(cursor,last)"
@@ -78,7 +77,7 @@ proc vTcl:grab {widget absX absY} {
     global vTcl
     grab $widget
     set vTcl(w,didmove) 0
-	set vTcl(w,grabbed) 1
+    set vTcl(w,grabbed) 1
     set vTcl(grab,startX) [vTcl:grid_snap x $absX]
     set vTcl(grab,startY) [vTcl:grid_snap y $absY]
 }
@@ -86,10 +85,8 @@ proc vTcl:grab {widget absX absY} {
 proc vTcl:grab_motion {widget absX absY} {
     global vTcl
     set vTcl(w,didmove) 1
-	# workaround for Tix
-	if { $vTcl(w,grabbed) == 0 } {
-		vTcl:grab $widget $absX $absY
-	}
+    # workaround for Tix
+    if { $vTcl(w,grabbed) == 0 } { vTcl:grab $widget $absX $absY }
     if { $vTcl(w,manager) == "place" } {
         place $widget \
             -x [vTcl:grid_snap x \
@@ -118,6 +115,17 @@ proc vTcl:grab_resize {absX absY handle} {
     set Y [vTcl:grid_snap y $absY]
     set deltaX [expr {$X - $vTcl(grab,startX)}]
     set deltaY [expr {$Y - $vTcl(grab,startY)}]
+
+    ## Can we resize this widget with this handle?
+    set can [can_resize $handle]
+
+    ## We definitely can't resize.
+    if {$can == 0} { return }
+
+    set newX $vTcl(w,x)
+    set newY $vTcl(w,y)
+    set newW $vTcl(w,width)
+    set newH $vTcl(w,height)
     switch $vTcl(w,manager) {
         place {
             switch $handle {
@@ -146,28 +154,48 @@ proc vTcl:grab_resize {absX absY handle} {
                     set newH $vTcl(w,height)
                 }
                 nw {
-                    set newX [expr {$vTcl(w,x) + $deltaX}]
-                    set newY [expr {$vTcl(w,y) + $deltaY}]
-                    set newW [expr {$vTcl(w,width) - $deltaX}]
-                    set newH [expr {$vTcl(w,height) - $deltaY}]
+		    if {$can == 1 || $can == 2} {
+			set newX [expr {$vTcl(w,x) + $deltaX}]
+			set newW [expr {$vTcl(w,width) - $deltaX}]
+		    }
+
+		    if {$can == 1 || $can == 3} {
+			set newY [expr {$vTcl(w,y) + $deltaY}]
+			set newH [expr {$vTcl(w,height) - $deltaY}]
+		    }
                 }
                 ne {
-                    set newX $vTcl(w,x)
-                    set newY [expr {$vTcl(w,y) + $deltaY}]
-                    set newW [expr {$vTcl(w,width) + $deltaX}]
-                    set newH [expr {$vTcl(w,height) - $deltaY}]
+		    if {$can == 1 || $can == 2} {
+			set newX $vTcl(w,x)
+			set newW [expr {$vTcl(w,width) + $deltaX}]
+		    }
+
+		    if {$can == 1 || $can == 3} {
+			set newY [expr {$vTcl(w,y) + $deltaY}]
+			set newH [expr {$vTcl(w,height) - $deltaY}]
+		    }
                 }
                 se {
-                    set newX $vTcl(w,x)
-                    set newY $vTcl(w,y)
-                    set newW [expr {$vTcl(w,width) + $deltaX}]
-                    set newH [expr {$vTcl(w,height) + $deltaY}]
+		    if {$can == 1 || $can == 2} {
+			set newX $vTcl(w,x)
+			set newW [expr {$vTcl(w,width) + $deltaX}]
+		    }
+
+		    if {$can == 1 || $can == 3} {
+			set newY $vTcl(w,y)
+			set newH [expr {$vTcl(w,height) + $deltaY}]
+		    }
                 }
                 sw {
-                    set newX [expr {$vTcl(w,x) + $deltaX}]
-                    set newY $vTcl(w,y)
-                    set newW [expr {$vTcl(w,width) - $deltaX}]
-                    set newH [expr {$vTcl(w,height) + $deltaY}]
+		    if {$can == 1 || $can == 2} {
+			set newX [expr {$vTcl(w,x) + $deltaX}]
+			set newW [expr {$vTcl(w,width) - $deltaX}]
+		    }
+
+		    if {$can == 1 || $can == 3} {
+			set newY $vTcl(w,y)
+			set newH [expr {$vTcl(w,height) + $deltaY}]
+		    }
                 }
             }
             place $widget -x $newX -y $newY -width $newW -height $newH
@@ -223,11 +251,11 @@ proc vTcl:grab_resize {absX absY handle} {
 	}
     }
             
-    vTcl:update_widget_size $widget $newW $newH
+    vTcl:adjust_widget_size $widget $newW $newH
     vTcl:place_handles $widget
 }
 
-proc vTcl:update_widget_size {widget w h} {
+proc vTcl:adjust_widget_size {widget w h} {
     # @@change by Christian Gavin 3/19/2000
     # added catch in case some widgets don't have a -width
     # or a -height option (for example Iwidgets toolbar)
@@ -245,11 +273,62 @@ proc vTcl:update_widget_size {widget w h} {
 	   Scale {
 	       $widget configure -width $w
 	   }
+	   Progressbar {
+	       $widget configure -width [expr $w - 10]
+	   }
 	   default {
-	       $widget configure -width $w -height $h
+	       $widget configure -width $w
+	       $widget configure -height $h
 	   }
 	}
     }
+
+    update
     
     # @@end_change
+}
+
+## Can we resize this widget?
+## 0 = no
+## 1 = yes
+## 2 = only horizontally
+## 3 = only vertically
+
+## classes($class,resizable)
+## 0 = none
+## 1 = both
+## 2 = horizontal
+## 3 = vertical
+
+proc can_resize {dir} {
+    global vTcl classes
+
+    set c [vTcl:get_class $vTcl(w,widget)]
+    set resizable $classes($c,resizable)
+
+    ## We can't resize at all.
+    if {$resizable == 0} { return 0 }
+
+    ## We can resize both.
+    if {$resizable == 1} { return 1 }
+
+    switch -- $dir {
+	e  -
+	w  {
+	    return [expr $resizable == 2]
+	}
+
+    	n  -
+	s  {
+	    return [expr $resizable == 3]
+	}
+
+	ne -
+	se -
+	sw -
+	nw {
+	    if {$resizable == 2} { return 2 }
+	    if {$resizable == 3} { return 3 }
+	}
+    }
 }

@@ -222,7 +222,7 @@ proc vTclWindow.vTcl.proclist {args} {
         -padx 9 \
         -pady 3 -image [vTcl:image:get_image remove.gif]
     pack $base.frame7.button10 \
-        -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 0 -pady 0 \
+        -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 \
         -side left
     vTcl:set_balloon $base.frame7.button10 "Remove selected procedure"
     frame $base.f2 \
@@ -333,6 +333,7 @@ proc vTclWindow.vTcl.proc {args} {
         -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 2 -pady 2 \
         -side left
     bind $base.f3.text <KeyPress> "+set vTcl(proc,[lindex $args 0],chg) 1"
+    bind $base.f3.text <Alt-Key-i> "$base.f3.butInsert invoke"
     scrollbar $base.f3.scrollbar4 \
         -command "$base.f3.text yview"
     pack $base.f3.scrollbar4 \
@@ -410,5 +411,3 @@ proc vTcl:proc:edit_cancel {base} {
         }
     }
 }
-
-

@@ -1,6 +1,23 @@
 ChangeLog for Visual Tcl:
 
 1.22   -> 1.4 (not released yet)
+	o If you iconify/deiconify vTcl, it takes the toplevels with it.
+	o Changed the default color for all vTcl windows to #d9d9d9.
+	o Completely re-wrote the way widgets are defined.
+	o Added widget command aliasing.
+	o Added widget auto-aliasing
+	o Added a pointer icon to the toolbar and continuous widget placement.
+	o Added more options to the right-click menu.
+	o Fixed a bug where clicking a Toplevel window in the widget tree
+	  would cause its manager to change, thereby breaking the project
+	  the next time it was sourced.
+	o When a project is saved, we save the hidden toplevel windows too,
+	  we just don't show them again.  But, the next time we load the
+	  project, they're properly included in the project and on the widget
+	  tree.
+	o Cleaned up the order in which widget selection occurs when a widget
+	  is deleted or cut.
+	o Added a menu option to Restore a project from backup.
 	o revamped Preferences... dialog (cool no?)
         o added an option in the Preferences... dialog to save all images as
           inline using Base64. Allows for self contained projects without any

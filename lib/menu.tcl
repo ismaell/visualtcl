@@ -29,6 +29,7 @@ set vTcl(menu,file) {
     {{Save As...}     {}           vTcl:save_as               }
     {{Save As With Binary...} {}   vTcl:save_as_binary        }
     {Close            Ctrl+W       vTcl:close                 }
+    {{Restore from Backup} {}      vTcl:restore               }
     {separator        {}           {}                         }
     {@vTcl:initRcFileMenu				      }
     {separator	      {}           {}                         }
@@ -160,6 +161,10 @@ proc vTcl:initRcFileMenu {} {
 proc vTcl:addRcFile {file} {
     global vTcl
 
+    if {[file pathtype $file] != "absolute"} {
+    	set file [file join [pwd] $file]
+    }
+
     lremove vTcl(rcFiles) $file
     set vTcl(rcFiles) [linsert $vTcl(rcFiles) 0 $file]
     vTcl:updateRcFileMenu
@@ -177,6 +182,11 @@ proc vTcl:updateRcFileMenu {} {
     }
 
     $w delete 0 end
+
+    foreach file $vTcl(rcFiles) {
+    	if {[file exists $file]} { continue }
+	lremove vTcl(rcFiles) $file
+    }
 
     ##
     # Trim down the number of files to the specified amount.

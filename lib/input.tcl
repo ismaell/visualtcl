@@ -48,7 +48,7 @@ proc vTcl:string_window {title base {value ""}} {
     toplevel $base
     wm transient $base .vTcl
     wm focusmodel $base passive
-    wm geometry $base 225x49+[expr $vTcl(mouseX)-120]+[expr $vTcl(mouseY)-20]
+    wm geometry $base 225x49+[expr $vTcl(mouse,X)-120]+[expr $vTcl(mouse,Y)-20]
     wm maxsize $base 500 870
     wm minsize $base 225 1
     wm overrideredirect $base 0
@@ -89,16 +89,16 @@ proc vTcl:string_window {title base {value ""}} {
     grab $base
 }
 
-proc vTcl:set_text {target title {var text}} {
+proc vTcl:set_text {target} {
     global vTcl
     set base .vTcl.[vTcl:rename $target]
-    vTcl:text_window $base $title $target
+    vTcl:text_window $base "Set Text" $target
     tkwait window $base
 
     ## They closed it without hitting the done button.  Just forget it.
     if {![info exists vTcl(x,$base)]} { return }
 
-    $target configure -$var $vTcl(x,$base)
+    $target configure -text $vTcl(x,$base)
     unset vTcl(x,$base)
     vTcl:create_handles $target
 }
@@ -106,7 +106,9 @@ proc vTcl:set_text {target title {var text}} {
 proc vTcl:get_text {base text} {
     global vTcl
 
-    set vTcl(x,$base) [$text get 0.0 end]
+    ## Remove the last character which is a \n the text widget puts in for
+    ## some reason.
+    set vTcl(x,$base) [string range [$text get 0.0 end] 0 end-1]
     destroy $base
 }
 
@@ -114,7 +116,7 @@ proc vTcl:text_window {base title target} {
     global vTcl
     toplevel $base -class Toplevel
     wm focusmodel $base passive
-    wm geometry $base 274x289+[expr $vTcl(mouseX)-130]+[expr $vTcl(mouseY)-20]
+    wm geometry $base 274x289+[expr $vTcl(mouse,X)-130]+[expr $vTcl(mouse,Y)-20]
     wm maxsize $base 1265 994
     wm minsize $base 1 1
     wm overrideredirect $base 0

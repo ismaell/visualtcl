@@ -194,7 +194,7 @@ source file.tcl
 toplevel .vTcl
 wm withdraw .
 wm withdraw .vTcl
-global vTcl; set vTcl(VTCL_HOME) /home/stewart/vtcl/vtcl
+global vTcl; set vTcl(VTCL_HOME) /opt/local/src/vtcl
 
 vTcl:editor:load_images
 vTclWindow.editor ""

@@ -54,10 +54,8 @@ proc vTcl:show_wtree {} {
 }
 
 proc vTcl:clear_wtree {} {
-
-    # do not refresh the widget tree if it does not exist
-    if {![winfo exists .vTcl.tree]} return
-
+    # Do not refresh the widget tree if it does not exist.
+    if {![winfo exists .vTcl.tree]} { return }
     set b .vTcl.tree.fra4.can8
     foreach i [winfo children $b] {
         destroy $i
@@ -67,7 +65,7 @@ proc vTcl:clear_wtree {} {
 }
 
 proc vTcl:init_wtree {{wants_destroy_handles 1}} {
-    global vTcl
+    global vTcl widgets classes
 
     # do not refresh the widget tree if it does not exist
     if {![winfo exists .vTcl.tree]} return
@@ -95,11 +93,10 @@ proc vTcl:init_wtree {{wants_destroy_handles 1}} {
         set j [vTcl:rename $i]
         if {$i == "."} {
             set c toplevel
+	    set type toplevel
         } else {
-            set c [vTcl:get_class $i 1]
-            if {$c == "scrollbar" || $c == "scale"} {
-                append c "_[string index [$i cget -orient] 0]"
-            }
+	    set type [vTcl:get_type $i 1]
+	    set c [vTcl:get_class $i 1]
         }
         if {![winfo exists $b.$j]} {
             set l($depth) [llength [vTcl:get_children $i]]
@@ -109,9 +106,11 @@ proc vTcl:init_wtree {{wants_destroy_handles 1}} {
             if {$depth > 1} {
                 incr l([expr $depth - 1]) -1
             }
-            button $b.$j -image ctl_$c -command "
+	    set cmd vTcl:show
+	    if {$type == "toplevel"} { set cmd vTcl:show_top }
+            button $b.$j -image ctl_$type -command "
                 if \{\$vTcl(mode) == \"EDIT\"\} \{
-                	vTcl:show $i
+                	$cmd $i
                 	vTcl:active_widget $i
                 	vTcl:show_selection $b.$j
                 \}
@@ -140,14 +139,17 @@ proc vTcl:init_wtree {{wants_destroy_handles 1}} {
 		    set t "VAR: $val"
 		}
                 default    {
-                	set t ""
-                	set tmpClass [string toupper [string range $c 0 0]]
-                	set tmpClass $tmpClass[string range $c 1 end]
+		    set t ""
+		    set tmp [vTcl:upper_first $c]
+		    set t $classes($tmp,treeLabel)
 
-                	if [info exists vTcl($tmpClass,get_widget_tree_label)] {
-
-                		set t [$vTcl($tmpClass,get_widget_tree_label) $c $i]
-                	}
+		    ## If the first char is a @, execute it as a command.
+		    ## Otherwise, just put the text.
+		    if {![lempty $t]} {
+			if {[string index $t 0] == "@"} {
+			    set t [[string range $t 1 end] $c $i]
+			}
+		    }
                 }
             }
             # @@end_change
@@ -208,10 +210,11 @@ proc vTclWindow.vTcl.tree {args} {
     wm title .vTcl.tree "Widget Tree"
 
     frame .vTcl.tree.fra11 \
-        -relief flat
+    	-relief flat
+
     pack .vTcl.tree.fra11 \
-        -in .vTcl.tree -anchor center -expand 0 -fill both -ipadx 0 -ipady 0 \
-        -padx 2 -pady 2 -side top
+    	-in .vTcl.tree -anchor center -expand 0 -fill both -ipadx 0 -ipady 0 \
+	-padx 2 -pady 2 -side top
     frame .vTcl.tree.fra4 \
         -height 30 -width 30
     pack .vTcl.tree.fra4 \
@@ -243,21 +246,20 @@ proc vTclWindow.vTcl.tree {args} {
         -in .vTcl.tree.fra6 -anchor center -expand 1 -fill both -ipadx 0 \
         -ipady 0 -padx 2 -pady 0 -side left
     frame .vTcl.tree.fra6.fra10 \
-        -borderwidth 1 -height 12 -relief flat -width 12
+        -borderwidth 1 -height 12 -relief flat
     pack .vTcl.tree.fra6.fra10 \
         -in .vTcl.tree.fra6 -anchor center -expand 0 -fill none -ipadx 0 \
         -ipady 0 -padx 0 -pady 0 -side right
     button .vTcl.tree.fra11.but3 \
         -command vTcl:init_wtree \
-        -highlightthickness 0 -padx 5 -pady 2 -image [vTcl:image:get_image refresh.gif]
+        -highlightthickness 0 -padx 5 -pady 2 \
+	-image [vTcl:image:get_image refresh.gif]
     pack .vTcl.tree.fra11.but3 \
-        -in .vTcl.tree.fra11 -anchor nw -expand 0 -fill none -ipadx 0 \
+        -in .vTcl.tree.fra11 -anchor center -expand 0 -fill none -ipadx 0 \
         -ipady 0 -padx 2 -pady 2 -side left
-    vTcl:set_balloon .vTcl.tree.fra11.but3 "Refreshes the widget tree"
+    vTcl:set_balloon .vTcl.tree.fra11.but3 "Refresh the widget tree"
 
     catch {wm geometry .vTcl.tree $vTcl(geometry,.vTcl.tree)}
     vTcl:init_wtree
     vTcl:setup_vTcl:bind .vTcl.tree
 }
-
-

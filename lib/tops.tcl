@@ -175,9 +175,9 @@ proc vTclWindow.vTcl.toplist {args} {
         -command {
             set vTcl(x) [.vTcl.toplist.f2.list curselection]
             if {$vTcl(x) != ""} {
-                if { [vTcl:destroy_top $vTcl(tops,$vTcl(x))] } {
-                    .vTcl.toplist.f2.list delete $vTcl(x)
-                }
+                if {[vTcl:destroy_top $vTcl(tops,$vTcl(x))]} {
+		    .vTcl.toplist.f2.list delete $vTcl(x)
+		}
             }
         } \
          -padx 9 \
@@ -208,5 +208,3 @@ proc vTclWindow.vTcl.toplist {args} {
     update idletasks
     wm deiconify .vTcl.toplist
 }
-
-

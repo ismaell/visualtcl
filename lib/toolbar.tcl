@@ -35,6 +35,20 @@ proc vTcl:toolbar_create {args} {
     wm protocol .vTcl.toolbar WM_DELETE_WINDOW {
         vTcl:error "You cannot remove the toolbar"
     }
+
+    set base .vTcl.toolbar
+    set f [vTcl:new_widget_name tb $base]
+    image create photo pointer \
+        -file [file join $vTcl(VTCL_HOME) images icon_pointer.gif]
+    button $f -bd 1 -image pointer -relief sunken -command "
+	$f configure -relief sunken
+	vTcl:raise_last_button $f
+	vTcl:rebind_button_1
+	vTcl:status Status
+    	set vTcl(x,lastButton) $f
+    "
+    lappend vTcl(tool,list) $f
+    set vTcl(x,lastButton) $f
 }
 
 proc vTcl:toolbar_add {type name image cmd_add} {

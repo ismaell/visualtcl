@@ -98,7 +98,7 @@ proc vTcl:splash {} {
     label .x.l -image title -bd 1 -relief sunken -background black
     pack .x.l -side top -expand 1 -fill both
     entry .x.status -relief flat -background black -foreground white \
-    	-textvar statusMsg
+    	-textvar statusMsg -font "Helvetica 12"
     pack .x.status -side bottom -expand 1 -fill both
     set x [expr {($sw - 200)/2}]
     set y [expr {($sh - 250)/2}]
@@ -146,8 +146,6 @@ proc vTcl:load_widgets {} {
     	}
     }
 
-    # puts "To load: $toload"
-
     foreach i $vTcl(LIB_WIDG) {
 
     	if { [lsearch -exact $toload $i] == -1} continue
@@ -161,6 +159,8 @@ proc vTcl:load_libs {} {
     foreach i $vTcl(LIBS) {
         vTcl:load_lib $i
     }
+
+    vTcl:LoadWidgets [file join $vTcl(VTCL_HOME) lib Widgets]
 }
 
 proc vTcl:setup {} {
@@ -199,11 +199,13 @@ proc vTcl:setup {} {
     set vTcl(LIB_DIR)   [file join $vTcl(VTCL_HOME) lib]
     set vTcl(LIB_WIDG)  [glob -nocomplain [file join $vTcl(LIB_DIR) lib_*.tcl]]
     set vTcl(LIBS)      "globals.tcl about.tcl propmgr.tcl balloon.tcl
-        attrbar.tcl bgerror.tcl
-        bind.tcl command.tcl color.tcl console.tcl compound.tcl compounds.tcl
-        do.tcl dragsize.tcl dump.tcl edit.tcl file.tcl font.tcl handle.tcl
-        input.tcl images.tcl menu.tcl misc.tcl name.tcl prefs.tcl proc.tcl tclet.tcl
-        toolbar.tcl tops.tcl tree.tcl var.tcl vtclib.tcl widget.tcl help.tcl"
+        		attrbar.tcl bgerror.tcl bind.tcl command.tcl color.tcl
+			console.tcl compound.tcl compounds.tcl do.tcl
+			dragsize.tcl dump.tcl edit.tcl file.tcl font.tcl
+			handle.tcl input.tcl images.tcl menu.tcl misc.tcl
+			name.tcl prefs.tcl proc.tcl tclet.tcl toolbar.tcl
+			tops.tcl tree.tcl var.tcl vtclib.tcl widget.tcl
+			help.tcl loadwidg.tcl"
 
     set tk_strictMotif    1
     wm withdraw .
@@ -270,6 +272,8 @@ proc vTcl:setup_gui {} {
     }
 
     option add *vTcl*Text*font $vTcl(pr,font_fixed)
+
+    option add *vTcl*background #d9d9d9
 
     vTcl:setup_bind_tree .
     vTcl:load_images
@@ -410,33 +414,18 @@ proc vTclWindow.vTcl {args} {
 
 proc vTcl:vtcl:remap {} {
     global vTcl
-    foreach i $vTcl(windows) {
-        catch {wm deiconify $i} error
-    }
+
     foreach i $vTcl(tops) {
-        if {[winfo exists $i] == 1} {
-            if {[wm state $i] != "withdrawn"} {
-                catch {wm deiconify $i} error
-            }
-        }
+	if {![winfo exists $i]} { continue }
+	vTcl:show_top $i
     }
 }
 
 proc vTcl:vtcl:unmap {} {
     global vTcl
-    foreach i $vTcl(windows) {
-        if {$i != ".vTcl"} {
-            catch {wm withdraw $i} error
-        } else {
-            catch {wm iconify $i} error
-        }
-    }
     foreach i $vTcl(tops) {
-        if {[winfo exists $i] == 1} {
-            if {[wm state $i] != "withdrawn"} {
-                catch {wm iconify $i} error
-            }
-        }
+	if {![winfo exists $i]} { continue }
+	vTcl:hide_top $i
     }
 }
 
@@ -466,6 +455,7 @@ proc vTcl:define_bindings {} {
         bind vTcl($i) <Alt-b>      { vTcl:show_bindings }
         bind vTcl($i) <Alt-w>      { vTcl:show_wtree }
         bind vTcl($i) <Alt-c>      { vTcl:name_compound $vTcl(w,widget) }
+	    	
     }
 
     bind vTcl(c) <Configure>  {
@@ -538,14 +528,14 @@ proc vTcl:define_bindings {} {
     bind vTcl(b) <Shift-Button-1>    {vTcl:bind_scrollbar %W $vTcl(w,widget)}
     bind vTcl(b) <Button-3>          {vTcl:right_click %W %X %Y %x %y}
     bind vTcl(b) <Double-Button-1>   {vTcl:widget_dblclick %W %X %Y}
-    bind vTcl(b) <Button-1>          {vTcl:bind_button_1 %W %X %Y}
-    bind vTcl(b) <Button-2>          {vTcl:bind_button_2 %W %X %Y}
-    bind vTcl(b) <Control-Button-1>  {vTcl:bind_button_2 %W %X %Y}
+    bind vTcl(b) <Button-1>          {vTcl:bind_button_1 %W %X %Y %x %y}
+    bind vTcl(b) <Button-2>          {vTcl:bind_button_2 %W %X %Y %x %y}
+    bind vTcl(b) <Control-Button-1>  {vTcl:bind_button_2 %W %X %Y %x %y}
     bind vTcl(b) <B1-Motion>         {vTcl:bind_motion %X %Y}
     bind vTcl(b) <B2-Motion>         {vTcl:bind_motion %X %Y}
     bind vTcl(b) <Control-B1-Motion> {vTcl:bind_motion %X %Y}
-    bind vTcl(b) <ButtonRelease-1>   {vTcl:bind_release %X %Y}
-    bind vTcl(b) <ButtonRelease-2>   {vTcl:bind_release %X %Y}
+    bind vTcl(b) <ButtonRelease-1>   {vTcl:bind_release %X %Y %x %y}
+    bind vTcl(b) <ButtonRelease-2>   {vTcl:bind_release %X %Y %x %y}
 
     bind vTcl(b) <Up> {
         vTcl:widget_delta $vTcl(w,widget) 0 -$vTcl(key,y) 0 0
@@ -586,6 +576,10 @@ proc vTcl:define_bindings {} {
             vTcl:create_handles $vTcl(w,widget)
         }
     }
+
+    ## If we iconify or deiconify vTcl, take the top windows with us.
+    bind vTcl(a) <Unmap> { vTcl:vtcl:unmap }
+    bind vTcl(a) <Map> { vTcl:vtcl:remap }
 
     vTcl:status "Status"
 }
@@ -632,7 +626,7 @@ proc vTcl:main {argc argv} {
             set vTcl(VTCL_HOME) [pwd]
         }
         vTcl:setup
-        if {$argc > 1} {
+        if {$argc > 0} {
 	    set file [lindex $argv end]
             if {[file exists $file]} {
                 vTcl:open $file

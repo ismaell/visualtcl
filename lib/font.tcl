@@ -21,14 +21,12 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 proc vTcl:font:prompt_user_font {target option} {
-
     global vTcl
+
     if {$target == ""} {return}
     set base ".vTcl.com_[vTcl:rename ${target}${option}]"
 
-    if {[catch {set font_desc [$target cget $option]}] == 1} {
-        return
-    }
+    if {[catch {set font_desc [$target cget $option]}] == 1} { return }
 
     vTcl:log "prompt_user_font: base=$base, font=$font_desc"
 
@@ -45,78 +43,70 @@ proc vTcl:font:prompt_user_font {target option} {
 }
 
 proc vTcl:font:prompt_user_font_2 {font_desc} {
-
     set base .vTcl.fontmgr
-
     set r [vTcl:font:get_font_dlg $base $font_desc]
-
     return $r
 }
 
 proc vTcl:font:fill_fonts {base} {
+    global widget
+    global vTcl
 
-	global widget
-	global vTcl
+    $widget($base.listbox) delete 0 end
+    eval $widget($base.listbox) insert 0 [lsort [font families] ]
 
-	$widget($base.listbox) delete 0 end
-	eval $widget($base.listbox) insert 0 [lsort [font families] ]
-
-	set list_contents [$widget($base.listbox) get 0 end]
-	set family [font configure $vTcl(x,$base,font) -family]
-	set index [lsearch -exact $list_contents $family]
-	if {$index >=0 } {
- 	   	$widget($base.listbox) selection clear 0 end
-  	  	$widget($base.listbox) selection set $index
-   	 	$widget($base.listbox) see $index
-	}
+    set list_contents [$widget($base.listbox) get 0 end]
+    set family [font configure $vTcl(x,$base,font) -family]
+    set index [lsearch -exact $list_contents $family]
+    if {$index >=0 } {
+	$widget($base.listbox) selection clear 0 end
+	$widget($base.listbox) selection set $index
+	$widget($base.listbox) see $index
+    }
 }
 
 proc vTcl:font:init_fontselect {base} {
+    global vTcl widget
 
-	global vTcl widget
+    $widget($base.text) delete 1.0 end
+    $widget($base.text) insert 1.0 "abcdefghijklmnopqrstuvxwyz 0123456789"
 
-	$widget($base.text) delete 1.0 end
-	$widget($base.text) insert 1.0 "abcdefghijklmnopqrstuvxwyz 0123456789"
-
-	trace variable vTcl(x,$base,weight)     w "vTcl:font:update_font"
-	trace variable vTcl(x,$base,slant)      w "vTcl:font:update_font"
-	trace variable vTcl(x,$base,underline)  w "vTcl:font:update_font"
-	trace variable vTcl(x,$base,overstrike) w "vTcl:font:update_font"
-	trace variable vTcl(x,$base,size)       w "vTcl:font:update_font"
+    trace variable vTcl(x,$base,weight)     w "vTcl:font:update_font"
+    trace variable vTcl(x,$base,slant)      w "vTcl:font:update_font"
+    trace variable vTcl(x,$base,underline)  w "vTcl:font:update_font"
+    trace variable vTcl(x,$base,overstrike) w "vTcl:font:update_font"
+    trace variable vTcl(x,$base,size)       w "vTcl:font:update_font"
 }
 
 proc vTcl:font:uninit_fontselect {base} {
+    global vTcl
 
-	global vTcl
-
-	trace vdelete vTcl(x,$base,weight)     w "vTcl:font:update_font"
-	trace vdelete vTcl(x,$base,slant)      w "vTcl:font:update_font"
-	trace vdelete vTcl(x,$base,underline)  w "vTcl:font:update_font"
-	trace vdelete vTcl(x,$base,overstrike) w "vTcl:font:update_font"
-	trace vdelete vTcl(x,$base,size)       w "vTcl:font:update_font"
+    trace vdelete vTcl(x,$base,weight)     w "vTcl:font:update_font"
+    trace vdelete vTcl(x,$base,slant)      w "vTcl:font:update_font"
+    trace vdelete vTcl(x,$base,underline)  w "vTcl:font:update_font"
+    trace vdelete vTcl(x,$base,overstrike) w "vTcl:font:update_font"
+    trace vdelete vTcl(x,$base,size)       w "vTcl:font:update_font"
 }
 
 proc vTcl:font:update_font {name1 name2 op} {
+    global vTcl widget
 
-	global vTcl widget
+    regexp .*,(.*),.* $name2 matchAll base
 
-	regexp .*,(.*),.* $name2 matchAll base
-
-	font configure $vTcl(x,$base,font) -weight     $vTcl(x,$base,weight) \
-					   -slant      $vTcl(x,$base,slant) \
-					   -underline  $vTcl(x,$base,underline) \
-					   -overstrike $vTcl(x,$base,overstrike) \
-					   -size       $vTcl(x,$base,size)
+    font configure $vTcl(x,$base,font) -weight     $vTcl(x,$base,weight) \
+				       -slant      $vTcl(x,$base,slant) \
+				       -underline  $vTcl(x,$base,underline) \
+				       -overstrike $vTcl(x,$base,overstrike) \
+				       -size       $vTcl(x,$base,size)
 }
 
 proc vTcl:font:font_select_family {base win y} {
+    global vTcl widget
 
-	global vTcl widget
-
-	set index [$win nearest $y]
-	if {$index != ""} {
- 	       font configure $vTcl(x,$base,font) -family [$win get $index]
-	}
+    set index [$win nearest $y]
+    if {$index != ""} {
+	font configure $vTcl(x,$base,font) -family [$win get $index]
+    }
 }
 
 proc vTcl:font:get_font_dlg {base font_desc} {
@@ -160,7 +150,8 @@ proc vTcl:font:get_font_dlg {base font_desc} {
     ###################
     toplevel $base -class vTcl
     wm transient $base .vTcl
-    wm geometry $base 380x451+192+157
+    wm geometry $base 380x451
+    vTcl:center $base 380 451
     wm maxsize $base 1009 738
     wm minsize $base 1 1
     wm overrideredirect $base 0
@@ -361,7 +352,6 @@ proc vTcl:font:button_cancel {base} {
 }
 
 proc vTcl:font:init_stock {} {
-
     global vTcl
 
     set vTcl(fonts,objects) ""
@@ -380,28 +370,21 @@ proc vTcl:font:init_stock {} {
 }
 
 proc vTcl:font:get_type {object} {
-
-	global vTcl
-
-	return $vTcl(fonts,$object,type)
+    global vTcl
+    return $vTcl(fonts,$object,type)
 }
 
 proc vTcl:font:get_key {object} {
-
-	global vTcl
-
-	return $vTcl(fonts,$object,key)
+    global vTcl
+    return $vTcl(fonts,$object,key)
 }
 
 proc vTcl:font:get_font {key} {
-
-	global vTcl
-
-	return $vTcl(fonts,$key,object)
+    global vTcl
+    return $vTcl(fonts,$key,object)
 }
 
 proc {vTcl:font:add_font} {font_descr font_type {newkey {}}} {
-
      global vTcl
 
      incr vTcl(fonts,counter)
@@ -425,7 +408,6 @@ proc {vTcl:font:add_font} {font_descr font_type {newkey {}}} {
 }
 
 proc vTcl:font:delete_font {key} {
-
      global vTcl
 
      set object $vTcl(fonts,$key,object)
@@ -441,14 +423,12 @@ proc vTcl:font:delete_font {key} {
 }
 
 proc vTcl:font:ask_delete_font {key} {
-
      global vTcl
 
      set object $vTcl(fonts,$key,object)
      set descr [font configure $object]
 
      set result [
-
           tk_messageBox \
 		-message "Do you want to remove '$descr' from the project?" \
 		-title "Visual Tcl" \
@@ -457,7 +437,6 @@ proc vTcl:font:ask_delete_font {key} {
      ]
 
      if {$result == "yes"} {
-
 	  set pos [vTcl:font:get_manager_position]
 
           vTcl:font:delete_font $key
@@ -466,22 +445,18 @@ proc vTcl:font:ask_delete_font {key} {
 }
 
 proc vTcl:font:remove_user_fonts {} {
-
      global vTcl
 
      foreach object $vTcl(fonts,objects) {
-
-     	  if {$vTcl(fonts,$object,type) == "user"} {
-
-     	  	vTcl:font:delete_font $vTcl(fonts,$object,key)
-     	  }
+	if {$vTcl(fonts,$object,type) == "user"} {
+	    vTcl:font:delete_font $vTcl(fonts,$object,key)
+	}
      }
 
      vTcl:font:refresh_manager
 }
 
 proc {vTcl:font:create_link} {t tag link_cmd} {
-
      global vTcl
 
      $t tag configure $tag -foreground blue  -font $vTcl(fonts,underline,object)
@@ -493,7 +468,6 @@ proc {vTcl:font:create_link} {t tag link_cmd} {
 }
 
 proc vTcl:font:display_fonts {base} {
-
      set t $base.cpd31.03
 
      if {![winfo exists $t]} {
@@ -504,7 +478,6 @@ proc vTcl:font:display_fonts {base} {
 }
 
 proc {vTcl:font:display_fonts_in_text} {t} {
-
      global vTcl
 
      $t configure -state normal
@@ -526,16 +499,15 @@ proc {vTcl:font:display_fonts_in_text} {t} {
         $t insert end "\n"
 
 	if {$vTcl(fonts,$object,type) == "user"} {
+	    $t insert end "Delete" "vTcl:hilite_delete_$object"
+	    vTcl:font:create_link $t vTcl:hilite_delete_$object \
+		    "vTcl:font:ask_delete_font $vTcl(fonts,$object,key)"
+	    $t insert end " "
 
-	        $t insert end "Delete" "vTcl:hilite_delete_$object"
- 	        vTcl:font:create_link $t vTcl:hilite_delete_$object \
- 	       		"vTcl:font:ask_delete_font $vTcl(fonts,$object,key)"
-	        $t insert end " "
-
-	        $t insert end "Change" "vTcl:hilite_change_$object"
-	        vTcl:font:create_link $t vTcl:hilite_change_$object \
-	        	"vTcl:font:font_change $object"
-	        $t insert end "\n"
+	    $t insert end "Change" "vTcl:hilite_change_$object"
+	    vTcl:font:create_link $t vTcl:hilite_change_$object \
+		    "vTcl:font:font_change $object"
+	    $t insert end "\n"
 	}
 
         $t insert end \
@@ -552,7 +524,6 @@ proc {vTcl:font:display_fonts_in_text} {t} {
 }
 
 proc {vTcl:font:font_change} {object} {
-
      global vTcl
 
      set font_desc [font configure $object]
@@ -571,7 +542,6 @@ proc {vTcl:font:font_change} {object} {
 }
 
 proc vTclWindow.vTcl.fontManager {args} {
-
     global vTcl
 
     set base ""
@@ -592,6 +562,7 @@ proc vTclWindow.vTcl.fontManager {args} {
         -highlightcolor #000000
     wm focusmodel $base passive
     wm geometry $base 491x544+314+132
+    vTcl:center $base 491 544
     wm maxsize $base 1009 738
     wm minsize $base 1 1
     wm overrideredirect $base 0
@@ -654,66 +625,56 @@ if {$font_desc != ""} {
 }
 
 proc vTcl:font:prompt_font_manager {} {
-
-	Window show .vTcl.fontManager
+    Window show .vTcl.fontManager
 }
 
 proc vTcl:font:dump_proc {fileID name} {
-
-	puts $fileID "proc $name {" nonewline
-	puts $fileID "[info args $name]} {" nonewline
-	puts $fileID "[info body $name]}"
-
-	puts $fileID ""
+    puts $fileID "proc $name {" nonewline
+    puts $fileID "[info args $name]} {" nonewline
+    puts $fileID "[info body $name]}"
+    puts $fileID ""
 }
 
 proc vTcl:font:generate_font_stock {fileID} {
+    global vTcl
 
-	global vTcl
+    puts $fileID {############################}
+    puts $fileID "\# vTcl Code to Load Stock Fonts\n"
+    puts $fileID "\nif {!\[info exist vTcl(sourcing)\]} \{"
+    puts $fileID "set vTcl(fonts,counter) 0"
 
-	puts $fileID {############################}
-	puts $fileID "\# code to load stock fonts\n"
-        puts $fileID "\nif {!\[info exist vTcl(sourcing)\]} \{"
-	puts $fileID "set vTcl(fonts,counter) 0"
+    vTcl:font:dump_proc $fileID "vTcl:font:add_font"
+    vTcl:font:dump_proc $fileID "vTcl:font:get_font"
 
-	vTcl:font:dump_proc $fileID "vTcl:font:add_font"
-	vTcl:font:dump_proc $fileID "vTcl:font:get_font"
-
-	foreach font $vTcl(fonts,objects) {
-
-		if {[vTcl:font:get_type $font] == "stock"} {
-
-			puts $fileID "vTcl:font:add_font \\"
-			puts $fileID "    \"[font configure $font]\" \\"
-			puts $fileID "    [vTcl:font:get_type $font] \\"
-			puts $fileID "    [vTcl:font:get_key $font]"
-		}
+    foreach font $vTcl(fonts,objects) {
+	if {[vTcl:font:get_type $font] == "stock"} {
+	    puts $fileID "vTcl:font:add_font \\"
+	    puts $fileID "    \"[font configure $font]\" \\"
+	    puts $fileID "    [vTcl:font:get_type $font] \\"
+	    puts $fileID "    [vTcl:font:get_key $font]"
 	}
+    }
 
-	puts $fileID "\}"
+    puts $fileID "\}"
 }
 
 proc vTcl:font:generate_font_user {fileID} {
+    global vTcl
 
-	global vTcl
+    puts $fileID {############################}
+    puts $fileID "\# vTcl Code to Load User Fonts\n"
 
-	puts $fileID {############################}
-	puts $fileID "\# code to load user fonts\n"
-
-	foreach font $vTcl(fonts,objects) {
-
-		if {[vTcl:font:get_type $font] == "user"} {
-
-			puts $fileID "vTcl:font:add_font \\"
-			puts $fileID "    \"[font configure $font]\" \\"
-			puts $fileID "    [vTcl:font:get_type $font] \\"
-			puts $fileID "    [vTcl:font:get_key $font]"
-		}
+    foreach font $vTcl(fonts,objects) {
+	if {[vTcl:font:get_type $font] == "user"} {
+	    puts $fileID "vTcl:font:add_font \\"
+	    puts $fileID "    \"[font configure $font]\" \\"
+	    puts $fileID "    [vTcl:font:get_type $font] \\"
+	    puts $fileID "    [vTcl:font:get_key $font]"
 	}
+    }
 }
 
 proc vTcl:font:create_noborder_fontlist {base} {
-
     if {$base == ""} {
         set base .vTcl.noborder_fontlist
     }
@@ -777,77 +738,73 @@ proc vTcl:font:create_noborder_fontlist {base} {
 }
 
 proc {vTcl:font:fill_noborder_font_list} {t} {
+    global vTcl
 
-	global vTcl
+    # set a tab on the right side
 
-	# set a tab on the right side
+    update
+    $t configure -state normal -tabs "[winfo width $t]p"
+    $t delete 0.0 end
 
-	update
-	$t configure -state normal -tabs "[winfo width $t]p"
-	$t delete 0.0 end
+    foreach object $vTcl(fonts,objects) {
 
-	foreach object $vTcl(fonts,objects) {
+	$t insert end \
+	    "ABDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwyz 0123456789\n" \
+	   vTcl:font_list:$object
 
-	    $t insert end \
-	    	"ABDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwyz 0123456789\n" \
-	       vTcl:font_list:$object
+	$t tag configure vTcl:font_list:$object -font $object
 
-	    $t tag configure vTcl:font_list:$object -font $object
+	$t tag bind vTcl:font_list:$object <Enter> \
+	    "$t tag configure vTcl:font_list:$object -background white -relief raised -borderwidth 2"
 
-	    $t tag bind vTcl:font_list:$object <Enter> \
-	        "$t tag configure vTcl:font_list:$object -background white -relief raised -borderwidth 2"
+	$t tag bind vTcl:font_list:$object <Leave> \
+	    "$t tag configure vTcl:font_list:$object -background #bcbcbc -relief flat -borderwidth 0"
 
-	    $t tag bind vTcl:font_list:$object <Leave> \
-	        "$t tag configure vTcl:font_list:$object -background #bcbcbc -relief flat -borderwidth 0"
+	$t tag bind vTcl:font_list:$object <ButtonPress-1> \
+	    "set vTcl(font,noborder_fontlist,font) $object"
+    }
 
- 	    $t tag bind vTcl:font_list:$object <ButtonPress-1> \
-	        "set vTcl(font,noborder_fontlist,font) $object"
-	}
+    # add additional item to create a new font
+    $t insert end "\nNew font...\t\n\t" vTcl:font_list:new
 
-	# add additional item to create a new font
-	$t insert end "\nNew font...\t\n\t" vTcl:font_list:new
+    $t tag bind vTcl:font_list:new <Enter> \
+	    "$t tag configure vTcl:font_list:new -relief raised -borderwidth 2 -background white"
 
-	$t tag bind vTcl:font_list:new <Enter> \
-		"$t tag configure vTcl:font_list:new -relief raised -borderwidth 2 -background white"
+    $t tag bind vTcl:font_list:new <Leave> \
+	    "$t tag configure vTcl:font_list:new -relief flat -borderwidth 0 -background #bcbcbc"
 
-	$t tag bind vTcl:font_list:new <Leave> \
-		"$t tag configure vTcl:font_list:new -relief flat -borderwidth 0 -background #bcbcbc"
+    $t tag bind vTcl:font_list:new <ButtonPress-1> \
+	    "set vTcl(font,noborder_fontlist,font) <new>"
 
-	$t tag bind vTcl:font_list:new <ButtonPress-1> \
-		"set vTcl(font,noborder_fontlist,font) <new>"
-
-	$t configure -state disabled
+    $t configure -state disabled
 }
 
 proc vTcl:font:prompt_noborder_fontlist {font} {
+    global vTcl
 
-	global vTcl
+    vTcl:font:create_noborder_fontlist ""
 
-	vTcl:font:create_noborder_fontlist ""
+    # do not reposition window according to root window
+    vTcl:dialog_wait $vTcl(font,noborder_fontlist,win) vTcl(font,noborder_fontlist,font) 1
+    destroy $vTcl(font,noborder_fontlist,win)
 
-	# do not reposition window according to root window
-	vTcl:dialog_wait $vTcl(font,noborder_fontlist,win) vTcl(font,noborder_fontlist,font) 1
-	destroy $vTcl(font,noborder_fontlist,win)
+    # user wants a new font ?
+    if {$vTcl(font,noborder_fontlist,font)=="<new>"} {
+	set font_desc [vTcl:font:prompt_user_font_2 "-family helvetica -size 12"]
 
-	# user wants a new font ?
-	if {$vTcl(font,noborder_fontlist,font)=="<new>"} {
+	if {$font_desc != ""} {
+	    set vTcl(font,noborder_fontlist,font) \
+	        [vTcl:font:add_font $font_desc user]
 
-		set font_desc [vTcl:font:prompt_user_font_2 "-family helvetica -size 12"]
+	    # refresh font manager
+	    vTcl:font:refresh_manager 1.0
 
-		if {$font_desc != ""} {
-
-			set vTcl(font,noborder_fontlist,font) \
-				[vTcl:font:add_font $font_desc user]
-
-			# refresh font manager
-			vTcl:font:refresh_manager 1.0
-
-		} else {
-			set vTcl(font,noborder_fontlist,font) ""
-		}
+	} else {
+	    set vTcl(font,noborder_fontlist,font) ""
 	}
+    }
 
-	return $vTcl(font,noborder_fontlist,font)
+    return $vTcl(font,noborder_fontlist,font)
 }
 
 # translation for options when saving files
@@ -855,34 +812,27 @@ set vTcl(option,translate,-font) vTcl:font:translate
 set vTcl(option,noencase,-font) 1
 
 proc vTcl:font:translate {value} {
+    global vTcl
 
-	global vTcl
+    if [info exists vTcl(fonts,$value,key)] {
+	set value "\[vTcl:font:get_font \"$vTcl(fonts,$value,key)\"\]"
+    }
 
-       	if [info exists vTcl(fonts,$value,key)] {
-
-      		set value "\[vTcl:font:get_font \"$vTcl(fonts,$value,key)\"\]"
-      	}
-
-      	return $value
+    return $value
 }
 
 proc vTcl:font:refresh_manager {{position 0.0}} {
+    global vTcl
 
-	global vTcl
-
-	if [info exists vTcl(fonts,font_mgr,win)] {
-
-		if [winfo exists $vTcl(fonts,font_mgr,win)] {
-
-			vTcl:font:display_fonts $vTcl(fonts,font_mgr,win)
-			$vTcl(fonts,font_mgr,win).cpd31.03 yview moveto $position
-		}
+    if [info exists vTcl(fonts,font_mgr,win)] {
+	if [winfo exists $vTcl(fonts,font_mgr,win)] {
+	    vTcl:font:display_fonts $vTcl(fonts,font_mgr,win)
+	    $vTcl(fonts,font_mgr,win).cpd31.03 yview moveto $position
 	}
+    }
 }
 
 proc vTcl:font:get_manager_position {} {
-
-	global vTcl
-
-	return [lindex [$vTcl(fonts,font_mgr,win).cpd31.03 yview] 0]
+    global vTcl
+    return [lindex [$vTcl(fonts,font_mgr,win).cpd31.03 yview] 0]
 }

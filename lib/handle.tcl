@@ -40,6 +40,7 @@ proc vTcl:create_handles {target} {
     if { $vTcl(w,manager) == "wm" || $target == "." } { return }
     set vTcl(h,exist) yes
     set s [expr $vTcl(h,size) * 2]
+    if {![winfo exists $target]} { return }
     set parent [winfo parent $target]
     if { $parent == "." } { set parent "" }
 

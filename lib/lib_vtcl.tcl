@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# lib_core.tcl - core tcl/tk widget support library
+# lib_vtcl.tcl - vTcl tcl/tk widget support library
 #
 # Copyright (C) 1996-1998 Stewart Allen
 #
@@ -21,31 +21,20 @@
 #
 # initializes this library
 #
-proc vTcl:widget:lib:lib_core {args} {
+proc vTcl:widget:lib:lib_vtcl {args} {
     global vTcl widgets classes
 
-    lappend vTcl(libNames) "Tcl/Tk Core Widget Library"
+    lappend vTcl(libNames) "Visual Tcl Widget Library"
 
     set order {
-    	toplevel
-	message
-	frame
-	canvas
-	button
-	entry
-	label
-	listbox
-	text
-	checkbutton
-	radiobutton
-	scrollbar_h
-	scrollbar_v
-	scale_h
-	scale_v
-	menubutton
+	progressbar1
     } 
 
-    vTcl:lib:add_widgets_to_toolbar $order
+    foreach i $order {
+	if {![info exists widgets($i,class)]} { continue }
+	vTcl:toolbar_add $i $widgets($i,balloon) \
+	    $widgets($i,image) $widgets($i,addOptions)
+    }
 }
 
 ####################################################################
