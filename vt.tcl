@@ -76,17 +76,10 @@ proc vTcl:load_lib {lib} {
 
 proc vTcl:load_widgets {} {
     global vTcl
-    foreach i $vTcl(LIB_WIDG) {
-        vTcl:load_lib $i
-        lappend vTcl(w,libs) [lindex [split [lindex [file split $i] end] .] 0]
-    }
 }
 
 proc vTcl:load_libs {} {
     global vTcl
-    foreach i $vTcl(LIBS) {
-        vTcl:load_lib $i
-    }
 }
 
 proc vTcl:setup {} {
@@ -111,8 +104,17 @@ proc vTcl:setup {} {
     set tk_strictMotif    1
     wm withdraw .
     vTcl:splash
-    vTcl:load_libs
-    vTcl:load_widgets
+
+	# load vtcl libraries (from 'lib' directory)
+    foreach i $vTcl(LIBS) {
+        vTcl:load_lib $i
+    }
+
+    # load widget libraries
+    foreach i $vTcl(LIB_WIDG) {
+        vTcl:load_lib $i
+        lappend vTcl(w,libs) [lindex [split [lindex [file split $i] end] .] 0]
+    }
     if {[file exists $vTcl(CONF_FILE)]} {
         catch {uplevel #0 [list source $vTcl(CONF_FILE)]}
         catch {set vTcl(w,def_mgr) $vTcl(pr,manager)}
@@ -121,11 +123,7 @@ proc vTcl:setup {} {
     update idletasks
     set vTcl(start,procs)   [lsort [info procs]]
     set vTcl(start,globals) [lsort [info globals]]
-    vTcl:setup_meta
-}
 
-proc vTcl:setup_meta {} {
-    global vTcl
     rename exit vTcl:exit
     proc exit {args} {}
     proc init {argc argv} {}
@@ -370,37 +368,14 @@ proc vTcl:define_bindings {} {
     bind vTcl(b) <ButtonRelease-1>   {vTcl:bind_release %X %Y}
     bind vTcl(b) <ButtonRelease-2>   {vTcl:bind_release %X %Y}
 
-    bind vTcl(b) <Up> {
-        vTcl:widget_delta $vTcl(w,widget) 0 -$vTcl(key,y) 0 0
-    }
-
-    bind vTcl(b) <Down> {
-        vTcl:widget_delta $vTcl(w,widget) 0 $vTcl(key,y) 0 0
-    }
-
-    bind vTcl(b) <Left> {
-        vTcl:widget_delta $vTcl(w,widget) -$vTcl(key,x) 0 0 0
-    }
-
-    bind vTcl(b) <Right> {
-        vTcl:widget_delta $vTcl(w,widget) $vTcl(key,x) 0 0 0
-    }
-
-    bind vTcl(b) <Shift-Up> {
-        vTcl:widget_delta $vTcl(w,widget) 0 0 0 -$vTcl(key,h)
-    }
-
-    bind vTcl(b) <Shift-Down> {
-        vTcl:widget_delta $vTcl(w,widget) 0 0 0 $vTcl(key,h)
-    }
-
-    bind vTcl(b) <Shift-Left> {
-        vTcl:widget_delta $vTcl(w,widget) 0 0 -$vTcl(key,w) 0
-    }
-
-    bind vTcl(b) <Shift-Right> {
-        vTcl:widget_delta $vTcl(w,widget) 0 0 $vTcl(key,w) 0
-    }
+    bind vTcl(b) <Up>          { vTcl:widget_delta $vTcl(w,widget) 0 -$vTcl(key,y) 0 0 }
+    bind vTcl(b) <Down>        { vTcl:widget_delta $vTcl(w,widget) 0 $vTcl(key,y) 0 0 }
+    bind vTcl(b) <Left>        { vTcl:widget_delta $vTcl(w,widget) -$vTcl(key,x) 0 0 0 }
+    bind vTcl(b) <Right>       { vTcl:widget_delta $vTcl(w,widget) $vTcl(key,x) 0 0 0 }
+    bind vTcl(b) <Shift-Up>    { vTcl:widget_delta $vTcl(w,widget) 0 0 0 -$vTcl(key,h) }
+    bind vTcl(b) <Shift-Down>  { vTcl:widget_delta $vTcl(w,widget) 0 0 0 $vTcl(key,h) }
+    bind vTcl(b) <Shift-Left>  { vTcl:widget_delta $vTcl(w,widget) 0 0 -$vTcl(key,w) 0 }
+    bind vTcl(b) <Shift-Right> { vTcl:widget_delta $vTcl(w,widget) 0 0 $vTcl(key,w) 0 }
 
     bind vTcl(b) <Alt-h> {
         if { $vTcl(h,exist) == "yes" } {
