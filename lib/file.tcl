@@ -161,7 +161,7 @@ proc vTcl:source {file newprocs} {
 
     set np [vTcl:diff_list $op $np]
     vTcl:statbar 45
-    set vTcl(tops) [vTcl:find_new_tops];     vTcl:statbar 0
+    set vTcl(tops) [vTcl:find_new_tops $np];     vTcl:statbar 0
     set vTcl(sourcing) 0
 }
 
@@ -203,6 +203,10 @@ proc vTcl:open {{file ""}} {
 
     vTcl:status "Updating top list"
     vTcl:update_top_list;                vTcl:statbar 68
+
+    ## convert older projects
+    vTcl:convert_tops
+
     vTcl:status "Updating aliases"
     vTcl:update_aliases;                 vTcl:statbar 75
 
@@ -241,14 +245,12 @@ proc vTcl:open {{file ""}} {
         vTcl:list add $newprocs   vTcl(procs)
     }
     vTcl:update_proc_list;               vTcl:statbar 95
+    vTcl:bind_tops;                      vTcl:statbar 98
 
     wm title .vTcl "Visual Tcl - $vTcl(project,name)"
     vTcl:status "Done Loading"
     vTcl:statbar 0
     set vTcl(newtops) [expr [llength $vTcl(tops)] + 1]
-
-    ## convert older projects
-    vTcl:convert_tops
 
     unset vTcl(sourcing)
 

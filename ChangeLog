@@ -1,6 +1,8 @@
 ChangeLog for Visual Tcl:
 
 1.6.0a2 ->
+    o Dump a menu even if it has no entries. Otherwise, empty menu buttons
+      won't work.
     o Trying to get the aliases really work. Basically, each toplevel now
       holds a list of aliases, and pasting/inserting widgets checks for
       existing aliases and auto-numbers them.

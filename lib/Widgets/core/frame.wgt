@@ -88,7 +88,6 @@ namespace eval ::vTcl::widgets::core::frame {
         set sitevariable "site_[llength [split $target .]]_0"
         append result "set $sitevariable $basename\n"
 	set basenames($target) \$$sitevariable
-        set geometry ""
 
 	foreach i $children {
             set basename [vTcl:base_name $i]

@@ -448,10 +448,10 @@ proc vTcl:get_children {target {include_megachildren 0}} {
     return $r
 }
 
-proc vTcl:find_new_tops {} {
+proc vTcl:find_new_tops {newprocs} {
     global vTcl
     set new ""
-    foreach i $vTcl(procs) {
+    foreach i [concat $vTcl(procs) $newprocs] {
         if [string match $vTcl(winname).* $i] {
             set n [string range $i 10 end]
             if {$n != "."} {

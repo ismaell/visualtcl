@@ -33,6 +33,8 @@ DefaultValues   -activebackground -activeforeground -activeborderwidth \
 ClassOption     -_tooltip
 DoubleClickCmd	vTcl:edit_target_menu
 InsertCmd	vTcl::widgets::core::menubutton::insertCmd
+DumpCmd         vTcl::widgets::core::menubutton::dumpCmd
+DumpInfoCmd     vTcl::widgets::core::menubutton::dumpInfoCmd
 TreeLabel	@vTcl::widgets::core::menubutton::getWidgetTreeLabel
 
 Function        "Edit Menu..."     vTcl::widgets::core::menubutton::editMenu
@@ -58,5 +60,39 @@ namespace eval vTcl::widgets::core::menubutton {
 
     proc getWidgetTreeLabel {target} {
         return [$target cget -text]
+    }
+
+    proc dumpCmd {target basename} {
+        global vTcl classes
+        set result [vTcl:dump_widget_opt $target $basename]
+
+	set child [$target cget -menu]
+	if {$child == ""} {
+	    ## the menubutton is empty, don't bother
+	    return $result
+	}
+
+        set class [vTcl:get_class $child]
+        append result [$classes($class,dumpCmd) $child [vTcl:base_name $child]]
+        set geometry [vTcl:dump_widget_geom $child [vTcl:base_name $child]]
+        incr vTcl(num,index)
+
+        append result $geometry
+        return $result
+    }
+
+    proc dumpInfoCmd {target basename} {
+        global vTcl classes
+        set result [vTcl:dump:widget_info $target $basename]
+
+	set child [$target cget -menu]
+	if {$child == ""} {
+	    ## the menubutton is empty, don't bother
+	    return $result
+	}
+
+        set class [vTcl:get_class $child]
+        append result [$classes($class,dumpInfoCmd) $child [vTcl:base_name $child]]
+        return $result
     }
 }
