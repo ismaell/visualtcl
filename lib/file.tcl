@@ -221,6 +221,11 @@ proc vTcl:open {{file ""}} {
     	source [file join $basedir $multidir $file]
     }
 
+    ## If there are project settings, load them
+    if { [info proc vTcl:project:info] != "" } {
+    	vTcl:project:info
+    }
+    
     wm title .vTcl "Visual Tcl - $vTcl(project,name)"
     vTcl:status "Done Loading"
     vTcl:statbar 0

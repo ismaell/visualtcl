@@ -46,30 +46,10 @@ proc vTclWindow.vTcl.bind {args} {
     set {widget(BindingsEditor)} "$base"
     set {widget(child,BindingsEditor)} ""
     interp alias {} BindingsEditor {} vTcl:Toplevel:WidgetProc $base
-    set widget(rev,$base.cpd21) {Frame4}
-    set {widget(Frame4)} "$base.cpd21"
-    set {widget(child,Frame4)} "cpd21"
-    interp alias {} Frame4 {} vTcl:WidgetProc $base.cpd21
-    set widget(rev,$base.cpd21.01) {Frame1}
-    set {widget(Frame1)} "$base.cpd21.01"
-    set {widget(child,Frame1)} "cpd21.01"
-    interp alias {} Frame1 {} vTcl:WidgetProc $base.cpd21.01
-    set widget(rev,$base.cpd21.01.cpd25) {Frame5}
-    set {widget(Frame5)} "$base.cpd21.01.cpd25"
-    set {widget(child,Frame5)} "cpd21.01.cpd25"
-    interp alias {} Frame5 {} vTcl:WidgetProc $base.cpd21.01.cpd25
     set widget(rev,$base.cpd21.01.cpd25.01) {ListboxBindings}
     set {widget(ListboxBindings)} "$base.cpd21.01.cpd25.01"
     set {widget(child,ListboxBindings)} "cpd21.01.cpd25.01"
     interp alias {} ListboxBindings {} vTcl:WidgetProc $base.cpd21.01.cpd25.01
-    set widget(rev,$base.cpd21.01.cpd25.02) {Scrollbar1}
-    set {widget(Scrollbar1)} "$base.cpd21.01.cpd25.02"
-    set {widget(child,Scrollbar1)} "cpd21.01.cpd25.02"
-    interp alias {} Scrollbar1 {} vTcl:WidgetProc $base.cpd21.01.cpd25.02
-    set widget(rev,$base.cpd21.01.cpd25.03) {Scrollbar2}
-    set {widget(Scrollbar2)} "$base.cpd21.01.cpd25.03"
-    set {widget(child,Scrollbar2)} "cpd21.01.cpd25.03"
-    interp alias {} Scrollbar2 {} vTcl:WidgetProc $base.cpd21.01.cpd25.03
     set widget(rev,$base.cpd21.01.fra22.but24) {RemoveBinding}
     set {widget(RemoveBinding)} "$base.cpd21.01.fra22.but24"
     set {widget(child,RemoveBinding)} "cpd21.01.fra22.but24"
@@ -78,30 +58,10 @@ proc vTclWindow.vTcl.bind {args} {
     set {widget(AddBinding)} "$base.cpd21.01.fra22.men20"
     set {widget(child,AddBinding)} "cpd21.01.fra22.men20"
     interp alias {} AddBinding {} vTcl:WidgetProc $base.cpd21.01.fra22.men20
-    set widget(rev,$base.cpd21.02) {Frame2}
-    set {widget(Frame2)} "$base.cpd21.02"
-    set {widget(child,Frame2)} "cpd21.02"
-    interp alias {} Frame2 {} vTcl:WidgetProc $base.cpd21.02
-    set widget(rev,$base.cpd21.02.cpd21) {Frame6}
-    set {widget(Frame6)} "$base.cpd21.02.cpd21"
-    set {widget(child,Frame6)} "cpd21.02.cpd21"
-    interp alias {} Frame6 {} vTcl:WidgetProc $base.cpd21.02.cpd21
-    set widget(rev,$base.cpd21.02.cpd21.01) {Scrollbar3}
-    set {widget(Scrollbar3)} "$base.cpd21.02.cpd21.01"
-    set {widget(child,Scrollbar3)} "cpd21.02.cpd21.01"
-    interp alias {} Scrollbar3 {} vTcl:WidgetProc $base.cpd21.02.cpd21.01
-    set widget(rev,$base.cpd21.02.cpd21.02) {Scrollbar4}
-    set {widget(Scrollbar4)} "$base.cpd21.02.cpd21.02"
-    set {widget(child,Scrollbar4)} "cpd21.02.cpd21.02"
-    interp alias {} Scrollbar4 {} vTcl:WidgetProc $base.cpd21.02.cpd21.02
     set widget(rev,$base.cpd21.02.cpd21.03) {TextBindings}
     set {widget(TextBindings)} "$base.cpd21.02.cpd21.03"
     set {widget(child,TextBindings)} "cpd21.02.cpd21.03"
     interp alias {} TextBindings {} vTcl:WidgetProc $base.cpd21.02.cpd21.03
-    set widget(rev,$base.cpd21.03) {Frame3}
-    set {widget(Frame3)} "$base.cpd21.03"
-    set {widget(child,Frame3)} "cpd21.03"
-    interp alias {} Frame3 {} vTcl:WidgetProc $base.cpd21.03
     set widget(MoveTagUp) $base.cpd21.01.fra22.but25
     set widget(MoveTagDown) $base.cpd21.01.fra22.but26
     set widget(AddTag) $base.cpd21.01.fra22.but27
@@ -110,9 +70,7 @@ proc vTclWindow.vTcl.bind {args} {
     # CREATING WIDGETS
     ###################
     if {!$container} {
-        toplevel $base -class Toplevel \
-            -background #dcdcdc -highlightbackground #dcdcdc \
-            -highlightcolor #000000 
+        toplevel $base -class Toplevel
         wm focusmodel $base passive
         wm withdraw $base
         wm geometry $base 660x514+264+138
@@ -198,7 +156,7 @@ proc vTclWindow.vTcl.bind {args} {
         -image down \
         -padx 0 -pady 0 -text button -width 23 
     button $base.cpd21.01.fra22.but27 \
-        -command "tk_messageBox -message {To be implemented}" \
+        -command "Window show .vTcl.newtag" \
         -height 23 \
         -highlightthickness 0 \
         -padx 0 -pady 0 -image icon_message.gif -width 23 
@@ -266,12 +224,10 @@ proc vTclWindow.vTcl.bind {args} {
     scrollbar $base.cpd21.01.cpd25.02 \
         -activebackground #dcdcdc -background #dcdcdc \
         -command "$base.cpd21.01.cpd25.01 xview" \
-        -highlightbackground #dcdcdc -highlightcolor #000000 \
         -orient horizontal -troughcolor #dcdcdc  
     scrollbar $base.cpd21.01.cpd25.03 \
         -activebackground #dcdcdc -background #dcdcdc \
         -command "$base.cpd21.01.cpd25.01 yview" \
-        -highlightbackground #dcdcdc -highlightcolor #000000 \
         -troughcolor #dcdcdc  
     frame $base.cpd21.02 \
         -background #9900991B99FE -highlightbackground #dcdcdc \
@@ -283,12 +239,10 @@ proc vTclWindow.vTcl.bind {args} {
     scrollbar $base.cpd21.02.cpd21.01 \
         -activebackground #dcdcdc -background #dcdcdc \
         -command "$base.cpd21.02.cpd21.03 xview"  \
-        -highlightbackground #dcdcdc -highlightcolor #000000 \
         -orient horizontal -troughcolor #dcdcdc  
     scrollbar $base.cpd21.02.cpd21.02 \
         -activebackground #dcdcdc -background #dcdcdc \
         -command "$base.cpd21.02.cpd21.03 yview"  \
-        -highlightbackground #dcdcdc -highlightcolor #000000 \
         -troughcolor #dcdcdc  
     text $base.cpd21.02.cpd21.03 \
         -background white \
@@ -439,38 +393,14 @@ proc vTclWindow.vTcl.newbind {base {container 0}} {
     set {widget(BindingsInsert)} "$base"
     set {widget(child,BindingsInsert)} ""
     interp alias {} BindingsInsert {} vTcl:Toplevel:WidgetProc $base
-    set widget(rev,$base.fra23.cpd34) {Frame7}
-    set {widget(Frame7)} "$base.fra23.cpd34"
-    set {widget(child,Frame7)} "fra23.cpd34"
-    interp alias {} Frame7 {} vTcl:WidgetProc $base.fra23.cpd34
     set widget(rev,$base.fra23.cpd34.01) {BindingsModifiers}
     set {widget(BindingsModifiers)} "$base.fra23.cpd34.01"
     set {widget(child,BindingsModifiers)} "fra23.cpd34.01"
     interp alias {} BindingsModifiers {} vTcl:WidgetProc $base.fra23.cpd34.01
-    set widget(rev,$base.fra23.cpd34.02) {Scrollbar5}
-    set {widget(Scrollbar5)} "$base.fra23.cpd34.02"
-    set {widget(child,Scrollbar5)} "fra23.cpd34.02"
-    interp alias {} Scrollbar5 {} vTcl:WidgetProc $base.fra23.cpd34.02
-    set widget(rev,$base.fra23.cpd34.03) {Scrollbar6}
-    set {widget(Scrollbar6)} "$base.fra23.cpd34.03"
-    set {widget(child,Scrollbar6)} "fra23.cpd34.03"
-    interp alias {} Scrollbar6 {} vTcl:WidgetProc $base.fra23.cpd34.03
-    set widget(rev,$base.fra23.cpd35) {Frame8}
-    set {widget(Frame8)} "$base.fra23.cpd35"
-    set {widget(child,Frame8)} "fra23.cpd35"
-    interp alias {} Frame8 {} vTcl:WidgetProc $base.fra23.cpd35
     set widget(rev,$base.fra23.cpd35.01) {BindingsEvents}
     set {widget(BindingsEvents)} "$base.fra23.cpd35.01"
     set {widget(child,BindingsEvents)} "fra23.cpd35.01"
     interp alias {} BindingsEvents {} vTcl:WidgetProc $base.fra23.cpd35.01
-    set widget(rev,$base.fra23.cpd35.02) {Scrollbar7}
-    set {widget(Scrollbar7)} "$base.fra23.cpd35.02"
-    set {widget(child,Scrollbar7)} "fra23.cpd35.02"
-    interp alias {} Scrollbar7 {} vTcl:WidgetProc $base.fra23.cpd35.02
-    set widget(rev,$base.fra23.cpd35.03) {Scrollbar8}
-    set {widget(Scrollbar8)} "$base.fra23.cpd35.03"
-    set {widget(child,Scrollbar8)} "fra23.cpd35.03"
-    interp alias {} Scrollbar8 {} vTcl:WidgetProc $base.fra23.cpd35.03
     set widget(rev,$base.fra36.ent38) {BindingsEventEntry}
     set {widget(BindingsEventEntry)} "$base.fra36.ent38"
     set {widget(child,BindingsEventEntry)} "fra36.ent38"
@@ -480,9 +410,7 @@ proc vTclWindow.vTcl.newbind {base {container 0}} {
     # CREATING WIDGETS
     ###################
     if {!$container} {
-        toplevel $base -class Toplevel \
-            -background #dcdcdc -highlightbackground #dcdcdc \
-            -highlightcolor #000000 
+        toplevel $base -class Toplevel
         wm focusmodel $base passive
         wm geometry $base 541x457+418+226
         update
@@ -534,12 +462,10 @@ proc vTclWindow.vTcl.newbind {base {container 0}} {
     scrollbar $base.fra23.cpd34.02 \
         -activebackground #dcdcdc -background #dcdcdc \
         -command "$base.fra23.cpd34.01 xview"  \
-        -highlightbackground #dcdcdc -highlightcolor #000000 \
         -orient horizontal -troughcolor #dcdcdc  
     scrollbar $base.fra23.cpd34.03 \
         -activebackground #dcdcdc -background #dcdcdc \
         -command "$base.fra23.cpd34.01 yview"  \
-        -highlightbackground #dcdcdc -highlightcolor #000000 \
         -troughcolor #dcdcdc  
     frame $base.fra23.cpd35 \
         -background #dcdcdc -borderwidth 1 -height 30 \
@@ -561,12 +487,10 @@ proc vTclWindow.vTcl.newbind {base {container 0}} {
     scrollbar $base.fra23.cpd35.02 \
         -activebackground #dcdcdc -background #dcdcdc \
         -command "$base.fra23.cpd35.01 xview"  \
-        -highlightbackground #dcdcdc -highlightcolor #000000 \
         -orient horizontal -troughcolor #dcdcdc  
     scrollbar $base.fra23.cpd35.03 \
         -activebackground #dcdcdc -background #dcdcdc \
         -command "$base.fra23.cpd35.01 yview"  \
-        -highlightbackground #dcdcdc -highlightcolor #000000 \
         -troughcolor #dcdcdc  
     frame $base.fra36 \
         -background #dcdcdc -borderwidth 2 -height 75 \
@@ -701,12 +625,143 @@ proc vTclWindow.vTcl.newbind {base {container 0}} {
     }
 }
 
+proc vTclWindow.vTcl.newtag {base} {
+    set container 0
+
+    if {$base == ""} {
+        set base .vTcl.newtag
+    }
+    if {[winfo exists $base] && (!$container)} {
+        wm deiconify $base; return
+    }
+
+    # this window will be a modal one (I have to figure
+    # out how to make this work) so this is why I
+    # am destroying it when the user clicks "Cancel"
+    
+    global widget
+    set widget(rev,$base.fra20.but21) {NewBindingTagOK}
+    set {widget(NewBindingTagOK)} "$base.fra20.but21"
+    set {widget(child,NewBindingTagOK)} "fra20.but21"
+    interp alias {} NewBindingTagOK {} vTcl:WidgetProc $base.fra20.but21
+    set widget(rev,$base.fra20.but23) {NewBindingTagCancel}
+    set {widget(NewBindingTagCancel)} "$base.fra20.but23"
+    set {widget(child,NewBindingTagCancel)} "fra20.but23"
+    interp alias {} NewBindingTagCancel {} vTcl:WidgetProc $base.fra20.but23
+    set widget(rev,$base.fra24.cpd26.01) {ListboxTags}
+    set {widget(ListboxTags)} "$base.fra24.cpd26.01"
+    set {widget(child,ListboxTags)} "fra24.cpd26.01"
+    interp alias {} ListboxTags {} vTcl:WidgetProc $base.fra24.cpd26.01
+    set widget(rev,$base.fra24.ent28) {NewBindingTagEntry}
+    set {widget(NewBindingTagEntry)} "$base.fra24.ent28"
+    set {widget(child,NewBindingTagEntry)} "fra24.ent28"
+    interp alias {} NewBindingTagEntry {} vTcl:WidgetProc $base.fra24.ent28
+
+    global NewBindingTagName
+    set NewBindingTagName ""
+    
+    ###################
+    # CREATING WIDGETS
+    ###################
+    if {!$container} {
+        toplevel $base -class Toplevel
+        wm focusmodel $base passive
+        wm geometry $base 340x319+149+138; update
+        wm maxsize $base 1009 738
+        wm minsize $base 1 1
+        wm overrideredirect $base 0
+        wm resizable $base 1 1
+        wm deiconify $base
+        wm title $base "Binding tags"
+        wm transient .vTcl.newtag .vTcl
+    }
+    frame $base.fra20 \
+        -background #dcdcdc -borderwidth 2
+    button $base.fra20.but21 \
+        -text OK -width 8 \
+        -command {
+            lappend ::widgets_bindings::tagslist $NewBindingTagName
+            Window destroy .vTcl.newtag } \
+        -state disabled
+    button $base.fra20.but23 \
+        -text Cancel -width 8 \
+        -command "Window destroy .vTcl.newtag"
+    frame $base.fra24 \
+        -borderwidth 2 -height 75 
+    label $base.fra24.lab25 \
+        -text {Select an existing tag:} 
+    frame $base.fra24.cpd26 \
+        -borderwidth 1 \
+        -relief raised \
+        -width 30 
+    listbox $base.fra24.cpd26.01 \
+        -selectforeground #ffffff -xscrollcommand "$base.fra24.cpd26.02 set" \
+        -yscrollcommand "$base.fra24.cpd26.03 set" 
+    scrollbar $base.fra24.cpd26.02 \
+        -command "$base.fra24.cpd26.01 xview" -highlightbackground #dcdcdc \
+        -highlightcolor #000000 -orient horizontal -troughcolor #dcdcdc 
+    scrollbar $base.fra24.cpd26.03 \
+        -command "$base.fra24.cpd26.01 yview" -highlightbackground #dcdcdc \
+        -highlightcolor #000000 -troughcolor #dcdcdc 
+    label $base.fra24.lab27 \
+        -text {Or name a new tag:} 
+    entry $base.fra24.ent28 \
+        -textvariable NewBindingTagName 
+    bind $base.fra24.ent28 <KeyRelease> {
+        if {$NewBindingTagName == ""} {
+            NewBindingTagOK configure -state disabled
+        } else {
+            NewBindingTagOK configure -state normal
+        }
+    }
+    ###################
+    # SETTING GEOMETRY
+    ###################
+    pack $base.fra20 \
+        -in $base -anchor center -expand 0 -fill none -pady 5 -side bottom 
+    pack $base.fra20.but21 \
+        -in $base.fra20 -anchor center -expand 0 -fill none -padx 5 \
+        -side left 
+    pack $base.fra20.but23 \
+        -in $base.fra20 -anchor center -expand 0 -fill none -padx 5 \
+        -side right 
+    pack $base.fra24 \
+        -in $base -anchor center -expand 1 -fill both -side top 
+    pack $base.fra24.lab25 \
+        -in $base.fra24 -anchor center -expand 0 -fill none -side top 
+    pack $base.fra24.cpd26 \
+        -in $base.fra24 -anchor center -expand 1 -fill both -side top 
+    grid columnconf $base.fra24.cpd26 0 -weight 1
+    grid rowconf $base.fra24.cpd26 0 -weight 1
+    grid $base.fra24.cpd26.01 \
+        -in $base.fra24.cpd26 -column 0 -row 0 -columnspan 1 -rowspan 1 \
+        -sticky nesw 
+    grid $base.fra24.cpd26.02 \
+        -in $base.fra24.cpd26 -column 0 -row 1 -columnspan 1 -rowspan 1 \
+        -sticky ew 
+    grid $base.fra24.cpd26.03 \
+        -in $base.fra24.cpd26 -column 1 -row 0 -columnspan 1 -rowspan 1 \
+        -sticky ns 
+    pack $base.fra24.lab27 \
+        -in $base.fra24 -anchor center -expand 0 -fill none -side top 
+    pack $base.fra24.ent28 \
+        -in $base.fra24 -anchor center -expand 0 -fill x -side top 
+    
+    ListboxTags delete 0 end
+        
+    foreach tag $::widgets_bindings::tagslist {
+        ListboxTags insert end $tag
+    }
+}
+
 #################################
 # USER DEFINED PROCEDURES
 #
 
 namespace eval ::widgets_bindings {
 
+    variable tagslist ""
+    
     proc {::widgets_bindings::add_binding} {event} {
 
         global widget

@@ -757,6 +757,12 @@ proc vTcl:dump:project_info {basedir project} {
 	append out "$vTcl(tab)\}\n"
     }
 
+    append out $vTcl(tab)
+    append out "namespace eval ::widgets_bindings \{\n"
+    append out $vTcl(tab2)
+    append out "set tagslist [list $::widgets_bindings::tagslist]\n"
+    append out "$vTcl(tab)\}\n"
+    
     append out "\}\n"
 
     if {[vTcl:streq $vTcl(pr,projecttype) "single"]} {
