@@ -34,13 +34,14 @@
 # {type} {option list} {manager specific list}
 
 global vTcl
+namespace eval ::vTcl::balloon {}
 
 set vTcl(action)         ""
 set vTcl(action_index)   -1
 set vTcl(action_limit)   -1
-set vTcl(balloon,first)  0
-set vTcl(balloon,set)    0
-set vTcl(balloon,soon)   0
+set ::vTcl::balloon::first  0
+set ::vTcl::balloon::set    0
+set ::vTcl::balloon::soon   0
 set vTcl(bind,ignore)    ""
 set vTcl(change)         0
 set vTcl(console)        0

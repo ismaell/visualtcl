@@ -22,41 +22,41 @@
 #
 
 bind vTcl(balloon) <Enter> {
-    set vTcl(balloon,set) 0
-    set vTcl(balloon,first) 1
-    set vTcl(balloon,id) [after 500 {vTcl:balloon %W $vTcl(balloon,%W)}]
+    set ::vTcl::balloon::set 0
+    set ::vTcl::balloon::first 1
+    set ::vTcl::balloon::id [after 500 {vTcl:balloon %W ${::vTcl::balloon::%W}}]
 }
 
 bind vTcl(balloon) <Button> {
-    set vTcl(balloon,first) 0
+    set ::vTcl::balloon::first 0
     vTcl:kill_balloon
 }
 
 bind vTcl(balloon) <Leave> {
-    set vTcl(balloon,first) 0
+    set ::vTcl::balloon::first 0
     vTcl:kill_balloon
 }
 
 bind vTcl(balloon) <Motion> {
-    if {$vTcl(balloon,set) == 0} {
-        after cancel $vTcl(balloon,id)
-        set vTcl(balloon,id) [after 500 {vTcl:balloon %W $vTcl(balloon,%W)}]
+    if {$::vTcl::balloon::set == 0} {
+        after cancel $::vTcl::balloon::id
+        set ::vTcl::balloon::id [after 500 {vTcl:balloon %W ${::vTcl::balloon::%W}}]
     }
 }
 
 proc vTcl:set_balloon {target message} {
     global vTcl
-    set vTcl(balloon,$target) $message
+    set ::vTcl::balloon::$target $message
     bindtags $target "[bindtags $target] vTcl(balloon)"
 }
 
 proc vTcl:kill_balloon {} {
     global vTcl
-    after cancel $vTcl(balloon,id)
+    after cancel $::vTcl::balloon::id
     if {[winfo exists .vTcl.balloon] == 1} {
         destroy .vTcl.balloon
     }
-    set vTcl(balloon,set) 0
+    set ::vTcl::balloon::set 0
 }
 
 proc vTcl:balloon {target message} {
@@ -64,8 +64,8 @@ proc vTcl:balloon {target message} {
     # the window may have disappeared
     if {![winfo exists $target]} return
 
-    if {$vTcl(balloon,first) == 1 && $vTcl(pr,balloon) == 1} {
-        set vTcl(balloon,first) 2
+    if {$::vTcl::balloon::first == 1 && $vTcl(pr,balloon) == 1} {
+        set ::vTcl::balloon::first 2
         set x [expr {[winfo rootx $target] + ([winfo width $target]/2)}]
         set y [expr {[winfo rooty $target] + [winfo height $target] + 4}]
         toplevel .vTcl.balloon -bg black
@@ -75,7 +75,7 @@ proc vTcl:balloon {target message} {
             -bg #ffffaa -fg black -padx 2 -pady 0 -anchor w
         pack .vTcl.balloon.l -side left -padx 1 -pady 1
         wm geometry .vTcl.balloon +${x}+${y}
-        set vTcl(balloon,set) 1
+        set ::vTcl::balloon::set 1
     }
 }
 
