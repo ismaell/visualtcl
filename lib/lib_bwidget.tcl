@@ -68,8 +68,13 @@ proc vTcl:widget:lib:lib_bwidget {args} {
     vTcl:lib:add_widgets_to_toolbar $order
 
     append vTcl(head,bwidget,importheader) {
-    if {[lsearch -exact $packageNames BWidget] > -1} {
-	package require BWidget
+    package require BWidget
+    switch $tcl_platform(platform) {
+	windows {
+	}
+	default {
+	    option add *ScrolledWindow.size 14
+	}
     }
     }
 

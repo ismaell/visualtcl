@@ -60,6 +60,9 @@ proc vTcl:widget:lib:lib_core {args} {
 	}
 	default {
 	    option add *Scrollbar.width 10
+            option add *Scrollbar.highlightThickness 0
+            option add *Scrollbar.elementBorderWidth 2
+            option add *Scrollbar.borderWidth 2
 	}
     }
     }
