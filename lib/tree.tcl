@@ -225,7 +225,7 @@ proc vTcl:init_wtree {{wants_destroy_handles 1}} {
         vTcl:set_balloon $b.$j $i
         $b create window $x $y -window $b.$j -anchor nw -tags $b.$j
         if {[lempty $t]} { set t [vTcl:widget:get_tree_label $i] }
-        set t [$b create text $x2 $y2 -text $t -anchor w \
+        set t [$b create text $x2 $y2 -text $t -anchor w -font $vTcl(pr,font_dlg) \
             -tags "TEXT TEXT$b.$j"]
         $b bind TEXT$b.$j <ButtonPress-1> $left_click_cmd
         $b bind TEXT$b.$j <ButtonRelease-3> $right_click_cmd

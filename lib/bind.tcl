@@ -36,23 +36,15 @@ proc vTclWindow.vTcl.bind {args} {
     if {[winfo exists $base] && (!$container)} { wm deiconify $base; return }
 
     global widget
-    set {widget(BindingsEditor)} "$base"
-    interp alias {} BindingsEditor {} vTcl:Toplevel:WidgetProc $base
-    set {widget(ListboxBindings)} "$base.cpd21.01.cpd25.01"
-    interp alias {} ListboxBindings {} vTcl:WidgetProc $base.cpd21.01.cpd25.01
-    set {widget(RemoveBinding)} "$base.fra22.but24"
-    interp alias {} RemoveBinding {} vTcl:WidgetProc $base.fra22.but24
-    set {widget(AddBinding)} "$base.fra22.men20"
-    interp alias {} AddBinding {} vTcl:WidgetProc $base.fra22.men20
-    set {widget(TextBindings)} "$base.cpd21.02.cpd21.03"
-    interp alias {} TextBindings {} vTcl:WidgetProc $base.cpd21.02.cpd21.03
-    set widget(MoveTagUp) $base.fra22.but25
-    interp alias {} MoveTagUp {} vTcl:WidgetProc $base.fra22.but25
-    set widget(MoveTagDown) $base.fra22.but26
-    interp alias {} MoveTagDown {} vTcl:WidgetProc $base.fra22.but26
-    set widget(AddTag) $base.fra22.but27
-    set widget(DeleteTag) $base.fra22.but28
-    interp alias {} DeleteTag {} vTcl:WidgetProc $base.fra22.but28
+    vTcl:DefineAlias $base BindingsEditor vTcl:Toplevel:WidgetProc "" 1
+    vTcl:DefineAlias $base.cpd21.01.cpd25.01 ListboxBindings vTcl:WidgetProc BindingsEditor 1
+    vTcl:DefineAlias $base.fra22.but24 RemoveBinding vTcl:WidgetProc BindingsEditor 1
+    vTcl:DefineAlias $base.fra22.men20 AddBinding vTcl:WidgetProc BindingsEditor 1
+    vTcl:DefineAlias $base.cpd21.02.cpd21.03 TextBindings vTcl:WidgetProc BindingsEditor 1
+    vTcl:DefineAlias $base.fra22.but25 MoveTagUp vTcl:WidgetProc BindingsEditor 1
+    vTcl:DefineAlias $base.fra22.but26 MoveTagDown vTcl:WidgetProc BindingsEditor 1
+    vTcl:DefineAlias $base.fra22.but27 AddTag vTcl:WidgetProc BindingsEditor 1
+    vTcl:DefineAlias $base.fra22.but28 DeleteTag vTcl:WidgetProc BindingsEditor 1
 
     ###################
     # CREATING WIDGETS
@@ -435,14 +427,10 @@ proc vTclWindow.vTcl.newbind {base {container 0}} {
     }
 
     global widget
-    set {widget(BindingsInsert)} "$base"
-    interp alias {} BindingsInsert {} vTcl:Toplevel:WidgetProc $base
-    set {widget(BindingsModifiers)} "$base.fra23.cpd34.01"
-    interp alias {} BindingsModifiers {} vTcl:WidgetProc $base.fra23.cpd34.01
-    set {widget(BindingsEvents)} "$base.fra23.cpd35.01"
-    interp alias {} BindingsEvents {} vTcl:WidgetProc $base.fra23.cpd35.01
-    set {widget(BindingsEventEntry)} "$base.fra36.ent38"
-    interp alias {} BindingsEventEntry {} vTcl:WidgetProc $base.fra36.ent38
+    vTcl:DefineAlias $base BindingsInsert vTcl:Toplevel:WidgetProc "" 1
+    vTcl:DefineAlias $base.fra23.cpd34.01 BindingsModifiers vTcl:WidgetProc BindingsInsert 1
+    vTcl:DefineAlias $base.fra23.cpd35.01 BindingsEvents vTcl:WidgetProc BindingsInsert 1
+    vTcl:DefineAlias $base.fra36.ent38 BindingsEventEntry vTcl:WidgetProc BindingsInsert 1
 
     ###################
     # CREATING WIDGETS
@@ -653,14 +641,10 @@ proc vTclWindow.vTcl.newtag {base} {
     # am destroying it when the user clicks "Cancel"
 
     global widget
-    set {widget(NewBindingTagOK)} "$base.fra20.but21"
-    interp alias {} NewBindingTagOK {} vTcl:WidgetProc $base.fra20.but21
-    set {widget(NewBindingTagCancel)} "$base.fra20.but23"
-    interp alias {} NewBindingTagCancel {} vTcl:WidgetProc $base.fra20.but23
-    set {widget(ListboxTags)} "$base.fra24.cpd26.01"
-    interp alias {} ListboxTags {} vTcl:WidgetProc $base.fra24.cpd26.01
-    set {widget(NewBindingTagEntry)} "$base.fra24.ent28"
-    interp alias {} NewBindingTagEntry {} vTcl:WidgetProc $base.fra24.ent28
+    vTcl:DefineAlias $base.fra20.but21 NewBindingTagOK vTcl:WidgetProc $base 1
+    vTcl:DefineAlias $base.fra20.but23 NewBindingTagCancel vTcl:WidgetProc $base 1
+    vTcl:DefineAlias $base.fra24.cpd26.01 ListboxTags vTcl:WidgetProc $base 1
+    vTcl:DefineAlias $base.fra24.ent28 NewBindingTagEntry vTcl:WidgetProc $base 1
 
     global NewBindingTagName
     set NewBindingTagName ""
@@ -964,7 +948,7 @@ namespace eval ::widgets_bindings {
         set event [::widgets_bindings::set_modifier_in_event  $event $modifier]
 
         bind $tag $event [TextBindings get 0.0 end]
-        
+
         ::widgets_bindings::fill_bindings $target
         ::widgets_bindings::select_show_binding $tag $event
     }

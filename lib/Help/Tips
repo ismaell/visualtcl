@@ -303,6 +303,29 @@ toplevel is created, but before all its widgets are.
     exists, but before any of its subwidgets has been defined.}
 
 {
+Visual Tcl links the WM_DELETE_WINDOW event to the
+<<DeleteWindow>> virtual event, which you can add to a toplevel
+in the bindings editor. A typical command in this event
+would be 'exit'.
+
+Note that while you are editing a project, the <<DeleteWindow>>
+event will not be triggered. Instead, when you click on the close
+button for the window, Visual Tcl will hide it from the display.}
+
+{
+Visual Tcl triggers the <<Ready>> event when all the widgets in
+a toplevel have been created and made visible on the screen.
+
+You can use this event to populate widgets in a toplevel. For
+example, after all widgets have been created, you can insert items
+in a listbox, initialize text in a text widget, or enable/disable
+buttons.
+
+The <<Ready>> event typically happens at the time you open a
+project in Visual Tcl, after a toplevel is ready. This event also
+happens when you execute your project from outside Visual Tcl.}
+
+{
 Visual Tcl also offers you two other virtual events that
 are triggered when the window is shown/hidden. They are:
 
@@ -338,7 +361,7 @@ a user defined procedure instead.
 {
 The (pre) and (post) procedures are obsolete in Visual Tcl 1.5.
 
-You should use the <<Create>> and <<Show>> events instead.}
+You should use the <<Create>> and <<Ready>> events instead.}
 
 {
 Visual Tcl 1.5 comes with a full-blown sample application
