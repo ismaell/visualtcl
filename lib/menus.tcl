@@ -581,7 +581,7 @@ namespace eval ::menu_edit {
         }
 
         ## test for revamped menu editor!
-        fillProperties TopProperties $m $i
+        ## fillProperties TopProperties $m $i
         ## end test
 
         set ::${top}::current_menu  $m
