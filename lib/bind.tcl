@@ -172,7 +172,8 @@ proc vTclWindow.vTcl.bind {args} {
         -width 30
     listbox $base.cpd21.01.cpd25.01 \
         -xscrollcommand "$base.cpd21.01.cpd25.02 set" \
-        -yscrollcommand "$base.cpd21.01.cpd25.03 set"
+        -yscrollcommand "$base.cpd21.01.cpd25.03 set" \
+        -background white
     bindtags $base.cpd21.01.cpd25.01 "Listbox $base.cpd21.01.cpd25.01 $base all"
     bind $base.cpd21.01.cpd25.01 <Button-3> {
         ListboxBindings selection clear 0 end

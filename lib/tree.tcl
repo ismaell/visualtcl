@@ -26,7 +26,7 @@ set vTcl(tree,last_yview) 0.0
 
 proc vTcl:show_selection_in_tree {widget_path} {
 
-    vTcl:show_selection .vTcl.tree.fra4.can8.[vTcl:rename $widget_path] \
+    vTcl:show_selection .vTcl.tree.cpd21.03.[vTcl:rename $widget_path] \
     	$widget_path
 }
 
@@ -39,13 +39,13 @@ proc vTcl:show_selection {button_path target} {
     if {[vTcl:streq $target "."]} { return }
 
     vTcl:log "widget tree select: $button_path"
-    set b .vTcl.tree.fra4.can8
+    set b .vTcl.tree.cpd21.03
 
     if {$vTcl(tree,last_selected)!=""} {
 	    $b itemconfigure "TEXT$vTcl(tree,last_selected)" -fill #000000
     }
 
-    $b itemconfigure "TEXT$button_path" -fill #ffffff
+    $b itemconfigure "TEXT$button_path" -fill #0000ff
 
     set vTcl(tree,last_selected) $button_path
 }
@@ -59,7 +59,7 @@ proc vTcl:show_wtree {} {
 proc vTcl:clear_wtree {} {
     # Do not refresh the widget tree if it does not exist.
     if {![winfo exists .vTcl.tree]} { return }
-    set b .vTcl.tree.fra4.can8
+    set b .vTcl.tree.cpd21.03
     foreach i [winfo children $b] {
         destroy $i
     }
@@ -74,7 +74,7 @@ proc vTcl:init_wtree {{wants_destroy_handles 1}} {
     if {![winfo exists .vTcl.tree]} return
     if {![info exists vTcl(tree,width)]} { set vTcl(tree,width) 0 }
 
-    set b .vTcl.tree.fra4.can8
+    set b .vTcl.tree.cpd21.03
 
     # save scrolling position first
     set vTcl(tree,last_yview) [lindex [$b yview] 0]
@@ -177,82 +177,63 @@ proc vTcl:init_wtree {{wants_destroy_handles 1}} {
 proc vTclWindow.vTcl.tree {args} {
     global vTcl
     set base .vTcl.tree
-    if {[winfo exists .vTcl.tree]} {
-        wm deiconify .vTcl.tree; return
+    if {[winfo exists $base]} {
+        wm deiconify $base; return
     }
-    toplevel .vTcl.tree -class vTcl
-    wm transient .vTcl.tree .vTcl
-    wm focusmodel .vTcl.tree passive
-    wm geometry .vTcl.tree 296x243+75+142
-    wm maxsize .vTcl.tree 1137 870
-    wm minsize .vTcl.tree 1 1
-    wm overrideredirect .vTcl.tree 0
-    wm resizable .vTcl.tree 1 1
-    wm deiconify .vTcl.tree
-    wm title .vTcl.tree "Widget Tree"
+    toplevel $base -class vTcl
+    wm transient $base .vTcl
+    wm focusmodel $base passive
+    wm geometry $base 296x243+75+142
+    wm maxsize $base 1137 870
+    wm minsize $base 1 1
+    wm overrideredirect $base 0
+    wm resizable $base 1 1
+    wm deiconify $base
+    wm title $base "Widget Tree"
 
-    frame .vTcl.tree.fra11 \
-    	-relief flat
+    frame $base.frameTop
+    button $base.frameTop.buttonRefresh \
+        -image [vTcl:image:get_image "refresh.gif"] \
+        -command vTcl:init_wtree
+    button $base.frameTop.buttonClose \
+        -image [vTcl:image:get_image "ok.gif"] \
+        -command "wm withdraw .vTcl.tree"
+    frame $base.cpd21 -relief raised
+    scrollbar $base.cpd21.01 \
+        -command "$base.cpd21.03 xview" -orient horizontal
+    scrollbar $base.cpd21.02 \
+        -command "$base.cpd21.03 yview"
+    canvas $base.cpd21.03 \
+        -background #ffffff -borderwidth 2 -closeenough 1.0 -relief sunken \
+        -xscrollcommand "$base.cpd21.01 set" \
+        -yscrollcommand "$base.cpd21.02 set"
 
-    pack .vTcl.tree.fra11 \
-    	-in .vTcl.tree -anchor center -expand 0 -fill both -ipadx 0 -ipady 0 \
-	-padx 2 -pady 2 -side top
-    frame .vTcl.tree.fra4 \
-        -height 30 -width 30
-    pack .vTcl.tree.fra4 \
-        -in .vTcl.tree -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 \
-        -padx 0 -pady 0 -side top
-    canvas .vTcl.tree.fra4.can8 \
-        -borderwidth 2 -height 0 -highlightthickness 0 -relief ridge \
-        -scrollregion {0 0 0 0} -width 0 \
-        -xscrollcommand {.vTcl.tree.fra6.scr7 set} \
-        -yscrollcommand {.vTcl.tree.fra4.scr9 set}
-    pack .vTcl.tree.fra4.can8 \
-        -in .vTcl.tree.fra4 -anchor center -expand 1 -fill both -ipadx 0 \
-        -ipady 0 -padx 2 -pady 2 -side left
-    scrollbar .vTcl.tree.fra4.scr9 \
-        -command {.vTcl.tree.fra4.can8 yview} \
-        -highlightthickness 0
-    pack .vTcl.tree.fra4.scr9 \
-        -in .vTcl.tree.fra4 -anchor center -expand 0 -fill y -ipadx 0 \
-        -ipady 0 -padx 0 -pady 2 -side right
-    frame .vTcl.tree.fra6 \
-        -height 30 -width 30
-    pack .vTcl.tree.fra6 \
-        -in .vTcl.tree -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 \
-        -padx 2 -pady 0 -side top
-    scrollbar .vTcl.tree.fra6.scr7 \
-        -command {.vTcl.tree.fra4.can8 xview} \
-        -highlightthickness 0 -orient horizontal
-    pack .vTcl.tree.fra6.scr7 \
-        -in .vTcl.tree.fra6 -anchor center -expand 1 -fill both -ipadx 0 \
-        -ipady 0 -padx 2 -pady 0 -side left
-    frame .vTcl.tree.fra6.fra10 \
-        -borderwidth 1 -height 12 -relief flat
-    pack .vTcl.tree.fra6.fra10 \
-        -in .vTcl.tree.fra6 -anchor center -expand 0 -fill none -ipadx 0 \
-        -ipady 0 -padx 0 -pady 0 -side right
+    ###################
+    # SETTING GEOMETRY
+    ###################
+    pack $base.frameTop \
+        -in $base -anchor center -expand 0 -fill x -side top
+    pack $base.frameTop.buttonRefresh \
+        -in $base.frameTop -anchor center -expand 0 -fill none -side left
+    pack $base.frameTop.buttonClose \
+        -in $base.frameTop -anchor center -expand 0 -fill none -side right
+    pack $base.cpd21 \
+        -in $base -anchor center -expand 1 -fill both -side top
+    grid columnconf $base.cpd21 0 -weight 1
+    grid rowconf $base.cpd21 0 -weight 1
+    grid $base.cpd21.01 \
+        -in $base.cpd21 -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew
+    grid $base.cpd21.02 \
+        -in $base.cpd21 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns
+    grid $base.cpd21.03 \
+        -in $base.cpd21 -column 0 -row 0 -columnspan 1 -rowspan 1 \
+        -sticky nesw
 
-    button .vTcl.tree.fra11.but3 \
-        -command vTcl:init_wtree \
-        -highlightthickness 0 -padx 5 -pady 2 \
-	-image [vTcl:image:get_image refresh.gif]
-    pack .vTcl.tree.fra11.but3 \
-        -in .vTcl.tree.fra11 -anchor center -expand 0 -fill none -ipadx 0 \
-        -ipady 0 -padx 2 -pady 2 -side left
-    vTcl:set_balloon .vTcl.tree.fra11.but3 "Refresh the widget tree"
-
-    button .vTcl.tree.fra11.but4 \
-    	-command "wm withdraw .vTcl.tree" \
-	-highlightthickness 0 \
-	-image [vTcl:image:get_image ok.gif]
-    pack .vTcl.tree.fra11.but4 \
-    	-in .vTcl.tree.fra11 -anchor center -expand 0 -fill none -ipadx 0 \
-	-ipady 0 -padx 2 -pady 2 -side right
-    vTcl:set_balloon .vTcl.tree.fra11.but4 "Close"
+    vTcl:set_balloon $base.frameTop.buttonRefresh "Refresh the widget tree"
+    vTcl:set_balloon $base.frameTop.buttonClose   "Close"
 
     catch {wm geometry .vTcl.tree $vTcl(geometry,.vTcl.tree)}
     vTcl:init_wtree
-    vTcl:setup_vTcl:bind .vTcl.tree
-    vTcl:BindHelp .vTcl.tree WidgetTree
+    vTcl:setup_vTcl:bind $base
+    vTcl:BindHelp $base WidgetTree
 }
