@@ -397,7 +397,11 @@ proc vTcl:font:get_key {object} {
 
 proc vTcl:font:get_font {key} {
     global vTcl
-    return $vTcl(fonts,$key,object)
+    if {[info exists vTcl(fonts,$key,object)]} then {
+        return $vTcl(fonts,$key,object)
+    } else {
+        return ""
+    }
 }
 
 proc {vTcl:font:add_font} {font_descr font_type {newkey {}}} {
@@ -413,6 +417,12 @@ proc {vTcl:font:add_font} {font_descr font_type {newkey {}}} {
 
      if {$newkey == ""} {
           set newkey vTcl:font$vTcl(fonts,counter)
+
+          # let's find an unused font key
+          while {[vTcl:font:get_font $newkey] != ""} {
+             incr vTcl(fonts,counter)
+             set newkey vTcl:font$vTcl(fonts,counter)
+          }
      }
 
      set vTcl(fonts,$newfont,type)                      $font_type
