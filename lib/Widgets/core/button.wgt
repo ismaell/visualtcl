@@ -3,7 +3,7 @@ Lib		core
 
 Icon		icon_button.gif
 DefaultOptions	-text button
-DoubleClickCmd	vTcl:set_command
+DoubleClickCmd	vTcl:Button:DblClk
 TreeLabel	@vTcl:core:get_widget_tree_label
 
 Function	"Set Text"	vTcl:Button:SetText
@@ -16,5 +16,9 @@ proc vTcl:Button:SetText {} {
 
 proc vTcl:Button:SetCommand {} {
     global vTcl
-    vTcl:set_command $vTcl(w,widget)
+    vTcl:set_command $vTcl(w,widget) -command vTcl(w,opt,-command)
+}
+
+proc vTcl:Button:DblClk {target} {
+    vTcl:set_command $target -command vTcl(w,opt,-command)
 }

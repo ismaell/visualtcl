@@ -55,7 +55,7 @@ proc vTcl:set_command {target {option -command} {variable ""}} {
 
     $target configure $option [string trim $r]
     if {[lempty $variable]} {
-    	set variable ::widgets::${target}::save($option)
+        set variable ::widgets::${target}::save($option)
     }
     global $variable
     set $variable [string trim $r]
@@ -74,7 +74,7 @@ proc vTcl:get_command {title initial base} {
     wm title $base $title
     set vTcl(comm,$base,chg) 0
     frame $base.f \
-        -borderwidth 2 -height 30 -relief groove -width 30 
+        -borderwidth 2 -height 30 -relief groove -width 30
     pack $base.f \
         -in $base -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 \
         -padx 3 -pady 3 -side bottom
