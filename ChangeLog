@@ -3,6 +3,10 @@ ChangeLog for Visual Tcl:
 1.6.0a3 ->
     o Converted compounds to new system with namespaces.
     o Added compound container widget, to insert compounds as black boxes.
+    o When a megawidget is deleted, any open editor for pages of this widget
+      will be closed.
+    o When a megawidget is deleted, all of its children's aliases are now
+      deleted.
 
 1.6.0a2 -> 1.6.0a3
     o Support for Iwidgets spintime.
@@ -961,5 +965,6 @@ ChangeLog for Visual Tcl:
     o And much, much more :)
 
 1.01 released (December 5, 1996)
+
 
 
