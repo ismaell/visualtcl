@@ -57,6 +57,7 @@ proc vTcl:widget:lib:lib_core {args} {
     append vTcl(head,core,importheader) {
     switch $tcl_platform(platform) {
 	windows {
+            option add *Button.padY 0
 	}
 	default {
 	    option add *Scrollbar.width 10
