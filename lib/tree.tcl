@@ -297,7 +297,7 @@ proc vTclWindow.vTcl.tree {args} {
         -command "$base.cpd21.03 xview" -orient horizontal
     scrollbar $base.cpd21.02 \
         -command "$base.cpd21.03 yview"
-    canvas $base.cpd21.03 \
+    canvas $base.cpd21.03 -highlightthickness 0 \
         -background #ffffff -borderwidth 0 -closeenough 1.0 -relief flat \
         -xscrollcommand "$base.cpd21.01 set" \
         -yscrollcommand "$base.cpd21.02 set"
