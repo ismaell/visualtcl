@@ -1,7 +1,7 @@
 Class		LabelEntry
 Lib		bwidget
 
-Icon		unknown.gif
+Icon		icon_labelentry.gif
 TreeLabel	BWidget LabelEntry
 CreateCmd	LabelEntry
 MegaWidget	yes
