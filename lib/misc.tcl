@@ -394,13 +394,17 @@ proc vTcl:rename {name} {
 
 proc vTcl:cmp_user_menu {} {
     global vTcl
-    #set m $vTcl(gui,main).menu.c.m.m.u
     set m $vTcl(menu,user,m)
     catch {destroy $m}
     menu $m -tearoff 0
     foreach i [lsort $vTcl(cmpd,list)] {
-        $m add comm -label $i -comm "
+        $m add command -label $i -command "
             vTcl:put_compound [list $i] \$vTcl(cmpd:$i)
+        "
+    }
+    foreach i [lsort [vTcl::compounds::enumerateCompounds user]] {
+        $m add command -label $i -command "
+            vTcl::compounds::put_compound user::$i
         "
     }
 }
@@ -1457,3 +1461,4 @@ namespace eval ::vTcl::ui::attributes {
         }
     }
 }
+

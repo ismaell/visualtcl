@@ -570,8 +570,7 @@ proc vTcl:name_compound {t} {
     if {$t == "" || ![winfo exists $t]} {return}
     set name [vTcl:get_string "Name Compound" $t]
     if {$name == ""} {return}
-    if {[lsearch $vTcl(cmpd,list) $name] < 0} {lappend vTcl(cmpd,list) $name}
-    set vTcl(cmpd:$name) [vTcl:create_compound $t $name]
+    eval [vTcl::compounds::createCompound $t user::[list $name]]
     vTcl:cmp_user_menu
 }
 
@@ -580,17 +579,22 @@ proc vTcl:name_compound {t} {
 
 namespace eval ::vTcl::compounds {
 
-    proc createCompound {target compoundName {procs {}}} {
+    namespace eval system {}
+    namespace eval user   {}
+
+    proc createCompound {target compoundName \
+                        {procs {}} {initCmd {}} {mainCmd {}}} {
 
         ## we don't want handles to be enumerated with the widget
         vTcl:destroy_handles
 
         set output ""
-        append output "namespace eval ::vTcl::compounds::$compoundName \{\n"
+        append output "namespace eval [list ::vTcl::compounds::$compoundName] \{\n"
 
         ## basic compound information
         set class [vTcl:get_class $target]
-        append output "\nset class $class\n\n"
+        append output "\nset class $class\n"
+        append output "\nset source $target\n\n"
 
         ## append of version of vTcl:DefineAlias that is local to this namespace
         append output "\n"
@@ -611,6 +615,9 @@ namespace eval ::vTcl::compounds {
 
         ## code to actually create the compound
         append output "proc compoundCmd \{target\} \{\n"
+        if {$initCmd != ""} {
+            append output "    $initCmd \$target\n\n"
+        }
         if {$class == "Toplevel"} {
             append output "    vTclWindow$target \$target\n"
         } else {
@@ -618,6 +625,9 @@ namespace eval ::vTcl::compounds {
             append output "    set parent \[join \[lrange \$items 0 end-1\] .\]\n"
             append output "    set top \[winfo toplevel \$parent\]\n"
             append output "[$::classes($class,dumpCmd) $target \$target]\n"
+        }
+        if {$mainCmd != ""} {
+            append output "    $mainCmd \$target\n"
         }
         append output "\}\n\n"
 
@@ -696,20 +706,36 @@ namespace eval ::vTcl::compounds {
         return $output
     }
 
-    proc mergeCompoundCode {compoundName} {
-        if {![lempty [vTcl:at ${compoundName}::procs]]} {
-            ${compoundName}::procsCmd
-            set ::vTcl(procs) [concat $::vTcl(procs) [vTcl:at ${compoundName}::procs]]
+    proc mergeCompoundCode {type compoundName} {
+        set spc ${type}::[list $compoundName]
+        if {![lempty [vTcl:at ${spc}::procs]]} {
+            ${spc}::procsCmd
+            set ::vTcl(procs) [concat $::vTcl(procs) [vTcl:at ${spc}::procs]]
             set ::vTcl(procs) [vTcl:lrmdups $::vTcl(procs)]
             vTcl:update_proc_list
         }
 
-        if {![lempty [vTcl:at ${compoundName}::bindtags]]} {
-            ${compoundName}::bindtagsCmd
-            foreach tag [vTcl:at ${compoundName}::bindtags] {
+        if {![lempty [vTcl:at ${spc}::bindtags]]} {
+            ${spc}::bindtagsCmd
+            foreach tag [vTcl:at ${spc}::bindtags] {
                 ::widgets_bindings::add_tag_to_tagslist $tag
             }
         }
+    }
+
+    ## type should be "system" (predefined compounds) or "user"
+    proc enumerateCompounds {type} {
+        if {$type != "system" && $type != "user"} {
+            return ""
+        }
+
+        set list [namespace children ${type}]
+        regsub -all :: $list : list
+        set result ""
+        foreach item $list {
+            append result [lindex [split $item :] end]
+        }
+        return $result
     }
 }
 
