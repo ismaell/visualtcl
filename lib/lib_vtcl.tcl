@@ -22,21 +22,18 @@
 # initializes this library
 #
 proc vTcl:lib_vtcl:init {} {
+    global vTcl
+
+    lappend vTcl(libNames) "Visual Tcl Widget Library"
+    return 1
 }
 
 proc vTcl:widget:lib:lib_vtcl {args} {
-    global vTcl widgets classes
-
-    lappend vTcl(libNames) "Visual Tcl Widget Library"
-
     set order {
 	Progressbar1
-    Combobox
-    Mclistbox
+	Combobox
+	Mclistbox
     }
 
     vTcl:lib:add_widgets_to_toolbar $order
 }
-
-
-

@@ -22,15 +22,13 @@
 # initializes this library
 #
 proc vTcl:lib_core:init {} {
-    # since vTcl must be started with Wish, what's the point?
-    # catch {package require Tk}
+    global vTcl
+
+    lappend vTcl(libNames) "Tcl/Tk Core Widget Library"
+    return 1
 }
 
 proc vTcl:widget:lib:lib_core {args} {
-    global vTcl widgets classes
-
-    lappend vTcl(libNames) "Tcl/Tk Core Widget Library"
-
     set order {
     	Toplevel
 	Message

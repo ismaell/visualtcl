@@ -33,75 +33,65 @@
 # Initializes this library
 #
 
-catch {
-    package require Itcl 3.0
-    namespace import itcl::*
-    package require Itk 3.0
-    package require Iwidgets 3.0
-    namespace import iwidgets::entryfield
-    namespace import iwidgets::spinint
-    namespace import iwidgets::combobox
-    namespace import iwidgets::scrolledlistbox
-    namespace import iwidgets::calendar
-    namespace import iwidgets::dateentry
-    namespace import iwidgets::scrolledhtml
-    namespace import iwidgets::toolbar
-    namespace import iwidgets::feedback
-    namespace import iwidgets::optionmenu
-    namespace import iwidgets::hierarchy
-    namespace import iwidgets::buttonbox
-    namespace import iwidgets::checkbox
-    namespace import iwidgets::radiobox
-    namespace import iwidgets::tabnotebook
-    namespace import iwidgets::panedwindow
-    namespace import iwidgets::scrolledtext
-} errorText
-vTcl:log $errorText
-
 proc vTcl:lib_itcl:init {} {
+    global vTcl
+
+    if {[catch {
+	package require Itcl 3.0
+	namespace import itcl::*
+	package require Itk 3.0
+	package require Iwidgets 3.0
+	namespace import iwidgets::entryfield
+	namespace import iwidgets::spinint
+	namespace import iwidgets::combobox
+	namespace import iwidgets::scrolledlistbox
+	namespace import iwidgets::calendar
+	namespace import iwidgets::dateentry
+	namespace import iwidgets::scrolledhtml
+	namespace import iwidgets::toolbar
+	namespace import iwidgets::feedback
+	namespace import iwidgets::optionmenu
+	namespace import iwidgets::hierarchy
+	namespace import iwidgets::buttonbox
+	namespace import iwidgets::checkbox
+	namespace import iwidgets::radiobox
+	namespace import iwidgets::tabnotebook
+	namespace import iwidgets::panedwindow
+	namespace import iwidgets::scrolledtext
+    } errorText]} {
+	vTcl:log $errorText
+        lappend vTcl(libNames) \
+	    {(not detected) Incr Tcl/Tk MegaWidgets Support Library}
+	return 0
+    }
+    lappend vTcl(libNames) {Incr Tcl/Tk MegaWidgets Support Library}
+    return 1
 }
 
 proc vTcl:widget:lib:lib_itcl {args} {
-
     global vTcl
 
-    catch {package require foobar}
-    set names [string tolower [package names]]
-
-    if {[lsearch -exact $names iwidgets] == -1} {
-
-        lappend vTcl(libNames) {(not detected) [Incr Tcl/Tk] MegaWidgets Support Library}
-        return
-    }
-
-    # setup required variables
+    # Setup required variables
     vTcl:lib_itcl:setup
 
-    # announce ourselves!
-    lappend vTcl(libNames) {[Incr Tcl/Tk] MegaWidgets Support Library}
-
     append vTcl(head,importheader) {
-
-        # provoke name search
+        # Provoke name search
         catch {package require foobar}
         set names [package names]
 
-        # check if Itcl is available
-        if { [lsearch -exact $names Itcl] != -1} {
-
+        # Check if Itcl is available
+        if {[lsearch -exact $names Itcl] != -1} {
             package require Itcl 3.0
             namespace import itcl::*
         }
 
-        # check if Itk is available
-        if { [lsearch -exact $names Itk] != -1} {
-
+        # Check if Itk is available
+        if {[lsearch -exact $names Itk] != -1} {
             package require Itk 3.0
         }
 
-        # check if Iwidgets is available
-        if { [lsearch -exact $names Iwidgets] != -1} {
-
+        # Check if Iwidgets is available
+        if {[lsearch -exact $names Iwidgets] != -1} {
             package require Iwidgets 3.0
             namespace import iwidgets::entryfield
             namespace import iwidgets::spinint

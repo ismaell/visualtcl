@@ -23,14 +23,18 @@
 #
 
 proc vTcl:lib_bwidget:init {} {
+    global vTcl
+
+    if {[catch {package require BWidget}]} {
+	lappend vTcl(libNames) "(not detected) BWidget Widget Support Library"
+	return 0
+    }
+    lappend vTcl(libNames) "BWidget Widget Library"
+    return 1
 }
 
 proc vTcl:widget:lib:lib_bwidget {args} {
-    global vTcl widgets classes
-
-    if {[catch {package require BWidget}]} { return }
-
-    lappend vTcl(libNames) "BWidget Widget Library"
+    global vTcl
 
     set order {
 	notebook

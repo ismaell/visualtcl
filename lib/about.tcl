@@ -172,8 +172,3 @@ proc vTclWindow.vTcl.credits {base {container 0}} {
     vTcl:center $base 500 420
     wm deiconify $base
 }
-
-
-
-
-

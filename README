@@ -42,7 +42,8 @@
        script will write out a startup script called vtcl that you can then
        use to start Visual Tcl.
 
-    o  If a WISH is not found, edit the "vtcl" shell script
+    o  If a WISH is not found, or you want to use a different WISH, edit the
+       "vtcl" shell script.
        Change PATH_TO_WISH to the location of the wish binary
        Change VTCL_HOME to the directory you installed vTcl in.
 

@@ -110,8 +110,8 @@ proc vTcl:splash {} {
 
 proc vTcl:load_lib {lib} {
     global vTcl
+
     vTcl:splash_status "Loading library [file tail $lib]"
-    # vTcl:puts "Loading library: $lib"
 
     set file [file join $vTcl(LIB_DIR) $lib]
     if {[file exists $file] == 0} {
@@ -151,8 +151,7 @@ proc vTcl:load_widgets {} {
         set lib [lindex [split [file root $i] _] end]
         if {[vTcl:load_lib $i]} {
             set libname [lindex [split [lindex [file split $i] end] .] 0]
-            lappend vTcl(w,libs) $libname
-            vTcl:$libname:init
+            if {[vTcl:$libname:init]} { lappend vTcl(w,libs) $libname }
             vTcl:LoadWidgets [file join $vTcl(VTCL_HOME) lib Widgets $lib]
         }
     }
@@ -164,8 +163,6 @@ proc vTcl:load_libs {} {
     foreach i $vTcl(LIBS) {
         vTcl:load_lib $i
     }
-
-    # vTcl:LoadWidgets [file join $vTcl(VTCL_HOME) lib Widgets]
 }
 
 proc vTcl:setup {} {

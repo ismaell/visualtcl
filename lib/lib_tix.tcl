@@ -25,18 +25,18 @@
 # Initializes this library
 #
 proc vTcl:lib_tix:init {} {
-    catch {package require Tix} erg
-    # vTcl:puts "init lib_tix -> $erg"
+    global vTcl
+
+    if {[catch {package require Tix} erg]} {
+        lappend vTcl(libNames) {(not detected) Tix Widget Support Library}
+	return 0
+    }
+    lappend vTcl(libNames) {Tix Widget Support Library}
+    return 1
 }
 
 proc vTcl:widget:lib:lib_tix {args} {
     global vTcl
-
-    ## See if we have Tix. If not, return
-    if {[info command tixNoteBookFrame] == ""} {
-        lappend vTcl(libNames) {(not detected) Tix Widget Support Library}
-        return
-    }
 
     # Setup required variables
     vTcl:lib_tix:setup
@@ -59,17 +59,13 @@ proc vTcl:widget:lib:lib_tix {args} {
 
     vTcl:lib_tix:unscrew_option_db
 
-    lappend vTcl(libNames) {Tix Widget Support Library}
-
     append vTcl(head,importheader) {
-
-        # provoke name search
+        # Provoke name search
         catch {package require foobar}
         set names [package names]
 
-        # check if tix is available
+        # Check if Tix is available
         if { [lsearch -exact $names Tix] != -1} {
-
             package require Tix
         }
     }

@@ -311,8 +311,7 @@ proc vTcl:prop:update_attr {} {
 
 	# special stuff to edit menu items (cascaded items)
 	if {$vTcl(w,class) == "Menu"} {
-
-		vTcl:prop:new_attr $top -menuspecial dummy "" opt ""
+	    vTcl:prop:new_attr $top -menuspecial dummy "" opt ""
 	}
     }
 

@@ -207,7 +207,7 @@ proc vTclWindow.vTcl.infolibs {{base ""} {container 0}} {
 
     $widget(libraries_listbox) delete 0 end
 
-    foreach name $vTcl(libNames) {
+    foreach name [lsort $vTcl(libNames)] {
         $widget(libraries_listbox) insert end $name
     }
 

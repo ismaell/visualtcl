@@ -19,7 +19,7 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 proc vTcl:lib_user:init {} {
-
+    return 1
 }
 
 proc vTcl:widget:lib:lib_user {args} {

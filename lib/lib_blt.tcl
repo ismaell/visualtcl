@@ -23,44 +23,40 @@
 # Kenneth H. Cox <kcox@senteinc.com>
 
 proc vTcl:lib_blt:init {} {
+    global vTcl
+
+    if {[catch {
+	package require BLT
+        namespace import blt::vector
+        namespace import blt::graph
+        namespace import blt::hierbox
+        namespace import blt::stripchart
+    } error]} {
+        lappend vTcl(libNames) {(not detected) BLT Widgets Support Library}
+	return 0
+    }
+    lappend vTcl(libNames) {BLT Widgets Support Library}
+    return 1
 }
 
 proc vTcl:widget:lib:lib_blt {args} {
     global vTcl
 
-    catch {package require foobar}
-    set names [string tolower [package names]]
-
-    if {[lsearch -exact $names blt] == -1} {
-
-        lappend vTcl(libNames) {(not detected) BLT Widgets Support Library}
-        return
-
-    } else {
-
-        package require BLT
-        namespace import blt::vector
-        namespace import blt::graph
-        namespace import blt::hierbox
-        namespace import blt::stripchart
+    set order {
+	Graph
+	Hierbox
+	Stripchart
     }
-
-    # announce ourselves!
-    lappend vTcl(libNames) {BLT Widgets Support Library}
-
-    set order { Graph Hierbox Stripchart }
 
     vTcl:lib:add_widgets_to_toolbar $order
 
     append vTcl(head,importheader) {
-
-        # provoke name search
+        # Provoke name search
         catch {package require foobar}
         set names [package names]
 
-        # check if BLT is available
-        if { [lsearch -exact $names BLT] != -1} {
-
+        # Check if BLT is available
+        if {[lsearch -exact $names BLT] != -1} {
             package require BLT
             namespace import blt::vector
             namespace import blt::graph
