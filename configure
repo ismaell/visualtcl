@@ -46,16 +46,22 @@ return 0
 
 findwish
 
+echo
 if [ -z "$WISH" ]; then
-  echo "Could not find wish"
-  exit 1
+  echo "Could not find a usable WISH shell"
+else
+  echo "Using $WISH"
 fi
+echo
+
+cd `dirname $0`
+VTCL_HOME=`pwd`
 
 cat > vtcl << EOF
 #!/bin/sh
 
 PATH_TO_WISH=$WISH
-VTCL_HOME=/opt/local/src/vtcl
+VTCL_HOME=$VTCL_HOME
 
 export PATH_TO_WISH
 export VTCL_HOME

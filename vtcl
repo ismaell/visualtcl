@@ -1,9 +1,0 @@
-#!/bin/sh
-
-PATH_TO_WISH=/usr/local/apache/bin/wish8.3
-VTCL_HOME=/opt/local/src/vtcl
-
-export PATH_TO_WISH
-export VTCL_HOME
-
-exec ${PATH_TO_WISH} ${VTCL_HOME}/vt.tcl $*
