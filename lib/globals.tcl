@@ -114,7 +114,11 @@ set vTcl(pr,projfile)    0
 set vTcl(pr,saveasexecutable) 1
 set vTcl(pr,dontshowtips) 0
 set vTcl(pr,dontshownews) 0
-set vTcl(pr,bgcolor) "#d9d9d9"
+set vTcl(pr,bgcolor) ""
+## this is for Linux/UNIX systems only, on Windows we use default colors
+if {$tcl_platform(platform) != "windows"} {
+    set vTcl(pr,bgcolor) "#d9d9d9"
+}
 set vTcl(pr,entrybgcolor) #ffffff
 set vTcl(pr,entryactivecolor) #ffffff
 set vTcl(pr,listboxbgcolor) #ffffff
@@ -369,8 +373,4 @@ proc vTcl:syntax:iscommand {command} {
 
 # special case for -in option
 set vTcl(option,noencase,-in) 1
-
-
-
-
 
