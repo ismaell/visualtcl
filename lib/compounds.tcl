@@ -780,6 +780,7 @@ set procs {
     ::imagelistbox::itemcgetCmd
     ::imagelistbox::button1
     ::imagelistbox::button1-release
+    ::imagelistbox::yviewCmd
 }
 
 
@@ -1070,12 +1071,23 @@ $l selection set $node
 }
 }
 
+#############################################################################
+## Procedure:  ::imagelistbox::button1-release
+
 namespace eval ::imagelistbox {
 proc button1-release {w node} {
 vTcl:FireEvent [winfo parent $w] <<ListboxSelect>>
 }
 }
 
+#############################################################################
+## Procedure:  ::imagelistbox::yviewCmd
+
+namespace eval ::imagelistbox {
+proc yviewCmd {w args} {
+eval [getListbox $w] yview $args
+}
+}
 }
 
 }

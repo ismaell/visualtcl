@@ -171,74 +171,20 @@ proc {vTcl:image:init_img_manager} {} {
 	}
     }
 
-    set base $vTcl(images,manager_dlg,win).cpd29.03
+    set base $vTcl(images,manager_dlg,win)
+    set theList $base.cpd29
 
-    $base configure -state normal -tabs {0.2i 3i 3.75i}
-    $base delete 0.0 end
-
+    set imageTextList {}
     foreach image $vTcl(images,files) {
-	set reference [vTcl:rename $image]
-	set object $vTcl(images,$reference,image)
+        set reference [vTcl:rename $image]
+        set object $vTcl(images,$reference,image)
 
-	catch {
-	    label $base.$reference -image $object
-	    vTcl:set_balloon $base.$reference "$image"
-	}
-
-	catch {
-	    set realname $image
-	    if {$tcl_platform(platform) == "windows"} {
-		 regsub -all / $realname {\\} realname
-	    }
-
-	    set file [file join $vTcl(VTCL_HOME) images edit open.gif]
-	    button $base.${reference}_edit \
-		-image [vTcl:image:get_image $file] \
-		-command "vTcl:image:external_editor [list $realname]"
-
-	    vTcl:set_balloon $base.${reference}_edit "Edit image"
-	}
-
-	if {$vTcl(images,$reference,type) == "user"} {
-	    catch {
-		set file [file join $vTcl(VTCL_HOME) images edit remove.gif]
-		button $base.${reference}_delete \
-		-image [vTcl:image:get_image $file] \
-		-command "vTcl:image:ask_delete_image \"$image\""
-
-		vTcl:set_balloon $base.${reference}_delete "Delete image"
-	    }
-
-	    catch {
-		set file [file join $vTcl(VTCL_HOME) images edit replace.gif]
-		button $base.${reference}_replace \
-		-image [vTcl:image:get_image $file] \
-		-command "vTcl:image:replace_image \"$image\""
-
-		vTcl:set_balloon $base.${reference}_replace "Replace image"
-	   }
-       }
-
-       $base insert end "$image: $vTcl(images,$reference,description)"
-       $base insert end " ($vTcl(images,$reference,type))\n"
-       $base insert end "[image type $object] [image width $object] x [image height $object]"
-       $base insert end "\n\n\t"
-
-       $base window create end -window $base.$reference
-       $base insert end "\t"
-       $base window create end -window $base.${reference}_edit
-
-       if {$vTcl(images,$reference,type) == "user"} {
-	   $base insert end " "
-	   $base window create end -window $base.${reference}_delete
-	   $base insert end " "
-	   $base window create end -window $base.${reference}_replace
-       }
-
-       $base insert end "\n\n___________________________________________________________________\n\n"
+        lappend imageTextList $object
+        lappend imageTextList "$image ($vTcl(images,$reference,type))"
     }
 
-    $base configure -state disabled
+    $theList widget fill $imageTextList
+    vTcl:image:enableButtons $base
 }
 
 proc {vTcl:image:init_stock} {} {
@@ -315,11 +261,12 @@ proc {vTcl:image:new_image_file} {} {
     return $object
 }
 
-proc vTcl:image:replace_image {filename} {
+proc vTcl:image:replace_image {imageListbox} {
     global vTcl tk_strictMotif
 
+    set filename [vTcl:image:get_selected_image $imageListbox]
     set types $vTcl(image,filetypes)
-
+    
     set tk_strictMotif 0
     set newImageFile [tk_getOpenFile -filetypes $types  -defaultextension .gif]
     set tk_strictMotif 1
@@ -336,7 +283,8 @@ proc vTcl:image:replace_image {filename} {
 	return
     }
 
-    lremove vTcl(images,files) $filename
+    vTcl::lremove vTcl(images,files) $filename
+    lappend vTcl(images,files) $newImageFile
 
     set object [vTcl:image:get_image $filename]
 
@@ -611,7 +559,20 @@ proc vTcl:image:delete_image {image} {
     unset vTcl(images,filename,$object)
 }
 
-proc vTcl:image:ask_delete_image {image} {
+proc vTcl:image:get_selected_image {imageListbox} {
+    set item [$imageListbox widget selection get]
+    if {$item == ""} { 
+        return ""
+    }
+    set text [$imageListbox widget itemcget $item -text]
+
+    ## remove the (user) or (stock) at the end of the item
+    return [string range $text 0 [expr [string last ( $text] -2]]
+}
+
+proc vTcl:image:ask_delete_image {imageListbox} {
+    set image [vTcl:image:get_selected_image $imageListbox]
+
     set result [
 	::vTcl::MessageBox \
 	    -message "Do you want to remove $image from the project?" \
@@ -648,6 +609,22 @@ proc vTcl:image:reload_images {} {
     }
 }
 
+proc vTcl:image:enableButtons {base} {
+    set image [vTcl:image:get_selected_image $base.cpd29]
+    if {$image == ""} {
+         set type stock
+    } else {
+         set type [vTcl:image:get_type $image]
+    }
+
+    set enabled(stock) disabled
+    set enabled(user)  normal
+
+    $base.butfr.but35 configure -state $enabled($type)
+    $base.butfr.but36 configure -state $enabled($type)
+    $base.butfr.but37 configure -state $enabled($type)
+}
+
 proc vTclWindow.vTcl.imgManager {args} {
 
     set base ""
@@ -677,13 +654,11 @@ proc vTclWindow.vTcl.imgManager {args} {
     wm protocol $base WM_DELETE_WINDOW "wm withdraw $base"
     wm transient .vTcl.imgManager .vTcl
 
-    ScrolledWindow $base.cpd29
-    text $base.cpd29.03 \
-        -background white -cursor left_ptr \
-        -height 1 -borderwidth 0 \
-        -state disabled -tabs {0.2i 3i 3.75i} \
-        -width 8 -wrap none
-    $base.cpd29 setwidget $base.cpd29.03
+    vTcl::widgets::core::compoundcontainer::createCmd $base.cpd29 \
+        -compoundType internal -compoundClass {Image Listbox} 
+    bind $base.cpd29 <<ListboxSelect>> "
+        vTcl:image:enableButtons $base
+    "
 
     frame $base.butfr
     vTcl:toolbar_button $base.butfr.but32 \
@@ -692,20 +667,37 @@ proc vTclWindow.vTcl.imgManager {args} {
     vTcl:toolbar_button $base.butfr.but34 \
         -command vTcl:image:reload_images \
         -padx 3 -pady 3 -image [vTcl:image:get_image refresh.gif]
+    vTcl:toolbar_button $base.butfr.but35 \
+        -command "vTcl:image:ask_delete_image $base.cpd29" -state disabled \
+        -padx 3 -pady 3 -image [vTcl:image:get_image remove.gif]
+    vTcl:toolbar_button $base.butfr.but36 \
+        -command "vTcl:image:external_editor $base.cpd29" -state disabled \
+        -padx 3 -pady 3 -image [vTcl:image:get_image open.gif]
+    vTcl:toolbar_button $base.butfr.but37 \
+        -command "vTcl:image:replace_image $base.cpd29" -state disabled \
+        -padx 3 -pady 3 -image [vTcl:image:get_image replace.gif]
     ::vTcl::OkButton $base.butfr.but33 -command "Window hide $base"
     ###################
     # SETTING GEOMETRY
     ###################
     pack $base.cpd29 \
         -in $base -anchor center -expand 1 -fill both -side bottom
-    pack $base.cpd29.03
 
     pack $base.butfr -fill x -side top
     pack $base.butfr.but32 \
         -anchor nw -expand 0 -fill none -side left
     vTcl:set_balloon $base.butfr.but32 "Add new image"
+    pack $base.butfr.but35 \
+        -anchor nw -expand 0 -fill none -side left
+    pack $base.butfr.but36 \
+        -anchor nw -expand 0 -fill none -side left
+    pack $base.butfr.but37 \
+        -anchor nw -expand 0 -fill none -side left
     pack $base.butfr.but34 \
         -anchor nw -expand 0 -fill none -side left
+    vTcl:set_balloon $base.butfr.but35 "Delete image"
+    vTcl:set_balloon $base.butfr.but36 "Open image in external editor"
+    vTcl:set_balloon $base.butfr.but37 "Replace image"
     vTcl:set_balloon $base.butfr.but34 "Reload images"
     pack $base.butfr.but33 \
     	-anchor nw -expand 0 -fill none -side right
@@ -762,20 +754,24 @@ proc vTcl:image:refresh_manager {{position 0.0}} {
     if [info exists vTcl(images,manager_dlg,win)] {
         if [winfo exists $vTcl(images,manager_dlg,win)] {
             vTcl:image:init_img_manager
-            $vTcl(images,manager_dlg,win).cpd29.03 yview moveto $position
+            $vTcl(images,manager_dlg,win).cpd29 widget yview moveto $position
         }
     }
 }
 
 proc vTcl:image:get_manager_position {} {
-    global vTcl
-    return [lindex [$vTcl(images,manager_dlg,win).cpd29.03 yview] 0]
+    return [lindex [$::vTcl(images,manager_dlg,win).cpd29 widget yview] 0]
 }
 
-proc vTcl:image:external_editor {imageName} {
-    global vTcl
-    if {[catch {exec "$vTcl(pr,imageeditor)" "$imageName" &}]} {
+proc vTcl:image:external_editor {imageListbox} {
+    set realName [vTcl:image:get_selected_image $imageListbox]
+    if {$::tcl_platform(platform) == "windows"} {
+         regsub -all / $realName {\\} realName
+    }
+
+    if {[catch {exec "$::vTcl(pr,imageeditor)" "$realName" &}]} {
         vTcl:error "Could not execute external image editor!"
     }
 }
+
 
