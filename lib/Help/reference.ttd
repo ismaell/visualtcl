@@ -1,0 +1,374 @@
+# -*- tcl -*-
+#
+
+ttd.version 1.0
+
+ttd.tagdef Title -background white -font {-family Arial -weight bold -slant roman -size 12 -underline 0 -overstrike 0} -foreground #000000 -justify left
+ttd.tagdef {Level 1 Title} -background white -font {-family Arial -weight bold -slant roman -size 11 -underline 0 -overstrike 0} -foreground #004080 -justify left
+ttd.tagdef {Level 2 Title} -background white -font {-family Arial -weight bold -slant roman -size 10 -underline 0 -overstrike 0} -foreground #000000 -justify left
+ttd.tagdef {Level 3 Title} -background white -font {-family Arial -weight bold -slant roman -size 9 -underline 0 -overstrike 0} -foreground #000000 -justify left
+ttd.tagdef {Level 4 Title} -background white -font {-family Arial -weight bold -slant roman -size 8 -underline 0 -overstrike 0} -foreground #000000 -justify left
+
+
+
+ttd.tagon Title
+ttd.text {Visual Tcl 1.6 Quick Reference Guide}
+ttd.tagoff Title
+ttd.text {
+}
+ttd.text {
+}
+ttd.tagon {Level 1 Title}
+ttd.text {1. Main Window}
+ttd.tagoff {Level 1 Title}
+ttd.text {
+}
+ttd.text {
+}
+ttd.tagon {Level 2 Title}
+ttd.text {1.1 File Menu}
+ttd.tagoff {Level 2 Title}
+ttd.text {
+}
+ttd.tagon {Level 3 Title}
+ttd.text {1.1.1 New...}
+ttd.tagoff {Level 3 Title}
+ttd.text {
+}
+ttd.text {Opens the "New Project" Wizard which allows you to create an empty new project.
+}
+ttd.text {
+}
+ttd.text {The new project will be located under the "Projects Parents Directory," under a subdirectory made from the project name.
+}
+ttd.text {
+}
+ttd.text {The main project file can be changed. By default, it is called "main.tcl".
+}
+ttd.text {
+}
+ttd.tagon {Level 3 Title}
+ttd.text {1.1.2 Open...
+}
+ttd.tagoff {Level 3 Title}
+ttd.text {Opens an existing Visual Tcl project. You can open a project made by an older version of Visual Tcl, but you cannot open a project created with a more recent version. If you happen to open a project made by a more recent version of Visual Tcl than the one you are currently running, you need to upgrade.
+}
+ttd.text {
+}
+ttd.tagon {Level 3 Title}
+ttd.text {1.1.3 Save
+}
+ttd.tagoff {Level 3 Title}
+ttd.text {Saves the project that is currently open inside Visual Tcl. If you haven't given a filename to the project yet (for example, you started a project without using the New Project Wizard) you will be prompted to do so.
+}
+ttd.text {
+}
+ttd.tagon {Level 3 Title}
+ttd.text {1.1.4 Save As...
+}
+ttd.tagoff {Level 3 Title}
+ttd.text {Saves the currently open project under a different name and/or location.
+}
+ttd.text {
+}
+ttd.tagon {Level 3 Title}
+ttd.text {1.1.5 Save As With Binary...
+}
+ttd.text {1.1.6 Close
+}
+ttd.text {1.1.7 Restore from Backup
+}
+ttd.text {1.1.8 Projects
+}
+ttd.text {1.1.9 Source...
+}
+ttd.text {1.1.10 Preferences...}
+ttd.tagoff {Level 3 Title}
+ttd.text {
+}
+ttd.tagon {Level 3 Title}
+ttd.text {1.1.11 Quit}
+ttd.tagoff {Level 3 Title}
+ttd.text {
+}
+ttd.text {
+}
+ttd.tagon {Level 2 Title}
+ttd.text {1.2 Edit Menu}
+ttd.tagoff {Level 2 Title}
+ttd.text {
+}
+ttd.tagon {Level 3 Title}
+ttd.text {1.2.1 Undo
+}
+ttd.text {1.2.2 Redo
+}
+ttd.text {1.2.3 Cut
+}
+ttd.text {1.2.4 Copy
+}
+ttd.text {1.2.5 Paste
+}
+ttd.text {1.2.6 Delete
+}
+ttd.text {1.2.7 Images...
+}
+ttd.text {1.2.8 Fonts...}
+ttd.tagoff {Level 3 Title}
+ttd.text {
+}
+ttd.text {
+}
+ttd.tagon {Level 2 Title}
+ttd.text {1.3 Mode Menu}
+ttd.tagoff {Level 2 Title}
+ttd.text {
+}
+ttd.tagon {Level 3 Title}
+ttd.text {1.3.1 Test Mode
+}
+ttd.text {1.3.2 Edit Mode}
+ttd.tagoff {Level 3 Title}
+ttd.text {
+}
+ttd.text {
+}
+ttd.tagon {Level 2 Title}
+ttd.text {1.4 Compound Menu}
+ttd.tagoff {Level 2 Title}
+ttd.text {
+}
+ttd.tagon {Level 3 Title}
+ttd.text {1.4.1 Create...
+}
+ttd.text {1.4.2 Insert}
+ttd.tagoff {Level 3 Title}
+ttd.text {
+}
+ttd.tagon {Level 4 Title}
+ttd.text {1.4.2.1 Insert System Compound
+}
+ttd.text {1.4.2.2 Insert User Compound
+}
+ttd.tagoff {Level 4 Title}
+ttd.tagon {Level 3 Title}
+ttd.text {1.4.3 Save Compounds...
+}
+ttd.text {1.4.4 Load Compounds...
+}
+ttd.text {1.4.5 Save As Tclet...}
+ttd.tagoff {Level 3 Title}
+ttd.text {
+}
+ttd.text {
+}
+ttd.tagon {Level 2 Title}
+ttd.text {1.5 Options Menu}
+ttd.tagoff {Level 2 Title}
+ttd.text {
+}
+ttd.tagon {Level 3 Title}
+ttd.text {1.5.1 Set Insert
+}
+ttd.text {1.5.2 Set Alias...
+}
+ttd.text {1.5.3 Manager}
+ttd.tagoff {Level 3 Title}
+ttd.text {
+}
+ttd.tagon {Level 4 Title}
+ttd.text {1.5.3.1 Place
+}
+ttd.text {1.5.3.2 Pack
+}
+ttd.text {1.5.3.3 Grid}
+ttd.tagoff {Level 4 Title}
+ttd.text {
+}
+ttd.tagon {Level 3 Title}
+ttd.text {1.5.4 Select Toplevel
+}
+ttd.text {1.5.5 Select Parent
+}
+ttd.text {1.5.6 Bindings
+}
+ttd.text {1.5.7 Hide}
+ttd.tagoff {Level 3 Title}
+ttd.text {
+}
+ttd.text {
+}
+ttd.tagon {Level 2 Title}
+ttd.text {1.6 Window Menu}
+ttd.tagoff {Level 2 Title}
+ttd.text {
+}
+ttd.tagon {Level 3 Title}
+ttd.text {1.6.1 Attribute Editor
+}
+ttd.text {1.6.2 Function List
+}
+ttd.text {1.6.3 Window List
+}
+ttd.text {1.6.4 Command Console
+}
+ttd.text {1.6.5 Widget Tree
+}
+ttd.text {1.6.6 System Inspector
+}
+ttd.text {1.6.7 Save Window locations
+}
+ttd.tagoff {Level 3 Title}
+ttd.text {
+}
+ttd.tagon {Level 2 Title}
+ttd.text {1.7 Widget Menu}
+ttd.tagoff {Level 2 Title}
+ttd.text {
+}
+ttd.text {
+}
+ttd.tagon {Level 2 Title}
+ttd.text {1.8 Help Menu}
+ttd.tagoff {Level 2 Title}
+ttd.text {
+}
+ttd.tagon {Level 3 Title}
+ttd.text {1.8.1 About Visual Tcl...
+}
+ttd.text {1.8.2 Libraries...
+}
+ttd.text {1.8.3 Index of Help
+}
+ttd.text {1.8.4 Tip of the Day
+}
+ttd.text {1.8.5 Visual Tcl News
+}
+ttd.tagoff {Level 3 Title}
+ttd.text {
+}
+ttd.tagon {Level 2 Title}
+ttd.text {1.9 Main Window Toolbar}
+ttd.tagoff {Level 2 Title}
+ttd.text {
+}
+ttd.tagon {Level 4 Title}
+ttd.tagon {Level 3 Title}
+ttd.text {1.9.1 Text Entry
+}
+ttd.text {1.9.2 Command Console
+}
+ttd.text {1.9.3 Border
+}
+ttd.text {1.9.4 Border Width
+}
+ttd.text {1.9.5 Label Anchor
+}
+ttd.text {1.9.6 Foreground Color
+}
+ttd.text {1.9.7 Background Color
+}
+ttd.text {1.9.8 Font Selection
+}
+ttd.text {1.9.8.1 Typeface
+}
+ttd.text {1.9.8.2 Font Size
+}
+ttd.text {1.9.8.3 Font Style
+}
+ttd.text {1.9.9 Justification
+}
+ttd.text {1.9.10 Geometry Manager
+}
+ttd.tagoff {Level 3 Title}
+ttd.text {1.9.10.1 Grid
+}
+ttd.text {1.9.10.2 Pack
+}
+ttd.text {1.9.10.3 Place
+}
+ttd.tagoff {Level 4 Title}
+ttd.text {
+}
+ttd.tagon {Level 2 Title}
+ttd.text {1.10 Status Bar}
+ttd.tagoff {Level 2 Title}
+ttd.text {
+}
+ttd.text {
+}
+ttd.tagon {Level 1 Title}
+ttd.text {2. Widget Toolbar}
+ttd.tagoff {Level 1 Title}
+ttd.text {
+}
+ttd.text {
+}
+ttd.tagon {Level 1 Title}
+ttd.text {3. Command Console}
+ttd.tagoff {Level 1 Title}
+ttd.text {
+}
+ttd.text {
+}
+ttd.tagon {Level 1 Title}
+ttd.text {4. Function List}
+ttd.tagoff {Level 1 Title}
+ttd.text {
+}
+ttd.text {
+}
+ttd.tagon {Level 1 Title}
+ttd.text {5. Window List}
+ttd.tagoff {Level 1 Title}
+ttd.text {
+}
+ttd.text {
+}
+ttd.tagon {Level 1 Title}
+ttd.text {6. Widget Tree}
+ttd.tagoff {Level 1 Title}
+ttd.text {
+}
+ttd.text {
+}
+ttd.tagon {Level 1 Title}
+ttd.text {7. Attribute Editor}
+ttd.tagoff {Level 1 Title}
+ttd.text {
+}
+ttd.text {
+}
+ttd.tagon {Level 1 Title}
+ttd.text {8. Widget Bindings}
+ttd.tagoff {Level 1 Title}
+ttd.text {
+}
+ttd.text {
+}
+ttd.tagon {Level 1 Title}
+ttd.text {9. Menu Editor}
+ttd.tagoff {Level 1 Title}
+ttd.text {
+}
+ttd.text {
+}
+ttd.tagon {Level 1 Title}
+ttd.text {10. Images Manager}
+ttd.tagoff {Level 1 Title}
+ttd.text {
+}
+ttd.text {
+}
+ttd.tagon {Level 1 Title}
+ttd.text {11. Fonts Manager}
+ttd.tagoff {Level 1 Title}
+ttd.text {
+}
+ttd.text {
+}
+ttd.tagon {Level 1 Title}
+ttd.text {12 .System Inspector}
+ttd.tagoff {Level 1 Title}
+ttd.text {
+}

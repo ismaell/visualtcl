@@ -38,7 +38,7 @@ proc vTclWindow.vTcl.help {args} {
 
     ScrolledWindow $base.fra18
     text $base.fra18.tex22 \
-        -height 15 -width 80 -background white -wrap none
+        -height 15 -width 80 -background white -wrap word -font {Arial 8}
     $base.fra18 setwidget $base.fra18.tex22
 
     ::vTcl::OkButton $base.but21 -command "Window hide $base"
@@ -48,12 +48,13 @@ proc vTclWindow.vTcl.help {args} {
         -anchor center -expand 1 -fill both -padx 5 -pady 5 -side top 
     pack $base.fra18.tex22
 
-    set file [file join $vTcl(VTCL_HOME) lib Help Main]
-    if {[file exists $file]} {
-	set fp [open $file]
-	$base.fra18.tex22 delete 0.0 end
-	$base.fra18.tex22 insert end [read $fp]
-	close $fp
+    set fileName [file join $vTcl(VTCL_HOME) lib Help reference.ttd]
+    if {[file exists $fileName]} {
+        set inID [open $fileName]
+        set contents [read $inID]
+        $base.fra18.tex22 delete 0.0 end
+        ::ttd::insert $base.fra18.tex22 $contents
+        close $inID
     }
 
     $base.fra18.tex22 configure -state disabled
@@ -425,4 +426,5 @@ proc vTclWindow.vTcl.infolibs {{base ""}} {
     vTcl:center $base 446 322
     wm deiconify $base
 }
+
 
