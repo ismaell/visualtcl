@@ -94,12 +94,12 @@ proc vTcl:fill_credits {} {
     close $inID
 }
 
-proc vTclWindow.vTcl.credits {base {container 0}} {
+proc vTclWindow.vTcl.credits {base} {
 
     if {$base == ""} {
         set base .vTcl.credits
     }
-    if {[winfo exists $base] && (!$container)} {
+    if {[winfo exists $base]} {
         wm deiconify $base; return
     }
 
@@ -110,7 +110,6 @@ proc vTclWindow.vTcl.credits {base {container 0}} {
     ###################
     # CREATING WIDGETS
     ###################
-    if {!$container} {
     toplevel $base -class Toplevel
     wm transient $base .vTcl
     wm overrideredirect $base 0
@@ -127,7 +126,7 @@ proc vTclWindow.vTcl.credits {base {container 0}} {
         vTcl:center %W 500 420
         wm deiconify %W
     }
-    }
+
     ::vTcl::OkButton $base.but23 -command "Window hide $base"
     ScrolledWindow $base.cpd24
     text $base.cpd24.03 -height 1 -background white \

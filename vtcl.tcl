@@ -222,15 +222,7 @@ proc vTcl:setup_meta {} {
     proc init {argc argv} {}
     proc main {argc argv} {}
 
-    if {[vTcl:streq $tcl_platform(platform) "windows"]} {
-    	proc main {argc argv} {
-## This will clean up and call exit properly on Windows.
-vTcl:WindowsCleanup
-	}
-    }
-
     vTcl:proclist:show $vTcl(pr,show_func)
-    vTcl:varlist:show  $vTcl(pr,show_var)
     vTcl:toplist:show  $vTcl(pr,show_top)
 }
 
@@ -469,7 +461,6 @@ proc vTcl:define_bindings {} {
         bind vTcl($i) <Key-Delete> { vTcl:delete %W }
         bind vTcl($i) <Alt-a>      { vTcl:set_alias $vTcl(w,widget) }
         bind vTcl($i) <Alt-f>      { vTcl:proclist:show flip }
-        bind vTcl($i) <Alt-v>      { vTcl:varlist:show flip }
         bind vTcl($i) <Alt-o>      { vTcl:toplist:show flip }
         bind vTcl($i) <Alt-t>      { vTcl:setup_unbind_tree . }
         bind vTcl($i) <Alt-e>      { vTcl:setup_bind_tree . }

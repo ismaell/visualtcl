@@ -74,7 +74,7 @@ proc vTcl:prefs:init {base} {
     $tb raise Basics
 }
 
-proc vTclWindow.vTcl.prefs {{base ""} {container 0}} {
+proc vTclWindow.vTcl.prefs {{base ""}} {
     global widget
 
     if {$base == ""} {
@@ -86,7 +86,6 @@ proc vTclWindow.vTcl.prefs {{base ""} {container 0}} {
     ###################
     # CREATING WIDGETS
     ###################
-    if {!$container} {
     toplevel $base -class Toplevel
     # should use frames for spacing instead
     #wm geometry   $base 400x400
@@ -104,7 +103,7 @@ proc vTclWindow.vTcl.prefs {{base ""} {container 0}} {
     bind $base <Key-Escape> {
         wm withdraw [winfo toplevel %W]; vTcl:prefs:data_exchange 0
     }
-    }
+    
     # frame $base.fra19 \
         # -borderwidth 2 -height 75 -width 125
     frame $base.fra19

@@ -103,14 +103,14 @@ proc vTcl:BindHelp {w help} {
     bind $w <Key-F1> "vTcl:Help $help"
 }
 
-proc vTclWindow.vTcl.tip {base {container 0}} {
+proc vTclWindow.vTcl.tip {base} {
 
     global vTcl
 
     if {$base == ""} {
         set base .vTcl.tip
     }
-    if {[winfo exists $base] && (!$container)} {
+    if {[winfo exists $base]} {
         wm deiconify $base; return
     }
 
@@ -159,7 +159,6 @@ proc vTclWindow.vTcl.tip {base {container 0}} {
     ###################
     # CREATING WIDGETS
     ###################
-    if {!$container} {
     toplevel $base -class Toplevel
     wm focusmodel $base passive
     wm withdraw $base
@@ -171,8 +170,9 @@ proc vTclWindow.vTcl.tip {base {container 0}} {
     wm protocol $base WM_DELETE_WINDOW {
          Window hide .vTcl.tip
          set vTcl(pr,dontshowtips) $::tip::dontshow
-         set vTcl(pr,tipindex)     $::tip::Index}
+         set vTcl(pr,tipindex)     $::tip::Index
     }
+
     frame $base.fra20 \
         -borderwidth 2 -height 75 -width 125 
     button $base.fra20.but22 \
@@ -383,12 +383,12 @@ namespace eval ::vTcl::news {
     }
 }
 
-proc vTclWindow.vTcl.infolibs {{base ""} {container 0}} {
+proc vTclWindow.vTcl.infolibs {{base ""}} {
 
     if {$base == ""} {
         set base .vTcl.infolibs
     }
-    if {[winfo exists $base] && (!$container)} {
+    if {[winfo exists $base]} {
         wm deiconify $base; return
     }
 
@@ -403,7 +403,6 @@ proc vTclWindow.vTcl.infolibs {{base ""} {container 0}} {
     ###################
     # CREATING WIDGETS
     ###################
-    if {!$container} {
     toplevel $base -class Toplevel
     wm withdraw $base
     wm focusmodel $base passive
@@ -413,7 +412,7 @@ proc vTclWindow.vTcl.infolibs {{base ""} {container 0}} {
     wm overrideredirect $base 0
     wm resizable $base 1 1
     wm title $base "Visual Tcl Libraries"
-    }
+    
     label $base.lab38 \
         -borderwidth 1 -text {The following libraries are available:}
 

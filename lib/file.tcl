@@ -39,7 +39,6 @@ proc vTcl:new {} {
 
     vTcl:setup_bind_tree .
     vTcl:update_top_list
-    vTcl:update_var_list
     vTcl:update_proc_list
 
     if {[lempty $::NewWizard::ProjectFile]} {
@@ -115,7 +114,7 @@ proc vTcl:is_vtcl_prj {file} {
 proc vTcl:source {file} {
     global vTcl
     set vTcl(sourcing) 1
-    set ov [uplevel #0 info vars];           vTcl:statbar 15
+    vTcl:statbar 15
     set op ""
 
     foreach context [vTcl:namespace_tree] {
@@ -139,14 +138,6 @@ proc vTcl:source {file} {
     }
     vTcl:statbar 35
 
-    # kc: ignore global vars like "tixSelect";
-    # otherwise File->Close breaks tix widgets.
-    set nv ""
-    foreach varname [uplevel #0 info vars] {
-        if {[vTcl:valid_varname $varname] == 1} {
-            lappend nv $varname
-        }
-    }
     # kc: ignore global procs like "tixSelect"
     set np ""
     foreach context [vTcl:namespace_tree] {
@@ -165,7 +156,6 @@ proc vTcl:source {file} {
        }
     }
 
-    vTcl:list add [vTcl:diff_list $ov $nv] vTcl(vars)
     vTcl:list add [vTcl:diff_list $op $np] vTcl(procs)
     vTcl:statbar 45
     set vTcl(tops) [vTcl:find_new_tops];     vTcl:statbar 0
@@ -208,9 +198,7 @@ proc vTcl:open {{file ""}} {
 
     vTcl:list add "init main" vTcl(procs)
     vTcl:status "Updating top list"
-    vTcl:update_top_list;                vTcl:statbar 65
-    vTcl:status "Updating variable list"
-    vTcl:update_var_list;                vTcl:statbar 70
+    vTcl:update_top_list;                vTcl:statbar 68
     vTcl:status "Updating proc list"
     vTcl:update_proc_list;               vTcl:statbar 75
     vTcl:status "Updating aliases"
@@ -319,7 +307,6 @@ proc vTcl:close {} {
         catch {global $i; unset $i}
     }
     set vTcl(vars) ""
-    vTcl:update_var_list
     foreach i $vTcl(procs) {
         catch {rename $i {}}
     }

@@ -30,10 +30,9 @@ proc vTcl:get_bind {target} {
 
 proc vTclWindow.vTcl.bind {args} {
     global vTcl
-    set container 0
     set base .vTcl.bind
 
-    if {[winfo exists $base] && (!$container)} { wm deiconify $base; return }
+    if {[winfo exists $base]} { wm deiconify $base; return }
 
     global widget
     vTcl:DefineAlias $base BindingsEditor vTcl:Toplevel:WidgetProc "" 1
@@ -49,19 +48,18 @@ proc vTclWindow.vTcl.bind {args} {
     ###################
     # CREATING WIDGETS
     ###################
-    if {!$container} {
-        toplevel $base -class Toplevel -menu $base.m37
-        wm focusmodel $base passive
-        wm withdraw $base
-        wm geometry $base 660x514+264+138
-        update
-        wm maxsize $base 1284 1010
-        wm minsize $base 100 1
-        wm overrideredirect $base 0
-        wm resizable $base 1 1
-        wm title $base "Widget bindings"
-        wm transient .vTcl.bind .vTcl
-    }
+    toplevel $base -class Toplevel -menu $base.m37
+    wm focusmodel $base passive
+    wm withdraw $base
+    wm geometry $base 660x514+264+138
+    update
+    wm maxsize $base 1284 1010
+    wm minsize $base 100 1
+    wm overrideredirect $base 0
+    wm resizable $base 1 1
+    wm title $base "Widget bindings"
+    wm transient .vTcl.bind .vTcl
+
     menu $base.m37 -relief flat
     $base.m37 add cascade \
         -menu "$base.m37.men38" -label Insert
@@ -387,11 +385,11 @@ proc vTclWindow.vTcl.bind {args} {
     wm deiconify $base
 }
 
-proc vTclWindow.vTcl.newbind {base {container 0}} {
+proc vTclWindow.vTcl.newbind {base} {
     if {$base == ""} {
         set base .vTcl.newbind
     }
-    if {[winfo exists $base] && (!$container)} {
+    if {[winfo exists $base]} {
         wm deiconify $base; return
     }
 
@@ -404,19 +402,18 @@ proc vTclWindow.vTcl.newbind {base {container 0}} {
     ###################
     # CREATING WIDGETS
     ###################
-    if {!$container} {
-        toplevel $base -class Toplevel
-        wm focusmodel $base passive
-        wm withdraw $base
-        wm geometry $base 500x400+418+226
-        update
-        wm maxsize $base 1284 1010
-        wm minsize $base 100 1
-        wm overrideredirect $base 0
-        wm resizable $base 1 1
-        wm title $base "Insert new binding"
-        wm transient .vTcl.newbind .vTcl
-    }
+    toplevel $base -class Toplevel
+    wm focusmodel $base passive
+    wm withdraw $base
+    wm geometry $base 500x400+418+226
+    update
+    wm maxsize $base 1284 1010
+    wm minsize $base 100 1
+    wm overrideredirect $base 0
+    wm resizable $base 1 1
+    wm title $base "Insert new binding"
+    wm transient .vTcl.newbind .vTcl
+
     frame $base.fra20
     label $base.fra20.lab21 \
         -borderwidth 1 -foreground #000000 \
@@ -558,12 +555,11 @@ proc vTclWindow.vTcl.newbind {base {container 0}} {
 }
 
 proc vTclWindow.vTcl.newtag {base} {
-    set container 0
 
     if {$base == ""} {
         set base .vTcl.newtag
     }
-    if {[winfo exists $base] && (!$container)} {
+    if {[winfo exists $base]} {
         wm deiconify $base; return
     }
 
@@ -583,20 +579,19 @@ proc vTclWindow.vTcl.newtag {base} {
     ###################
     # CREATING WIDGETS
     ###################
-    if {!$container} {
-        toplevel $base -class Toplevel
-        wm focusmodel $base passive
-        wm geometry $base 340x319+149+138
-        wm withdraw $base
-        wm maxsize $base 1009 738
-        wm minsize $base 1 1
-        wm overrideredirect $base 0
-        wm resizable $base 1 1
-        vTcl:center $base 340 319
-        wm deiconify $base
-        wm title $base "Binding tags"
-        wm transient .vTcl.newtag .vTcl
-    }
+    toplevel $base -class Toplevel
+    wm focusmodel $base passive
+    wm geometry $base 340x319+149+138
+    wm withdraw $base
+    wm maxsize $base 1009 738
+    wm minsize $base 1 1
+    wm overrideredirect $base 0
+    wm resizable $base 1 1
+    vTcl:center $base 340 319
+    wm deiconify $base
+    wm title $base "Binding tags"
+    wm transient .vTcl.newtag .vTcl
+
     frame $base.fra20
     button $base.fra20.but21 \
         -text OK -width 8 \

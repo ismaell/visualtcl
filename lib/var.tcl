@@ -21,99 +21,6 @@
 ##############################################################################
 #
 
-proc vTcl:delete_var {var} {
-global vTcl
-    set name [vTcl:var_root $var]
-    catch {
-        global $name
-        unset $var
-        if { $name != $var && "[array names $name]" == "" } {
-            unset $name
-        }
-    }
-    vTcl:list delete $name vTcl(vars)
-}
-
-proc vTcl:find_new_vars {{a 0}} {
-global vTcl
-    update idletasks
-    return [vTcl:diff_list $vTcl(start,globals) [info globals]]
-}
-
-proc vTcl:show_var {name} {
-global vTcl
-    if { $name != "" } {
-        set globname [vTcl:var_root $name]
-        global $globname
-        set value [subst $$name]
-        Window show .vTcl.var .vTcl.var $name $value
-    } else {
-        Window show .vTcl.var "" "" ""
-    }
-}
-
-proc vTcl:update_var {} {
-global vTcl
-    set vTcl(var,name) [.vTcl.var.fra2.ent8 get]
-    set vTcl(var,value) [string trimright [.vTcl.var.fra3.tex10 get 0.0 end]]
-    set globname [vTcl:var_root $vTcl(var,name)]
-    global $globname
-    set $vTcl(var,name) $vTcl(var,value)
-    vTcl:list add $globname vTcl(vars)
-    grab release .vTcl.var
-    destroy .vTcl.var
-    vTcl:update_var_list
-}
-
-proc vTcl:update_var_list {} {
-global vTcl
-    if { [winfo exists $vTcl(gui,varlist)] == 0 } { return }
-    $vTcl(gui,varlist).f2.list delete 0 end
-    foreach i $vTcl(vars) {
-        if {[vTcl:valid_varname $i] == 1} {
-            catch {global $i}
-            if {[array exists $i] == 1} {
-                foreach j [array names $i] {
-                    $vTcl(gui,varlist).f2.list insert end "$i\($j\)"
-                }
-            } else {
-                $vTcl(gui,varlist).f2.list insert end $i
-            }
-        }
-    }
-}
-
-proc vTcl:valid_varname {name} {
-global vTcl
-    if [regexp "^($vTcl(var,ignore))" $name] {
-        return 0
-    } else {
-        return 1
-    }
-}
-
-proc vTcl:var_root {name} {
-set pos [string first "(" $name]
-    if {$pos > -1} {
-        return [string range $name 0 [expr $pos - 1]]
-    } else {
-        return $name
-    }
-}
-
-proc vTcl:varlist:show {{on ""}} {
-    global vTcl
-    if {$on == "flip"} { set on [expr - $vTcl(pr,show_var)] }
-    if {$on == ""}     { set on $vTcl(pr,show_var) }
-    if {$on == 1} {
-        Window show $vTcl(gui,varlist)
-        vTcl:update_var_list
-    } else {
-        Window hide $vTcl(gui,varlist)
-    }
-    set vTcl(pr,show_var) $on
-}
-
 namespace eval ::inspector {
 
     proc {::inspector::contract_node} {listbox index} {
@@ -438,6 +345,12 @@ namespace eval ::inspector {
         InspectorValue configure -state normal
         InspectorValue delete 0.0 end
 
+        if {[info command $node_info] == ""} {
+            InspectorValue insert end "Invalid window"
+            InspectorValue configure -state disabled
+            return
+        }
+
         set options [$node_info configure]
         foreach option $options {
             InspectorValue insert end ${option}\n
@@ -538,12 +451,12 @@ namespace eval ::inspector {
     }
 }
 
-proc vTclWindow.vTcl.inspector {base {container 0}} {
+proc vTclWindow.vTcl.inspector {base} {
 
     if {$base == ""} {
         set base .vTcl.inspector
     }
-    if {[winfo exists $base] && (!$container)} {
+    if {[winfo exists $base]} {
         wm deiconify $base; return
     }
 
@@ -559,19 +472,18 @@ proc vTclWindow.vTcl.inspector {base {container 0}} {
     ###################
     # CREATING WIDGETS
     ###################
-    if {!$container} {
-        toplevel $base -class Toplevel
-        wm focusmodel $base passive
-        wm transient .vTcl.inspector .vTcl
-        wm withdraw $base
-        wm geometry $base 550x400
-        wm maxsize $base 1600 1200
-        wm minsize $base 1 1
-        wm overrideredirect $base 0
-        wm resizable $base 1 1
-        wm title $base "System Inspector"
-        wm protocol $base WM_DELETE_WINDOW "Window hide $base"
-    }
+    toplevel $base -class Toplevel
+    wm focusmodel $base passive
+    wm transient .vTcl.inspector .vTcl
+    wm withdraw $base
+    wm geometry $base 550x400
+    wm maxsize $base 1600 1200
+    wm minsize $base 1 1
+    wm overrideredirect $base 0
+    wm resizable $base 1 1
+    wm title $base "System Inspector"
+    wm protocol $base WM_DELETE_WINDOW "Window hide $base"
+
     frame $base.fra23 \
         -borderwidth 2
     ::vTcl::OkButton $base.fra23.but24 -command "Window hide $base"

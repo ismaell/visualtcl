@@ -141,19 +141,19 @@ proc vTclWindow.vTcl.ae {args} {
 
     label $w.ln -text "Widget" -width 11 -anchor w
         vTcl:entry $w.en -width 12 -textvariable vTcl(w,widget) \
-        -relief sunken -bd 1  -state disabled
+        -relief sunken   -state disabled
     label $w.lc -text "Class"  -width 11 -anchor w
         vTcl:entry $w.ec -width 12 -textvariable vTcl(w,class) \
-        -relief sunken -bd 1  -state disabled
+        -relief sunken   -state disabled
     label $w.lm -text "Manager" -width 11 -anchor w
         vTcl:entry $w.em -width 12 -textvariable vTcl(w,manager) \
-        -relief sunken -bd 1  -state disabled
+        -relief sunken   -state disabled
     label $w.la -text "Alias"  -width 11 -anchor w
         vTcl:entry $w.ea -width 12 -textvariable vTcl(w,alias) \
-        -relief sunken -bd 1  -state disabled
+        -relief sunken   -state disabled
     label $w.li -text "Insert Point" -width 11 -anchor w
         vTcl:entry $w.ei -width 12 -textvariable vTcl(w,insert) \
-        -relief sunken -bd 1  -state disabled
+        -relief sunken   -state disabled
 
     grid columnconf $w 1 -weight 1
 
@@ -427,17 +427,17 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
         boolean {
             frame $base
             radiobutton ${base}.y \
-                -variable $variable -value 1 -text "Yes" -relief sunken -bd 1 \
+                -variable $variable -value 1 -text "Yes" -relief sunken  \
                 -command "$config_cmd" -padx 0 -pady 1
             radiobutton ${base}.n \
-                -variable $variable -value 0 -text "No" -relief sunken -bd 1 \
+                -variable $variable -value 0 -text "No" -relief sunken  \
                 -command "$config_cmd" -padx 0 -pady 1
             pack ${base}.y ${base}.n -side left -expand 1 -fill both
         }
         choice {
             frame $base
             menubutton ${base}.l \
-                -textvariable $variable -bd 1 -width 12 -menu ${base}.l.m \
+                -textvariable $variable  -width 12 -menu ${base}.l.m \
                 -highlightthickness 1 -relief sunken -anchor w -fg black \
                 -padx 0 -pady 1
             menu ${base}.l.m -tearoff 0
@@ -445,7 +445,7 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
                 ${base}.l.m add command -label "$i" -command \
                     "set $variable $i; $config_cmd; "
             }
-            button ${base}.f -relief raised -bd 1 -image file_down \
+            button ${base}.f -relief raised  -image file_down \
                 -height 5 -command "
 		    focus $base.l
 		    vTcl:propmgr:select_attr $top $option
@@ -463,7 +463,7 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
         }
         menu {
             button $base \
-                -text "<click to edit>" -relief sunken -bd 1 -width 12 \
+                -text "<click to edit>" -relief sunken  -width 12 \
                 -highlightthickness 1 -fg black -padx 0 -pady 1 \
                 -command "
 		    focus $base
@@ -476,7 +476,7 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
         }
 	menuspecial {
             button $base \
-                -text "<click to edit>" -relief sunken -bd 1 -width 12 \
+                -text "<click to edit>" -relief sunken  -width 12 \
                 -highlightthickness 1 -fg black -padx 0 -pady 1 \
                 -command "
 		    vTcl:propmgr:select_attr $top $option
@@ -487,13 +487,13 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
 	}
         color {
             frame $base
-            vTcl:entry ${base}.l -relief sunken -bd 2 \
+            vTcl:entry ${base}.l -relief sunken  \
                 -textvariable $variable -width 8 \
                 -highlightthickness 1 -fg black 
             bind ${base}.l <KeyRelease-Return> \
                 "$config_cmd; ${base}.f conf -bg \$$variable"
-            frame ${base}.f -relief raised -bd 1 \
-                -bg [subst $$variable] -width 20 -height 5
+            frame ${base}.f -relief raised \
+                -bg [subst $$variable] -bd 2 -width 20 -height 5
             bind ${base}.f <ButtonPress> \
                 "
 		vTcl:propmgr:select_attr $top $option
@@ -506,7 +506,7 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
         }
         command {
             frame $base
-            vTcl:entry ${base}.l -relief sunken -bd 2 \
+            vTcl:entry ${base}.l -relief sunken  \
                 -textvariable $variable -width 8 \
                 -highlightthickness 1 -fg black 
 
@@ -519,7 +519,7 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
 	    }
 
             button ${base}.f \
-                -image ellipses -bd 1 -width 12 \
+                -image ellipses  -width 12 \
                 -highlightthickness 1 -fg black -padx 0 -pady 1 \
                 -command "
 		    vTcl:propmgr:select_attr $top $option
@@ -531,11 +531,11 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
         }
         font {
             frame $base
-            vTcl:entry ${base}.l -relief sunken -bd 2 \
+            vTcl:entry ${base}.l -relief sunken  \
                 -textvariable $variable -width 8 \
                 -highlightthickness 1 -fg black 
             button ${base}.f \
-                -image ellipses -bd 1 -width 12 \
+                -image ellipses  -width 12 \
                 -highlightthickness 1 -fg black -padx 0 -pady 1 \
                 -command "
 		vTcl:propmgr:select_attr $top $option
@@ -548,11 +548,11 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
         }
         image {
             frame $base
-            vTcl:entry ${base}.l -relief sunken -bd 2 \
+            vTcl:entry ${base}.l -relief sunken  \
                 -textvariable $variable -width 8 \
                 -highlightthickness 1 -fg black 
             button ${base}.f \
-                -image ellipses -bd 1 -width 12 \
+                -image ellipses  -width 12 \
                 -highlightthickness 1 -fg black -padx 0 -pady 1 \
                 -command "
 		vTcl:propmgr:select_attr $top $option
@@ -565,8 +565,7 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
         }
         default {
             vTcl:entry $base \
-                -textvariable $variable -relief groove -bd 2 -width 12 \
-                -highlightthickness 1  -fg black
+                -textvariable $variable -width 12 -highlightthickness 1
 
 	    if {[info tclversion] > 8.2} {
 		${base} configure -validate key \

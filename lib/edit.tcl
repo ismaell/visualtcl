@@ -185,11 +185,11 @@ namespace eval ::vTcl::findReplace {
     variable origInd	0.0
 }
 
-proc ::vTcl::findReplace::window {{newBase ""} {container 0}} {
+proc ::vTcl::findReplace::window {{newBase ""}} {
     variable base
 
     if {[llength $newBase] > 0} { set base $newBase }
-    if {[winfo exists $base] && (!$container)} {
+    if {[winfo exists $base]} {
 	wm deiconify $base
 	$base.fra22.findEnt select range 0 end
 	focus $base.fra22.findEnt
@@ -199,16 +199,14 @@ proc ::vTcl::findReplace::window {{newBase ""} {container 0}} {
     ###################
     # CREATING WIDGETS
     ###################
-    if {!$container} {
-	toplevel $base -class Toplevel -cursor {}
-	wm focusmodel $base passive
-	wm maxsize $base 1028 753
-	wm minsize $base 104 1
-	wm overrideredirect $base 0
-	wm resizable $base 1 1
-	wm deiconify $base
-	wm title $base "Find and Replace"
-    }
+    toplevel $base -class Toplevel -cursor {}
+    wm focusmodel $base passive
+    wm maxsize $base 1028 753
+    wm minsize $base 104 1
+    wm overrideredirect $base 0
+    wm resizable $base 1 1
+    wm deiconify $base
+    wm title $base "Find and Replace"
 
     frame $base.fra22
     label $base.fra22.labelFindWhat \

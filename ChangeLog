@@ -1,6 +1,18 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Fixed a bug in the system inspector where some windows would not have
+      a widget procedure and would not respond to the standard configure
+      command. This happens for some special temporary windows created by
+      BWidgets.
+    o Removed the container thing for toplevels. The idea was to create
+      one toplevel for each page of a tabnotebook and then call the toplevel
+      creation proc with a special parameter to put the widgets inside the
+      tabnotebook's pages. Since we now allow direct editing of tabnotebook
+      pages this feature becomes no longer necessary.
+    o Removed a bunch of borderwidth options in the property manager to
+      use standard values. If we want different values we should use the
+      option database instead of hardcoding them for each single widget.
     o Added a "New Project Wizard" that appears when a new project is
       created.  Still in the fledgling stages, but it's there.
     o Better way of exiting a user app. When toplevels are created, a count

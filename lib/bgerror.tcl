@@ -605,11 +605,11 @@ namespace eval ::stack_trace {
     variable boxIndex 0
 }
 
-proc vTclWindow.vTcl.stack_trace {base {container 0}} {
+proc vTclWindow.vTcl.stack_trace {base} {
     if {$base == ""} {
         set base .vTcl.stack_trace
     }
-    if {[winfo exists $base] && (!$container)} {
+    if {[winfo exists $base]} {
         wm deiconify $base; return
     }
 
@@ -622,17 +622,16 @@ proc vTclWindow.vTcl.stack_trace {base {container 0}} {
     ###################
     # CREATING WIDGETS
     ###################
-    if {!$container} {
-        toplevel $base -class Toplevel
-        wm transient $base .vTcl
-        wm focusmodel $base passive
-        wm geometry $base 575x446+139+158
-        wm minsize $base 1 1
-        wm overrideredirect $base 0
-        wm resizable $base 1 1
-        wm deiconify $base
-        wm title $base "Stack trace"
-    }
+    toplevel $base -class Toplevel
+    wm transient $base .vTcl
+    wm focusmodel $base passive
+    wm geometry $base 575x446+139+158
+    wm minsize $base 1 1
+    wm overrideredirect $base 0
+    wm resizable $base 1 1
+    wm deiconify $base
+    wm title $base "Stack trace"
+
     frame $base.cpd18 \
         -background #000000 -height 100 -highlightcolor #000000 -width 200
     frame $base.cpd18.01
@@ -793,11 +792,11 @@ proc vTclWindow.vTcl.stack_trace {base {container 0}} {
     vTcl:set_balloon $base.cpd18.01.fratop.close "Close"
 }
 
-proc vTclWindow.vTcl.bgerror {base {container 0}} {
+proc vTclWindow.vTcl.bgerror {base} {
     if {$base == ""} {
         set base .vTcl.bgerror
     }
-    if {[winfo exists $base] && (!$container)} {
+    if {[winfo exists $base]} {
         wm deiconify $base; return
     }
 
@@ -814,7 +813,6 @@ proc vTclWindow.vTcl.bgerror {base {container 0}} {
     ###################
     # CREATING WIDGETS
     ###################
-    if {!$container} {
     toplevel $base -class Toplevel \
         -background #dcdcdc -highlightbackground #dcdcdc \
         -highlightcolor #000000
@@ -829,7 +827,7 @@ proc vTclWindow.vTcl.bgerror {base {container 0}} {
     wm protocol $base WM_DELETE_WINDOW "
             set [vTcl:rename $base.dialogStatus] ok
             destroy $base"
-    }
+    
     frame $base.fra20 \
         -borderwidth 2
     label $base.fra20.lab21 \
