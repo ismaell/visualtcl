@@ -487,13 +487,13 @@ proc vTclWindow.vTcl.itemEdit {base} {
     ###################
     vTcl:toplevel $base -class Toplevel
     wm focusmodel $base passive
-    wm geometry $base 510x343
+    wm geometry $base 450x343
     wm withdraw $base
     wm maxsize $base 1009 738
     wm minsize $base 1 1
     wm overrideredirect $base 0
     wm resizable $base 1 1
-    wm title $base "Edit Pages"
+    wm title $base "Edit"
     vTcl:FireEvent $base <<Create>>
     wm protocol $base WM_DELETE_WINDOW "::vTcl::itemEdit::close $base"
     wm transient $base .vTcl
@@ -582,7 +582,7 @@ proc vTclWindow.vTcl.itemEdit {base} {
     pack $base.cpd37 \
         -in $base -anchor center -expand 1 -fill both -side top
     place $base.cpd37.01 \
-        -x 0 -y 0 -width -1 -relwidth 0.5 -relheight 1 -anchor nw \
+        -x 0 -y 0 -width -1 -relwidth 0.6 -relheight 1 -anchor nw \
         -bordermode ignore
     pack $base.cpd37.01.cpd38 \
         -in $base.cpd37.01 -anchor center -expand 1 -fill both -side top
@@ -598,10 +598,10 @@ proc vTclWindow.vTcl.itemEdit {base} {
         -in $base.cpd37.01.cpd38 -column 1 -row 0 -columnspan 1 -rowspan 1 \
         -sticky ns
     place $base.cpd37.02 \
-        -x 0 -relx 1 -y 0 -width -1 -relwidth 0.5 -relheight 1 -anchor ne \
+        -x 0 -relx 1 -y 0 -width -1 -relwidth 0.4 -relheight 1 -anchor ne \
         -bordermode ignore
     place $base.cpd37.03 \
-        -x 0 -relx 0.5 -y 0 -rely 0.9 -width 10 -height 10 -anchor s \
+        -x 0 -relx 0.6 -y 0 -rely 0.9 -width 10 -height 10 -anchor s \
         -bordermode ignore
     pack $base.cpd37.02.sw \
         -in $base.cpd37.02 -anchor center -expand 1 -fill both -side top
@@ -616,7 +616,7 @@ proc vTclWindow.vTcl.itemEdit {base} {
     $base.cpd37.02.sw.c create window 0 0 -window $base.cpd37.02.sw.c.f \
         -anchor nw -tag properties
 
-    vTcl:center $base 510 343
+    vTcl:center $base 450 343
     wm deiconify $base
 
     vTcl:FireEvent $base <<Ready>>
@@ -655,6 +655,7 @@ namespace eval ::vTcl::itemEdit {
         set ::${top}::list_items $list_items
         ${top}.ItemsListbox selection set $current($top)
         initProperties $top
+        wm title $top [::$cmds($top)::getTitle $w]
     }
 
     proc initProperties {top} {
@@ -683,11 +684,30 @@ namespace eval ::vTcl::itemEdit {
             pack $f -side top -fill x -expand 0
         }
 
+        ## the label option is kinda special, it updates the label in the
+        ## listbox as well
+        set labelOption [::$cmds($top)::getLabelOption]
+        set variable ::vTcl::itemEdit::${labelOption}_$suffix($top)
+        trace variable $variable w \
+            "::vTcl::itemEdit::setLabel $top $labelOption $variable"
+
         ## calculate the scrolling region
         update idletasks
         set w [winfo width  $::widget(${top},PropertiesFrame)]
         set h [winfo height $::widget(${top},PropertiesFrame)]
         ${top}.PropertiesCanvas configure -scrollregion [list 0 0 $w $h]
+    }
+
+    proc setLabel {top option variable args} {
+        variable current
+        variable target
+        variable cmds
+
+        set label [::vTcl:at $variable]
+        set ::${top}::list_items [lreplace [::vTcl:at ::${top}::list_items] \
+            $current($top) $current($top) $label]
+        ::$cmds($top)::itemConfigure $target($top) $current($top) \
+            $option $label
     }
 
     proc selectItem {top index} {
@@ -698,6 +718,7 @@ namespace eval ::vTcl::itemEdit {
 
         ${top}.ItemsListbox selection clear 0 end
         ${top}.ItemsListbox selection set $index
+        set current($top) $index
 
         set properties [::$cmds($top)::itemConfigure $target($top) $index]
         foreach property $properties {
@@ -706,7 +727,6 @@ namespace eval ::vTcl::itemEdit {
             set variable ::vTcl::itemEdit::${option}_$suffix($top)
             set $variable $value
         }
-        set current($top) $index
     }
 
     proc close {top} {
@@ -747,8 +767,26 @@ namespace eval ::vTcl::itemEdit {
         variable current
 
         ::$cmds($top)::removeItem $target($top) $current($top)
+        set ::${top}::list_items [lreplace [::vTcl:at ::${top}::list_items] \
+            $current($top) $current($top)]
+        set length [llength [::vTcl:at ::${top}::list_items]]
+        set current($top) [expr $current($top) % $length]
+        selectItem $top $current($top)
     }
 
     proc moveUpOrDown {top direction} {
+        variable cmds
+        variable target
+        variable current
+
+        set offset(up) -1
+        set offset(down) 1
+        ::$cmds($top)::moveUpOrDown $target($top) $current($top) $direction
+        set list_items [::$cmds($top)::getItems $target($top)]
+        set list_items [lrange $list_items 1 end]
+        set ::${top}::list_items $list_items
+        set length [llength $list_items]
+        set current($top) [expr ($current($top) + $offset($direction)) % $length]
+        selectItem $top $current($top)
     }
 }

@@ -71,6 +71,14 @@ OptionConfigCmd -_mclistbox_columns     editArg    vTcl::widgets::vtcl::mclistbo
 
 namespace eval ::vTcl::widgets::vtcl::mclistbox::edit {
 
+    proc getTitle {target} {
+        return "Edit columns for $target"
+    }
+
+    proc getLabelOption {} {
+        return -label
+    }
+
     proc getItems {target} {
         ## first item in the list is the current index
         set names [$target column names]
@@ -93,6 +101,39 @@ namespace eval ::vTcl::widgets::vtcl::mclistbox::edit {
         }
         $target column add $newpage -label "Column $index"
         return "Column $index"
+    }
+
+    proc removeItem {target index} {
+        set columns [$target column names]
+        set column  [lindex $columns $index]
+        $target column delete $column
+    }
+
+    proc moveUpOrDown {target index direction} {
+        set columns [$target column names]
+        set length [llength $columns]
+        set i 0
+        set offset(up) -1
+        set offset(down) 1
+        set k [expr ($index + $offset($direction)) % $length]
+        ## here we assign positions to columns
+        foreach column $columns {
+            if {$i == $index} {
+                $target column configure $column -position $k
+            } elseif {$i == $k} {
+                $target column configure $column -position $index
+            } else {
+                $target column configure $column -position $i
+            }
+            incr i
+        }
+        update idletasks
+        ## do it one more time
+        set columns [$target column names]
+        foreach column $columns {
+            set position [$target column cget $column -position]
+            $target column configure $column -position $position
+        }
     }
 
     proc itemConfigure {target index args} {

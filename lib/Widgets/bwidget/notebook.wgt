@@ -48,6 +48,14 @@ NewOption -leavecmd		"leave cmd"		command
 
 namespace eval ::vTcl::widgets::bwidgets::notebook::edit {
 
+    proc getTitle {target} {
+        return "Edit pages for $target"
+    }
+
+    proc getLabelOption {} {
+        return -text
+    }
+
     proc getItems {target} {
         ## first item in the list is the current index
         set sites [$target pages]
@@ -74,6 +82,13 @@ namespace eval ::vTcl::widgets::bwidgets::notebook::edit {
         return "New Page"
     }
 
+    proc removeItem {target index} {
+        set pages [$target pages]
+        set page  [lindex $pages $index]
+        $target delete $page
+        vTcl:init_wtree
+    }
+
     proc itemConfigure {target index args} {
         set pages [$target pages]
         set page [lindex $pages $index]
@@ -82,6 +97,16 @@ namespace eval ::vTcl::widgets::bwidgets::notebook::edit {
         } else {
             eval $target itemconfigure $page $args
         }
+    }
+
+    proc moveUpOrDown {target index direction} {
+        set offset(up) -1
+        set offset(down) 1
+        set pages [$target pages]
+        set length [llength $pages]
+        set page [lindex $pages $index]
+        $target move $page [expr ($index + $offset($direction)) % $length]
+        vTcl:init_wtree
     }
 }
 
@@ -146,7 +171,7 @@ namespace eval vTcl::widgets::bwidgets::notebook {
         set pages [$target pages]
         foreach page $pages {
             set conf [$target itemconfigure $page]
-            set pairs [vTcl:conf_to_pairs $conf ""]
+            set pairs [vTcl:get_subopts_special $conf $target]
             append result "$::vTcl(tab)$basename insert end $page \\\n"
             append result "[vTcl:clean_pairs $pairs]\n"
         }
