@@ -420,18 +420,22 @@ namespace eval ::menu_edit {
                              -background -foreground -font} {
                     vTcl:prop:default_opt $nmenu $def vTcl(w,opt,$def)
                 }
+                vTcl::widgets::saveSubOptions $menu -label -menu
             }
             "command" {
                 $menu add $type -label "New command"  \
                     -command "\# TODO: Your menu handler here"
+                vTcl::widgets::saveSubOptions $menu -label -command
             }
             "radiobutton" {
                 $menu add $type -label "New radio"  \
                     -command "\# TODO: Your menu handler here"
+                vTcl::widgets::saveSubOptions $menu -label -command
             }
             "checkbutton" {
                 $menu add $type -label "New check"  \
                     -command "\# TODO: Your menu handler here"
+                vTcl::widgets::saveSubOptions $menu -label -command
             }
             "separator" {
                 $menu add $type
@@ -618,6 +622,11 @@ namespace eval ::menu_edit {
                 checkAttribute $m $option $checkVar
             }
         }
+
+        ## make sure the -command option substitutes %widget and %top with the
+        ## correct value
+        set f [$top.MenuCanvas].f.-command
+        ::vTcl::ui::attributes::setCommandTarget $f -command $m
     }
 
     proc enableProperties {top enable} {
@@ -1177,5 +1186,6 @@ proc vTclWindow.vTclMenuEdit {base menu} {
 
     wm deiconify $base
 }
+
 
 

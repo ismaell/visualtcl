@@ -1492,6 +1492,15 @@ namespace eval vTcl::widgets {
         set save($optionName) 1
     }
 
+    ## ensures the list of suboptions are saved
+    proc saveSubOptions {w args} {
+        set nm ::widgets::${w}::subOptions
+        namespace eval $nm {}
+        foreach option $args {
+            set ${nm}::save($option) 1
+        }
+    }
+
     ## actionProc takes as parameter the widget path and an additional param
     ##
     ## returnVal array is set with as index the widget path and as value the
@@ -1560,5 +1569,6 @@ namespace eval vTcl::widgets {
         return [$::classes($class,queryInsertOptionsCmd) $addOptions options]
     }
 }
+
 
 

@@ -1382,11 +1382,14 @@ namespace eval ::vTcl::ui::attributes {
                 vTcl:entry ${base}.l -relief sunken  \
                     -textvariable $variable -width 8 \
                     -highlightthickness 1 -fg black
+                namespace eval ::${base}.f "set target $target"
                 button ${base}.f \
                     -image ellipses  -width 12 \
                     -highlightthickness 1 -fg black -padx 0 -pady 1 \
-                    -command "::vTcl::ui::attributes::set_command $target $option [list $config_cmd] $variable
+                    -command "::vTcl::ui::attributes::set_command \[set ::${base}.f::target\] $option [list $config_cmd] $variable
 		              $keyrelease_cmd $option $variable ::vTcl::ui::attributes::checked($base)"
+                bind ${base}.f <Destroy> "
+                    namespace delete ::${base}.f"
                 pack ${base}.l -side left -expand 1 -fill x
                 pack ${base}.f -side right -fill y -pady 1 -padx 1
 	        set focusControl ${base}.l
@@ -1455,6 +1458,12 @@ namespace eval ::vTcl::ui::attributes {
     proc getCheckVariable {top option} {
         set base $top.t${option}
         return ::vTcl::ui::attributes::checked($base)
+    }
+
+    ## Sets the current target for a -command option
+    proc setCommandTarget {top option target} {
+        set base $top.t${option}
+        namespace eval ::${base}.f "set target $target"
     }
 
     ## Sets all pending options (eg. for which user didn't press the <Return> key)
