@@ -118,6 +118,15 @@ proc vTcl:init_wtree {{wants_destroy_handles 1}} {
                 	vTcl:show_selection $b.$j $i
                 \}
             "
+            bind $b.$j <ButtonRelease-3> "
+                vTcl:active_widget $i
+                vTcl:set_mouse_coords %X %Y %x %y
+                $vTcl(gui,rc_menu) post %X %Y
+                grab $vTcl(gui,rc_menu)
+                bind $vTcl(gui,rc_menu) <ButtonRelease> {
+                    grab release $vTcl(gui,rc_menu)
+                     $vTcl(gui,rc_menu) unpost
+                }"
             vTcl:set_balloon $b.$j $i
             $b create window $x $y -window $b.$j -anchor nw -tags $b.$j
 

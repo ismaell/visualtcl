@@ -419,7 +419,7 @@ proc {vTcl:font:add_font} {font_descr font_type {newkey {}}} {
      set vTcl(fonts,$newfont,key)                       $newkey
      set vTcl(fonts,$vTcl(fonts,$newfont,key),object)   $newfont
 
-     lappend vTcl(fonts,$font_type) font$vTcl(fonts,counter)
+     lappend vTcl(fonts,$font_type) $newfont
 
      # in case caller needs it
      return $newfont
