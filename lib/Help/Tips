@@ -95,3 +95,14 @@ It's easier to write
 than
 %W.frame03
 }
+
+{
+To change the order of widgets arranged with the "pack" geometry
+manager, activate the widget you want to move by clicking on it,
+then press the Left/Up, Right/Down keys to change its order.
+}
+
+{
+To move a widget around in a grid, activate it by clicking on it,
+then use the cursor keys.
+}
