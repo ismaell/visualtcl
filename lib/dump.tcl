@@ -529,7 +529,7 @@ proc vTcl:dump_menu_widget {target basename} {
 
 		# to allow option translation
 		set pairs [vTcl:get_opts_special $conf $target \
-                       "-menu -label -command -tearoff -accelerator"]
+                       "-menu -label -command -tearoff -accelerator -value -onvalue -offvalue -variable"]
 
                 append result "$vTcl(tab)$basename add $type \\\n"
                 append result "[vTcl:clean_pairs $pairs]\n"
@@ -824,6 +824,7 @@ proc vTcl:dump:project_info {basedir project} {
     close $fp
     return
 }
+
 
 
 
