@@ -1,6 +1,7 @@
 ChangeLog for Visual Tcl:
 
 1.22   -> 1.51b1
+        o Changed the way libs are loaded
         o Support for mclistbox and combobox from Bryan Oakley. This time,
           no additional packages are needed, and when projects are saved, the
           necessary mclistbox or combobox code is included
