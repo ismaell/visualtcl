@@ -261,7 +261,7 @@ namespace eval ::inspector {
     proc {::inspector::expand_packages} {listbox node_index node_info level} {
         global widget
 
-        set children [package names]
+        set children [lsort [package names]]
 
         # insert just after the node
         incr node_index

@@ -26,9 +26,6 @@ if {![llength [info commands tkMbPost]]} {
     ::tk::unsupported::ExposePrivateCommand tkMbPost
 }
 
-set vTcl(w,last_widget_in) ""
-set vTcl(w,last_value) ""
-
 proc vTcl:show_propmgr {} {
     vTclWindow.vTcl.ae
 }
@@ -225,47 +222,26 @@ proc vTcl:prop:recalc_canvas {} {
     set vTcl(propmgr,frame,$f3) [expr $h + $h2]
 }
 
-proc vTcl:focus_out_cmd {option} {
-    global vTcl
-    if {$vTcl(mode) == "TEST"} return
+proc vTcl:key_release_cmd {k w config_cmd} {
 
-    if {$vTcl(w,last_widget_in) != "" && $vTcl(w,last_value) != ""} {
-	set w $vTcl(w,last_widget_in)
-	set val $vTcl(w,last_value)
-
-	set vTcl(w,last_widget_in) ""
-	set vTcl(w,last_value)     ""
-
-	$w configure $option $val
-	vTcl:prop:save_opt $w $option ::widgets::${w}::options($option)
-	vTcl:place_handles $vTcl(w,widget)
-    } else {
-	vTcl:log "oops:$vTcl(w,widget),$vTcl(w,last_widget_in)!"
+    ## Don't change if the user presses a directional key.
+    if {$k < 37 || $k > 40} {
+        set ::vTcl::config($w) $config_cmd
     }
 }
 
-proc vTcl:focus_out_geometry_cmd {option cmd {cmd2 ""}} {
-    global vTcl
+proc vTcl:focus_out_cmd {} {
 
-    if {$vTcl(mode) == "TEST"} return
+    set names [array names ::vTcl::config]
+    foreach w $names {
+        if {![winfo exists $w]} {
+            continue
+        }
+        eval $::vTcl::config($w)
+        unset ::vTcl::config($w)
+    }
 
-    if {$vTcl(w,last_widget_in) != "" && \
-	$vTcl(w,last_value)     != ""} {
-
-	set back_last_widget_in $vTcl(w,last_widget_in)
-	set back_last_value $vTcl(w,last_value)
-
-	set vTcl(w,last_widget_in) ""
-	set vTcl(w,last_value)     ""
-
-	if {$cmd2==""} {
-	    $cmd $back_last_widget_in $option $back_last_value
-	} else {
-	    $cmd $cmd2 $back_last_widget_in $option $back_last_value
-	}
-     } else {
-	vTcl:log "oops2:$vTcl(w,widget),$vTcl(w,last_widget_in)!"
-     }
+    vTcl:place_handles $::vTcl(w,widget)
 }
 
 proc vTcl:prop:update_attr {} {
@@ -317,11 +293,9 @@ proc vTcl:prop:update_attr {} {
             }
             if {[lsearch $vTcl(w,optlist) $i] < 0} { continue }
 	    set variable "vTcl(w,opt,$i)"
-	    set config_cmd "\$vTcl(w,widget) configure $i \$$variable; "
-	    set focus_out_cmd "vTcl:focus_out_cmd $i"
+	    set config_cmd "\$vTcl(w,widget) configure $i \[list \$$variable\]; "
 
-	    append config_cmd "vTcl:place_handles \$vTcl(w,widget)"
-	    vTcl:prop:new_attr $top $i $variable $config_cmd opt $focus_out_cmd
+	    vTcl:prop:new_attr $top $i $variable $config_cmd opt
         }
 
 	## special stuff to edit menu items (cascaded items)
@@ -364,16 +338,13 @@ proc vTcl:prop:update_attr {} {
 	    foreach i "$vTcl(m,$mgr,list) $vTcl(m,$mgr,extlist)" {
 		set variable "vTcl(w,$mgr,$i)"
 		set cmd [lindex $vTcl(m,$mgr,$i) 4]
-		set config_cmd "$cmd \$vTcl(w,widget) $i \$$variable"
-		set focus_out_cmd "vTcl:focus_out_geometry_cmd $i $cmd"
 
 		if {$cmd == ""} {
-		    set config_cmd "$mgr conf \$vTcl(w,widget) $i \$$variable"
-		    set focus_out_cmd "vTcl:focus_out_geometry_cmd $i $mgr conf"
-		}
-		append config_cmd ";vTcl:place_handles \$vTcl(w,widget)"
-		vTcl:prop:new_attr $top $i $variable $config_cmd m,$mgr \
-		    $focus_out_cmd -geomOpt
+		    set config_cmd "$mgr conf \$vTcl(w,widget) $i \[list \$$variable\]"
+		} else {
+		    set config_cmd "$cmd \$vTcl(w,widget) $i \[list \$$variable\]"
+                }
+		vTcl:prop:new_attr $top $i $variable $config_cmd m,$mgr -geomOpt
 	    }
 	}
     }
@@ -388,8 +359,7 @@ proc vTcl:prop:update_attr {} {
     vTcl:prop:update_saves $vTcl(w,widget)
 }
 
-proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
-			{isGeomOpt ""}} {
+proc vTcl:prop:new_attr {top option variable config_cmd prefix {isGeomOpt ""}} {
     global vTcl $variable options specialOpts propmgrLabels
 
     set base $top.t${option}
@@ -430,7 +400,9 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
 
     set focusControl $base
 
-    append config_cmd "; vTcl:prop:save_opt \$vTcl(w,widget) $option $variable"
+    set apply_cmd $config_cmd
+    append apply_cmd "; vTcl:prop:save_opt \$vTcl(w,widget) $option $variable"
+    append config_cmd "; vTcl:place_handles \$vTcl(w,widget); vTcl:prop:save_opt \$vTcl(w,widget) $option $variable"
 
     switch $type {
         boolean {
@@ -615,19 +587,9 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
     bind $label <ButtonRelease-3> \
 	"vTcl:propmgr:show_rightclick_menu $vTcl(gui,ae) $option $variable %X %Y"
 
-    set focus_in_cmd "vTcl:propmgr:select_attr $top $option"
-
-    ## Don't change if the user presses a directional key.
-    set key_release_cmd "
-	if {%k < 37 || %k > 40} {
-	    set vTcl(w,last_widget_in) \$vTcl(w,widget)
-	    set vTcl(w,last_value) \$$variable
-	}
-    "
-
-    bind $focusControl <FocusIn>    $focus_in_cmd
-    bind $focusControl <FocusOut>   $focus_out_cmd
-    bind $focusControl <KeyRelease> $key_release_cmd
+    bind $focusControl <FocusIn>    "vTcl:propmgr:select_attr $top $option"
+    bind $focusControl <FocusOut>   vTcl:focus_out_cmd
+    bind $focusControl <KeyRelease> "vTcl:key_release_cmd %k \$vTcl(w,widget) \[subst [list $apply_cmd]\]"
     bind $focusControl <KeyRelease-Return> $config_cmd
     bind $focusControl <Key-Up>     "vTcl:propmgr:focusPrev $label"
     bind $focusControl <Key-Down>   "vTcl:propmgr:focusNext $label"

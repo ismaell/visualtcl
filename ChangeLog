@@ -1,6 +1,12 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Better and simpler implementation of action to take when focus lost in
+      attributes editor. Now, when the user presses a key in an attribute, the
+      command to execute is stored until either he presses Return or the focus
+      gets lost. When the entry field loses the focus, the command gets
+      executed.
+    o Sorting names of packages in the system inspector.
     o If the package Img can be found, adds more file types to the image
       manager: JPEG, BMP.
     o Shift-click will now place the last widget placed.  This sort of bombs

@@ -233,7 +233,6 @@ proc vTcl:select_widget {target} {
         return
     }
     set vTcl(w,last_class) $vTcl(w,class)
-    set vTcl(w,last_widget) $vTcl(w,widget)
     set vTcl(w,last_manager) $vTcl(w,manager)
     vTcl:update_widget_info $target
     vTcl:prop:update_attr
