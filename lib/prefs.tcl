@@ -128,11 +128,10 @@ proc vTclWindow.vTcl.prefs {{base ""} {container 0}} {
 
     update
 
-    ## We specify the geometry of the window because we'd have to deiconify
-    ## the window first to get its true geometry.  This causes the ugly
-    ## window jump as it is deiconified and then centered.
-    vTcl:center $base 400 400
+    ## We have to deiconify first.  There's no way around it.  This causes
+    ## the ugly window jump, but oh well.
     wm deiconify $base
+    vTcl:center $base
 }
 
 proc {vTcl:prefs:data_exchange} {save_and_validate} {

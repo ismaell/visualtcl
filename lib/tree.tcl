@@ -276,13 +276,13 @@ proc vTclWindow.vTcl.tree {args} {
     }
     toplevel $base -class vTcl
     wm transient $base .vTcl
+    wm withdraw $base
     wm focusmodel $base passive
     wm geometry $base 296x243+75+142
     wm maxsize $base 1137 870
     wm minsize $base 1 1
     wm overrideredirect $base 0
     wm resizable $base 1 1
-    wm deiconify $base
     wm title $base "Widget Tree"
 
     frame $base.frameTop
@@ -315,6 +315,6 @@ proc vTclWindow.vTcl.tree {args} {
     vTcl:init_wtree
     vTcl:setup_vTcl:bind $base
     vTcl:BindHelp $base WidgetTree
+
+    wm deiconify $base
 }
-
-
