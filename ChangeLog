@@ -1,6 +1,6 @@
 ChangeLog for Visual Tcl:
 
-1.22b1 ->
+1.22b1 -> 1.22 (released August 20, 2000)
         o Fixed root window placer bug
         o Added "Clear" pulldown menu in command console under Linux
         o Added modifier pulldown menu in bindings editor
