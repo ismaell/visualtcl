@@ -32,3 +32,20 @@ Icon		icon_scrolledlistbox.gif
 DumpChildren	no
 MegaWidget	yes
 DontSaveOptions -sbwidth
+GetFontsCmd     vTcl::widgets::iwidgets::scrolledlistbox::getFontsCmd
+
+namespace eval vTcl::widgets::iwidgets::scrolledlistbox {
+
+    proc getFontsCmd {target} {
+        set result ""
+	set labelfont [$target cget -labelfont]
+	set textfont  [$target cget -textfont]
+	if {$labelfont != ""} {
+	    lappend result $labelfont
+	}
+	if {$textfont != ""} {
+	    lappend result $textfont
+	}
+	return $result
+    }
+}
