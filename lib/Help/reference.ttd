@@ -3,6 +3,7 @@
 
 ttd.version 1.0
 
+ttd.tagdef sel -background SystemHighlight -borderwidth 0 -foreground SystemHighlightText -relief flat
 ttd.tagdef Title -background white -font {-family Arial -weight bold -slant roman -size 12 -underline 0 -overstrike 0} -foreground #000000 -justify left
 ttd.tagdef {Level 1 Title} -background white -font {-family Arial -weight bold -slant roman -size 11 -underline 0 -overstrike 0} -foreground #004080 -justify left
 ttd.tagdef {Level 2 Title} -background white -font {-family Arial -weight bold -slant roman -size 10 -underline 0 -overstrike 0} -foreground #000000 -justify left
@@ -849,8 +850,8 @@ ttd.tagon {Level 4 Title}
 ttd.tagon {Level 3 Title}
 ttd.text {1.9.10 Geometry Manager
 }
-ttd.tagoff {Level 4 Title}
 ttd.tagoff {Level 3 Title}
+ttd.tagoff {Level 4 Title}
 ttd.text {In Tk, a geometry manager controls how widgets are arranged in a window. There are three geometry managers currently available with Tk.
 }
 ttd.text {
@@ -867,8 +868,7 @@ ttd.text {
 ttd.text {1.9.10.2 Pack
 }
 ttd.tagoff {Level 4 Title}
-ttd.text {The pack geometry manager arranges widgets next to each other from top to bottom or from left to right. Widgets can expand to fill the available space. See a good Tcl/Tk book for details on }
-ttd.text {the pack geometry manager.
+ttd.text {The pack geometry manager arranges widgets next to each other from top to bottom or from left to right. Widgets can expand to fill the available space. See a good Tcl/Tk book for details on the pack geometry manager.
 }
 ttd.text {
 }
@@ -902,8 +902,11 @@ ttd.text {The widget toolbar lists all the widgets available for you to insert i
 }
 ttd.text {
 }
-ttd.text {When you select a widget to insert, the status bar will display its class. To actually insert the widget, click anywhere in your project where you want the widget to be inserted.}
+ttd.text {When you select a widget to insert, the status bar will display its class. To actually insert the widget, click anywhere in your project where you want the widget to be inserted.
+}
 ttd.text {
+}
+ttd.text {If you selected a widget to insert by mistake, you can select another one in the widget toolbar, or you can select the "Pointer" to return to the mode where you can select and manipulate widgets.
 }
 ttd.text {
 }
@@ -912,6 +915,8 @@ ttd.text {3. Command Console}
 ttd.tagoff {Level 1 Title}
 ttd.text {
 }
+ttd.text {The command console is TkCon from Jeffrey Hobbs. You can type commands and see the results interactively. The command console also offers extensive support for manipulating interpreters, features brace highlighting and command history.
+}
 ttd.text {
 }
 ttd.tagon {Level 1 Title}
@@ -919,11 +924,72 @@ ttd.text {4. Function List}
 ttd.tagoff {Level 1 Title}
 ttd.text {
 }
+ttd.text {The function list shows the list of procedures / functions you have defined in your project.
+}
+ttd.text {
+}
+ttd.tagon {Level 2 Title}
+ttd.text {4.1 Add New Procedure}
+ttd.tagoff {Level 2 Title}
+ttd.text {
+}
+ttd.text {This icon opens a new empty procedure editor window. You can type a new procedure name and code in this window. To create a procedure within a namespace, enter the fully qualified name, for example
+}
+ttd.text {
+}
+ttd.tagon Listing
+ttd.text ::mynamespace::myprocedure
+ttd.tagoff Listing
+ttd.text {
+}
+ttd.text {
+}
+ttd.tagon {Level 2 Title}
+ttd.text {4.2 Edit Selected Procedure}
+ttd.tagoff {Level 2 Title}
+ttd.text {
+}
+ttd.text {Opens a procedure editor window with the selected procedure.
+}
+ttd.text {
+}
+ttd.tagon {Level 2 Title}
+ttd.text {4.3 Delete Selected Procedure}
+ttd.tagoff {Level 2 Title}
+ttd.text {
+}
+ttd.text {Deletes the currently selected procedure. You will be asked for confirmation before the procedure is deleted.
+}
 ttd.text {
 }
 ttd.tagon {Level 1 Title}
 ttd.text {5. Window List}
 ttd.tagoff {Level 1 Title}
+ttd.text {
+}
+ttd.text {The Window List only lists the toplevel windows in your application. Toplevel windows are windows that have a titlebar and can dragged and resized by the user.
+}
+ttd.text {
+}
+ttd.tagon {Level 2 Title}
+ttd.text {5.1 Show Toplevel Window}
+ttd.tagoff {Level 2 Title}
+ttd.text {
+}
+ttd.text {
+}
+ttd.tagon {Level 2 Title}
+ttd.text {5.2 Hide Toplevel Window}
+ttd.tagoff {Level 2 Title}
+ttd.text {
+}
+ttd.text {
+}
+ttd.tagon {Level 2 Title}
+ttd.tagon sel
+ttd.text {5.3 Delete Toplevel Window}
+ttd.tagoff sel
+ttd.tagoff {Level 2 Title}
 ttd.text {
 }
 ttd.text {
