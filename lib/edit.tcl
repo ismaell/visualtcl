@@ -145,7 +145,11 @@ proc ::vTcl::findReplace::window {{newBase ""} {container 0}} {
     variable base
 
     if {[llength $newBase] > 0} { set base $newBase }
-    if {[winfo exists $base] && (!$container)} { wm deiconify $base; return }
+    if {[winfo exists $base] && (!$container)} {
+	wm deiconify $base
+	focus $base.findEnt
+	return
+    }
 
     ###################
     # CREATING WIDGETS

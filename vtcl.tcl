@@ -151,11 +151,12 @@ proc vTcl:load_widgets {} {
         set lib [lindex [split [file root $i] _] end]
         if {[vTcl:load_lib $i]} {
             set libname [lindex [split [lindex [file split $i] end] .] 0]
-            if {[vTcl:$libname:init]} { lappend vTcl(w,libs) $libname }
+	    ## If we don't have the library, don't load the widgets for it.
+            if {![vTcl:$libname:init]} { continue }
+	    lappend vTcl(w,libs) $libname
             vTcl:LoadWidgets [file join $vTcl(VTCL_HOME) lib Widgets $lib]
         }
     }
-    unset libname
 }
 
 proc vTcl:load_libs {} {

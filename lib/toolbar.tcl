@@ -24,7 +24,7 @@
 proc vTcl:toolbar_create {args} {
     global vTcl
     set base .vTcl.toolbar
-    if [winfo exists $base] {return}
+    if {[winfo exists $base]} {return}
     toplevel $base -width 0 -height 0 -class vTcl
     wm transient $base .vTcl
     wm withdraw $base
@@ -53,10 +53,8 @@ proc vTcl:toolbar_create {args} {
 
 proc vTcl:toolbar_add {class name image cmd_add} {
     global vTcl
-    if ![winfo exists .vTcl.toolbar] {
-        vTcl:toolbar_create
-    }
     set base .vTcl.toolbar
+    if {![winfo exists $base]} { vTcl:toolbar_create }
     set f [vTcl:new_widget_name tb $base]
     button $f -bd 1 -image $image -comm "vTcl:new_widget $class $f \"$cmd_add\""
     vTcl:set_balloon $f $name
@@ -70,6 +68,7 @@ proc vTclWindow.vTcl.toolbar {args} {
 proc vTcl:toolbar_reflow {} {
     global vTcl
     set base .vTcl.toolbar
+    if {![winfo exists $base]} { vTcl:toolbar_create }
     wm resizable $base 1 1
     set num [llength [winfo children $base]]
     set w $vTcl(toolbar,width)
