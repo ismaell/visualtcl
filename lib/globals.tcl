@@ -264,6 +264,23 @@ set vTcl(m,wm,title)               { title           {}       type    {} {vTcl:w
 set vTcl(m,menebar,list) ""
 set vTcl(m,menubar,extlist) ""
 
+# Provide default values for menus managed by wm
+set vTcl(w,wm,geometry,w)    0
+set vTcl(w,wm,geometry,h)    0
+set vTcl(w,wm,geometry,x)    0
+set vTcl(w,wm,geometry,y)    0
+set vTcl(w,wm,minsize,x)     0
+set vTcl(w,wm,minsize,y)     0
+set vTcl(w,wm,maxsize,x)     0
+set vTcl(w,wm,maxsize,y)     0
+set vTcl(w,wm,aspect,minnum) 0
+set vTcl(w,wm,aspect,minden) 1
+set vTcl(w,wm,aspect,maxnum) 0
+set vTcl(w,wm,aspect,maxden) 1
+set vTcl(w,wm,resizable,w)   0
+set vTcl(w,wm,resizable,h)   0
+set vTcl(w,wm,set,origin)    0
+set vTcl(w,wm,set,size)      0
 
 set vTcl(head,proj) [string trim {
 #############################################################################
@@ -350,5 +367,6 @@ proc vTcl:syntax:iscommand {command} {
 
 # special case for -in option
 set vTcl(option,noencase,-in) 1
+
 
 

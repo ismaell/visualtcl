@@ -727,7 +727,11 @@ proc vTcl:prop:enable_manager_entry {option state} {
     set base $top.t${option}
 
     array set background [list normal $vTcl(pr,entrybgcolor) disabled gray]
-    $base configure -state $state -bg $background($state)
+
+    ## makes sure the property entry does exist
+    if {[winfo exists $base]} {
+        $base configure -state $state -bg $background($state)
+    }
 }
 
 proc vTcl:prop:clear {} {
@@ -1222,3 +1226,4 @@ proc vTcl:propmgr:scrollWheelMouse {delta label} {
 	vTcl:propmgr:focusNext $label
     }
 }
+
