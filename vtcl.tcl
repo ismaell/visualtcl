@@ -317,7 +317,7 @@ proc vTclWindow.vTcl {args} {
     wm command $vTcl(gui,main) "$vTcl(VTCL_HOME)/vtcl"
     wm iconname $vTcl(gui,main) "Visual Tcl"
     if {$tcl_platform(platform) == "macintosh"} {
-        wm geometry $vTcl(gui,main) $vTcl(pr,geom_vTcl)+0+20
+        wm geometry $vTcl(gui,main) +0+20
     } else {
          wm geometry $vTcl(gui,main) +0+0
     }
