@@ -1,6 +1,8 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Added wheel mouse support to the property manager.
+    o Cleaned up some of the BWidget support.
     o Added Escape and Return key bindings to preferences window.
     o Added more tests to automated test script.
     o Restored vTcl:exit stuff like it was in 1.5.2 because vTcl
