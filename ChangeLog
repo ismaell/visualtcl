@@ -1,6 +1,17 @@
 ChangeLog for Visual Tcl:
 
-1.22   -> 1.4 (not released yet)
+1.22   -> 1.51b1
+        o Support for mclistbox and combobox from Bryan Oakley. This time,
+          no additional packages are needed, and when projects are saved, the
+          necessary mclistbox or combobox code is included
+        o Support for Iwidgets and BLT with new widget description mechanism
+        o Megawidgets such as Iwidgets can now be selected/dragged as a whole
+        o Added checkboxes to save only the options the user wants to.
+        o Redone menu editor.
+        o Added MRU to command console. Up/down arrows navigate through
+          previously issued commands.
+        o Added system inspector to view variables, procedures, windows,
+          bindings, namespaces, packages
         o Completely redone the binding editor. Should be easier to use and
           less error prone (forgot to click on "update" ?)
 	o Removed "type" as a means of identifying widgets.  Widgets are all
