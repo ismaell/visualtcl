@@ -102,7 +102,10 @@ namespace eval vTcl::widgets::core::panedwindow {
             append result "set $sitevariable $basename.$last\n"
             append result \
                 [vTcl::widgets::core::dump_subwidgets $pane \$$sitevariable]
-            append result "$::vTcl(tab)$basename add $basename.$last\n"
+            set conf [$target paneconfigure $pane]
+            set pairs [vTcl:get_subopts_special $conf $target]
+            append result "$::vTcl(tab)$basename add $basename.$last \\\n"
+            append result "[vTcl:clean_pairs $pairs]\n"
 	    if {$i < [llength $panes] -1} {
 	        set coord [$target sash coord $i]
 		lassign $coord x y
@@ -199,4 +202,5 @@ namespace eval vTcl::widgets::core::panedwindow::edit {
 }
 
 } ; # if ...
+
 
