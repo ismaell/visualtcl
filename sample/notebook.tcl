@@ -1,13 +1,15 @@
-#!/usr/bin/wish
+#!/bin/sh
+# the next line restarts using wish\
+exec wish8.0 "$0" "$@"
 if {![info exist vTcl(sourcing)]} {
 
-		
+
 		# provoke name search
 	        catch {package require foobar}
 	        set names [package names]
-                
+
 	        # check if BLT is available
-	        if { [lsearch -exact $names BLT] != -1} { 
+	        if { [lsearch -exact $names BLT] != -1} {
 
 		   package require BLT
 		   namespace import blt::vector
@@ -15,26 +17,26 @@ if {![info exist vTcl(sourcing)]} {
 		   namespace import blt::hierbox
 		   namespace import blt::stripchart
 		}
-	
-		
+
+
 		# provoke name search
 	        catch {package require foobar}
 	        set names [package names]
-                
+
 	        # check if Itcl is available
-	        if { [lsearch -exact $names Itcl] != -1} { 
+	        if { [lsearch -exact $names Itcl] != -1} {
 
 		   package require Itcl 3.0
 		   namespace import itcl::* }
-                
+
 		# check if Itk is available
 		if { [lsearch -exact $names Itk] != -1} {
-		    
-		   package require Itk 3.0 } 
-		
+
+		   package require Itk 3.0 }
+
 		# check if Iwidgets is available
 		if { [lsearch -exact $names Iwidgets] != -1} {
-		  
+
 		   package require Iwidgets 3.0
                    namespace import iwidgets::entryfield
                    namespace import iwidgets::spinint
@@ -51,8 +53,11 @@ if {![info exist vTcl(sourcing)]} {
                    namespace import iwidgets::checkbox
                    namespace import iwidgets::radiobox
                    namespace import iwidgets::tabnotebook
+                   namespace import iwidgets::panedwindow
+
+               	   option add *Scrolledlistbox.sbWidth 10
                 }
-        
+
 }
 ############################
 # code to load stock images
@@ -70,59 +75,59 @@ proc vTcl:rename {name} {
 }
 
 proc vTcl:image:create_new_image {filename description type} {
-	
+
 	global vTcl env
 	set reference [vTcl:rename $filename]
 
 	# image already existing ?
 	if [info exists vTcl(images,files)] {
-		
+
 		set index [lsearch -exact $vTcl(images,files) $filename]
-		
+
 		if {$index != "-1"} {
 			# cool, no more work to do
 			return
 		}
 	}
-	
+
 	# wait a minute... does the file actually exist?
 	if {! [file exists $filename] } {
 
 		set description "file not found!"
-		
+
 		set object [image create bitmap -data {
 		    #define open_width 16
 		    #define open_height 16
 		    static char open_bits[] = {
-			0x7F, 0xFE, 
-			0x41, 0x82, 
-			0x21, 0x81, 
-			0x41, 0x82, 
-			0x21, 0x81, 
-			0x21, 0x81, 
-			0x21, 0x81, 
+			0x7F, 0xFE,
+			0x41, 0x82,
+			0x21, 0x81,
+			0x41, 0x82,
+			0x21, 0x81,
+			0x21, 0x81,
+			0x21, 0x81,
 			0x91, 0x80,
-			0x21, 0x81, 
-			0x91, 0x80, 
-			0x21, 0x81, 
-			0x21, 0x81, 
-			0x21, 0x81, 
-			0x41, 0x82, 
+			0x21, 0x81,
+			0x91, 0x80,
+			0x21, 0x81,
+			0x21, 0x81,
+			0x21, 0x81,
+			0x41, 0x82,
 			0x41, 0x82,
 			0x7F, 0xFE};}]
-		
+
 	} else {
 
 		set object [image create [vTcl:image:get_creation_type $filename] -file $filename]
 	}
-	
+
 	set vTcl(images,$reference,image)       $object
 	set vTcl(images,$reference,description) $description
 	set vTcl(images,$reference,type)        $type
 	set vTcl(images,filename,$object)       $filename
 
 	lappend vTcl(images,files) $filename
-	
+
 	# return image name in case caller might want it
 	return $object
 }
@@ -136,16 +141,16 @@ proc vTcl:image:get_image {filename} {
 }
 
 proc vTcl:image:get_creation_type {filename} {
-	
+
 	set ext [file extension $filename]
 	set ext [string tolower $ext]
-	
+
 	switch $ext {
-		
+
 		.ppm -
 		.gif    {return photo}
 		.xbm    {return bitmap}
-		
+
 		default {return photo}
 	}
 }
@@ -186,15 +191,15 @@ proc vTcl:font:add_font {font_descr font_type newkey} {
      set vTcl(fonts,$newfont,type)                      $font_type
      set vTcl(fonts,$newfont,key)                       $newkey
      set vTcl(fonts,$vTcl(fonts,$newfont,key),object)   $newfont
-     
+
      # in case caller needs it
      return $newfont
 }
 
 proc vTcl:font:get_font {key} {
-	
+
 	global vTcl
-	
+
 	return $vTcl(fonts,$key,object)
 }
 
@@ -212,13 +217,13 @@ vTcl:font:add_font "-family lucida -size 18 -weight normal -slant italic -underl
 # code to load user fonts
 
 #############################################################################
-# Visual Tcl v1.21 Project
+# Visual Tcl v1.22 Project
 #
 
 #################################
 # GLOBAL VARIABLES
 #
-global widget; 
+global widget;
     set widget(ButtonBox1) {.top33.but35}
     set widget(CheckBox1) {.top33.fra36.che37}
     set widget(CheckBox2) {.top33.fra36.che38}
@@ -234,17 +239,9 @@ global widget;
 # USER DEFINED PROCEDURES
 #
 
-proc {buttonbox} {pathName args} {
-uplevel ::iwidgets::Buttonbox $pathName $args
-}
-
-proc {checkbox} {pathName args} {
-uplevel ::iwidgets::Checkbox $pathName $args
-}
-
 proc {notebookPage1} {base {container 0}} {
 global widget
-    
+
     if {$base == ""} {
         set base .top33
     }
@@ -255,7 +252,7 @@ global widget
     # CREATING WIDGETS
     ###################
     if {!$container} {
-    toplevel $base -class Toplevel  -background #bcbcbc -highlightbackground #bcbcbc  -highlightcolor #000000 
+    toplevel $base -class Toplevel  -background #bcbcbc -highlightbackground #bcbcbc  -highlightcolor #000000
     wm focusmodel $base passive
     wm geometry $base 428x293+123+165
     wm maxsize $base 1009 738
@@ -265,25 +262,25 @@ global widget
     wm deiconify $base
     wm title $base "New Toplevel 1"
     }
-    frame $base.fra36  -background #bcbcbc -borderwidth 2 -cursor left_ptr -height 75  -highlightbackground #bcbcbc -highlightcolor #000000 -relief groove  -width 125 
-    checkbox $base.fra36.che37  -background #febcbc -labeltext Settings! 
-    checkbox $base.fra36.che38  -background #bce8bc -labeltext {Settings 2} 
-    frame $base.fra34  -background #bcbcbc -borderwidth 2 -height 75  -highlightbackground #bcbcbc -highlightcolor #000000 -width 125 
-    radiobox $base.fra34.rad35  -background #bc725c -labeltext {Settings 3} -relief sunken 
+    frame $base.fra36  -background #bcbcbc -borderwidth 2 -cursor left_ptr -height 75  -highlightbackground #bcbcbc -highlightcolor #000000 -relief groove  -width 125
+    checkbox $base.fra36.che37  -background #febcbc -labeltext Settings!
+    checkbox $base.fra36.che38  -background #bce8bc -labeltext {Settings 2}
+    frame $base.fra34  -background #bcbcbc -borderwidth 2 -height 75  -highlightbackground #bcbcbc -highlightcolor #000000 -width 125
+    radiobox $base.fra34.rad35  -background #bc725c -labeltext {Settings 3} -relief sunken
     ###################
     # SETTING GEOMETRY
     ###################
-    pack $base.fra36  -in $base -anchor center -expand 1 -fill both -side top 
-    pack $base.fra36.che37  -in $base.fra36 -anchor n -expand 1 -fill both -side left 
+    pack $base.fra36  -in $base -anchor center -expand 1 -fill both -side top
+    pack $base.fra36.che37  -in $base.fra36 -anchor n -expand 1 -fill both -side left
     grid columnconf $base.fra36.che37 1 -weight 1
     grid rowconf $base.fra36.che37 1 -weight 1
     grid rowconf $base.fra36.che37 0 -minsize 8
-    pack $base.fra36.che38  -in $base.fra36 -anchor n -expand 1 -fill both -side left 
+    pack $base.fra36.che38  -in $base.fra36 -anchor n -expand 1 -fill both -side left
     grid columnconf $base.fra36.che38 1 -weight 1
     grid rowconf $base.fra36.che38 1 -weight 1
     grid rowconf $base.fra36.che38 0 -minsize 8
-    pack $base.fra34  -in $base -anchor center -expand 0 -fill x -side top 
-    pack $base.fra34.rad35  -in $base.fra34 -anchor center -expand 0 -fill x -side top 
+    pack $base.fra34  -in $base -anchor center -expand 0 -fill x -side top
+    pack $base.fra34.rad35  -in $base.fra34 -anchor center -expand 0 -fill x -side top
     grid columnconf $base.fra34.rad35 1 -weight 1
     grid rowconf $base.fra34.rad35 1 -weight 1
     grid rowconf $base.fra34.rad35 0 -minsize 8
@@ -299,14 +296,6 @@ global widget
     $base.fra34.rad35 add radio1 -text "Radio 1"
     $base.fra34.rad35 add radio2 -text "Radio 2"
     $base.fra34.rad35 add radio3 -text "Radio 3"
-}
-
-proc {radiobox} {pathName args} {
-uplevel ::iwidgets::Radiobox $pathName $args
-}
-
-proc {tabnotebook} {pathName args} {
-uplevel ::iwidgets::Tabnotebook $pathName $args
 }
 
 proc {main} {argc argv} {
@@ -399,9 +388,9 @@ proc vTclWindow.top35 {base {container 0}} {
     if {!$container} {
     toplevel $base -class Toplevel \
         -background #bcbcbc -highlightbackground #bcbcbc \
-        -highlightcolor #000000 
+        -highlightcolor #000000
     wm focusmodel $base passive
-    wm geometry $base 450x368+177+212
+    wm geometry $base 450x368+142+160
     wm maxsize $base 1009 738
     wm minsize $base 1 1
     wm overrideredirect $base 0
@@ -410,33 +399,33 @@ proc vTclWindow.top35 {base {container 0}} {
     wm title $base "New Toplevel 2"
     }
     tabnotebook $base.tab36 \
-        -raiseselect 1 -tabpos n 
+        -raiseselect 1 -tabpos n
     frame $base.fra37 \
         -background #bcbcbc -borderwidth 2 -height 75 \
-        -highlightbackground #bcbcbc -highlightcolor #000000 -width 125 
+        -highlightbackground #bcbcbc -highlightcolor #000000 -width 125
     button $base.fra37.but38 \
         -activebackground #bcbcbc -activeforeground #000000 \
         -background #bcbcbc \
         -font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1 \
         -foreground #000000 -highlightbackground #bcbcbc \
-        -highlightcolor #000000 -padx 9 -pady 3 -text {Next >} 
+        -highlightcolor #000000 -padx 9 -pady 3 -text {Next >}
     button $base.fra37.but39 \
         -activebackground #bcbcbc -activeforeground #000000 \
         -background #bcbcbc \
         -font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1 \
         -foreground #000000 -highlightbackground #bcbcbc \
-        -highlightcolor #000000 -padx 9 -pady 3 -text {< Previous} 
+        -highlightcolor #000000 -padx 9 -pady 3 -text {< Previous}
     ###################
     # SETTING GEOMETRY
     ###################
     pack $base.tab36 \
-        -in $base -anchor center -expand 1 -fill both -side top 
+        -in $base -anchor center -expand 1 -fill both -side top
     pack $base.fra37 \
-        -in $base -anchor center -expand 0 -fill none -side right 
+        -in $base -anchor center -expand 0 -fill none -side right
     pack $base.fra37.but38 \
-        -in $base.fra37 -anchor center -expand 0 -fill none -side right 
+        -in $base.fra37 -anchor center -expand 0 -fill none -side right
     pack $base.fra37.but39 \
-        -in $base.fra37 -anchor center -expand 0 -fill none -side right 
+        -in $base.fra37 -anchor center -expand 0 -fill none -side right
 }
 
 Window show .

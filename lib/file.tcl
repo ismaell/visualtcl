@@ -33,7 +33,7 @@ proc vTcl:new {} {
     wm title $vTcl(gui,main) "Visual Tcl - $vTcl(project,name)"
     proc main {argc argv} "
     	wm protocol $vTcl(w,insert) WM_DELETE_WINDOW {exit}
-    
+
     "
 }
 
@@ -45,20 +45,20 @@ proc vTcl:file_source {} {
 }
 
 proc vTcl:is_vtcl_prj {file} {
-	
+
     set fileID [open $file r]
     set contents [read $fileID]
     close $fileID
-    
+
     set found 0
     set vmajor ""
     set vminor ""
-    
+
     foreach line [split $contents \n] {
-	
+
 	if [regexp {# Visual Tcl v(.?)\.(.?.?) Project} $line \
 	       matchAll vmajor vminor] {
-		
+
 		set found 1
 	}
     }
@@ -69,12 +69,12 @@ proc vTcl:is_vtcl_prj {file} {
 	              -message "This is not a vTcl project!" \
 	              -icon error \
 	              -type ok
-		              
+
 	return 0
-    }    
+    }
 
     if {$vmajor != "" && $vminor != ""} {
-    	
+
     	if {$vmajor > 1 ||
     	    ($vmajor == 1 && $vminor > 22)} {
 
@@ -82,11 +82,11 @@ proc vTcl:is_vtcl_prj {file} {
 		              -message "You are trying to load a project created using Visual Tcl v$vmajor.$vminor\n\nPlease update to vTcl $vmajor.$vminor and try again." \
 	              -icon error \
 	              -type ok
-	              
+
 	        return 0
     	}
     }
-    
+
     # all right, it's a vtcl project
     return 1
 }
@@ -100,7 +100,7 @@ proc vTcl:source {file} {
         vTcl:dialog "Error Sourcing Project\n$err"
     }
     vTcl:statbar 35
-    
+
     # kc: ignore global vars like "tixSelect";
     # otherwise File->Close breaks tix widgets.
     set nv ""
@@ -132,10 +132,10 @@ proc vTcl:open {{file ""}} {
         if ![file exists $file] {return}
     }
     if {$file != ""} {
-    	
+
     	# only open a Visual Tcl project and nothing else
     	if ![vTcl:is_vtcl_prj $file] {return}
-    	
+
         set vTcl(file,mode) ""
         proc exit {args} {}
         proc init {argc argv} {}
@@ -148,7 +148,7 @@ proc vTcl:open {{file ""}} {
 
         # make sure the 'Window' procedure is the latest
         vTcl:load_lib vtclib.tcl;            vTcl:statbar 60
-        
+
         vTcl:list add "init main" vTcl(procs)
         vTcl:setup_bind_tree .;              vTcl:statbar 65
         vTcl:update_top_list;                vTcl:statbar 75
@@ -160,17 +160,17 @@ proc vTcl:open {{file ""}} {
         vTcl:status "Done Loading"
         vTcl:statbar 0
 		set vTcl(newtops) [expr [llength $vTcl(tops)] + 1]
-		
+
 	# @@change by Christian Gavin 3/5/2000
 	# refresh widget tree automatically after File Open...
 	# refresh image manager and font manager too
-	
+
 	after idle {
 		vTcl:init_wtree
 		vTcl:image:refresh_manager
 		vTcl:font:refresh_manager
 	}
-	
+
 	# @@end_change
     }
 }
@@ -189,7 +189,7 @@ proc vTcl:close {} {
             }
         }
     }
-    
+
     # @@change by Christian Gavin 5/2/2000
     #
     # deletes all iTcl objects that are not destroyed by the
@@ -204,22 +204,22 @@ proc vTcl:close {} {
     # in an error message
     #
     # this applies to objects named after widgets
- 
-    catch {   
+
+    catch {
     	set obj_list [itcl::find objects .*]
     	set obj_list [lsort $obj_list]
- 
+
     	while {[llength $obj_list] > 0} {
-    		
+
     		set obj [lindex $obj_list 0]
     		itcl::delete object $obj
 	    	set obj_list [itcl::find objects .*]
 	    	set obj_list [lsort $obj_list]
     	}
     }
-    
+
     # @@end_change
-    
+
     set tops [winfo children .]
     foreach i $tops {
         if {$i != ".vTcl" && $i != ".__tk_filedialog"} {destroy $i}
@@ -245,7 +245,7 @@ proc vTcl:close {} {
     set vTcl(w,save) ""
     wm title $vTcl(gui,main) "Visual Tcl"
     set vTcl(change) 0
-    
+
     # @@change by Christian Gavin 3/5/2000
     # refresh widget tree automatically after File Close
     # delete user images (e.g. per project images)
@@ -253,9 +253,9 @@ proc vTcl:close {} {
 
     vTcl:image:remove_user_images
     vTcl:font:remove_user_fonts
-    
+
     after idle {vTcl:init_wtree}
-	
+
     # @@end_change
 }
 
@@ -286,7 +286,7 @@ proc vTcl:save_as {} {
 proc vTcl:save_as_binary {} {
 
     global vTcl env tcl_platform
-    
+
     set vTcl(save) all
     set vTcl(w,save) $vTcl(w,widget)
     set file [vTcl:get_file save "Save Project With Binary"]
@@ -294,14 +294,14 @@ proc vTcl:save_as_binary {} {
 
     # now comes the magic
     set filelist [file rootname $file].txt
-    
+
     set listID [open $filelist w]
     puts $listID [join [vTcl:image:get_files_list] \n]
     close $listID
-    
+
     # launches freewrap
     set freewrap $env(VTCL_HOME)/freewrap/$tcl_platform(platform)/bin/freewrap
-    
+
     exec $freewrap $file -f $filelist
 }
 
@@ -324,14 +324,15 @@ proc vTcl:save2 {file} {
         file rename -force ${file} ${file}.bak
     }
     set output [open $file w]
-    if {[array get env PATH_TO_WISH] != ""} {
-        puts $output "#!$env(PATH_TO_WISH)"
-    }
-    # @@change by Christian Gavin
+
+    puts $output "\#!/bin/sh"
+    puts $output "\# the next line restarts using wish\\"
+    puts $output {exec wish8.0 "$0" "$@" }
+
     # header to import libraries
     # code to load images
     # code to load fonts
-    
+
     puts $output "if {!\[info exist vTcl(sourcing)\]} \{"
     puts $output $vTcl(head,importheader)
     puts $output "\}"
@@ -340,14 +341,14 @@ proc vTcl:save2 {file} {
     vTcl:image:generate_image_user  $output
     vTcl:font:generate_font_stock   $output
     vTcl:font:generate_font_user    $output
-    
+
     # @@end_change
     puts $output "[subst $vTcl(head,proj)]\n"
-    
+
     # @@change by Christian Gavin
     # moved init proc after user procs so that the init
     # proc can call any user proc
-    
+
     if {$vTcl(save) == "all"} {
         puts $output $vTcl(head,vars)
         puts $output [vTcl:save_vars]
@@ -362,9 +363,9 @@ proc vTcl:save2 {file} {
     } else {
         puts $output [vTcl:save_tree $vTcl(w,widget)]
     }
-    
+
     # @@end_change
-    
+
     close $output
     vTcl:status "Done Saving"
     set vTcl(file,mode) ""
@@ -375,17 +376,17 @@ proc vTcl:save2 {file} {
         vTcl:create_handles $vTcl(w,save)
     }
     set vTcl(change) 0
-    
+
     # @@change by Christian Gavin 3/5/2000
     #
     # it really annoyed me when I had to set the file as
     # executable under Linux to be able to run it, so here
     # we go
-    
+
     if {$tcl_platform(platform) == "unix"} {
     	    file attributes $file -permissions [expr 0755]
     }
-    
+
     # @@end_change
 }
 

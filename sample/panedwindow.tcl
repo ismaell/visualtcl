@@ -1,13 +1,15 @@
-#!/usr/bin/wish
+#!/bin/sh
+# the next line restarts using wish\
+exec wish8.0 "$0" "$@"
 if {![info exist vTcl(sourcing)]} {
 
-		
+
 		# provoke name search
 	        catch {package require foobar}
 	        set names [package names]
-                
+
 	        # check if BLT is available
-	        if { [lsearch -exact $names BLT] != -1} { 
+	        if { [lsearch -exact $names BLT] != -1} {
 
 		   package require BLT
 		   namespace import blt::vector
@@ -15,26 +17,26 @@ if {![info exist vTcl(sourcing)]} {
 		   namespace import blt::hierbox
 		   namespace import blt::stripchart
 		}
-	
-		
+
+
 		# provoke name search
 	        catch {package require foobar}
 	        set names [package names]
-                
+
 	        # check if Itcl is available
-	        if { [lsearch -exact $names Itcl] != -1} { 
+	        if { [lsearch -exact $names Itcl] != -1} {
 
 		   package require Itcl 3.0
 		   namespace import itcl::* }
-                
+
 		# check if Itk is available
 		if { [lsearch -exact $names Itk] != -1} {
-		    
-		   package require Itk 3.0 } 
-		
+
+		   package require Itk 3.0 }
+
 		# check if Iwidgets is available
 		if { [lsearch -exact $names Iwidgets] != -1} {
-		  
+
 		   package require Iwidgets 3.0
                    namespace import iwidgets::entryfield
                    namespace import iwidgets::spinint
@@ -53,7 +55,7 @@ if {![info exist vTcl(sourcing)]} {
                    namespace import iwidgets::tabnotebook
                    namespace import iwidgets::panedwindow
                 }
-        
+
 }
 ############################
 # code to load stock images
@@ -71,59 +73,59 @@ proc vTcl:rename {name} {
 }
 
 proc vTcl:image:create_new_image {filename description type} {
-	
+
 	global vTcl env
 	set reference [vTcl:rename $filename]
 
 	# image already existing ?
 	if [info exists vTcl(images,files)] {
-		
+
 		set index [lsearch -exact $vTcl(images,files) $filename]
-		
+
 		if {$index != "-1"} {
 			# cool, no more work to do
 			return
 		}
 	}
-	
+
 	# wait a minute... does the file actually exist?
 	if {! [file exists $filename] } {
 
 		set description "file not found!"
-		
+
 		set object [image create bitmap -data {
 		    #define open_width 16
 		    #define open_height 16
 		    static char open_bits[] = {
-			0x7F, 0xFE, 
-			0x41, 0x82, 
-			0x21, 0x81, 
-			0x41, 0x82, 
-			0x21, 0x81, 
-			0x21, 0x81, 
-			0x21, 0x81, 
+			0x7F, 0xFE,
+			0x41, 0x82,
+			0x21, 0x81,
+			0x41, 0x82,
+			0x21, 0x81,
+			0x21, 0x81,
+			0x21, 0x81,
 			0x91, 0x80,
-			0x21, 0x81, 
-			0x91, 0x80, 
-			0x21, 0x81, 
-			0x21, 0x81, 
-			0x21, 0x81, 
-			0x41, 0x82, 
+			0x21, 0x81,
+			0x91, 0x80,
+			0x21, 0x81,
+			0x21, 0x81,
+			0x21, 0x81,
+			0x41, 0x82,
 			0x41, 0x82,
 			0x7F, 0xFE};}]
-		
+
 	} else {
 
 		set object [image create [vTcl:image:get_creation_type $filename] -file $filename]
 	}
-	
+
 	set vTcl(images,$reference,image)       $object
 	set vTcl(images,$reference,description) $description
 	set vTcl(images,$reference,type)        $type
 	set vTcl(images,filename,$object)       $filename
 
 	lappend vTcl(images,files) $filename
-	
+
 	# return image name in case caller might want it
 	return $object
 }
@@ -137,16 +139,16 @@ proc vTcl:image:get_image {filename} {
 }
 
 proc vTcl:image:get_creation_type {filename} {
-	
+
 	set ext [file extension $filename]
 	set ext [string tolower $ext]
-	
+
 	switch $ext {
-		
+
 		.ppm -
 		.gif    {return photo}
 		.xbm    {return bitmap}
-		
+
 		default {return photo}
 	}
 }
@@ -187,15 +189,15 @@ proc vTcl:font:add_font {font_descr font_type newkey} {
      set vTcl(fonts,$newfont,type)                      $font_type
      set vTcl(fonts,$newfont,key)                       $newkey
      set vTcl(fonts,$vTcl(fonts,$newfont,key),object)   $newfont
-     
+
      # in case caller needs it
      return $newfont
 }
 
 proc vTcl:font:get_font {key} {
-	
+
 	global vTcl
-	
+
 	return $vTcl(fonts,$key,object)
 }
 
@@ -219,7 +221,7 @@ vTcl:font:add_font "-family lucida -size 18 -weight normal -slant italic -underl
 #################################
 # GLOBAL VARIABLES
 #
-global widget; 
+global widget;
     set widget(pane) {.top36.pan37}
     set widget(pane1_contents) {.top38}
     set widget(pane2_contents) {.top41}
@@ -346,7 +348,7 @@ proc vTclWindow.top36 {base {container 0}} {
     if {!$container} {
     toplevel $base -class Toplevel \
         -background #bcbcbc -highlightbackground #bcbcbc \
-        -highlightcolor #000000 
+        -highlightcolor #000000
     wm focusmodel $base passive
     wm geometry $base 318x349+151+159
     wm maxsize $base 1009 738
@@ -361,7 +363,7 @@ proc vTclWindow.top36 {base {container 0}} {
     # SETTING GEOMETRY
     ###################
     pack $base.pan37 \
-        -in $base -anchor center -expand 1 -fill both -side top 
+        -in $base -anchor center -expand 1 -fill both -side top
 }
 
 proc vTclWindow.top38 {base {container 0}} {
@@ -377,7 +379,7 @@ proc vTclWindow.top38 {base {container 0}} {
     if {!$container} {
     toplevel $base -class Toplevel \
         -background #bcbcbc -cursor left_ptr -highlightbackground #bcbcbc \
-        -highlightcolor #000000 
+        -highlightcolor #000000
     wm focusmodel $base passive
     wm geometry $base 247x181+418+330
     wm maxsize $base 1009 738
@@ -390,17 +392,17 @@ proc vTclWindow.top38 {base {container 0}} {
     frame $base.cpd39 \
         -background #bcbcbc -borderwidth 1 -height 30 \
         -highlightbackground #bcbcbc -highlightcolor #000000 -relief raised \
-        -width 30 
+        -width 30
     scrollbar $base.cpd39.01 \
         -activebackground #bcbcbc -background #bcbcbc \
         -command "$base.cpd39.03 xview" -cursor left_ptr \
         -highlightbackground #bcbcbc -highlightcolor #000000 -orient horiz \
-        -troughcolor #bcbcbc -width 10 
+        -troughcolor #bcbcbc -width 10
     scrollbar $base.cpd39.02 \
         -activebackground #bcbcbc -background #bcbcbc \
         -command "$base.cpd39.03 yview" -cursor left_ptr \
         -highlightbackground #bcbcbc -highlightcolor #000000 -orient vert \
-        -troughcolor #bcbcbc -width 10 
+        -troughcolor #bcbcbc -width 10
     text $base.cpd39.03 \
         -background #bcbcbc \
         -font -Adobe-Helvetica-Medium-R-Normal-*-*-120-*-*-*-*-*-* \
@@ -408,28 +410,28 @@ proc vTclWindow.top38 {base {container 0}} {
         -highlightcolor #000000 -selectbackground #000080 \
         -selectforeground #ffffff -width 8 \
         -xscrollcommand "$base.cpd39.01 set" \
-        -yscrollcommand "$base.cpd39.02 set" 
+        -yscrollcommand "$base.cpd39.02 set"
     label $base.lab40 \
         -background #bcbcbc -borderwidth 1 \
         -font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1 \
         -foreground #000000 -highlightbackground #bcbcbc \
-        -highlightcolor #000000 -text {This is pane 1!} 
+        -highlightcolor #000000 -text {This is pane 1!}
     ###################
     # SETTING GEOMETRY
     ###################
     pack $base.cpd39 \
-        -in $base -anchor center -expand 1 -fill both -side bottom 
+        -in $base -anchor center -expand 1 -fill both -side bottom
     grid columnconf $base.cpd39 0 -weight 1
     grid rowconf $base.cpd39 0 -weight 1
     grid $base.cpd39.01 \
-        -in $base.cpd39 -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew 
+        -in $base.cpd39 -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew
     grid $base.cpd39.02 \
-        -in $base.cpd39 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns 
+        -in $base.cpd39 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns
     grid $base.cpd39.03 \
         -in $base.cpd39 -column 0 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky nesw 
+        -sticky nesw
     pack $base.lab40 \
-        -in $base -anchor center -expand 0 -fill none -side top 
+        -in $base -anchor center -expand 0 -fill none -side top
 }
 
 proc vTclWindow.top41 {base {container 0}} {
@@ -445,7 +447,7 @@ proc vTclWindow.top41 {base {container 0}} {
     if {!$container} {
     toplevel $base -class Toplevel \
         -background #bcbcbc -highlightbackground #bcbcbc \
-        -highlightcolor #000000 
+        -highlightcolor #000000
     wm focusmodel $base passive
     wm geometry $base 303x186+543+505
     wm maxsize $base 1009 738
@@ -456,12 +458,12 @@ proc vTclWindow.top41 {base {container 0}} {
     wm title $base "New Toplevel 3"
     }
     scrolledlistbox $base.scr42 \
-        -labeltext {This is pane 2!} -sbwidth 10 
+        -labeltext {This is pane 2!} -sbwidth 10
     ###################
     # SETTING GEOMETRY
     ###################
     pack $base.scr42 \
-        -in $base -anchor center -expand 1 -fill both -side top 
+        -in $base -anchor center -expand 1 -fill both -side top
     grid columnconf $base.scr42 0 -weight 1
     grid rowconf $base.scr42 2 -weight 1
     grid rowconf $base.scr42 1 -minsize 2
