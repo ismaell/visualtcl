@@ -177,7 +177,7 @@ proc vTcl:addRcFile {file} {
         set file [file join [pwd] $file]
     }
 
-    lremove vTcl(rcFiles) $file
+    ::vTcl::lremove vTcl(rcFiles) $file
     set vTcl(rcFiles) [linsert $vTcl(rcFiles) 0 $file]
     vTcl:updateRcFileMenu
 }
@@ -199,8 +199,8 @@ proc vTcl:updateRcFileMenu {} {
     $w delete 0 end
 
     foreach file $vTcl(rcFiles) {
-        if {[file exists $file]} then { continue }
-        lremove vTcl(rcFiles) $file
+        if {[file exists $file]} { continue }
+        ::vTcl::lremove vTcl(rcFiles) $file
     }
 
     ##
