@@ -73,7 +73,7 @@ proc vTcl:get_command {title initial base} {
         -borderwidth 2 -height 30 -relief groove -width 30 
     pack $base.f \
         -in $base -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 \
-        -padx 3 -pady 3 -side top 
+        -padx 3 -pady 3 -side bottom
     text $base.f.text \
         -height 2 -width 2 -wrap none \
         -yscrollcommand "$base.f.scrollbar16 set" -background white
@@ -86,26 +86,28 @@ proc vTcl:get_command {title initial base} {
         -in $base.f -anchor center -expand 0 -fill y -ipadx 0 -ipady 0 \
         -padx 0 -pady 0 -side left 
     frame $base.f21 \
-        -borderwidth 1 -height 30 -relief sunken -width 30 
+        -height 30 -relief flat -width 30 
     pack $base.f21 \
         -in $base -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 \
-        -padx 3 -pady 3 -side top 
-    button $base.f21.button22 \
-        -command "vTcl:command:edit_save $base" \
-        -padx 9 \
-        -pady 3 -text OK -width 5 
-    pack $base.f21.button22 \
-        -in $base.f21 -anchor center -expand 1 -fill x -ipadx 0 -ipady 0 \
-        -padx 0 -pady 0 -side left 
+        -padx 3 -side top 
     button $base.f21.button23 \
         -command "
             vTcl:command:edit_cancel $base
         " \
          -padx 9 \
-        -pady 3 -text Cancel -width 5 
+        -pady 3 -image [vTcl:image:get_image [file join $vTcl(VTCL_HOME) edit remove.gif] ]
     pack $base.f21.button23 \
-        -in $base.f21 -anchor center -expand 1 -fill x -ipadx 0 -ipady 0 \
-        -padx 0 -pady 0 -side left 
+        -in $base.f21 -anchor center -ipadx 0 -ipady 0 \
+        -padx 0 -pady 0 -side right
+    vTcl:set_balloon $base.f21.button23 "Discard changes"
+    button $base.f21.button22 \
+        -command "vTcl:command:edit_save $base" \
+        -padx 9 \
+        -pady 3 -image [vTcl:image:get_image [file join $vTcl(VTCL_HOME) edit ok.gif] ]
+    pack $base.f21.button22 \
+        -in $base.f21 -anchor center -ipadx 0 -ipady 0 \
+        -padx 0 -pady 0 -side right
+    vTcl:set_balloon $base.f21.button22 "Save changes"
     update idletasks
     bind $base <KeyPress> "
         set vTcl(comm,$base,chg) 1
