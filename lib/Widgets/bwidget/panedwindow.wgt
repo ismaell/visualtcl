@@ -120,7 +120,7 @@ namespace eval vTcl::widgets::bwidgets::panedwindow {
             set sitevariable "site_[llength [split $site .]]_$i"
             append result "set $sitevariable "
             append result "\[$basename getframe $i\]\n"
-            append result [$classes(FrameCmd,dumpInfoCmd) $site \$$sitevariable]
+            append result [$classes(Frame,dumpInfoCmd) $site \$$sitevariable]
         }
         return $result
     }
