@@ -823,8 +823,63 @@ proc vTcl:dump:gather_widget_info {} {
     set vTcl(dump,libraries) [vTcl:lrmdups $vTcl(dump,libraries)]
 }
 
+## tries to eliminate as many absolute paths as possible with childsites
+proc vTcl:dump:make_relative_paths {widget} {
+
+    global classes
+
+    ## Let's try to find a parent and it's childsites
+    set path ""
+    if {[vTcl:WidgetVar $widget parent_widget tmp]} {
+        set path $tmp
+        if {$path == $widget} {
+            if {[vTcl:WidgetVar [winfo parent $widget] parent_widget tmp]} {
+               set path $tmp
+            }
+        }
+    }
+
+    ## At this stage path either is "" (which means there is no
+    ## parent that is a megawidget) or contains the path of the
+    ## closest megawidget parent
+    if {$path == ""} {return $widget}
+
+    ## ask for the childsites
+    set class [vTcl:get_class $path]
+    if {[info exists classes($class,megaWidget)] &&
+        $classes($class,megaWidget)} {
+
+        ## it is a megawidget, ask for its childsites
+        set childsiteCmd [lindex $classes($class,treeChildrenCmd) 1]
+
+        ## no childsites in megawidget ? shouldn't happen at this point but...
+        set sites ""
+        if {$childsiteCmd != ""} {
+        set sites [$childsiteCmd $path]
+        }
+
+        ## let's see what we can do to subsitute absolute paths
+        set index 0
+        foreach site $sites {
+            set first [string first $site $widget]
+            if {$first == -1} {incr index; continue}
+
+            ## all right, let's replace!
+            set length [string length $site]
+            set widget [string replace $widget \
+                $first [expr $first + $length - 1] \
+                "\[lindex \[$childsiteCmd [vTcl:dump:make_relative_paths $path]\] $index\]"]
+
+            ## we'are done replacing
+            break
+        }
+    }
+
+    return $widget
+}
+
 proc vTcl:dump:project_info {basedir project} {
-    global vTcl
+    global vTcl classes
 
     set out   {}
     set multi 0
@@ -853,6 +908,8 @@ proc vTcl:dump:project_info {basedir project} {
             if {!$save($var)} { continue }
             lappend list $var $save($var)
         }
+
+        set widget [vTcl:dump:make_relative_paths $widget]
 
         append out $vTcl(tab)
         append out "namespace eval ::widgets::$widget \{\n"

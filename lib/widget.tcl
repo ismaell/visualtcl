@@ -1141,9 +1141,11 @@ proc vTcl:widget:register_widget_megachildren {w} {
             set children [vTcl:list_widget_tree $w "" 1 1]
             foreach child $children {
                 namespace eval ::widgets::${child} {
-                    variable parent
+                    variable parent          ;# this one is for dragging items
+                    variable parent_widget   ;# same value, but used for saving
                 }
                 set ::widgets::${child}::parent $w
+                set ::widgets::${child}::parent_widget $w
             }
 
             # Now, we shall unmark those widgets as parent that
