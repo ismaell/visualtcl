@@ -193,16 +193,28 @@ proc vTcl:close {} {
     # @@change by Christian Gavin 5/2/2000
     #
     # deletes all iTcl objects that are not destroyed by the
-    # destroy command
+    # destroy command (they should be deleted, but seemingly
+    # vTcl is modifying bindings)
+    #
+    # lsort is used so that higher level objects are destroyed
+    # first, for example a tabnotebook has contained objects so
+    # if the tabnotebook is deleted first then all its subobjects
+    # will be deleted automatically; however if we delete the
+    # contained objects first, deleting the container will result
+    # in an error message
+    #
+    # this applies to objects named after widgets
  
     catch {   
-    	set obj_list [itcl::find objects]
+    	set obj_list [itcl::find objects .*]
+    	set obj_list [lsort $obj_list]
  
     	while {[llength $obj_list] > 0} {
     		
     		set obj [lindex $obj_list 0]
     		itcl::delete object $obj
-	    	set obj_list [itcl::find objects]
+	    	set obj_list [itcl::find objects .*]
+	    	set obj_list [lsort $obj_list]
     	}
     }
     
