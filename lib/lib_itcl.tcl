@@ -232,3 +232,11 @@ proc vTcl:widget:panedwindow:inscmd {target} {
     return "$target add pane1; $target add pane2"
 }
 
+proc vTcl:widget:combobox:inscmd {target} {
+
+    # this will have to be looked into
+    # combobox doesn't destroy all its commands
+    # sometimes, so we clean up the rest
+
+    return "bind $target <Destroy> \{set _cmds \[info commands %W.*\]; foreach _cmd \$_cmds \{rename \$_cmd \"\"\}\}"
+}

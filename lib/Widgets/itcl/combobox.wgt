@@ -4,3 +4,5 @@ Lib   itcl
 Icon icon_combobox.gif
 DumpChildren  no
 MegaWidget    yes
+
+InsertCmd vTcl:widget:combobox:inscmd
