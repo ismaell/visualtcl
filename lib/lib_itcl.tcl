@@ -157,16 +157,6 @@ proc vTcl:lib_itcl:setup {} {
 # individual widget commands executed after insert
 #
 
-proc vTcl:widget:toolbar:inscmd {target} {
-
-    global env
-
-    return "$target add button open \
-        -balloonstr \"Open\" \
-        -image [vTcl:image:get_image $env(VTCL_HOME)/images/edit/open.gif] \
-        -command {tk_messageBox -message {TODO: Command handler here!}}"
-}
-
 proc vTcl:widget:optionmenu:inscmd {target} {
 
     return "$target insert 0 {Choice 1} {Choice 2} {Choice 3}"

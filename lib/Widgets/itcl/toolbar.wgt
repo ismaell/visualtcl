@@ -31,3 +31,14 @@ Icon		icon_toolbar.gif
 DumpChildren	no
 MegaWidget	yes
 TagsCmd         vTcl:lib_itcl:tagscmd
+InsertCmd       vTcl:widget:toolbar:inscmd
+
+proc vTcl:widget:toolbar:inscmd {target} {
+
+    global env
+
+    return "$target add button open \
+        -balloonstr \"Open\" \
+        -image [vTcl:image:get_image $env(VTCL_HOME)/images/edit/open.gif] \
+        -command {tk_messageBox -message {TODO: Command handler here!}}"
+}
