@@ -1,5 +1,20 @@
 ChangeLog for Visual Tcl:
 
+1.22   -> 1.4 (not released yet)
+        o added tutorial.html to doc folder (html version of the tutorial.txt file)
+        o added multiple file support
+        o added option in Preferences dialog for "Single file project" or
+          "Multiple files project"
+        o replaced header path to wish from "wish8.0" to "wish" to accomodate
+          any possible version of Tk (in the ideal world, it should do some
+          version checking, because vTcl is not compatible with versions prior
+          to 8.0)
+        o syntax coloring is done when user moves the cursor inside the
+          current line or types a few typical keys (eg. [] {}, etc.)
+        o fixed "Save Compound..." bug
+	o dump widget aliases inside window procedure in preparation for
+          multiple file support
+
 1.22b1 -> 1.22 (released August 20, 2000)
         o Fixed root window placer bug
         o Added "Clear" pulldown menu in command console under Linux
