@@ -34,7 +34,7 @@ set bldtmp $bldroot/build/tmp
 file delete -force $bldtmp
 file mkdir $bldtmp
 
-set copyroot $bldtmp/vtcl-$version/usr/local/vtcl-$version
+set copyroot $bldtmp/vtcl-$version/opt/local/vtcl-$version
 
 file mkdir $copyroot
 file mkdir $copyroot/lib
@@ -88,8 +88,6 @@ eval exec cp [glob $bldroot/sample/*.tcl]                 $copyroot/sample
 
 # temp for the alpha version
 file delete -force $copyroot/lib/lib_bwidget.tcl
-file delete -force $copyroot/lib/lib_mclistbox.tcl
-file delete -force $copyroot/lib/lib_tcombobox.tcl
 file delete -force $copyroot/lib/lib_user.tcl
 
 cd $bldtmp
@@ -98,9 +96,9 @@ exec tar cf - -C $bldtmp vtcl-$version | gzip >vtcl-$version.tar.gz
 cd $copyroot/..
 exec tar cf - -C . vtcl-$version | gzip >vtcl-$version.tar.gz
 
-# cd $bldroot/build
-# file copy -force vtcl-$version-1.spec /root/RPM/SPECS
-# file copy -force $bldtmp/vtcl-$version.tar.gz /root/RPM/SOURCES
-# file copy -force $bldroot/images/title.gif /root/RPM/SOURCES
+cd $bldroot/build
+file copy -force vtcl-$version-1.spec         /root/RPM/SPECS
+file copy -force $bldtmp/vtcl-$version.tar.gz /root/RPM/SOURCES
+file copy -force $bldroot/images/title.gif    /root/RPM/SOURCES
 
-# exec /bin/rpm -bb /root/RPM/SPECS/vtcl-$version-1.spec
+exec /bin/rpm -ba /root/RPM/SPECS/vtcl-$version-1.spec

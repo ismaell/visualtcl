@@ -1,22 +1,35 @@
 ChangeLog for Visual Tcl:
 
-1.22   -> 1.51b1
+1.51b1 -> 1.51b2
 	o Defined a Tktable widget.
+    o Support for childsites in the following Iwidgets:
+      tabnotebook, panedwinodw
+    o Support for childsites in the following tix widgets:
+      tixNotebook, tixPanedWindow
+    o Eliminates aliases to non-existing widgets on saving
+    o Widget tree displays widgets in childsites
+    o Widget tree right-click menu
+    o Fixed font saving bug introduced in 1.51b1
+    o Added "Cancel" button for image/font selection pull-down menu
+    o Now disables menu editors/binding editor when in TEST mode
+    o Added Find/Replace in procedure editor
+
+1.22   -> 1.51b1
 	o Added a configure script to locate the best WISH shell.
-        o Changed the way libs are loaded
-        o Support for mclistbox and combobox from Bryan Oakley. This time,
-          no additional packages are needed, and when projects are saved, the
-          necessary mclistbox or combobox code is included
-        o Support for Iwidgets and BLT with new widget description mechanism
-        o Megawidgets such as Iwidgets can now be selected/dragged as a whole
-        o Added checkboxes to save only the options the user wants to.
-        o Redone menu editor.
-        o Added MRU to command console. Up/down arrows navigate through
-          previously issued commands.
-        o Added system inspector to view variables, procedures, windows,
-          bindings, namespaces, packages
-        o Completely redone the binding editor. Should be easier to use and
-          less error prone (forgot to click on "update" ?)
+    o Changed the way libs are loaded
+    o Support for mclistbox and combobox from Bryan Oakley. This time,
+      no additional packages are needed, and when projects are saved, the
+      necessary mclistbox or combobox code is included
+    o Support for Iwidgets and BLT with new widget description mechanism
+    o Megawidgets such as Iwidgets can now be selected/dragged as a whole
+    o Added checkboxes to save only the options the user wants to.
+    o Redone menu editor.
+    o Added MRU to command console. Up/down arrows navigate through
+      previously issued commands.
+    o Added system inspector to view variables, procedures, windows,
+      bindings, namespaces, packages
+    o Completely redone the binding editor. Should be easier to use and
+      less error prone (forgot to click on "update" ?)
 	o Removed "type" as a means of identifying widgets.  Widgets are all
 	  identified by class.
 	o If you iconify/deiconify vTcl, it takes the toplevels with it.
@@ -37,12 +50,12 @@ ChangeLog for Visual Tcl:
 	  is deleted or cut.
 	o Added a menu option to Restore a project from backup.
 	o revamped Preferences... dialog (cool no?)
-        o added an option in the Preferences... dialog to save all images as
-          inline using Base64. Allows for self contained projects without any
-          dependencies on external images. However, while editing the project,
-          external files are used as usual. When saving the project, external
-          image files are then converted to Base64 and included inside the main
-          file.
+    o added an option in the Preferences... dialog to save all images as
+      inline using Base64. Allows for self contained projects without any
+      dependencies on external images. However, while editing the project,
+      external files are used as usual. When saving the project, external
+      image files are then converted to Base64 and included inside the main
+      file.
 	o if a widget is of an unknown class, just ignore it, instead
 	  of generating an exception
 	o changed the way widget placement is handled.  It is now more like a
@@ -53,19 +66,19 @@ ChangeLog for Visual Tcl:
 	o fixed a bug that caused a problem if the console window was killed
 	  through the OS window manager.
 	o added a lot more functions to the right-click menu.
-        o added tutorial.html to doc folder (html version of the tutorial.txt file)
-        o added multiple file support
-        o added option in Preferences dialog for "Single file project" or
-          "Multiple files project"
-        o replaced header path to wish from "wish8.0" to "wish" to accomodate
-          any possible version of Tk (in the ideal world, it should do some
-          version checking, because vTcl is not compatible with versions prior
-          to 8.0)
-        o syntax coloring is done when user moves the cursor inside the
-          current line or types a few typical keys (eg. [] {}, etc.)
-        o fixed "Save Compound..." bug
+    o added tutorial.html to doc folder (html version of the tutorial.txt file)
+    o added multiple file support
+    o added option in Preferences dialog for "Single file project" or
+      "Multiple files project"
+    o replaced header path to wish from "wish8.0" to "wish" to accomodate
+      any possible version of Tk (in the ideal world, it should do some
+      version checking, because vTcl is not compatible with versions prior
+      to 8.0)
+    o syntax coloring is done when user moves the cursor inside the
+      current line or types a few typical keys (eg. [] {}, etc.)
+    o fixed "Save Compound..." bug
 	o dump widget aliases inside window procedure in preparation for
-          multiple file support
+      multiple file support
 
 1.22b1 -> 1.22 (released August 20, 2000)
         o Fixed root window placer bug

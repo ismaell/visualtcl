@@ -49,7 +49,7 @@ proc vTclWindow.vTcl.about {args} {
 
     label $base.lab28 \
         -background #000000 -borderwidth 1 -image title -relief groove \
-        -text label 
+        -text label
     frame $base.fra30 \
         -borderwidth 2 -height 75 -width 125 -background black
     button $base.fra30.but31 \
@@ -62,7 +62,7 @@ proc vTclWindow.vTcl.about {args} {
         -borderwidth 1 -font [vTcl:font:get_font "vTcl:font5"]
     label $base.lab21 \
         -borderwidth 1 -font [vTcl:font:get_font "vTcl:font5"] \
-        -text {Version 1.5.1b1} -foreground white -background black
+        -text {Version 1.5.1b2} -foreground white -background black
     ###################
     # SETTING GEOMETRY
     ###################
