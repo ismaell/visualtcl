@@ -148,17 +148,7 @@ proc ScrollView::_destroy { path } {
             -xscrollcommand $_widget($path,oldxscroll) \
             -yscrollcommand $_widget($path,oldyscroll)
     }
-    unset _widget($path,oldxscroll)
-    unset _widget($path,oldyscroll)
-    unset _widget($path,bd)
-    unset _widget($path,width)
-    unset _widget($path,height)
-    if {[info exists _widget($path,dx)]} {
-        unset _widget($path,dx)
-    }
-    if {[info exists _widget($path,dy)]} {
-        unset _widget($path,dy)
-    }
+    foreach var [array names _widget $path,*] { unset _widget($var) }
     Widget::destroy $path
     rename $path {}
 }

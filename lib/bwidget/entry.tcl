@@ -20,7 +20,7 @@ namespace eval Entry {
     # Note:  -textvariable is pulled off of the tk entry and put onto the
     # BW Entry so that we avoid the TkResource test for it, which screws up
     # the existance/non-existance bits of the -textvariable.
-    set remove  [list -state -cursor -foreground -textvariable]
+    set remove  [list -state -foreground -textvariable]
     set declare [list \
 	    [list -foreground		TkResource	""	0 entry] \
 	    [list -state	Enum	normal	0 [list normal disabled]] \

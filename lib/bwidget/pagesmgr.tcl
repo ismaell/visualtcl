@@ -23,6 +23,7 @@
 namespace eval PagesManager {
     Widget::declare PagesManager {
         {-background TkResource "" 0 frame}
+	{-cursor     TkResource "" 0 frame}
         {-width      Int        0  0 "%d >= 0"}
         {-height     Int        0  0 "%d >= 0"}
     }

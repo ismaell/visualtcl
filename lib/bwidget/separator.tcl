@@ -11,6 +11,7 @@
 namespace eval Separator {
     Widget::declare Separator {
         {-background TkResource ""         0 frame}
+	{-cursor     TkResource ""         0 frame}
         {-relief     Enum       groove     0 {ridge groove}}
         {-orient     Enum       horizontal 1 {horizontal vertical}}
         {-bg         Synonym    -background}
