@@ -91,7 +91,9 @@ proc vTcl:put_compound {text compound} {
     regsub -all % $compound %% compound
 
     bind vTcl(b) <Button-1> \
-    	"vTcl:place_compound [list $compound] $vTcl(w,def_mgr) %X %Y %x %y"
+    	"vTcl:place_compound [list $compound] $vTcl(w,def_mgr) %X %Y %x %y
+         set vTcl(cursor,last) \[%W cget -cursor\]
+         set vTcl(cursor,w) %W"
 }
 
 proc vTcl:auto_place_compound {compound gmgr gopt} {
@@ -275,10 +277,13 @@ proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
 		incr index
 	    }
 	}
-        if {$alis != "" && ![llength [array get widget $alis]]} {
-            set widget($alis) $name
-            set widget(rev,$name) "$alis"
+        if {$alis != ""} {
+            append todo "vTcl:set_alias $name $alis -noupdate; "
+        } elseif {$alis == "" && $vTcl(pr,autoalias)} {
+            set next [vTcl:next_widget_name $class]
+            append todo "vTcl:set_alias $name $next -noupdate; "
         }
+
         foreach j $grid {
             set cmd [lindex $j 0]
             set num [lindex $j 1]
@@ -286,9 +291,6 @@ proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
             set val [lindex $j 3]
             append todo "grid $cmd $name $num $prop $val; "
         }
-
-	set next [vTcl:next_widget_name $class]
-    	append todo "vTcl:set_alias $name $next -noupdate; "
 
         if {[lsearch -exact $vTcl(procs) "::${cmpdname}::main"] >= 0 } {
 	    append todo "[list ::${cmpdname}::main] $name"
