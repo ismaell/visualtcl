@@ -324,13 +324,18 @@ proc vTcl:core:scrollviewtranslate {value} {
 
 proc vTcl:core:noencasewhen {value} {
 
-	return [string match {"$base*} $value]
+    if { [string match {"$base*} $value] ||
+         [string match {"$site*} $value] } {
+        return 1
+    }
+
+    return 0
 }
 
 proc vTcl:core:noencasewhenscroll {value} {
 
-	if { [string match {"$base*xview"} $value] ||
-             [string match {"$base*yview"} $value] } {
+	if { [string match {"$base*?view"} $value] ||
+             [string match {"$site*?view"} $value] } {
 		return 1
 	} else {
 		return 0

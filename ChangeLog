@@ -1,6 +1,8 @@
 ChangeLog for Visual Tcl:
 
 1.51b4 -> 1.51rc0
+    o Found how to dump scrollbars with childsites to avoid absolute
+      widget paths.
     o Made sure not-to-be-saved options won't be saved again after a
       project is reloaded.
     o Fixed bug for right-click context menu "Hide" doing nothing for

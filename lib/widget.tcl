@@ -27,12 +27,29 @@
 #
 proc vTcl:base_name {target} {
 
-    # don't change anything if the widget doesn't start with a
-    # period (.) because it could be an alias
+    ## don't change anything if the widget doesn't start with a
+    ## period (.) because it could be an alias
     if {[string range $target 0 0] != "."} {
         return $target
     }
 
+    ## let's see if there is a basename to replace
+    global basenames
+    if {[info exists basenames($target)]} {
+        return $basenames($target)
+    } else {
+        ## let's see if we have a partial match
+        foreach name [lsort -decreasing [array names basenames]] {
+            if {[string match $name* $target]} {
+                set length [string length $name]
+                set result [string replace $target 0 [expr $length - 1] \
+                    $basenames($name)]
+                return $result
+            }
+        }
+    }
+
+    ## otherwise, just replace the toplevel by $base
     set l [split $target .]
     set name "\$base"
     foreach i [lrange $l 2 end] {

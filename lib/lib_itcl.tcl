@@ -29,7 +29,6 @@
 #   added support for new image/font managers
 #   made sure children are not dumped and not viewed in the widget tree
 #
-#
 # Initializes this library
 #
 
@@ -210,11 +209,12 @@ proc vTcl:widget:combobox:inscmd {target} {
 # itself (`vTcl:dump:widgets $subwidget' doesn't do the right thing if
 # the grid geometry manager is used to manage children of $subwidget.
 proc vTcl:lib_itcl:dump_subwidgets {subwidget {sitebasename {}}} {
-    global vTcl classes
+    global vTcl basenames classes
     set output ""
     set geometry ""
     set widget_tree [vTcl:widget_tree $subwidget]
     set length      [string length $subwidget]
+    set basenames($subwidget) $sitebasename
 
     foreach i $widget_tree {
 
@@ -228,12 +228,16 @@ proc vTcl:lib_itcl:dump_subwidgets {subwidget {sitebasename {}}} {
 
         # don't try to dump subwidget itself
         if {"$i" != "$subwidget"} {
+            set basenames($i) $basename
             set class [vTcl:get_class $i]
             append output [$classes($class,dumpCmd) $i $basename]
             append geometry [vTcl:dump_widget_geom $i $basename]
+            unset basenames($i)
         }
     }
     append output $geometry
+
+    unset basenames($subwidget)
     return $output
 }
 
