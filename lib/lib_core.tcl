@@ -41,6 +41,7 @@ proc vTcl:widget:lib:lib_core {args} {
 	Scrollbar
 	Scale
 	Menubutton
+	Spinbox
     } 
 
     vTcl:lib:add_widgets_to_toolbar $order

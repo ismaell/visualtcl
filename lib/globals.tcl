@@ -158,6 +158,8 @@ set vTcl(images,user)    ""
 set vTcl(fonts,stock)    ""
 set vTcl(fonts,user)     ""
 
+set vTcl(reliefs)        "flat groove raised ridge sunken"
+
 set vTcl(cmpd,list)      ""
 set vTcl(syscmpd,list)   ""
 

@@ -253,7 +253,7 @@ proc vTcl:focus_out_geometry_cmd {option cmd {cmd2 ""}} {
 }
 
 proc vTcl:prop:update_attr {} {
-    global vTcl options
+    global vTcl options specialOpts
     if {$vTcl(var_update) == "no"} {
         return
     }
@@ -277,9 +277,13 @@ proc vTcl:prop:update_attr {} {
             pack $top -side left -fill both -expand 1
         }
         foreach i $vTcl(options) {
-	    if {$options($i,type) == "synonym"} { continue }
+	    set type $options($i,type)
+	    if {[info exists specialOpts($i,type)]} {
+	    	set type $specialOpts($i,type)
+	    }
+	    if {$type == "synonym"} { continue }
             if {[lsearch $vTcl(w,optlist) $i] >= 0} {
-		if {$options($i,type) == "color"} {
+		if {$type == "color"} {
                     $top.t${i}.f configure -bg $vTcl(w,opt,$i)
                 }
             }
@@ -361,19 +365,30 @@ proc vTcl:prop:update_attr {} {
 }
 
 proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
-    global vTcl $variable options
+    global vTcl $variable options specialOpts
     set base $top.t${option}
     # hack for Tix
     if {[ winfo exists $top.$option ] == 1} { return }
 
     if {$prefix == "opt"} {
-    	set text $options($option,text)
-	set type $options($option,type)
-	set choices $options($option,choices)
+	if {[info exists specialOpts($option,type)]} {
+	    set text $specialOpts($option,text)
+	    set type $specialOpts($option,type)
+	    set choices $specialOpts($option,choices)
+	} else {
+	    set text $options($option,text)
+	    set type $options($option,type)
+	    set choices $options($option,choices)
+	}
     } else {
     	set text [lindex $vTcl($prefix,$option) 0]
 	set type [lindex $vTcl($prefix,$option) 2]
 	set choices [lindex $vTcl($prefix,$option) 3]
+    }
+
+    if {[vTcl:streq $type "relief"]} {
+	set type choice
+    	set choices $vTcl(reliefs)
     }
 
     label $top.$option -text $text -anchor w -width 11 -fg black

@@ -2,8 +2,7 @@
 
 NewOption -activebackground	"active bg"		color	{}	Colors
 NewOption -activeforeground	"active fg"		color	{}	Colors
-NewOption -activerelief		"active relief"		choice \
-  "flat groove raised ridge sunken"
+NewOption -activerelief		"active relief"		relief
 NewOption -anchor		"anchor"		choice \
   "n ne e se s sw w nw center"
 NewOption -aspect		"aspect"		type
@@ -47,8 +46,7 @@ NewOption -orient		"orient"		choice \
   "vertical horizontal"
 NewOption -padx			"x pad"			type
 NewOption -pady			"y pad"			type
-NewOption -relief		"relief"		choice	\
-  "flat groove raised ridge sunken"
+NewOption -relief		"relief"		relief
 NewOption -repeatdelay		"repeat delay"		type
 NewOption -repeatinterval	"repeat intrvl"		type
 NewOption -screen		"screen"		type
@@ -65,8 +63,7 @@ NewOption -setgrid		"set grid"		boolean	"0 1"
 NewOption -show			"show"			type
 NewOption -showvalue		"show value"		boolean	"0 1"
 NewOption -sliderlength		"slider length"		type
-NewOption -sliderrelief		"slider relief"		choice \
-  "flat groove raised ridge sunken"
+NewOption -sliderrelief		"slider relief"		relief
 NewOption -spacing1		"spacing1"		type
 NewOption -spacing2		"spacing2"		type
 NewOption -spacing3		"spacing3"		type
