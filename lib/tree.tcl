@@ -53,6 +53,8 @@ proc vTcl:show_selection {button_path target} {
     lassign [$b cget -scrollregion] foo foo cx cy
     lassign [$b bbox $button_path] x1 y1 x2 y2
 
+    if {$cy <= 0} {return}
+
     set yf0 [expr $y1.0 / $cy]
     set yf1 [expr $y2.0 / $cy]
     lassign [$b yview] yv0 yv1
