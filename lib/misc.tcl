@@ -1315,7 +1315,8 @@ namespace eval ::vTcl::ui::attributes {
                     "$config_cmd; ${base}.f conf -bg \$$variable"
                 vTcl:special_button ${base}.f -image ellipses -width 12 -padx 0 -pady 1 \
                     -command \
-                    "::vTcl::ui::attributes::select_color ${base}.f [list $config_cmd] $variable"
+                    "::vTcl::ui::attributes::select_color ${base}.f [list $config_cmd] $variable
+		     $keyrelease_cmd $option $variable ::vTcl::ui::attributes::checked($base)"
                 pack ${base}.l -side left -expand 1 -fill x
                 pack ${base}.f -side right -fill y -pady 0 -padx 1 -ipady 0
 	        set focusControl ${base}.l
@@ -1332,7 +1333,8 @@ namespace eval ::vTcl::ui::attributes {
                 button ${base}.f \
                     -image ellipses  -width 12 \
                     -highlightthickness 1 -fg black -padx 0 -pady 1 \
-                    -command "::vTcl::ui::attributes::set_command $target $option [list $config_cmd] $variable"
+                    -command "::vTcl::ui::attributes::set_command $target $option [list $config_cmd] $variable
+		              $keyrelease_cmd $option $variable ::vTcl::ui::attributes::checked($base)"
                 pack ${base}.l -side left -expand 1 -fill x
                 pack ${base}.f -side right -fill y -pady 1 -padx 1
 	        set focusControl ${base}.l
@@ -1346,7 +1348,8 @@ namespace eval ::vTcl::ui::attributes {
                 button ${base}.f \
                     -image ellipses  -width 12 \
                     -highlightthickness 1 -fg black -padx 0 -pady 1 \
-                    -command "::vTcl::ui::attributes::set_font [list $config_cmd] $variable"
+                    -command "::vTcl::ui::attributes::set_font [list $config_cmd] $variable
+		              $keyrelease_cmd $option $variable ::vTcl::ui::attributes::checked($base)"
                 pack ${base}.l -side left -expand 1 -fill x
                 pack ${base}.f -side right -fill y -pady 1 -padx 1
                 set focusControl ${base}.l
@@ -1360,7 +1363,8 @@ namespace eval ::vTcl::ui::attributes {
                 button ${base}.f \
                     -image ellipses  -width 12 \
                     -highlightthickness 1 -fg black -padx 0 -pady 1 \
-                    -command "::vTcl::ui::attributes::set_image [list $config_cmd] $variable"
+                    -command "::vTcl::ui::attributes::set_image [list $config_cmd] $variable
+		              $keyrelease_cmd $option $variable ::vTcl::ui::attributes::checked($base)"
                 pack ${base}.l -side left -expand 1 -fill x
                 pack ${base}.f -side right -fill y -pady 1 -padx 1
 	        set focusControl ${base}.l

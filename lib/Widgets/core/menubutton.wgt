@@ -32,24 +32,31 @@ DefaultValues   -activebackground -activeforeground -activeborderwidth \
                 -background -foreground -highlightbackground -highlightcolor
 ClassOption     -_tooltip
 DoubleClickCmd	vTcl:edit_target_menu
-InsertCmd	vTcl:widget:menubutton:inscmd
-TreeLabel	@vTcl:core:get_widget_tree_label
+InsertCmd	vTcl::widgets::core::menubutton::insertCmd
+TreeLabel	@vTcl::widgets::core::menubutton::getWidgetTreeLabel
 
-Function        "Edit Menu..."              vTcl:widget:menubutton:edit_menu
+Function        "Edit Menu..."     vTcl::widgets::core::menubutton::editMenu
 
-proc vTcl:widget:menubutton:edit_menu {} {
-    global vTcl
-    set vTcl(w,opt,-menu) [$vTcl(w,widget) cget -menu]
-    vTcl:edit_target_menu $vTcl(w,widget)
-    vTcl:prop:save_opt $vTcl(w,widget) -menu vTcl(w,opt,-menu)
-}
+namespace eval vTcl::widgets::core::menubutton {
 
-proc vTcl:widget:menubutton:inscmd {target} {
-    menu $target.m -tearoff 0
-    $target conf -menu $target.m
-    vTcl:widget:register_widget $target.m
-    foreach def {-activebackground -activeforeground
-                 -background -foreground} {
-        vTcl:prop:default_opt $target.m $def vTcl(w,opt,$def)
+    proc editMenu {} {
+    	global vTcl
+    	set vTcl(w,opt,-menu) [$vTcl(w,widget) cget -menu]
+    	vTcl:edit_target_menu $vTcl(w,widget)
+    	vTcl:prop:save_opt $vTcl(w,widget) -menu vTcl(w,opt,-menu)
+    }
+
+    proc insertCmd {target} {
+        menu $target.m -tearoff 0
+        $target conf -menu $target.m
+        vTcl:widget:register_widget $target.m
+        foreach def {-activebackground -activeforeground
+                     -background -foreground} {
+            vTcl:prop:default_opt $target.m $def vTcl(w,opt,$def)
+        }
+    }
+
+    proc getWidgetTreeLabel {target} {
+        return [$target cget -text]
     }
 }
