@@ -237,6 +237,9 @@ proc vTcl:open {{file ""}} {
     vTcl:statbar 0
     set vTcl(newtops) [expr [llength $vTcl(tops)] + 1]
 
+    ## convert older projects
+    vTcl:convert_tops
+
     unset vTcl(sourcing)
 
     # @@change by Christian Gavin 3/5/2000
