@@ -1,6 +1,7 @@
 ChangeLog for Visual Tcl:
 
 1.51b4 -> 1.51
+    o Added horizontal scrollbars to command and proc editors
     o No need to remove duplicates from the MRU list, because when a file
       is added to this list, the code checks if the file already exists in the
       list and removes it if needed, then adds it at the top of the list.

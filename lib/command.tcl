@@ -61,27 +61,37 @@ proc vTcl:get_command {title initial base} {
     wm resizable $base 1 1
     wm title $base $title
     set vTcl(comm,$base,chg) 0
+
     frame $base.f \
-        -borderwidth 2 -height 30 -relief groove -width 30
-    pack $base.f \
-        -in $base -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 \
-        -padx 3 -pady 3 -side bottom
+        -borderwidth 1 -relief sunken
+    scrollbar $base.f.01 \
+        -command "$base.f.text xview" -highlightthickness 0 \
+        -orient horizontal
+    scrollbar $base.f.02 \
+        -command "$base.f.text yview" -highlightthickness 0
     text $base.f.text \
-        -height 2 -width 2 -wrap none \
-        -yscrollcommand "$base.f.scrollbar16 set" -background white
-    pack $base.f.text \
-        -in $base.f -anchor center -expand 1 -fill both -ipadx 0 \
-        -ipady 0 -padx 0 -pady 0 -side left 
-    scrollbar $base.f.scrollbar16 \
-        -command "$base.f.text yview"
-    pack $base.f.scrollbar16 \
-        -in $base.f -anchor center -expand 0 -fill y -ipadx 0 -ipady 0 \
-        -padx 0 -pady 0 -side left 
+        -background white -borderwidth 0 -height 3 -wrap none \
+        -relief flat -width 20 -xscrollcommand "$base.f.01 set" \
+        -yscrollcommand "$base.f.02 set"
+    pack $base.f \
+        -in "$base" -anchor center -expand 1 -fill both -side bottom
+    grid columnconf $base.f 0 -weight 1
+    grid rowconf $base.f 0 -weight 1
+    grid $base.f.01 \
+        -in "$base.f" -column 0 -row 1 -columnspan 1 -rowspan 1 \
+        -sticky ew
+    grid $base.f.02 \
+        -in "$base.f" -column 1 -row 0 -columnspan 1 -rowspan 1 \
+        -sticky ns
+    grid $base.f.text \
+        -in "$base.f" -column 0 -row 0 -columnspan 1 -rowspan 1 \
+        -sticky nesw
+
     frame $base.f21 \
-        -height 30 -relief flat -width 30 
+        -height 30 -relief flat -width 30
     pack $base.f21 \
         -in $base -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 \
-        -padx 3 -side top 
+        -padx 3 -side top
     button $base.f21.button23 \
         -command "
             vTcl:command:edit_cancel $base
@@ -111,14 +121,10 @@ proc vTcl:get_command {title initial base} {
     $base.f.text delete 0.0 end
     $base.f.text insert end $initial
     focus $base.f.text
-    
-    # @@change by Christian Gavin 3/20/2000
-    # syntax colouring
-    
+
+    ## syntax colouring
     vTcl:syntax_color $base.f.text
-    
-    # @@end_change
-    
+
     tkwait window $base
     update idletasks
     switch -- $vTcl(x,$base) {
