@@ -434,7 +434,7 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
             frame $base
             vTcl:entry ${base}.l -relief sunken -bd 1 \
                 -textvariable $variable -width 8 \
-                -highlightthickness 1 -fg black
+                -highlightthickness 1 -fg black -bg white
             bind ${base}.l <KeyRelease-Return> \
                 "$config_cmd; ${base}.f conf -bg \$$variable"
             frame ${base}.f -relief raised -bd 1 \
@@ -451,7 +451,7 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
             frame $base
             vTcl:entry ${base}.l -relief sunken -bd 1 \
                 -textvariable $variable -width 8 \
-                -highlightthickness 1 -fg black -validate key \
+                -highlightthickness 1 -fg black -bg white -validate key \
 		-vcmd "
 		    vTcl:prop:save_opt \$vTcl(w,widget) $option $variable
 		    return 1
@@ -472,7 +472,7 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
             frame $base
             vTcl:entry ${base}.l -relief sunken -bd 1 \
                 -textvariable $variable -width 8 \
-                -highlightthickness 1 -fg black
+                -highlightthickness 1 -fg black -bg white
             bind ${base}.l <KeyRelease-Return> "$config_cmd"
             button ${base}.f \
                 -image ellipses -bd 1 -width 12 \
@@ -488,7 +488,7 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
             frame $base
             vTcl:entry ${base}.l -relief sunken -bd 1 \
                 -textvariable $variable -width 8 \
-                -highlightthickness 1 -fg black
+                -highlightthickness 1 -fg black -bg white
             bind ${base}.l <KeyRelease-Return> "$config_cmd"
             button ${base}.f \
                 -image ellipses -bd 1 -width 12 \
@@ -503,7 +503,7 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
         default {
             vTcl:entry $base \
                 -textvariable $variable -relief sunken -bd 1 -width 12 \
-                -highlightthickness 1 -fg black -validate key \
+                -highlightthickness 1 -bg white -fg black -validate key \
 		-vcmd "
 		vTcl:prop:save_opt \$vTcl(w,widget) $option $variable
 		return 1
@@ -533,7 +533,7 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
     # @@end_change
 
     if {[vTcl:streq $prefix "opt"]} {
-    	set saveCheck [checkbutton ${base}_save]
+    	set saveCheck [checkbutton ${base}_save -pady 0]
 	vTcl:set_balloon $saveCheck "Check to save option"
 	grid $top.$option $base $saveCheck -sticky news
     } else {
@@ -602,3 +602,6 @@ proc vTcl:prop:save_opt {w opt varName} {
 	set ::widgets::${w}::save($opt) 1
     }
 }
+
+
+
