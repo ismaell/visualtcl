@@ -33,31 +33,10 @@ proc vTcl:wm_take_focus {target} {
 proc vTcl:destroy_top {target} {
     global vTcl
 
-    set result [tk_messageBox -type yesno \
-        -title "Visual Tcl" \
-        -message "Are you sure you want to delete top-level window $target ?"]
-
-    if {$result == "no"} {
-        return 0
-    }
-
     vTcl:select_widget $target
     vTcl:delete
 
-#    if [winfo exists $target] {
-#        if {[vTcl:get_class $target] == "Toplevel"} {
-#            if {$vTcl(w,toplevel) == $target} {
-#                 vTcl:select_widget .
-#             }
-#            destroy $target
-#        }
-#    }
-#    set x [lsearch $vTcl(tops) $target]
-#    if {$x >= 0} {
-#        set vTcl(tops) [lreplace $vTcl(tops) $x $x]
-#    }
-#
-    return 1
+    return [expr ![winfo exists $target]]
 }
 
 proc vTcl:show_top {target} {

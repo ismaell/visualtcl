@@ -57,9 +57,22 @@ proc vTcl:delete {{w ""}} {
     if {[vTcl:entry_or_text $w]} then return
 
     global vTcl classes
+    set w $vTcl(w,widget)
+    set class [winfo class $w]
+
+    if {$class == "Toplevel" &&
+        ![lempty [vTcl:get_children $w]]} {
+        set result [tk_messageBox -type yesno \
+            -title "Visual Tcl" \
+            -message "Are you sure you want to delete top-level window $w ?"]
+
+        if {$result == "no"} {
+            return 0
+        }
+    }
+
     if { $vTcl(w,widget) == "." } { return }
 
-    set w $vTcl(w,widget)
     if {[lempty $w]} { return }
 
     vTcl:destroy_handles
@@ -68,7 +81,6 @@ proc vTcl:delete {{w ""}} {
     # list widget tree without including $w (it's why the "0" parameter)
     set children [vTcl:widget_tree $w 0]
     set parent [winfo parent $vTcl(w,widget)]
-    set class [winfo class $w]
 
     set buffer [vTcl:create_compound $vTcl(w,widget)]
     set do ""
@@ -119,12 +131,9 @@ proc vTcl:delete {{w ""}} {
 
     if {[lempty $vTcl(widgets,$top)] || ![winfo exists $n]} { set n $parent }
 
-    # @@change by Christian Gavin 3/5/2000
     # automatically refresh widget tree after delete operation
 
     after idle {vTcl:init_wtree}
-
-    # @@end_change
 
     if {[vTcl:streq $n "."]} {
         vTcl:prop:clear

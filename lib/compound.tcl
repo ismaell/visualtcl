@@ -175,7 +175,7 @@ proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
             # if the proc name is in a namespace, make sure the
             # namespace exists
 	    if {[string match ::${cmpdname}::* $nme]} {
-                namespace eval [list ::${cmpdname}] [list proc $nme $arg $bdy]
+                namespace eval ::${cmpdname} [list proc $nme $arg $bdy]
             } else {
                 proc $nme $arg $bdy
             }
