@@ -5,10 +5,55 @@ Icon icon_panedwindow.gif
 DumpChildren  no
 MegaWidget    yes
 AdditionalClasses Pane
+TreeChildrenCmd     "vTcl:widget:panedwindow:treeChildrenCmd \
+                     vTcl:widget:panedwindow:treeChildrenChildsite"
+DumpCmd             vTcl:dump:panedwindow
 
 InsertCmd vTcl:widget:panedwindow:inscmd
 
 proc vTcl:widget:panedwindow:inscmd {target} {
 
-	return "$target add pane1; $target add pane2"
+    return "$target add pane1; $target add pane2"
+}
+
+# All right, I explain it: -1 is the number of levels
+# in the window path between the megawidget and its
+# pages (childsites). This is used by the widget tree
+# to skip 4 levels (otherwise it would draw 4 vertical
+# lines)
+
+proc vTcl:widget:panedwindow:treeChildrenCmd {target} {
+
+    set children ""
+
+    foreach site [$target childsite] {
+        foreach child [vTcl:list_widget_tree $site] {
+            lappend children $child\#-1
+        }
+    }
+
+    return $children
+}
+
+proc vTcl:widget:panedwindow:treeChildrenChildsite {target} {
+
+    return [$target childsite]
+}
+
+proc vTcl:dump:panedwindow {target basename} {
+
+    global vTcl
+    set result [vTcl:dump_widget_opt $target $basename]
+    set entries [$target childsite]
+    set size [llength $entries]
+    for {set i 0} {$i < $size} {incr i} {
+        set conf [$target paneconfigure $i]
+        set pairs [vTcl:conf_to_pairs $conf ""]
+        append result "$vTcl(tab)$basename add pane$i \\\n"
+        append result "[vTcl:clean_pairs $pairs]\n"
+    }
+    foreach page $entries {
+        append result [vTcl:lib_itcl:dump_subwidgets $page]
+    }
+    return $result
 }
