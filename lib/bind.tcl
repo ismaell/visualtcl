@@ -932,11 +932,15 @@ namespace eval ::widgets_bindings {
         if {![::widgets_bindings::is_editable_tag $tag] ||
             $event == ""} return
         
-        bind $tag $event ""
-        set ::widgets_bindings::lasttag ""
-        set ::widgets_bindings::lastevent ""
-
-        ::widgets_bindings::fill_bindings $target
+        set do ""
+        append do "bind $tag $event \"\""
+        append do ";::widgets_bindings::clear_current_binding"
+        append do ";::widgets_bindings::fill_bindings $target"
+        set undo ""
+        append undo "bind $tag $event [list [bind $tag $event]]"
+        append undo ";::widgets_bindings::clear_current_binding"
+        append undo ";if \{\$vTcl(w,widget)==\"$target\"\} \{vTcl:get_bind $target\}"
+        vTcl:push_action $do $undo
     }
 
     proc {::widgets_bindings::enable_toolbar_buttons} {} {
@@ -1410,5 +1414,6 @@ namespace eval ::widgets_bindings {
     }
 
 } ; # namespace eval
+
 
 
