@@ -36,6 +36,7 @@ DoubleClickCmd	vTcl::widgets::core::button::dblClk
 TreeLabel	@vTcl::widgets::core::button::getWidgetTreeLabel
 
 Function	"Set Text"	vTcl::widgets::core::button::setText
+Function    "Set Multiline Text"  vTcl::widgets::core::button::setMultilineText
 Function	"Set Command"	vTcl::widgets::core::button::setCommand
 
 namespace eval vTcl::widgets::core::button {
@@ -43,6 +44,10 @@ namespace eval vTcl::widgets::core::button {
     proc setText {} {
 	global vTcl
 	vTcl:set_label $vTcl(w,widget)
+    }
+
+    proc setMultilineText {} {
+        vTcl:set_text $::vTcl(w,widget)
     }
 
     proc setCommand {} {
@@ -65,3 +70,4 @@ namespace eval vTcl::widgets::core::button {
 	}
     }
 }
+
