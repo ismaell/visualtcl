@@ -46,6 +46,7 @@ proc vTcl:file_source {} {
     set file [vTcl:get_file open "Source File"]
     if {$file != ""} {
         vTcl:source $file
+        vTcl:update_proc_list
     }
 }
 
