@@ -33,6 +33,11 @@ proc vTcl:Menu:delete_menu {m} {
     if {$class == "Toplevel"} then {
         # it's a toplevel, just removes its menu
         $parent configure -menu ""
+
+        # closes any open menu editor for this menu
+        if {$editor != ""} {
+            destroy $editor}
+
         return
     }
 
