@@ -37,6 +37,7 @@ proc vTcl:widget:lib:lib_bwidget {args} {
     global vTcl
 
     set order {
+	ArrowButton
 	NoteBook
 	Tree
 	ProgressBar
