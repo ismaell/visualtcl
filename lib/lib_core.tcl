@@ -612,6 +612,41 @@ set vTcl(Radiobutton,get_widget_tree_label) vtcl:core:get_widget_tree_label
 set vTcl(Checkbutton,get_widget_tree_label) vtcl:core:get_widget_tree_label
 set vTcl(Button,get_widget_tree_label)      vtcl:core:get_widget_tree_label
 set vTcl(Label,get_widget_tree_label)       vtcl:core:get_widget_tree_label
+set vTcl(Listbox,get_widget_tree_label)     vtcl:core:get_widget_tree_label
+set vTcl(Menu,get_widget_tree_label)        vtcl:core:get_menu_label
+
+proc vtcl:core:get_menu_label {class {target ""}} {
+
+	set components [split $target .]
+
+	# let's see if the parent is a menu
+	set size [llength $components]
+
+	# parent is at least a toplevel
+	if {$size <= 3} {
+		return "Menu"
+	}
+
+	set parent [lrange $components 0 [expr $size - 2] ]
+	set parent [join $parent .]
+
+	# puts "parent is $parent"
+	if { [vTcl:get_class $parent 1] != "menu" } {
+		return "Menu"
+	}
+
+	for {set i 0} {$i <= [$parent index end]} {incr i} {
+
+		set menuwindow [$parent entrycget $i -menu]
+
+		if {$menuwindow == $target} {
+
+			return [$parent entrycget $i -label]
+		}
+	}
+
+	return "Menu"
+}
 
 proc vtcl:core:get_widget_tree_label {class {target ""}} {
 
@@ -629,6 +664,10 @@ proc vtcl:core:get_widget_tree_label {class {target ""}} {
                           set t "LAB: $ttt1 var=$ttt2"
                     }
 
+           }
+
+           listbox {
+                   return "Listbox"
            }
 
            radiobutton {
@@ -678,6 +717,27 @@ proc vtcl:core:get_widget_tree_label {class {target ""}} {
 }
 
 # translation for options when saving files
+
+set vTcl(option,translate,-menu) vTcl:core:menutranslate
+set vTcl(option,noencase,-menu) 1
+set vTcl(option,noencasewhen,-menu) vTcl:core:noencasewhen
+
+proc vTcl:core:menutranslate {value} {
+
+	global vTcl
+
+	if [regexp {((\.[a-zA-Z0-9]+)+)} $value matchAll path] {
+
+		if {$matchAll == $value} {
+
+	               	set path [vTcl:base_name $path]
+
+			return "\"$path\""
+		}
+	}
+
+      	return $value
+}
 
 set vTcl(option,translate,-xscrollcommand) vTcl:core:scrolltranslate
 set vTcl(option,noencase,-xscrollcommand) 1
