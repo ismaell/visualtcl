@@ -107,12 +107,6 @@ proc vTcl:delete {{w ""}} {
         if {[info procs vTclWindow$w] != ""} {
             rename vTclWindow$w {}
         }
-        if {[info procs vTclWindow(pre)$w] != ""} {
-            rename vTclWindow$w {}
-        }
-        if {[info procs vTclWindow(post)$w] != ""} {
-            rename vTclWindow$w {}
-        }
     }
 
     if {![info exists vTcl(widgets,$top)]} { set vTcl(widgets,$top) {} }

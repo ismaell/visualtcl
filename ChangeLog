@@ -1,6 +1,9 @@
 ChangeLog for Visual Tcl:
 
 1.51b4 -> 1.51
+    o Added <<Create>>, <<Show>> and <<Hide>> virtual events for toplevels.
+    o Updated demo app with these virtual events.
+    o Removed (pre) and (post) mechanism for toplevels.
     o Added GPL copyright for Tk widgets description files.
     o Fixed find/replace bug with dollar sign in text to find.
     o Find/Replace highlights text when a match is found.

@@ -33,18 +33,21 @@ proc Window {args} {
     set exists [winfo exists $newname]
     switch $cmd {
         show {
-            if {$exists} { wm deiconify $newname; return }
-            if {[info procs vTclWindow(pre)$name] != ""} {
-                eval "vTclWindow(pre)$name $newname $rest"
-            }
-            if {[info procs vTclWindow$name] != ""} {
+            if {$exists} {
+                wm deiconify $newname
+            } elseif {[info procs vTclWindow$name] != ""} {
                 eval "vTclWindow$name $newname $rest"
             }
-            if {[info procs vTclWindow(post)$name] != ""} {
-                eval "vTclWindow(post)$name $newname $rest"
+            if {[wm state $newname] == "normal"} {
+                vTcl:FireEvent $newname <<Show>>
             }
         }
-        hide    { if $exists {wm withdraw $newname; return} }
+        hide    {
+            if {$exists} {
+                wm withdraw $newname
+                vTcl:FireEvent $newname <<Hide>>
+                return}
+        }
         iconify { if $exists {wm iconify $newname; return} }
         destroy { if $exists {destroy $newname; return} }
     }
@@ -96,5 +99,26 @@ proc vTcl:DefineAlias {target alias widgetProc top_or_alias cmdalias} {
         if {$cmdalias} {
             interp alias {} $top_or_alias.$alias {} $widgetProc $target
         }
+    }
+}
+
+proc vTcl:FireEvent {target event} {
+
+    foreach bindtag [bindtags $target] {
+        set tag_events [bind $bindtag]
+        set stop_processing 0
+        foreach tag_event $tag_events {
+            if {$tag_event == $event} {
+                set bind_code [bind $bindtag $tag_event]
+                regsub -all %W $bind_code $target bind_code
+                set result [catch {uplevel #0 $bind_code}]
+                if {$result == 3} {
+                   # break exception, stop processing
+                   set stop_processing 1
+                }
+                break
+            }
+        }
+        if {$stop_processing} {break}
     }
 }

@@ -309,18 +309,21 @@ proc Window {args} {
     set exists [winfo exists $newname]
     switch $cmd {
         show {
-            if {$exists} { wm deiconify $newname; return }
-            if {[info procs vTclWindow(pre)$name] != ""} {
-                eval "vTclWindow(pre)$name $newname $rest"
-            }
-            if {[info procs vTclWindow$name] != ""} {
+            if {$exists} {
+                wm deiconify $newname
+            } elseif {[info procs vTclWindow$name] != ""} {
                 eval "vTclWindow$name $newname $rest"
             }
-            if {[info procs vTclWindow(post)$name] != ""} {
-                eval "vTclWindow(post)$name $newname $rest"
+            if {[wm state $newname] == "normal"} {
+                vTcl:FireEvent $newname <<Show>>
             }
         }
-        hide    { if $exists {wm withdraw $newname; return} }
+        hide    {
+            if {$exists} {
+                wm withdraw $newname
+                vTcl:FireEvent $newname <<Hide>>
+                return}
+        }
         iconify { if $exists {wm iconify $newname; return} }
         destroy { if $exists {destroy $newname; return} }
     }
@@ -358,6 +361,26 @@ proc {vTcl:DoCmdOption} {target cmd} {
     regsub -all {\%top} $cmd [winfo toplevel $parent] cmd
 
     uplevel #0 [list eval $cmd]
+}
+
+proc {vTcl:FireEvent} {target event} {
+    foreach bindtag [bindtags $target] {
+        set tag_events [bind $bindtag]
+        set stop_processing 0
+        foreach tag_event $tag_events {
+            if {$tag_event == $event} {
+                set bind_code [bind $bindtag $tag_event]
+                regsub -all %W $bind_code $target bind_code
+                set result [catch {uplevel #0 $bind_code}]
+                if {$result == 3} {
+                   # break exception, stop processing
+                   set stop_processing 1
+                }
+                break
+            }
+        }
+        if {$stop_processing} {break}
+    }
 }
 
 proc {vTcl:Toplevel:WidgetProc} {w args} {
@@ -1751,6 +1774,29 @@ $mainw.MainText image create insert -image $object
 
 }
 ###########################################################
+## Procedure:  ::visual_text::main
+
+namespace eval ::visual_text {
+
+proc {::visual_text::main} {W} {
+global widget
+wm protocol $W WM_DELETE_WINDOW {exit}
+
+## set commands for toolbar buttons
+::bitmapbutton::set_command $widget($W,ToolbarButtonSave)  {
+    ::visual_text::command-save %top}
+::bitmapbutton::set_command $widget($W,ToolbarButtonNew)   {
+    ::visual_text::command-new %top}
+::bitmapbutton::set_command $widget($W,ToolbarButtonCut)   {
+    tk_textCut   $widget(%top,MainText)}
+::bitmapbutton::set_command $widget($W,ToolbarButtonCopy)  {
+    tk_textCopy  $widget(%top,MainText)}
+::bitmapbutton::set_command $widget($W,ToolbarButtonPaste) {
+    tk_textPaste $widget(%top,MainText)}
+}
+
+}
+###########################################################
 ## Procedure:  ::visual_text::show_insert_position
 
 namespace eval ::visual_text {
@@ -1904,23 +1950,9 @@ return [lindex $opts $index]
 
 proc {main} {argc argv} {
 global widget
-global vTcl
-wm protocol .top21 WM_DELETE_WINDOW {exit}
 
 ::edit_tag::init_edit_tag $widget(EditTag)
 ::about::init
-
-## set commands for toolbar buttons
-::bitmapbutton::set_command $widget(ToolbarButtonSave)  {
-    ::visual_text::command-save %top}
-::bitmapbutton::set_command $widget(ToolbarButtonNew)   {
-    ::visual_text::command-new %top}
-::bitmapbutton::set_command $widget(ToolbarButtonCut)   {
-    tk_textCut   $widget(%top,MainText)}
-::bitmapbutton::set_command $widget(ToolbarButtonCopy)  {
-    tk_textCopy  $widget(%top,MainText)}
-::bitmapbutton::set_command $widget(ToolbarButtonPaste) {
-    tk_textPaste $widget(%top,MainText)}
 
 ## if not running vTcl, we use our own bindings for the text widget
 if {![winfo exists .vTcl]} {
@@ -1958,6 +1990,7 @@ proc vTclWindow. {base {container 0}} {
     wm withdraw $base
     wm title $base "vtcl.tcl"
     bindtags $base "$base Vtcl.tcl all"
+    vTcl:FireEvent $base <<Create>>
     }
     ###################
     # SETTING GEOMETRY
@@ -1983,12 +2016,13 @@ proc vTclWindow.top18 {base {container 0}} {
     vTcl:toplevel $base -class Toplevel
     wm withdraw $base
     wm focusmodel $base passive
-    wm geometry $base 471x392+260+161; update
+    wm geometry $base 471x392+264+181; update
     wm maxsize $base 1009 738
     wm minsize $base 100 1
     wm overrideredirect $base 0
     wm resizable $base 1 1
     wm title $base "About Visual Text"
+    vTcl:FireEvent $base <<Create>>
     }
     frame $base.cpd19 \
         -borderwidth 1 -height 30 -relief sunken -width 30 
@@ -2048,6 +2082,7 @@ proc vTclWindow.top19 {base {container 0}} {
     wm overrideredirect $base 0
     wm resizable $base 1 1
     wm title $base "Delete Tag"
+    vTcl:FireEvent $base <<Create>>
     }
     label $base.lab20 \
         -anchor w -padx 1 -pady 1 \
@@ -2124,7 +2159,7 @@ proc vTclWindow.top21 {base {container 0}} {
     vTcl:toplevel $base -class Toplevel \
         -menu "$base.m26" 
     wm focusmodel $base passive
-    wm geometry $base 678x575+125+64; update
+    wm geometry $base 678x575+159+60; update
     wm maxsize $base 1009 738
     wm minsize $base 100 1
     wm overrideredirect $base 0
@@ -2132,6 +2167,10 @@ proc vTclWindow.top21 {base {container 0}} {
     wm deiconify $base
     wm title $base "Visual Text"
     bindtags $base "$base Toplevel all Accelerators"
+    bind $base <<Show>> {
+        ::visual_text::main %W
+    }
+    vTcl:FireEvent $base <<Create>>
     }
     frame $base.fra22 \
         -borderwidth 1 
@@ -2697,6 +2736,7 @@ proc vTclWindow.top22 {base {container 0}} {
     wm overrideredirect $base 0
     wm resizable $base 1 1
     wm title $base "Edit Tag"
+    vTcl:FireEvent $base <<Create>>
     }
     label $base.lab23 \
         -anchor w -text {Tag name:} 

@@ -43,6 +43,7 @@ Function        "Adjust Size To Children"   vTcl:widget:toplevel:adjust_size
 Export          vTcl:DefineAlias
 Export          vTcl:toplevel
 Export          vTcl:DoCmdOption
+Export          vTcl:FireEvent
 
 proc vTcl:DoCmdOption {target cmd} {
 

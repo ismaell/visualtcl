@@ -293,3 +293,63 @@ code executes.
 Visual Tcl has a "bindings editor" that allows you to define
 actions to take when events happen. To invoke the bindings editor,
 select a widget, then press Alt + B.}
+
+{
+Visual Tcl allows you to execute a bloc of code after a
+toplevel is created, but before all its widgets are.
+
+<<Create>>
+    This virtual event is triggered just after your toplevel
+    exists, but before any of its subwidgets has been defined.}
+
+{
+Visual Tcl also offers you two other virtual events that
+are triggered when the window is shown/hidden. They are:
+
+<<Show>>
+    This virtual event is triggered after a window is created,
+    all its widgets exist, and it is visible on the screen. It
+    is also triggered when the window is shown after it has
+    been hidden.
+
+<<Hide>>
+    This virtual event is triggered after a window is hidden
+    by the means of the 'Window hide' command.
+}
+
+{
+In several instances, the Tk toolkit allows you to define
+callbacks, e.g. a bloc of code you provide to Tk that will
+be executed when something happens.
+
+For example, you provide a bloc of code to execute when
+a button is pressed by using the -command option.
+
+Or, you can define an event handler triggered by a mouse
+click.
+
+These callbacks always execute in the 'global' namespace,
+which means they have access to all global variables. To
+avoid polluting the global namespace, make these callbacks
+as small as possible, or try to have the callbacks call
+a user defined procedure instead.
+}
+
+{
+The (pre) and (post) procedures are obsolete in Visual Tcl 1.5.
+
+You should use the <<Create>> and <<Show>> events instead.}
+
+{
+Visual Tcl 1.5 comes with a full-blown sample application
+called Visual Text.
+
+It is a small text editor featuring basic text formatting.
+
+You can open this application from within Visual Tcl and browse
+its procedures, widgets and events. It shows you how to add
+shortcuts to your application, how to define pull-down menus,
+how to define event handlers, or how to load/save files. You can
+even use the text dump/restore code in the ::ttd namespace in
+your own application.
+}

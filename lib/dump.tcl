@@ -650,9 +650,6 @@ proc vTcl:dump_top {target} {
     global vTcl
     set output ""
     set proc_base $vTcl(winname)$target
-    foreach i "$vTcl(winname)(pre)$target $vTcl(winname)(post)$target" {
-        append output [vTcl:maybe_dump_proc $i]
-    }
     if {![winfo exists $target]} {
         if {[info procs $proc_base] == ""} {
             return ""
@@ -681,6 +678,7 @@ proc vTcl:dump_top {target} {
     vTcl:statbar [expr {($vTcl(num,index) * 100) / $vTcl(num,total)}]
 
     append output [vTcl:dump:widgets $target]
+    append output "\n$vTcl(tab)vTcl:FireEvent \$base <<Ready>>\n"
 
     append output "\}\n"
     return $output
@@ -746,6 +744,7 @@ proc vTcl:dump:widgets {target} {
             append output [$classes($class,dumpCmd) $i $basename]
 
         if {[string tolower $class] == "toplevel"} {
+            append output "$vTcl(tab)vTcl:FireEvent $basename <<Create>>\n"
             append output "$vTcl(tab)\}\n"
         }
 
