@@ -66,8 +66,7 @@ proc vTcl:dump:buttonbox {target basename} {
 
     for {set i 0} {$i <= $last} {incr i} {
         set conf [$target buttonconfigure $i]
-        set pairs [vTcl:get_opts_special $conf $target \
-            "-text -command"]
+        set pairs [vTcl:get_subopts_special $conf $target]
 
         append result "$vTcl(tab)$basename add but$i \\\n"
         append result "[vTcl:clean_pairs $pairs]\n"

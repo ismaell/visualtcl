@@ -680,7 +680,7 @@ namespace eval ::vTcl::itemEdit {
                    $option \[vTcl:at $variable\]
                "
             ::vTcl::ui::attributes::newAttribute \
-                $f $option $variable $config_cmd
+                $target($top) $f $option $variable $config_cmd
             pack $f -side top -fill x -expand 0
         }
 

@@ -1,6 +1,9 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Editing radioboxes, checkboxes and buttonboxes
+    o Support for %top and %widget in commands for megawidget subitems
+      (eg. commands for a button in a buttonbox)
     o Fixed find/replace problem where replace string is a superset
       of find string.
     o Display asterisk in title bar to show that changes have been made.

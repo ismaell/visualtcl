@@ -1154,16 +1154,28 @@ namespace eval ::vTcl::ui::attributes {
         eval $config_cmd
     }
 
-    proc set_command {option config_cmd variable} {
+    proc set_command {target option config_cmd variable} {
         variable counter
 
         set cmd [::vTcl:at $variable]
         incr counter
+
+        ## if the command is in the form "vTcl:DoCmdOption target cmd",
+        ## then extracts the command, otherwise use the command as is
+        if {[regexp {vTcl:DoCmdOption [^ ]+ (.*)} $cmd matchAll realCmd]} {
+            lassign $cmd dummy1 dummy2 cmd
+        }
         set result [::vTcl:get_command "Edit $option" $cmd .vTcl.cmdEdit_$counter]
         if {$result == -1} {
             return
         }
-        set $variable [string trim $result]
+
+        ## if the command is non null, replace it by DoCmdOption
+        set cmd [string trim $result]
+        if {$cmd != "" && [string match *%* $cmd]} {
+            set cmd [list vTcl:DoCmdOption $target $cmd]
+        }
+        set $variable $cmd
         eval $config_cmd
     }
 
@@ -1184,7 +1196,7 @@ namespace eval ::vTcl::ui::attributes {
         eval $config_cmd
     }
 
-    proc newAttribute {top option variable config_cmd} {
+    proc newAttribute {target top option variable config_cmd} {
         set class $::vTcl(w,class)
 	if {[info exists ::specialOpts($class,$option,type)]} {
 	    set text    $::specialOpts($class,$option,text)
@@ -1194,6 +1206,12 @@ namespace eval ::vTcl::ui::attributes {
 	    set text    $::options($option,text)
 	    set type    $::options($option,type)
 	    set choices $::options($option,choices)
+        }
+
+        ## standard relief options
+        if {[vTcl:streq $type "relief"]} {
+	    set type    choice
+    	    set choices $::vTcl(reliefs)
         }
 
         ## the option label
@@ -1246,7 +1264,7 @@ namespace eval ::vTcl::ui::attributes {
                 button ${base}.f \
                     -image ellipses  -width 12 \
                     -highlightthickness 1 -fg black -padx 0 -pady 1 \
-                    -command "::vTcl::ui::attributes::set_command $option [list $config_cmd] $variable"
+                    -command "::vTcl::ui::attributes::set_command $target $option [list $config_cmd] $variable"
                 pack ${base}.l -side left -expand 1 -fill x
                 pack ${base}.f -side right -fill y -pady 1 -padx 1
 	        set focusControl ${base}.l
