@@ -1,6 +1,11 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Bound the entries in the attribute editor to change color with focus
+    o Removed call to raise in console.tcl to speed painting of tk_con in KDE2
+    o Removed vTcl:show_console in KDE2
+    o Modified vTcl:attrbar:toggle_console to run ::vTcl::InitTkcon only one  
+      time and to do the work of vTcl:show_console
     o Made a fix that I hope will fix the cursor problem.
     o System inspector shows window class in left pane
     o Widget tree now uses "dialog font" from the preferences.
