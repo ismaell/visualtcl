@@ -130,7 +130,7 @@ proc vTcl:image:broken_image {} {
 
 foreach img {
 
-        {{[file join / home cgavin vtcl images edit add.gif]} {} stock {
+        {{[file join C:/ {My Documents} vtcl images edit add.gif]} {} stock {
 R0lGODdhFAAUAPcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwMDcwKbK8AAA
 AAAAKgAAVQAAfwAAqgAA1AAqAAAqKgAqVQAqfwAqqgAq1ABVAABVKgBVVQBV
 fwBVqgBV1AB/AAB/KgB/VQB/fwB/qgB/1ACqAACqKgCqVQCqfwCqqgCq1ADU
@@ -151,7 +151,7 @@ cn9/f4yMjJmZmaWlpbKysr+/v8zMzNjY2OXl5fLy8v/78KCgpICAgP8AAAD/
 AP//AAAA//8A/wD//////ywAAAAAFAAUAAAIWADnCRxIsKDBgwgTKlzIsCA+
 gfj+zcO3r+FDihQBzNOoEeE+iv/wiXwosKNDkQf2VWw4ryK+lCQHmiSITyNF
 ljQRziS4E6fCniV9sgS6sShHo0KTKl26MCAAOw==}}
-        {{[file join / home cgavin vtcl images edit remove.gif]} {} stock {
+        {{[file join C:/ {My Documents} vtcl images edit remove.gif]} {} stock {
 R0lGODdhFAAUAPcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwMDcwKbK8AAA
 AAAAKgAAVQAAfwAAqgAA1AAqAAAqKgAqVQAqfwAqqgAq1ABVAABVKgBVVQBV
 fwBVqgBV1AB/AAB/KgB/VQB/fwB/qgB/1ACqAACqKgCqVQCqfwCqqgCq1ADU
@@ -215,6 +215,14 @@ proc Window {args} {
         hide    { if $exists {wm withdraw $newname; return} }
         iconify { if $exists {wm iconify $newname; return} }
         destroy { if $exists {destroy $newname; return} }
+    }
+}
+
+proc vTcl:WindowsCleanup {} {
+    global vTcl
+    if {[info exists vTcl(sourcing)]} { return }
+    foreach w [winfo children .] {
+    	wm protocol $w WM_DELETE_WINDOW { exit }
     }
 }
 }
@@ -517,7 +525,7 @@ proc vTcl:project:info {} {
         array set save {-command 1 -text 1 -width 1}
     }
     namespace eval ::widgets_bindings {
-        set tagslist {}
+        set tagslist FlatToolbarButton
     }
 }
 }
@@ -1402,14 +1410,14 @@ proc vTclWindow. {base {container 0}} {
     ###################
     if {!$container} {
     wm focusmodel $base passive
-    wm geometry $base 1x1+0+0; update
-    wm maxsize $base 1009 738
-    wm minsize $base 1 1
+    wm geometry $base 200x200+84+84; update
+    wm maxsize $base 1284 1010
+    wm minsize $base 100 1
     wm overrideredirect $base 0
     wm resizable $base 1 1
     wm withdraw $base
-    wm title $base "vtcl.tcl"
-    bindtags $base "$base Vtcl.tcl all"
+    wm title $base "vtcl"
+    bindtags $base "$base Vtcl all"
     }
     ###################
     # SETTING GEOMETRY
@@ -1437,7 +1445,7 @@ proc vTclWindow.top18 {base {container 0}} {
     wm focusmodel $base passive
     wm geometry $base 471x392+260+161; update
     wm maxsize $base 1009 738
-    wm minsize $base 1 1
+    wm minsize $base 100 1
     wm overrideredirect $base 0
     wm resizable $base 1 1
     wm title $base "About Visual Text"
@@ -1497,9 +1505,9 @@ proc vTclWindow.top21 {base {container 0}} {
     vTcl:toplevel $base -class Toplevel \
         -menu "$base.m26" 
     wm focusmodel $base passive
-    wm geometry $base 678x613+152+43; update
+    wm geometry $base 678x575+152+43; update
     wm maxsize $base 1009 738
-    wm minsize $base 1 1
+    wm minsize $base 100 1
     wm overrideredirect $base 0
     wm resizable $base 1 1
     wm deiconify $base
@@ -1563,12 +1571,12 @@ proc vTclWindow.top21 {base {container 0}} {
         -borderwidth 2 -height 75 -width 125 
     button $base.cpd23.02.fra22.but23 \
         -command {::visual_text::command-add_tag VisualText EditTag} \
-        -image [vTcl:image:get_image [file join / home cgavin vtcl images edit add.gif]] \
+        -image [vTcl:image:get_image [file join C:/ {My Documents} vtcl images edit add.gif]] \
         -relief flat -text button 
     bindtags $base.cpd23.02.fra22.but23 "$base.cpd23.02.fra22.but23 Button $base all FlatToolbarButton"
     button $base.cpd23.02.fra22.but24 \
         \
-        -image [vTcl:image:get_image [file join / home cgavin vtcl images edit remove.gif]] \
+        -image [vTcl:image:get_image [file join C:/ {My Documents} vtcl images edit remove.gif]] \
         -relief flat -text button 
     bindtags $base.cpd23.02.fra22.but24 "$base.cpd23.02.fra22.but24 Button $base all FlatToolbarButton"
     frame $base.cpd23.02.cpd22 \
@@ -1765,7 +1773,7 @@ proc vTclWindow.top22 {base {container 0}} {
     wm focusmodel $base passive
     wm geometry $base 439x473+307+174; update
     wm maxsize $base 1009 738
-    wm minsize $base 1 1
+    wm minsize $base 100 1
     wm overrideredirect $base 0
     wm resizable $base 1 1
     wm title $base "Edit Tag"
@@ -1960,6 +1968,13 @@ proc vTclWindow.top22 {base {container 0}} {
     pack $base.fra46.but48 \
         -in $base.fra46 -anchor center -expand 0 -fill none -padx 5 -pady 2 \
         -side left 
+}
+
+bind "FlatToolbarButton" <Enter> {
+    %W configure -relief raised
+}
+bind "FlatToolbarButton" <Leave> {
+    %W configure -relief flat
 }
 
 Window show .
