@@ -229,6 +229,7 @@ proc vTcl:key_release_cmd {k config_cmd target option variable args} {
     if {$k < 37 || $k > 40} {
         set value [vTcl:at $variable]
         set ::vTcl::config($target) [list $config_cmd $target $option $variable $value $args]
+        vTcl:prop:save_opt $target $option $variable
     }
 }
 
@@ -575,15 +576,6 @@ proc vTcl:prop:new_attr {top option variable config_cmd config_args prefix {isGe
             vTcl:entry ${base}.l -relief sunken  \
                 -textvariable $variable -width 8 \
                 -highlightthickness 1 -fg black
-
-	    if {[info tclversion] > 8.2} {
-		${base}.l configure -validate key \
-		-vcmd "
-		    vTcl:prop:save_opt \$vTcl(w,widget) $option $variable
-		    return 1
-		"
-	    }
-
             button ${base}.f \
                 -image ellipses  -width 12 \
                 -highlightthickness 1 -fg black -padx 0 -pady 1 \
@@ -632,14 +624,6 @@ proc vTcl:prop:new_attr {top option variable config_cmd config_args prefix {isGe
         default {
             vTcl:entry $base \
                 -textvariable $variable -width 12 -highlightthickness 1
-
-	    if {[info tclversion] > 8.2} {
-		${base} configure -validate key \
-		-vcmd "
-		    vTcl:prop:save_opt \$vTcl(w,widget) $option $variable
-		    return 1
-		"
-	    }
         }
     }
 
@@ -672,15 +656,21 @@ proc vTcl:prop:new_attr {top option variable config_cmd config_args prefix {isGe
     bind $label <ButtonRelease-3> \
 	"vTcl:propmgr:show_rightclick_menu $vTcl(gui,ae) $option $variable %X %Y"
 
-    bind $focusControl <FocusIn>    "vTcl:propmgr:select_attr $top $option"
-    bind $focusControl <FocusOut>   vTcl:focus_out_cmd
-    bind $focusControl <KeyRelease> \
+    bind after_$focusControl <FocusIn>    \
+        "vTcl:propmgr:select_attr $top $option"
+    bind after_$focusControl <FocusOut>   \
+        vTcl:focus_out_cmd
+    bind $focusControl <MouseWheel> \
+        "vTcl:propmgr:scrollWheelMouse %D $label"
+    bind after_$focusControl <KeyRelease> \
         "vTcl:key_release_cmd %k $config_cmd \$vTcl(w,widget) $option $variable $config_args"
-    bind $focusControl <KeyRelease-Return> \
+    bind after_$focusControl <KeyRelease-Return> \
         "$config_cmd \$vTcl(w,widget) $option $variable {} $config_args"
-    bind $focusControl <Key-Up>     "vTcl:propmgr:focusPrev $label"
-    bind $focusControl <Key-Down>   "vTcl:propmgr:focusNext $label"
-    bind $focusControl <MouseWheel> "vTcl:propmgr:scrollWheelMouse %D $label"
+    bind after_$focusControl <Key-Up> \
+        "vTcl:propmgr:focusPrev $label"
+    bind after_$focusControl <Key-Down> \
+        "vTcl:propmgr:focusNext $label"
+    bindtags $focusControl "[bindtags $focusControl] after_$focusControl"
 
     if {[vTcl:streq $prefix "opt"]} {
 	set saveCheck [checkbutton ${base}_save -pady 0]
@@ -916,21 +906,21 @@ proc vTcl:propmgr:show_rightclick_menu {base option variable X Y} {
 			$::vTcl::_rclick_option $::vTcl::_rclick_variable \
 			subwidgets vTcl:prop:save_or_unsave_opt \
                         0} \
-                -label {Similar Subwidgets}
+                -label {Same Class Subwidgets}
         $base.menu_rightclk.men24 add command \
                 -accelerator {} \
 		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
 			$::vTcl::_rclick_option $::vTcl::_rclick_variable \
 			toplevel vTcl:prop:save_or_unsave_opt \
                         0} \
-                -label {All Similar Widgets in toplevel}
+                -label {All Same Class Widgets in toplevel}
         $base.menu_rightclk.men24 add command \
                 -accelerator {} \
 		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
 			$::vTcl::_rclick_option $::vTcl::_rclick_variable \
 			all vTcl:prop:save_or_unsave_opt \
                         0} \
-                -label {All Similar Widgets in this project}
+                -label {All Same Class Widgets in this project}
         menu $base.menu_rightclk.men25 -tearoff 0
         $base.menu_rightclk.men25 add command \
                 -accelerator {} \
@@ -938,21 +928,21 @@ proc vTcl:propmgr:show_rightclick_menu {base option variable X Y} {
 			$::vTcl::_rclick_option $::vTcl::_rclick_variable \
 			subwidgets vTcl:prop:save_or_unsave_opt \
                         1} \
-                -label {Similar Subwidgets}
+                -label {Same Class Subwidgets}
         $base.menu_rightclk.men25 add command \
                 -accelerator {} \
 		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
 			$::vTcl::_rclick_option $::vTcl::_rclick_variable \
 			toplevel vTcl:prop:save_or_unsave_opt \
                         1} \
-                -label {All Similar Widgets in toplevel}
+                -label {All Same Class Widgets in toplevel}
         $base.menu_rightclk.men25 add command \
                 -accelerator {} \
 		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
 			$::vTcl::_rclick_option $::vTcl::_rclick_variable \
 			all vTcl:prop:save_or_unsave_opt \
                         1} \
-                -label {All Similar Widgets in this project}
+                -label {All Same Class Widgets in this project}
         menu $base.menu_rightclk.men26 -tearoff 0
         $base.menu_rightclk.men26 add command \
                 -accelerator {} \
@@ -960,21 +950,21 @@ proc vTcl:propmgr:show_rightclick_menu {base option variable X Y} {
 			$::vTcl::_rclick_option $::vTcl::_rclick_variable \
 			subwidgets vTcl:prop:set_opt \
                         [vTcl:at $::vTcl::_rclick_variable]} \
-                -label {Similar Subwidgets}
+                -label {Same Class Subwidgets}
         $base.menu_rightclk.men26 add command \
                 -accelerator {} \
 		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
 			$::vTcl::_rclick_option $::vTcl::_rclick_variable \
 			toplevel vTcl:prop:set_opt \
                         [vTcl:at $::vTcl::_rclick_variable]} \
-                -label {All Similar Widgets in toplevel}
+                -label {All Same Class Widgets in toplevel}
         $base.menu_rightclk.men26 add command \
                 -accelerator {} \
 		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
 			$::vTcl::_rclick_option $::vTcl::_rclick_variable \
 			all vTcl:prop:set_opt \
                         [vTcl:at $::vTcl::_rclick_variable]} \
-                -label {All Similar Widgets in this project}
+                -label {All Same Class Widgets in this project}
         menu $base.menu_rightclk.men22 -tearoff 0
         $base.menu_rightclk.men22 add command \
                 -accelerator {} \
@@ -986,19 +976,19 @@ proc vTcl:propmgr:show_rightclick_menu {base option variable X Y} {
 		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
 			$::vTcl::_rclick_option $::vTcl::_rclick_variable \
 			subwidgets vTcl:prop:default_opt} \
-                -label {Similar Subwidgets}
+                -label {Same Class Subwidgets}
         $base.menu_rightclk.men22 add command \
                 -accelerator {} \
 		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
 			$::vTcl::_rclick_option $::vTcl::_rclick_variable \
 			toplevel vTcl:prop:default_opt} \
-                -label {All Similar Widgets in toplevel}
+                -label {All Same Class Widgets in toplevel}
         $base.menu_rightclk.men22 add command \
                 -accelerator {} \
 		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
 			$::vTcl::_rclick_option $::vTcl::_rclick_variable \
 			all vTcl:prop:default_opt} \
-                -label {All Similar Widgets in this project}
+                -label {All Same Class Widgets in this project}
     }
 
     set ::vTcl::_rclick_option   $option
