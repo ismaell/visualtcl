@@ -31,10 +31,13 @@ TagsCmd         vTcl:lib_itcl:tagscmd
 Icon		icon_incrCombobox.gif
 DumpChildren	no
 MegaWidget	yes
-InsertCmd	vTcl:widget:combobox:inscmd
+InsertCmd	vTcl::widgets::iwidgets::combobox::insertCmd
 
-proc vTcl:widget:combobox:inscmd {target} {
-    $target insert list end {Item 1}
-    $target insert list end {Item 2}
-    $target insert list end {Item 3}
+namespace eval vTcl::widgets::iwidgets::combobox {
+
+    proc insertCmd {target} {
+        $target insert list end {Item 1}
+        $target insert list end {Item 2}
+        $target insert list end {Item 3}
+    }
 }

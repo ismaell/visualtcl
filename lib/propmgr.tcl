@@ -891,21 +891,29 @@ proc vTcl:propmgr:show_rightclick_menu {base option variable X Y} {
     if {![winfo exists $base.menu_rightclk]} {
 
         menu $base.menu_rightclk -tearoff 0
+
         $base.menu_rightclk add cascade \
                 -menu "$base.menu_rightclk.men22" -accelerator {} -command {} -font {} \
                 -label {Reset to default}
+
         $base.menu_rightclk add separator
+
         $base.menu_rightclk add cascade \
                 -menu "$base.menu_rightclk.men24" -accelerator {} -command {} -font {} \
                 -label {Do not save option for}
+
         $base.menu_rightclk add cascade \
                 -menu "$base.menu_rightclk.men25" -accelerator {} -command {} -font {} \
                 -label {Save option for}
+
         $base.menu_rightclk add separator
+
         $base.menu_rightclk add cascade \
                 -menu "$base.menu_rightclk.men26" -accelerator {} -command {} -font {} \
                 -label {Apply to}
+
         menu $base.menu_rightclk.men24 -tearoff 0
+
         $base.menu_rightclk.men24 add command \
                 -accelerator {} \
 		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
@@ -913,6 +921,15 @@ proc vTcl:propmgr:show_rightclick_menu {base option variable X Y} {
 			subwidgets vTcl:prop:save_or_unsave_opt \
                         0} \
                 -label {Same Class Subwidgets}
+
+        $base.menu_rightclk.men24 add command \
+                -accelerator {} \
+		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
+			$::vTcl::_rclick_option $::vTcl::_rclick_variable \
+			frame vTcl:prop:save_or_unsave_opt \
+                        0} \
+                -label {All Same Class Widgets in same Parent}
+
         $base.menu_rightclk.men24 add command \
                 -accelerator {} \
 		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
@@ -920,14 +937,17 @@ proc vTcl:propmgr:show_rightclick_menu {base option variable X Y} {
 			toplevel vTcl:prop:save_or_unsave_opt \
                         0} \
                 -label {All Same Class Widgets in toplevel}
-        $base.menu_rightclk.men24 add command \
+
+	$base.menu_rightclk.men24 add command \
                 -accelerator {} \
 		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
 			$::vTcl::_rclick_option $::vTcl::_rclick_variable \
 			all vTcl:prop:save_or_unsave_opt \
                         0} \
                 -label {All Same Class Widgets in this project}
+
         menu $base.menu_rightclk.men25 -tearoff 0
+
         $base.menu_rightclk.men25 add command \
                 -accelerator {} \
 		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
@@ -935,6 +955,15 @@ proc vTcl:propmgr:show_rightclick_menu {base option variable X Y} {
 			subwidgets vTcl:prop:save_or_unsave_opt \
                         1} \
                 -label {Same Class Subwidgets}
+
+        $base.menu_rightclk.men25 add command \
+                -accelerator {} \
+		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
+			$::vTcl::_rclick_option $::vTcl::_rclick_variable \
+			frame vTcl:prop:save_or_unsave_opt \
+                        1} \
+                -label {All Same Class Widgets in same Parent}
+
         $base.menu_rightclk.men25 add command \
                 -accelerator {} \
 		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
@@ -949,7 +978,9 @@ proc vTcl:propmgr:show_rightclick_menu {base option variable X Y} {
 			all vTcl:prop:save_or_unsave_opt \
                         1} \
                 -label {All Same Class Widgets in this project}
+
         menu $base.menu_rightclk.men26 -tearoff 0
+
         $base.menu_rightclk.men26 add command \
                 -accelerator {} \
 		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
@@ -957,6 +988,15 @@ proc vTcl:propmgr:show_rightclick_menu {base option variable X Y} {
 			subwidgets vTcl:prop:set_opt \
                         [vTcl:at $::vTcl::_rclick_variable]} \
                 -label {Same Class Subwidgets}
+
+        $base.menu_rightclk.men26 add command \
+                -accelerator {} \
+		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
+			$::vTcl::_rclick_option $::vTcl::_rclick_variable \
+			frame vTcl:prop:set_opt \
+                        [vTcl:at $::vTcl::_rclick_variable]} \
+                -label {All Same Class Widgets in same Parent}
+
         $base.menu_rightclk.men26 add command \
                 -accelerator {} \
 		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
@@ -964,6 +1004,7 @@ proc vTcl:propmgr:show_rightclick_menu {base option variable X Y} {
 			toplevel vTcl:prop:set_opt \
                         [vTcl:at $::vTcl::_rclick_variable]} \
                 -label {All Same Class Widgets in toplevel}
+
         $base.menu_rightclk.men26 add command \
                 -accelerator {} \
 		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
@@ -971,24 +1012,36 @@ proc vTcl:propmgr:show_rightclick_menu {base option variable X Y} {
 			all vTcl:prop:set_opt \
                         [vTcl:at $::vTcl::_rclick_variable]} \
                 -label {All Same Class Widgets in this project}
+
         menu $base.menu_rightclk.men22 -tearoff 0
+
         $base.menu_rightclk.men22 add command \
                 -accelerator {} \
 		-command {vTcl:prop:default_opt $vTcl(w,widget) \
 			$::vTcl::_rclick_option $::vTcl::_rclick_variable} \
                 -label {This Widget}
+
         $base.menu_rightclk.men22 add command \
                 -accelerator {} \
 		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
 			$::vTcl::_rclick_option $::vTcl::_rclick_variable \
 			subwidgets vTcl:prop:default_opt} \
                 -label {Same Class Subwidgets}
+
+        $base.menu_rightclk.men22 add command \
+                -accelerator {} \
+		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
+			$::vTcl::_rclick_option $::vTcl::_rclick_variable \
+			frame vTcl:prop:default_opt} \
+                -label {All Same Class Widgets in same Parent}
+
         $base.menu_rightclk.men22 add command \
                 -accelerator {} \
 		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
 			$::vTcl::_rclick_option $::vTcl::_rclick_variable \
 			toplevel vTcl:prop:default_opt} \
                 -label {All Same Class Widgets in toplevel}
+
         $base.menu_rightclk.men22 add command \
                 -accelerator {} \
 		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
@@ -1081,6 +1134,8 @@ proc vTcl:prop:save_or_unsave_opt {w opt varName save_or_not} {
 #   opt       the option to change (eg. -background)
 #   varName   name of variable for display in attributes editor
 #   extent    which widgets to modify; can be one of
+#	      frame
+#		  apply to given widget and all in same parent
 #             subwidgets
 #                 apply to given widget and all its subwidgets
 #             toplevel
@@ -1116,6 +1171,14 @@ proc vTcl:prop:apply_opt {w opt varName extent action {user_param {}}} {
     }
     all {
         set widgets [vTcl:complete_widget_tree . 0]
+    }
+    frame {
+        set widgets [list]
+        set man  [winfo manager $w]
+        set par  [winfo parent $w]
+        if {$man == "grid" || $man == "pack" || $man == "place"} {
+            set widgets [$man slaves $par]
+        }
     }
     }
 
