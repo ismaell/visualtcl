@@ -167,6 +167,33 @@ proc vTcl:get_opts {opts} {
     return $ret
 }
 
+# @@change by Christian Gavin 3/18/2000
+# converts image names to filenames before saving
+# converts font object names to font keys before saving
+
+proc vTcl:get_opts_special {opts} {
+	
+    global vTcl
+    set ret ""
+    foreach i $opts {
+        set o [lindex $i 0]
+        set v [lindex $i 4]
+        if {$o != "-class" && $v != [lindex $i 3]} {
+        	
+	    if [info exists vTcl(option,translate,$o)] {
+	    	
+	    	set v [$vTcl(option,translate,$o) $v]
+	    	vTcl:log "Translated option: $o value: $v"
+	    }
+	                
+            lappend ret $o $v
+        }
+    }
+    return $ret
+}
+
+# @@end_change
+
 proc vTcl:dump_widget_quick {target} {
     global vTcl
     vTcl:update_widget_info $target
@@ -190,7 +217,15 @@ proc vTcl:dump_widget_opt {target basename} {
         if {$mgr == "wm" && $class != "Menu"} {
             append result " -class [winfo class $target]"
         }
-        set p [vTcl:get_opts $opt]
+        
+        # @@change by Christian Gavin 3/18/2000
+        # use special proc to convert image names to filenames before
+        # saving to disk
+        
+        set p [vTcl:get_opts_special $opt]
+        
+        # @@end_change
+        
         if {$p != ""} {
             append result " \\\n[vTcl:clean_pairs $p]\n"
         } else {

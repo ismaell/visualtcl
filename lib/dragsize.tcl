@@ -207,18 +207,27 @@ proc vTcl:grab_resize {absX absY handle} {
             }
             if { $newW < 0 } { set newW 0 }
             if { $newH < 0 } { set newH 0 }
-            switch $vTcl(w,class) {
-                Label -
-                Entry -
-                Message -
-                Scrollbar -
-                Scale {
-                    $widget configure -width $newW
-                }
-                default {
-                    $widget configure -width $newW -height $newH
+            
+            # @@change by Christian Gavin 3/19/2000
+            # added catch in case some widgets don't have a -width
+            # or a -height option (for example Iwidgets toolbar)
+            
+            catch {
+                switch $vTcl(w,class) {
+                   Label -
+                   Entry -
+                   Message -
+                   Scrollbar -
+                   Scale {
+                       $widget configure -width $newW
+                   }
+                   default {
+                       $widget configure -width $newW -height $newH
+                   }
                 }
             }
+            
+            # @@end_change
         }
     }
     vTcl:place_handles $widget

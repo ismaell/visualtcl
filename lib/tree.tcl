@@ -21,6 +21,32 @@
 ##############################################################################
 #
 
+set vTcl(tree,last_selected) ""
+
+proc vTcl:show_selection_in_tree {widget_path} {
+	
+    vTcl:show_selection .vTcl.tree.fra4.can8.[vTcl:rename $widget_path]
+}
+
+proc vTcl:show_selection {button_path} {
+
+    global vTcl
+
+    # do not refresh the widget tree if it does not exist
+    if {![winfo exists .vTcl.tree]} return
+    
+    vTcl:log "widget tree select: $button_path"
+    set b .vTcl.tree.fra4.can8
+
+    if {$vTcl(tree,last_selected)!=""} {
+	    $b itemconfigure "TEXT$vTcl(tree,last_selected)" -fill #000000
+    }
+    
+    $b itemconfigure "TEXT$button_path" -fill #ffffff
+    
+    set vTcl(tree,last_selected) $button_path
+}
+
 proc vTcl:show_wtree {} {
     global vTcl
     Window show .vTcl.tree
@@ -35,12 +61,14 @@ proc vTcl:clear_wtree {} {
     $b configure -scrollregion "0 0 0 0"
 }
 
-proc vTcl:init_wtree {} {
+proc vTcl:init_wtree {{wants_destroy_handles 1}} {
     global vTcl
-	if { [winfo exists .vTcl.tree] == 0 } {
-		return
-	}
+    
+    # do not refresh the widget tree if it does not exist
+    if {![winfo exists .vTcl.tree]} return
+    
     vTcl:destroy_handles
+  
     vTcl:clear_wtree
     set b .vTcl.tree.fra4.can8
     set y 10
@@ -74,17 +102,43 @@ proc vTcl:init_wtree {} {
             button $b.$j -image ctl_$c -command "
                 vTcl:show $i
                 vTcl:active_widget $i
+                vTcl:show_selection $b.$j
             "
             vTcl:set_balloon $b.$j $i
             $b create window $x $y -window $b.$j -anchor nw -tags $b.$j
+            
+            # @@change by Christian Gavin 3/5/2000
+            # added "checkbutton" and "radiobutton" classes
+            # added "entry" class
+            # added "message" class
+            # 3/15/2000 added generic proc for getting label
             switch $c {
                 toplevel {set t [wm title $i]}
+                frame {set t Frame}
+                text {set t "Text Widget"}
+                scrollbar {set t "Scrollbar"}
+                canvas {set t "Canvas"}
                 label      -
                 button     -
+                checkbutton    -
+                radiobutton    -
+                message        -
                 menubutton {set t [$i cget -text]}
-                default    {set t ""}
+                entry {set t "-textvariable [$i cget -textvariable]"}
+                default    {
+                	set t ""
+                	set tmpClass [string toupper [string range $c 0 0]]
+                	set tmpClass $tmpClass[string range $c 1 end]
+                	
+                	if [info exists vTcl($tmpClass,get_widget_tree_label)] {
+                		
+                		set t [$vTcl($tmpClass,get_widget_tree_label) $c]
+                	}
+                }
             }
-            $b create text $x2 $y2 -text $t -anchor w -tags TEXT
+            # @@end_change
+            
+            $b create text $x2 $y2 -text $t -anchor w -tags "TEXT TEXT$b.$j"
             set d2 [expr $depth - 1]
             for {set k 1} {$k <= $d2} {incr k} {
                 if {$depth > 1} {
@@ -111,6 +165,12 @@ proc vTcl:init_wtree {} {
         incr y 30
     }
     $b configure -scrollregion "0 0 [expr $x + 200] $y"
+    
+    if {!$wants_destroy_handles} {
+        
+        vTcl:create_handles $vTcl(w,widget)
+        vTcl:place_handles $vTcl(w,widget)
+     }
 }
 
 proc vTclWindow.vTcl.tree {args} {

@@ -48,6 +48,12 @@ proc vTclWindow.vTcl.about {args} {
     pack .vTcl.about.lab2 \
         -in .vTcl.about -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 \
         -padx 0 -pady 0 -side top 
+    label .vTcl.about.lab21 \
+        -borderwidth 0 \
+        -text "Maintained by:\nChristian Gavin, March 2000"
+    pack .vTcl.about.lab21 \
+        -in .vTcl.about -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 \
+        -padx 0 -pady 0 -side top 
     frame .vTcl.about.fra8 \
         -height 30 -width 30 
     pack .vTcl.about.fra8 \

@@ -149,13 +149,26 @@ proc vTcl:active_widget {target} {
 
 proc vTcl:select_widget {target} {
     global vTcl
-    if {$target == $vTcl(w,widget)} {return}
+    vTcl:log "vTcl:select_widget $target"
+    if {$target == $vTcl(w,widget)} {
+        
+        # @@change by Christian Gavin 3/13/2000
+        # show selection in widget tree
+        vTcl:show_selection_in_tree $target
+        # @@end_change
+    	return
+    }
     set vTcl(w,last_class) $vTcl(w,class)
     set vTcl(w,last_widget) $vTcl(w,widget)
     set vTcl(w,last_manager) $vTcl(w,manager)
     vTcl:update_widget_info $target
     vTcl:prop:update_attr
     vTcl:get_bind $target
+
+    # @@change by Christian Gavin 3/13/2000
+    # show selection in widget tree
+    vTcl:show_selection_in_tree $target
+    # @@end_change
 }
 
 #
@@ -455,7 +468,23 @@ proc vTcl:new_widget {type {options ""}} {
         set new_widg [vTcl:new_widget_name $type $vTcl(w,insert)]
     }
     if {$new_widg != ""} {
-        vTcl:create_widget $type $options $new_widg
+    	
+    	set created_widget [vTcl:create_widget $type $options $new_widg]
+        
+        # @@change by Christian Gavin 3/5/2000
+        #
+        # when new widget is inserted, automatically refresh
+        # widget tree
+        
+        # we do not destroy the handles that were just created
+        # (remember, the handles are used to grab and move a widget
+        # around)
+        
+        after idle "\
+	        vTcl:init_wtree 0
+	        vTcl:show_selection_in_tree $created_widget"
+        
+        # @@end_change
     }
 }
 
@@ -485,7 +514,6 @@ proc vTcl:create_widget {type options new_widg} {
     vTcl:push_action $do $undo
     update idletasks
     set vTcl(mgrs,update) yes
-	vTcl:init_wtree
     return $new_widg
 }
 

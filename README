@@ -5,6 +5,7 @@
                              For the Tcl/Tk language
 
                         Copyright 1996-1999, Stewart Allen
+                           Maintained by Christian Gavin
 
 
  TABLE OF CONTENTS
@@ -72,10 +73,12 @@
 
  III. REQUIREMENTS
 
-    Tcl7.6 and Tk4.2 or newer. You can obtain a binary for most platforms
+    Tcl8.03 and Tk8.03 or newer. You can obtain a binary for most platforms
     from http://www.scriptics.com/. If not, source code is also available.
+    
+    ITcl/Tk 3.0 or newer.
 
 
                                       --
                               stewart@neuron.com
-
+                                cgavin@dnai.com

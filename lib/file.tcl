@@ -31,6 +31,10 @@ proc vTcl:new {} {
     vTcl:update_proc_list
     set vTcl(project,name) "unknown.tcl"
     wm title $vTcl(gui,main) "Visual Tcl - $vTcl(project,name)"
+    proc main {argc argv} "
+    	wm protocol $vTcl(w,insert) WM_DELETE_WINDOW {exit}
+    
+    "
 }
 
 proc vTcl:file_source {} {
@@ -45,7 +49,7 @@ proc vTcl:source {file} {
     set vTcl(sourcing) 1
     set ov [uplevel #0 info vars];           vTcl:statbar 15
     set op [uplevel #0 info procs];          vTcl:statbar 20
-    if {[catch {uplevel #0 [list source $file]} err]} {
+    if [catch {uplevel #0 [list source $file]} err] {
         vTcl:dialog "Error Sourcing Project\n$err"
     }
     vTcl:statbar 35
@@ -78,7 +82,7 @@ proc vTcl:open {{file ""}} {
     if {$file == ""} {
         set file [vTcl:get_file open "Open Project"]
     } else {
-        if {![file exists $file]} {return}
+        if ![file exists $file] {return}
     }
     if {$file != ""} {
         set vTcl(file,mode) ""
@@ -100,8 +104,14 @@ proc vTcl:open {{file ""}} {
         wm title .vTcl "Visual Tcl - $vTcl(project,name)"
         vTcl:status "Done Loading"
         vTcl:statbar 0
-        set vTcl(newtops) [expr {[llength $vTcl(tops)]} + 1]
 		set vTcl(newtops) [expr [llength $vTcl(tops)] + 1]
+		
+	# @@change by Christian Gavin 3/5/2000
+	# refresh widget tree automatically after File Open...
+	
+	after idle {vTcl:init_wtree}
+	
+	# @@end_change
     }
 }
 
@@ -144,6 +154,13 @@ proc vTcl:close {} {
     set vTcl(w,save) ""
     wm title $vTcl(gui,main) "Visual Tcl"
     set vTcl(change) 0
+    
+    # @@change by Christian Gavin 3/5/2000
+    # refresh widget tree automatically after File Close
+    
+    after idle {vTcl:init_wtree}
+	
+    # @@end_change
 }
 
 proc vTcl:save {} {
@@ -166,8 +183,38 @@ proc vTcl:save_as {} {
     vTcl:save2 $file
 }
 
+# @@change by Christian Gavin 3/27/00
+# added support for freewrap to generate executables
+# under Linux and Windows
+
+proc vTcl:save_as_binary {} {
+
+    global vTcl env tcl_platform
+    
+    set vTcl(save) all
+    set vTcl(w,save) $vTcl(w,widget)
+    set file [vTcl:get_file save "Save Project With Binary"]
+    vTcl:save2 $file
+
+    # now comes the magic
+    set filelist [file rootname $file].txt
+    
+    set listID [open $filelist w]
+    puts $listID [join [vTcl:image:get_files_list] \n]
+    close $listID
+    
+    # launches freewrap
+    set freewrap $env(VTCL_HOME)/freewrap/$tcl_platform(platform)/bin/freewrap
+    
+    exec $freewrap $file -f $filelist
+}
+
+# @@end_change
+
 proc vTcl:save2 {file} {
     global vTcl env
+    global tcl_platform
+
     if {$file == ""} {
         return -1
     }
@@ -184,21 +231,44 @@ proc vTcl:save2 {file} {
     if {[array get env PATH_TO_WISH] != ""} {
         puts $output "#!$env(PATH_TO_WISH)"
     }
+    # @@change by Christian Gavin
+    # header to import libraries
+    # code to load images
+    # code to load fonts
+    
+    puts $output "if {!\[info exist vTcl(sourcing)\]} \{"
+    puts $output $vTcl(head,importheader)
+    puts $output "\}"
+
+    vTcl:image:generate_image_stock $output
+    vTcl:image:generate_image_user  $output
+    vTcl:font:generate_font_stock   $output
+    vTcl:font:generate_font_user    $output
+    
+    # @@end_change
     puts $output "[subst $vTcl(head,proj)]\n"
+    
+    # @@change by Christian Gavin
+    # moved init proc after user procs so that the init
+    # proc can call any user proc
+    
     if {$vTcl(save) == "all"} {
         puts $output $vTcl(head,vars)
         puts $output [vTcl:save_vars]
         set body [string trim [info body init]]
         puts $output $vTcl(head,procs)
+        puts $output [vTcl:save_procs]
         puts $output "proc init \{argc argv\} \{\n$body\n\}\n"
         puts $output "init \$argc \$argv\n"
-        puts $output [vTcl:save_procs]
         puts $output $vTcl(head,gui)
         puts $output [vTcl:save_tree .]
         puts $output "main \$argc \$argv"
     } else {
         puts $output [vTcl:save_tree $vTcl(w,widget)]
     }
+    
+    # @@end_change
+    
     close $output
     vTcl:status "Done Saving"
     set vTcl(file,mode) ""
@@ -209,6 +279,18 @@ proc vTcl:save2 {file} {
         vTcl:create_handles $vTcl(w,save)
     }
     set vTcl(change) 0
+    
+    # @@change by Christian Gavin 3/5/2000
+    #
+    # it really annoyed me when I had to set the file as
+    # executable under Linux to be able to run it, so here
+    # we go
+    
+    if {$tcl_platform(platform) == "unix"} {
+    	    file attributes $file -permissions 755
+    }
+    
+    # @@end_change
 }
 
 proc vTcl:quit {} {

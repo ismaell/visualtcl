@@ -21,6 +21,9 @@
 ##############################################################################
 #
 
+set vTcl(w,last_widget_in) ""
+set vTcl(w,last_value) ""
+
 proc vTcl:show_propmgr {} {
 	vTclWindow.vTcl.ae
 }
@@ -201,13 +204,56 @@ proc vTcl:prop:recalc_canvas {} {
     wm minsize .vTcl.ae $w 200
 }
 
+proc vTcl:focus_out_cmd {option} {
+
+	global vTcl
+	if {$vTcl(mode) == "TEST"} return
+
+	if {$vTcl(w,last_widget_in) != "" && \
+	    $vTcl(w,last_value)     != ""} {
+	    	
+	    	$vTcl(w,last_widget_in) configure $option $vTcl(w,last_value)
+	    	
+	    	set vTcl(w,last_widget_in) ""
+	    	set vTcl(w,last_value)     ""
+	    	
+	} else {
+	    # puts "oops:$vTcl(w,widget),$vTcl(w,last_widget_in)!"
+	}
+}
+
+proc vTcl:focus_out_geometry_cmd {option cmd {cmd2 ""}} {
+	
+	global vTcl
+	if {$vTcl(mode) == "TEST"} return
+		
+        if {$vTcl(w,last_widget_in) != "" && \
+            $vTcl(w,last_value)     != ""} {
+                
+            if {$cmd2==""} {      
+	            $cmd $vTcl(w,last_widget_in) $option $vTcl(w,last_value)
+	    } else {
+	            $cmd $cmd2 $vTcl(w,last_widget_in) $option $vTcl(w,last_value)
+	    }
+
+    	    set vTcl(w,last_widget_in) ""
+    	    set vTcl(w,last_value)     ""
+
+         } else {
+         	vTcl:log "oops2:$vTcl(w,widget),$vTcl(w,last_widget_in)!"
+         }
+}
+
 proc vTcl:prop:update_attr {} {
     global vTcl
     if {$vTcl(var_update) == "no"} {
         return
     }
 
+    vTcl:log "vTcl:prop:update_attr"
+    #
     # Update Widget Attributes
+    #
     set fr $vTcl(gui,ae).c.f2.f
     set top $fr._$vTcl(w,class)
     update idletasks
@@ -237,8 +283,10 @@ proc vTcl:prop:update_attr {} {
             if {[lsearch $vTcl(w,optlist) $i] >= 0} {
                 set variable "vTcl(w,opt,$i)"
                 set config_cmd "\$vTcl(w,widget) configure $i \$$variable; "
+                set focus_out_cmd "vTcl:focus_out_cmd $i"
+                
                 append config_cmd "vTcl:place_handles \$vTcl(w,widget)"
-                vTcl:prop:new_attr $top $i $variable $config_cmd opt
+                vTcl:prop:new_attr $top $i $variable $config_cmd opt $focus_out_cmd
             }
         }
     }
@@ -249,12 +297,15 @@ proc vTcl:prop:update_attr {} {
         return
     }
 
+    #
     # Update Widget Geometry
+    #
     set fr $vTcl(gui,ae).c.f3.f
     set top $fr._$vTcl(w,manager)
     set mgr $vTcl(w,manager)
     update idletasks
     if {[winfo exists $top]} {
+    	vTcl:log "here!"
         if {$vTcl(w,manager) != $vTcl(w,last_manager)} {
             catch {pack forget $fr._$vTcl(w,last_manager)}
             pack $top -side left -fill both -expand 1
@@ -270,11 +321,14 @@ proc vTcl:prop:update_attr {} {
             set variable "vTcl(w,$mgr,$i)"
             set cmd [lindex $vTcl(m,$mgr,$i) 4]
             set config_cmd "$cmd \$vTcl(w,widget) $i \$$variable"
+            set focus_out_cmd "vTcl:focus_out_geometry_cmd $i $cmd"
+
             if {$cmd == ""} {
                 set config_cmd "$mgr conf \$vTcl(w,widget) $i \$$variable"
+                set focus_out_cmd "vTcl:focus_out_geometry_cmd $i $mgr conf"
             }
             append config_cmd ";vTcl:place_handles \$vTcl(w,widget)"
-            vTcl:prop:new_attr $top $i $variable $config_cmd m,$mgr
+            vTcl:prop:new_attr $top $i $variable $config_cmd m,$mgr $focus_out_cmd
         }
 		}
     }
@@ -283,7 +337,7 @@ proc vTcl:prop:update_attr {} {
     vTcl:prop:recalc_canvas
 }
 
-proc vTcl:prop:new_attr {top option variable config_cmd prefix} {
+proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
     global vTcl
     set base $top.t${option}
 	# hack for Tix
@@ -292,15 +346,21 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix} {
 	}
     label $top.$option \
         -text "[lindex $vTcl($prefix,$option) 0]" -anchor w -width 11 -fg black
+
+    # @@change by Christian Gavin 3/10/2000
+    # added font browser for individual properties
+    
+    set focusControl $base
+    
     switch [lindex $vTcl($prefix,$option) 2] {
         boolean {
             frame $base
             radiobutton ${base}.y \
                 -variable $variable -value 1 -text "Yes" -relief sunken -bd 1 \
-                -command "$config_cmd" -selectcolor #0077ff -padx 0 -pady 1 -bg white
+                -command "$config_cmd" -selectcolor #0077ff -padx 0 -pady 1
             radiobutton ${base}.n \
                 -variable $variable -value 0 -text "No" -relief sunken -bd 1 \
-                -command "$config_cmd" -selectcolor #0077ff -padx 0 -pady 1 -bg white
+                -command "$config_cmd" -selectcolor #0077ff -padx 0 -pady 1
             pack ${base}.y ${base}.n -side left -expand 1 -fill both
         }
         choice {
@@ -308,14 +368,14 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix} {
             menubutton ${base}.l \
                 -textvariable $variable -bd 1 -width 12 -menu ${base}.l.m \
                 -highlightthickness 1 -relief sunken -anchor w -fg black \
-                -padx 0 -pady 1 -bg white
+                -padx 0 -pady 1
             menu ${base}.l.m -tearoff 0
             foreach i [lindex $vTcl($prefix,$option) 3] {
                 ${base}.l.m add command -label "$i" -command \
                     "set $variable $i; $config_cmd; "
             }
             button ${base}.f -relief raised -bd 1 -image file_down \
-                -height 5 -command "tkMbPost ${base}.l" -bg white
+                -height 5 -command "tkMbPost ${base}.l"
             pack ${base}.l -side left -expand 1 -fill x
             pack ${base}.f -side right -fill y -pady 1 -padx 1
         }
@@ -325,13 +385,13 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix} {
                 -highlightthickness 1 -fg black -padx 0 -pady 1 \
                 -command {
                     vTcl:edit_target_menu $vTcl(w,widget)
-                } -anchor w -bg white
+                } -anchor w
         }
         color {
             frame $base
             entry ${base}.l -relief sunken -bd 1 \
                 -textvariable $variable -width 8 \
-                -highlightthickness 1 -fg black -bg white
+                -highlightthickness 1 -fg black
             bind ${base}.l <KeyRelease-Return> \
                 "$config_cmd; ${base}.f conf -bg \$$variable"
             frame ${base}.f -relief raised -bd 1 \
@@ -345,23 +405,69 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix} {
             frame $base
             entry ${base}.l -relief sunken -bd 1 \
                 -textvariable $variable -width 8 \
-                -highlightthickness 1 -fg black -bg white
+                -highlightthickness 1 -fg black
             bind ${base}.l <KeyRelease-Return> $config_cmd
             button ${base}.f \
                 -image ellipses -bd 1 -width 12 \
                 -highlightthickness 1 -fg black -padx 0 -pady 1 \
-                -command "vTcl:set_command \$vTcl(w,widget) $option" -bg white
+                -command "vTcl:set_command \$vTcl(w,widget) $option"
             pack ${base}.l -side left -expand 1 -fill x
             pack ${base}.f -side right -fill y -pady 1 -padx 1
-        }
+	    set focusControl ${base}.l
+        }  
+        font {
+            frame $base
+            entry ${base}.l -relief sunken -bd 1 \
+                -textvariable $variable -width 8 \
+                -highlightthickness 1 -fg black
+            bind ${base}.l <KeyRelease-Return> "$config_cmd"
+            button ${base}.f \
+                -image ellipses -bd 1 -width 12 \
+                -highlightthickness 1 -fg black -padx 0 -pady 1 \
+                -command "vTcl:font:prompt_user_font \$vTcl(w,widget) $option"
+            pack ${base}.l -side left -expand 1 -fill x
+            pack ${base}.f -side right -fill y -pady 1 -padx 1
+        }        
+        image {
+            frame $base
+            entry ${base}.l -relief sunken -bd 1 \
+                -textvariable $variable -width 8 \
+                -highlightthickness 1 -fg black
+            bind ${base}.l <KeyRelease-Return> "$config_cmd"
+            button ${base}.f \
+                -image ellipses -bd 1 -width 12 \
+                -highlightthickness 1 -fg black -padx 0 -pady 1 \
+                -command "vTcl:prompt_user_image \$vTcl(w,widget) $option"
+            pack ${base}.l -side left -expand 1 -fill x
+            pack ${base}.f -side right -fill y -pady 1 -padx 1
+        }        
         default {
             entry $base \
                 -textvariable $variable -relief sunken -bd 1 -width 12 \
-                -highlightthickness 1 -fg black -bg white
+                -highlightthickness 1 -fg black
         }
     }
+    # @@end_change
+
     bind $base <KeyRelease-Return> $config_cmd
+
+    # @@change by Christian Gavin 3/12/2000
+    # tries to activate changes when the user clicks outside an option
+    
+    # puts "widget: $vTcl(w,widget)"
+    # puts "config_cmd: $config_cmd"
+    # puts "focus_out_cmd: $focus_out_cmd"
+    
+    set focus_in_cmd "puts in:\$vTcl(w,widget),\$vTcl(w,last_widget_in)"
+    # puts "focus_in_cmd: $focus_in_cmd"
+    
+    bind $focusControl <FocusIn> $focus_in_cmd
+
+    bind $focusControl <FocusOut> "puts \"out:(\$vTcl(w,widget)),\$vTcl(w,last_widget_in), value:\$vTcl(w,last_value)\";$focus_out_cmd"
+    
+    bind $focusControl <KeyRelease> "puts \"type: \$vTcl(w,widget)\"; set vTcl(w,last_widget_in) \$vTcl(w,widget); set vTcl(w,last_value) \$$variable"
+    	
+    # @@end_change
+    
     grid $top.$option $base -sticky news
 }
-
-

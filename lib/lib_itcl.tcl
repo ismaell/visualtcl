@@ -21,30 +21,61 @@
 # Architecture by Stewart Allen
 # Implementation by James Kramer usinge ideas from
 # Kenneth H. Cox <kcox@senteinc.com>
-
 #
+# Maintained by Christian Gavin:
+#   added support for more widgets
+#   added support for new image/font managers
+#   made sure children are not dumped and not viewed in the widget tree
+#
+
 # Initializes this library
 #
-
+    
 proc vTcl:widget:lib:lib_itcl {args} {
+
     global vTcl
     #
     # see if we're running itclWish. if not, return
     #
-    if {[catch {class itcltest { constructor {args} {}}}]} {
+    
+    # @@change by Christian Gavin 3/6/2000
+    
+    # added namespace for itcl because some versions of itcl do
+    # not declare classes with the full namespaces specified and assume
+    # the namespace itcl has been exported
+    
+    if {[catch {itcl::class itcltest { constructor {args} {}}}]} {
         return
     }
 
+    # @@end_change
+    
+    # @@change by Christian Gavin 3/6/2000
+    vTcl:log "Support for Itcl activated"
+    
+    # @@end_change
+    
     # setup required variables
     vTcl:lib_itcl:setup
 
     # add items to toolbar
+    
+    # @@change by Christian Gavin 3/6/2000
+    # added scrolledlistbox to the list of classes supported
+    # added calendar
+    # added dateentry
+    # added scrolledhtml
+    # added toolbar
+    # added feedback
+    # added optionmenu
+    # @@end_change
+    
     foreach i {
-        entryfield spinint combobox
+        entryfield spinint combobox scrolledlistbox calendar dateentry scrolledhtml toolbar feedback optionmenu
     } {
         set img_file [file join $vTcl(VTCL_HOME) images icon_$i.gif]
         if {![file exists $img_file]} {
-            set img_file [file join $vTcl(VTCL_HOME) images icon_tix_unknown.gif]
+            set img_file [file join $vTcl(VTCL_HOME) images unknown.gif]
         }
         image create photo "ctl_$i" -file $img_file
         vTcl:toolbar_add $i $i ctl_$i ""
@@ -62,23 +93,19 @@ proc vTcl:lib_itcl:setup {} {
 	# additional attributes to set on insert
 	#
 	set vTcl(scrolledlistbox,insert)       "-labeltext {Label:} "
-	set vTcl(combobox,insert)       "-labeltext {Label:} "
-	set vTcl(entryfield,insert)       "-labeltext {Label:} "
-	set vTcl(spinint,insert)       "-labeltext {Label:} -range {0 10} -step 1"
+	set vTcl(combobox,insert)              "-labeltext {Label:} "
+	set vTcl(entryfield,insert)            "-labeltext {Label:} "
+	set vTcl(spinint,insert)               "-labeltext {Label:} -range {0 10} -step 1"
+	set vTcl(calendar,insert)	       ""
+	set vTcl(dateentry,insert)	       "-labeltext {Selected date:}"
+	set vTcl(scrolledhtml,insert)          ""
+	set vTcl(toolbar,insert)               ""
+	set vTcl(feedback,insert)              "-labeltext {Percent complete:}"
+	set vTcl(optionmenu,insert)            "-labeltext {Select option:}"
 
 	#
 	# add to procedure, var, bind regular expressions
 	#
-#	if {"$vTcl(bind,ignore)" != ""} {
-#		append vTcl(bind,ignore) "|tix"
-#	} else {
-#		append vTcl(bind,ignore) "tix"
-#	}
-#	append vTcl(proc,ignore) "|tix"
-#	append vTcl(var,ignore)  "|tix"
-        append vTcl(top,ignore,post) ".*shell\\.lwchildsite\\.efchildsite\\.popup"
-
-	lappend vTcl(NoXResizeClasses) Combobox Spinint Entryfield
 	#
 	# add to valid class list
 	#
@@ -86,38 +113,30 @@ proc vTcl:lib_itcl:setup {} {
 		Entryfield \
 		Spinint \
 		Combobox \
-                Scrolledlistbox
+                Scrolledlistbox \
+                Calendar \
+                Dateentry \
+                Scrolledhtml \
+                Toolbar \
+                Feedback \
+                Optionmenu
 
-	lappend vTcl(multclasses) \
-		Entryfield \
-		Spinint \
-		Combobox \
-                Scrolledlistbox
-
-        lappend vTcl(Combobox,nosubwidget) \
-                shell \
-                shell.label \
-                shell.lwchildsite \
-                shell.lwchildsite.entry \
-                shell.lwchildsite.efchildsite \
-                shell.lwchildsite.efchildsite.arrowBtn
-
-        lappend vTcl(Entryfield,nosubwidget) \
-                shell \
-                shell.label \
-                shell.labelmargin \
-                shell.lwchildsite \
-                shell.lwchildsite.entry
-
-        lappend vTcl(Spinint,nosubwidget) \
-                shell \
-                shell.label \
-                shell.lwchildsite \
-                shell.lwchildsite.entry \
-                shell.lwchildsite.efchildsite \
-                shell.lwchildsite.efchildsite.arrowFrame \
-                shell.lwchildsite.efchildsite.arrowFrame.uparrow \
-                shell.lwchildsite.efchildsite.arrowFrame.downarrow        
+	# @@change by Christian Gavin 3/7/2000
+	# list of megawidgets whose children are not visible by Vtcl
+	
+	lappend vTcl(megaWidget) Entryfield \
+				 Spinint \
+				 Combobox \
+				 Scrolledlistbox \
+				 Calendar \
+				 Dateentry \
+				 Scrolledhtml \
+				 Toolbar \
+				 Feedback \
+				 Optionmenu
+	
+	# @@end_change
+	
 	#
 	# register additional options that might be on itcl widgets,
 	# and the option information that the Attribute Editor needs.
@@ -134,45 +153,190 @@ proc vTcl:lib_itcl:setup {} {
 	        -items \
 	        -decrement \
 	        -increment \
-	        -listheight
-
-#	set vTcl(opt,-plotbackground) { {Plot BgColor}    Colors   color   {} }
-	set vTcl(opt,-labelfont) { {Label Font}        {}       type    {} }
-	set vTcl(opt,-textfont) { {Text Font}        {}       type    {} }
-	set vTcl(opt,-labelpos) { {Label Pos}          {}       choice  {n ne e se s sw w nw center} }
-	set vTcl(opt,-fixed) { {Fixed}        longname type    {} }
-	set vTcl(opt,-validate)      { {Validate Cmd}          {}       command {}}
-	set vTcl(opt,-decrement)      { {Decrement Cmd}          {}       command {}}
-	set vTcl(opt,-increment)      { {Increment Cmd}          {}       command {}}
-	set vTcl(opt,-labeltext)      { Label               longname type    {} }
-	set vTcl(opt,-range)      { Range               longname type    {} }
-	set vTcl(opt,-items)      { Items               {}  command  {} }
-#	set vTcl(opt,-items)      { Items               longname type    {} }
-	set vTcl(opt,-step)      { Step               longname type    {} }
-	set vTcl(opt,-listheight)    { "List Height"         longname type    {} }
+	        -listheight \
+	        -editable \
+	        -focuscommand \
+	        -invalid \
+	        -textbackground \
+	        -arrowrelief \
+	        -completion \
+	        -dropdown \
+	        -margin \
+	        -popupcursor \
+	        -selectioncommand \
+	        -unique \
+	        -dblclickcommand \
+	        -visibleitems \
+	        -alink \
+	        -link \
+	        -linkhighlight \
+	        -balloonbackground \
+	        -balloondelay1 \
+	        -balloondelay2 \
+	        -balloonfont \
+	        -balloonforeground \
+	        -helpvariable \
+	        -barcolor \
+	        -barheight \
+	        -steps \
+	        -troughcolor \
+	        -clicktime \
+	        -cyclicon \
+	        
+	set vTcl(opt,-clicktime)      { {Click Time}       {}       type    {} }
+	set vTcl(opt,-cyclicon)       { {Cyclic}           {}       boolean {false true} }
+        set vTcl(opt,-barcolor)       { {Bar Color}        Colors   color   {} }
+        set vTcl(opt,-troughcolor)    { {Trough Color}     Colors   color   {} }
+        set vTcl(opt,-steps)          { {Steps}            {}       type    {} }
+        set vTcl(opt,-barheight)      { {Bar Height}       {}       type    {} }
+	set vTcl(opt,-balloonbackground) { {Balloon Bg}       Colors   color   {} }
+	set vTcl(opt,-balloondelay1)     { {Balloon Delay 1}  {}       type    {} }
+	set vTcl(opt,-balloondelay2)     { {Balloon Delay 2}  {}       type    {} }
+	set vTcl(opt,-balloonfont)       { {Balloon Font}     {}       font    {} }
+	set vTcl(opt,-balloonforeground) { {Balloon Fg}       Colors   color   {} }
+	set vTcl(opt,-helpvariable)      { {Help Var}      {}       type    {} }
+#	set vTcl(opt,-plotbackground) { {Plot BgColor}     Colors   color   {} }
+	set vTcl(opt,-labelfont)      { {Label Font}       {}       font    {} }
+	set vTcl(opt,-textfont)       { {Text Font}        {}       font    {} }
+	set vTcl(opt,-labelpos)       { {Label Pos}        {}       choice  {n ne e se s sw w nw center} }
+	set vTcl(opt,-fixed)          { {Fixed}            longname type    {} }
+	set vTcl(opt,-validate)       { {Validate Cmd}     {}       command {}}
+	set vTcl(opt,-decrement)      { {Decrement Cmd}    {}       command {}}
+	set vTcl(opt,-increment)      { {Increment Cmd}    {}       command {}}
+	set vTcl(opt,-labeltext)      { Label              longname type    {} }
+	set vTcl(opt,-range)          { Range              longname type    {} }
+	set vTcl(opt,-items)          { Items              {}  command  {} }
+#	set vTcl(opt,-items)          { Items              longname type    {} }
+	set vTcl(opt,-step)           { Step               longname type    {} }
+	set vTcl(opt,-listheight)     { "List Height"      longname type    {} }
+	set vTcl(opt,-editable)	      { {Editable}         {}       boolean {0 1} }
+	set vTcl(opt,-focuscommand)   { {Focus Cmd}	   {}       command {}}
+	set vTcl(opt,-invalid)        { {Invalid Cmd}      {}       command {}}
+	set vTcl(opt,-textbackground) { {Text BgColor}     Colors   color   {}}
+	set vTcl(opt,-arrowrelief)    { {Arrow Relief}     {}       choice  {flat groove raised ridge sunken} }
+	set vTcl(opt,-completion)     { {Completion}       {}       boolean {0 1} }
+	set vTcl(opt,-dropdown)       { {Drop Down}        {}       boolean {0 1} }
+	set vTcl(opt,-margin)         { {Margin}           {}       type    {} }
+	set vTcl(opt,-popupcursor)    { {Popup Cursor}     {}       type    {} }
+	set vTcl(opt,-selectioncommand) { {Selection Cmd}  {}       command {} }
+	set vTcl(opt,-unique)         { {Unique}           {}       boolean {0 1} }
+	set vTcl(opt,-dblclickcommand) { {DblClk Cmd}      {}       command {} }
+	set vTcl(opt,-visibleitems)   { {Visible Items}    {}       type    {} }
+	set vTcl(opt,-alink)          { {ALink color}      Colors   color   {}}
+	set vTcl(opt,-link)           { {Link color}       Colors   color   {}}
+	set vTcl(opt,-linkhighlight)  { {Link highlight}   Colors   color   {}}
 	
 	#
 	# define dump procedures for widget types
 	#
-	set vTcl(Entryfield,dump_opt)         vTcl:lib_itcl:dump_widget_opt
-	set vTcl(Spinint,dump_opt)         vTcl:lib_itcl:dump_widget_opt
-	set vTcl(Combobox,dump_opt)         vTcl:lib_itcl:dump_combobox
-	set vTcl(Scrolledlistbox,dump_opt)             vTcl:lib_itcl:dump_widget_opt
-
+	set vTcl(Entryfield,dump_opt)          vTcl:lib_itcl:dump_widget_opt
+	set vTcl(Spinint,dump_opt)             vTcl:lib_itcl:dump_widget_opt
+	set vTcl(Combobox,dump_opt)            vTcl:lib_itcl:dump_combobox
+	set vTcl(Scrolledlistbox,dump_opt)     vTcl:lib_itcl:dump_widget_opt
+	set vTcl(Calendar,dump_opt)            vTcl:lib_itcl:dump_widget_opt
+	set vTcl(Dateentry,dump_opt)           vTcl:lib_itcl:dump_widget_opt
+	set vTcl(Scrolledhtml,dump_opt)        vTcl:lib_itcl:dump_widget_opt
+	set vTcl(Toolbar,dump_opt)             vTcl:lib_itcl:dump_widget_opt
+	set vTcl(Feedback,dump_opt)            vTcl:lib_itcl:dump_widget_opt
+	set vTcl(Optionmenu,dump_opt)          vTcl:lib_itcl:dump_widget_opt
 	#
 	# define whether or not do dump children of a class
 	#
 	set vTcl(Entryfield,dump_children)         0
-	set vTcl(Spinint,dump_children)         0
-	set vTcl(Combobox,dump_children)         0
-	set vTcl(Scrolledlistbox,dump_children)         0
+	set vTcl(Spinint,dump_children)            0
+	set vTcl(Combobox,dump_children)           0
+	set vTcl(Scrolledlistbox,dump_children)    0
+	set vTcl(Calendar,dump_children)	   0
+	set vTcl(Dateentry,dump_children)          0
+	set vTcl(Scrolledhtml,dump_children)       0
+	set vTcl(Toolbar,dump_children)            0
+	set vTcl(Feedback,dump_children)           0
+	set vTcl(Optionmenu,dump_children)         0
+	
+	# @@change by Christian Gavin 3/9/2000
+	# code to be generated at the top of a file if Itcl is supported
+	
+	set vTcl(head,importheader) "$vTcl(head,importheader)
+	        \# uncomment if your project uses Itcl
+		\# package require Itcl 3.0
+		\# namespace import itcl::*
+		\# package require Itk 3.0
+		\# package require Iwidgets 3.0
+                \# namespace import iwidgets::entryfield
+                \# namespace import iwidgets::spinint
+                \# namespace import iwidgets::combobox
+                \# namespace import iwidgets::scrolledlistbox
+                \# namespace import iwidgets::calendar
+                \# namespace import iwidgets::dateentry
+                \# namespace import iwidgets::scrolledhtml
+                \# namespace import iwidgets::toolbar
+                \# namespace import iwidgets::feedback
+                \# namespace import iwidgets::optionmenu"
+	
+	# @@end_change
+	
+	# @@change by Christian Gavin 3/15/2000
+	# procedure to return the label of a widget to display in the tree view
+	
+	set vTcl(Combobox,get_widget_tree_label)        vTcl:lib_itcl:get_widget_tree_label
+	set vTcl(Scrolledlistbox,get_widget_tree_label) vTcl:lib_itcl:get_widget_tree_label
+	set vTcl(Calendar,get_widget_tree_label)        vTcl:lib_itcl:get_widget_tree_label
+	set vTcl(Dateentry,get_widget_tree_label)       vTcl:lib_itcl:get_widget_tree_label
+	set vTcl(Scrolledhtml,get_widget_tree_label)    vTcl:lib_itcl:get_widget_tree_label
+	set vTcl(Toolbar,get_widget_tree_label)         vTcl:lib_itcl:get_widget_tree_label
+	set vTcl(Feedback,get_widget_tree_label)        vTcl:lib_itcl:get_widget_tree_label
+	set vTcl(Optionmenu,get_widget_tree_label)      vTcl:lib_itcl:get_widget_tree_label
+	
+	# @@end_change
+	
+	# @@change by Christian Gavin 4/1/2000
+	# translation of option values for Itcl widgets so that
+	# fonts are correctly saved
+	
+	set vTcl(option,translate,-labelfont) vTcl:font:translate
+	set vTcl(option,noencase,-labelfont) 1
+	set vTcl(option,translate,-textfont) vTcl:font:translate
+	set vTcl(option,noencase,-textfont) 1
+	set vTcl(option,translate,-balloonfont) vTcl:font:translate
+	set vTcl(option,noencase,-balloonfont) 1
+
+	# @@end_change
+}
+
+proc vTcl:lib_itcl:get_widget_tree_label {className} {
+	
+	switch [string tolower $className] {
+		
+		"combobox"          {return "Combo Box"}
+		"scrolledlistbox"   {return "Scrolled List Box"}
+		"calendar"          {return "Calendar" }
+		"dateentry"         {return "Date Entry" }
+		"scrolledhtml"      {return "Scrolled HTML"}
+		"toolbar"           {return "Toolbar"}
+		"feedback"          {return "Feedback"}
+		"optionmenu"        {return "Option menu"}
+		
+		default             {return ""}
+	}
 }
 
 #
 # individual widget commands executed after insert
 #
-proc vTcl:widget:graph:inscmd {target} {
-    return ""
+
+proc vTcl:widget:toolbar:inscmd {target} {
+	
+	global env
+	
+	return "$target add button open \
+		-balloonstr \"Open\" \
+		-image [vTcl:image:get_image $env(VTCL_HOME)/images/edit/open.gif] \
+		-command {tk_messageBox -message {TODO: Command handler here!}}"
+}
+
+proc vTcl:widget:optionmenu:inscmd {target} {
+	
+	return "$target insert 0 {Choice 1} {Choice 2} {Choice 3}"
 }
 
 #
@@ -186,10 +350,10 @@ proc vTcl:widget:graph:inscmd {target} {
 #   1 means save the option
 #   0 means don't save it
 proc vTcl:lib_itcl:save_option {opt} {
-    if [string match *::iwidgets* $opt] {
-        return 0
-    }
-#    puts "save_option '$opt'"
+#    if [string match *::iwidgets* $opt] {
+#        return 0
+#    }
+    vTcl:log "save_option '$opt'"
     return 1
 }
 
@@ -197,6 +361,7 @@ proc vTcl:lib_itcl:save_option {opt} {
 # Differs from vTcl:dump_widget_opt in that it tries harder to avoid
 # dumping options that shouldn't really be dumped, e.g. -fg,-bg,-font.
 proc vTcl:lib_itcl:dump_widget_opt {target basename} {
+
     global vTcl
     set result ""
     set class [vTcl:get_class $target]
@@ -208,8 +373,9 @@ proc vTcl:lib_itcl:dump_widget_opt {target basename} {
             lappend keep_opt $e
         }
     }
-    set p [vTcl:get_opts $keep_opt]
+    set p [vTcl:get_opts_special $keep_opt]
     if {$p != ""} {
+    	vTcl:log "=> megawidget: $p"
         append result " \\\n[vTcl:clean_pairs $p]\n"
     } else {
         append result "\n"
@@ -223,12 +389,9 @@ proc vTcl:lib_itcl:dump_widget_opt {target basename} {
 # dumping options that shouldn't really be dumped, e.g. -fg,-bg,-font.
 proc vTcl:lib_itcl:dump_combobox {target basename} {
     global vTcl
-    $target configure -editable 1
+    # @@change by Christian Gavin 3/8/2000
+    # removed editable stuff
+    # @@end_change
     set result [vTcl:lib_itcl:dump_widget_opt $target $basename]
-    $target configure -editable 0
     return $result
 }
-
-
-
-

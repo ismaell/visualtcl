@@ -22,6 +22,38 @@
 #
 
 proc vTcl:get_color {color} {
+	
+	vTcl:log "Color: $color"
+
+    # @@change by Christian Gavin 3/19/2000
+    # apparently Iwidgets 3.0 returns screwed up colors
+    #
+    # tk_chooseColor accepts the following:
+    # #RGB           (4 chars)
+    # #RRGGBB        (7 chars)
+    # #RRRGGGBBB     (10 chars)
+    # #RRRRGGGGBBBB  (13 chars)
+    
+    if {[string length $color] == 11} {
+    	
+    	set extend [string range $color 10 10]
+    	set color $color$extend$extend
+    	
+    	vTcl:log "Fixed color: $color"
+
+    } else {
+	
+	if {[string length $color] == 9} {
+    	
+ 	   	set extend [string range $color 8 8]
+  	  	set color $color$extend$extend$extend$extend
+    	
+   	 	vTcl:log "Fixed color: $color"
+    	}    
+    }
+    
+    # @@end_change
+    
     global vTcl tk_version
     set oldcolor $color
 

@@ -105,17 +105,28 @@ proc vTcl:clean_pairs {list {indent 8}} {
         if {$last == ""} {
             set last $i
         } else {
-            switch $vTcl(pr,encase) {
-                list {
-                    set i "$last [list $i] "
-                }
-                brace {
-                    set i "$last \{$i\} "
-                }
-                quote {
-                    set i "$last \"$i\" "
-                }
+            # @@change by Christian Gavin 3/18/2000
+            # special case to handle image filenames
+            # 3/26/2000
+            # special case to handle font keys
+        	
+            if [info exists vTcl(option,noencase,$last)] {
+            	    set i "$last $i "
+            } else {
+	            switch $vTcl(pr,encase) {
+ 	               list {
+  	                  set i "$last [list $i] "
+   	               }
+    	               brace {
+     	                  set i "$last \{$i\} "
+      	               }
+       	  	       quote {
+        	           set i "$last \"$i\" "
+         	       }
+         	   }
             }
+            
+            # @@end_change
             set last ""
             set len [string length $i]
             if { [expr $index + $len] > 78 } {
@@ -237,11 +248,21 @@ proc vTcl:show_bindings {} {
     }
 }
 
+# @@change by Christian Gavin 3/15/2000
+# modif to generate widget names starting
+# from long Windows 9x filenames with spaces
+
 proc vTcl:rename {name} {
+
     regsub -all "\\." $name "_" ret
-    regsub -all "\\-" $ret "_" ret2
-    return $ret2
+    regsub -all "\\-" $ret "_" ret
+    regsub -all " " $ret "_" ret
+    regsub -all "/" $ret "__" ret
+
+    return [string tolower $ret]
 }
+
+# @@end_change
 
 proc vTcl:cmp_user_menu {} {
     global vTcl
@@ -271,6 +292,19 @@ proc vTcl:cmp_sys_menu {} {
 
 proc vTcl:get_children {target} {
     global vTcl
+    
+    # @@change by Christian Gavin 3/7/2000
+    # mega-widgets children should not be copied
+ 
+    foreach megawidget $vTcl(megaWidget) {
+
+	    if [string match $megawidget [vTcl:get_class $target]] {
+  	  	return ""
+	    }
+    }
+    
+    # @@end_change
+
     set r ""
     set all [winfo children $target]
     set n [pack slaves $target]
@@ -366,4 +400,130 @@ proc vTcl:dialog {mesg {options Ok} {root 0}} {
     return $vTcl(x_mesg)
 }
 
+# @@change by Christian Gavin 3/18/2000
+# procedures to manage modal dialog boxes
+# from "Effective Tcl/Tk Programming, by Mark Harrison, Michael McLennan"
+# @@end_change
 
+##############################################################################
+# MODAL DIALOG BOXES
+##############################################################################
+
+proc vTcl:dialog_wait {win varName {nopos 0}} {
+	
+	vTcl:dialog_safeguard $win
+	
+	if {$nopos==0} {
+	
+		set x [expr [winfo rootx .] + 50]
+		set y [expr [winfo rooty .] + 50]
+	
+		wm geometry $win "+$x+$y"
+		wm deiconify $win
+	}
+	
+	grab set $win
+	vwait $varName
+	grab release $win
+	
+	wm withdraw $win
+}
+
+bind vTcl:modalDialog <ButtonPress> {
+	
+	wm deiconify %W
+	raise %W
+}
+
+proc vTcl:dialog_safeguard {win} {
+	
+	if {[lsearch [bindtags $win] vTcl:modalDialog] < 0} {
+		
+		bindtags $win [linsert [bindtags $win] 0 modalDialog]
+	}
+}
+
+# @@change by Christian Gavin 3/19/2000
+# procedure to find patterns in a text control
+# based on the procedures by John K. Ousterhout in
+# "Tcl and the Tk Toolkit"
+# @@end_change
+
+proc vTcl:forAllMatches {w tags callback} {
+
+	global vTcl
+	scan [$w index end] %d numLines
+
+	for {set i 1} {$i <= $numLines} {incr i} {
+              
+		# get the line only once
+		set currentLine [$w get $i.0 $i.end]
+
+		# special case?
+		if {[string range [string trim $currentLine] 0 0] == "\#"} {
+
+                        $w mark set first $i.0
+                        $w mark set last "$i.end"
+                             
+		        $callback $w vTcl:comment
+		        continue
+		}
+
+                foreach tag $tags {
+						
+			set lastMark 0
+			$w mark set last $i.0
+			
+			while {[regexp -indices $vTcl(syntax,$tag) \
+			       [string range $currentLine $lastMark end] indices]} {
+		       	
+		 	     $w mark set first "last + [lindex $indices 0] chars"
+		           
+		   	     $w mark set last "last + 1 chars + [lindex $indices 1] chars"
+		           
+		             set lastMark [expr $lastMark + 1 + [lindex $indices 1]]
+		             
+		             if [info exists vTcl(syntax,$tag,validate)] {
+		             	
+		             	 if {! [$vTcl(syntax,$tag,validate) [$w get first last] ] } {
+		             	      	
+		             	      	continue
+		             	 }
+		             }
+		             
+		     	     $callback $w $tag 
+			}			
+		}
+	}
+}
+
+# @@change by Christian Gavin 3/19/2000
+# syntax colouring for text widget
+# @@end_change
+
+proc vTcl:syntax_item {w tag} {
+
+	# already a tag there ?
+	if { [$w tag names first] != ""} return
+	
+	$w tag add $tag first last
+}
+
+proc vTcl:syntax_color {w} {
+	
+	global vTcl
+
+	set patterns ""
+
+	foreach tag $vTcl(syntax,tags) {
+
+		$w tag remove $tag 0.0 end	
+	}
+	
+	vTcl:forAllMatches $w $vTcl(syntax,tags) vTcl:syntax_item
+	
+	foreach tag $vTcl(syntax,tags) {
+
+		eval $w tag configure $tag $vTcl(syntax,$tag,configure)
+	}
+}

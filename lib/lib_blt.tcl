@@ -33,8 +33,11 @@
 #    }
 #}
 
-# Load up the blt library
-catch {load BLT24}
+# Load up the blt library (Linux)
+catch {load libBLT24.so}
+
+# for Windoze
+catch {load BLT24.dll}
 
 proc vTcl:widget:lib:lib_blt {args} {
     global vTcl blt_library
@@ -163,6 +166,16 @@ proc vTcl:lib_blt:setup {} {
 	set vTcl(Graph,dump_children)         0
 	set vTcl(Hierbox,dump_children)       0
 	set vTcl(Stripchart,dump_children)       0
+	
+	# @@change by Christian Gavin 3/9/2000
+	# commands to generate in header of a file when saving
+	
+	set vTcl(head,importheader) "$vTcl(head,importheader)
+	        \# uncomment if your project uses BLT
+		\# package require BLT
+		\# namespace import blt::graph
+		\# namespace import blt::hierbox"
+	# @@end_change
 }
 
 #

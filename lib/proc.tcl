@@ -266,7 +266,7 @@ proc vTclWindow.vTcl.proc {args} {
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 2 -pady 0 \
         -side left 
     entry $base.f2.f8.procname \
-        -cursor {} -bg white \
+        -cursor {}  \
         -highlightthickness 0 
     pack $base.f2.f8.procname \
         -anchor center -expand 1 -fill x -ipadx 0 -ipady 0 -padx 2 -pady 2 \
@@ -283,7 +283,7 @@ proc vTclWindow.vTcl.proc {args} {
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 2 -pady 0 \
         -side left 
     entry $base.f2.f9.args \
-        -cursor {} -bg white \
+        -cursor {}  \
         -highlightthickness 0 
     pack $base.f2.f9.args \
         -anchor center -expand 1 -fill x -ipadx 0 -ipady 0 -padx 2 -pady 2 \
@@ -293,9 +293,20 @@ proc vTclWindow.vTcl.proc {args} {
     pack $base.f3 \
         -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 3 -pady 3 \
         -side top 
+
+    # @@change by Christian Gavin 3/13/2000
+    # button to insert the complete name of the currently selected
+    # widget
+    button $base.f3.butInsert \
+        -text "Insert selected widget name" \
+        -command "$base.f3.text insert insert \"\$vTcl(w,widget) \""
+    pack $base.f3.butInsert -fill x -side top
+    # @@end_change 
+
     text $base.f3.text \
-        -height 7 -highlightthickness 0 -width 16 -bg white \
-        -wrap none -yscrollcommand "$base.f3.scrollbar4 set"
+        -height 7 -highlightthickness 0 -width 16 \
+        -wrap none -yscrollcommand "$base.f3.scrollbar4 set" \
+        -background white
     pack $base.f3.text \
         -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 2 -pady 2 \
         -side left 
@@ -339,6 +350,13 @@ proc vTclWindow.vTcl.proc {args} {
     } else {
         focus $pbody
     }
+    
+    # @@change by Christian Gavin 3/19/2000
+    # syntax colouring
+    
+    vTcl:syntax_color $base.f3.text
+    
+    # @@end_change
 }
 
 proc vTcl:proc:edit_cancel {base} {

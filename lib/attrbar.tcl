@@ -23,25 +23,11 @@
 
 proc vTcl:fill_font_menu {menu} {
     global vTcl
-    set fams [lsort [font families]]
-	if { [llength $fams] > 26 } {
-		foreach i "a b c d e f g h i j k l m n o p q r s t u v w x y z" {
-			set submenu "$menu.$i"
-			menu $submenu -tearoff 0
-			$menu add cascade -label $i -menu $submenu
-			foreach x $fams {
-				if { [string first $i [string tolower $x]] == 0 } {
-					$submenu add radiobutton -label $x -variable vTcl(w,font) \
-					-value $x -command "vTcl:set_font base \$vTcl(w,widget) \{$x\}"
-				}
-			}
-		}
-	} else {
-		foreach i $fams {
-			$menu add radiobutton -label $i -variable vTcl(w,font) \
-			-value $i -command "vTcl:set_font base \$vTcl(w,widget) \{$i\}"
-		}
-	}
+    set fams [font families]
+    foreach i $fams {
+        $menu add radiobutton -label $i -variable vTcl(w,font) \
+        -value $i -command "vTcl:set_font base \$vTcl(w,widget) \{$i\}"
+    }
 }
 
 proc vTcl:fill_fontsize_menu {menu} {
@@ -165,7 +151,7 @@ proc vTcl:attrbar {args} {
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 3 -pady 2 \
         -side left 
     entry .vTcl.attr.01.02 \
-        -highlightthickness 0 -width 15 -textvariable vTcl(w,opt,-text) -bg white
+        -highlightthickness 0 -width 15 -textvariable vTcl(w,opt,-text)
     bind .vTcl.attr.01.02 <Return> {
         .vTcl.attr.01.02 insert end "\n"
         vTcl:update_label $vTcl(w,widget)

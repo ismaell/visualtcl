@@ -66,7 +66,7 @@ set vTcl(gui,prefs)      "$vTcl(gui,main).prefs"
 set vTcl(gui,rc_menu)    "$vTcl(gui,main).rc"
 set vTcl(gui,varlist)    "$vTcl(gui,main).varlist"
 set vTcl(gui,statbar)    "$vTcl(gui,main).stat.f.bar"
-set vTcl(gui,showlist)   ".vTcl.mgr .vTcl.ae .vTcl.con"
+set vTcl(gui,showlist)   ".vTcl.mgr .vTcl.ae"
 set vTcl(h,exist)        no
 set vTcl(h,size)         3
 set vTcl(hide)           ""
@@ -217,7 +217,7 @@ set vTcl(m,wm,maxsize,y)           { {y maxsize}     {}       type    {} {vTcl:w
 set vTcl(m,wm,state)               { state           {}       choice  {iconify deiconify withdraw} {vTcl:wm:conf_state} }
 set vTcl(m,wm,title)               { title           {}       type    {} {vTcl:wm:conf_title} }
 
-set vTcl(m,menubar,list) ""
+set vTcl(m,menebar,list) ""
 set vTcl(m,menubar,extlist) ""
 
 #
@@ -334,12 +334,12 @@ set vTcl(opt,-elementborderwidth)  { {element bd}    {}       type    {} }
 set vTcl(opt,-exportselection)     { export          {}       boolean {0 1} }
 set vTcl(opt,-fg)                  { foreground      Colors   color   {} }
 set vTcl(opt,-foreground)          { foreground      Colors   color   {} }
-set vTcl(opt,-font)                { font            {}       type    {} }
+set vTcl(opt,-font)                { font            {}       font    {} }
 set vTcl(opt,-height)              { height          {}       type    {} }
 set vTcl(opt,-highlightbackground) { {hilight bg}    Colors   color   {} }
 set vTcl(opt,-highlightcolor)      { {hilight color} Colors   color   {} }
 set vTcl(opt,-highlightthickness)  { {hilight bd}    {}       type    {} }
-set vTcl(opt,-image)               { image           {}       type    {} }
+set vTcl(opt,-image)               { image           {}       image   {} }
 set vTcl(opt,-indicatoron)         { indicator       {}       boolean {0 1} }
 set vTcl(opt,-insertbackground)    { {insert bg}     Colors   color   {} }
 set vTcl(opt,-insertborderwidth)   { {insert bd}     {}       type    {} }
@@ -363,7 +363,7 @@ set vTcl(opt,-selectbackground)    { {select bg}     Colors   color   {} }
 set vTcl(opt,-selectborderwidth)   { {select bd}     {}       type    {} }
 set vTcl(opt,-selectcolor)         { {select color}  Colors   color   {} }
 set vTcl(opt,-selectforeground)    { {select fg}     Colors   color   {} }
-set vTcl(opt,-selectimage)         { {select image}  {}       type    {} }
+set vTcl(opt,-selectimage)         { {select image}  {}       image   {} }
 set vTcl(opt,-selectmode)          { {select mode}   {}       type    {} }
 set vTcl(opt,-setgrid)             { {set grid}      {}       boolean {0 1} }
 set vTcl(opt,-show)                { show            {}       type    {} }
@@ -430,3 +430,38 @@ $vTcl(tab)###################
 "
 
 
+# @@change by Christian Gavin 3/19/2000
+# patterns and colors for syntax colouring
+# @@end_change
+
+set vTcl(syntax,tags) "vTcl:dollar vTcl:bracket vTcl:command vTcl:option vTcl:parenthesis vTcl:window vTcl:string vTcl:comment"
+
+set vTcl(syntax,vTcl:parenthesis)            {\(.+\)}
+set vTcl(syntax,vTcl:parenthesis,configure)  {-foreground #00A000}
+
+set vTcl(syntax,vTcl:dollar)            {\$[a-zA-Z0-9_]+}
+set vTcl(syntax,vTcl:dollar,configure)  {-foreground #00A000}
+
+set vTcl(syntax,vTcl:bracket)           {\[|\]|\{|\}}
+set vTcl(syntax,vTcl:bracket,configure) {-foreground #FF0000}
+
+set vTcl(syntax,vTcl:command)           {[a-zA-Z0-9_:]+}
+set vTcl(syntax,vTcl:command,configure) {-foreground #B000B0}
+set vTcl(syntax,vTcl:command,validate)  vTcl:syntax:iscommand
+
+set vTcl(syntax,vTcl:option)            {\-[a-zA-Z0-9]+}
+set vTcl(syntax,vTcl:option,configure)  {-foreground #0000FF}
+
+set vTcl(syntax,vTcl:comment)		{# [,\. a-zA-Z0-9:=_?()@'/-<>"	]+}
+set vTcl(syntax,vTcl:comment,configure) {-foreground #B0B0B0}
+
+set vTcl(syntax,vTcl:string)		{\"[^\"]*\"}
+set vTcl(syntax,vTcl:string,configure)  {-foreground #00A0A0}
+
+set vTcl(syntax,vTcl:window)            {\.[a-zA-Z0-9_\.]+}
+set vTcl(syntax,vTcl:window,configure)  {-foreground #800060}
+
+proc vTcl:syntax:iscommand {command} {
+	
+	return [ expr { [info command $command] == $command } ]
+}

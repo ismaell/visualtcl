@@ -45,7 +45,13 @@ proc vTcl:cut {} {
         vTcl:select_widget $parent
         set vTcl(w,insert) $parent
     }
-	vTcl:init_wtree
+    
+    # @@change by Christian Gavin 3/5/2000
+    # automatically refresh widget tree after cut operation
+    
+    after idle {vTcl:init_wtree}
+    
+    # @@end_change
 }
 
 proc vTcl:delete {} {
@@ -61,7 +67,13 @@ proc vTcl:delete {} {
     vTcl:push_action $do $undo
     vTcl:select_widget $parent
     set vTcl(w,insert) $parent
-	vTcl:init_wtree
+
+    # @@change by Christian Gavin 3/5/2000
+    # automatically refresh widget tree after delete operation
+    
+    after idle {vTcl:init_wtree}
+    
+    # @@end_change
 }
 
 proc vTcl:paste {} {
@@ -75,8 +87,12 @@ proc vTcl:paste {} {
         set undo "destroy $name"
         vTcl:push_action $do $undo
         vTcl:active_widget $name
-		vTcl:init_wtree
+
+	# @@change by Christian Gavin 3/5/2000
+	# automatically refresh widget tree after paste operation
+    
+ 	after idle {vTcl:init_wtree}
+    
+	# @@end_change
     }
 }
-
-

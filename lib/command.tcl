@@ -21,23 +21,27 @@
 ##############################################################################
 #
 
-proc vTcl:edit_wincmd {which} {
-    global vTcl
-    set target $vTcl(w,widget)
-    set base ".vTcl.com_${which}_[vTcl:rename $target]"
-    if {[catch {set cmd [info body vTclWindow($which)$target]}]} {
-        set cmd ""
-    }
-    set cmd [string trim $cmd]
-    set r [vTcl:get_command "Window ${which}Command for $target" $cmd $base]
-    if {$r == -1} {
-        return
-    } else {
-        set procname vTclWindow($which)$target
-        vTcl:list add "{$procname}" vTcl(procs)
-        proc $procname {args} $r
-    }
-}
+# @@ change by Christian Gavin
+# procedure not used
+# @@ end_change
+
+# proc vTcl:edit_wincmd {which} {
+#    global vTcl
+#    set target $vTcl(w,widget)
+#    set base ".vTcl.com_${which}_[vTcl:rename $target]"
+#    if {[catch {set cmd [info body vTclWindow($which)$target]}]} {
+#        set cmd ""
+#   }
+#    set cmd [string trim $cmd]
+#    set r [vTcl:get_command "Window ${which}Command for $target" $cmd $base]
+#    if {$r == -1} {
+#        return
+#    } else {
+#        set procname vTclWindow($which)$target
+#        vTcl:list add "{$procname}" vTcl(procs)
+#        proc $procname {args} $r
+#    }
+# }
 
 proc vTcl:set_command {target {option -command}} {
     global vTcl
@@ -50,7 +54,7 @@ proc vTcl:set_command {target {option -command}} {
     if {$r == -1} {
         return
     } else {
-        $target conf $option [string trim $r]
+        $target configure $option [string trim $r]
     }
 }
 
@@ -70,8 +74,8 @@ proc vTcl:get_command {title initial base} {
         -in $base -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 \
         -padx 3 -pady 3 -side top 
     text $base.f.text \
-        -height 2 -width 2 -wrap none -bg white \
-        -yscrollcommand "$base.f.scrollbar16 set"
+        -height 2 -width 2 -wrap none \
+        -yscrollcommand "$base.f.scrollbar16 set" -background white
     pack $base.f.text \
         -in $base.f -anchor center -expand 1 -fill both -ipadx 0 \
         -ipady 0 -padx 0 -pady 0 -side left 
@@ -112,6 +116,14 @@ proc vTcl:get_command {title initial base} {
     $base.f.text delete 0.0 end
     $base.f.text insert end $initial
     focus $base.f.text
+    
+    # @@change by Christian Gavin 3/20/2000
+    # syntax colouring
+    
+    vTcl:syntax_color $base.f.text
+    
+    # @@end_change
+    
     tkwait window $base
     update idletasks
     switch -- $vTcl(x,$base) {

@@ -1,6 +1,23 @@
 ChangeLog for Visual Tcl:
 
-1.20 -> 1.21 (November 23, 1999)
+1.20 -> 1.21 (April 2000)
+	o Added image manager to maintain a database of images and use
+	  them for widgets
+	o Added font manager to maintain a database of fonts and use
+	  them for widgets
+	o Widget tree automatically refreshes whenever needed
+	o Property manager sets a property automatically when user
+	  clicks outside an entry field
+	o Command console now shows standard output, error messages, and
+	  return value resulting from commands; output, error and return
+	  have different colors
+	o Added syntax coloring to procedure/command editor
+	o Added support for Freewrap to generate stand-alone executables
+	  on Linux and Windows platforms
+	o Support for more Iwidgets, including scrolledhtml, calendar,
+	  dateentry, feedback, optionmenu
+	
+1.20 -> 1.2x (November 23, 1999) * version not released *
     o Root window placer fix (long-standing bug) from Alex Goodyear
     o Added more comments into the code (ok, still needs work :)
     o Added sorting to font list

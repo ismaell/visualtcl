@@ -31,6 +31,11 @@ proc vTcl:show_console {} {
 }
 
 proc vTclWindow.vTcl.con {args} {
+    #@@change by Christian Gavin 3/18/2000
+    # restore console position/size
+    global vTcl env
+    #@@end_change
+
     set base .vTcl.con
     if {[winfo exists .vTcl.con]} {
         wm deiconify .vTcl.con; return
@@ -59,7 +64,15 @@ proc vTclWindow.vTcl.con {args} {
         -height 30 -width 30 
     pack .vTcl.con.fra6 \
         -anchor center -expand 0 -fill both -ipadx 0 -ipady 0 -padx 0 -pady 0 \
-        -side top 
+        -side top
+    # @@change by Christian Gavin 3/13/2000
+    # button to insert the complete name of the currently selected
+    # widget
+    button .vTcl.con.fra6.but1 \
+        -text "Insert selected widget name" \
+        -command ".vTcl.con.fra6.ent10 insert end \"\$vTcl(w,widget) \""
+    pack .vTcl.con.fra6.but1 -fill x -side top
+    # @@end_change 
     entry .vTcl.con.fra6.ent10 \
         -highlightthickness 0 
     pack .vTcl.con.fra6.ent10 \
@@ -67,11 +80,44 @@ proc vTclWindow.vTcl.con {args} {
         -side top 
     bind .vTcl.con.fra6.ent10 <Key-Return> {
         .vTcl.con.fra5.tex7 conf -state normal
-        catch [set cmd [%W get]] vTcl(err)
-        .vTcl.con.fra5.tex7 insert end "% $cmd\n$vTcl(err)\n"
-        .vTcl.con.fra5.tex7 yview end
+        .vTcl.con.fra5.tex7 insert end "\n[.vTcl.con.fra6.ent10 get]" vTcl:bold
         .vTcl.con.fra5.tex7 conf -state disabled
-        %W delete 0 end
+        
+        set caught [expr [catch [.vTcl.con.fra6.ent10 get] vTcl(err)] == 1]
+
+        vTcl:console:get_output
+        
+        .vTcl.con.fra5.tex7 conf -state normal
+
+        if {$caught} {
+            .vTcl.con.fra5.tex7 insert end "\n$vTcl(err)\n" vTcl:error
+        } else {
+            .vTcl.con.fra5.tex7 insert end "\n$vTcl(err)\n" vTcl:return_value
+        }
+
+        .vTcl.con.fra5.tex7 conf -state disabled
+        .vTcl.con.fra5.tex7 yview end
+        .vTcl.con.fra6.ent10 delete 0 end
     }
-    focus .vTcl.con.fra6.ent10
+    catch {wm geometry .vTcl.con $vTcl(geometry,.vTcl.con)}
+    
+    .vTcl.con.fra5.tex7 tag configure vTcl:bold \
+        -font -*-helvetica-bold-r-normal--*-120-*
+
+    .vTcl.con.fra5.tex7 tag configure vTcl:error -foreground #B00000
+    .vTcl.con.fra5.tex7 tag configure vTcl:return_value -foreground #0000B0
+    # @@end_change
 }
+
+proc vTcl:console:get_output {} {
+    global vTcl
+    
+    set contents [read $vTcl(LOG_FD_R)]
+    if {$contents != ""} {
+		.vTcl.con.fra5.tex7 conf -state normal
+        .vTcl.con.fra5.tex7 insert end "\n$contents" vTcl:return_value
+		.vTcl.con.fra5.tex7 yview end
+		.vTcl.con.fra5.tex7 conf -state disabled
+    }
+}
+

@@ -24,13 +24,14 @@
 set vTcl(menu,file) {
     {New              Ctrl+N       vTcl:new                   }
     {separator        {}           {}                         }
-    {Open             Ctrl+O       vTcl:open                  }
+    {Open...          Ctrl+O       vTcl:open                  }
     {Save             Ctrl+S       vTcl:save                  }
     {{Save As...}     {}           vTcl:save_as               }
+    {{Save As With Binary...} {}   vTcl:save_as_binary        }
     {Close            Ctrl+W       vTcl:close                 }
     {separator        {}           {}                         }
-    {Source           {}           vTcl:file_source           }
-    {Preferences      {}           vTclWindow.vTcl.prefs      }
+    {Source...        {}           vTcl:file_source           }
+    {Preferences...   {}           vTclWindow.vTcl.prefs      }
     {separator        {}           {}                         }
     {Quit             Ctrl+Q       vTcl:quit                  }
 }
@@ -44,6 +45,9 @@ set vTcl(menu,edit) {
     {Paste            Ctrl+V       vTcl:paste                 }
     {separator        {}           {}                         }
     {Delete           {}           vTcl:delete                }
+    {separator        {}           {}                         }
+    {Images...        {}           vTcl:image:prompt_image_manager }
+    {Fonts...         {}           vTcl:font:prompt_font_manager   }
 }
 
 set vTcl(menu,mode) {
@@ -66,8 +70,8 @@ set vTcl(menu,compound) {
     {Create           Alt+C         {vTcl:name_compound $vTcl(w,widget)} }
     {Insert           {menu insert} {}                         }
     {separator        {}            {}                         }
-    {{Save Compounds} {}            vTcl:save_compounds        }
-    {{Load Compounds} {}            vTcl:load_compounds        }
+    {{Save Compounds...} {}            vTcl:save_compounds        }
+    {{Load Compounds...} {}            vTcl:load_compounds        }
     {separator        {}            {}                         }
     {{Save as Tclet}  {}            {vTcl:create_tclet $vTcl(w,widget)}  }
 }

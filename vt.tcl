@@ -22,11 +22,53 @@
 ##############################################################################
 #
 
-# system indicator that we are not 'sourcing' a file
 set vTcl(sourcing) 0
 
-# replace 'proc' command with our own so we can monitor
-# actions like sourcing a file
+rename puts vTcl:puts
+
+proc puts {args} {
+    global vTcl
+	if { [llength $args] > 1 } {
+		eval vTcl:puts $args
+	} else {
+		eval vTcl:puts $vTcl(LOG_FD_W) $args
+		flush $vTcl(LOG_FD_W)
+	}
+}
+
+proc vTcl:log {msg} {
+    global vTcl
+	if { [info exists vTcl(LOG_FILE)] } {
+		vTcl:puts $vTcl(LOG_FD_W) "$msg"
+		flush $vTcl(LOG_FD_W)
+	} else {
+		vTcl:puts "$msg"
+	}
+}
+
+# @@change by Christian Gavin 3/6/2000
+# Itcl/tk and IWidgets support
+
+catch {
+    package require Itcl 3.0
+    namespace import itcl::*
+    package require Itk 3.0
+    package require Iwidgets 3.0
+    namespace import iwidgets::entryfield
+    namespace import iwidgets::spinint
+    namespace import iwidgets::combobox
+    namespace import iwidgets::scrolledlistbox
+    namespace import iwidgets::calendar
+    namespace import iwidgets::dateentry
+    namespace import iwidgets::scrolledhtml
+    namespace import iwidgets::toolbar
+    namespace import iwidgets::feedback
+    namespace import iwidgets::optionmenu
+} errorText
+vTcl:log $errorText
+
+# @@end_change
+
 rename proc vTcl:proc
 
 vTcl:proc proc {name args body} {
@@ -35,20 +77,6 @@ vTcl:proc proc {name args body} {
     vTcl:proc $name $args $body
 }
 
-# replace 'winfo' command to fix place bug with toplevel windows
-rename winfo vTcl:winfo
-
-proc winfo {options args} {
-	if {$options == "manager"} {
-		set w [lindex $args 0]
-		if {$w == "." || [vTcl:winfo class $w] == "Toplevel"} {
-			return "wm"
-		}
-	}
-	return [uplevel vTcl:winfo $options $args]
-}
-
-# vtcl splash screen
 proc vTcl:splash {} {
     global vTcl
     toplevel .x -bd 3 -relief raised
@@ -65,14 +93,14 @@ proc vTcl:splash {} {
     wm geometry .x +$x+$y
     wm deiconify .x
     update idletasks
-    after 2500 {catch {destroy .x}}
+    after 2000 {catch {destroy .x}}
 }
 
 proc vTcl:load_lib {lib} {
     global vTcl
     set file [file join $vTcl(LIB_DIR) $lib]
     if {[file exists $file] == 0} {
-        puts "Missing Libary: $lib"
+        vTcl:log "Missing Libary: $lib"
     } else {
         uplevel #0 [list source $file]
     }
@@ -80,59 +108,77 @@ proc vTcl:load_lib {lib} {
 
 proc vTcl:load_widgets {} {
     global vTcl
+    foreach i $vTcl(LIB_WIDG) {
+        vTcl:load_lib $i
+        lappend vTcl(w,libs) [lindex [split [lindex [file split $i] end] .] 0]
+    }
 }
 
 proc vTcl:load_libs {} {
     global vTcl
+    foreach i $vTcl(LIBS) {
+        vTcl:load_lib $i
+    }
 }
 
 proc vTcl:setup {} {
-    global tk_strictMotif env vTcl tcl_platform
+    global tk_strictMotif env vTcl tcl_platform __vtlog
 
-    set vTcl(version)   1.2.1
+    # @@change by Christian Gavin 3/7/2000
+    # support for Itcl mega widgets
+    set vTcl(megaWidget) ""
+    set vTcl(head,importheader) ""
+    # @@end_change
+    
+    # @@change by Christian Gavin 3/14/2000
+    # text widget children should not be saved/seen
+    lappend vTcl(megaWidget) Text
+    
+    set vTcl(version)   1.21
     set vTcl(VTCL_HOME) $env(VTCL_HOME)
     if {$env(HOME) == ""} {
         set vTcl(CONF_FILE) [file join $env(VTCL_HOME) .vtclrc]
+        set vTcl(LOG_FILE) [file join $env(VTCL_HOME) .vtclog]
     } else {
         set vTcl(CONF_FILE) [file join $env(HOME) .vtclrc]
+        set vTcl(LOG_FILE) [file join $env(HOME) .vtclog]
     }
+	set vTcl(LOG_FD_W)  [open $vTcl(LOG_FILE) "w"]
+	set vTcl(LOG_FD_R)  [open $vTcl(LOG_FILE) "r"]
+	fconfigure $vTcl(LOG_FD_R) -buffering line
     set vTcl(LIB_DIR)   [file join $vTcl(VTCL_HOME) lib]
     set vTcl(LIB_WIDG)  [glob -nocomplain [file join $vTcl(LIB_DIR) lib_*.tcl]]
     set vTcl(LIBS)      "globals.tcl about.tcl propmgr.tcl balloon.tcl
         attrbar.tcl
         bind.tcl command.tcl color.tcl console.tcl compound.tcl compounds.tcl
-        do.tcl dragsize.tcl dump.tcl edit.tcl file.tcl handle.tcl
-        input.tcl menu.tcl misc.tcl name.tcl prefs.tcl proc.tcl tclet.tcl
+        do.tcl dragsize.tcl dump.tcl edit.tcl file.tcl font.tcl handle.tcl
+        input.tcl images.tcl menu.tcl misc.tcl name.tcl prefs.tcl proc.tcl tclet.tcl
         toolbar.tcl tops.tcl tree.tcl var.tcl vtclib.tcl widget.tcl help.tcl"
 
-    set tk_strictMotif 1
+    set tk_strictMotif    1
     wm withdraw .
     vTcl:splash
-
-	# load vtcl libraries (from 'lib' directory)
-    foreach i $vTcl(LIBS) {
-        vTcl:load_lib $i
-    }
-
-    # load widget libraries
-    foreach i $vTcl(LIB_WIDG) {
-        vTcl:load_lib $i
-        lappend vTcl(w,libs) [lindex [split [lindex [file split $i] end] .] 0]
-    }
-
-	# load config/preferences file if it exists
+    vTcl:load_libs
+    vTcl:load_widgets
     if {[file exists $vTcl(CONF_FILE)]} {
         catch {uplevel #0 [list source $vTcl(CONF_FILE)]}
         catch {set vTcl(w,def_mgr) $vTcl(pr,manager)}
     }
-
     vTcl:setup_gui
-
     update idletasks
     set vTcl(start,procs)   [lsort [info procs]]
     set vTcl(start,globals) [lsort [info globals]]
+    vTcl:setup_meta
 
-	# setup default procs and prevent app-exits
+    # initializes the stock images database
+    vTcl:image:init_stock
+
+    # initializes the stock fonts database
+    vTcl:font:init_stock
+}
+
+proc vTcl:setup_meta {} {
+    global vTcl
     rename exit vTcl:exit
     proc exit {args} {}
     proc init {argc argv} {}
@@ -144,73 +190,72 @@ proc vTcl:setup {} {
 }
 
 proc vTcl:setup_gui {} {
+
     global vTcl tcl_platform tk_version
 
-	# turn off balloon help for the macintosh
     if {$tcl_platform(platform) == "macintosh"} {
         set vTcl(pr,balloon) 0
         set vTcl(balloon,on) 0
     }
 
-	# use unix font names for tk versions prior to 8.x
     if {$tk_version < 8} {
+
         if {$vTcl(pr,font_dlg) == ""} {
             set vTcl(pr,font_dlg) -Adobe-Helvetica-Medium-R-Normal-*-*-180-*-*-*-*-*-*
         }
+
         if {$vTcl(pr,font_fixed) == ""} {
             set vTcl(pr,font_fixed) fixed
         }
+
         option add *vTcl*font \
             -Adobe-Helvetica-Medium-R-Normal-*-*-120-*-*-*-*-*-*
         option add *vTcl*Scrollbar.borderWidth 1
         option add *vTcl*Scrollbar.width 10
+        option add *Scrollbar.width 10
+
     } else {
+
         if {$vTcl(pr,font_dlg) == ""} {
             set vTcl(pr,font_dlg) {Helvetica 14}
         }
+
         if {$vTcl(pr,font_fixed) == ""} {
             set vTcl(pr,font_fixed) {Courier 10}
         }
+
         if {$tcl_platform(platform) == "unix"} {
             option add *vTcl*Scrollbar.width 10
+	    option add *Scrollbar.width 10
             option add *vTcl*font {Helvetica 12}
+        }
+
+        if {$tcl_platform(platform) == "windows"} {
+            option add *Scrollbar.width 16
+            option add *vTcl*Scrollbar.width 16
         }
     }
     option add *vTcl*Text*font $vTcl(pr,font_fixed)
 
-	# setup vtcl program shortcut keystrokes
     vTcl:setup_bind_tree .
-
-	# load vtcl images
     vTcl:load_images
-
-	# show root window
     Window show .vTcl
-
-	# load vtcl libraries
     foreach l $vTcl(w,libs) {
         vTcl:widget:lib:$l
     }
-
-	# add widget icons
     vTcl:toolbar_reflow
-
-	# show windows in their last positions
     foreach i $vTcl(gui,showlist) {
         Window show $i
     }
-
-	# define edit-mode key/mouse bindings
     vTcl:define_bindings
-
-	# build system compount menu
     vTcl:cmp_sys_menu
+
+    raise .vTcl
 }
 
 proc vTclWindow.vTcl {args} {
     global vTcl tcl_platform tcl_version
 
-	# setup root window (.vTcl)
     if {[winfo exists .vTcl]} {return}
     toplevel $vTcl(gui,main)
     wm title $vTcl(gui,main) "Visual Tcl"
@@ -230,7 +275,6 @@ proc vTclWindow.vTcl {args} {
     frame .vTcl.stat -relief flat
     pack $tmp -side top -expand 1 -fill x
 
-	# setup vtcl menu options
 	if {$tcl_version >= 8} {
 		.vTcl conf -menu .vTcl.m
 	}
@@ -245,7 +289,6 @@ proc vTclWindow.vTcl {args} {
 		}
     }
 
-	# add vtcl help menu
 	if {$tcl_version >= 8} {
 		vTcl:menu:insert .vTcl.m.help help .vTcl.m
 	} else {
@@ -291,7 +334,6 @@ proc vTclWindow.vTcl {args} {
     pack .vTcl.stat.f  -side left -padx 2 -fill y
     pack .vTcl.stat -side top -fill both
 
-	# setup vtcl app key bindings
     vTcl:setup_vTcl:bind .vTcl
 }
 
@@ -369,9 +411,11 @@ proc vTcl:define_bindings {} {
         focus %W
         break
     }
-
+    #
     # handles auto-indent
+    #
     bind Text <Key-Return>    {
+    	vTcl:syntax_color %W
         set pos [%W index "insert linestart"]
         set nos [%W search -regexp -nocase "\[a-z0-9\]" $pos]
         if {$nos != ""} {
@@ -398,14 +442,37 @@ proc vTcl:define_bindings {} {
     bind vTcl(b) <ButtonRelease-1>   {vTcl:bind_release %X %Y}
     bind vTcl(b) <ButtonRelease-2>   {vTcl:bind_release %X %Y}
 
-    bind vTcl(b) <Up>          { vTcl:widget_delta $vTcl(w,widget) 0 -$vTcl(key,y) 0 0 }
-    bind vTcl(b) <Down>        { vTcl:widget_delta $vTcl(w,widget) 0 $vTcl(key,y) 0 0 }
-    bind vTcl(b) <Left>        { vTcl:widget_delta $vTcl(w,widget) -$vTcl(key,x) 0 0 0 }
-    bind vTcl(b) <Right>       { vTcl:widget_delta $vTcl(w,widget) $vTcl(key,x) 0 0 0 }
-    bind vTcl(b) <Shift-Up>    { vTcl:widget_delta $vTcl(w,widget) 0 0 0 -$vTcl(key,h) }
-    bind vTcl(b) <Shift-Down>  { vTcl:widget_delta $vTcl(w,widget) 0 0 0 $vTcl(key,h) }
-    bind vTcl(b) <Shift-Left>  { vTcl:widget_delta $vTcl(w,widget) 0 0 -$vTcl(key,w) 0 }
-    bind vTcl(b) <Shift-Right> { vTcl:widget_delta $vTcl(w,widget) 0 0 $vTcl(key,w) 0 }
+    bind vTcl(b) <Up> {
+        vTcl:widget_delta $vTcl(w,widget) 0 -$vTcl(key,y) 0 0
+    }
+
+    bind vTcl(b) <Down> {
+        vTcl:widget_delta $vTcl(w,widget) 0 $vTcl(key,y) 0 0
+    }
+
+    bind vTcl(b) <Left> {
+        vTcl:widget_delta $vTcl(w,widget) -$vTcl(key,x) 0 0 0
+    }
+
+    bind vTcl(b) <Right> {
+        vTcl:widget_delta $vTcl(w,widget) $vTcl(key,x) 0 0 0
+    }
+
+    bind vTcl(b) <Shift-Up> {
+        vTcl:widget_delta $vTcl(w,widget) 0 0 0 -$vTcl(key,h)
+    }
+
+    bind vTcl(b) <Shift-Down> {
+        vTcl:widget_delta $vTcl(w,widget) 0 0 0 $vTcl(key,h)
+    }
+
+    bind vTcl(b) <Shift-Left> {
+        vTcl:widget_delta $vTcl(w,widget) 0 0 -$vTcl(key,w) 0
+    }
+
+    bind vTcl(b) <Shift-Right> {
+        vTcl:widget_delta $vTcl(w,widget) 0 0 $vTcl(key,w) 0
+    }
 
     bind vTcl(b) <Alt-h> {
         if { $vTcl(h,exist) == "yes" } {
@@ -421,11 +488,9 @@ proc vTcl:define_bindings {} {
 proc vTcl:main {argc argv} {
     global env vTcl tcl_version tcl_platform
 
-    catch {package require Unsafe} ; # for running in Netscape
-    catch {package require dde}    ; # for windows
-    catch {package require Tk}     ; # for dynamic loading tk
-
-	# detect old versions of Tcl/Tk and refuse to run
+    catch {package require Unsafe} ; #for running in Netscape
+    catch {package require dde}    ; #for windows
+    catch {package require Tk}     ; #for dynamic loading tk
     if {$tcl_version < 7.6} {
         wm deiconify .
         wm title . "Time to upgrade"
@@ -462,7 +527,6 @@ proc vTcl:main {argc argv} {
             set vTcl(VTCL_HOME) [pwd]
         }
         vTcl:setup
-		# load a vtcl project if speficied on the command line
         if {$argc == 1} {
             if {[file exists $argv]} {
                 vTcl:open $argv
@@ -470,10 +534,19 @@ proc vTcl:main {argc argv} {
                 vTcl:open [file join [pwd] $argv]
             }
         }
-		# determine if wish knows about a 'console' command (win32)
         if {[info commands console] == "console"} {
             set vTcl(console) 1
         }
+
+	# @@change by Christian Gavin 3/5/2000
+	# autoloading of compounds if "Preferences" options enabled
+	
+	if [info exists vTcl(pr,autoloadcomp)] {
+        	if {$vTcl(pr,autoloadcomp)} {
+        		vTcl:load_compounds $vTcl(pr,autoloadcompfile)
+        	}
+        }
+        # @@end_change
     }
 }
 
