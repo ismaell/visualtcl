@@ -9,7 +9,8 @@ TreeLabel	@vTcl:core:get_widget_tree_label
 
 proc vTcl:widget:menubutton:inscmd {target} {
     return "
-    	menu $target.m
-	$target conf -menu $target.m
+        menu $target.m
+        $target conf -menu $target.m
+        vTcl:widget:register_widget $target.m
     "
 }
