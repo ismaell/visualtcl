@@ -385,10 +385,7 @@ proc vTcl:dump_widget_geom {target basename} {
     if {$class == "Menu" && $mgr == "place"} {return ""}
 
     set result ""
-    if {$mgr != "wm" \
-        && $mgr != "menubar" \
-        && $mgr != "tixGeometry" \
-        && $mgr != "tixForm"} {
+    if {[lsearch -exact {wm menubar tixGeometry tixForm busy} $mgr] == -1} {
         set result ""
         if {(($mgr == "pack") && (![pack propagate $target])) ||
             (($mgr == "grid") && (![grid propagate $target]))} {

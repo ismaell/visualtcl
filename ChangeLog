@@ -1,6 +1,8 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Fix to allow saving projects using the ::blt::busy command (not the most
+      elegant one but the easiest one that required the less retesting)
     o Using the BWidget font selector
     o Support for dump/copy/paste of Iwidget optionmenu
     o Added patch from Don Porter <dgp@users.sourceforge.net> to support Tk8.4.

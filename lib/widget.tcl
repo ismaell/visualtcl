@@ -115,7 +115,7 @@ proc vTcl:show {target} {
             ## only show widgets that are not childsites and have been hidden
 
             if {[vTcl:Frame:containing_megawidget $target] == "" &&
-                [vTcl:get_class $target] != "Menu"} {
+                [lsearch -exact {Menu Busy} [vTcl:get_class $target]] == -1} {
                 catch {$vTcl(w,def_mgr) $target $vTcl($vTcl(w,def_mgr),insert)}
             }
         }

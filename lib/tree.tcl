@@ -89,6 +89,7 @@ proc vTcl:left_click_tree {cmd i b j} {
 
     global vTcl
 
+    if {$::classes([vTcl:get_class $i],ignoreLeftClk)} return
     if {$vTcl(mode) == "TEST"} return
 
     $cmd $i
@@ -100,6 +101,7 @@ proc vTcl:right_click_tree {i X Y x y} {
 
     global vTcl
 
+    if {$::classes([vTcl:get_class $i],ignoreRightClk)} return
     if {$vTcl(mode) == "TEST"} return
 
     vTcl:active_widget $i

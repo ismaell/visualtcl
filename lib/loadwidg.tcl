@@ -110,6 +110,8 @@ proc SetClassArray {} {
         $tmp(class),selectSiteCmd   {}
         $tmp(class),defaultValues   {}
         $tmp(class),dontSaveOptions {}
+        $tmp(class),ignoreLeftClk   0
+        $tmp(class),ignoreRightClk  0
     "
 
     foreach elem [array names classes $tmp(class),*] {
@@ -360,6 +362,16 @@ proc AdditionalClasses {args} {
     foreach arg $args {
         lappend vTcl(classes) $arg
     }
+}
+
+proc IgnoreTreeLeftClick {} {
+    global tmp
+    set tmp(ignoreLeftClk) 1
+}
+
+proc IgnoreTreeRightClick {} {
+    global tmp
+    set tmp(ignoreRightClk) 1
 }
 
 proc TreeChildrenCmd {val} {

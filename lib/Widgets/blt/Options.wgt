@@ -16,4 +16,3 @@ NewOption -rightmargin {RightMar} type
 NewOption -tile tile type
 NewOption -title Title type
 NewOption -topmargin {TopMar} type
-
