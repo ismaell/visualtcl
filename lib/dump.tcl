@@ -592,10 +592,11 @@ proc vTcl:dump:widgets {target} {
     set output ""
 
     # for dumping widgets recursively using relative paths
-    set classes(Frame,dumpChildren)      0
-    set classes(MegaWidget,dumpChildren) 0
-    set classes(Menu,dumpChildren)       0
-    set classes(Menubutton,dumpChildren) 0
+    set dontDumpChildren {Frame MegaWidget Menu Menubutton Labelframe}
+    foreach i $dontDumpChildren {
+        set classes($i,dumpChildren) 0
+    }
+
     set tree [vTcl:widget_tree $target]
 
     append output $vTcl(head,proc,widgets)
@@ -621,10 +622,9 @@ proc vTcl:dump:widgets {target} {
     }
 
     # end of dumping widgets with relative paths
-    set classes(Frame,dumpChildren)      1
-    set classes(MegaWidget,dumpChildren) 1
-    set classes(Menu,dumpChildren)       1
-    set classes(Menubutton,dumpChildren) 1
+    foreach i $dontDumpChildren {
+        set classes($i,dumpChildren) 1
+    }
 
     return $output
 }
@@ -798,4 +798,5 @@ proc vTcl:dump:sourcing_footer {varName} {
     if {![vTcl:streq [string index $var end] "\n"]} { append var "\n" }
     append var "\}\n"
 }
+
 

@@ -1,8 +1,11 @@
 Class		Labelframe
-Lib		bwidget
+Lib		core
 
 Icon		../lib/Widgets/core/labelframe.gif
 TreeLabel	Labelframe
 CreateCmd       labelframe
 DefaultOptions   -text "Label"
 Insertable
+DumpCmd         ::vTcl::widgets::core::frame::dumpCmd
+DumpInfoCmd     ::vTcl::widgets::core::frame::dumpInfoCmd
+
