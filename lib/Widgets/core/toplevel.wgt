@@ -23,7 +23,7 @@ proc vTcl:DoCmdOption {target cmd} {
     regsub -all {\%W} $cmd $target cmd
     regsub -all {\%top} $cmd [winfo toplevel $target] cmd
 
-    uplevel #0 eval $cmd
+    uplevel #0 [list eval $cmd]
 }
 
 proc vTcl:toplevel {args} {
