@@ -430,3 +430,7 @@ proc DumpInfoCmd {val} {
     global tmp
     set tmp(dumpInfoCmd) $val
 }
+
+proc EditableTagsCmd {val} {
+    set ::classes($::tmp(class),editableTagsCmd) $val
+}

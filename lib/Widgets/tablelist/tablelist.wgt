@@ -32,6 +32,7 @@ MegaWidget   	yes
 CreateCmd       ::tablelist::tablelist
 InsertCmd       vTcl::widgets::tablelist::tablelist::insertCmd
 DumpCmd         vTcl::widgets::tablelist::tablelist::dumpCmd
+EditableTagsCmd vTcl::widgets::tablelist::tablelist::editableTagsCmd
 
 ## Procs to ignore when saving
 IgnoreProc      ::tablelist::*
@@ -87,6 +88,13 @@ namespace eval vTcl::widgets::tablelist::tablelist {
             append result "[vTcl:clean_pairs $pairs]\n"
         }
         return $result
+    }
+
+    proc editableTagsCmd {target} {
+        set result [$target bodypath]
+        set result [concat $result [$target separators]]
+	set result [concat $result [$target labels]]
+	return $result
     }
 }
 

@@ -598,52 +598,10 @@ proc vTcl:dump_top {target} {
     return [vTcl::widgets::core::toplevel::dumpTop $target]
 }
 
-proc vTcl:dump:aliases {target} {
-
-    if {$target == "."} {
-    	return ""
-    }
-
-    global widget classes
-    global vTcl
-
-    set output "\n$vTcl(tab)global widget\n"
-    set aliases [lsort [array names widget rev,$target*] ]
-
-    foreach name $aliases {
-        set value $widget($name)
-
-        # don't dump aliases to non-existing widgets
-        if {![winfo exists $widget($value)]} continue
-
-        set alias $value
-        set top_or_alias [vTcl:get_top_level_or_alias $target]
-
-        if {[info exists widget($top_or_alias,$alias)]} {
-            set value $widget($top_or_alias,$alias)
-        } else {
-            set value $widget($alias)
-        }
-
-        if {$value == $target} {
-            set top_or_alias ""
-        }
-
-        set c [vTcl:get_class $value]
-        append output $vTcl(tab)
-        append output "vTcl:DefineAlias \"[vTcl:base_name $value]\" \"$alias\""
-        append output " $classes($c,widgetProc)"
-        append output " \"[vTcl:base_name $top_or_alias]\" $vTcl(pr,cmdalias)\n"
-    }
-
-    return "$output\n"
-}
-
 proc vTcl:dump:widgets {target} {
     global vTcl classes
 
     set output ""
-    # append output "[vTcl:dump:aliases $target]"
 
     # for dumping widgets recursively using relative paths
     set classes(Frame,dumpChildren) 0
@@ -800,6 +758,13 @@ proc vTcl:dump:project_info {basedir project} {
     append out "set tagslist [list $::widgets_bindings::tagslist]\n"
     append out "$vTcl(tab)\}\n"
 
+    append out "$vTcl(tab)namespace eval ::vTcl::modules::main \{\n"
+    append out "$vTcl(tab2)set procs \{\n"
+    foreach item $vTcl(procs) {
+        append out "$vTcl(tab)$vTcl(tab2)$item\n"
+    }
+    append out "$vTcl(tab2)\}\n"
+    append out "$vTcl(tab)\}\n"
     append out "\}\n"
 
     if {!$multi} {

@@ -819,6 +819,10 @@ namespace eval ::widgets_bindings {
             return 1
         }
 
+	if {[lsearch -exact [::widgets_bindings::get_subwidgets $target] $tag] >= 0} {
+	    return 1
+	}
+
         return 0
     }
 
@@ -964,7 +968,10 @@ namespace eval ::widgets_bindings {
 
         set target $::widgets_bindings::target
 
-        if {$event == ""} {
+	if {$event == "" && [lsearch -exact [get_subwidgets $target] $tag] >=0} {
+            array set ::widgets_bindings::uistate {
+                MoveTagUp   disabled  MoveTagDown disabled }
+	} elseif {$event == ""} {
             if {$index > 0} {
                 array set ::widgets_bindings::uistate { MoveTagUp normal }
             } else {
@@ -991,6 +998,16 @@ namespace eval ::widgets_bindings {
         }
     }
 
+    proc get_subwidgets {target} {
+        global classes
+	set class [vTcl:get_class $target]
+	if {[info exists classes($class,editableTagsCmd)]} {
+	    return [$classes($class,editableTagsCmd) $target]
+	} else {
+	    return ""
+	}
+    }
+
     proc {::widgets_bindings::fill_bindings} {target {change 1}} {
         global widget vTcl tk_version
 
@@ -1000,10 +1017,11 @@ namespace eval ::widgets_bindings {
 
         # w is the bindings editor window
         # target is the widgets whose bindings we want to edit
-        
+
         set index 0
         set tags $vTcl(bindtags,$target)
-        
+	set tags [concat $tags [::widgets_bindings::get_subwidgets $target]]
+
         set ::widgets_bindings::bindingslist ""
         ListboxBindings delete 0 end
         
@@ -1028,7 +1046,7 @@ namespace eval ::widgets_bindings {
                        ListboxBindings itemconfigure $index  -foreground blue
                    }
                }
-               
+
                lappend ::widgets_bindings::bindingslist [list $tag $event]
                incr index
            }
@@ -1042,21 +1060,21 @@ namespace eval ::widgets_bindings {
 
     proc {::widgets_bindings::find_tag_event} {l index ref_tag ref_event} {
         global widget
-        
+
         upvar $ref_tag tag
         upvar $ref_event event
-        
+
         if {$index == ""} {
             set tag ""
             set event ""
             return
         }
-        
+
         set bindingslist $::widgets_bindings::bindingslist
         set tagevent [lindex $bindingslist $index]
 
         set tag   [lindex $tagevent 0]
-        set event [lindex $tagevent 1]       
+        set event [lindex $tagevent 1]
     }
 
     proc {::widgets_bindings::enable_editor} {enable} {
@@ -1065,7 +1083,7 @@ namespace eval ::widgets_bindings {
 
         global widget
         variable backup_bindings
-        
+
         switch $enable {
             1 - yes - true {
                 ListboxBindings configure -background white
