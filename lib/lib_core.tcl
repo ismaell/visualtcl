@@ -46,8 +46,11 @@ proc vTcl:widget:lib:lib_core {args} {
 	Scrollbar
 	Scale
 	Menubutton
-	Spinbox
     } 
+
+    if {[info tclversion] >= 8.4} {
+	lappend order Spinbox
+    }
 
     vTcl:lib:add_widgets_to_toolbar $order
 }

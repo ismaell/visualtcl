@@ -274,6 +274,8 @@ proc vTcl:grab_resize {absX absY handle} {
     vTcl:place_handles $widget
 }
 
+## Default routine to adjust the size of a widget after it's been resized.
+## This routine can be overridden in the widget definition.
 proc vTcl:adjust_widget_size {widget w h} {
     # @@change by Christian Gavin 3/19/2000
     # added catch in case some widgets don't have a -width

@@ -21,6 +21,10 @@
 #
 # initializes this library
 #
+
+proc vTcl:lib_bwidget:init {} {
+}
+
 proc vTcl:widget:lib:lib_bwidget {args} {
     global vTcl widgets classes
 

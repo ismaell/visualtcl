@@ -15,7 +15,7 @@ proc vTcl:widget:toplevel:inscmd {target} {
     	wm geometry $target $vTcl(pr,geom_new)
 	wm protocol $target WM_DELETE_WINDOW {vTcl:hide_top $target}
 	if {$vTcl(pr,winfocus) == 1} {
-	    wm protocol WM_TAKE_FOCUS {vTcl:wm_take_focus $target}
+	    wm protocol $target WM_TAKE_FOCUS {vTcl:wm_take_focus $target}
 	}
 	wm title $target \"New Toplevel $vTcl(newtops)\"
 	incr vTcl(newtops)
