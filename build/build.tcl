@@ -27,7 +27,7 @@
 
 ##############################################################################
 
-set version 1.2.2b1
+set version 1.2.2
 set bldroot /home/work/vtcl_new
 set bldtmp $bldroot/build/tmp
 

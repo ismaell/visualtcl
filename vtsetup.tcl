@@ -50,15 +50,15 @@ proc vTcl:font:add_font {font_descr font_type newkey} {
      set vTcl(fonts,$newfont,type)                      $font_type
      set vTcl(fonts,$newfont,key)                       $newkey
      set vTcl(fonts,$vTcl(fonts,$newfont,key),object)   $newfont
-     
+
      # in case caller needs it
      return $newfont
 }
 
 proc vTcl:font:get_font {key} {
-	
+
 	global vTcl
-	
+
 	return $vTcl(fonts,$key,object)
 }
 
@@ -80,7 +80,7 @@ vTcl:font:add_font "-family helvetica -size 12 -weight normal -slant italic -und
 #################################
 # GLOBAL VARIABLES
 #
-global widget; 
+global widget;
     set widget(.vTcl.fontmgr.listbox) {.vTcl.fontmgr.fra28.cpd29.01}
     set widget(.vTcl.fontmgr.text) {.vTcl.fontmgr.cpd43.03}
     set widget(listbox) {.top38.lis41}
@@ -119,7 +119,8 @@ global vTcl
 
 $widget(listbox) delete 0 end
 
-set dirname [pwd]
+set dirname [file dirname [info script]]
+# puts $dirname
 set libs [glob -nocomplain [file join $dirname lib lib*.tcl]]
 
 foreach lib $libs {
@@ -127,12 +128,12 @@ foreach lib $libs {
 }
 
 ####################################
-#  
+#
 # try to open the configuration file
 # if no configuration file selects everything
 
 if {! [file exists $vTcl(LIB_FILE)] } {
-    
+
     $widget(listbox) selection set 0 end
     return
 }
@@ -153,9 +154,9 @@ global widget
 set items [$widget(listbox) get 0 end]
 
 for {set index 0}  {$index < [llength $items]}  {incr index} {
-    
+
     if { [$widget(listbox) get $index] == $item} {
-    
+
         $widget(listbox) selection set $index
         return
     }
@@ -165,7 +166,7 @@ for {set index 0}  {$index < [llength $items]}  {incr index} {
 proc {main} {argc argv} {
 global widget
 wm protocol .top38 WM_DELETE_WINDOW {setup_exit}
- 
+
 setup_init
 }
 
@@ -254,25 +255,25 @@ proc vTclWindow.top38 {base {container 0}} {
     }
     message $base.mes40 \
         -aspect 600 -justify center -padx 5 -pady 2 \
-        -text {The following libraires are available to Visual Tcl. Please select the libraries you want to be loaded on Visual Tcl startup.} 
+        -text {The following libraires are available to Visual Tcl. Please select the libraries you want to be loaded on Visual Tcl startup.}
     message $base.mes45 \
         -aspect 600 -font [vTcl:font:get_font "vTcl:font10"] -padx 5 -pady 2 \
-        -text {Note: this will take effect the next time you start Visual Tcl.} 
+        -text {Note: this will take effect the next time you start Visual Tcl.}
     listbox $base.lis41 \
-        -foreground #808080 -height 0 -selectmode multiple -width 0 
+        -foreground #808080 -height 0 -selectmode multiple -width 0
     button $base.but42 \
-        -command setup_exit -padx 9 -pady 3 -text Close 
+        -command setup_exit -padx 9 -pady 3 -text Close
     ###################
     # SETTING GEOMETRY
     ###################
     pack $base.mes40 \
-        -in $base -anchor center -expand 0 -fill x -side top 
+        -in $base -anchor center -expand 0 -fill x -side top
     pack $base.mes45 \
-        -in $base -anchor center -expand 0 -fill none -side top 
+        -in $base -anchor center -expand 0 -fill none -side top
     pack $base.lis41 \
-        -in $base -anchor center -expand 1 -fill both -side top 
+        -in $base -anchor center -expand 1 -fill both -side top
     pack $base.but42 \
-        -in $base -anchor center -expand 0 -fill x -side bottom 
+        -in $base -anchor center -expand 0 -fill x -side bottom
 }
 
 Window show .
