@@ -129,17 +129,13 @@ proc vTclWindow.vTcl.credits {base {container 0}} {
     }
     }
     ::vTcl::OkButton $base.but23 -command "Window hide $base"
-    frame $base.cpd24 \
-        -borderwidth 1 -height 30 -relief raised -width 30
-    scrollbar $base.cpd24.01 \
-        -command "$base.cpd24.03 xview" -orient horizontal
-    scrollbar $base.cpd24.02 \
-        -command "$base.cpd24.03 yview"
+    ScrolledWindow $base.cpd24
     text $base.cpd24.03 -height 1 -background white \
         -font {-family helvetica -size 12} \
-        -width 8 -wrap none -xscrollcommand "$base.cpd24.01 set" \
-        -yscrollcommand "$base.cpd24.02 set"
+        -width 8 -wrap none
+    $base.cpd24 setwidget $base.cpd24.03
     bind $base.cpd24.03 <KeyRelease> "break"
+
     ###################
     # SETTING GEOMETRY
     ###################
@@ -147,14 +143,7 @@ proc vTclWindow.vTcl.credits {base {container 0}} {
         -in $base -anchor e -expand 0 -fill none -pady 5 -side top
     pack $base.cpd24 \
         -in $base -anchor center -expand 1 -fill both -side top
-    grid columnconf $base.cpd24 0 -weight 1
-    grid rowconf $base.cpd24 0 -weight 1
-    grid $base.cpd24.01 \
-        -in $base.cpd24 -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew
-    grid $base.cpd24.02 \
-        -in $base.cpd24 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns
-    grid $base.cpd24.03 \
-        -in $base.cpd24 -column 0 -row 0 -columnspan 1 -rowspan 1 -sticky nesw
+    pack $base.cpd24.03
 
     vTcl:FireEvent $base <<Ready>>
 }

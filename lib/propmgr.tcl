@@ -53,15 +53,15 @@ proc vTcl:prop:set_visible {which {on ""}} {
     set var ${which}_on
     switch $which {
         info {
-            set f $vTcl(gui,ae).c.f1
+            set f $vTcl(gui,ae,canvas).f1
             set name "Widget"
         }
         attr {
-            set f $vTcl(gui,ae).c.f2
+            set f $vTcl(gui,ae,canvas).f2
             set name "Attributes"
         }
         geom {
-            set f $vTcl(gui,ae).c.f3
+            set f $vTcl(gui,ae,canvas).f3
             set name "Geometry"
         }
         default {
@@ -89,6 +89,7 @@ proc vTclWindow.vTcl.ae {args} {
 
     set ae $vTcl(gui,ae)
     if {[winfo exists $ae]} {wm deiconify $ae; return}
+
     toplevel $ae -class vTcl
     wm withdraw $ae
     wm transient $ae .vTcl
@@ -104,26 +105,22 @@ proc vTclWindow.vTcl.ae {args} {
 	set scrincr 20
     }
 
-    canvas $ae.c -highlightthickness 0 \
-	-xscrollcommand "$ae.sh set" \
-	-yscrollcommand "$ae.sv set" \
-	-yscrollincrement $scrincr
-    scrollbar $ae.sh -orient horiz -command "$ae.c xview" -takefocus 0
-    scrollbar $ae.sv -orient vert  -command "$ae.c yview" -takefocus 0
+    set vTcl(gui,ae,canvas) [ScrolledWindow $ae.sw].c
+    set c $vTcl(gui,ae,canvas)
 
-    grid $ae.c  -column 0 -row 0 -sticky news
-    grid $ae.sh -column 0 -row 1 -sticky ew
-    grid $ae.sv -column 1 -row 0 -sticky ns
+    canvas $c -highlightthickness 0 -yscrollincrement $scrincr
 
-    grid columnconf $ae 0 -weight 1
-    grid rowconf    $ae 0 -weight 1
+    pack $ae.sw -expand 1 -fill both
+    pack $c
 
-    set f1 $ae.c.f1; frame $f1       ; # Widget Info
-        $ae.c create window 0 0 -window $f1 -anchor nw -tag info
-    set f2 $ae.c.f2; frame $f2       ; # Widget Attributes
-        $ae.c create window 0 0 -window $f2 -anchor nw -tag attr
-    set f3 $ae.c.f3; frame $f3       ; # Widget Geometry
-        $ae.c create window 0 0 -window $f3 -anchor nw -tag geom
+    $ae.sw setwidget $c
+
+    set f1 $c.f1; frame $f1       ; # Widget Info
+        $c create window 0 0 -window $f1 -anchor nw -tag info
+    set f2 $c.f2; frame $f2       ; # Widget Attributes
+        $c create window 0 0 -window $f2 -anchor nw -tag attr
+    set f3 $c.f3; frame $f3       ; # Widget Geometry
+        $c create window 0 0 -window $f3 -anchor nw -tag geom
 
     label $f1.l -text "Widget"     -relief raised -bg #aaaaaa -bd 1 -width 30 \
     	-anchor center
@@ -197,14 +194,15 @@ proc vTcl:prop:recalc_canvas {} {
     global vTcl
 
     set ae $vTcl(gui,ae)
+    set c  $vTcl(gui,ae,canvas)
     if {![winfo exists $ae]} { return }
 
-    set f1 $ae.c.f1                              ; # Widget Info Frame
-    set f2 $ae.c.f2                              ; # Widget Attribute Frame
-    set f3 $ae.c.f3                              ; # Widget Geometry Frame
+    set f1 $c.f1                              ; # Widget Info Frame
+    set f2 $c.f2                              ; # Widget Attribute Frame
+    set f3 $c.f3                              ; # Widget Geometry Frame
 
-    $ae.c coords attr 0 [winfo height $f1]
-    $ae.c coords geom 0 [expr [winfo height $f1] + [winfo height $f2]]
+    $c coords attr 0 [winfo height $f1]
+    $c coords geom 0 [expr [winfo height $f1] + [winfo height $f2]]
 
     set w [vTcl:util:greatest_of "[winfo width $f1] \
                                   [winfo width $f2] \
@@ -212,7 +210,7 @@ proc vTcl:prop:recalc_canvas {} {
     set h [expr [winfo height $f1] + \
                 [winfo height $f2] + \
                 [winfo height $f3] ]
-    $ae.c configure -scrollregion "0 0 $w $h"
+    $c configure -scrollregion "0 0 $w $h"
     wm minsize .vTcl.ae $w 200
 
     set vTcl(propmgr,frame,$f1) 0
@@ -280,7 +278,7 @@ proc vTcl:prop:update_attr {} {
     #
     # Update Widget Attributes
     #
-    set fr $vTcl(gui,ae).c.f2.f
+    set fr $vTcl(gui,ae,canvas).f2.f
     set top $fr._$vTcl(w,class)
     update idletasks
     if {[winfo exists $top]} {
@@ -339,7 +337,7 @@ proc vTcl:prop:update_attr {} {
     #
     # Update Widget Geometry
     #
-    set fr $vTcl(gui,ae).c.f3.f
+    set fr $vTcl(gui,ae,canvas).f3.f
     set top $fr._$vTcl(w,manager)
     set mgr $vTcl(w,manager)
     update idletasks
@@ -652,12 +650,12 @@ proc vTcl:prop:clear {} {
 
     vTcl:propmgr:deselect_attr
 
-    if {![winfo exists $vTcl(gui,ae).c]} {
-        frame $vTcl(gui,ae).c
-        pack $vTcl(gui,ae).c
+    if {![winfo exists $vTcl(gui,ae,canvas)]} {
+        frame $vTcl(gui,ae,canvas)
+        pack $vTcl(gui,ae,canvas)
     }
     foreach fr {f2 f3} {
-        set fr $vTcl(gui,ae).c.$fr
+        set fr $vTcl(gui,ae,canvas).$fr
         if {![winfo exists $fr]} {
             frame $fr
             pack $fr -side top -expand 1 -fill both
@@ -665,12 +663,12 @@ proc vTcl:prop:clear {} {
     }
 
     ## Destroy and rebuild the Attributes frame
-    set fr $vTcl(gui,ae).c.f2.f
+    set fr $vTcl(gui,ae,canvas).f2.f
     catch {destroy $fr}
     frame $fr; pack $fr -side top -expand 1 -fill both
 
     ## Destroy and rebuild the Geometry frame
-    set fr $vTcl(gui,ae).c.f3.f
+    set fr $vTcl(gui,ae,canvas).f3.f
     catch {destroy $fr}
     frame $fr; pack $fr -side top -expand 1 -fill both
 
@@ -760,7 +758,7 @@ proc vTcl:propmgr:focusOnLabel {w dir} {
     ## to scroll to the label of the focusControl.
     focus $propmgrLabels($next)
 
-    vTcl:propmgr:scrollToLabel $vTcl(gui,ae).c $next $dir
+    vTcl:propmgr:scrollToLabel $vTcl(gui,ae,canvas) $next $dir
 }
 
 proc vTcl:propmgr:focusPrev {w} {

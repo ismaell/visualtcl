@@ -174,13 +174,13 @@ proc vTclWindow.vTcl.proclist {args} {
     if { [winfo exists $base] } { wm deiconify $base; return }
     toplevel $base -class vTcl
     wm transient $base .vTcl
+    wm withdraw $vTcl(gui,proclist)
     wm focusmodel $base passive
     wm geometry $base 200x200+48+237
     wm maxsize $base 1137 870
     wm minsize $base 200 100
     wm overrideredirect $base 0
     wm resizable $base 1 1
-    wm deiconify $base
     wm title $base "Function List"
     wm protocol $base WM_DELETE_WINDOW {vTcl:proclist:show 0}
     frame $base.frame7 \
@@ -221,8 +221,8 @@ proc vTclWindow.vTcl.proclist {args} {
     pack $base.frame7.button11 \
         -expand 0 -side right
     vTcl:set_balloon $base.frame7.button11 "Close"
-    frame $base.f2 \
-        -borderwidth 1 -height 30 -relief sunken -width 30
+
+    ScrolledWindow $base.f2
     pack $base.f2 \
         -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 0 -pady 0 \
         -side top
@@ -238,13 +238,9 @@ proc vTclWindow.vTcl.proclist {args} {
     pack $base.f2.list \
         -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 0 -pady 0 \
         -side left
-    scrollbar $base.f2.sb4 \
-        -command "$base.f2.list yview"
-    pack $base.f2.sb4 \
-        -anchor center -expand 0 -fill y -ipadx 0 -ipady 0 -padx 0 -pady 0 \
-        -side right
 
-    wm withdraw $vTcl(gui,proclist)
+    $base.f2 setwidget $base.f2.list
+
     vTcl:setup_vTcl:bind $vTcl(gui,proclist)
     catch {wm geometry $vTcl(gui,proclist) $vTcl(geometry,$vTcl(gui,proclist))}
     update idletasks
@@ -364,30 +360,14 @@ proc vTclWindow.vTcl.proc {args} {
     pack configure $butOK -side right
     vTcl:set_balloon $butOK "Save changes"
 
-    frame $base.f4 \
-        -borderwidth 1 -height 30 -relief sunken -width 30
-    scrollbar $base.f4.01 \
-        -command "$base.f4.text xview" -highlightthickness 0 \
-        -orient horizontal
-    scrollbar $base.f4.02 \
-        -command "$base.f4.text yview" -highlightthickness 0
+    ScrolledWindow $base.f4
     text $base.f4.text \
-        -background white -borderwidth 0 -height 3 -wrap none \
-        -relief flat -xscrollcommand "$base.f4.01 set" \
-        -yscrollcommand "$base.f4.02 set"
-    pack $base.f4 \
-        -in "$base" -anchor center -expand 1 -fill both -side top
-    grid columnconf $base.f4 0 -weight 1
-    grid rowconf $base.f4 0 -weight 1
-    grid $base.f4.01 \
-        -in "$base.f4" -column 0 -row 1 -columnspan 1 -rowspan 1 \
-        -sticky ew
-    grid $base.f4.02 \
-        -in "$base.f4" -column 1 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky ns
-    grid $base.f4.text \
-        -in "$base.f4" -column 0 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky nesw
+        -background white -borderwidth 0 -height 3 -wrap none -relief flat
+
+    $base.f4 setwidget $base.f4.text
+
+    pack $base.f4 -in $base -anchor center -expand 1 -fill both -side top
+    pack $base.f4.text
 
     bind $base.f4.text <KeyPress> "+::vTcl::proc_edit_change $base %K"
     bind $base.f4.text <Control-Key-i> "$butInsert invoke"

@@ -183,14 +183,10 @@ proc vTclWindow.vTcl.bind {args} {
     vTcl:toolbar_button $base.fra22.but28 \
         -command "::widgets_bindings::delete_tag" \
         -padx 0 -pady 0 -image delete_tag
-    frame $base.cpd21.01.cpd25 \
-        -background #dcdcdc -borderwidth 1 -height 30 \
-        -highlightbackground #dcdcdc -highlightcolor #000000 -relief raised \
-        -width 30
-    listbox $base.cpd21.01.cpd25.01 \
-        -xscrollcommand "$base.cpd21.01.cpd25.02 set" \
-        -yscrollcommand "$base.cpd21.01.cpd25.03 set" \
-        -background white
+
+    ScrolledWindow $base.cpd21.01.cpd25 -background #dcdcdc
+    listbox $base.cpd21.01.cpd25.01 -background white
+    $base.cpd21.01.cpd25 setwidget $base.cpd21.01.cpd25.01
     bindtags $base.cpd21.01.cpd25.01 "Listbox $base.cpd21.01.cpd25.01 $base all"
     bind $base.cpd21.01.cpd25.01 <Button-3> {
         ListboxBindings selection clear 0 end
@@ -242,28 +238,17 @@ proc vTclWindow.vTcl.bind {args} {
     $base.cpd21.01.cpd25.01.menu add command \
         -command {::widgets_bindings::right_click_modifier Button3} \
         -label Button3
-    scrollbar $base.cpd21.01.cpd25.02 \
-        -command "$base.cpd21.01.cpd25.01 xview" -orient horizontal
-    scrollbar $base.cpd21.01.cpd25.03 \
-        -command "$base.cpd21.01.cpd25.01 yview"
     frame $base.cpd21.02 \
         -background #9900991B99FE -highlightbackground #dcdcdc \
         -highlightcolor #000000
-    frame $base.cpd21.02.cpd21 \
-        -background #dcdcdc -borderwidth 1 -height 30 \
-        -highlightbackground #dcdcdc -highlightcolor #000000 -relief raised \
-        -width 30
-    scrollbar $base.cpd21.02.cpd21.01 \
-        -command "$base.cpd21.02.cpd21.03 xview" -orient horizontal
-    scrollbar $base.cpd21.02.cpd21.02 \
-        -command "$base.cpd21.02.cpd21.03 yview"
+
+    ScrolledWindow $base.cpd21.02.cpd21 -background #dcdcdc
     text $base.cpd21.02.cpd21.03 \
         -background white \
         -foreground #000000 -height 1 -highlightbackground #ffffff \
         -highlightcolor #000000 -selectbackground #008080 \
-        -selectforeground #ffffff -width 8 \
-        -xscrollcommand "$base.cpd21.02.cpd21.01 set" \
-        -yscrollcommand "$base.cpd21.02.cpd21.02 set" 
+        -selectforeground #ffffff -width 8
+    $base.cpd21.02.cpd21 setwidget $base.cpd21.02.cpd21.03
     bind $base.cpd21.02.cpd21.03 <ButtonRelease-3> {
         if {![winfo exists %W.menu]} { menu %W.menu }
 
@@ -349,35 +334,19 @@ proc vTclWindow.vTcl.bind {args} {
     pack $base.fra22.but26  \
         -in $base.fra22 -anchor center -expand 0 -fill none \
         -side left 
+
     pack $base.cpd21.01.cpd25 \
         -in $base.cpd21.01 -anchor center -expand 1 -fill both -side top
-    grid columnconf $base.cpd21.01.cpd25 0 -weight 1
-    grid rowconf $base.cpd21.01.cpd25 0 -weight 1
-    grid $base.cpd21.01.cpd25.01 \
-        -in $base.cpd21.01.cpd25 -column 0 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky nesw 
-    grid $base.cpd21.01.cpd25.02 \
-        -in $base.cpd21.01.cpd25 -column 0 -row 1 -columnspan 1 -rowspan 1 \
-        -sticky ew 
-    grid $base.cpd21.01.cpd25.03 \
-        -in $base.cpd21.01.cpd25 -column 1 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky ns
+    pack $base.cpd21.01.cpd25.01
+
     place $base.cpd21.02 \
         -x 0 -relx 1 -y 0 -width -1 -relwidth 0.6319 -relheight 1 -anchor ne \
         -bordermode ignore 
+
     pack $base.cpd21.02.cpd21 \
         -in $base.cpd21.02 -anchor center -expand 1 -fill both -side top
-    grid columnconf $base.cpd21.02.cpd21 0 -weight 1
-    grid rowconf $base.cpd21.02.cpd21 0 -weight 1
-    grid $base.cpd21.02.cpd21.01 \
-        -in $base.cpd21.02.cpd21 -column 0 -row 1 -columnspan 1 -rowspan 1 \
-        -sticky ew 
-    grid $base.cpd21.02.cpd21.02 \
-        -in $base.cpd21.02.cpd21 -column 1 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky ns 
-    grid $base.cpd21.02.cpd21.03 \
-        -in $base.cpd21.02.cpd21 -column 0 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky nesw 
+    pack $base.cpd21.02.cpd21.03
+
     place $base.cpd21.03 \
         -x 0 -relx 0.3681 -y 0 -rely 0.9 -width 10 -height 10 -anchor s \
         -bordermode ignore
@@ -459,33 +428,33 @@ proc vTclWindow.vTcl.newbind {base {container 0}} {
         set bindingsEventEntry "$bindingsEventEntry<Key-%K>"
         after idle {set bindingsKeystrokes ""}
     }
+
+    ::vTcl::OkButton $base.fra20.ok \
+        -command {
+             if {$bindingsEventEntry != ""} {
+                 BindingsInsert hide
+                 ::widgets_bindings::add_binding $bindingsEventEntry
+             }
+         }
+    ::vTcl::CancelButton $base.fra20.cancel -command {BindingsInsert hide}
+
     frame $base.fra23
     label $base.fra23.lab24 \
         -borderwidth 1 \
         -text {Select a mouse event or a key event}
-    frame $base.fra23.cpd34 \
-        -background #dcdcdc -borderwidth 1 -height 30 \
-        -highlightbackground #dcdcdc -highlightcolor #000000 -relief raised \
-        -width 30
-    listbox $base.fra23.cpd34.01 \
-        -xscrollcommand "$base.fra23.cpd34.02 set" \
-        -yscrollcommand "$base.fra23.cpd34.03 set"
+
+    ScrolledWindow $base.fra23.cpd34 -background #dcdcdc
+    listbox $base.fra23.cpd34.01
+    $base.fra23.cpd34 setwidget $base.fra23.cpd34.01
     bind $base.fra23.cpd34.01 <Button-1> {
         set modifier [BindingsModifiers get @%x,%y]
         set bindingsEventEntry [::widgets_bindings::set_modifier_in_event \
             $bindingsEventEntry $modifier]
     }
-    scrollbar $base.fra23.cpd34.02 \
-        -command "$base.fra23.cpd34.01 xview" \
-        -orient horizontal
-    scrollbar $base.fra23.cpd34.03 \
-        -command "$base.fra23.cpd34.01 yview" \
-        -orient vertical
-    frame $base.fra23.cpd35 \
-        -borderwidth 1 -relief raised
-    listbox $base.fra23.cpd35.01 \
-        -xscrollcommand "$base.fra23.cpd35.02 set" \
-        -yscrollcommand "$base.fra23.cpd35.03 set"
+
+    ScrolledWindow $base.fra23.cpd35
+    listbox $base.fra23.cpd35.01
+    $base.fra23.cpd35 setwidget $base.fra23.cpd35.01
     bind $base.fra23.cpd35.01 <Button-1> {
         set event [BindingsEvents get @%x,%y]
         if {![string match <<*>> $event]} {
@@ -493,12 +462,7 @@ proc vTclWindow.vTcl.newbind {base {container 0}} {
         }
         set bindingsEventEntry $bindingsEventEntry$event
     }
-    scrollbar $base.fra23.cpd35.02 \
-        -command "$base.fra23.cpd35.01 xview"  \
-        -orient horizontal
-    scrollbar $base.fra23.cpd35.03 \
-        -command "$base.fra23.cpd35.01 yview"  \
-        -orient vertical
+
     frame $base.fra36
     label $base.fra36.lab37 \
         -borderwidth 1 -text Event
@@ -529,18 +493,7 @@ proc vTclWindow.vTcl.newbind {base {container 0}} {
             $bindingsEventEntry $index stindex endindex
         BindingsEventEntry selection range $stindex [expr $endindex + 1]
     }
-    frame $base.fra39
-    button $base.fra39.but40 \
-        -command {
-             if {$bindingsEventEntry != ""} {
-                 BindingsInsert hide
-                 ::widgets_bindings::add_binding $bindingsEventEntry
-             }
-         } \
-        -padx 9 -text Add -width 8
-    button $base.fra39.but41 \
-        -command {BindingsInsert hide} \
-        -padx 9 -text Cancel -width 8
+
     ###################
     # SETTING GEOMETRY
     ###################
@@ -551,51 +504,29 @@ proc vTclWindow.vTcl.newbind {base {container 0}} {
     pack $base.fra20.ent22 \
         -in $base.fra20 -anchor center -expand 0 -fill none -padx 5 \
         -side left
+    pack $base.fra20.cancel -side right
+    pack $base.fra20.ok -side right
+
     pack $base.fra23 \
         -in $base -anchor center -expand 1 -fill both -side top
     pack $base.fra23.lab24 \
         -in $base.fra23 -anchor center -expand 0 -fill none -ipady 10 \
         -side top 
+
     pack $base.fra23.cpd34 \
         -in $base.fra23 -anchor center -expand 1 -fill both -side right 
-    grid columnconf $base.fra23.cpd34 0 -weight 1
-    grid rowconf $base.fra23.cpd34 0 -weight 1
-    grid $base.fra23.cpd34.01 \
-        -in $base.fra23.cpd34 -column 0 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky nesw 
-    grid $base.fra23.cpd34.02 \
-        -in $base.fra23.cpd34 -column 0 -row 1 -columnspan 1 -rowspan 1 \
-        -sticky ew 
-    grid $base.fra23.cpd34.03 \
-        -in $base.fra23.cpd34 -column 1 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky ns 
+    pack $base.fra23.cpd34.01
+
     pack $base.fra23.cpd35 \
         -in $base.fra23 -anchor center -expand 1 -fill both -side left 
-    grid columnconf $base.fra23.cpd35 0 -weight 1
-    grid rowconf $base.fra23.cpd35 0 -weight 1
-    grid $base.fra23.cpd35.01 \
-        -in $base.fra23.cpd35 -column 0 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky nesw
-    grid $base.fra23.cpd35.02 \
-        -in $base.fra23.cpd35 -column 0 -row 1 -columnspan 1 -rowspan 1 \
-        -sticky ew 
-    grid $base.fra23.cpd35.03 \
-        -in $base.fra23.cpd35 -column 1 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky ns 
+    pack $base.fra23.cpd35.01
+
     pack $base.fra36 \
         -in $base -anchor center -expand 0 -fill x -ipady 10 -side top 
     pack $base.fra36.lab37 \
         -in $base.fra36 -anchor center -expand 0 -fill none -side left 
     pack $base.fra36.ent38 \
         -in $base.fra36 -anchor center -expand 1 -fill x -side left 
-    pack $base.fra39 \
-        -in $base -anchor center -expand 0 -fill none -pady 5 -side top
-    pack $base.fra39.but40 \
-        -in $base.fra39 -anchor center -expand 0 -fill none -padx 10 \
-        -side left 
-    pack $base.fra39.but41 \
-        -in $base.fra39 -anchor center -expand 0 -fill none -padx 10 \
-        -side right
 
     BindingsModifiers delete 0 end
     foreach modifier {

@@ -72,14 +72,15 @@ proc vTcl:hide_top {target} {
 
 proc vTcl:update_top_list {} {
     global vTcl
-    if [winfo exists .vTcl.toplist] {
-        .vTcl.toplist.f2.list delete 0 end
+    set base .vTcl.toplist
+    if {[winfo exists $base]} {
+        $base.f2.list delete 0 end
         set index 0
         foreach i $vTcl(tops) {
             if [catch {set n [wm title $i]}] {
                 set n $i
             }
-            .vTcl.toplist.f2.list insert end $n
+            $base.f2.list insert end $n
             set vTcl(tops,$index) $i
             incr index
         }
@@ -119,109 +120,99 @@ proc vTcl:toplist:show {{on ""}} {
 proc vTclWindow.vTcl.toplist {args} {
     global vTcl
     set base .vTcl.toplist
-    if {[winfo exists .vTcl.toplist]} {
-        wm deiconify .vTcl.toplist; return
-    }
-    toplevel .vTcl.toplist -class vTcl
-    wm withdraw .vTcl.toplist
-    wm transient .vTcl.toplist .vTcl
-    wm focusmodel .vTcl.toplist passive
-    wm geometry .vTcl.toplist 200x200+714+382
-    wm maxsize .vTcl.toplist 1137 870
-    wm minsize .vTcl.toplist 200 100
-    wm overrideredirect .vTcl.toplist 0
-    wm resizable .vTcl.toplist 1 1
-    wm title .vTcl.toplist "Window List"
+    if {[winfo exists $base]} { wm deiconify $base; return }
+
+    toplevel $base -class vTcl
+    wm withdraw $base
+    wm transient $base .vTcl
+    wm focusmodel $base passive
+    wm geometry $base 200x200+714+382
+    wm maxsize $base 1137 870
+    wm minsize $base 200 100
+    wm overrideredirect $base 0
+    wm resizable $base 1 1
+    wm title $base "Window List"
     wm protocol $base WM_DELETE_WINDOW {vTcl:toplist:show 0}
-    bind .vTcl.toplist <Double-Button-1> {
-        set vTcl(x) [.vTcl.toplist.f2.list curselection]
+    bind $base <Double-Button-1> {
+        set vTcl(x) [$base.f2.list curselection]
         if {$vTcl(x) != ""} {
             vTcl:show_top $vTcl(tops,$vTcl(x))
         }
     }
 
-    frame .vTcl.toplist.frame7 \
+    frame $base.frame7 \
         -borderwidth 1 -height 30 -relief sunken -width 30 
-    pack .vTcl.toplist.frame7 \
-        -in .vTcl.toplist -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 \
+    pack $base.frame7 \
+        -in $base -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 \
         -padx 0 -pady 0 -side top
-    vTcl:toolbar_button .vTcl.toplist.frame7.button8 \
+    vTcl:toolbar_button $base.frame7.button8 \
         -command {
-            set vTcl(x) [.vTcl.toplist.f2.list curselection]
+            set vTcl(x) [$base.f2.list curselection]
             if {$vTcl(x) != ""} {
                 vTcl:show_top $vTcl(tops,$vTcl(x))
             }
         } \
          -padx 9 \
         -pady 3 -image [vTcl:image:get_image show.gif]
-    pack .vTcl.toplist.frame7.button8 \
-        -in .vTcl.toplist.frame7 -anchor center -expand 0 -fill none -ipadx 0 \
+    pack $base.frame7.button8 \
+        -in $base.frame7 -anchor center -expand 0 -fill none -ipadx 0 \
         -ipady 0 -padx 0 -pady 0 -side left 
-    vTcl:set_balloon .vTcl.toplist.frame7.button8 "Show toplevel window"
-    vTcl:toolbar_button .vTcl.toplist.frame7.button9 \
+    vTcl:set_balloon $base.frame7.button8 "Show toplevel window"
+    vTcl:toolbar_button $base.frame7.button9 \
         -command {
-            set vTcl(x) [.vTcl.toplist.f2.list curselection]
+            set vTcl(x) [$base.f2.list curselection]
             if {$vTcl(x) != ""} {
                 vTcl:hide_top $vTcl(tops,$vTcl(x))
             }
         } \
          -padx 9 \
         -pady 3 -image [vTcl:image:get_image hide.gif]
-    pack .vTcl.toplist.frame7.button9 \
-        -in .vTcl.toplist.frame7 -anchor center -expand 0 -fill none -ipadx 0 \
+    pack $base.frame7.button9 \
+        -in $base.frame7 -anchor center -expand 0 -fill none -ipadx 0 \
         -ipady 0 -padx 0 -pady 0 -side left
-    vTcl:set_balloon .vTcl.toplist.frame7.button9 "Hide toplevel window"
+    vTcl:set_balloon $base.frame7.button9 "Hide toplevel window"
     ::vTcl::CancelButton $base.frame7.button10 -command {
-	set vTcl(x) [.vTcl.toplist.f2.list curselection]
+	set vTcl(x) [$base.f2.list curselection]
 	if {$vTcl(x) != ""} {
 	    vTcl:destroy_top $vTcl(tops,$vTcl(x))
 	}
     }
-    pack .vTcl.toplist.frame7.button10 \
-        -in .vTcl.toplist.frame7 -anchor center -expand 0 -fill none -ipadx 0 \
+    pack $base.frame7.button10 \
+        -in $base.frame7 -anchor center -expand 0 -fill none -ipadx 0 \
         -ipady 0 -padx 0 -pady 0 -side left
-    vTcl:set_balloon .vTcl.toplist.frame7.button10 "Delete toplevel window"
+    vTcl:set_balloon $base.frame7.button10 "Delete toplevel window"
     ::vTcl::OkButton $base.frame7.button11 -command "vTcl:toplist:show 0"
     pack $base.frame7.button11 \
     	-expand 0 -side right
     vTcl:set_balloon $base.frame7.button11 "Close"
 
-    frame .vTcl.toplist.f2 \
-        -borderwidth 1 -height 30 -relief sunken -width 30 
-    pack .vTcl.toplist.f2 \
-        -in .vTcl.toplist -anchor center -expand 1 -fill both -ipadx 0 \
+    ScrolledWindow $base.f2
+    pack $base.f2 \
+        -in $base -anchor center -expand 1 -fill both -ipadx 0 \
         -ipady 0 -padx 0 -pady 0 -side top
-    listbox .vTcl.toplist.f2.list \
-        -yscrollcommand {.vTcl.toplist.f2.sb4 set} -exportselection 0 \
-        -background white
-    pack .vTcl.toplist.f2.list \
-        -in .vTcl.toplist.f2 -anchor center -expand 1 -fill both -ipadx 0 \
-        -ipady 0 -padx 0 -pady 0 -side left
-    scrollbar .vTcl.toplist.f2.sb4 \
-        -command {.vTcl.toplist.f2.list yview}
-    pack .vTcl.toplist.f2.sb4 \
-        -in .vTcl.toplist.f2 -anchor center -expand 0 -fill y -ipadx 0 \
-        -ipady 0 -padx 0 -pady 0 -side right
+    listbox $base.f2.list -exportselection 0 -background white
+    $base.f2 setwidget $base.f2.list
+    pack $base.f2.list
 
-    vTcl:setup_vTcl:bind .vTcl.toplist
-    catch {wm geometry .vTcl.toplist $vTcl(geometry,.vTcl.toplist)}
+    vTcl:setup_vTcl:bind $base
+    catch {wm geometry $base $vTcl(geometry,$base)}
     update idletasks
-    wm deiconify .vTcl.toplist
+    wm deiconify $base
 
     # ok, let's add a special tag to override the <KeyPress-Delete> mechanism
 
     # first, make sure the list gets the focus when it's clicked on
-    bind .vTcl.toplist.f2.list <ButtonPress-1> {
-        focus .vTcl.toplist.f2.list
+    bind $base.f2.list <ButtonPress-1> {
+        focus $base.f2.list
     }
 
     # bind all controls in the window
-    foreach child [vTcl:list_widget_tree .vTcl.toplist] {
+    foreach child [vTcl:list_widget_tree $base] {
         bindtags $child "_vTclTopDelete [bindtags $child]"
     }
 
     bind _vTclTopDelete <KeyPress-Delete> {
-        .vTcl.toplist.frame7.button10 invoke
+        $base.frame7.button10 invoke
 
         # stop event processing here
         break

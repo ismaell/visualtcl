@@ -579,11 +579,10 @@ proc vTclWindow.vTcl.inspector {base {container 0}} {
     frame $base.cpd26 \
         -background #000000
     frame $base.cpd26.01
-    frame $base.cpd26.01.cpd27 \
-        -relief raised
-    listbox $base.cpd26.01.cpd27.01 \
-        -xscrollcommand "$base.cpd26.01.cpd27.02 set" \
-        -yscrollcommand "$base.cpd26.01.cpd27.03 set"
+
+    ScrolledWindow $base.cpd26.01.cpd27
+    listbox $base.cpd26.01.cpd27.01
+    $base.cpd26.01.cpd27 setwidget $base.cpd26.01.cpd27.01
     bindtags $base.cpd26.01.cpd27.01 "Listbox $base.cpd26.01.cpd27.01 $base all"
     bind $base.cpd26.01.cpd27.01 <<ListboxSelect>> {
         ::inspector::listbox_select %W
@@ -594,11 +593,6 @@ proc vTclWindow.vTcl.inspector {base {container 0}} {
     bind $base.cpd26.01.cpd27.01 <Key-Return> {
         ::inspector::expand_or_contract %W
     }
-    scrollbar $base.cpd26.01.cpd27.02 \
-        -command "$base.cpd26.01.cpd27.01 xview" \
-        -orient horizontal
-    scrollbar $base.cpd26.01.cpd27.03 \
-        -command "$base.cpd26.01.cpd27.01 yview"
     frame $base.cpd26.01.fra29 \
         -borderwidth 2
     vTcl:toolbar_button $base.cpd26.01.fra29.but30 \
@@ -612,18 +606,13 @@ proc vTclWindow.vTcl.inspector {base {container 0}} {
     entry $base.cpd26.02.ent26
     label $base.cpd26.02.lab27 \
         -anchor w -padx 1 -text Value
-    frame $base.cpd26.02.cpd28 \
-        -borderwidth 1 -relief raised
-    scrollbar $base.cpd26.02.cpd28.01 \
-        -command "$base.cpd26.02.cpd28.03 xview"  \
-        -orient horizontal
-    scrollbar $base.cpd26.02.cpd28.02 \
-        -command "$base.cpd26.02.cpd28.03 yview"
+
+    ScrolledWindow $base.cpd26.02.cpd28
     text $base.cpd26.02.cpd28.03 \
         -background #dcdcdc  \
-        -padx 1 -pady 1 \
-        -xscrollcommand "$base.cpd26.02.cpd28.01 set" \
-        -yscrollcommand "$base.cpd26.02.cpd28.02 set"
+        -padx 1 -pady 1
+    $base.cpd26.02.cpd28 setwidget $base.cpd26.02.cpd28.03
+
     frame $base.cpd26.03 \
         -background #ff0000 -borderwidth 2 -height 0 \
         -highlightbackground #dcdcdc -highlightcolor #000000 -relief raised \
@@ -657,19 +646,11 @@ proc vTclWindow.vTcl.inspector {base {container 0}} {
     place $base.cpd26.01 \
         -x 0 -y 0 -width -1 -relwidth 0.3466 -relheight 1 -anchor nw \
         -bordermode ignore
+
     pack $base.cpd26.01.cpd27 \
         -in $base.cpd26.01 -anchor center -expand 1 -fill both -side bottom
-    grid columnconf $base.cpd26.01.cpd27 0 -weight 1
-    grid rowconf $base.cpd26.01.cpd27 0 -weight 1
-    grid $base.cpd26.01.cpd27.01 \
-        -in $base.cpd26.01.cpd27 -column 0 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky nesw
-    grid $base.cpd26.01.cpd27.02 \
-        -in $base.cpd26.01.cpd27 -column 0 -row 1 -columnspan 1 -rowspan 1 \
-        -sticky ew
-    grid $base.cpd26.01.cpd27.03 \
-        -in $base.cpd26.01.cpd27 -column 1 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky ns
+    pack $base.cpd26.01.cpd27.01
+
     pack $base.cpd26.01.fra29 \
         -in $base.cpd26.01 -anchor center -expand 0 -fill x -side top
     pack $base.cpd26.01.fra29.but30 \
@@ -688,20 +669,12 @@ proc vTclWindow.vTcl.inspector {base {container 0}} {
         -in $base.cpd26.02 -anchor center -expand 0 -fill x -padx 3 -side top
     pack $base.cpd26.02.lab27 \
         -in $base.cpd26.02 -anchor w -expand 0 -fill none -padx 3 -side top
+
     pack $base.cpd26.02.cpd28 \
         -in $base.cpd26.02 -anchor center -expand 1 -fill both -padx 3 \
         -pady 3 -side top
-    grid columnconf $base.cpd26.02.cpd28 0 -weight 1
-    grid rowconf $base.cpd26.02.cpd28 0 -weight 1
-    grid $base.cpd26.02.cpd28.01 \
-        -in $base.cpd26.02.cpd28 -column 0 -row 1 -columnspan 1 -rowspan 1 \
-        -sticky ew
-    grid $base.cpd26.02.cpd28.02 \
-        -in $base.cpd26.02.cpd28 -column 1 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky ns
-    grid $base.cpd26.02.cpd28.03 \
-        -in $base.cpd26.02.cpd28 -column 0 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky nesw
+    pack $base.cpd26.02.cpd28.03
+
     place $base.cpd26.03 \
         -x 0 -relx 0.3466 -y 0 -rely 0.9 -width 10 -height 10 -anchor s \
         -bordermode ignore

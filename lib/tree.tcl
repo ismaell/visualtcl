@@ -290,15 +290,10 @@ proc vTclWindow.vTcl.tree {args} {
         -image [vTcl:image:get_image "refresh.gif"] \
         -command vTcl:init_wtree
     ::vTcl::OkButton $base.frameTop.buttonClose -command "Window hide $base"
-    frame $base.cpd21 -relief sunken -borderwidth 2
-    scrollbar $base.cpd21.01 \
-        -command "$base.cpd21.03 xview" -orient horizontal
-    scrollbar $base.cpd21.02 \
-        -command "$base.cpd21.03 yview"
+    ScrolledWindow $base.cpd21
     canvas $base.cpd21.03 -highlightthickness 0 \
-        -background #ffffff -borderwidth 0 -closeenough 1.0 -relief flat \
-        -xscrollcommand "$base.cpd21.01 set" \
-        -yscrollcommand "$base.cpd21.02 set"
+        -background #ffffff -borderwidth 0 -closeenough 1.0 -relief flat
+    $base.cpd21 setwidget $base.cpd21.03
 
     ###################
     # SETTING GEOMETRY
@@ -311,15 +306,7 @@ proc vTclWindow.vTcl.tree {args} {
         -in $base.frameTop -anchor center -expand 0 -fill none -side right
     pack $base.cpd21 \
         -in $base -anchor center -expand 1 -fill both -side top
-    grid columnconf $base.cpd21 0 -weight 1
-    grid rowconf $base.cpd21 0 -weight 1
-    grid $base.cpd21.01 \
-        -in $base.cpd21 -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew
-    grid $base.cpd21.02 \
-        -in $base.cpd21 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns
-    grid $base.cpd21.03 \
-        -in $base.cpd21 -column 0 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky nesw
+    pack $base.cpd21.03
 
     vTcl:set_balloon $base.frameTop.buttonRefresh "Refresh the widget tree"
     vTcl:set_balloon $base.frameTop.buttonClose   "Close"

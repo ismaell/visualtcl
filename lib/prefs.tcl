@@ -127,84 +127,10 @@ proc vTclWindow.vTcl.prefs {{base ""} {container 0}} {
 
     update
 
-    ## Let's have Tk determine what size it needs (it works!)
-    ## We have to deiconify first for Tk to figure out its size.  In
-    ## withdrawn mode, Tk inaccurately determines the geometry of a widget.
-    wm deiconify $base
-    vTcl:center $base
-}
-
-proc vTclWindow.vTcl.infolibs {{base ""} {container 0}} {
-
-    if {$base == ""} {
-        set base .vTcl.infolibs
-    }
-    if {[winfo exists $base] && (!$container)} {
-        wm deiconify $base; return
-    }
-
-    global vTcl
-
-    # let's keep widget local
-    set widget(libraries_close)         "$base.but40"
-    set widget(libraries_frame_listbox) "$base.cpd39"
-    set widget(libraries_header)        "$base.lab38"
-    set widget(libraries_listbox)       "$base.cpd39.01"
-
-    ###################
-    # CREATING WIDGETS
-    ###################
-    if {!$container} {
-    toplevel $base -class Toplevel
-    wm withdraw $base
-    wm focusmodel $base passive
-    wm transient  $base .vTcl
-    wm maxsize $base 1009 738
-    wm minsize $base 1 1
-    wm overrideredirect $base 0
-    wm resizable $base 1 1
-    wm title $base "Visual Tcl Libraries"
-    }
-    label $base.lab38 \
-        -borderwidth 1 -text {The following libraries are available:}
-    frame $base.cpd39 \
-        -borderwidth 1 -height 30 -relief raised -width 30
-    listbox $base.cpd39.01 \
-        -width 0 -xscrollcommand "$base.cpd39.02 set" \
-        -yscrollcommand "$base.cpd39.03 set"
-    scrollbar $base.cpd39.02 \
-        -command "$base.cpd39.01 xview" -orient horiz
-    scrollbar $base.cpd39.03 \
-        -command "$base.cpd39.01 yview" -orient vert
-    ::vTcl::OkButton $base.but40 -command "Window hide $base"
-
-    ###################
-    # SETTING GEOMETRY
-    ###################
-    pack $base.but40 \
-        -in $base -anchor center -expand 0 -fill none -side top -anchor e
-    pack $base.lab38 \
-        -in $base -anchor center -expand 0 -fill x -ipadx 1 -side top
-    pack $base.cpd39 \
-        -in $base -anchor center -expand 1 -fill both -side top
-    grid columnconf $base.cpd39 0 -weight 1
-    grid rowconf $base.cpd39 0 -weight 1
-    grid $base.cpd39.01 \
-        -in $base.cpd39 -column 0 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky nesw
-    grid $base.cpd39.02 \
-        -in $base.cpd39 -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew
-    grid $base.cpd39.03 \
-        -in $base.cpd39 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns
-
-    $widget(libraries_listbox) delete 0 end
-
-    foreach name [lsort $vTcl(libNames)] {
-        $widget(libraries_listbox) insert end $name
-    }
-
-    wm geometry $base 446x322
-    vTcl:center $base 446 322
+    ## We specify the geometry of the window because we'd have to deiconify
+    ## the window first to get its true geometry.  This causes the ugly
+    ## window jump as it is deiconified and then centered.
+    vTcl:center $base 400 400
     wm deiconify $base
 }
 

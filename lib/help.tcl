@@ -24,55 +24,43 @@
 proc vTclWindow.vTcl.help {args} {
     global vTcl
     set base .vTcl.help
-    if {[winfo exists .vTcl.help]} {
-        wm deiconify .vTcl.help; return
-    }
-    toplevel .vTcl.help -class Toplevel
-    wm withdraw .vTcl.help
-    wm transient .vTcl.help .vTcl
-    wm focusmodel .vTcl.help passive
-    wm title .vTcl.help "Help for Visual Tcl"
-    wm maxsize .vTcl.help 1137 870
-    wm minsize .vTcl.help 1 1
-    wm overrideredirect .vTcl.help 0
-    wm resizable .vTcl.help 1 1
-    frame .vTcl.help.fra18 \
-        -borderwidth 1 -height 30 -relief raised -width 30 
-    text .vTcl.help.fra18.tex22 \
-        -height 15 -width 80 -background white \
-        -xscrollcommand {.vTcl.help.fra18.scr23 set} \
-        -yscrollcommand {.vTcl.help.fra18.scr24 set} -wrap none
-    scrollbar .vTcl.help.fra18.scr23 \
-        -command {.vTcl.help.fra18.tex22 xview} -orient horiz
-    scrollbar .vTcl.help.fra18.scr24 \
-        -command {.vTcl.help.fra18.tex22 yview} -orient vert
+    if {[winfo exists $base]} { wm deiconify $base; return }
+
+    toplevel $base -class Toplevel
+    wm withdraw $base
+    wm transient $base .vTcl
+    wm focusmodel $base passive
+    wm title $base "Help for Visual Tcl"
+    wm maxsize $base 1137 870
+    wm minsize $base 1 1
+    wm overrideredirect $base 0
+    wm resizable $base 1 1
+
+    ScrolledWindow $base.fra18
+    text $base.fra18.tex22 \
+        -height 15 -width 80 -background white -wrap none
+    $base.fra18 setwidget $base.fra18.tex22
+
     ::vTcl::OkButton $base.but21 -command "Window hide $base"
-    pack .vTcl.help.but21 \
+    pack $base.but21 \
         -anchor e -expand 0 -fill none -padx 2 -pady 2 -side top 
-    pack .vTcl.help.fra18 \
+    pack $base.fra18 \
         -anchor center -expand 1 -fill both -padx 5 -pady 5 -side top 
-    grid columnconf .vTcl.help.fra18 0 -weight 1
-    grid rowconf .vTcl.help.fra18 0 -weight 1
-    grid .vTcl.help.fra18.tex22 \
-        -column 0 -row 0 -columnspan 1 -rowspan 1 -sticky nesw 
-    grid .vTcl.help.fra18.scr23 \
-        -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew 
-    grid .vTcl.help.fra18.scr24 \
-        -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns 
+    pack $base.fra18.tex22
 
     set file [file join $vTcl(VTCL_HOME) lib Help Main]
     if {[file exists $file]} {
 	set fp [open $file]
-	.vTcl.help.fra18.tex22 delete 0.0 end
-	.vTcl.help.fra18.tex22 insert end [read $fp]
+	$base.fra18.tex22 delete 0.0 end
+	$base.fra18.tex22 insert end [read $fp]
 	close $fp
     }
 
-    .vTcl.help.fra18.tex22 configure -state disabled
+    $base.fra18.tex22 configure -state disabled
 
-    wm geometry .vTcl.help 600x425
-    vTcl:center .vTcl.help 600 425
-    wm deiconify .vTcl.help
+    wm geometry $base 600x425
+    vTcl:center $base 600 425
+    wm deiconify $base
 }
 
 ###
@@ -82,6 +70,8 @@ proc vTclWindow.vTcl.help {args} {
 proc vTcl:Help {helpName} {
     global vTcl
 
+    set base .vTcl.help
+
     set file [file join $vTcl(VTCL_HOME) lib Help $helpName]
     if {![file exist $file]} {
 	set helpName Main
@@ -90,18 +80,18 @@ proc vTcl:Help {helpName} {
 
     if {[vTcl:streq $helpName "Main"]} { set helpName "Visual Tcl" }
 
-    Window show .vTcl.help
+    Window show $base
 
-    wm title .vTcl.help $helpName
+    wm title $base $helpName
 
-    .vTcl.help.fra18.tex22 configure -state normal
+    $base.fra18.tex22 configure -state normal
 
     set fp [open $file]
-    .vTcl.help.fra18.tex22 delete 0.0 end
-    .vTcl.help.fra18.tex22 insert end [read $fp]
+    $base.fra18.tex22 delete 0.0 end
+    $base.fra18.tex22 insert end [read $fp]
     close $fp
 
-    .vTcl.help.fra18.tex22 configure -state disabled
+    $base.fra18.tex22 configure -state disabled
 
     update
 }
@@ -209,16 +199,12 @@ proc vTclWindow.vTcl.tip {base {container 0}} {
         -borderwidth 1 \
         -image light_bulb \
         -relief raised -text label 
-    frame $base.cpd25 \
-        -borderwidth 1 -relief raised 
-    scrollbar $base.cpd25.01 \
-        -command "$base.cpd25.03 xview" -orient horizontal
-    scrollbar $base.cpd25.02 \
-        -command "$base.cpd25.03 yview"
+
+    ScrolledWindow $base.cpd25
     text $base.cpd25.03 -background white \
-        -font -Adobe-Helvetica-Medium-R-Normal-*-*-120-*-*-*-*-*-* -height 1 \
-        -xscrollcommand "$base.cpd25.01 set" \
-        -yscrollcommand "$base.cpd25.02 set" 
+        -font -Adobe-Helvetica-Medium-R-Normal-*-*-120-*-*-*-*-*-* -height 1
+    $base.cpd25 setwidget $base.cpd25.03
+
     label $base.lab19 \
         -borderwidth 1 -font [vTcl:font:get_font "vTcl:font8"] \
         -text {Did you know ...?} 
@@ -243,15 +229,7 @@ proc vTclWindow.vTcl.tip {base {container 0}} {
     pack $base.cpd25 \
         -in $base -anchor center -expand 1 -fill both -padx 5 -pady 5 \
         -side bottom 
-    grid columnconf $base.cpd25 0 -weight 1
-    grid rowconf $base.cpd25 0 -weight 1
-    grid $base.cpd25.01 \
-        -in $base.cpd25 -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew 
-    grid $base.cpd25.02 \
-        -in $base.cpd25 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns 
-    grid $base.cpd25.03 \
-        -in $base.cpd25 -column 0 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky nesw 
+    pack $base.cpd25.03
     pack $base.lab19 \
         -in $base -anchor center -expand 0 -fill none -side top 
 
@@ -346,16 +324,10 @@ namespace eval ::vTcl::news {
 	wm deiconify $base
 	wm title $base "Visual Tcl News"
 
-	frame $base.f \
-	    -borderwidth 1 -height 78 -relief raised -width 75 
-	scrollbar $base.f.hs \
-	    -command "$base.f.t xview" -orient horizontal
-	scrollbar $base.f.vs \
-	    -command "$base.f.t yview" -orient vertical
-	text $base.f.t -background white -wrap none \
-	    -xscrollcommand "$base.f.hs set" \
-	    -yscrollcommand "$base.f.vs set" \
-	    -cursor arrow
+	ScrolledWindow $base.f
+	text $base.f.t -background white -wrap none -cursor arrow
+	$base.f setwidget $base.f.t
+
 	::vTcl::OkButton $base.b -anchor center -command "Window hide $base"
 
 	label $base.l -anchor w
@@ -368,14 +340,7 @@ namespace eval ::vTcl::news {
 	pack $base.l -side bottom -fill x
 	pack $base.f \
 	    -in $base -anchor center -expand 1 -fill both -side top
-	grid columnconf $base.f 0 -weight 1
-	grid rowconf $base.f 0 -weight 1
-	grid $base.f.hs \
-	    -in $base.f -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew
-	grid $base.f.vs \
-	    -in $base.f -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns
-	grid $base.f.t \
-	    -in $base.f -column 0 -row 0 -columnspan 1 -rowspan 1 -sticky nesw 
+	pack $base.f.t
 
 	wm protocol $base WM_DELETE_WINDOW "$base.b invoke"
 
@@ -416,4 +381,66 @@ namespace eval ::vTcl::news {
 	}
 	$base.f.t configure -state disabled
     }
+}
+
+proc vTclWindow.vTcl.infolibs {{base ""} {container 0}} {
+
+    if {$base == ""} {
+        set base .vTcl.infolibs
+    }
+    if {[winfo exists $base] && (!$container)} {
+        wm deiconify $base; return
+    }
+
+    global vTcl
+
+    # let's keep widget local
+    set widget(libraries_close)         "$base.but40"
+    set widget(libraries_frame_listbox) "$base.cpd39"
+    set widget(libraries_header)        "$base.lab38"
+    set widget(libraries_listbox)       "$base.cpd39.01"
+
+    ###################
+    # CREATING WIDGETS
+    ###################
+    if {!$container} {
+    toplevel $base -class Toplevel
+    wm withdraw $base
+    wm focusmodel $base passive
+    wm transient  $base .vTcl
+    wm maxsize $base 1009 738
+    wm minsize $base 1 1
+    wm overrideredirect $base 0
+    wm resizable $base 1 1
+    wm title $base "Visual Tcl Libraries"
+    }
+    label $base.lab38 \
+        -borderwidth 1 -text {The following libraries are available:}
+
+    ScrolledWindow $base.cpd39
+    listbox $base.cpd39.01 -width 0
+    $base.cpd39 setwidget $base.cpd39.01
+
+    ::vTcl::OkButton $base.but40 -command "Window hide $base"
+
+    ###################
+    # SETTING GEOMETRY
+    ###################
+    pack $base.but40 \
+        -in $base -anchor center -expand 0 -fill none -side top -anchor e
+    pack $base.lab38 \
+        -in $base -anchor center -expand 0 -fill x -ipadx 1 -side top
+    pack $base.cpd39 \
+        -in $base -anchor center -expand 1 -fill both -side top
+    pack $base.cpd39.01
+
+    $widget(libraries_listbox) delete 0 end
+
+    foreach name [lsort $vTcl(libNames)] {
+        $widget(libraries_listbox) insert end $name
+    }
+
+    wm geometry $base 446x322
+    vTcl:center $base 446 322
+    wm deiconify $base
 }
