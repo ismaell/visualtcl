@@ -38,7 +38,7 @@ ChangeLog for Visual Tcl:
       raise when the mouse passes over it.
     o Using transparent GIF images.
     o Added background color tab in preferences.
-    o Messages boxes don't use tk_strictMotif
+    o Message boxes don't use tk_strictMotif
 
 1.51 -> 1.52
     o Fixed startup bug

@@ -25,6 +25,8 @@ exec wish "$0" "$@"
 ##############################################################################
 #
 
+namespace eval ::vTcl {}
+
 set vTcl(sourcing) 0
 
 proc vTcl:log {msg} {
@@ -132,6 +134,14 @@ proc vTcl:load_libs {} {
     }
 }
 
+proc ::vTcl::load_bwidgets {} {
+    vTcl:splash_status "Loading BWidgets"
+    uplevel #0 {
+	set dir [file join $vTcl(LIB_DIR) bwidget]
+	source  [file join $dir pkgIndex.tcl]
+    }
+}
+
 proc vTcl:setup {} {
     global tk_strictMotif env vTcl tcl_platform __vtlog
 
@@ -179,6 +189,7 @@ proc vTcl:setup {} {
     vTcl:splash
     vTcl:load_libs
     vTcl:load_widgets
+    ::vTcl::load_bwidgets
     if {[file exists $vTcl(CONF_FILE)]} {
         catch {uplevel #0 [list source $vTcl(CONF_FILE)]}
         catch {set vTcl(w,def_mgr) $vTcl(pr,manager)}
