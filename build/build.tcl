@@ -27,8 +27,8 @@
 
 ##############################################################################
 
-set version 1.5.2
-set bldroot /home/cgavin/vtcl
+set version 2.0.0
+set bldroot /home/cgavin/vtcl2-0
 set bldtmp $bldroot/build/tmp
 
 file delete -force $bldtmp
@@ -38,6 +38,9 @@ set copyroot $bldtmp/vtcl-$version/opt/local/vtcl-$version
 
 file mkdir $copyroot
 file mkdir $copyroot/lib
+file mkdir $copyroot/lib/bwidget
+file mkdir $copyroot/lib/bwidget/lang
+file mkdir $copyroot/lib/bwidget/images
 file mkdir $copyroot/lib/Help
 file mkdir $copyroot/lib/Widgets
 file mkdir $copyroot/lib/Widgets/bwidget
@@ -62,11 +65,16 @@ exec cp $bldroot/vtcl.tcl                                 $copyroot
 exec cp $bldroot/vtsetup.tcl                              $copyroot
 exec cp $bldroot/configure                                $copyroot
 eval exec cp [glob $bldroot/lib/*.tcl]                    $copyroot/lib
+eval exec cp [glob $bldroot/lib/bwidget/*.tcl]            $copyroot/lib/bwidget
+eval exec cp [glob $bldroot/lib/bwidget/lang/*.rc]        $copyroot/lib/bwidget/lang
+eval exec cp [glob $bldroot/lib/bwidget/images/*.gif]     $copyroot/lib/bwidget/images
+eval exec cp [glob $bldroot/lib/bwidget/images/*.xbm]     $copyroot/lib/bwidget/images
 eval exec cp [glob $bldroot/lib/Help/Main]                $copyroot/lib/Help
 eval exec cp [glob $bldroot/lib/Help/Preferences]         $copyroot/lib/Help
 eval exec cp [glob $bldroot/lib/Help/PropManager]         $copyroot/lib/Help
 eval exec cp [glob $bldroot/lib/Help/WidgetTree]          $copyroot/lib/Help
 eval exec cp [glob $bldroot/lib/Help/Tips]                $copyroot/lib/Help
+eval exec cp [glob $bldroot/lib/Help/About.txt]           $copyroot/lib/Help
 eval exec cp [glob $bldroot/lib/Widgets/bwidget/*.*]      $copyroot/lib/Widgets/bwidget
 eval exec cp [glob $bldroot/lib/Widgets/core/*.*]         $copyroot/lib/Widgets/core
 eval exec cp [glob $bldroot/lib/Widgets/tix/*.*]          $copyroot/lib/Widgets/tix
@@ -89,7 +97,6 @@ eval exec cp [glob $bldroot/demo/images/*.*]              $copyroot/demo/images
 eval exec cp [glob $bldroot/sample/*.tcl]                 $copyroot/sample
 
 # temp for the alpha version
-file delete -force $copyroot/lib/lib_bwidget.tcl
 file delete -force $copyroot/lib/lib_user.tcl
 
 cd $bldtmp
@@ -98,9 +105,9 @@ exec tar cf - -C $bldtmp vtcl-$version | gzip >vtcl-$version.tar.gz
 cd $copyroot/..
 exec tar cf - -C . vtcl-$version | gzip >vtcl-$version.tar.gz
 
-cd $bldroot/build
-file copy -force vtcl-$version-1.spec         /root/RPM/SPECS
-file copy -force $bldtmp/vtcl-$version.tar.gz /root/RPM/SOURCES
-file copy -force $bldroot/images/title.gif    /root/RPM/SOURCES
-
-exec /bin/rpm -ba /root/RPM/SPECS/vtcl-$version-1.spec
+#cd $bldroot/build
+#file copy -force vtcl-$version-1.spec         /root/RPM/SPECS
+#file copy -force $bldtmp/vtcl-$version.tar.gz /root/RPM/SOURCES
+#file copy -force $bldroot/images/title.gif    /root/RPM/SOURCES
+#
+#exec /bin/rpm -ba /root/RPM/SPECS/vtcl-$version-1.spec
