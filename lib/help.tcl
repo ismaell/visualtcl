@@ -292,6 +292,10 @@ namespace eval ::vTcl::news {
 	    $http $URL -timeout 30000 -command ::vTcl::news::display_news
 	    } token]} {
 	    vTcl:status
+
+            ## too bad, we couldn't show news, so we won't bother the user
+            ## again on the next startup
+            set vTcl(pr,dontshownews) 1
 	}
     }
 
