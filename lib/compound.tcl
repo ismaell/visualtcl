@@ -433,9 +433,20 @@ proc vTcl:replace {target replace source} {
 
 proc vTcl:name_compound {t} {
     global vTcl
-    if {$t == "" || ![winfo exists $t]} {return}
-    set name [vTcl:get_string "Name Compound" $t]
-    if {$name == ""} {return}
+    if {$t == "" || ![winfo exists $t]} {return ""}
+    set ask_name 1
+    set name ""
+    while {$ask_name} {
+        set name [vTcl:get_string "Name Compound" $t $name]
+        if {$name == ""} {return ""}
+        set ask_name 0
+        if {[regexp \{|\}|\\\[|\\\] $name]} {
+            ::vTcl::MessageBox -icon error \
+              -title "Invalid Compound Name" \
+              -message "A compound name cannot contain the following characters:\n\[\]\{\}"
+            set ask_name 1
+        }
+    }
 
     ## selection of list of procs to include
     set proposedProcs ""
@@ -450,11 +461,16 @@ proc vTcl:name_compound {t} {
     ## if there are no procs to include well just don't ask (duh)
     set includedProcs ""
     if {![lempty $proposedProcs]} {
+        ## be nice and grab the list of procs if the compound exists
+        set selectedProcs ""
+        if {[::vTcl::compounds::existsCompound user $name]} {
+            set selectedProcs [::vTcl::compounds::getProcs user $name]
+        }
         set includedProcs [::vTcl::input::listboxSelect::select \
-        $proposedProcs "Select Code for Compound" extended \
-        -canceltext "No Code" \
-        -headertext "Choose procedures to include with the compound.
-Select 'No Code' if the compound doesn't contain code."]
+          $proposedProcs "Select Code for Compound" extended \
+          -canceltext "No Code" \
+          -headertext "Choose procedures to include with the compound.\nSelect 'No Code' if the compound doesn't contain code." \
+          -selecteditems $selectedProcs]
     }
 
     ## if any of the included procs is in a namespace and ends with init
@@ -472,6 +488,9 @@ Select 'No Code' if the compound doesn't contain code."]
 
     eval [vTcl::compounds::createCompound $t user $name $includedProcs $initCmd $mainCmd]
     vTcl:cmp_user_menu
+
+    ## return the name of the created compound for future use
+    return [list user $name]
 }
 
 ##########################################################################
@@ -482,6 +501,14 @@ namespace eval ::vTcl::compounds {
     namespace eval system    {}
     namespace eval user      {}
     namespace eval clipboard {}
+
+    proc existsCompound {type compoundName} {
+        set spc ${type}::[list $compoundName]
+        if {[info proc ${spc}::compoundCmd] != ""} {
+            return 1
+        }
+        return 0
+    }
 
     proc createCompound {target type compoundName \
                         {procs {}} {initCmd {}} {mainCmd {}}} {
@@ -781,6 +808,11 @@ namespace eval ::vTcl::compounds {
         return [set ${spc}::libraries]
     }
 
+    proc getProcs {type compoundName} {
+        set spc ${type}::[list $compoundName]
+        return [vTcl:at ${spc}::procs]
+    }
+
     proc deleteCompound {type compoundName} {
         set spc ${type}::[list $compoundName]
 
@@ -801,7 +833,4 @@ namespace eval ::vTcl::compounds {
         namespace delete $spc
     }
 }
-
-
-
 

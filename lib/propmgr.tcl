@@ -1256,7 +1256,13 @@ namespace eval ::vTcl::properties {
             bind $entryWidget <FocusOut> $oldBind
             return
         }
-        vTcl:set_alias $target $alias
+
+        ## user wants to unset alias?
+        if {$alias == ""} {
+            vTcl:unset_alias $target
+        } else {
+            vTcl:set_alias $target $alias
+        }
     }
 }
 

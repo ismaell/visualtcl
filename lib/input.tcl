@@ -64,7 +64,7 @@ proc vTcl:string_window {title base {value ""}} {
         -padx 0 -pady 0 -side top
     ::vTcl::CancelButton $base.fra19.but21 -command "
 	$base.ent18 delete 0 end
-	vTcl:set_string \{$base\} \{$value\}
+	vTcl:set_string \{$base\} \"\"
     "
     pack $base.fra19.but21 \
         -in $base.fra19 -anchor center -expand 0 -fill none -ipadx 0 \
@@ -93,6 +93,9 @@ proc vTcl:set_label {t} {
         return
     }
     set label [vTcl:get_string "Setting label for $t" $t $txt]
+    if {$label == ""} {
+        return
+    }
     $t conf -text $label
     vTcl:place_handles $t
     set vTcl(w,opt,-text) $label
@@ -274,6 +277,17 @@ proc select {contents title {selectMode single} args} {
             }
             -headertext {
                  $top.SelectLabel configure -text $value
+            }
+            -selecteditems {
+                 set index 0
+                 foreach item $contents {
+                     set found [lsearch -exact $value $item]
+                     if {$found != -1} {
+                         $top.SelectListbox selection set $index
+                     }
+                     incr index
+                 }
+                 ::vTcl::input::listboxSelect::updateSelection $top
             }
         }
     }

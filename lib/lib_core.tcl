@@ -395,6 +395,10 @@ proc vTcl:core:set_option {target option description} {
 
     set value [$target cget $option]
     set newvalue [vTcl:get_string $description $target $value]
+    # cancelled?
+    if {$newvalue == ""} {
+        return
+    }
 
     if {! [vTcl:streq $value $newvalue]} {
         $target configure $option $newvalue
@@ -991,6 +995,7 @@ namespace eval ::vTcl::itemEdit {
 	$top.ItemsEditMenuAddDelete entryconfigure 1 -state $state($enabled)
     }
 }
+
 
 
 

@@ -874,7 +874,7 @@ proc vTcl:set_alias {target {alias ""} {noupdate ""}} {
         set valid 0
         while {!$valid} {
             set alias [vTcl:get_string "Widget alias for $c" $target $was]
-            if {$alias != $was} {
+            if {$alias != $was && $alias != ""} {
                 # make sure no other widget in the same toplevel has the same alias
                 set valid [vTcl:valid_alias $target $alias]
                 if {!$valid} {
@@ -997,6 +997,10 @@ proc vTcl:set_textvar {t} {
     global vTcl
     if {$t == ""} {return}
     set label [vTcl:get_string "Setting textvariable" $t [$t cget -textvar]]
+    if {$label == ""} {
+        ## user cancelled
+        return
+    }
     $t conf -textvar $label
     vTcl:place_handles $t
     vTcl:update_widget_info $t
@@ -1569,6 +1573,7 @@ namespace eval vTcl::widgets {
         return [$::classes($class,queryInsertOptionsCmd) $addOptions options]
     }
 }
+
 
 
 
