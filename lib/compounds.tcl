@@ -596,7 +596,11 @@ bind "_TopLevel" <<Create>> {
     if {![info exists _topcount]} {set _topcount 0}; incr _topcount
 }
 bind "_TopLevel" <<DeleteWindow>> {
-    destroy %W; if {$_topcount == 0} {exit}
+    if {[set ::%W::_modal]} {
+        vTcl:Toplevel:WidgetProc %W endmodal
+    } else {
+        destroy %W; if {$_topcount == 0} {exit}
+    }
 }
 bind "_TopLevel" <Destroy> {
     if {[winfo toplevel %W] == "%W"} {incr _topcount -1}
@@ -743,6 +747,7 @@ proc vTclWindow.top81 {base} {
 }
 
 }
+
 
 
 

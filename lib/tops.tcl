@@ -108,10 +108,13 @@ proc vTcl:convert_tops {} {
 proc vTcl:bind_tops {} {
     global vTcl
 
+    ## do this anyway so that the latest version of the bindings
+    ## will be saved into the file
+    vTcl::widgets::core::toplevel::setBindings
+
     foreach i $vTcl(tops) {
 	# convert from 1.51 to 1.6
 	if {[lsearch $::vTcl(bindtags,$i) _TopLevel] == -1} {
-	    vTcl::widgets::core::toplevel::setBindings
 	    lappend ::vTcl(bindtags,$i) _TopLevel
 	}
     }
@@ -252,4 +255,5 @@ namespace eval ::vTcl::tops {
     ::vTcl::notify::subscribe edit_mode "vtcltops" ::vTcl::tops::editMode
     ::vTcl::notify::subscribe test_mode "vtcltops" ::vTcl::tops::testMode
 }
+
 

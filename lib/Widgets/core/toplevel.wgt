@@ -73,7 +73,7 @@ proc vTcl:toplevel {args} {
 
     uplevel #0 eval toplevel $args
     set target [lindex $args 0]
-    namespace eval ::$target {}
+    namespace eval ::$target {set _modal 0}
 }
 
 proc vTcl:Toplevel:WidgetProc {w args} {
@@ -88,7 +88,7 @@ proc vTcl:Toplevel:WidgetProc {w args} {
     }
     set command [lindex $args 0]
     set args [lrange $args 1 end]
-    switch -- $command {
+    switch -- [string tolower $command] {
         "setvar" {
             set varname [lindex $args 0]
             set value [lindex $args 1]
@@ -98,15 +98,24 @@ proc vTcl:Toplevel:WidgetProc {w args} {
                 return [set ::${w}::${varname} $value]
             }
         }
-        "hide" - "Hide" - "show" - "Show" {
+        "hide" - "show" {
             Window [string tolower $command] $w
         }
-        "ShowModal" {
-            Window show $w
-            raise $w
-            grab $w
-            tkwait window $w
-            grab release $w
+        "showmodal" {
+            ## modal dialog ends when window is destroyed
+            Window show $w; raise $w
+            grab $w; tkwait window $w; grab release $w
+        }
+        "startmodal" {
+            ## ends when endmodal called
+            Window show $w; raise $w
+            set ::${w}::_modal 1
+            grab $w; tkwait variable ::${w}::_modal; grab release $w
+        }
+        "endmodal" {
+            ## ends modal dialog started with startmodal, argument is var name
+            set ::${w}::_modal 0
+            Window hide $w
         }
         default {
             uplevel $w $command $args
@@ -137,7 +146,7 @@ namespace eval vTcl::widgets::core::toplevel {
 
     proc setBindings {} {
 
-    	bind _TopLevel <<Create>> {
+    	  bind _TopLevel <<Create>> {
 	    if {![info exists _topcount]} {set _topcount 0}; incr _topcount
         }
 
@@ -146,7 +155,11 @@ namespace eval vTcl::widgets::core::toplevel {
         }
 
         bind _TopLevel <<DeleteWindow>> {
-            destroy %W; if {$_topcount == 0} {exit}
+            if {[set ::%W::_modal]} {
+                vTcl:Toplevel:WidgetProc %W endmodal
+            } else {
+                destroy %W; if {$_topcount == 0} {exit}
+            }
         }
 
         ::widgets_bindings::add_tag_to_tagslist _TopLevel
@@ -296,7 +309,7 @@ namespace eval vTcl::widgets::core::toplevel {
 	## Let's be safe and force wm for toplevel windows.  Just in case...
         set mgr wm
         set opt [$target configure]
-	set class [vTcl:get_class $target]
+        set class [vTcl:get_class $target]
 
         if {$target != "."} {
             set result "$vTcl(tab)$classes($class,createCmd) "
@@ -346,5 +359,6 @@ namespace eval vTcl::widgets::core::toplevel {
 	return $out
     }
 }
+
 
 
