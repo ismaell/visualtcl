@@ -52,7 +52,7 @@ proc vTclWindow.vTcl.about {args} {
     label .vTcl.about.lab21 \
         -borderwidth 0 \
         -text "Maintained by Christian Gavin (cgavin@dnai.com)
-and Damon Courtney
+and Damon Courtney (damon@unreality.com)
 freeWrap is Copyright (C) 1998
 by Dennis R. LaBelle (dlabelle@albany.net)
 All Rights Reserved."
