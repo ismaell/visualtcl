@@ -42,7 +42,15 @@ NewOption -colormap  "color map"  type
 NewOption -container "container"  boolean
 NewOption -visual    "visual"     type
 
+## Right-click menu
+Function        "Create Compound..."         vTcl::widgets::core::frame::rightClickCmd
+
 namespace eval ::vTcl::widgets::core::frame {
+
+    proc rightClickCmd {} {
+        set w $::vTcl(w,widget)
+        set newName [vTcl:name_compound $w]
+    }
 
     proc dumpCmd {target basename} {
         global vTcl basenames classes
@@ -189,4 +197,5 @@ namespace eval ::vTcl::widgets::core::frame {
         }
     }
 }
+
 
