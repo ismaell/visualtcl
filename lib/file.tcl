@@ -426,9 +426,11 @@ proc vTcl:save2 {file} {
     }
     set output [open $file w]
 
-    puts $output "\#!/bin/sh"
-    puts $output "\# the next line restarts using wish\\"
-    puts $output {exec wish "$0" "$@" }
+    if {$vTcl(pr,saveasexecutable)} {
+        puts $output "\#!/bin/sh"
+        puts $output "\# the next line restarts using wish\\"
+        puts $output {exec wish "$0" "$@" }
+    }
 
     # header to import libraries
     # code to load images
@@ -474,7 +476,7 @@ proc vTcl:save2 {file} {
     # @@end_change
 
     vTcl:addRcFile $file
-    
+
     close $output
     vTcl:status "Done Saving"
     set vTcl(file,mode) ""
@@ -492,7 +494,8 @@ proc vTcl:save2 {file} {
     # executable under Linux to be able to run it, so here
     # we go
 
-    if {$tcl_platform(platform) == "unix"} {
+    if {$vTcl(pr,saveasexecutable) &&
+        $tcl_platform(platform) == "unix"} {
     	    file attributes $file -permissions [expr 0755]
     }
 

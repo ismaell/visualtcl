@@ -30,6 +30,47 @@ proc vTcl:show_console {{show show}} {
     }
 }
 
+namespace eval ::console {
+    variable MRU         ""
+    variable current_MRU 0
+
+    proc add_MRU cmd {
+
+        variable MRU
+        variable current_MRU 0
+
+        set MRU [linsert $MRU 0 $cmd]
+
+        if {[llength $MRU] > 20} {
+            set MRU [lreplace $MRU end end]
+        }
+
+        set current_MRU -1
+    }
+
+    proc get_MRU direction {
+
+        variable MRU
+        variable current_MRU
+
+        switch $direction {
+            backward {
+                if {$current_MRU < [expr [llength $MRU] - 1]} {
+                    incr current_MRU
+                }
+            }
+            forward {
+                if {$current_MRU > 0} {
+                    incr current_MRU -1
+                }
+            }
+        }
+
+        set result [lindex $MRU $current_MRU]
+        return $result
+    }
+}
+
 proc vTclWindow.vTcl.con {args} {
     #@@change by Christian Gavin 3/18/2000
     # restore console position/size
@@ -40,6 +81,7 @@ proc vTclWindow.vTcl.con {args} {
     if {[winfo exists .vTcl.con]} {
         wm deiconify .vTcl.con; return
     }
+
     toplevel .vTcl.con -class vTcl
     wm transient .vTcl.con .vTcl
     wm minsize .vTcl.con 375 80
@@ -91,18 +133,16 @@ proc vTclWindow.vTcl.con {args} {
         .vTcl.con.fra5.tex7 conf -state normal
         .vTcl.con.fra5.tex7 insert end "\n[.vTcl.con.fra6.ent10 get]" vTcl:bold
         .vTcl.con.fra5.tex7 conf -state disabled
-        
-	set cmd [.vTcl.con.fra6.ent10 get]
-	if {$cmd == "exit" || $cmd == "quit"} {
-	    vTcl:attrbar:toggle_console
-	    set caught 0
-	    set vTcl(err) $cmd
-	} else {
-	    set caught [expr [catch $cmd vTcl(err)] == 1]
-	}
 
-	# not needed, since the redefined "puts" command calls this function
-        # vTcl:console:get_output
+        set cmd [.vTcl.con.fra6.ent10 get]
+        if {$cmd == "exit" || $cmd == "quit"} {
+            vTcl:attrbar:toggle_console
+            set caught 0
+            set vTcl(err) $cmd
+        } else {
+            ::console::add_MRU $cmd
+            set caught [expr [catch $cmd vTcl(err)] == 1]
+        }
 
         .vTcl.con.fra5.tex7 conf -state normal
 
@@ -116,6 +156,17 @@ proc vTclWindow.vTcl.con {args} {
         .vTcl.con.fra5.tex7 yview end
         .vTcl.con.fra6.ent10 delete 0 end
     }
+    bind .vTcl.con.fra6.ent10 <KeyRelease-Up> {
+        set cmd [::console::get_MRU backward]
+        .vTcl.con.fra6.ent10 delete 0 end
+        .vTcl.con.fra6.ent10 insert 0 $cmd
+    }
+    bind .vTcl.con.fra6.ent10 <KeyRelease-Down> {
+        set cmd [::console::get_MRU forward]
+        .vTcl.con.fra6.ent10 delete 0 end
+        .vTcl.con.fra6.ent10 insert 0 $cmd
+    }
+
     catch {wm geometry .vTcl.con $vTcl(geometry,.vTcl.con)}
 
     .vTcl.con.fra5.tex7 tag configure vTcl:bold \

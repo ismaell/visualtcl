@@ -50,6 +50,7 @@ proc vTcl:prefs:init {base} {
        variable imageeditor      ""
        variable saveimagesinline ""
        variable projfile         ""
+       variable saveasexecutable ""
     }
 
     set prefs::font_dlg [eval font create [font actual $vTcl(pr,font_dlg)]]
@@ -262,6 +263,8 @@ proc {vTcl:prefs:data_exchange} {save_and_validate} {
 	prefs::multiplace       $save_and_validate
     vTcl:data_exchange_var vTcl(pr,projfile)         \
     	prefs::projfile         $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,saveasexecutable) \
+        prefs::saveasexecutable $save_and_validate
 
     if {$save_and_validate} {
     	set vTcl(pr,font_dlg)   [font configure $prefs::font_dlg]
@@ -420,7 +423,7 @@ proc {vTcl:prefs:project} {tab} {
 	set last  [vTcl:formCompound:add $tab  label \
 		-text "Option encaps" -background gray -relief raised]
 	pack configure $last -fill x
-   
+
 	vTcl:formCompound:add $tab radiobutton  \
 		-text "List"   -variable prefs::encase -value list
 	vTcl:formCompound:add $tab radiobutton  \
@@ -451,5 +454,13 @@ proc {vTcl:prefs:project} {tab} {
 		-text "Pack" -variable prefs::manager -value pack
 	vTcl:formCompound:add $tab radiobutton  \
 		-text "Place" -variable prefs::manager -value place
-}
 
+	#======================================================================
+
+	set last  [vTcl:formCompound:add $tab  label \
+		-text "Source file" -background gray -relief raised]
+	pack configure $last -fill x
+
+	vTcl:formCompound:add $tab checkbutton  \
+		-text "Save as executable" -variable prefs::saveasexecutable
+}

@@ -109,6 +109,7 @@ set vTcl(pr,projecttype) "single"
 set vTcl(pr,imageeditor) ""
 set vTcl(pr,saveimagesinline) 0
 set vTcl(pr,projfile)    0
+set vTcl(pr,saveasexecutable) 1
 set vTcl(numRcFiles)	 5
 # end preferences
 set vTcl(proc,name)      ""
