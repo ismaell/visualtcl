@@ -20,8 +20,15 @@ Export          vTcl:toplevel
 Export          vTcl:DoCmdOption
 
 proc vTcl:DoCmdOption {target cmd} {
+
+    ## menus are considered toplevel windows
+    set parent $target
+    while {[winfo class $parent] == "Menu"} {
+        set parent [winfo parent $parent]
+    }
+
     regsub -all {\%widget} $cmd $target cmd
-    regsub -all {\%top} $cmd [winfo toplevel $target] cmd
+    regsub -all {\%top} $cmd [winfo toplevel $parent] cmd
 
     uplevel #0 [list eval $cmd]
 }

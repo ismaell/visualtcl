@@ -240,8 +240,14 @@ proc {vTcl:DefineAlias} {target alias widgetProc top_or_alias cmdalias} {
 }
 
 proc {vTcl:DoCmdOption} {target cmd} {
+    ## menus are considered toplevel windows
+    set parent $target
+    while {[winfo class $parent] == "Menu"} {
+        set parent [winfo parent $parent]
+    }
+
     regsub -all {\%widget} $cmd $target cmd
-    regsub -all {\%top} $cmd [winfo toplevel $target] cmd
+    regsub -all {\%top} $cmd [winfo toplevel $parent] cmd
 
     uplevel #0 [list eval $cmd]
 }
@@ -494,7 +500,7 @@ proc vTcl:project:info {} {
         array set save {-background 1 -text 1}
     }
     namespace eval ::widgets::.top22.fra27.fra29.lab23 {
-        array set save {-background 1 -padx 1 -pady 1 -text 1}
+        array set save {-background 1 -text 1}
     }
     namespace eval ::widgets::.top22.fra26 {
         array set save {-borderwidth 1 -height 1 -relief 1 -width 1}
@@ -509,7 +515,7 @@ proc vTcl:project:info {} {
         array set save {-command 1 -highlightthickness 1}
     }
     namespace eval ::widgets::.top22.cpd44.03 {
-        array set save {-background 1 -height 1 -relief 1 -width 1 -xscrollcommand 1 -yscrollcommand 1}
+        array set save {-background 1 -height 1 -relief 1 -width 1 -wrap 1 -xscrollcommand 1 -yscrollcommand 1}
     }
     namespace eval ::widgets::.top22.fra45 {
         array set save {-borderwidth 1 -height 1 -relief 1 -width 1}
@@ -557,7 +563,7 @@ namespace eval ::edit_tag {
 
 proc {::edit_tag::add_new_tag} {mainw w selrange} {
 global widget
-upvar #0 ::$widget($w)::tag_name tag_name
+upvar #0 ::${w}::tag_name tag_name
 
 eval $mainw.MainText tag add $tag_name $selrange
 ::edit_tag::set_existing_tag $mainw $w
@@ -572,10 +578,10 @@ namespace eval ::edit_tag {
 proc {::edit_tag::do_modal} {w} {
 global widget
 
-set ::$widget($w)::edit_tag_status ""
-$w show
-vwait ::$widget($w)::edit_tag_status
-$w hide
+set ::${w}::edit_tag_status ""
+Window show $w
+vwait ::${w}::edit_tag_status
+Window hide $w
 }
 
 }
@@ -586,12 +592,13 @@ namespace eval ::edit_tag {
 
 proc {::edit_tag::enable_ok} {w} {
 global widget
-upvar #0 ::$widget($w)::tag_name tag_name
+set wa $widget(rev,$w)
+upvar #0 ::${w}::tag_name tag_name
 
 if {$tag_name == ""} {
-    $w.EditTagOK configure -state disabled
+    $wa.EditTagOK configure -state disabled
 } else {
-    $w.EditTagOK configure -state normal
+    $wa.EditTagOK configure -state normal
 }
 }
 
@@ -604,7 +611,7 @@ namespace eval ::edit_tag {
 proc {::edit_tag::get_status} {w} {
 ## easier access to namespace variable
 global widget
-upvar #0 $widget($w)::edit_tag_status edit_tag_status
+upvar #0 ::${w}::edit_tag_status edit_tag_status
 return $edit_tag_status
 }
 
@@ -616,23 +623,24 @@ namespace eval ::edit_tag {
 
 proc {::edit_tag::init_edit_tag} {w} {
 global widget
-upvar #0 ::$widget($w)::edit_tag_status edit_tag_status
-upvar #0 ::$widget($w)::selected_font   selected_font
-upvar #0 ::$widget($w)::justify_radio   justify_radio
-upvar #0 ::$widget($w)::font_size_entry font_size_entry
+set wa $widget(rev,$w)
+upvar #0 ::${w}::edit_tag_status edit_tag_status
+upvar #0 ::${w}::selected_font   selected_font
+upvar #0 ::${w}::justify_radio   justify_radio
+upvar #0 ::${w}::font_size_entry font_size_entry
 
-$w.FontsListbox delete 0 end
+$wa.FontsListbox delete 0 end
 foreach family [lsort [font families]] {
-    $w.FontsListbox insert end $family
+    $wa.FontsListbox insert end $family
 }
-$w.FontsListbox selection set 0
-set selected_font [$w.FontsListbox get 0]
+$wa.FontsListbox selection set 0
+set selected_font [$wa.FontsListbox get 0]
 
 set justify_radio left
 set font_size_entry 10
 
-$w.TagSampleText delete 1.0 end
-$w.TagSampleText insert end "The Quick Brown Fox jumped over a lazy dog's back" sample
+$wa.TagSampleText delete 1.0 end
+$wa.TagSampleText insert end "The Quick Brown Fox jumped over a lazy dog's back" sample
 
 ::edit_tag::update_sample $w
 }
@@ -644,28 +652,29 @@ $w.TagSampleText insert end "The Quick Brown Fox jumped over a lazy dog's back" 
 namespace eval ::edit_tag {
 
 proc {::edit_tag::prepare_edit_tag} {mainw w tag_to_edit} {
-global widget 
-upvar #0 ::$widget($w)::tag_name         tag_name
-upvar #0 ::$widget($w)::edit_tag_status  edit_tag_status 
-upvar #0 ::$widget($w)::selected_font    selected_font
-upvar #0 ::$widget($w)::bold_check       bold_check
-upvar #0 ::$widget($w)::italic_check     italic_check
-upvar #0 ::$widget($w)::justify_radio    justify_radio
-upvar #0 ::$widget($w)::font_size_entry  font_size_entry
-upvar #0 ::$widget($w)::underline_check  underline_check
-upvar #0 ::$widget($w)::overstrike_check overstrike_check
+global widget
+set wa $widget(rev,$w) 
+upvar #0 ::${w}::tag_name         tag_name
+upvar #0 ::${w}::edit_tag_status  edit_tag_status 
+upvar #0 ::${w}::selected_font    selected_font
+upvar #0 ::${w}::bold_check       bold_check
+upvar #0 ::${w}::italic_check     italic_check
+upvar #0 ::${w}::justify_radio    justify_radio
+upvar #0 ::${w}::font_size_entry  font_size_entry
+upvar #0 ::${w}::underline_check  underline_check
+upvar #0 ::${w}::overstrike_check overstrike_check
 
 set tag_name $tag_to_edit
 set font [$mainw.MainText tag cget $tag_name -font]
 set font_name [string tolower [get_option $font -family]]
 
 ## try to match font case insensitive
-$w.FontsListbox selection clear 0 end
-for {set i 0} {$i < [$w.FontsListbox index end]} {incr i} {
-    if {[string tolower [$w.FontsListbox get $i]] == $font_name} {
-        $w.FontsListbox selection set $i
-        $w.FontsListbox see $i
-        set selected_font [$w.FontsListbox get $i]
+$wa.FontsListbox selection clear 0 end
+for {set i 0} {$i < [$wa.FontsListbox index end]} {incr i} {
+    if {[string tolower [$wa.FontsListbox get $i]] == $font_name} {
+        $wa.FontsListbox selection set $i
+        $wa.FontsListbox see $i
+        set selected_font [$wa.FontsListbox get $i]
         break
     }
 }
@@ -674,11 +683,11 @@ set justify_radio [$mainw.MainText tag cget $tag_name -justify]
 
 set background    [$mainw.MainText tag cget $tag_name -background]
 if {$background == ""} {set background [$mainw.MainText cget -background]}
-$w.TagBackground configure -background $background
+$wa.TagBackground configure -background $background
 
 set foreground    [$mainw.MainText tag cget $tag_name -foreground]
 if {$foreground == ""} {set foreground [$mainw.MainText cget -foreground]}
-$w.TagForeground configure -background $foreground
+$wa.TagForeground configure -background $foreground
 
 set weight [get_option $font -weight]
 set slant  [get_option $font -slant]
@@ -703,15 +712,16 @@ namespace eval ::edit_tag {
 
 proc {::edit_tag::set_existing_tag} {mainw w} {
 global widget
-upvar #0 ::$widget($w)::tag_name         tag_name
-upvar #0 ::$widget($w)::edit_tag_status  edit_tag_status 
-upvar #0 ::$widget($w)::selected_font    selected_font
-upvar #0 ::$widget($w)::bold_check       bold_check
-upvar #0 ::$widget($w)::italic_check     italic_check
-upvar #0 ::$widget($w)::justify_radio    justify_radio
-upvar #0 ::$widget($w)::font_size_entry  font_size_entry
-upvar #0 ::$widget($w)::underline_check  underline_check
-upvar #0 ::$widget($w)::overstrike_check overstrike_check
+set wa $widget(rev,$w)
+upvar #0 ::${w}::tag_name         tag_name
+upvar #0 ::${w}::edit_tag_status  edit_tag_status 
+upvar #0 ::${w}::selected_font    selected_font
+upvar #0 ::${w}::bold_check       bold_check
+upvar #0 ::${w}::italic_check     italic_check
+upvar #0 ::${w}::justify_radio    justify_radio
+upvar #0 ::${w}::font_size_entry  font_size_entry
+upvar #0 ::${w}::underline_check  underline_check
+upvar #0 ::${w}::overstrike_check overstrike_check
 
 set family $selected_font
 set weight normal
@@ -721,8 +731,8 @@ if {$italic_check} {set slant italic}
 
 $mainw.MainText tag configure $tag_name -font "-family [list $family] -weight $weight -slant $slant -size $font_size_entry -underline $underline_check -overstrike $overstrike_check"
 $mainw.MainText tag configure $tag_name -justify $justify_radio
-$mainw.MainText tag configure $tag_name -background [$w.TagBackground cget -background]
-$mainw.MainText tag configure $tag_name -foreground [$w.TagForeground cget -background]
+$mainw.MainText tag configure $tag_name -background [$wa.TagBackground cget -background]
+$mainw.MainText tag configure $tag_name -foreground [$wa.TagForeground cget -background]
 
 ::visual_text::fill_tags $mainw
 ::visual_text::show_tags_at_insert $mainw
@@ -736,15 +746,16 @@ namespace eval ::edit_tag {
 
 proc {::edit_tag::update_sample} {w} {
 global widget
-upvar #0 ::$widget($w)::tag_name         tag_name
-upvar #0 ::$widget($w)::edit_tag_status  edit_tag_status 
-upvar #0 ::$widget($w)::selected_font    selected_font
-upvar #0 ::$widget($w)::bold_check       bold_check
-upvar #0 ::$widget($w)::italic_check     italic_check
-upvar #0 ::$widget($w)::justify_radio    justify_radio
-upvar #0 ::$widget($w)::font_size_entry  font_size_entry
-upvar #0 ::$widget($w)::underline_check  underline_check
-upvar #0 ::$widget($w)::overstrike_check overstrike_check
+set wa $widget(rev,$w)
+upvar #0 ::${w}::tag_name         tag_name
+upvar #0 ::${w}::edit_tag_status  edit_tag_status 
+upvar #0 ::${w}::selected_font    selected_font
+upvar #0 ::${w}::bold_check       bold_check
+upvar #0 ::${w}::italic_check     italic_check
+upvar #0 ::${w}::justify_radio    justify_radio
+upvar #0 ::${w}::font_size_entry  font_size_entry
+upvar #0 ::${w}::underline_check  underline_check
+upvar #0 ::${w}::overstrike_check overstrike_check
 
 set family $selected_font
 set weight normal
@@ -752,10 +763,10 @@ if {$bold_check} {set weight bold}
 set slant roman
 if {$italic_check} {set slant italic}
 
-$w.TagSampleText tag configure sample -font "-family [list $family] -weight $weight -slant $slant -size $font_size_entry -underline $underline_check -overstrike $overstrike_check"
-$w.TagSampleText tag configure sample -justify $justify_radio
-$w.TagSampleText tag configure sample -background [$w.TagBackground cget -background]
-$w.TagSampleText tag configure sample -foreground [$w.TagForeground cget -background]
+$wa.TagSampleText tag configure sample -font "-family [list $family] -weight $weight -slant $slant -size $font_size_entry -underline $underline_check -overstrike $overstrike_check"
+$wa.TagSampleText tag configure sample -justify $justify_radio
+$wa.TagSampleText tag configure sample -background [$wa.TagBackground cget -background]
+$wa.TagSampleText tag configure sample -foreground [$wa.TagForeground cget -background]
 }
 
 }
@@ -774,6 +785,8 @@ proc {::ttd::get} {args} {
 # at your own risk.
 #
 #
+::ttd::init;    # one time initialization
+
     set argc [llength $args]
     if {$argc == 0} {
 	error "wrong \# args: must be ::ttd::get pathName ?index1? ?index2?"
@@ -911,12 +924,98 @@ proc {::ttd::get} {args} {
 
 }
 ###########################################################
+## Procedure:  ::ttd::init
+
+namespace eval ::ttd {
+
+proc {::ttd::init} {} {
+## already initialized?
+if {[info exists ::ttd::ttdCode]} {return}
+
+variable code
+variable ttdCode
+variable ttdVersion {}
+variable taglist
+variable safeInterpreter
+
+# this code defines the commands which are embedded in the ttd
+# data. It should only executed in a safe interpreter.
+set ttdCode {
+    set taglist ""
+    set command ""
+    set ttdVersion ""
+
+    proc ttd.version {version} {
+	global ttdVersion
+	set ttdVersion $version
+    }
+
+    proc ttd.window {args} {
+	# not supported yet
+	error "embedded windows aren't supported in this version"
+    }
+
+    proc ttd.image {args} {
+	global taglist
+
+	set index [masterTextWidget index insert]
+	eval masterTextWidget image create $index $args
+
+	# we want the current tags associated with the image...
+	# (I wonder why I can't supply tags at the time I create
+	# the image, like I can when I insert text?)
+	foreach tag $taglist {
+	    masterTextWidget tag add $tag $index
+	}
+    }
+
+    proc ttd.imgdef {name args} {
+	eval image create photo $name $args
+    }
+
+    proc ttd.tagdef {name args} {
+	eval masterTextWidget tag configure $name $args
+    }
+
+    proc ttd.text {string} {
+	global taglist
+	masterTextWidget insert insert $string $taglist
+    }
+
+    proc ttd.tagon {tag} {
+	global taglist
+
+	# I'm confused by this, but we need to keep track of our
+	# tags in reverse order.
+	set taglist [concat $tag $taglist]
+    }
+
+    proc ttd.tagoff {tag} {
+	global taglist
+
+	set i [lsearch -exact $taglist $tag]
+	if {$i >= 0} {
+	    set taglist [lreplace $taglist $i $i]
+	}
+	masterTextWidget tag remove $tag insert
+    }
+
+    proc ttd.mark {name} {
+	masterTextWidget mark set $name [masterTextWidget index insert]
+    }
+}
+}
+
+}
+###########################################################
 ## Procedure:  ::ttd::insert
 
 namespace eval ::ttd {
 
 proc {::ttd::insert} {w ttd} {
-variable ttdVersion {}
+::ttd::init;    # one time initialization
+
+    variable ttdVersion {}
     variable taglist
     variable safeInterpreter
     variable ttdCode
@@ -983,9 +1082,10 @@ if {$selrange == ""} {
 global widget 
 
 ## we allow the user to enter a new tag name
-set ::$widget($w)::tag_name ""
-$w.EditTagOK    configure -state disabled
-$w.TagNameEntry configure -state normal
+set ::${w}::tag_name ""
+set wa $widget(rev,$w)
+$wa.EditTagOK    configure -state disabled
+$wa.TagNameEntry configure -state normal
 
 ## launch modal dialog box and check status ("OK" or "Cancel")
 ::edit_tag::do_modal $w
@@ -1002,10 +1102,12 @@ if {[::edit_tag::get_status $w] != "OK"} return
 namespace eval ::visual_text {
 
 proc {::visual_text::command-edit_tag} {mainw w tag_to_edit} {
+if {$tag_to_edit == ""} {return}
 global widget
 
 ## we don't allow the user to modify the existing tag name
-$w.TagNameEntry configure -state disabled
+set wa $widget(rev,$w)
+$wa.TagNameEntry configure -state disabled
 ::edit_tag::prepare_edit_tag $mainw $w $tag_to_edit
 
 ## launch modal dialog and check status
@@ -1040,7 +1142,7 @@ namespace eval ::visual_text {
 
 proc {::visual_text::command-open} {mainw {file {}}} {
 global filename widget tk_strictMotif
-    
+
     if {$file == ""} {
         set old $tk_strictMotif
         set tk_strictMotif 0
@@ -1054,7 +1156,7 @@ global filename widget tk_strictMotif
     ::visual_text::command-new $mainw
 
     set filename $file
-    wm title $widget($mainw) "$filename - Visual Text"
+    wm title $mainw "$filename - Visual Text"
     set id [open $filename]
     set ttd [read $id]
     close $id
@@ -1085,7 +1187,7 @@ global filename tk_strictMotif widget
 	set data [::ttd::get $widget($mainw,MainText)]
 	puts -nonewline $id $data
 	close $id
-	wm title $widget($mainw) "$file - Visual Text"
+	wm title $mainw "$file - Visual Text"
     }
 }
 
@@ -1311,87 +1413,13 @@ proc {main} {argc argv} {
 global widget
 wm protocol .top21 WM_DELETE_WINDOW {exit}
 
-::edit_tag::init_edit_tag EditTag
+::edit_tag::init_edit_tag $widget(EditTag)
 ::about::init
 }
 
 proc init {argc argv} {
 global filename
 set filename ""
-
-namespace eval ::ttd {
-    variable code
-    variable ttdVersion {}
-    variable taglist
-    variable safeInterpreter
-}
-
-# this code defines the commands which are embedded in the ttd
-# data. It should only executed in a safe interpreter.
-set ::ttd::ttdCode {
-    set taglist ""
-    set command ""
-    set ttdVersion ""
-
-    proc ttd.version {version} {
-	global ttdVersion
-	set ttdVersion $version
-    }
-
-    proc ttd.window {args} {
-	# not supported yet
-	error "embedded windows aren't supported in this version"
-    }
-
-    proc ttd.image {args} {
-	global taglist
-
-	set index [masterTextWidget index insert]
-	eval masterTextWidget image create $index $args
-
-	# we want the current tags associated with the image...
-	# (I wonder why I can't supply tags at the time I create
-	# the image, like I can when I insert text?)
-	foreach tag $taglist {
-	    masterTextWidget tag add $tag $index
-	}
-    }
-
-    proc ttd.imgdef {name args} {
-	eval image create photo $name $args
-    }
-
-    proc ttd.tagdef {name args} {
-	eval masterTextWidget tag configure $name $args
-    }
-
-    proc ttd.text {string} {
-	global taglist
-	masterTextWidget insert insert $string $taglist
-    }
-
-    proc ttd.tagon {tag} {
-	global taglist
-
-	# I'm confused by this, but we need to keep track of our
-	# tags in reverse order.
-	set taglist [concat $tag $taglist]
-    }
-
-    proc ttd.tagoff {tag} {
-	global taglist
-
-	set i [lsearch -exact $taglist $tag]
-	if {$i >= 0} {
-	    set taglist [lreplace $taglist $i $i]
-	}
-	masterTextWidget tag remove $tag insert
-    }
-
-    proc ttd.mark {name} {
-	masterTextWidget mark set $name [masterTextWidget index insert]
-    }
-}
 }
 
 init $argc $argv
@@ -1468,18 +1496,20 @@ proc vTclWindow.top18 {base {container 0}} {
     # SETTING GEOMETRY
     ###################
     pack $base.cpd19 \
-        -in $base -anchor center -expand 1 -fill both -side top 
+        -in "$base" -anchor center -expand 1 -fill both -side top 
     grid columnconf $base.cpd19 0 -weight 1
     grid rowconf $base.cpd19 0 -weight 1
     grid $base.cpd19.01 \
-        -in $base.cpd19 -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew 
+        -in "$base.cpd19" -column 0 -row 1 -columnspan 1 -rowspan 1 \
+        -sticky ew 
     grid $base.cpd19.02 \
-        -in $base.cpd19 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns 
+        -in "$base.cpd19" -column 1 -row 0 -columnspan 1 -rowspan 1 \
+        -sticky ns 
     grid $base.cpd19.03 \
-        -in $base.cpd19 -column 0 -row 0 -columnspan 1 -rowspan 1 \
+        -in "$base.cpd19" -column 0 -row 0 -columnspan 1 -rowspan 1 \
         -sticky nesw 
     pack $base.but20 \
-        -in $base -anchor center -expand 0 -fill none -pady 5 -side top 
+        -in "$base" -anchor center -expand 0 -fill none -pady 5 -side top 
 }
 
 proc vTclWindow.top21 {base {container 0}} {
@@ -1491,26 +1521,26 @@ proc vTclWindow.top21 {base {container 0}} {
     }
 
     global widget
-    vTcl:DefineAlias "$base" "VisualText" vTcl:Toplevel:WidgetProc "" 1
-    vTcl:DefineAlias "$base.cpd23.01.cpd24.03" "MainText" vTcl:WidgetProc "VisualText" 1
-    vTcl:DefineAlias "$base.cpd23.02.cpd22.01" "TagsListbox" vTcl:WidgetProc "VisualText" 1
-    vTcl:DefineAlias "$base.cpd23.02.fra25.03" "TagsText" vTcl:WidgetProc "VisualText" 1
-    vTcl:DefineAlias "$base.fra22.lab30" "LineCol" vTcl:WidgetProc "VisualText" 1
+    vTcl:DefineAlias "$base.cpd23.01.cpd24.03" "MainText" vTcl:WidgetProc "$base" 1
+    vTcl:DefineAlias "$base.cpd23.02.cpd22.01" "TagsListbox" vTcl:WidgetProc "$base" 1
+    vTcl:DefineAlias "$base.cpd23.02.fra25.03" "TagsText" vTcl:WidgetProc "$base" 1
+    vTcl:DefineAlias "$base.fra22.lab30" "LineCol" vTcl:WidgetProc "$base" 1
 
     ###################
     # CREATING WIDGETS
     ###################
     if {!$container} {
     vTcl:toplevel $base -class Toplevel \
-        -menu "$base.m26"
+        -menu "$base.m26" 
     wm focusmodel $base passive
-    wm geometry $base 678x575+150+71; update
+    wm geometry $base 678x575+140+58; update
     wm maxsize $base 1009 738
     wm minsize $base 100 1
     wm overrideredirect $base 0
     wm resizable $base 1 1
     wm deiconify $base
     wm title $base "Visual Text"
+    bindtags $base "$base Toplevel all Accelerators"
     }
     frame $base.fra22 \
         -borderwidth 1 
@@ -1534,25 +1564,25 @@ proc vTclWindow.top21 {base {container 0}} {
         -yscrollcommand "$base.cpd23.01.cpd24.02 set" 
     bindtags $base.cpd23.01.cpd24.03 "Text $base all $base.cpd23.01.cpd24.03 Accelerators"
     bind $base.cpd23.01.cpd24.03 <Button-1> {
-        ::visual_text::show_tags_at_insert $widget(rev,[winfo toplevel %W])
+        ::visual_text::show_tags_at_insert [winfo toplevel %W]
     }
     bind $base.cpd23.01.cpd24.03 <Key-Down> {
-        ::visual_text::show_tags_at_insert $widget(rev,[winfo toplevel %W])
+        ::visual_text::show_tags_at_insert [winfo toplevel %W]
     }
     bind $base.cpd23.01.cpd24.03 <Key-Left> {
-        ::visual_text::show_tags_at_insert $widget(rev,[winfo toplevel %W])
+        ::visual_text::show_tags_at_insert [winfo toplevel %W]
     }
     bind $base.cpd23.01.cpd24.03 <Key-Next> {
-        ::visual_text::show_tags_at_insert $widget(rev,[winfo toplevel %W])
+        ::visual_text::show_tags_at_insert [winfo toplevel %W]
     }
     bind $base.cpd23.01.cpd24.03 <Key-Prior> {
-        ::visual_text::show_tags_at_insert $widget(rev,[winfo toplevel %W])
+        ::visual_text::show_tags_at_insert [winfo toplevel %W]
     }
     bind $base.cpd23.01.cpd24.03 <Key-Right> {
-        ::visual_text::show_tags_at_insert $widget(rev,[winfo toplevel %W])
+        ::visual_text::show_tags_at_insert [winfo toplevel %W]
     }
     bind $base.cpd23.01.cpd24.03 <Key-Up> {
-        ::visual_text::show_tags_at_insert $widget(rev,[winfo toplevel %W])
+        ::visual_text::show_tags_at_insert [winfo toplevel %W]
     }
     frame $base.cpd23.02
     frame $base.cpd23.02.fra25 \
@@ -1566,11 +1596,12 @@ proc vTclWindow.top21 {base {container 0}} {
         -background white -borderwidth 0 -height 20 -width 20 \
         -xscrollcommand "$base.cpd23.02.fra25.01 set" \
         -yscrollcommand "$base.cpd23.02.fra25.02 set" 
+    bindtags $base.cpd23.02.fra25.03 "$base.cpd23.02.fra25.03 Text $base all Accelerators"
     frame $base.cpd23.02.fra22 \
         -borderwidth 2 -height 75 -width 125 
     button $base.cpd23.02.fra22.but23 \
         \
-        -command [list vTcl:DoCmdOption $base.cpd23.02.fra22.but23 {::visual_text::command-add_tag $widget(rev,%top) EditTag}] \
+        -command [list vTcl:DoCmdOption $base.cpd23.02.fra22.but23 {::visual_text::command-add_tag %top $widget(EditTag)}] \
         -image [vTcl:image:get_image [file join / home cgavin vtcl images edit add.gif]] \
         -relief flat -text button 
     bindtags $base.cpd23.02.fra22.but23 "$base.cpd23.02.fra22.but23 Button $base all FlatToolbarButton"
@@ -1585,14 +1616,15 @@ proc vTclWindow.top21 {base {container 0}} {
         -background white -borderwidth 0 -relief flat -selectmode multiple \
         -xscrollcommand "$base.cpd23.02.cpd22.02 set" \
         -yscrollcommand "$base.cpd23.02.cpd22.03 set" 
+    bindtags $base.cpd23.02.cpd22.01 "$base.cpd23.02.cpd22.01 Listbox $base all Accelerators"
     bind $base.cpd23.02.cpd22.01 <Button-1> {
         if {[MainText tag ranges sel] != ""} {
-    ::visual_text::apply_tag $widget(rev,[winfo toplevel %W]) %x %y
+    ::visual_text::apply_tag [winfo toplevel %W] %x %y
 }
 break
     }
     bind $base.cpd23.02.cpd22.01 <Button-3> {
-        ::visual_text::command-edit_tag $widget(rev,[winfo toplevel %W]) EditTag [%W get @%x,%y]
+        ::visual_text::command-edit_tag [winfo toplevel %W] $widget(EditTag) [%W get @%x,%y]
     }
     scrollbar $base.cpd23.02.cpd22.02 \
         -command "$base.cpd23.02.cpd22.01 xview" -highlightthickness 0 \
@@ -1614,7 +1646,7 @@ break
     set val [ expr (%X - [winfo rootx $root]) /$width ]
 
     if { $val >= 0 && $val <= 1.0 } {
-    
+
         place $root.01 -relwidth $val
         place $root.03 -relx $val
         place $root.02 -relwidth [ expr 1.0 - $val ]
@@ -1630,22 +1662,24 @@ break
         -label Edit 
     $base.m26 add cascade \
         -menu "$base.m26.men29" -accelerator {} -command {} -image {} \
-        -label Help
+        -label Help 
     menu $base.m26.men27 \
         -tearoff 0 
     $base.m26.men27 add command \
         -accelerator {Ctrl + N} \
-        -command {::visual_text::command-new VisualText} -image {} -label New 
+        -command [list vTcl:DoCmdOption $base.m26.men27 {::visual_text::command-new %top}] \
+        -image {} -label New 
     $base.m26.men27 add separator
     $base.m26.men27 add command \
         -accelerator {Ctrl + O} \
-        -command {::visual_text::command-open VisualText} -image {} \
-        -label Open... 
+        -command [list vTcl:DoCmdOption $base.m26.men27 {::visual_text::command-open %top}] \
+        -image {} -label Open... 
     $base.m26.men27 add command \
         -accelerator {Ctrl + S} -command {# TODO: Your menu handler here} \
         -image {} -label Save 
     $base.m26.men27 add command \
-        -accelerator {} -command {::visual_text::command-save VisualText} \
+        -accelerator {} \
+        -command [list vTcl:DoCmdOption $base.m26.men27 {::visual_text::command-save %top}] \
         -image {} -label {Save As...} 
     $base.m26.men27 add separator
     $base.m26.men27 add command \
@@ -1663,7 +1697,8 @@ break
         -image {} -label Paste 
     $base.m26.men28 add separator
     $base.m26.men28 add command \
-        -accelerator {} -command {::visual_text::insert_image VisualText} \
+        -accelerator {} \
+        -command [list vTcl:DoCmdOption $base.m26.men28 {::visual_text::insert_image %top}] \
         -image {} -label {Insert image...} 
     menu $base.m26.men29 \
         -tearoff 0 
@@ -1674,74 +1709,74 @@ break
     # SETTING GEOMETRY
     ###################
     pack $base.fra22 \
-        -in $base -anchor center -expand 0 -fill x -side bottom 
+        -in "$base" -anchor center -expand 0 -fill x -side bottom 
     pack $base.fra22.lab30 \
-        -in $base.fra22 -anchor center -expand 0 -fill none -padx 2 \
+        -in "$base.fra22" -anchor center -expand 0 -fill none -padx 2 \
         -side left 
     pack $base.fra22.lab31 \
-        -in $base.fra22 -anchor center -expand 0 -fill none -padx 2 \
+        -in "$base.fra22" -anchor center -expand 0 -fill none -padx 2 \
         -side left 
     pack $base.cpd23 \
-        -in $base -anchor center -expand 1 -fill both -side top 
+        -in "$base" -anchor center -expand 1 -fill both -side top 
     place $base.cpd23.01 \
         -x 0 -y 0 -width -1 -relwidth 0.6906 -relheight 1 -anchor nw \
         -bordermode ignore 
     pack $base.cpd23.01.cpd24 \
-        -in $base.cpd23.01 -anchor center -expand 1 -fill both -padx 5 \
+        -in "$base.cpd23.01" -anchor center -expand 1 -fill both -padx 5 \
         -side top 
     grid columnconf $base.cpd23.01.cpd24 0 -weight 1
     grid rowconf $base.cpd23.01.cpd24 0 -weight 1
     grid $base.cpd23.01.cpd24.01 \
-        -in $base.cpd23.01.cpd24 -column 0 -row 1 -columnspan 1 -rowspan 1 \
+        -in "$base.cpd23.01.cpd24" -column 0 -row 1 -columnspan 1 -rowspan 1 \
         -sticky ew 
     grid $base.cpd23.01.cpd24.02 \
-        -in $base.cpd23.01.cpd24 -column 1 -row 0 -columnspan 1 -rowspan 1 \
+        -in "$base.cpd23.01.cpd24" -column 1 -row 0 -columnspan 1 -rowspan 1 \
         -sticky ns 
     grid $base.cpd23.01.cpd24.03 \
-        -in $base.cpd23.01.cpd24 -column 0 -row 0 -columnspan 1 -rowspan 1 \
+        -in "$base.cpd23.01.cpd24" -column 0 -row 0 -columnspan 1 -rowspan 1 \
         -sticky nesw 
     place $base.cpd23.02 \
         -x 0 -relx 1 -y 0 -width -1 -relwidth 0.3094 -relheight 1 -anchor ne \
         -bordermode ignore 
     pack $base.cpd23.02.fra25 \
-        -in $base.cpd23.02 -anchor center -expand 1 -fill both -padx 5 \
+        -in "$base.cpd23.02" -anchor center -expand 1 -fill both -padx 5 \
         -side bottom 
     grid columnconf $base.cpd23.02.fra25 0 -weight 1
     grid rowconf $base.cpd23.02.fra25 0 -weight 1
     grid $base.cpd23.02.fra25.01 \
-        -in $base.cpd23.02.fra25 -column 0 -row 1 -columnspan 1 -rowspan 1 \
+        -in "$base.cpd23.02.fra25" -column 0 -row 1 -columnspan 1 -rowspan 1 \
         -sticky ew 
     grid $base.cpd23.02.fra25.02 \
-        -in $base.cpd23.02.fra25 -column 1 -row 0 -columnspan 1 -rowspan 1 \
+        -in "$base.cpd23.02.fra25" -column 1 -row 0 -columnspan 1 -rowspan 1 \
         -sticky ns 
     grid $base.cpd23.02.fra25.03 \
-        -in $base.cpd23.02.fra25 -column 0 -row 0 -columnspan 1 -rowspan 1 \
+        -in "$base.cpd23.02.fra25" -column 0 -row 0 -columnspan 1 -rowspan 1 \
         -sticky nesw 
     pack $base.cpd23.02.fra22 \
-        -in $base.cpd23.02 -anchor center -expand 0 -fill x -side top 
+        -in "$base.cpd23.02" -anchor center -expand 0 -fill x -side top 
     pack $base.cpd23.02.fra22.but23 \
-        -in $base.cpd23.02.fra22 -anchor center -expand 0 -fill none \
+        -in "$base.cpd23.02.fra22" -anchor center -expand 0 -fill none \
         -side left 
     pack $base.cpd23.02.fra22.but24 \
-        -in $base.cpd23.02.fra22 -anchor center -expand 0 -fill none \
+        -in "$base.cpd23.02.fra22" -anchor center -expand 0 -fill none \
         -side left 
     pack $base.cpd23.02.cpd22 \
-        -in $base.cpd23.02 -anchor center -expand 1 -fill both -padx 5 \
+        -in "$base.cpd23.02" -anchor center -expand 1 -fill both -padx 5 \
         -side top 
     grid columnconf $base.cpd23.02.cpd22 0 -weight 1
     grid rowconf $base.cpd23.02.cpd22 0 -weight 1
     grid $base.cpd23.02.cpd22.01 \
-        -in $base.cpd23.02.cpd22 -column 0 -row 0 -columnspan 1 -rowspan 1 \
+        -in "$base.cpd23.02.cpd22" -column 0 -row 0 -columnspan 1 -rowspan 1 \
         -sticky nesw 
     grid $base.cpd23.02.cpd22.02 \
-        -in $base.cpd23.02.cpd22 -column 0 -row 1 -columnspan 1 -rowspan 1 \
+        -in "$base.cpd23.02.cpd22" -column 0 -row 1 -columnspan 1 -rowspan 1 \
         -sticky ew 
     grid $base.cpd23.02.cpd22.03 \
-        -in $base.cpd23.02.cpd22 -column 1 -row 0 -columnspan 1 -rowspan 1 \
+        -in "$base.cpd23.02.cpd22" -column 1 -row 0 -columnspan 1 -rowspan 1 \
         -sticky ns 
     pack $base.cpd23.02.fra23 \
-        -in $base.cpd23.02 -anchor center -expand 0 -fill x -padx 5 -pady 10 \
-        -side top 
+        -in "$base.cpd23.02" -anchor center -expand 0 -fill x -padx 5 \
+        -pady 10 -side top 
     place $base.cpd23.03 \
         -x 0 -relx 0.6906 -y 0 -rely 0.9 -width 10 -height 10 -anchor s \
         -bordermode ignore 
@@ -1771,7 +1806,7 @@ proc vTclWindow.top22 {base {container 0}} {
     vTcl:toplevel $base -class Toplevel
     wm withdraw $base
     wm focusmodel $base passive
-    wm geometry $base 439x473+119+158; update
+    wm geometry $base 439x473+127+198; update
     wm maxsize $base 1009 738
     wm minsize $base 100 1
     wm overrideredirect $base 0
@@ -1784,7 +1819,7 @@ proc vTclWindow.top22 {base {container 0}} {
         -background white -textvariable "$base\::tag_name" 
     bindtags $base.ent24 "Entry $base all $base.ent24"
     bind $base.ent24 <Key> {
-        ::edit_tag::enable_ok $widget(rev,[winfo toplevel %W])
+        ::edit_tag::enable_ok [winfo toplevel %W]
     }
     frame $base.fra25 \
         -borderwidth 2 -height 2 -relief groove -width 125 
@@ -1798,7 +1833,7 @@ proc vTclWindow.top22 {base {container 0}} {
         -yscrollcommand "$base.fra27.cpd28.03 set" 
     bind $base.fra27.cpd28.01 <<ListboxSelect>> {
         set ::[winfo toplevel %W]::selected_font [%W get [%W curselection]]
-::edit_tag::update_sample $widget(rev,[winfo toplevel %W])
+::edit_tag::update_sample [winfo toplevel %W]
     }
     scrollbar $base.fra27.cpd28.02 \
         -command "$base.fra27.cpd28.01 xview" -highlightthickness 0 \
@@ -1814,7 +1849,7 @@ proc vTclWindow.top22 {base {container 0}} {
     button $base.fra27.fra29.fra30.but31 \
         \
         -command [list vTcl:DoCmdOption $base.fra27.fra29.fra30.but31 {incr ::%top::font_size_entry -1
-::edit_tag::update_sample $widget(rev,%top)}] \
+::edit_tag::update_sample %top}] \
         -padx 0 -pady 0 -text < 
     entry $base.fra27.fra29.fra30.ent32 \
         -background white -justify center -state disabled \
@@ -1822,50 +1857,50 @@ proc vTclWindow.top22 {base {container 0}} {
     button $base.fra27.fra29.fra30.but33 \
         \
         -command [list vTcl:DoCmdOption $base.fra27.fra29.fra30.but33 {incr ::%top::font_size_entry
-::edit_tag::update_sample $widget(rev,%top)}] \
+::edit_tag::update_sample %top}] \
         -padx 0 -pady 0 -text > 
     checkbutton $base.fra27.fra29.che35 \
         -anchor w \
-        -command [list vTcl:DoCmdOption $base.fra27.fra29.che35 {::edit_tag::update_sample $widget(rev,%top)}] \
+        -command [list vTcl:DoCmdOption $base.fra27.fra29.che35 {::edit_tag::update_sample %top}] \
         -pady 0 -text Bold -variable "$base\::bold_check" 
     checkbutton $base.fra27.fra29.che37 \
         -anchor w \
-        -command [list vTcl:DoCmdOption $base.fra27.fra29.che37 {::edit_tag::update_sample $widget(rev,%top)}] \
+        -command [list vTcl:DoCmdOption $base.fra27.fra29.che37 {::edit_tag::update_sample %top}] \
         -pady 0 -text Italic -variable "$base\::italic_check" 
     checkbutton $base.fra27.fra29.che38 \
         -anchor w \
-        -command [list vTcl:DoCmdOption $base.fra27.fra29.che38 {::edit_tag::update_sample $widget(rev,%top)}] \
+        -command [list vTcl:DoCmdOption $base.fra27.fra29.che38 {::edit_tag::update_sample %top}] \
         -pady 0 -text Underline -variable "$base\::underline_check" 
     checkbutton $base.fra27.fra29.che39 \
         -anchor w \
-        -command [list vTcl:DoCmdOption $base.fra27.fra29.che39 {::edit_tag::update_sample $widget(rev,%top)}] \
+        -command [list vTcl:DoCmdOption $base.fra27.fra29.che39 {::edit_tag::update_sample %top}] \
         -pady 0 -text Overstrike -variable "$base\::overstrike_check" 
     label $base.fra27.fra29.lab40 \
         -anchor w -text Justify 
     radiobutton $base.fra27.fra29.rad41 \
         -anchor w \
-        -command [list vTcl:DoCmdOption $base.fra27.fra29.rad41 {::edit_tag::update_sample $widget(rev,%top)}] \
+        -command [list vTcl:DoCmdOption $base.fra27.fra29.rad41 {::edit_tag::update_sample %top}] \
         -pady 0 -text left -value left -variable "$base\::justify_radio" 
     radiobutton $base.fra27.fra29.rad42 \
         -anchor w \
-        -command [list vTcl:DoCmdOption $base.fra27.fra29.rad42 {::edit_tag::update_sample $widget(rev,%top)}] \
+        -command [list vTcl:DoCmdOption $base.fra27.fra29.rad42 {::edit_tag::update_sample %top}] \
         -padx 1 -pady 0 -text center -value center \
         -variable "$base\::justify_radio" 
     radiobutton $base.fra27.fra29.rad43 \
         -anchor w \
-        -command [list vTcl:DoCmdOption $base.fra27.fra29.rad43 {::edit_tag::update_sample $widget(rev,%top)}] \
+        -command [list vTcl:DoCmdOption $base.fra27.fra29.rad43 {::edit_tag::update_sample %top}] \
         -pady 0 -text right -value right -variable "$base\::justify_radio" 
     label $base.fra27.fra29.lab22 \
         -background white -text Bkgnd 
     bind $base.fra27.fra29.lab22 <Button-1> {
         %W configure -background [tk_chooseColor -initialcolor [%W cget -background]]
-::edit_tag::update_sample $widget(rev,[winfo toplevel %W])
+::edit_tag::update_sample [winfo toplevel %W]
     }
     label $base.fra27.fra29.lab23 \
-        -background #000000 -padx 1 -pady 1 -text Foregnd 
+        -background #000000 -text Foregnd 
     bind $base.fra27.fra29.lab23 <Button-1> {
         %W configure -background [tk_chooseColor -initialcolor [%W cget -background]]
-::edit_tag::update_sample $widget(rev,[winfo toplevel %W])
+::edit_tag::update_sample [winfo toplevel %W]
     }
     frame $base.fra26 \
         -borderwidth 2 -height 2 -relief groove -width 125 
@@ -1877,7 +1912,7 @@ proc vTclWindow.top22 {base {container 0}} {
     scrollbar $base.cpd44.02 \
         -command "$base.cpd44.03 yview" -highlightthickness 0 
     text $base.cpd44.03 \
-        -background white -height 4 -relief flat -width 20 \
+        -background white -height 4 -relief flat -width 20 -wrap word \
         -xscrollcommand "$base.cpd44.01 set" \
         -yscrollcommand "$base.cpd44.02 set" 
     frame $base.fra45 \
@@ -1896,87 +1931,89 @@ proc vTclWindow.top22 {base {container 0}} {
     # SETTING GEOMETRY
     ###################
     pack $base.lab23 \
-        -in $base -anchor center -expand 0 -fill x -side top 
+        -in "$base" -anchor center -expand 0 -fill x -side top 
     pack $base.ent24 \
-        -in $base -anchor center -expand 0 -fill x -side top 
+        -in "$base" -anchor center -expand 0 -fill x -side top 
     pack $base.fra25 \
-        -in $base -anchor center -expand 0 -fill x -pady 5 -side top 
+        -in "$base" -anchor center -expand 0 -fill x -pady 5 -side top 
     pack $base.fra27 \
-        -in $base -anchor center -expand 0 -fill both -side top 
+        -in "$base" -anchor center -expand 0 -fill both -side top 
     pack $base.fra27.cpd28 \
-        -in $base.fra27 -anchor center -expand 1 -fill both -side left 
+        -in "$base.fra27" -anchor center -expand 1 -fill both -side left 
     grid columnconf $base.fra27.cpd28 0 -weight 1
     grid rowconf $base.fra27.cpd28 0 -weight 1
     grid $base.fra27.cpd28.01 \
-        -in $base.fra27.cpd28 -column 0 -row 0 -columnspan 1 -rowspan 1 \
+        -in "$base.fra27.cpd28" -column 0 -row 0 -columnspan 1 -rowspan 1 \
         -sticky nesw 
     grid $base.fra27.cpd28.02 \
-        -in $base.fra27.cpd28 -column 0 -row 1 -columnspan 1 -rowspan 1 \
+        -in "$base.fra27.cpd28" -column 0 -row 1 -columnspan 1 -rowspan 1 \
         -sticky ew 
     grid $base.fra27.cpd28.03 \
-        -in $base.fra27.cpd28 -column 1 -row 0 -columnspan 1 -rowspan 1 \
+        -in "$base.fra27.cpd28" -column 1 -row 0 -columnspan 1 -rowspan 1 \
         -sticky ns 
     pack $base.fra27.fra29 \
-        -in $base.fra27 -anchor center -expand 0 -fill y -side right 
+        -in "$base.fra27" -anchor center -expand 0 -fill y -side right 
     pack $base.fra27.fra29.fra30 \
-        -in $base.fra27.fra29 -anchor center -expand 0 -fill none -ipadx 2 \
+        -in "$base.fra27.fra29" -anchor center -expand 0 -fill none -ipadx 2 \
         -ipady 2 -side top 
     pack $base.fra27.fra29.fra30.lab34 \
-        -in $base.fra27.fra29.fra30 -anchor center -expand 0 -fill none \
+        -in "$base.fra27.fra29.fra30" -anchor center -expand 0 -fill none \
         -side left 
     pack $base.fra27.fra29.fra30.but31 \
-        -in $base.fra27.fra29.fra30 -anchor center -expand 0 -fill none \
+        -in "$base.fra27.fra29.fra30" -anchor center -expand 0 -fill none \
         -side left 
     pack $base.fra27.fra29.fra30.ent32 \
-        -in $base.fra27.fra29.fra30 -anchor center -expand 0 -fill none \
+        -in "$base.fra27.fra29.fra30" -anchor center -expand 0 -fill none \
         -side left 
     pack $base.fra27.fra29.fra30.but33 \
-        -in $base.fra27.fra29.fra30 -anchor center -expand 0 -fill none \
+        -in "$base.fra27.fra29.fra30" -anchor center -expand 0 -fill none \
         -side left 
     pack $base.fra27.fra29.che35 \
-        -in $base.fra27.fra29 -anchor center -expand 0 -fill x -side top 
+        -in "$base.fra27.fra29" -anchor center -expand 0 -fill x -side top 
     pack $base.fra27.fra29.che37 \
-        -in $base.fra27.fra29 -anchor center -expand 0 -fill x -side top 
+        -in "$base.fra27.fra29" -anchor center -expand 0 -fill x -side top 
     pack $base.fra27.fra29.che38 \
-        -in $base.fra27.fra29 -anchor center -expand 0 -fill x -side top 
+        -in "$base.fra27.fra29" -anchor center -expand 0 -fill x -side top 
     pack $base.fra27.fra29.che39 \
-        -in $base.fra27.fra29 -anchor center -expand 0 -fill x -side top 
+        -in "$base.fra27.fra29" -anchor center -expand 0 -fill x -side top 
     pack $base.fra27.fra29.lab40 \
-        -in $base.fra27.fra29 -anchor center -expand 0 -fill x -side top 
+        -in "$base.fra27.fra29" -anchor center -expand 0 -fill x -side top 
     pack $base.fra27.fra29.rad41 \
-        -in $base.fra27.fra29 -anchor center -expand 0 -fill x -side top 
+        -in "$base.fra27.fra29" -anchor center -expand 0 -fill x -side top 
     pack $base.fra27.fra29.rad42 \
-        -in $base.fra27.fra29 -anchor center -expand 0 -fill x -side top 
+        -in "$base.fra27.fra29" -anchor center -expand 0 -fill x -side top 
     pack $base.fra27.fra29.rad43 \
-        -in $base.fra27.fra29 -anchor center -expand 0 -fill x -side top 
+        -in "$base.fra27.fra29" -anchor center -expand 0 -fill x -side top 
     pack $base.fra27.fra29.lab22 \
-        -in $base.fra27.fra29 -anchor center -expand 0 -fill x -padx 2 \
+        -in "$base.fra27.fra29" -anchor center -expand 0 -fill x -padx 2 \
         -pady 1 -side top 
     pack $base.fra27.fra29.lab23 \
-        -in $base.fra27.fra29 -anchor center -expand 0 -fill x -padx 2 \
+        -in "$base.fra27.fra29" -anchor center -expand 0 -fill x -padx 2 \
         -pady 1 -side top 
     pack $base.fra26 \
-        -in $base -anchor center -expand 0 -fill x -pady 5 -side top 
+        -in "$base" -anchor center -expand 0 -fill x -pady 5 -side top 
     pack $base.cpd44 \
-        -in $base -anchor center -expand 1 -fill both -padx 2 -side top 
+        -in "$base" -anchor center -expand 1 -fill both -padx 2 -side top 
     grid columnconf $base.cpd44 0 -weight 1
     grid rowconf $base.cpd44 0 -weight 1
     grid $base.cpd44.01 \
-        -in $base.cpd44 -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew 
+        -in "$base.cpd44" -column 0 -row 1 -columnspan 1 -rowspan 1 \
+        -sticky ew 
     grid $base.cpd44.02 \
-        -in $base.cpd44 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns 
+        -in "$base.cpd44" -column 1 -row 0 -columnspan 1 -rowspan 1 \
+        -sticky ns 
     grid $base.cpd44.03 \
-        -in $base.cpd44 -column 0 -row 0 -columnspan 1 -rowspan 1 \
+        -in "$base.cpd44" -column 0 -row 0 -columnspan 1 -rowspan 1 \
         -sticky nesw 
     pack $base.fra45 \
-        -in $base -anchor center -expand 0 -fill x -pady 5 -side top 
+        -in "$base" -anchor center -expand 0 -fill x -pady 5 -side top 
     pack $base.fra46 \
-        -in $base -anchor center -expand 0 -fill none -pady 2 -side top 
+        -in "$base" -anchor center -expand 0 -fill none -pady 2 -side top 
     pack $base.fra46.but47 \
-        -in $base.fra46 -anchor center -expand 0 -fill none -padx 5 -pady 2 \
+        -in "$base.fra46" -anchor center -expand 0 -fill none -padx 5 -pady 2 \
         -side left 
     pack $base.fra46.but48 \
-        -in $base.fra46 -anchor center -expand 0 -fill none -padx 5 -pady 2 \
+        -in "$base.fra46" -anchor center -expand 0 -fill none -padx 5 -pady 2 \
         -side left 
 }
 
@@ -1987,16 +2024,16 @@ bind "FlatToolbarButton" <Leave> {
     %W configure -relief flat
 }
 bind "Accelerators" <Control-Key-n> {
-    ::visual_text::command-new $widget(rev,[winfo toplevel %W])
+    ::visual_text::command-new [winfo toplevel %W]
 }
 bind "Accelerators" <Control-Key-o> {
-    ::visual_text::command-open $widget(rev,[winfo toplevel %W])
+    ::visual_text::command-open [winfo toplevel %W]
 }
 bind "Accelerators" <Control-Key-q> {
     exit
 }
 bind "Accelerators" <Control-Key-s> {
-    ::visual_text::command-save $widget(rev,[winfo toplevel %W])
+    ::visual_text::command-save [winfo toplevel %W]
 }
 bind "Accelerators" <Key-F1> {
     AboutVisualText show

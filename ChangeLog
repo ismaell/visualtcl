@@ -1,6 +1,10 @@
 ChangeLog for Visual Tcl:
 
 1.51b4 -> 1.51
+    o Fixed bug where Tclets with pack or grid manager wouldn't run because
+      of wrong window path
+    o Simplified a bit demo app by removing alias for main window
+    o Fixed bug with %top substitution for menu items
     o Automatically assigns a default variable for entry and scale widgets
     o Added same %widget and %top mechanism for menu commands; this allows a
       menu to know in which toplevel it is located, or to reconfigure itself
