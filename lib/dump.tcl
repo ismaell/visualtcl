@@ -331,8 +331,9 @@ proc vTcl:get_opts_special {opts w} {
     set ret {}
     foreach i $opts {
 	lassign $i opt x x def val
-	if {[vTcl:streq $opt "-class"] || [vTcl:streq $val $def]} { continue }
-	if {[info exists save($opt)] && !$save($opt)} { continue }
+	if {[vTcl:streq $opt "-class"]} { continue }
+	if {![info exists save($opt)]} { set save($opt) 0 }
+	if {!$save($opt)} { continue }
 
 	if [info exists vTcl(option,translate,$opt)] {
 	    set val [$vTcl(option,translate,$opt) $val]

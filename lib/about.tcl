@@ -135,7 +135,7 @@ proc vTclWindow.vTcl.credits {base {container 0}} {
     button $base.but23 \
         -command {Window hide $widget(CreditsWindow)} -text Close -width 8 
     frame $base.cpd24 \
-        -borderwidth 1 -height 30 -relief raised -width 30 -background black
+        -borderwidth 1 -height 30 -relief raised -width 30
     scrollbar $base.cpd24.01 \
         -command "$base.cpd24.03 xview" -orient horizontal
     scrollbar $base.cpd24.02 \

@@ -44,8 +44,17 @@ proc vTcl:create_handles {target} {
     set parent [winfo parent $target]
     if { $parent == "." } { set parent "" }
 
-    foreach i { {n top_tee} {s bottom_tee} {e right_tee} {w left_tee} \
-                {nw ul_angle} {ne ur_angle} {sw ll_angle} {se lr_angle} } {
+    set handles {
+    	{n  top_side}
+	{s  bottom_side}
+	{e  right_side}
+	{w  left_side}
+	{nw top_left_corner}
+	{ne top_right_corner}
+	{sw bottom_left_corner}
+	{se bottom_right_corner}
+    }
+    foreach i $handles {
         set a [lindex $i 0]
         set b [lindex $i 1]
         set vTcl(h,$a) "$parent.vTH_${a}"
