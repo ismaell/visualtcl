@@ -726,7 +726,6 @@ proc vTclWindow.vTcl.inspector {base {container 0}} {
     wm deiconify $base
 
     vTcl:setup_vTcl:bind $base
-    vTcl:setup_vTcl:bind $widget(InspectorListbox)
 }
 
 

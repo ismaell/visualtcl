@@ -499,9 +499,9 @@ proc vTcl:setup_vTcl:bind {target} {
     set bindlist [vTcl:list_widget_tree $target all 1 1]
     update idletasks
     foreach i $bindlist {
-        if { [lsearch [bindtags $target] vTcl(a)] < 0 } {
-            set vTcl(bindtags,$target) [bindtags $target]
-            bindtags $target "vTcl(a) $vTcl(bindtags,$target)"
+        if { [lsearch [bindtags $i] vTcl(a)] < 0 } {
+            set vTcl(bindtags,$i) [bindtags $i]
+            bindtags $i "vTcl(a) $vTcl(bindtags,$i)"
         }
     }
 }

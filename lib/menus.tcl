@@ -1224,9 +1224,8 @@ proc vTclWindow.vTclMenuEdit {base menu} {
             namespace delete %W
         }
     }
+
+    vTcl:setup_vTcl:bind $base
 }
-
-
-
 
 
