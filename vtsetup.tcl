@@ -264,7 +264,7 @@ proc vTclWindow.top38 {base {container 0}} {
     listbox $base.lis41 \
         -foreground #808080 -height 0 -selectmode multiple -width 0
     button $base.but42 \
-        -command setup_exit -padx 9 -pady 3 -text Close
+        -command setup_exit -padx 9 -text Close -width 8
     ###################
     # SETTING GEOMETRY
     ###################
@@ -275,7 +275,7 @@ proc vTclWindow.top38 {base {container 0}} {
     pack $base.lis41 \
         -in $base -anchor center -expand 1 -fill both -side top
     pack $base.but42 \
-        -in $base -anchor center -expand 0 -fill x -side bottom
+        -in $base -anchor center -expand 0 -side bottom -pady 2
 }
 
 Window show .
