@@ -381,3 +381,8 @@ how to define event handlers, or how to load/save files. You can
 even use the text dump/restore code in the ::ttd namespace in
 your own application.
 }
+
+{
+Holding down the shift key while clicking in your project will
+automatically place the last widget selected on the project.
+}
