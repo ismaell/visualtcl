@@ -513,6 +513,14 @@ proc vTcl:setup_bind_tree {target} {
     foreach i $bindlist {
         vTcl:setup_bind $i
     }
+
+    foreach i [vTcl:list_widget_tree $target] {
+
+        # make sure megawidgets' children are properly tagged
+        # as such; test mode could have added/removed children
+        vTcl:widget:register_widget_megachildren $i
+    }
+
     set vTcl(mode) "EDIT"
 }
 
@@ -948,7 +956,7 @@ proc vTcl:place_widget {class button options rx ry x y} {
     after idle "\
 	    vTcl:init_wtree 0
 	    vTcl:show_selection_in_tree $created_widget"
-    
+
     # @@end_change
 
     return $created_widget

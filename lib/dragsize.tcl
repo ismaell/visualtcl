@@ -94,7 +94,7 @@ proc vTcl:grab {widget absX absY} {
     set vTcl(w,grabbed) 1
     set vTcl(grab,startX) [vTcl:grid_snap x $absX]
     set vTcl(grab,startY) [vTcl:grid_snap y $absY]
-    puts "grab: $widget"
+    # puts "grab: $widget"
 }
 
 proc vTcl:grab_motion {parent widget absX absY} {
@@ -123,7 +123,7 @@ proc vTcl:grab_release {widget} {
         set vTcl(undo) [vTcl:dump_widget_quick $vTcl(w,widget)]
         vTcl:passive_push_action $vTcl(undo) $vTcl(redo)
     }
-    puts "grab_release: $widget"
+    # puts "grab_release: $widget"
 }
 
 proc vTcl:grab_resize {absX absY handle} {

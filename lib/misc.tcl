@@ -237,7 +237,14 @@ proc vTcl:right_click {widget X Y x y} {
 
     vTcl:set_mouse_coords $X $Y $x $y
 
-    vTcl:active_widget $widget
+    set parent $widget
+
+    # megawidget ?
+    if {[info exists ::widgets::${widget}::parent]} {
+        set parent [vTcl:at ::widgets::${widget}::parent]
+    }
+
+    vTcl:active_widget $parent
     $vTcl(gui,rc_menu) post $X $Y
     grab $vTcl(gui,rc_menu)
     bind $vTcl(gui,rc_menu) <ButtonRelease> {
