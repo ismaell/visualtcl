@@ -954,7 +954,7 @@ namespace eval base64 {
 
 proc vTcl:formCompound:add {cpd type args} {
 
-	global widget 
+	global widget
 	set varname [vTcl:rename $cpd]
 
 	global ${varname}_count
@@ -964,7 +964,7 @@ proc vTcl:formCompound:add {cpd type args} {
 	   set ${varname}_count 0
 	}
 
-	eval set count $${varname}_count
+	set count [vTcl:at ${varname}_count]
 
 	if {$type == "entry"} { set type vTcl:entry }
 	set window_name $cpd.i$count
