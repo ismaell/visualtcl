@@ -56,6 +56,7 @@ NewOption -ipad			"ipad"			text
 NewOption -ipadx		"ipadx"			text
 NewOption -ipady		"ipady"			text
 NewOption -maximum		"maximum"		text
+NewOption -modifycmd	        "modify cmd"		command
 NewOption -pad			"pad"			text
 NewOption -separator		"separator"		choice	\
   {none top bottom both}
