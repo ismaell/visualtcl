@@ -846,6 +846,11 @@ namespace eval ::vTcl::itemEdit {
         selectItem $top [expr $length - 1]
         set adding($top) 0
     	enableMenus $top
+
+	## update attributes editor
+	if {$::vTcl(w,widget) == $target($top)} {
+	    vTcl:update_widget_info $target($top)
+	}
     }
 
     proc removeItem {top} {
@@ -861,6 +866,11 @@ namespace eval ::vTcl::itemEdit {
         set current($top) [expr $current($top) % $length]
         selectItem $top $current($top)
 	enableMenus $top
+
+	## update attributes editor
+	if {$::vTcl(w,widget) == $target($top)} {
+	    vTcl:update_widget_info $target($top)
+	}
     }
 
     proc moveUpOrDown {top direction} {

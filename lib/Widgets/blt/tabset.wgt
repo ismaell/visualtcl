@@ -90,7 +90,7 @@ namespace eval vTcl::widgets::blt::tabset::edit {
     proc getItems {target} {
         ## first item in the list is the current index
         set size [$target size]
-        set current [$target index -index focus]
+        set current [$target index -index select]
         set values $current
         for {set i 0} {$i < $size} {incr i} {
             lappend values [$target tab cget [$target get $i] -text]
@@ -122,7 +122,7 @@ namespace eval vTcl::widgets::blt::tabset::edit {
             vTcl:prop:default_opt $target.f$findex $def vTcl(w,opt,$def)
         }
         $target insert end $newpage -text "Page $index" -window $target.f$findex -fill both
-        $target invoke [expr [$target size] - 1]
+        $target select [expr [$target size] - 1]
         vTcl:init_wtree
         return "Page $index"
     }
@@ -298,7 +298,7 @@ namespace eval vTcl::widgets::blt::tabset {
         ## there is a trace on var to update the combobox
         ## first item in the list is the current index
         set size [$target size]
-        set current [$target index -index focus]
+        set current [$target index -index select]
         set values $current
         for {set i 0} {$i < $size} {incr i} {
             set label_opt [$target tab cget [$target get $i] -text]
@@ -316,8 +316,7 @@ namespace eval vTcl::widgets::blt::tabset {
     }
 
     proc select_page {target index} {
-        $target invoke $index
-        $target activate $index
+        $target select $index
     }
 
     proc getImagesCmd {target} {
