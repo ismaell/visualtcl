@@ -97,7 +97,7 @@ proc vTclWindow.vTcl.prefs {{base ""}} {
         -font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1 \
         -foreground #000000 -highlightbackground #bcbcbc \
         -highlightcolor #000000 -highlightthickness 0 \
-        -text {Auto load/save compounds} -variable vTcl(pr,autoloadcomp) 
+        -text {Auto load compounds} -variable vTcl(pr,autoloadcomp) 
     frame $base.fra18.fra17 \
         -height 5 -highlightbackground #bcbcbc \
         -highlightcolor #000000 -relief groove -width 5 
