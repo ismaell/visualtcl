@@ -29,12 +29,6 @@ proc vTclWindow.vTcl.about {args} {
         wm deiconify $base; return
     }
 
-    global widget
-    set widget(rev,$base.lab21) {AboutVersion}
-    set {widget(AboutVersion)} "$base.lab21"
-    set {widget(child,AboutVersion)} "lab21"
-    set {widget(CreditsWindow)} ".vTcl.credits"
-
     ###################
     # CREATING WIDGETS
     ###################
@@ -46,6 +40,8 @@ proc vTclWindow.vTcl.about {args} {
     wm resizable $base 0 0
     wm transient $base .vTcl
     wm title $base "About Visual Tcl"
+    bind $base <Key-Escape> "%W.fra30.but31 invoke"
+    bind $base <Key-Return> "%W.fra30.but31 invoke"
 
     label $base.lab28 \
         -background #000000 -borderwidth 1 -image title -relief groove \
@@ -57,7 +53,7 @@ proc vTclWindow.vTcl.about {args} {
         -command "Window hide $base" \
         -borderwidth 1 -font [vTcl:font:get_font "vTcl:font5"]
     button $base.fra30.but32 \
-        -command Window\ hide\ $base\;Window\ show\ \$widget(CreditsWindow) \
+        -command "Window hide $base; Window show .vTcl.credits" \
         -text Credits... -width 8 \
         -borderwidth 1 -font [vTcl:font:get_font "vTcl:font5"]
     label $base.lab21 \
@@ -67,24 +63,35 @@ proc vTclWindow.vTcl.about {args} {
     # SETTING GEOMETRY
     ###################
     pack $base.lab28 \
-        -in $base -anchor center -expand 1 -fill both -side top 
+        -in $base -anchor center -expand 1 -fill both -side top
     pack $base.fra30 \
-        -in $base -anchor center -expand 0 -fill none -side bottom 
+        -in $base -anchor center -expand 0 -fill none -side bottom
     pack $base.fra30.but31 \
         -in $base.fra30 -anchor center -expand 0 -fill none -padx 5 -pady 5 \
-        -side right 
+        -side right
     pack $base.fra30.but32 \
         -in $base.fra30 -anchor center -expand 0 -fill none -padx 5 \
         -side left
     pack $base.lab21 \
-        -in $base -anchor center -expand 0 -fill none -pady 2 -side top 
+        -in $base -anchor center -expand 0 -fill none -pady 2 -side top
 
     update idletasks
 
-    bind $base <Key-Escape> "$base.fra30.but31 invoke"
-
     vTcl:center $base
     wm deiconify $base
+}
+
+proc vTcl:fill_credits {} {
+
+    global vTcl tcl_version tk_version
+
+    set inID [open [file join $vTcl(VTCL_HOME) lib Help About.txt]]
+    CreditsText delete 0.0 end
+    CreditsText insert 0.0 [read $inID]
+    CreditsText insert end \
+        "\nTcl version $tcl_version\nTk version $tk_version"
+    CreditsText configure -state disabled
+    close $inID
 }
 
 proc vTclWindow.vTcl.credits {base {container 0}} {
@@ -97,14 +104,8 @@ proc vTclWindow.vTcl.credits {base {container 0}} {
     }
 
     global widget tcl_version tk_version
-    set widget(rev,$base) {CreditsWindow}
-    set {widget(CreditsWindow)} "$base"
-    set {widget(child,CreditsWindow)} ""
-    interp alias {} CreditsWindow {} vTcl:Toplevel:WidgetProc $base
-    set widget(rev,$base.cpd24.03) {CreditsText}
-    set {widget(CreditsText)} "$base.cpd24.03"
-    set {widget(child,CreditsText)} "cpd24.03"
-    interp alias {} CreditsText {} vTcl:WidgetProc $base.cpd24.03
+    vTcl:DefineAlias $base CreditsWindow vTcl:Toplevel:WidgetProc "" 1
+    vTcl:DefineAlias $base.cpd24.03 CreditsText vTcl:WidgetProc CreditsWindow 1
 
     ###################
     # CREATING WIDGETS
@@ -119,6 +120,13 @@ proc vTclWindow.vTcl.credits {base {container 0}} {
     wm minsize $base 100 1
     wm resizable $base 1 1
     wm title $base "Visual Tcl Credits"
+    bind $base <Key-Escape> "$base.but23 invoke"
+    bind $base <<Ready>> {
+        vTcl:fill_credits
+        wm geometry %W 500x420
+        vTcl:center %W 500 420
+        wm deiconify %W
+    }
     }
     ::vTcl::OkButton $base.but23 -command "Window hide $base"
     frame $base.cpd24 \
@@ -131,6 +139,7 @@ proc vTclWindow.vTcl.credits {base {container 0}} {
         -font {-family helvetica -size 12} \
         -width 8 -wrap none -xscrollcommand "$base.cpd24.01 set" \
         -yscrollcommand "$base.cpd24.02 set"
+    bind $base.cpd24.03 <KeyRelease> "break"
     ###################
     # SETTING GEOMETRY
     ###################
@@ -145,46 +154,7 @@ proc vTclWindow.vTcl.credits {base {container 0}} {
     grid $base.cpd24.02 \
         -in $base.cpd24 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns
     grid $base.cpd24.03 \
-        -in $base.cpd24 -column 0 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky nesw
+        -in $base.cpd24 -column 0 -row 0 -columnspan 1 -rowspan 1 -sticky nesw
 
-    CreditsText delete 0.0 end
-    CreditsText insert 0.0 \
-         "Copyright\ (C)\ 1996-2000\ Stewart\ Allen\ (stewart@neuron.com)\n\n======================================================================\nMaintained\ by:\n\nChristian\ Gavin\ (cgavin@dnai.com)\nDamon\ Courtney\ (damon@unreality.com)\n\n======================================================================\nFreewrap\ is\ Copyright\ (C)\ 1998\ by\ Dennis\ LaBelle\n(dlabelle@albany.net)\ All\ Rights\ Reserved.\n\n======================================================================\nPortions\ of\ this\ software\ from\n\n\ \ Effective\ Tcl/Tk\ Programming\n\ \ Mark\ Harrison,\ DSC\ Communications\ Corp.\n\ \ Michael\ McLennan,\ Bell\ Labs\ Innovations\ for\ Lucent\ Technologies\n\ \ Addison-Wesley\ Professional\ Computing\ Series\n\n\ \ Copyright\ (c)\ 1996-1997\ \ Lucent\ Technologies\ Inc.\ and\ Mark\ Harrison\n======================================================================\n
-Routines for encoding and decoding base64
-   encoding from Time Janes,
-   decoding from Pascual Alonso,
-   namespace'ing and bugs from Parand Tony Darugar (tdarugar@binevolve.com)\n
-Combobox and Multicolumn listbox Copyright (c) 1999, Bryan Oakley
-Progressbar Copyright (c) 2000 Alexander Schoepe\n
-======================================================================
-Enhanced Tk Console, part of the VerTcl system
-
-Originally based off Brent Welch's Tcl Shell Widget
-(from \"Practical Programming in Tcl and Tk\")
-
-Thanks to the following (among many) for early bug reports & code ideas:
-Steven Wahl <steven@indra.com>, Jan Nijtmans <nijtmans@nici.kun.nl>
-Crimmins <markcrim@umich.edu>, Wart <wart@ugcs.caltech.edu>
-
-Copyright 1995-2000 Jeffrey Hobbs
-Initiated: Thu Aug 17 15:36:47 PDT 1995
-
-jeff.hobbs@acm.org
-
-source standard_disclaimer.tcl
-source bourbon_ware.tcl
-======================================================================
-"
-    CreditsText insert end \
-         "\nTcl version $tcl_version\nTk version $tk_version"
-    CreditsText configure -state disabled
-    bind $base <Key-Escape> "$base.but23 invoke"
-
-    # avoid syntax coloring in credits text...
-    bind $widget(CreditsText) <KeyRelease> "break"
-
-    wm geometry $base 500x420
-    vTcl:center $base 500 420
-    wm deiconify $base
+    vTcl:FireEvent $base <<Ready>>
 }
