@@ -189,7 +189,6 @@ set vTcl(place,insert)  "-x 5 -y 5 -bordermode ignore"
 # Geometry Manager Attributes       LabelName     Balloon  Type   Choices   CfgCmd     Group
 #
 set vTcl(m,pack,list) "-anchor -expand -fill -side -ipadx -ipady -padx -pady -in"
-set vTcl(m,pack,extlist) ""
 set vTcl(m,pack,-anchor)           { anchor          {}       choice  {n ne e se s sw w nw center} }
 set vTcl(m,pack,-expand)           { expand          {}       boolean {0 1} }
 set vTcl(m,pack,-fill)             { fill            {}       choice  {none x y both} }
@@ -199,6 +198,8 @@ set vTcl(m,pack,-ipady)            { {int. y pad}    {}       type    {} }
 set vTcl(m,pack,-padx)             { {ext. x pad}    {}       type    {} }
 set vTcl(m,pack,-pady)             { {ext. y pad}    {}       type    {} }
 set vTcl(m,pack,-in)               { inside          {}       type    {} }
+set vTcl(m,pack,extlist) "propagate"
+set vTcl(m,pack,propagate)         { propagate       {}        boolean {0 1} {vTcl:pack:conf_ext} }
 
 set vTcl(m,place,list) "-anchor -x -y -relx -rely -width -height -relwidth -relheight -in"
 set vTcl(m,place,extlist) ""
@@ -214,7 +215,6 @@ set vTcl(m,place,-relheight)       { {rel. height}   {}       type    {} }
 set vTcl(m,place,-in)              { inside          {}       type    {} }
 
 set vTcl(m,grid,list) "-sticky -row -column -rowspan -columnspan -ipadx -ipady -padx -pady -in"
-set vTcl(m,grid,extlist) ""
 set vTcl(m,grid,-sticky)           { sticky          {}       type    {n s e w} }
 set vTcl(m,grid,-row)              { row             {}       type    {} }
 set vTcl(m,grid,-column)           { column          {}       type    {} }
@@ -226,11 +226,12 @@ set vTcl(m,grid,-padx)             { {ext. x pad}    {}       type    {} }
 set vTcl(m,grid,-pady)             { {ext. y pad}    {}       type    {} }
 set vTcl(m,grid,-in)               { inside          {}       type    {} }
 
-set vTcl(m,grid,extlist) "row,weight column,weight row,minsize column,minsize"
+set vTcl(m,grid,extlist) "row,weight column,weight row,minsize  column,minsize propagate"
 set vTcl(m,grid,column,weight)     { {col weight}    {}       type    {} {vTcl:grid:conf_ext} }
 set vTcl(m,grid,column,minsize)    { {col minsize}   {}       type    {} {vTcl:grid:conf_ext} }
 set vTcl(m,grid,row,weight)        { {row weight}    {}       type    {} {vTcl:grid:conf_ext} }
 set vTcl(m,grid,row,minsize)       { {row minsize}   {}       type    {} {vTcl:grid:conf_ext} }
+set vTcl(m,grid,propagate)         { propagate       {}       boolean {0 1} {vTcl:grid:conf_ext} }
 
 set vTcl(m,wm,list) ""
 set vTcl(m,wm,extlist) "geometry,x geometry,y geometry,w geometry,h resizable,w resizable,h

@@ -1,6 +1,7 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Added propagate patch from Simon for pack/grid geometry managers.
     o Added call to tk_setPalette to set color scheme according to
       preferences.
     o Fix for correctly dumping labeledframe with contained widgets.

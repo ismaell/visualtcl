@@ -412,9 +412,7 @@ proc vTcl:dump_widget_geom {target basename} {
     ## Let's be safe and force wm for toplevel windows.  Just incase...
     if {$class == "Toplevel"} { set mgr wm }
 
-    ## Weird totally I mean like confusing kinda bug: the window manager
-    ## switches from 'wm' for a menu to 'place' which messed up the saved
-    ## file.
+    ## That shouldn't be necessary any more. Doesn't hurt anyway.
     if {$class == "Menu" && $mgr == "place"} {return ""}
 
     set result ""
@@ -422,8 +420,15 @@ proc vTcl:dump_widget_geom {target basename} {
         && $mgr != "menubar" \
         && $mgr != "tixGeometry" \
         && $mgr != "tixForm"} {
+        set result ""
+        if {(($mgr == "pack") && (![pack propagate $target])) ||
+            (($mgr == "grid") && (![grid propagate $target]))} {
+            # Do them both!  Important when mixing geometery managers
+            append result "$vTcl(tab)pack propagate $basename 0\n"
+            append result "$vTcl(tab)grid propagate $basename 0\n"
+        }
         set opts [$mgr info $target]
-        set result "$vTcl(tab)$mgr $basename \\\n"
+        append result "$vTcl(tab)$mgr $basename \\\n"
         set basesplit  [split $basename .]
         set length     [llength $basesplit]
         set parentname [join [lrange $basesplit 0 [expr $length - 2]] .]

@@ -381,6 +381,9 @@ proc vTcl:split_info {target} {
                 set vTcl(w,grid,$a,$b) $x
             }
         }
+        set vTcl(w,grid,propagate) [grid propagate $target]
+    } elseif {$mgr == "pack"} {
+        set vTcl(w,pack,propagate) [pack propagate $target]
     }
 }
 

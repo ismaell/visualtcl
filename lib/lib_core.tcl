@@ -66,7 +66,7 @@ proc vTcl:widget:lib:lib_core {args} {
 }
 
 ####################################################################
-# Procedure to support extra geometry mgr configuration
+# Procedures to support extra geometry mgr configuration
 #
 
 proc vTcl:grid:conf_ext {target var value} {
@@ -76,6 +76,16 @@ proc vTcl:grid:conf_ext {target var value} {
     grid columnconf $parent $vTcl(w,grid,-column) -minsize $vTcl(w,grid,column,minsize)
     grid rowconf    $parent $vTcl(w,grid,-row)    -weight  $vTcl(w,grid,row,weight)
     grid rowconf    $parent $vTcl(w,grid,-row)    -minsize $vTcl(w,grid,row,minsize)
+    # Both required for better compatibilty!
+    grid propagate  $target $vTcl(w,grid,propagate)
+    pack propagate  $target $vTcl(w,grid,propagate)
+}
+
+proc vTcl:pack:conf_ext {target var value} {
+    global vTcl
+    # Both required for better compatibilty!
+    pack propagate  $target $vTcl(w,pack,propagate)
+    grid propagate  $target $vTcl(w,pack,propagate)
 }
 
 proc vTcl:wm:conf_geom {target var value} {
