@@ -444,6 +444,10 @@ proc vTcl:save2 {file} {
     ## Gather information about the widgets.
     vTcl:dump:gather_widget_info
 
+    ## Find out what libraries are being used by the compounds
+    set vTcl(dump,libraries) [concat $vTcl(dump,libraries) [vTcl::project::requiredLibraries main]]
+    set vTcl(dump,libraries) [lsort -unique $vTcl(dump,libraries)]
+
     ## Header to import libraries
     ## If any of the widgets use an external library, we need to dump the
     ## importheader for each library.  If all the widgets are core or don't
@@ -685,7 +689,7 @@ namespace eval vTcl::project {
             append output \n
             append output {## Compound: }
             append output "$type / $compoundName\n"
-            append output [vTcl:dump_namespace vTcl::compounds::${type}::${compoundName}]
+            append output [vTcl:dump_namespace vTcl::compounds::${type}::[list $compoundName]]
         }
 
         return $output
@@ -708,6 +712,20 @@ namespace eval vTcl::project {
         set type         [lindex $compound 0]
         set compoundName [lindex $compound 1]
         vTcl::compounds::deleteCompound $type $compoundName
+    }
+
+    ## returns the required libraries for the inserted compounds
+    proc requiredLibraries {moduleName} {
+        upvar ::vTcl::modules::${moduleName}::compounds compounds
+
+        set result "core"
+        foreach compound $compounds {
+            set type         [lindex $compound 0]
+            set compoundName [lindex $compound 1]
+            set result [concat $result [vTcl::compounds::getLibraries $type $compoundName]]
+        }
+
+        return [lsort -unique $result]
     }
 }
 

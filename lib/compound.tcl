@@ -741,6 +741,17 @@ namespace eval ::vTcl::compounds {
         return [vTcl:at ${spc}::class]
     }
 
+    proc getLibraries {type compoundName} {
+        set spc ${type}::[list $compoundName]
+
+        ## if no libs have been specified, we assume the default
+        if {![info exists ${spc}::libraries]} {
+            set ${spc}::libraries core
+        }
+
+        return [set ${spc}::libraries]
+    }
+
     proc deleteCompound {type compoundName} {
         set spc ${type}::[list $compoundName]
 
@@ -761,6 +772,4 @@ namespace eval ::vTcl::compounds {
         namespace delete $spc
     }
 }
-
-
 
