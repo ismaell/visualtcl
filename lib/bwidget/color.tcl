@@ -82,6 +82,7 @@ proc SelectColor::menu {path placement args} {
     wm deiconify $top
     focus -force $frame
     raise $top
+    update
     BWidget::grab set $frame
 
     tkwait variable SelectColor::_selection

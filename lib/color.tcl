@@ -21,11 +21,8 @@
 ##############################################################################
 #
 
-proc vTcl:get_color {color} {
-	
-	vTcl:log "Color: $color"
+proc vTcl:get_color {color w} {
 
-    # @@change by Christian Gavin 3/19/2000
     # apparently Iwidgets 3.0 returns screwed up colors
     #
     # tk_chooseColor accepts the following:
@@ -33,31 +30,30 @@ proc vTcl:get_color {color} {
     # #RRGGBB        (7 chars)
     # #RRRGGGBBB     (10 chars)
     # #RRRRGGGGBBBB  (13 chars)
-    
+
     if {[string length $color] == 11} {
-    	
+
     	set extend [string range $color 10 10]
     	set color $color$extend$extend
-    	
+
     	vTcl:log "Fixed color: $color"
 
     } else {
-	
+
 	if {[string length $color] == 9} {
-    	
+
  	   	set extend [string range $color 8 8]
   	  	set color $color$extend$extend$extend$extend
-    	
+
    	 	vTcl:log "Fixed color: $color"
-    	}    
+    	}
     }
-    
-    # @@end_change
-    
+
     global vTcl tk_version
     set oldcolor $color
 
-    set newcolor [tk_chooseColor -initialcolor $color]
+    set newcolor [SelectColor::menu .color [list below $w] -color $color]
+    # set newcolor [tk_chooseColor -initialcolor $color]
     if {$newcolor != ""} {
         return $newcolor
     } else {
@@ -65,14 +61,14 @@ proc vTcl:get_color {color} {
     }
 }
 
-proc vTcl:show_color {widget option variable} {
+proc vTcl:show_color {widget option variable w} {
 global vTcl
     set vTcl(color,widget)   $widget
     set vTcl(color,option)   $option
     set vTcl(color,variable) $variable
     set color [subst $$variable]
     if {$color == ""} {
-        set color "#000000" 
+        set color "#000000"
     } elseif {[string range $color 0 0] != "#" } {
         set clist [winfo rgb . $color]
         set r [lindex $clist 0]
@@ -80,10 +76,8 @@ global vTcl
         set b [lindex $clist 2]
         set color "#[vTcl:hex $r][vTcl:hex $g][vTcl:hex $b]"
     }
-    set vTcl(color) [vTcl:get_color $color]
+    set vTcl(color) [vTcl:get_color $color $w]
     set $vTcl(color,variable) $vTcl(color)
     $vTcl(color,widget) configure -bg $vTcl(color)
     $vTcl(w,widget) configure $vTcl(color,option) $vTcl(color)
 }
-
-

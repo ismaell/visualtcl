@@ -124,7 +124,7 @@ proc vTcl:widget_set_fg {target} {
     if {$vTcl(w,widget) == ""} {return}
     if {[catch {set fg [$vTcl(w,widget) cget -foreground]}]} {return}
     set vTcl(w,opt,-foreground) $fg
-    vTcl:show_color $target -foreground vTcl(w,opt,-foreground)
+    vTcl:show_color $target -foreground vTcl(w,opt,-foreground) $target
 }
 
 proc vTcl:widget_set_bg {target} {
@@ -132,7 +132,7 @@ proc vTcl:widget_set_bg {target} {
     if {$vTcl(w,widget) == ""} {return}
     if {[catch {set bg [$vTcl(w,widget) cget -background]}]} {return}
     set vTcl(w,opt,-background) $bg
-    vTcl:show_color $target -background vTcl(w,opt,-background)
+    vTcl:show_color $target -background vTcl(w,opt,-background) $target
 }
 
 proc vTcl:set_manager {mgr} {

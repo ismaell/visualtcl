@@ -498,7 +498,7 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
             frame $base
             vTcl:entry ${base}.l -relief sunken  \
                 -textvariable $variable -width 8 \
-                -highlightthickness 1 -fg black 
+                -highlightthickness 1 -fg black
             bind ${base}.l <KeyRelease-Return> \
                 "$config_cmd; ${base}.f conf -bg \$$variable"
             frame ${base}.f -relief raised \
@@ -506,7 +506,7 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
             bind ${base}.f <ButtonPress> \
                 "
 		vTcl:propmgr:select_attr $top $option
-		vTcl:show_color $top.t${option}.f $option $variable
+		vTcl:show_color $top.t${option}.f $option $variable ${base}.f
 		vTcl:prop:save_opt \$vTcl(w,widget) $option $variable
 		"
             pack ${base}.l -side left -expand 1 -fill x
