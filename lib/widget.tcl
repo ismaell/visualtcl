@@ -630,6 +630,14 @@ proc vTcl:switch_mode {} {
 
 proc vTcl:setup_bind_tree {target} {
     global vTcl
+    vTcl:setup_bind_widget $target
+    set vTcl(mode) "EDIT"
+    ::widgets_bindings::enable_editor 1
+    ::menu_edit::enable_all_editors 1
+}
+
+proc vTcl:setup_bind_widget {target} {
+    global vTcl
     # Include special menu windows under X with '#'
     set bindlist [vTcl:list_widget_tree $target "" 1 1]
     update idletasks
@@ -642,10 +650,6 @@ proc vTcl:setup_bind_tree {target} {
         # as such; test mode could have added/removed children
         vTcl:widget:register_widget_megachildren $i
     }
-
-    set vTcl(mode) "EDIT"
-    ::widgets_bindings::enable_editor 1
-    ::menu_edit::enable_all_editors 1
 }
 
 proc vTcl:setup_unbind {target} {
@@ -659,15 +663,20 @@ proc vTcl:setup_unbind_tree {target} {
     global vTcl
     vTcl:select_widget .
     vTcl:destroy_handles
+    vTcl:setup_unbind_widget $target
+    set vTcl(mode) "TEST"
+    ::widgets_bindings::enable_editor 0
+    ::menu_edit::enable_all_editors 0
+}
+
+proc vTcl:setup_unbind_widget {target} {
+    global vTcl
     # Include special menu windows under X with '#'
     set bindlist [vTcl:list_widget_tree $target "" 1 1]
     update idletasks
     foreach i $bindlist {
         vTcl:setup_unbind $i
     }
-    set vTcl(mode) "TEST"
-    ::widgets_bindings::enable_editor 0
-    ::menu_edit::enable_all_editors 0
 }
 
 ##

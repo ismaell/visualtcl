@@ -880,13 +880,14 @@ namespace eval ::vTcl::itemEdit {
         variable adding
 
         ::vTcl::ui::attributes::setPending
+        vTcl:setup_unbind_widget $target($top)
         set added [::$cmds($top)::addItem $target($top)]
+        vTcl:setup_bind_widget $target($top)
         ## user canceled ?
         if {$added == ""} {return}
         set adding($top) 1
         lappend ::${top}::list_items $added
         set length [llength [vTcl:at ::${top}::list_items]]
-        vTcl:setup_bind_tree $target($top)
         selectItem $top [expr $length - 1]
         set adding($top) 0
     	enableMenus $top
@@ -903,7 +904,9 @@ namespace eval ::vTcl::itemEdit {
         variable current
 
         ::vTcl::ui::attributes::setPending
+        vTcl:setup_unbind_widget $target($top)
         ::$cmds($top)::removeItem $target($top) $current($top)
+        vTcl:setup_bind_widget $target($top)
         set ::${top}::list_items [lreplace [::vTcl:at ::${top}::list_items] \
             $current($top) $current($top)]
         set length [llength [::vTcl:at ::${top}::list_items]]
