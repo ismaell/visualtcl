@@ -350,6 +350,108 @@ proc vTcl:project:info {} {
     namespace eval ::widgets::.top21.m26.men29 {
         array set save {-tearoff 1}
     }
+    namespace eval ::widgets::.top22 {
+        array set save {}
+    }
+    namespace eval ::widgets::.top22.lab23 {
+        array set save {-anchor 1 -text 1}
+    }
+    namespace eval ::widgets::.top22.ent24 {
+        array set save {-background 1 -textvariable 1}
+    }
+    namespace eval ::widgets::.top22.fra25 {
+        array set save {-borderwidth 1 -height 1 -relief 1 -width 1}
+    }
+    namespace eval ::widgets::.top22.fra27 {
+        array set save {-borderwidth 1 -height 1 -width 1}
+    }
+    namespace eval ::widgets::.top22.fra27.cpd28 {
+        array set save {-borderwidth 1 -height 1 -relief 1 -width 1}
+    }
+    namespace eval ::widgets::.top22.fra27.cpd28.01 {
+        array set save {-background 1 -height 1 -relief 1 -width 1 -xscrollcommand 1 -yscrollcommand 1}
+    }
+    namespace eval ::widgets::.top22.fra27.cpd28.02 {
+        array set save {-command 1 -highlightthickness 1 -orient 1}
+    }
+    namespace eval ::widgets::.top22.fra27.cpd28.03 {
+        array set save {-command 1 -highlightthickness 1}
+    }
+    namespace eval ::widgets::.top22.fra27.fra29 {
+        array set save {-borderwidth 1 -height 1 -width 1}
+    }
+    namespace eval ::widgets::.top22.fra27.fra29.fra30 {
+        array set save {-borderwidth 1 -height 1 -width 1}
+    }
+    namespace eval ::widgets::.top22.fra27.fra29.fra30.lab34 {
+        array set save {-text 1}
+    }
+    namespace eval ::widgets::.top22.fra27.fra29.fra30.but31 {
+        array set save {-command 1 -padx 1 -pady 1 -text 1}
+    }
+    namespace eval ::widgets::.top22.fra27.fra29.fra30.ent32 {
+        array set save {-background 1 -justify 1 -state 1 -textvariable 1 -width 1}
+    }
+    namespace eval ::widgets::.top22.fra27.fra29.fra30.but33 {
+        array set save {-command 1 -padx 1 -pady 1 -text 1}
+    }
+    namespace eval ::widgets::.top22.fra27.fra29.che35 {
+        array set save {-anchor 1 -command 1 -pady 1 -text 1 -variable 1}
+    }
+    namespace eval ::widgets::.top22.fra27.fra29.che37 {
+        array set save {-anchor 1 -command 1 -pady 1 -text 1 -variable 1}
+    }
+    namespace eval ::widgets::.top22.fra27.fra29.che38 {
+        array set save {-anchor 1 -command 1 -pady 1 -text 1 -variable 1}
+    }
+    namespace eval ::widgets::.top22.fra27.fra29.che39 {
+        array set save {-anchor 1 -command 1 -pady 1 -text 1 -variable 1}
+    }
+    namespace eval ::widgets::.top22.fra27.fra29.lab40 {
+        array set save {-anchor 1 -text 1}
+    }
+    namespace eval ::widgets::.top22.fra27.fra29.rad41 {
+        array set save {-anchor 1 -command 1 -pady 1 -text 1 -value 1 -variable 1}
+    }
+    namespace eval ::widgets::.top22.fra27.fra29.rad42 {
+        array set save {-anchor 1 -command 1 -padx 1 -pady 1 -text 1 -value 1 -variable 1}
+    }
+    namespace eval ::widgets::.top22.fra27.fra29.rad43 {
+        array set save {-anchor 1 -command 1 -pady 1 -text 1 -value 1 -variable 1}
+    }
+    namespace eval ::widgets::.top22.fra27.fra29.lab22 {
+        array set save {-background 1 -padx 1 -text 1}
+    }
+    namespace eval ::widgets::.top22.fra27.fra29.lab23 {
+        array set save {-background 1 -padx 1 -pady 1 -text 1}
+    }
+    namespace eval ::widgets::.top22.fra26 {
+        array set save {-borderwidth 1 -height 1 -relief 1 -width 1}
+    }
+    namespace eval ::widgets::.top22.cpd44 {
+        array set save {-borderwidth 1 -height 1 -relief 1 -width 1}
+    }
+    namespace eval ::widgets::.top22.cpd44.01 {
+        array set save {-command 1 -highlightthickness 1 -orient 1}
+    }
+    namespace eval ::widgets::.top22.cpd44.02 {
+        array set save {-command 1 -highlightthickness 1}
+    }
+    namespace eval ::widgets::.top22.cpd44.03 {
+        array set save {-background 1 -height 1 -relief 1 -width 1 -xscrollcommand 1 -yscrollcommand 1}
+    }
+    namespace eval ::widgets::.top22.fra45 {
+        array set save {-borderwidth 1 -height 1 -relief 1 -width 1}
+    }
+    namespace eval ::widgets::.top22.fra46 {
+        array set save {-borderwidth 1 -height 1 -width 1}
+    }
+    namespace eval ::widgets::.top22.fra46.but47 {
+        array set save {-padx 1 -pady 1 -text 1 -width 1}
+    }
+    namespace eval ::widgets::.top22.fra46.but48 {
+        array set save {-padx 1 -pady 1 -text 1 -width 1}
+    }
     namespace eval ::widgets_bindings {
         set tagslist {}
     }
@@ -543,8 +645,18 @@ variable ttdVersion {}
 
 }
 
-proc {apply_tag} {tag} {
-eval MainText tag add $tag [MainText tag ranges sel]
+proc {apply_tag} {x y} {
+set index [TagsListbox index @$x,$y]
+set tag   [TagsListbox get $index]
+
+## apply or unapply the tag?
+if {[TagsListbox itemcget $index -background] == "white"} {
+    eval MainText tag add $tag [MainText tag ranges sel]
+} else {
+    eval MainText tag remove $tag [MainText tag ranges sel]
+}
+
+show_tags_at_insert
 }
 
 proc {command-new} {} {
@@ -581,6 +693,24 @@ global filename widget tk_strictMotif
     }
     $w mark set insert 1.0
     fill_tags
+}
+
+proc {command-save} {w} {
+global filename tk_strictMotif widget
+
+    set old $tk_strictMotif
+    set tk_strictMotif 0
+    set file [tk_getSaveFile  -defaultextension {.ttd}   -initialdir .  -filetypes {{{Rich Tcl Text} *.ttd TEXT} {all *.* TEXT}}  -initialfile $filename  -title "Save..."]
+    set tk_strictMotif $old
+
+    if {$file != ""} {
+	set filename $file
+	set id [open $filename w]
+	set data [::ttd::get $w]
+	puts -nonewline $id $data
+	close $id
+	wm title $widget(VisualText) "$file - Visual Text"
+    }
 }
 
 proc {compare_range} {range1 range2} {
@@ -639,6 +769,24 @@ foreach tag $tags {
 
 TagsText tag configure default -background white
 TagsText configure -state disabled
+}
+
+proc {init_create_new_tag} {} {
+global justify_radio font_size_entry
+
+FontsListbox delete 0 end
+foreach family [lsort [font families]] {
+    FontsListbox insert end $family
+}
+FontsListbox selection set 0
+
+set justify_radio left
+set font_size_entry 10
+
+TagSampleText delete 1.0 end
+TagSampleText insert end "The Quick Brown Fox jumped over a lazy dog's back" sample
+
+update_sample
 }
 
 proc {show_insert_position} {} {
@@ -735,29 +883,29 @@ show_insert_position
 
 proc {main} {argc argv} {
 wm protocol .top21 WM_DELETE_WINDOW {exit}
+
+init_create_new_tag
 }
 
-proc {command-save} {w} {
-global filename tk_strictMotif widget
+proc {update_sample} {} {
+global bold_check italic_check justify_radio font_size_entry
+global underline_check overstrike_check
 
-    set old $tk_strictMotif
-    set tk_strictMotif 0
-    set file [tk_getSaveFile \
-	    -defaultextension {.ttd}  \
-	    -initialdir . \
-	    -filetypes {{{Rich Tcl Text} *.ttd TEXT} {all *.* TEXT}} \
-	    -initialfile $filename \
-	    -title "Save..."]
-    set tk_strictMotif $old
+set index [lindex [FontsListbox curselection] 0]
+if {$index == ""} {
+    FontsListbox selection set 0
+    set index 0
+}
+set family [FontsListbox get $index]
+set weight normal
+if {$bold_check} {set weight bold}
+set slant roman
+if {$italic_check} {set slant italic}
 
-    if {$file != ""} {
-	set filename $file
-	set id [open $filename w]
-	set data [::ttd::get $w]
-	puts -nonewline $id $data
-	close $id
-	wm title $widget(VisualText) "$file - Visual Text"
-    }
+TagSampleText tag configure sample -font "-family [list $family] -weight $weight -slant $slant -size $font_size_entry -underline $underline_check -overstrike $overstrike_check"
+TagSampleText tag configure sample -justify $justify_radio
+TagSampleText tag configure sample -background [TagBackground cget -background]
+TagSampleText tag configure sample -foreground [TagForeground cget -background]
 }
 
 proc init {argc argv} {
@@ -860,7 +1008,7 @@ proc vTclWindow. {base {container 0}} {
     wm overrideredirect $base 0
     wm resizable $base 1 1
     wm withdraw $base
-    wm title $base "/home/cgavin/vtcl/demo/visual-text.ttd - Tcl/Tk Text Dump Viewer"
+    wm title $base "vtcl.tcl"
     bindtags $base "$base Vtcl.tcl all"
     }
     ###################
@@ -890,18 +1038,18 @@ proc vTclWindow.top21 {base {container 0}} {
     toplevel $base -class Toplevel \
         -menu "$base.m26" 
     wm focusmodel $base passive
-    wm geometry $base 678x613+190+95; update
+    wm geometry $base 678x613+157+97; update
     wm maxsize $base 1009 738
     wm minsize $base 1 1
     wm overrideredirect $base 0
     wm resizable $base 1 1
     wm deiconify $base
-    wm title $base "Visual Text"
+    wm title $base "/home/cgavin/vtcl/demo/visual-text.ttd - Visual Text"
     }
     frame $base.fra22 \
         -borderwidth 1 
     label $base.fra22.lab30 \
-        -borderwidth 1 -padx 1 -relief sunken -text {Line 32 Col 19} 
+        -borderwidth 1 -padx 1 -relief sunken -text {Line 88 Col 27} 
     label $base.fra22.lab31 \
         -borderwidth 1 -padx 1 -relief sunken -text INS 
     frame $base.cpd23 \
@@ -971,9 +1119,10 @@ proc vTclWindow.top21 {base {container 0}} {
         -xscrollcommand "$base.cpd23.02.cpd22.02 set" \
         -yscrollcommand "$base.cpd23.02.cpd22.03 set" 
     bind $base.cpd23.02.cpd22.01 <Button-1> {
-        if {[MainText tag ranges sel] == ""} break
-
-apply_tag [TagsListbox get @%x,%y]
+        if {[MainText tag ranges sel] != ""} {
+    apply_tag %x %y
+}
+break
     }
     scrollbar $base.cpd23.02.cpd22.02 \
         -command "$base.cpd23.02.cpd22.01 xview" -highlightthickness 0 \
@@ -1122,7 +1271,219 @@ apply_tag [TagsListbox get @%x,%y]
         -bordermode ignore 
 }
 
+proc vTclWindow.top22 {base {container 0}} {
+    if {$base == ""} {
+        set base .top22
+    }
+    if {[winfo exists $base] && (!$container)} {
+        wm deiconify $base; return
+    }
+
+    global widget
+    vTcl:DefineAlias "$base" "CreateNewTag" vTcl:Toplevel:WidgetProc "" 1
+    vTcl:DefineAlias "$base.cpd44.03" "TagSampleText" vTcl:WidgetProc "CreateNewTag" 1
+    vTcl:DefineAlias "$base.fra27.cpd28.01" "FontsListbox" vTcl:WidgetProc "CreateNewTag" 1
+    vTcl:DefineAlias "$base.fra27.fra29.lab22" "TagBackground" vTcl:WidgetProc "CreateNewTag" 1
+    vTcl:DefineAlias "$base.fra27.fra29.lab23" "TagForeground" vTcl:WidgetProc "CreateNewTag" 1
+
+    ###################
+    # CREATING WIDGETS
+    ###################
+    if {!$container} {
+    toplevel $base -class Toplevel
+    wm focusmodel $base passive
+    wm geometry $base 439x457+223+143; update
+    wm maxsize $base 1009 738
+    wm minsize $base 1 1
+    wm overrideredirect $base 0
+    wm resizable $base 1 1
+    wm deiconify $base
+    wm title $base "Create New Tag"
+    }
+    label $base.lab23 \
+        -anchor w -text {Enter new tag name:} 
+    entry $base.ent24 \
+        -background white -textvariable new_tag_name 
+    frame $base.fra25 \
+        -borderwidth 2 -height 2 -relief groove -width 125 
+    frame $base.fra27 \
+        -borderwidth 2 -height 75 -width 125 
+    frame $base.fra27.cpd28 \
+        -borderwidth 1 -height 30 -relief sunken -width 30 
+    listbox $base.fra27.cpd28.01 \
+        -background white -height 5 -relief flat -width 40 \
+        -xscrollcommand "$base.fra27.cpd28.02 set" \
+        -yscrollcommand "$base.fra27.cpd28.03 set" 
+    bind $base.fra27.cpd28.01 <<ListboxSelect>> {
+        update_sample
+    }
+    scrollbar $base.fra27.cpd28.02 \
+        -command "$base.fra27.cpd28.01 xview" -highlightthickness 0 \
+        -orient horizontal 
+    scrollbar $base.fra27.cpd28.03 \
+        -command "$base.fra27.cpd28.01 yview" -highlightthickness 0 
+    frame $base.fra27.fra29 \
+        -borderwidth 2 -height 75 -width 125 
+    frame $base.fra27.fra29.fra30 \
+        -borderwidth 2 -height 75 -width 125 
+    label $base.fra27.fra29.fra30.lab34 \
+        -text Size: 
+    button $base.fra27.fra29.fra30.but31 \
+        -command {incr font_size_entry -1
+update_sample} -padx 0 -pady 0 \
+        -text < 
+    entry $base.fra27.fra29.fra30.ent32 \
+        -background white -justify center -state disabled \
+        -textvariable font_size_entry -width 3 
+    button $base.fra27.fra29.fra30.but33 \
+        -command {incr font_size_entry
+update_sample} -padx 0 -pady 0 -text > 
+    checkbutton $base.fra27.fra29.che35 \
+        -anchor w -command update_sample -pady 0 -text Bold \
+        -variable bold_check 
+    checkbutton $base.fra27.fra29.che37 \
+        -anchor w -command update_sample -pady 0 -text Italic \
+        -variable italic_check 
+    checkbutton $base.fra27.fra29.che38 \
+        -anchor w -command update_sample -pady 0 -text Underline \
+        -variable underline_check 
+    checkbutton $base.fra27.fra29.che39 \
+        -anchor w -command update_sample -pady 0 -text Overstrike \
+        -variable overstrike_check 
+    label $base.fra27.fra29.lab40 \
+        -anchor w -text Justify 
+    radiobutton $base.fra27.fra29.rad41 \
+        -anchor w -command update_sample -pady 0 -text left -value left \
+        -variable justify_radio 
+    radiobutton $base.fra27.fra29.rad42 \
+        -anchor w -command update_sample -padx 1 -pady 0 -text center \
+        -value center -variable justify_radio 
+    radiobutton $base.fra27.fra29.rad43 \
+        -anchor w -command update_sample -pady 0 -text right -value right \
+        -variable justify_radio 
+    label $base.fra27.fra29.lab22 \
+        -background #ffe8ff -padx 1 -text Bkgnd 
+    bind $base.fra27.fra29.lab22 <Button-1> {
+        %W configure -background [tk_chooseColor -initialcolor [%W cget -background]]
+update_sample
+    }
+    label $base.fra27.fra29.lab23 \
+        -background #c03e1c -padx 1 -pady 1 -text Foregnd 
+    bind $base.fra27.fra29.lab23 <Button-1> {
+        %W configure -background [tk_chooseColor -initialcolor [%W cget -background]]
+update_sample
+    }
+    frame $base.fra26 \
+        -borderwidth 2 -height 2 -relief groove -width 125 
+    frame $base.cpd44 \
+        -borderwidth 1 -height 30 -relief sunken -width 30 
+    scrollbar $base.cpd44.01 \
+        -command "$base.cpd44.03 xview" -highlightthickness 0 \
+        -orient horizontal 
+    scrollbar $base.cpd44.02 \
+        -command "$base.cpd44.03 yview" -highlightthickness 0 
+    text $base.cpd44.03 \
+        -background white -height 4 -relief flat -width 20 \
+        -xscrollcommand "$base.cpd44.01 set" \
+        -yscrollcommand "$base.cpd44.02 set" 
+    frame $base.fra45 \
+        -borderwidth 2 -height 2 -relief groove -width 125 
+    frame $base.fra46 \
+        -borderwidth 2 -height 75 -width 125 
+    button $base.fra46.but47 \
+        -padx 3m -pady 1m -text Add -width 8 
+    button $base.fra46.but48 \
+        -padx 3m -pady 1m -text Cancel -width 8 
+    ###################
+    # SETTING GEOMETRY
+    ###################
+    pack $base.lab23 \
+        -in $base -anchor center -expand 0 -fill x -side top 
+    pack $base.ent24 \
+        -in $base -anchor center -expand 0 -fill x -side top 
+    pack $base.fra25 \
+        -in $base -anchor center -expand 0 -fill x -pady 5 -side top 
+    pack $base.fra27 \
+        -in $base -anchor center -expand 0 -fill both -side top 
+    pack $base.fra27.cpd28 \
+        -in $base.fra27 -anchor center -expand 1 -fill both -side left 
+    grid columnconf $base.fra27.cpd28 0 -weight 1
+    grid rowconf $base.fra27.cpd28 0 -weight 1
+    grid $base.fra27.cpd28.01 \
+        -in $base.fra27.cpd28 -column 0 -row 0 -columnspan 1 -rowspan 1 \
+        -sticky nesw 
+    grid $base.fra27.cpd28.02 \
+        -in $base.fra27.cpd28 -column 0 -row 1 -columnspan 1 -rowspan 1 \
+        -sticky ew 
+    grid $base.fra27.cpd28.03 \
+        -in $base.fra27.cpd28 -column 1 -row 0 -columnspan 1 -rowspan 1 \
+        -sticky ns 
+    pack $base.fra27.fra29 \
+        -in $base.fra27 -anchor center -expand 0 -fill y -side right 
+    pack $base.fra27.fra29.fra30 \
+        -in $base.fra27.fra29 -anchor center -expand 0 -fill none -ipadx 2 \
+        -ipady 2 -side top 
+    pack $base.fra27.fra29.fra30.lab34 \
+        -in $base.fra27.fra29.fra30 -anchor center -expand 0 -fill none \
+        -side left 
+    pack $base.fra27.fra29.fra30.but31 \
+        -in $base.fra27.fra29.fra30 -anchor center -expand 0 -fill none \
+        -side left 
+    pack $base.fra27.fra29.fra30.ent32 \
+        -in $base.fra27.fra29.fra30 -anchor center -expand 0 -fill none \
+        -side left 
+    pack $base.fra27.fra29.fra30.but33 \
+        -in $base.fra27.fra29.fra30 -anchor center -expand 0 -fill none \
+        -side left 
+    pack $base.fra27.fra29.che35 \
+        -in $base.fra27.fra29 -anchor center -expand 0 -fill x -side top 
+    pack $base.fra27.fra29.che37 \
+        -in $base.fra27.fra29 -anchor center -expand 0 -fill x -side top 
+    pack $base.fra27.fra29.che38 \
+        -in $base.fra27.fra29 -anchor center -expand 0 -fill x -side top 
+    pack $base.fra27.fra29.che39 \
+        -in $base.fra27.fra29 -anchor center -expand 0 -fill x -side top 
+    pack $base.fra27.fra29.lab40 \
+        -in $base.fra27.fra29 -anchor center -expand 0 -fill x -side top 
+    pack $base.fra27.fra29.rad41 \
+        -in $base.fra27.fra29 -anchor center -expand 0 -fill x -side top 
+    pack $base.fra27.fra29.rad42 \
+        -in $base.fra27.fra29 -anchor center -expand 0 -fill x -side top 
+    pack $base.fra27.fra29.rad43 \
+        -in $base.fra27.fra29 -anchor center -expand 0 -fill x -side top 
+    pack $base.fra27.fra29.lab22 \
+        -in $base.fra27.fra29 -anchor center -expand 0 -fill x -padx 2 \
+        -pady 1 -side top 
+    pack $base.fra27.fra29.lab23 \
+        -in $base.fra27.fra29 -anchor center -expand 0 -fill x -padx 2 \
+        -pady 1 -side top 
+    pack $base.fra26 \
+        -in $base -anchor center -expand 0 -fill x -pady 5 -side top 
+    pack $base.cpd44 \
+        -in $base -anchor center -expand 1 -fill both -padx 2 -side top 
+    grid columnconf $base.cpd44 0 -weight 1
+    grid rowconf $base.cpd44 0 -weight 1
+    grid $base.cpd44.01 \
+        -in $base.cpd44 -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew 
+    grid $base.cpd44.02 \
+        -in $base.cpd44 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns 
+    grid $base.cpd44.03 \
+        -in $base.cpd44 -column 0 -row 0 -columnspan 1 -rowspan 1 \
+        -sticky nesw 
+    pack $base.fra45 \
+        -in $base -anchor center -expand 0 -fill x -pady 5 -side top 
+    pack $base.fra46 \
+        -in $base -anchor center -expand 0 -fill none -pady 2 -side top 
+    pack $base.fra46.but47 \
+        -in $base.fra46 -anchor center -expand 0 -fill none -padx 5 -pady 2 \
+        -side left 
+    pack $base.fra46.but48 \
+        -in $base.fra46 -anchor center -expand 0 -fill none -padx 5 -pady 2 \
+        -side left 
+}
+
 Window show .
 Window show .top21
+Window show .top22
 
 main $argc $argv

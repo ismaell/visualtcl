@@ -632,7 +632,7 @@ if {$font_desc != ""} {
     vTcl:set_balloon $base.butfr.but30 "Add new font"
     pack $base.butfr.but31 \
         -anchor nw -expand 0 -fill none -side right
-    vTcl:set_balloon $base.butfr.but30 "Close"
+    vTcl:set_balloon $base.butfr.but31 "Close"
 
     pack $base.cpd31 \
         -in $base -anchor center -expand 1 -fill both -side top
