@@ -1,6 +1,10 @@
 ChangeLog for Visual Tcl:
 
 1.6.0a2 ->
+    o Getting rid of the old stack trace dialog and using TkCon instead.
+    o Added unmanaged frame widget. This is a frame where you can
+      programmatically insert any widgets you like. Visual Tcl won't care
+      about them, it will not save them into the project either.
     o Fixed bug where TkCon would load a project then vTcl would load it one
       more time.
     o Fixed bug where .x would appear in widget tree when loading a project

@@ -46,6 +46,7 @@ proc vTcl:widget:lib:lib_core {args} {
 	Scrollbar
 	Scale
 	Menubutton
+	UnmanagedFrame
     } 
 
     if {[info tclversion] >= 8.4} {
