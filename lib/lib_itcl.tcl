@@ -37,32 +37,32 @@ proc vTcl:lib_itcl:init {} {
     global vTcl
 
     if {[catch {
-	package require Itcl 3.0
-	namespace import itcl::*
-	package require Itk 3.0
-	package require Iwidgets 3.0
-	namespace import iwidgets::entryfield
-	namespace import iwidgets::spinint
-	namespace import iwidgets::combobox
-	namespace import iwidgets::scrolledlistbox
-	namespace import iwidgets::calendar
-	namespace import iwidgets::dateentry
-	namespace import iwidgets::scrolledhtml
-	namespace import iwidgets::toolbar
-	namespace import iwidgets::feedback
-	namespace import iwidgets::optionmenu
-	namespace import iwidgets::hierarchy
-	namespace import iwidgets::buttonbox
-	namespace import iwidgets::checkbox
-	namespace import iwidgets::radiobox
-	namespace import iwidgets::tabnotebook
-	namespace import iwidgets::panedwindow
-	namespace import iwidgets::scrolledtext
+        package require Itcl 3.0
+        namespace import itcl::*
+        package require Itk 3.0
+        package require Iwidgets 3.0
+        namespace import iwidgets::entryfield
+        namespace import iwidgets::spinint
+        namespace import iwidgets::combobox
+        namespace import iwidgets::scrolledlistbox
+        namespace import iwidgets::calendar
+        namespace import iwidgets::dateentry
+        namespace import iwidgets::scrolledhtml
+        namespace import iwidgets::toolbar
+        namespace import iwidgets::feedback
+        namespace import iwidgets::optionmenu
+        namespace import iwidgets::hierarchy
+        namespace import iwidgets::buttonbox
+        namespace import iwidgets::checkbox
+        namespace import iwidgets::radiobox
+        namespace import iwidgets::tabnotebook
+        namespace import iwidgets::panedwindow
+        namespace import iwidgets::scrolledtext
     } errorText]} {
-	vTcl:log $errorText
+        vTcl:log $errorText
         lappend vTcl(libNames) \
-	    {(not detected) Incr Tcl/Tk MegaWidgets Support Library}
-	return 0
+            {(not detected) Incr Tcl/Tk MegaWidgets Support Library}
+        return 0
     }
     lappend vTcl(libNames) {Incr Tcl/Tk MegaWidgets Support Library}
     return 1
@@ -111,9 +111,18 @@ proc vTcl:widget:lib:lib_itcl {args} {
             namespace import iwidgets::panedwindow
             namespace import iwidgets::scrolledtext
 
-            option add *Scrolledhtml.sbWidth 10
-            option add *Scrolledtext.sbWidth 10
-            option add *Scrolledlistbox.sbWidth 10
+            switch {$tcl_platform(platform)} {
+                windows {
+                    option add *Scrolledhtml.sbWidth    16
+                    option add *Scrolledtext.sbWidth    16
+                    option add *Scrolledlistbox.sbWidth 16
+                }
+                default {
+                    option add *Scrolledhtml.sbWidth    10
+                    option add *Scrolledtext.sbWidth    10
+                    option add *Scrolledlistbox.sbWidth 10
+                }
+            }
         }
     }
 
@@ -123,6 +132,8 @@ proc vTcl:widget:lib:lib_itcl {args} {
                Panedwindow Scrolledtext}
 
     vTcl:lib:add_widgets_to_toolbar $order
+
+    append vTcl(proc,ignore) "|::iwidgets::.*"
 
     foreach cmd [string tolower $order] {
         append vTcl(proc,ignore) "|$cmd"
@@ -158,9 +169,18 @@ proc vTcl:lib_itcl:setup {} {
     set vTcl(option,translate,-balloonfont) vTcl:font:translate
     set vTcl(option,noencase,-balloonfont) 1
 
-    option add *Scrolledhtml.sbWidth 10
-    option add *Scrolledtext.sbWidth 10
-    option add *Scrolledlistbox.sbWidth 10
+    switch {$tcl_platform(platform)} {
+        windows {
+            option add *Scrolledhtml.sbWidth    16
+            option add *Scrolledtext.sbWidth    16
+            option add *Scrolledlistbox.sbWidth 16
+        }
+        default {
+            option add *Scrolledhtml.sbWidth    10
+            option add *Scrolledtext.sbWidth    10
+            option add *Scrolledlistbox.sbWidth 10
+        }
+    }
 
     # hum... this is not too clean, but the hierarchy widget creates
     # icons on the fly
@@ -233,10 +253,6 @@ proc vTcl:widget:panedwindow:inscmd {target} {
 }
 
 proc vTcl:widget:combobox:inscmd {target} {
-
-    # this will have to be looked into
-    # combobox doesn't destroy all its commands
-    # sometimes, so we clean up the rest
 
     return "$target insert list end {Item 1}; \
             $target insert list end {Item 2}; \

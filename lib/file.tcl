@@ -145,7 +145,8 @@ proc vTcl:source {file} {
         set cop [namespace eval $context {info procs}]
 
         foreach procname $cop {
-            if {[vTcl:ignore_procname_when_sourcing $procname] == 0} {
+            if {[vTcl:ignore_procname_when_sourcing $procname] == 0 &&
+                [vTcl:ignore_procname_when_sourcing ${context}::$procname] == 0} {
                if {$context == "::"} {
                    lappend np $procname
                } else {

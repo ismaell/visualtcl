@@ -6,7 +6,9 @@ DumpChildren  no
 MegaWidget    yes
 AdditionalClasses Notebook Tabset Page
 
-InsertCmd vTcl:widget:tabnotebook:inscmd
+InsertCmd           vTcl:widget:tabnotebook:inscmd
+TreeChildrenCmd     "vTcl:widget:tabnotebook:treeChildrenCmd \
+                     vTcl:widget:tabnotebook:treeChildrenChildsite"
 
 proc vTcl:widget:tabnotebook:inscmd {target} {
 
@@ -14,4 +16,22 @@ proc vTcl:widget:tabnotebook:inscmd {target} {
             $target add -label {Page 2} ;\
             $target add -label {Page 3} ;\
             $target select 0"
+}
+
+proc vTcl:widget:tabnotebook:treeChildrenCmd {target} {
+
+    set children ""
+
+    foreach site [$target childsite] {
+        foreach child [vTcl:list_widget_tree $site] {
+            lappend children $child\#-4
+        }
+    }
+
+    return $children
+}
+
+proc vTcl:widget:tabnotebook:treeChildrenChildsite {target} {
+
+    return [$target childsite]
 }
