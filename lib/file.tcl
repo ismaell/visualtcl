@@ -255,7 +255,7 @@ proc vTcl:open {{file ""}} {
 }
 
 proc vTcl:close {} {
-    global vTcl widgetNums
+    global vTcl
     if {$vTcl(change) > 0} {
         set result [::vTcl::MessageBox -default yes -icon question -message \
             "Your application has unsaved changes. Do you wish to save?" \
@@ -298,7 +298,6 @@ proc vTcl:close {} {
 
     set vTcl(tops) ""
     set vTcl(newtops) 1
-    catch {unset widgetNums}
     vTcl:update_top_list
     foreach i $vTcl(vars) {
         # don't erase aliases, they should be erased when

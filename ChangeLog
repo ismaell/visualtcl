@@ -1,6 +1,15 @@
 ChangeLog for Visual Tcl:
 
 1.6.0a2 ->
+    o Trying to get the aliases really work. Basically, each toplevel now
+      holds a list of aliases, and pasting/inserting widgets checks for
+      existing aliases and auto-numbers them.
+    o Before applying geometry options, reset the bindings to their TEST
+      mode equivalent so that tabnotebooks and other megawidgets properly
+      resize when changing their geometry (expand, fill, etc.). After
+      applying geometry options, set bindings back to EDIT mode.
+    o Remove right-click context menu for geometry options, because it was
+      not functional.
     o Saving project info (eg. which options are saved) now uses fully
       relative widget paths. Each widget class can now be responsible for
       saving its own info into the project file.

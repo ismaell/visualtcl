@@ -180,31 +180,6 @@ proc vTcl:options_only {opts} {
     return $result
 }
 
-# returns 1 if:
-#
-# - the alias is defined for another widget than the given
-#   target in another toplevel
-#
-# - the alias doesn't exist at all
-
-proc vTcl:alias_in_other_toplevel {target alias} {
-
-    global widget
-    if {! [info exists widget($alias)]} {return 1}
-
-    set class [vTcl:get_class $target]
-    if {$class == "Toplevel" && [info exists widget($alias)]} {
-        return 0
-    }
-
-    set toplevel ""
-    catch {
-	set toplevel [vTcl:get_top_level_or_alias $target]
-    }
-
-    return [expr ![info exists widget($toplevel,$alias)]]
-}
-
 proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
     global vTcl widget classes
 
@@ -370,11 +345,9 @@ proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
 	}
         if {!$was_existing} {
             if {$alis != ""} {
-                append todo "if \{\[vTcl:alias_in_other_toplevel $name $alis\]\} \{"
-                append todo "vTcl:set_alias $name $alis -noupdate\} else \{"
-                append todo "vTcl:set_alias $name \[vTcl:next_widget_name $class\] -noupdate\}; "
+                append todo "vTcl:set_alias $name \[vTcl:next_widget_name $class $name $alis\] -noupdate; "
             } elseif {$alis == "" && $vTcl(pr,autoalias)} {
-                append todo "vTcl:set_alias $name \[vTcl:next_widget_name $class\] -noupdate; "
+                append todo "vTcl:set_alias $name \[vTcl:next_widget_name $class $name\] -noupdate; "
             }
         }; ## if {!$was_existing} ...
 

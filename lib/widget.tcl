@@ -816,7 +816,7 @@ proc vTcl:create_widget {class options new_widg x y} {
     }
 
     if { $vTcl(pr,autoalias) } {
-        set alias [vTcl:next_widget_name $c]
+        set alias [vTcl:next_widget_name $c $new_widg]
         vTcl:set_alias $new_widg $alias
     }
 
@@ -840,7 +840,7 @@ proc vTcl:valid_alias {target alias} {
 }
 
 proc vTcl:set_alias {target {alias ""} {noupdate ""}} {
-    global vTcl widget widgetNums classes
+    global vTcl widget classes
 
     if {[lempty $target]} { return }
 
@@ -886,12 +886,11 @@ proc vTcl:set_alias {target {alias ""} {noupdate ""}} {
             }
         }
 
-        ## If the alias is something like Button1, we try to add its number
-        ## to the widgetNums($class) variable.  This lets us re-use aliases
-        ## when widgets are deleted.
-        if {[regexp "$c\(\[0-9\]+\)" $alias trash num]} {
-            lappend widgetNums($c) $num
-        }
+	## Remember the list of aliases on a toplevel-basis
+	namespace eval ::[winfo toplevel $target] "
+	    variable _aliases
+	    lappend _aliases $alias
+	"
 
         # Refresh property manager after changing an alias
         if {[lempty $noupdate]} { vTcl:update_widget_info $target }
@@ -899,7 +898,7 @@ proc vTcl:set_alias {target {alias ""} {noupdate ""}} {
 }
 
 proc vTcl:unset_alias {w} {
-    global widget widgetNums vTcl classes
+    global widget vTcl classes
 
     if {![info exists widget(rev,$w)]} { return }
     set alias $widget(rev,$w)
@@ -936,12 +935,10 @@ proc vTcl:unset_alias {w} {
         }
     }
 
-    ## If the alias is something like Button1, we try to remove its number
-    ## from the widgetNums($class) variable.  This lets us re-use aliases
-    ## when widgets are deleted.
-    if {[regexp "$class\(\[0-9\]+\)" $alias trash num] && $other == ""} {
-        ::vTcl::lremove widgetNums($class) $num
-    }
+    namespace eval ::[winfo toplevel $w] "
+	variable _aliases
+	::vTcl::lremove _aliases $alias
+    "
 }
 
 proc vTcl:get_top_level_or_alias {target} {
@@ -1196,39 +1193,66 @@ proc vTcl:place_widget {class button options rx ry x y} {
     return $created_widget
 }
 
-proc vTcl:next_widget_name {class} {
-    global widgetNums classes
+## Get the next available widget number for this class.
+## IE: Edit1, Edit2, Edit3...
+proc vTcl:next_widget_name {class target {old_alias {}}} {
+    global classes vTcl
 
-    set var $class
-    if {[info exists classes($class,aliasPrefix)]} {
-        set var $classes($class,aliasPrefix)
+    if {$old_alias == ""} {
+        set prefix $class
+        set num 1
+        if {[info exists classes($class,aliasPrefix)]} {
+            set prefix $classes($class,aliasPrefix)
+        }
+    } else {
+        set prefix $old_alias
+	set num 1
+	## If the alias we want to set is in the form <Prefix><Num> we try
+	## to reuse the same number
+	regexp {([^0-9]+)([0-9]+)} $old_alias matchall prefix num
     }
-    ## Get the next available widget number for this class.
-    ## IE: Edit1, Edit2, Edit3...
-    if {![info exists widgetNums($var)] || [lempty $widgetNums($var)]} {
-        set widgetNums($var) 0
-    }
-    set num [lindex [lsort -decreasing -integer $widgetNums($var)] 0]
-    incr num
 
-    ## do this in vTcl:set_alias instead
-    # lappend widgetNums($var) $num
-    return $var$num
+    ## If it is a toplevel alias, it must not be the same as any other alias
+    ## So we make a list of existing aliases to check for, and increment until
+    ## we find a unused name.
+    if {$class == "Toplevel"} {
+        set tops $vTcl(tops)
+    } else {
+        set tops [winfo toplevel $target]
+    }
+    set existing ""
+    foreach top $tops {
+        namespace eval ::$top {
+            variable _aliases
+	    if {![info exists _aliases]} {
+	        set _aliases {}
+	    }
+        }
+        set existing [concat $existing [vTcl:at ::${top}::_aliases]]
+    }
+    while {[lsearch -exact $existing $prefix$num] != -1} {
+        incr num
+    }
+
+    return $prefix$num
 }
 
 proc vTcl:update_aliases {} {
-    global widgetNums widget
+    global vTcl widget
 
-    catch {unset widgetNums}
+    foreach top $vTcl(tops) {
+        # all children of the toplevel
+        set children [vTcl:list_widget_tree $top "" 1 1]
+        foreach child $children {
+	    if {![info exists widget(rev,$child)]} { continue }
 
-    set aliases [array names widget]
-#   lremove aliases rev,* child,*
-    lremove aliases *,*
-
-    foreach alias [lsort $aliases] {
-        if {![regexp {([a-zA-Z]+)([0-9]+)} $alias trash class num]} { continue }
-        if {![vTcl:valid_class $class]} { continue }
-        lappend widgetNums($class) $num
+	    set alias $widget(rev,$child)
+            ## Remember the list of aliases on a toplevel-basis
+            namespace eval ::$top "
+	        variable _aliases
+	        lappend _aliases $alias
+	    "
+	}
     }
 }
 

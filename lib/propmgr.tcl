@@ -283,23 +283,27 @@ proc vTcl:prop:spec_config_cmd {target option variable value args} {
 proc vTcl:prop:geom_config_mgr {target option variable value args} {
     global vTcl
     set mgr $args
+    vTcl:setup_unbind_widget $target
     if {$value == ""} {
         $mgr configure $target $option [vTcl:at $variable]
         vTcl:place_handles $target
     } else {
         $mgr configure $target $option $value
     }
+    vTcl:setup_bind_widget $target
 }
 
 proc vTcl:prop:geom_config_cmd {target option variable value args} {
     global vTcl
     set cmd $args
+    vTcl:setup_unbind_widget $target
     if {$value == ""} {
         $cmd $target $option [vTcl:at $variable]
         vTcl:place_handles $target
     } else {
         $cmd $target $option $value
     }
+    vTcl:setup_bind_widget $target
 }
 
 proc vTcl:prop:update_attr {} {
@@ -672,9 +676,12 @@ proc vTcl:prop:new_attr {top option variable config_cmd config_args prefix {isGe
 	}
     "
 
-    ## If they right-click the label, show the context menu
-    bind $label <ButtonRelease-3> \
-	"vTcl:propmgr:show_rightclick_menu $vTcl(gui,ae) $option $variable %X %Y"
+    ## If they right-click the label, show the context menu. No right-click for
+    ## geometry options is currently provided.
+    if {!$isGeomOpt} {
+        bind $label <ButtonRelease-3> \
+	    "vTcl:propmgr:show_rightclick_menu $vTcl(gui,ae) $option $variable %X %Y"
+    }
 
     bind after_$focusControl <FocusIn>    \
         "vTcl:propmgr:select_attr $top $option"
