@@ -677,6 +677,10 @@ proc vTcl:create_widget {class options new_widg x y} {
         append do "vTcl:prop:default_opt $new_widg $def vTcl(w,opt,$def); "
     }
 
+    foreach def $classes($c,dontSaveOptions) {
+        append do "vTcl:prop:save_or_unsave_opt $new_widg $def vTcl(w,opt,$def) 0; "
+    }
+
     if {$undo == ""} {
         set undo "destroy $new_widg; vTcl:active_widget [list $vTcl(w,widget)];"
     }

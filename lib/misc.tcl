@@ -413,16 +413,16 @@ proc vTcl:dialog {mesg {options Ok} {root 0}} {
         frame $base.o -bd 1
         foreach i $options {
             set n [string tolower $i]
-            button $base.o.$n -text $i -width 5 \
+            button $base.o.$n -text $i -width 8 \
             -command "
                 set vTcl(x_mesg) $i
                 destroy $base
             "
-            pack $base.o.$n -side left -expand 1
+            pack $base.o.$n -side left -expand 1 -padx 5 -pady 1
         }
         pack $base.f.t -side top -expand 1 -fill both -ipadx 5 -ipady 5
         pack $base.f -side top -expand 1 -fill both -padx 2 -pady 2
-        pack $base.o -side top -fill x -padx 2 -pady 5
+        pack $base.o -side top -padx 2 -pady 5
     }
     update idletasks
     set w [winfo reqwidth $base]

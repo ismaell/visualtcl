@@ -104,6 +104,7 @@ proc SetClassArray {} {
         $tmp(class),treeChildrenCmd {}
         $tmp(class),deleteCmd       {}
         $tmp(class),defaultValues   {}
+        $tmp(class),dontSaveOptions {}
     "
 
     foreach elem [array names classes $tmp(class),*] {
@@ -196,6 +197,11 @@ proc DefaultOptions {args} {
 proc DefaultValues {args} {
     global tmp
     eval lappend tmp(defaultValues) $args
+}
+
+proc DontSaveOptions {args} {
+    global tmp
+    eval lappend tmp(dontSaveOptions) $args
 }
 
 proc DumpCmd {val} {

@@ -5,3 +5,4 @@ CreateCmd	::iwidgets::scrolledhtml
 Icon		icon_scrolledhtml.gif
 DumpChildren	no
 MegaWidget	yes
+DontSaveOptions -sbwidth

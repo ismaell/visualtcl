@@ -264,6 +264,11 @@ proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
             }
         }
 
+        ## options not to save
+        foreach def $classes($class,dontSaveOptions) {
+            append todo "vTcl:prop:save_or_unsave_opt $name $def vTcl(w,opt,$def) 0; "
+        }
+
         set index 0
         incr level
         foreach j $bind {

@@ -5,3 +5,4 @@ CreateCmd	::iwidgets::scrolledlistbox
 Icon		icon_scrolledlistbox.gif
 DumpChildren	no
 MegaWidget	yes
+DontSaveOptions -sbwidth

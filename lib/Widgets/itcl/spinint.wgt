@@ -5,3 +5,4 @@ CreateCmd	::iwidgets::spinint
 Icon		icon_spinint.gif
 DumpChildren	no
 MegaWidget	yes
+DefaultOptions  -labeltext Spinint
