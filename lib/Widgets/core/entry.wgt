@@ -6,6 +6,20 @@ DoubleClickCmd	vTcl:set_textvar
 InsertCmd	vTcl:widget:entry:inscmd
 TreeLabel	@vTcl:core:get_widget_tree_label
 
+Function        "Set Text Variable" vTcl:widget:entry:SetTextVariable
+
 proc vTcl:widget:entry:inscmd {target} {
     return "$target insert end entry"
+}
+
+proc vTcl:widget:entry:SetTextVariable {} {
+    global vTcl
+
+    set target $vTcl(w,widget)
+    set value [$target cget -textvariable]
+    set newvalue [vTcl:get_string "Text variable for $target" $target $value]
+
+    if {! [vTcl:streq $value $newvalue]} {
+        $target configure -textvariable $newvalue
+    }
 }

@@ -6,7 +6,7 @@ ChangeLog for Visual Tcl:
       changed OK / Cancel buttons to icons (checkmark and red cross)
     o Activating a widget now automatically scrolls widget tree into view
     o Fixed message text input dialog Escape bug
-    o Added "Set Text Variable" context menu item to message widget
+    o Added "Set Text Variable" context menu item to entry widget
     o Fixed problem where vTcl was saving duplicate fonts.
     o Fixed some bug where problems could occur from defining namespaces
       with a space in the name.
