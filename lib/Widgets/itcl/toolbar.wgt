@@ -31,67 +31,95 @@ Icon		icon_toolbar.gif
 DumpChildren	no
 MegaWidget	yes
 TagsCmd         vTcl:lib_itcl:tagscmd
-InsertCmd       vTcl:widget:toolbar:inscmd
-DumpCmd         vTcl:dump:toolbar
-CompoundCmd     vTcl:compound:toolbar
+InsertCmd       vTcl::widgets::iwidgets::toolbar::insertCmd
+DumpCmd         vTcl::widgets::iwidgets::toolbar::dumpCmd
+CompoundCmd     vTcl::widgets::iwidgets::toolbar::compoundCmd
+GetImagesCmd    vTcl::widgets::iwidgets::toolbar::getImagesCmd
+GetFontsCmd     vTcl::widgets::iwidgets::toolbar::getFontsCmd
 
-proc vTcl:widget:toolbar:inscmd {target} {
+namespace eval vTcl::widgets::iwidgets::toolbar {
 
-    global env
+    proc insertCmd {target} {
+        global env
 
-    $target add button open \
-        -balloonstr "Open" \
-        -image [vTcl:image:get_image $env(VTCL_HOME)/images/edit/open.gif] \
-        -command {tk_messageBox -message {TODO: Open Command handler here!}}
-    $target add button save \
-        -balloonstr "Save" \
-        -image [vTcl:image:get_image $env(VTCL_HOME)/images/edit/save.gif] \
-        -command {tk_messageBox -message {TODO: Save Command handler here!}}
-}
-
-proc vTcl:dump:toolbar {target basename} {
-
-    global vTcl
-    set result [vTcl:dump_widget_opt $target $basename]
-
-    set components [$target component]
-    foreach component $components {
-        if {$component == "hull"} {continue}
-
-        set path [$target component $component]
-        set class [vTcl:get_class $path]
-
-        set conf [$target itemconfigure $component]
-        set pairs [vTcl:get_opts_special $conf $target \
-                "-text -command -image -balloonstr"]
-
-        append result "$vTcl(tab)$basename add [string tolower $class]"
-        append result " $component \\\n"
-        append result "[vTcl:clean_pairs $pairs]\n"
+        $target add button open \
+                -balloonstr "Open" \
+                -image [vTcl:image:get_image $env(VTCL_HOME)/images/edit/open.gif] \
+                -command {tk_messageBox -message {TODO: Open Command handler here!}}
+        $target add button save \
+                -balloonstr "Save" \
+                -image [vTcl:image:get_image $env(VTCL_HOME)/images/edit/save.gif] \
+                -command {tk_messageBox -message {TODO: Save Command handler here!}}
     }
 
-    return $result
-}
+    proc dumpCmd {target basename} {
+        set result [vTcl:dump_widget_opt $target $basename]
+        set components [$target component]
+        foreach component $components {
+            if {$component == "hull"} {continue}
+            set path [$target component $component]
+            set x [winfo x $path]
+            set sorted($x) $component
+        }
+        foreach index [lsort -integer [array names sorted]] {
+            set component $sorted($index)
+            set path [$target component $component]
+            set class [vTcl:get_class $path]
 
-## this function returns the necessary code to insert all
-## the buttons into the toolbar widget (basically, the returned
-## code will be stored in a compound)
+            set conf [$target itemconfigure $component]
+            set pairs [vTcl:get_subopts_special $conf $target]
 
-proc vTcl:compound:toolbar {target} {
-    set result ""
-
-    set components [$target component]
-    foreach component $components {
-        if {$component == "hull"} {continue}
-
-        set path [$target component $component]
-        set class [string tolower [vTcl:get_class $path]]
-
-        set conf [$target itemconfigure $component]
-        set pairs [vTcl:conf_to_pairs $conf ""]
-
-        append result "\$target add $class $component $pairs\n"
+            append result "$::vTcl(tab)$basename add [string tolower $class]"
+            append result " $component \\\n"
+            append result "[vTcl:clean_pairs $pairs]\n"
+        }
+        return $result
     }
 
-    return $result
+    ## this function returns the necessary code to insert all
+    ## the buttons into the toolbar widget (basically, the returned
+    ## code will be stored in a compound)
+    ##
+    proc compoundCmd {target} {
+        set result ""
+        set components [$target component]
+        foreach component $components {
+            if {$component == "hull"} {continue}
+            set path [$target component $component]
+            set x [winfo x $path]
+            set sorted($x) $component
+        }
+        foreach index [lsort -integer [array names sorted]] {
+            set component $sorted($index)
+            set path [$target component $component]
+            set class [string tolower [vTcl:get_class $path]]
+
+            set conf [$target itemconfigure $component]
+            set pairs [vTcl:conf_to_pairs $conf ""]
+
+            append result "\$target add $class $component $pairs\n"
+        }
+        return $result
+    }
+
+    proc getOptionsCmd {target option} {
+        set result ""
+        foreach component [$target component] {
+            if {$component == "hull"} {continue}
+            set value ""
+            catch {set value [$target itemcget $component $option]}
+            if {$value != ""} {
+                lappend result $value
+            }
+        }
+        return $result
+    }
+
+    proc getImagesCmd {target} {
+        return [getOptionsCmd $target -image]
+    }
+
+    proc getFontsCmd {target} {
+        return [getOptionsCmd $target -font]
+    }
 }

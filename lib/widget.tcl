@@ -724,7 +724,10 @@ proc vTcl:create_widget {class options new_widg x y} {
     }
 
     set c $class
-    set p [vTcl:get_class $insert]
+    set p ""
+    if {[winfo exists $insert]} {
+        set p [vTcl:get_class $insert]
+    }
 
     append do "$classes($c,createCmd) $new_widg "
     append do "$classes($c,defaultOptions) $options;"

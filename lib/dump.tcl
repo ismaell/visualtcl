@@ -706,8 +706,10 @@ proc vTcl:dump:gather_widget_info {} {
 
         foreach resource {image font} {
             set used_${resource} {}
-            if {![catch {$child cget -$resource} $resource]} {
-                lappend used_${resource} [vTcl:at $resource]
+            set value {}
+            catch {set value [$child cget -$resource]}
+            if {$value != ""} {
+                lappend used_${resource} $value
             }
             set cmd get[string totitle $resource]sCmd
             if {[info exists classes($c,$cmd)]} {

@@ -45,9 +45,6 @@ proc vTcl:widget:lib:lib_bwidget {args} {
     # Entry
     # Label
     #
-    ## This one announces itself as 'Canvas' class which is no good for us.
-    ## Need to investigate.
-    # PagesManager
 
     set order {
 	ArrowButton
@@ -58,6 +55,7 @@ proc vTcl:widget:lib:lib_bwidget {args} {
         ListBox
 	MainFrame
 	NoteBook
+        PagesManager
         PanedWindow
 	ProgressBar
 	ScrolledWindow
