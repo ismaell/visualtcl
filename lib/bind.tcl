@@ -184,8 +184,7 @@ proc vTclWindow.vTcl.bind {args} {
         ::widgets_bindings::select_binding
     }
     bind $base.cpd21.01.cpd25.01 <ButtonRelease-1> {
-        set n [vTcl:rename $widget(BindingsEditor)]
-        set ${n}::lastselected [lindex [ListboxBindings curselection] 0]
+        set widgets_bindings::lastselected [lindex [ListboxBindings curselection] 0]
 
         ::widgets_bindings::enable_toolbar_buttons
         after idle "::widgets_bindings::select_binding"
@@ -293,6 +292,10 @@ proc vTclWindow.vTcl.bind {args} {
             -command "TextBindings insert insert %%Y"
         tk_popup %W.menu %X %Y
     }
+    bind $base.cpd21.02.cpd21.03 <FocusOut> {
+        ::widgets_bindings::save_current_binding
+    }
+
     frame $base.cpd21.03 \
         -background #ff0000 -borderwidth 2 -highlightbackground #dcdcdc \
         -highlightcolor #000000 -relief raised 
@@ -455,9 +458,6 @@ proc vTclWindow.vTcl.newbind {base {container 0}} {
     label $base.fra23.lab24 \
         -borderwidth 1 \
         -text {Select a mouse event or a key event} 
-    bind $base.fra23.lab24 <Double-Key-a> {
-        puts "aa"
-    }
     frame $base.fra23.cpd34 \
         -background #dcdcdc -borderwidth 1 -height 30 \
         -highlightbackground #dcdcdc -highlightcolor #000000 -relief raised \
@@ -811,9 +811,7 @@ namespace eval ::widgets_bindings {
 
         if {![::widgets_bindings::is_editable_tag $tag]} return
 
-        set w $widget(BindingsEditor)
-        set n [vTcl:rename $w]
-        eval set target $${n}::target
+        set target $widgets_bindings::target
 
         lremove vTcl(bindtags,$target) $tag
 
@@ -836,9 +834,7 @@ namespace eval ::widgets_bindings {
         ::widgets_bindings::find_tag_event \
             $widget(ListboxBindings) $index tag event
 
-        set w $widget(BindingsEditor)
-        set n [vTcl:rename $w]
-        eval set target $${n}::target
+        set target $widgets_bindings::target
 
         set tags $vTcl(bindtags,$target)
 
@@ -871,9 +867,7 @@ namespace eval ::widgets_bindings {
             lappend ::widgets_bindings::tagslist $tag
         }
 
-        set w $widget(BindingsEditor)
-        set n [vTcl:rename $w]
-        eval set target $${n}::target
+        set target $widgets_bindings::target
 
         # target has tag in its list ?
         if {[lsearch -exact $vTcl(bindtags,$target) $tag] == -1} {
@@ -889,9 +883,7 @@ namespace eval ::widgets_bindings {
 
         global widget
 
-        set w $widget(BindingsEditor)
-        set n [vTcl:rename $w]
-        eval set target $${n}::target
+        set target $widgets_bindings::target
 
         if {$tag == $target} {
             return 1
@@ -912,14 +904,11 @@ namespace eval ::widgets_bindings {
         # save the current one
         ::widgets_bindings::save_current_binding
         
-        set w $widget(BindingsEditor)
-        set n [vTcl:rename $w]
-
         set indices [ListboxBindings curselection]
         set index [lindex $indices 0]
         
         if {$index == ""} {
-            eval set index \$::${n}::lastselected
+            set index $::widgets_bindings::lastselected
         }
 
         set tag ""
@@ -928,7 +917,7 @@ namespace eval ::widgets_bindings {
         ::widgets_bindings::find_tag_event \
             $widget(ListboxBindings) $index tag tmp_event
         
-        eval set target $${n}::target
+        set target $widgets_bindings::target
         
         if {![::widgets_bindings::is_editable_tag $tag]} return
         
@@ -963,10 +952,7 @@ namespace eval ::widgets_bindings {
     proc {::widgets_bindings::change_binding} {tag event modifier} {
 
         global widget
-        set w $widget(BindingsEditor)
-         
-        set n [vTcl:rename $w]
-        eval set target $${n}::target
+        set target $widgets_bindings::target
          
         if {![::widgets_bindings::is_editable_tag $tag]} return
 
@@ -974,8 +960,8 @@ namespace eval ::widgets_bindings {
          
         # unbind old event first
         bind $tag $event ""
-        set ::${n}::lasttag ""
-        set ::${n}::lastevent ""
+        set ::widgets_bindings::lasttag ""
+        set ::widgets_bindings::lastevent ""
         
         # rebind new event
         set event [::widgets_bindings::set_modifier_in_event  $event $modifier]
@@ -990,9 +976,6 @@ namespace eval ::widgets_bindings {
 
         global widget
         
-        set w $widget(BindingsEditor)
-        set n [vTcl:rename $w]
-        
         set indices [ListboxBindings curselection]
         set index [lindex $indices 0]
         
@@ -1004,14 +987,14 @@ namespace eval ::widgets_bindings {
         ::widgets_bindings::find_tag_event \
             $widget(ListboxBindings) $index tag event
         
-        eval set target $${n}::target
+        set target $widgets_bindings::target
 
         if {![::widgets_bindings::is_editable_tag $tag] || 
             $event == ""} return
         
         bind $tag $event ""
-        set ::${n}::lasttag ""
-        set ::${n}::lastevent ""
+        set ::widgets_bindings::lasttag ""
+        set ::widgets_bindings::lastevent ""
         
         ::widgets_bindings::fill_bindings $target
     }
@@ -1054,9 +1037,7 @@ namespace eval ::widgets_bindings {
             DeleteTag     configure -state disabled
         }
 
-        set w $widget(BindingsEditor)
-        set n [vTcl:rename $w]
-        eval set target \$::${n}::target
+        set target $::widgets_bindings::target
 
         if {$event == ""} {
             if {$index > 0} {
@@ -1081,9 +1062,6 @@ namespace eval ::widgets_bindings {
 
         global widget vTcl tk_version
 
-        set w $widget(BindingsEditor)
-        set n [vTcl:rename $w]
-        
         # before selecting a different binding, make sure we
         # save the current one
         ::widgets_bindings::save_current_binding
@@ -1094,10 +1072,10 @@ namespace eval ::widgets_bindings {
         set index 0
         set tags $vTcl(bindtags,$target)
         
-        set ::${n}::bindingslist ""
+        set ::widgets_bindings::bindingslist ""
         ListboxBindings delete 0 end
         
-        set ::${n}::target $target
+        set ::widgets_bindings::target $target
 
         foreach tag $tags {
         
@@ -1108,7 +1086,7 @@ namespace eval ::widgets_bindings {
                }
            }
            
-           lappend ::${n}::bindingslist [list $tag ""]
+           lappend ::widgets_bindings::bindingslist [list $tag ""]
            incr index
            
            set events [bind $tag]
@@ -1121,7 +1099,7 @@ namespace eval ::widgets_bindings {
                    }
                }
                
-               lappend ::${n}::bindingslist [list $tag $event]
+               lappend ::widgets_bindings::bindingslist [list $tag $event]
                incr index
            }
         }
@@ -1142,10 +1120,7 @@ namespace eval ::widgets_bindings {
             return
         }
         
-        set w $widget(BindingsEditor)
-        set n [vTcl:rename $w]
-
-        eval set bindingslist \$::${n}::bindingslist
+        set bindingslist $::widgets_bindings::bindingslist
         set tagevent [lindex $bindingslist $index]
 
         set tag   [lindex $tagevent 0]
@@ -1171,17 +1146,12 @@ namespace eval ::widgets_bindings {
         TextBindings delete 0.0 end
         TextBindings configure -font $vTcl(pr,font_fixed) \
                                -background gray -state disabled
- 
-        set w $widget(BindingsEditor)
-        set n [vTcl:rename $w]
-        
-        namespace eval ::${n} {
-            variable lastselected 0
-            variable lasttag ""
-            variable lastevent ""
-            variable target ""
-            variable bindingslist ""
-        }
+       
+        variable lastselected 0
+        variable lasttag ""
+        variable lastevent ""
+        variable target ""
+        variable bindingslist ""
 
         # enable/disable various buttons
         ::widgets_bindings::enable_toolbar_buttons
@@ -1204,9 +1174,7 @@ namespace eval ::widgets_bindings {
             return
         }
         
-        set w $widget(BindingsEditor)
-        set n [vTcl:rename $w]
-        eval set target $${n}::target
+        set target $widgets_bindings::target
         
         if {![::widgets_bindings::is_editable_tag $tag]} return
         
@@ -1216,13 +1184,10 @@ namespace eval ::widgets_bindings {
     proc {::widgets_bindings::save_current_binding} {} {
 
         global widget
-        
-        set w $widget(BindingsEditor)
-        set n [vTcl:rename $w]
-        
-        eval set target \$::${n}::target
-        eval set tag    \$::${n}::lasttag
-        eval set event  \$::${n}::lastevent
+              
+        set target $::widgets_bindings::target
+        set tag    $::widgets_bindings::lasttag
+        set event  $::widgets_bindings::lastevent
         
         if {$tag == "" ||
             $event == "" ||
@@ -1230,15 +1195,17 @@ namespace eval ::widgets_bindings {
             return
         }
         
+        if {![winfo exists $target] } return
+
         if {![::widgets_bindings::is_editable_tag $tag]} return
-            
-        if { [winfo exists $target] } {
-           
-            bind $tag $event [string trim [TextBindings get 0.0 end]]
+                        
+        set old_bind [string trim [bind $tag $event]]
+        set new_bind [string trim [TextBindings get 0.0 end]]
+
+        # is it really different?
+        if {$new_bind != $old_bind} {
+            bind $tag $event $new_bind
         }
-        
-        set ::${n}::lasttag ""
-        set ::${n}::lastevent ""
     }
 
     proc {::widgets_bindings::select_binding} {} {
@@ -1263,6 +1230,8 @@ namespace eval ::widgets_bindings {
             TextBindings configure -state normal
             TextBindings delete 0.0 end
             TextBindings configure  -state disabled -background gray
+            set ::widgets_bindings::lasttag ""
+            set ::widgets_bindings::lastevent ""
             return
         }
         
@@ -1284,10 +1253,7 @@ namespace eval ::widgets_bindings {
         regsub -all Button2 $event B2 event
         regsub -all Button3 $event B3 event
 
-        set w $widget(BindingsEditor)
-        set n [vTcl:rename $w]
-
-        eval set bindingslist \$::${n}::bindingslist
+        set bindingslist $::widgets_bindings::bindingslist
         
         foreach tag_event $bindingslist {
 
@@ -1355,22 +1321,19 @@ namespace eval ::widgets_bindings {
         TextBindings configure  -state normal
         TextBindings delete 0.0 end
         TextBindings insert 0.0 $bindcode
-        
-        set w $widget(BindingsEditor)
-        set n [vTcl:rename $w]
-        
+                
         if {[::widgets_bindings::is_editable_tag $tag] &&
             $event != ""} {
             TextBindings configure  -background white -state normal
             vTcl:syntax_color $widget(TextBindings) 0 -1
             
-            set ::${n}::lasttag $tag
-            set ::${n}::lastevent $event
+            set ::widgets_bindings::lasttag $tag
+            set ::widgets_bindings::lastevent $event
         } else {
             TextBindings configure  -background gray -state disabled
         
-            set ::${n}::lasttag ""
-            set ::${n}::lastevent ""
+            set ::widgets_bindings::lasttag ""
+            set ::widgets_bindings::lastevent ""
         }
     }
 

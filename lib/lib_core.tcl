@@ -121,6 +121,7 @@ global vTcl
         cascade {
             set nmenu [vTcl:new_widget_name menu $target]
             menu $nmenu
+            vTcl:widget:register_widget $nmenu
             vTcl:setup_vTcl:bind $nmenu
             $target add $type -label $label -accel $accel -menu $nmenu
         }
@@ -317,6 +318,7 @@ proc vTcl:edit_target_menu {target} {
     if {$menu == ""} {
         set menu [vTcl:new_widget_name m $target]
         menu $menu
+        vTcl:widget:register_widget $menu
         vTcl:setup_vTcl:bind $menu
         $target conf -menu $menu
     }
@@ -500,6 +502,7 @@ proc vTcl:edit_menu {target} {
         -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 2 -pady 2 \
         -side left
     vTcl:menu_setup $base $target
+    tkwait window $base
 }
 
 proc vTcl:core:get_menu_label {class {target ""}} {

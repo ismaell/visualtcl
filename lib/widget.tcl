@@ -224,7 +224,7 @@ proc vTcl:widget_tree {target {include_target 1}} {
 #
 # Recurses a widget tree with the option of not ignoring built-ins
 #
-proc vTcl:list_widget_tree {target {which ""}} {
+proc vTcl:list_widget_tree {target {which ""} {include_menus 0}} {
     if {$which == ""} {
         if {$target == ".vTcl" || [string range $target 0 4] == ".__tk"} {
             return
@@ -235,7 +235,8 @@ proc vTcl:list_widget_tree {target {which ""}} {
     foreach i $children {
 
 	# don't include temporary windows
-	if {[string match {*#*} $i]} {
+	if {[string match {*#*} $i] &&
+	    (! $include_menus)} {
 	    continue
 	}
 
@@ -462,12 +463,12 @@ proc vTcl:new_widget_name {class base} {
 
 proc vTcl:setup_vTcl:bind {target} {
     global vTcl
-    set bindlist [vTcl:list_widget_tree $target all]
+    set bindlist [vTcl:list_widget_tree $target all 1]
     update idletasks
     foreach i $bindlist {
         if { [lsearch [bindtags $target] vTcl(a)] < 0 } {
-            set tmp [bindtags $target]
-            bindtags $target "vTcl(a) $tmp"
+            set vTcl(bindtags,$target) [bindtags $target]
+            bindtags $target "vTcl(a) $vTcl(bindtags,$target)"
         }
     }
 }
@@ -499,7 +500,8 @@ proc vTcl:switch_mode {} {
 
 proc vTcl:setup_bind_tree {target} {
     global vTcl
-    set bindlist [vTcl:list_widget_tree $target]
+    # include special menu windows under X with '#'
+    set bindlist [vTcl:list_widget_tree $target "" 1]
     update idletasks
     foreach i $bindlist {
         vTcl:setup_bind $i
@@ -518,7 +520,8 @@ proc vTcl:setup_unbind_tree {target} {
     global vTcl
     vTcl:select_widget .
     vTcl:destroy_handles
-    set bindlist [vTcl:list_widget_tree $target]
+    # include special menu windows under X with '#'
+    set bindlist [vTcl:list_widget_tree $target "" 1]
     update idletasks
     foreach i $bindlist {
         vTcl:setup_unbind $i
