@@ -1529,8 +1529,9 @@ proc ::combobox2::Configure {w args} {
 		$widgets(frame)   configure -background $newValue
 		$widgets(entry)   configure -background $newValue
 		$widgets(listbox) configure -background $newValue
-		$widgets(vsb)     configure -background $newValue
-		$widgets(vsb)     configure -troughcolor $newValue
+		# let's keep the scrollbar good-looking
+		# $widgets(vsb)     configure -background $newValue
+		# $widgets(vsb)     configure -troughcolor $newValue
 		set options($option) $newValue
 	    }
 
