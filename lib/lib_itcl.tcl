@@ -53,6 +53,8 @@ catch {
     namespace import iwidgets::buttonbox
     namespace import iwidgets::checkbox
     namespace import iwidgets::radiobox
+    namespace import iwidgets::tabnotebook
+    namespace import iwidgets::panedwindow
 } errorText
 vTcl:log $errorText
 
@@ -62,7 +64,7 @@ proc vTcl:widget:lib:lib_itcl {args} {
 
     global vTcl
     #
-    # see if we're running itclWish. if not, return
+    # see if we can define a class. if not, return
     #
     
     # @@change by Christian Gavin 3/6/2000
@@ -99,6 +101,8 @@ proc vTcl:widget:lib:lib_itcl {args} {
     # added buttonbox
     # added checkbox
     # added radiobox
+    # added tabnotebook
+    # added panedwindow
     # @@end_change
     
     foreach i {
@@ -116,6 +120,8 @@ proc vTcl:widget:lib:lib_itcl {args} {
         buttonbox
         checkbox
         radiobox
+        tabnotebook
+        panedwindow
     } {
         set img_file [file join $vTcl(VTCL_HOME) images icon_$i.gif]
         if {![file exists $img_file]} {
@@ -136,20 +142,22 @@ proc vTcl:lib_itcl:setup {} {
 	#
 	# additional attributes to set on insert
 	#
-	set vTcl(scrolledlistbox,insert)       "-labeltext {Label:} "
-	set vTcl(combobox,insert)              "-labeltext {Label:} "
-	set vTcl(entryfield,insert)            "-labeltext {Label:} "
-	set vTcl(spinint,insert)               "-labeltext {Label:} -range {0 10} -step 1"
-	set vTcl(calendar,insert)	       ""
-	set vTcl(dateentry,insert)	       "-labeltext {Selected date:}"
-	set vTcl(scrolledhtml,insert)          ""
-	set vTcl(toolbar,insert)               ""
-	set vTcl(feedback,insert)              "-labeltext {Percent complete:}"
-	set vTcl(optionmenu,insert)            "-labeltext {Select option:}"
-	set vTcl(hierarchy,insert)             ""
-	set vTcl(buttonbox,insert)             ""
-	set vTcl(checkbox,insert)              ""
-	set vTcl(radiobox,insert)              ""
+	set vTcl(scrolledlistbox,insert)    "-labeltext {Label:} "
+	set vTcl(combobox,insert)           "-labeltext {Label:} "
+	set vTcl(entryfield,insert)         "-labeltext {Label:} "
+	set vTcl(spinint,insert)            "-labeltext {Label:} -range {0 10} -step 1"
+	set vTcl(calendar,insert)	    ""
+	set vTcl(dateentry,insert)	    "-labeltext {Selected date:}"
+	set vTcl(scrolledhtml,insert)       ""
+	set vTcl(toolbar,insert)            ""
+	set vTcl(feedback,insert)           "-labeltext {Percent complete:}"
+	set vTcl(optionmenu,insert)         "-labeltext {Select option:}"
+	set vTcl(hierarchy,insert)          ""
+	set vTcl(buttonbox,insert)          ""
+	set vTcl(checkbox,insert)           ""
+	set vTcl(radiobox,insert)           ""
+	set vTcl(tabnotebook,insert)        ""
+	set vTcl(panedwindow,insert)        ""
 
 	#
 	# add to procedure, var, bind regular expressions
@@ -171,7 +179,9 @@ proc vTcl:lib_itcl:setup {} {
                 Hierarchy \
                 Buttonbox \
                 Checkbox \
-                Radiobox
+                Radiobox \
+                Tabnotebook \
+                Panedwindow
 
 	# @@change by Christian Gavin 3/7/2000
 	# list of megawidgets whose children are not visible by Vtcl
@@ -189,7 +199,9 @@ proc vTcl:lib_itcl:setup {} {
 				 Hierarchy \
 				 Buttonbox \
 				 Checkbox \
-				 Radiobox
+				 Radiobox \
+				 Tabnotebook \
+				 Panedwindow
 	
 	# @@end_change
 	
@@ -251,12 +263,58 @@ proc vTcl:lib_itcl:setup {} {
 	        -querycommand \
 	        -selectcommand \
 	        -textbackground \
-	        -textfont
-	        
-	set vTcl(opt,-alwaysquery)    { {Always Query}     {}       boolean {false true} }
+	        -textfont \
+	        -angle \
+	        -backdrop \
+	        -bevelamount \
+	        -equaltabs \
+	        -gap \
+	        -raiseselect \
+	        -start \
+	        -tabbackground \
+	        -tabborders \
+	        -tabforeground \
+	        -tabpos \
+	        -sashborderwidth \
+	        -sashcursor \
+	        -sashheight \
+	        -sashindent \
+	        -sashwidth \
+	        -thickness \
+	        -sbwidth \
+	        -clientdata \
+	        -hscrollmode \
+	        -vscrollmode \
+	        -labelimage
+
+	set vTcl(opt,-labelimage)     { {Label Img}        {}       image   {} }
+	set vTcl(opt,-hscrollmode)    { {Horz Scroll}      {}  
+	                                choice {static dynamic none} }
+	set vTcl(opt,-vscrollmode)    { {Vert Scroll}      {}  
+	                                choice {static dynamic none} }
+	set vTcl(opt,-clientdata)     { {Client Data}      {}       type    {} }
+	set vTcl(opt,-sbwidth)        { {ScrollBar Width}  {}       type    {} }
+	set vTcl(opt,-sashborderwidth) { {Sash Bd Width}   {}       type    {} }
+	set vTcl(opt,-sashcursor)     { {Sash Cursor}      {}       type    {} }
+	set vTcl(opt,-sashheight)     { {Sash Height}      {}       type    {} }
+	set vTcl(opt,-sashindent)     { {Sash Indent}      {}       type    {} }
+	set vTcl(opt,-sashwidth)      { {Sash Width}       {}       type    {} }
+	set vTcl(opt,-thickness)      { {Sep. Thickness}   {}       type    {} }
+	set vTcl(opt,-angle)          { {Angle}            {}       type    {} }
+	set vTcl(opt,-backdrop)       { {Backdrop Color}   Colors   color   {} }
+	set vTcl(opt,-bevelamount)    { {Bevel amount}     {}       type    {} }
+	set vTcl(opt,-equaltabs)      { {Equal tabs}       {}       boolean {0 1} }
+	set vTcl(opt,-gap)            { {Overlap}          {}       type    {} }
+	set vTcl(opt,-raiseselect)    { {Raise select}     {}       boolean {0 1} }
+	set vTcl(opt,-start)          { {Start}            {}       type    {} }
+	set vTcl(opt,-tabbackground)  { {Tab BgColor}      Colors   color   {} }
+	set vTcl(opt,-tabborders)     { {Tab borders}      {}       boolean {0 1} }
+	set vTcl(opt,-tabforeground)  { {Tab FgColor}      Colors   color   {} }
+	set vTcl(opt,-tabpos)         { {Tab pos}          {}       choice  {n s e w} }
+	set vTcl(opt,-alwaysquery)    { {Always Query}     {}       boolean {0 1} }
 	set vTcl(opt,-closedicon)     { {Closed icon}      {}       image    {} }
-	set vTcl(opt,-expanded)       { {Expanded}         {}       boolean {false true} }
-	set vTcl(opt,-filter)         { {Filter}           {}       boolean {false true} }
+	set vTcl(opt,-expanded)       { {Expanded}         {}       boolean {0 1} }
+	set vTcl(opt,-filter)         { {Filter}           {}       boolean {0 1} }
 	set vTcl(opt,-iconcommand)    { {Icon Cmd}         {}       command {} }
 	set vTcl(opt,-markbackground) { {Mark BgColor}     Colors   color   {} }
 	set vTcl(opt,-markforeground) { {Mark FgColor}     Colors   color   {} }
@@ -268,7 +326,7 @@ proc vTcl:lib_itcl:setup {} {
 	set vTcl(opt,-textbackground) { {Text BgColor}     Colors   color   {} }
 	set vTcl(opt,-textfont)       { {Text Font}        {}       font    {} }
 	set vTcl(opt,-clicktime)      { {Click Time}       {}       type    {} }
-	set vTcl(opt,-cyclicon)       { {Cyclic}           {}       boolean {false true} }
+	set vTcl(opt,-cyclicon)       { {Cyclic}           {}       boolean {0 1} }
         set vTcl(opt,-barcolor)       { {Bar Color}        Colors   color   {} }
         set vTcl(opt,-troughcolor)    { {Trough Color}     Colors   color   {} }
         set vTcl(opt,-steps)          { {Steps}            {}       type    {} }
@@ -282,7 +340,8 @@ proc vTcl:lib_itcl:setup {} {
 #	set vTcl(opt,-plotbackground) { {Plot BgColor}     Colors   color   {} }
 	set vTcl(opt,-labelfont)      { {Label Font}       {}       font    {} }
 	set vTcl(opt,-textfont)       { {Text Font}        {}       font    {} }
-	set vTcl(opt,-labelpos)       { {Label Pos}        {}       choice  {n ne e se s sw w nw center} }
+	set vTcl(opt,-labelpos)       { {Label Pos}        {}  
+	                                choice  {n ne e se s sw w nw center} }
 	set vTcl(opt,-fixed)          { {Fixed}            longname type    {} }
 	set vTcl(opt,-validate)       { {Validate Cmd}     {}       command {}}
 	set vTcl(opt,-decrement)      { {Decrement Cmd}    {}       command {}}
@@ -297,7 +356,8 @@ proc vTcl:lib_itcl:setup {} {
 	set vTcl(opt,-focuscommand)   { {Focus Cmd}	   {}       command {}}
 	set vTcl(opt,-invalid)        { {Invalid Cmd}      {}       command {}}
 	set vTcl(opt,-textbackground) { {Text BgColor}     Colors   color   {}}
-	set vTcl(opt,-arrowrelief)    { {Arrow Relief}     {}       choice  {flat groove raised ridge sunken} }
+	set vTcl(opt,-arrowrelief)    { {Arrow Relief}     {}       
+	                                choice  {flat groove raised ridge sunken} }
 	set vTcl(opt,-completion)     { {Completion}       {}       boolean {0 1} }
 	set vTcl(opt,-dropdown)       { {Drop Down}        {}       boolean {0 1} }
 	set vTcl(opt,-margin)         { {Margin}           {}       type    {} }
@@ -327,6 +387,8 @@ proc vTcl:lib_itcl:setup {} {
 	set vTcl(Buttonbox,dump_opt)           vTcl:lib_itcl:dump_widget_opt
 	set vTcl(Checkbox,dump_opt)            vTcl:lib_itcl:dump_widget_opt
 	set vTcl(Radiobox,dump_opt)            vTcl:lib_itcl:dump_widget_opt
+	set vTcl(Tabnotebook,dump_opt)         vTcl:lib_itcl:dump_widget_opt
+	set vTcl(Panedwindow,dump_opt)         vTcl:lib_itcl:dump_widget_opt
 	#
 	# define whether or not do dump children of a class
 	#
@@ -344,6 +406,8 @@ proc vTcl:lib_itcl:setup {} {
 	set vTcl(Buttonbox,dump_children)          0
 	set vTcl(Checkbox,dump_children)           0
 	set vTcl(Radiobox,dump_children)           0
+	set vTcl(Tabnotebook,dump_children)        0
+	set vTcl(Panedwindow,dump_children)        0
 	
 	# @@change by Christian Gavin 3/9/2000
 	# code to be generated at the top of a file if Itcl is supported
@@ -383,6 +447,10 @@ proc vTcl:lib_itcl:setup {} {
                    namespace import iwidgets::buttonbox
                    namespace import iwidgets::checkbox
                    namespace import iwidgets::radiobox
+                   namespace import iwidgets::tabnotebook
+                   namespace import iwidgets::panedwindow
+                   
+               	   option add *Scrolledlistbox.sbWidth 10
                 }
         }
 	
@@ -391,19 +459,48 @@ proc vTcl:lib_itcl:setup {} {
 	# @@change by Christian Gavin 3/15/2000
 	# procedure to return the label of a widget to display in the tree view
 	
-	set vTcl(Combobox,get_widget_tree_label)        vTcl:lib_itcl:get_widget_tree_label
-	set vTcl(Scrolledlistbox,get_widget_tree_label) vTcl:lib_itcl:get_widget_tree_label
-	set vTcl(Calendar,get_widget_tree_label)        vTcl:lib_itcl:get_widget_tree_label
-	set vTcl(Dateentry,get_widget_tree_label)       vTcl:lib_itcl:get_widget_tree_label
-	set vTcl(Scrolledhtml,get_widget_tree_label)    vTcl:lib_itcl:get_widget_tree_label
-	set vTcl(Toolbar,get_widget_tree_label)         vTcl:lib_itcl:get_widget_tree_label
-	set vTcl(Feedback,get_widget_tree_label)        vTcl:lib_itcl:get_widget_tree_label
-	set vTcl(Optionmenu,get_widget_tree_label)      vTcl:lib_itcl:get_widget_tree_label
-	set vTcl(Hierarchy,get_widget_tree_label)       vTcl:lib_itcl:get_widget_tree_label
-	set vTcl(Buttonbox,get_widget_tree_label)       vTcl:lib_itcl:get_widget_tree_label
-	set vTcl(Checkbox,get_widget_tree_label)        vTcl:lib_itcl:get_widget_tree_label
-	set vTcl(Radiobox,get_widget_tree_label)        vTcl:lib_itcl:get_widget_tree_label
-	
+	set vTcl(Combobox,get_widget_tree_label)   \
+	    vTcl:lib_itcl:get_widget_tree_label
+
+	set vTcl(Scrolledlistbox,get_widget_tree_label) \
+	    vTcl:lib_itcl:get_widget_tree_label
+
+	set vTcl(Calendar,get_widget_tree_label)   \
+	    vTcl:lib_itcl:get_widget_tree_label
+
+	set vTcl(Dateentry,get_widget_tree_label)  \
+	    vTcl:lib_itcl:get_widget_tree_label
+
+	set vTcl(Scrolledhtml,get_widget_tree_label)  \
+	    vTcl:lib_itcl:get_widget_tree_label
+
+	set vTcl(Toolbar,get_widget_tree_label)    \
+	    vTcl:lib_itcl:get_widget_tree_label
+
+	set vTcl(Feedback,get_widget_tree_label)   \
+	    vTcl:lib_itcl:get_widget_tree_label
+
+	set vTcl(Optionmenu,get_widget_tree_label) \
+	    vTcl:lib_itcl:get_widget_tree_label
+
+	set vTcl(Hierarchy,get_widget_tree_label)  \
+	    vTcl:lib_itcl:get_widget_tree_label
+
+	set vTcl(Buttonbox,get_widget_tree_label)  \
+	    vTcl:lib_itcl:get_widget_tree_label
+
+	set vTcl(Checkbox,get_widget_tree_label)   \
+	    vTcl:lib_itcl:get_widget_tree_label
+
+	set vTcl(Radiobox,get_widget_tree_label)   \
+	    vTcl:lib_itcl:get_widget_tree_label
+
+	set vTcl(Tabnotebook,get_widget_tree_label)  \
+	    vTcl:lib_itcl:get_widget_tree_label
+
+	set vTcl(Panedwindow,get_widget_tree_label)  \
+	    vTcl:lib_itcl:get_widget_tree_label
+		
 	# @@end_change
 	
 	# @@change by Christian Gavin 4/1/2000
@@ -420,16 +517,20 @@ proc vTcl:lib_itcl:setup {} {
 	set vTcl(option,noencase,-textfont) 1
 
 	# @@end_change
-	
-	# hum... this is not too clean, but the hierarchy widget creates icons on the fly
+		
+	option add *Scrolledlistbox.sbWidth 10
+
+	# hum... this is not too clean, but the hierarchy widget creates
+	# icons on the fly
 	#
 	# in brief, the hierarchy widget does not know about the following images:
 	#    openFolder
 	#    closedFolder
 	#    nodeFolder
 	#
-	# unless their respective options -openFolder,-closedFolder,-nodeFolder haven't been
-	# specified while creating a hierarchy widget in which case Iwidgets creates them
+	# unless their respective options -openFolder,-closedFolder,-nodeFolder
+	# haven't been specified while creating a hierarchy widget in which case
+	# Iwidgets creates them
 	#
 	# this creates problems while sourcing a Iwidgets project in vTcl
 	#
@@ -452,6 +553,8 @@ proc vTcl:lib_itcl:get_widget_tree_label {className} {
 		"buttonbox"         {return "Button Box"}
 		"checkbox"          {return "Check Box"}
 		"radiobox"          {return "Radio Box"}
+		"tabnotebook"       {return "Tab Notebook"}
+		"panedwindow"       {return "Paned Window"}
 		
 		default             {return ""}
 	}
@@ -495,6 +598,19 @@ proc vTcl:widget:radiobox:inscmd {target} {
 	return "$target add radio1   -text {Radio 1} ;\
 	        $target add radio2   -text {Radio 2} ;\
 	        $target add radio3   -text {Radio 3}"
+}
+
+proc vTcl:widget:tabnotebook:inscmd {target} {
+	
+	return "$target add -label {Page 1} ;\
+	        $target add -label {Page 2} ;\
+	        $target add -label {Page 3} ;\
+	        $target select 0"
+}
+
+proc vTcl:widget:panedwindow:inscmd {target} {
+	
+	return "$target add pane1; $target add pane2"
 }
 
 #
