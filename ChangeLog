@@ -1,6 +1,18 @@
 ChangeLog for Visual Tcl:
 
-1.21 -> 1.22 (not released yet)
+1.22b1 ->
+        o Menus are now dumped relative to their top-level window
+        o Don't display in widget tree temporary menu windows with "#" in
+          their name
+        o Display menu item titles in widget tree window
+        o Widget tree remembers scrolling position when new widget added or
+          existing widget deleted
+        o If an image is not found while loading a project, then the image is
+          searched for in the project directory
+        o Fixed problem when loading a 1.21 project in 1.22b1 and stock images
+          were not found
+
+1.21 -> 1.22b1 (released August 5, 2000)
         o When saving -xscrollcommand, -yscrollcommand, and -command options,
           if options are about scrolling then window path is replaced by
           $base... id. the path is now relative to the parent window instead of

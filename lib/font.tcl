@@ -21,17 +21,17 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 proc vTcl:font:prompt_user_font {target option} {
-	
+
     global vTcl
     if {$target == ""} {return}
     set base ".vTcl.com_[vTcl:rename ${target}${option}]"
-    
+
     if {[catch {set font_desc [$target cget $option]}] == 1} {
         return
     }
 
     vTcl:log "prompt_user_font: base=$base, font=$font_desc"
-    
+
     set r [vTcl:font:prompt_noborder_fontlist $font_desc]
     if {$r == ""} {
         return
@@ -45,11 +45,11 @@ proc vTcl:font:prompt_user_font {target option} {
 }
 
 proc vTcl:font:prompt_user_font_2 {font_desc} {
-	
+
     set base .vTcl.fontmgr
-    
+
     set r [vTcl:font:get_font_dlg $base $font_desc]
-    
+
     return $r
 }
 
@@ -57,7 +57,7 @@ proc vTcl:font:fill_fonts {base} {
 
 	global widget
 	global vTcl
-	
+
 	$widget($base.listbox) delete 0 end
 	eval $widget($base.listbox) insert 0 [lsort [font families] ]
 
@@ -110,7 +110,7 @@ proc vTcl:font:update_font {name1 name2 op} {
 }
 
 proc vTcl:font:font_select_family {base win y} {
-	
+
 	global vTcl widget
 
 	set index [$win nearest $y]
@@ -120,7 +120,7 @@ proc vTcl:font:font_select_family {base win y} {
 }
 
 proc vTcl:font:get_font_dlg {base font_desc} {
-	
+
     if {$base == ""} {
         set base .top27
     }
@@ -132,7 +132,7 @@ proc vTcl:font:get_font_dlg {base font_desc} {
     global vTcl
 
     set vTcl(x,$base,dlgstatus)          "cancel"
-    
+
     set widget($base.listbox)            "$base.fra28.cpd29.01"
     set widget($base.text)               "$base.cpd43.03"
     set widget(rev,$base.cpd43.03)       "$base.text"
@@ -142,7 +142,7 @@ proc vTcl:font:get_font_dlg {base font_desc} {
 
     catch {font delete $vTcl(x,$base,font)}
     set vTcl(x,$base,font)  [eval font create $font_desc]
-    
+
     set vTcl(x,$base,weight)     [font configure $vTcl(x,$base,font) -weight]
     set vTcl(x,$base,slant)      [font configure $vTcl(x,$base,font) -slant]
     set vTcl(x,$base,underline)  [font configure $vTcl(x,$base,font) -underline]
@@ -154,11 +154,11 @@ proc vTcl:font:get_font_dlg {base font_desc} {
     vTcl:log "weight = $vTcl(x,$base,weight)"
     vTcl:log "slant  = $vTcl(x,$base,slant)"
     vTcl:log "size   = $vTcl(x,$base,size)"
-    
+
     ###################
     # CREATING WIDGETS
     ###################
-    toplevel $base -class vTcl 
+    toplevel $base -class vTcl
     wm transient $base .vTcl
     wm geometry $base 380x451+192+157
     wm maxsize $base 1009 738
@@ -169,10 +169,10 @@ proc vTcl:font:get_font_dlg {base font_desc} {
     frame $base.fra28 \
         -borderwidth 2 -height 75 \
         -relief groove \
-        -width 125 
+        -width 125
     frame $base.fra28.cpd29 \
         -borderwidth 1 \
-        -relief raised -width 30 
+        -relief raised -width 30
     listbox $base.fra28.cpd29.01 \
         -xscrollcommand "$base.fra28.cpd29.02 set" \
         -yscrollcommand "$base.fra28.cpd29.03 set"
@@ -188,55 +188,55 @@ proc vTcl:font:get_font_dlg {base font_desc} {
         -orient vert
     label $base.fra28.lab30 \
         -borderwidth 1 \
-        -padx 5 -pady 0 -text Size: 
+        -padx 5 -pady 0 -text Size:
     label $base.fra28.lab31 \
         -borderwidth 1 \
-        -padx 5 -text Weight: 
+        -padx 5 -text Weight:
     label $base.fra28.lab32 \
         -borderwidth 1 \
-        -padx 5 -text Slant: 
+        -padx 5 -text Slant:
     checkbutton $base.fra28.che34 \
         -text Underline \
-        -variable vTcl(x,$base,underline) 
+        -variable vTcl(x,$base,underline)
     checkbutton $base.fra28.che35 \
         -text Overstrike \
-        -variable vTcl(x,$base,overstrike) 
+        -variable vTcl(x,$base,overstrike)
     entry $base.fra28.ent36 \
-        -textvariable vTcl(x,$base,size) -width 10 
+        -textvariable vTcl(x,$base,size) -width 10
     menubutton $base.fra28.men37 \
         -menu $base.fra28.men37.m -padx 4 -pady 3 \
         -relief raised -text normal -textvariable vTcl(x,$base,weight) \
-        -width 10 
+        -width 10
     menu $base.fra28.men37.m \
-        -tearoff 0 
+        -tearoff 0
     $base.fra28.men37.m add command \
-        -command "set vTcl(x,$base,weight) normal" -label normal 
+        -command "set vTcl(x,$base,weight) normal" -label normal
     $base.fra28.men37.m add command \
-        -command "set vTcl(x,$base,weight) bold" -label bold 
+        -command "set vTcl(x,$base,weight) bold" -label bold
     menubutton $base.fra28.men38 \
         -menu $base.fra28.men38.m -padx 4 -pady 3 \
         -relief raised -text roman -textvariable vTcl(x,$base,slant) \
-        -width 10 
+        -width 10
     menu $base.fra28.men38.m \
-        -tearoff 0 
+        -tearoff 0
     $base.fra28.men38.m add command \
-        -command "set vTcl(x,$base,slant) roman" -label roman 
+        -command "set vTcl(x,$base,slant) roman" -label roman
     $base.fra28.men38.m add command \
-        -command "set vTcl(x,$base,slant) italic" -label italic 
+        -command "set vTcl(x,$base,slant) italic" -label italic
     label $base.fra28.lab39 \
         -borderwidth 1
     button $base.fra28.but32 \
         -command "incr vTcl(x,$base,size)" \
-        -padx 2 -pady 0 -text + 
+        -padx 2 -pady 0 -text +
     button $base.fra28.but33 \
         -command "incr vTcl(x,$base,size) -1" \
-        -padx 2 -pady 0 -text - 
+        -padx 2 -pady 0 -text -
     label $base.lab41 \
         -borderwidth 1 \
-        -text Sample 
+        -text Sample
     frame $base.cpd43 \
         -borderwidth 1 \
-        -relief raised -width 50 
+        -relief raised -width 50
     scrollbar $base.cpd43.01 \
         -borderwidth 1 \
         -command "$base.cpd43.03 xview" -cursor left_ptr \
@@ -250,11 +250,11 @@ proc vTcl:font:get_font_dlg {base font_desc} {
         -height 3 \
         -width 8 -wrap none \
         -xscrollcommand "$base.cpd43.01 set" \
-        -yscrollcommand "$base.cpd43.02 set" 
+        -yscrollcommand "$base.cpd43.02 set"
     frame $base.fra27 \
         -borderwidth 2 -height 75 \
         -relief groove \
-        -width 125 
+        -width 125
     button $base.fra27.but28 \
         -padx 9 -pady 3 -text OK \
         -command "vTcl:font:button_ok $base"
@@ -265,80 +265,80 @@ proc vTcl:font:get_font_dlg {base font_desc} {
     # SETTING GEOMETRY
     ###################
     pack $base.fra28 \
-        -in $base -anchor center -expand 1 -fill both -side top 
+        -in $base -anchor center -expand 1 -fill both -side top
     grid columnconf $base.fra28 0 -weight 1
     grid rowconf $base.fra28 6 -weight 1
     grid $base.fra28.cpd29 \
         -in $base.fra28 -column 0 -row 0 -columnspan 1 -rowspan 7 \
-        -sticky nesw 
+        -sticky nesw
     grid columnconf $base.fra28.cpd29 0 -weight 1
     grid rowconf $base.fra28.cpd29 0 -weight 1
     grid $base.fra28.cpd29.01 \
         -in $base.fra28.cpd29 -column 0 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky nesw 
+        -sticky nesw
     grid $base.fra28.cpd29.02 \
         -in $base.fra28.cpd29 -column 0 -row 1 -columnspan 1 -rowspan 1 \
-        -sticky ew 
+        -sticky ew
     grid $base.fra28.cpd29.03 \
         -in $base.fra28.cpd29 -column 1 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky ns 
+        -sticky ns
     grid $base.fra28.lab30 \
         -in $base.fra28 -column 1 -row 0 -columnspan 1 -rowspan 2 -pady 5 \
-        -sticky e 
+        -sticky e
     grid $base.fra28.lab31 \
-        -in $base.fra28 -column 1 -row 2 -columnspan 1 -rowspan 1 -sticky e 
+        -in $base.fra28 -column 1 -row 2 -columnspan 1 -rowspan 1 -sticky e
     grid $base.fra28.lab32 \
-        -in $base.fra28 -column 1 -row 3 -columnspan 1 -rowspan 1 -sticky e 
+        -in $base.fra28 -column 1 -row 3 -columnspan 1 -rowspan 1 -sticky e
     grid $base.fra28.che34 \
         -in $base.fra28 -column 1 -row 4 -columnspan 2 -rowspan 1 -ipadx 5 \
-        -sticky w 
+        -sticky w
     grid $base.fra28.che35 \
         -in $base.fra28 -column 1 -row 5 -columnspan 2 -rowspan 1 -padx 5 \
-        -sticky w 
+        -sticky w
     grid $base.fra28.ent36 \
-        -in $base.fra28 -column 2 -row 0 -columnspan 1 -rowspan 2 -pady 5 
+        -in $base.fra28 -column 2 -row 0 -columnspan 1 -rowspan 2 -pady 5
     grid $base.fra28.men37 \
         -in $base.fra28 -column 2 -row 2 -columnspan 1 -rowspan 1 -padx 5 \
-        -pady 5 
+        -pady 5
     grid $base.fra28.men38 \
         -in $base.fra28 -column 2 -row 3 -columnspan 1 -rowspan 1 -padx 5 \
-        -pady 5 
+        -pady 5
     grid $base.fra28.lab39 \
         -in $base.fra28 -column 1 -row 6 -columnspan 2 -rowspan 1 \
-        -sticky nesw 
+        -sticky nesw
     grid $base.fra28.but32 \
-        -in $base.fra28 -column 3 -row 0 -columnspan 1 -rowspan 1 
+        -in $base.fra28 -column 3 -row 0 -columnspan 1 -rowspan 1
     grid $base.fra28.but33 \
-        -in $base.fra28 -column 3 -row 1 -columnspan 1 -rowspan 1 
+        -in $base.fra28 -column 3 -row 1 -columnspan 1 -rowspan 1
     pack $base.lab41 \
-        -in $base -anchor center -expand 0 -fill none -side top 
+        -in $base -anchor center -expand 0 -fill none -side top
     pack $base.cpd43 \
-        -in $base -anchor center -expand 0 -fill both -side top 
+        -in $base -anchor center -expand 0 -fill both -side top
     grid columnconf $base.cpd43 0 -weight 1
     grid rowconf $base.cpd43 0 -weight 1
     grid $base.cpd43.01 \
-        -in $base.cpd43 -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew 
+        -in $base.cpd43 -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew
     grid $base.cpd43.02 \
-        -in $base.cpd43 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns 
+        -in $base.cpd43 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns
     grid $base.cpd43.03 \
         -in $base.cpd43 -column 0 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky nesw 
+        -sticky nesw
     pack $base.fra27 \
-        -in $base -anchor center -expand 0 -fill x -side top 
+        -in $base -anchor center -expand 0 -fill x -side top
     pack $base.fra27.but28 \
-        -in $base.fra27 -anchor center -expand 1 -fill x -side left 
+        -in $base.fra27 -anchor center -expand 1 -fill x -side left
     pack $base.fra27.but29 \
-        -in $base.fra27 -anchor center -expand 1 -fill x -side right 
+        -in $base.fra27 -anchor center -expand 1 -fill x -side right
 
     vTcl:font:fill_fonts $base
     vTcl:font:init_fontselect $base
-    
+
     tkwait window $base
     update idletasks
-    
+
     # argh... don't forget this!
     vTcl:font:uninit_fontselect $base
-    
+
     switch -- $vTcl(x,$base,dlgstatus) {
     	"ok" {
     		return [font configure $vTcl(x,$base,font)]
@@ -384,23 +384,23 @@ proc vTcl:font:init_stock {} {
 }
 
 proc vTcl:font:get_type {object} {
-	
+
 	global vTcl
-	
+
 	return $vTcl(fonts,$object,type)
 }
 
 proc vTcl:font:get_key {object} {
-	
+
 	global vTcl
-	
+
 	return $vTcl(fonts,$object,key)
 }
 
 proc vTcl:font:get_font {key} {
-	
+
 	global vTcl
-	
+
 	return $vTcl(fonts,$key,object)
 }
 
@@ -423,7 +423,7 @@ proc {vTcl:font:add_font} {font_descr font_type {newkey {}}} {
      set vTcl(fonts,$newfont,type)                      $font_type
      set vTcl(fonts,$newfont,key)                       $newkey
      set vTcl(fonts,$vTcl(fonts,$newfont,key),object)   $newfont
-     
+
      # in case caller needs it
      return $newfont
 }
@@ -431,9 +431,9 @@ proc {vTcl:font:add_font} {font_descr font_type {newkey {}}} {
 proc vTcl:font:delete_font {key} {
 
      global vTcl
-     
+
      set object $vTcl(fonts,$key,object)
-     
+
      set index [lsearch -exact $vTcl(fonts,objects) $object]
      set vTcl(fonts,objects) [lreplace $vTcl(fonts,objects) $index $index]
 
@@ -447,21 +447,21 @@ proc vTcl:font:delete_font {key} {
 proc vTcl:font:ask_delete_font {key} {
 
      global vTcl
-     
+
      set object $vTcl(fonts,$key,object)
      set descr [font configure $object]
 
      set result [
-	
+
           tk_messageBox \
 		-message "Do you want to remove '$descr' from the project?" \
 		-title "Visual Tcl" \
 		-type yesno \
 		-icon question
      ]
-	
+
      if {$result == "yes"} {
-		
+
 	  set pos [vTcl:font:get_manager_position]
 
           vTcl:font:delete_font $key
@@ -470,13 +470,13 @@ proc vTcl:font:ask_delete_font {key} {
 }
 
 proc vTcl:font:remove_user_fonts {} {
-	
+
      global vTcl
-     
+
      foreach object $vTcl(fonts,objects) {
-     	
+
      	  if {$vTcl(fonts,$object,type) == "user"} {
-     	  	
+
      	  	vTcl:font:delete_font $vTcl(fonts,$object,key)
      	  }
      }
@@ -503,7 +503,7 @@ proc vTcl:font:display_fonts {base} {
      if {![winfo exists $t]} {
      	return
      }
-     
+
      vTcl:font:display_fonts_in_text $t
 }
 
@@ -551,7 +551,7 @@ proc {vTcl:font:display_fonts_in_text} {t} {
 
      $t tag configure vTcl:fontname \
      	-font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1
-     	
+
      $t configure -state disabled
 }
 
@@ -568,7 +568,7 @@ proc {vTcl:font:font_change} {object} {
 
         vTcl:log "change font: $font_desc"
         eval font configure $object $font_desc
-        
+
         set pos [vTcl:font:get_manager_position]
         vTcl:font:refresh_manager $pos
      }
@@ -603,7 +603,7 @@ proc vTclWindow.vTcl.fontManager {args} {
     wm deiconify $base
     wm title $base "Font manager"
     wm transient .vTcl.fontManager .vTcl
-    
+
     button $base.but29 \
         -padx 9 -pady 3 -text Close \
         -command "wm withdraw $base"
@@ -672,60 +672,62 @@ proc vTcl:font:dump_proc {fileID name} {
 
 	puts $fileID "proc $name {" nonewline
 	puts $fileID "[info args $name]} {" nonewline
-	puts $fileID "[info body $name]}" 
+	puts $fileID "[info body $name]}"
 
 	puts $fileID ""
 }
 
 proc vTcl:font:generate_font_stock {fileID} {
-	
+
 	global vTcl
-	
+
 	puts $fileID {############################}
 	puts $fileID "\# code to load stock fonts\n"
         puts $fileID "\nif {!\[info exist vTcl(sourcing)\]} \{"
 	puts $fileID "set vTcl(fonts,counter) 0"
-	
+
 	vTcl:font:dump_proc $fileID "vTcl:font:add_font"
 	vTcl:font:dump_proc $fileID "vTcl:font:get_font"
-	
+
 	foreach font $vTcl(fonts,objects) {
 
 		if {[vTcl:font:get_type $font] == "stock"} {
-			
-			puts $fileID \
- "vTcl:font:add_font \"[font configure $font]\" [vTcl:font:get_type $font] " nonewline
-			puts $fileID "[vTcl:font:get_key $font]"
+
+			puts $fileID "vTcl:font:add_font \\"
+			puts $fileID "    \"[font configure $font]\" \\"
+			puts $fileID "    [vTcl:font:get_type $font] \\"
+			puts $fileID "    [vTcl:font:get_key $font]"
 		}
 	}
-	
+
 	puts $fileID "\}"
 }
 
 proc vTcl:font:generate_font_user {fileID} {
-	
+
 	global vTcl
-	
+
 	puts $fileID {############################}
 	puts $fileID "\# code to load user fonts\n"
-		
+
 	foreach font $vTcl(fonts,objects) {
 
 		if {[vTcl:font:get_type $font] == "user"} {
-			
-			puts $fileID \
- "vTcl:font:add_font \"[font configure $font]\" [vTcl:font:get_type $font] " nonewline
-			puts $fileID "[vTcl:font:get_key $font]"
+
+			puts $fileID "vTcl:font:add_font \\"
+			puts $fileID "    \"[font configure $font]\" \\"
+			puts $fileID "    [vTcl:font:get_type $font] \\"
+			puts $fileID "    [vTcl:font:get_key $font]"
 		}
-	}	
+	}
 }
 
 proc vTcl:font:create_noborder_fontlist {base} {
-	
+
     if {$base == ""} {
         set base .vTcl.noborder_fontlist
     }
-    
+
     if {[winfo exists $base]} {
         wm deiconify $base; return
     }
@@ -735,17 +737,17 @@ proc vTcl:font:create_noborder_fontlist {base} {
 
     set vTcl(font,noborder_fontlist,win) $base
     set vTcl(font,noborder_fontlist,font) "nope"
-    
+
     ###################
     # CREATING WIDGETS
     ###################
     toplevel $base -class Toplevel \
         -background #bcbcbc -highlightbackground #bcbcbc \
-        -highlightcolor #000000 
+        -highlightcolor #000000
     wm focusmodel $base passive
 
     vTcl:prepare_pulldown $base 396 252
-    
+
     wm maxsize $base 1009 738
     wm minsize $base 1 1
     wm resizable $base 1 1
@@ -754,7 +756,7 @@ proc vTcl:font:create_noborder_fontlist {base} {
     frame $base.cpd29 \
         -background #bcbcbc -borderwidth 1 -height 30 \
         -highlightbackground #bcbcbc -highlightcolor #000000 -relief raised \
-        -width 30 
+        -width 30
     scrollbar $base.cpd29.02 \
         -activebackground #bcbcbc -background #bcbcbc -borderwidth 1 \
         -command "$base.cpd29.03 yview" -cursor left_ptr \
@@ -770,17 +772,17 @@ proc vTcl:font:create_noborder_fontlist {base} {
     # SETTING GEOMETRY
     ###################
     pack $base.cpd29 \
-        -in $base -anchor center -expand 1 -fill both -side top 
+        -in $base -anchor center -expand 1 -fill both -side top
     grid columnconf $base.cpd29 0 -weight 1
     grid rowconf $base.cpd29 0 -weight 1
     grid $base.cpd29.02 \
-        -in $base.cpd29 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns 
+        -in $base.cpd29 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns
     grid $base.cpd29.03 \
         -in $base.cpd29 -column 0 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky nesw 
-        
+        -sticky nesw
+
     vTcl:display_pulldown $base 396 252
-    
+
     vTcl:font:fill_noborder_font_list $base.cpd29.03
 }
 
@@ -799,12 +801,12 @@ proc {vTcl:font:fill_noborder_font_list} {t} {
 	    $t insert end \
 	    	"ABDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwyz 0123456789\n" \
 	       vTcl:font_list:$object
-      
+
 	    $t tag configure vTcl:font_list:$object -font $object
-	
+
 	    $t tag bind vTcl:font_list:$object <Enter> \
 	        "$t tag configure vTcl:font_list:$object -background white -relief raised -borderwidth 2"
-           
+
 	    $t tag bind vTcl:font_list:$object <Leave> \
 	        "$t tag configure vTcl:font_list:$object -background #bcbcbc -relief flat -borderwidth 0"
 
@@ -820,33 +822,33 @@ proc {vTcl:font:fill_noborder_font_list} {t} {
 
 	$t tag bind vTcl:font_list:new <Leave> \
 		"$t tag configure vTcl:font_list:new -relief flat -borderwidth 0 -background #bcbcbc"
-		
+
 	$t tag bind vTcl:font_list:new <ButtonPress-1> \
 		"set vTcl(font,noborder_fontlist,font) <new>"
-		
+
 	$t configure -state disabled
 }
 
 proc vTcl:font:prompt_noborder_fontlist {font} {
-	
+
 	global vTcl
-	
+
 	vTcl:font:create_noborder_fontlist ""
-	
+
 	# do not reposition window according to root window
 	vTcl:dialog_wait $vTcl(font,noborder_fontlist,win) vTcl(font,noborder_fontlist,font) 1
 	destroy $vTcl(font,noborder_fontlist,win)
 
 	# user wants a new font ?
 	if {$vTcl(font,noborder_fontlist,font)=="<new>"} {
-	
+
 		set font_desc [vTcl:font:prompt_user_font_2 "-family helvetica -size 12"]
 
 		if {$font_desc != ""} {
 
 			set vTcl(font,noborder_fontlist,font) \
 				[vTcl:font:add_font $font_desc user]
-				
+
 			# refresh font manager
 			vTcl:font:refresh_manager 1.0
 
@@ -854,7 +856,7 @@ proc vTcl:font:prompt_noborder_fontlist {font} {
 			set vTcl(font,noborder_fontlist,font) ""
 		}
 	}
-	
+
 	return $vTcl(font,noborder_fontlist,font)
 }
 
@@ -865,32 +867,32 @@ set vTcl(option,noencase,-font) 1
 proc vTcl:font:translate {value} {
 
 	global vTcl
-	
+
        	if [info exists vTcl(fonts,$value,key)] {
 
       		set value "\[vTcl:font:get_font \"$vTcl(fonts,$value,key)\"\]"
       	}
-      	
+
       	return $value
 }
 
 proc vTcl:font:refresh_manager {{position 0.0}} {
 
 	global vTcl
-	
+
 	if [info exists vTcl(fonts,font_mgr,win)] {
-	
+
 		if [winfo exists $vTcl(fonts,font_mgr,win)] {
-	
+
 			vTcl:font:display_fonts $vTcl(fonts,font_mgr,win)
 			$vTcl(fonts,font_mgr,win).cpd31.03 yview moveto $position
 		}
-	}		
+	}
 }
 
 proc vTcl:font:get_manager_position {} {
-	
+
 	global vTcl
-	
+
 	return [lindex [$vTcl(fonts,font_mgr,win).cpd31.03 yview] 0]
 }
