@@ -33,16 +33,14 @@ proc vTcl:lib_table:init {} {
 proc vTcl:widget:lib:lib_table {args} {
     global vTcl
 
-    set order {
-    	Table
-    }
+    set order { Table }
 
     vTcl:lib:add_widgets_to_toolbar $order
 
-    append vTcl(head,importheader) {
-    # Check if Tktable is available
-    if {[lsearch -exact $packageNames Tktable] != -1} {
-	package require Tktable
-    }
+    append vTcl(head,TkTable,importheader) {
+        # Check if Tktable is available
+        if {[lsearch -exact $packageNames Tktable] != -1} {
+            package require Tktable
+        }
     }
 }

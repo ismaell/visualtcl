@@ -48,6 +48,24 @@ proc vTcl:show_selection {button_path target} {
     $b itemconfigure "TEXT$button_path" -fill #0000ff
 
     set vTcl(tree,last_selected) $button_path
+
+    # let's see if we can bring the thing into view
+    lassign [$b cget -scrollregion] foo foo cx cy
+    lassign [$b bbox $button_path] x1 y1 x2 y2
+
+    if {$cy <= 0} {return}
+
+    set yf0 [expr $y1.0 / $cy]
+    set yf1 [expr $y2.0 / $cy]
+    lassign [$b yview] yv0 yv1
+
+    if {$yf0 < $yv0 || $yf1 > $yv1} {
+        set ynew [expr $yf0 - ($yf1 - $yf0) / 2.0]
+        if {$ynew < 0.0} {
+            set ynew $yf0
+        }
+        $b yview moveto $ynew
+    }
 }
 
 proc vTcl:show_wtree {} {
@@ -243,6 +261,7 @@ proc vTcl:init_wtree {{wants_destroy_handles 1}} {
     if {!$wants_destroy_handles} {
         vTcl:create_handles $vTcl(w,widget)
         vTcl:place_handles $vTcl(w,widget)
+        vTcl:show_selection_in_tree $vTcl(w,widget)
     }
 
     # Restore scrolling position
@@ -267,19 +286,17 @@ proc vTclWindow.vTcl.tree {args} {
     wm title $base "Widget Tree"
 
     frame $base.frameTop
-    button $base.frameTop.buttonRefresh \
+    vTcl:toolbar_button $base.frameTop.buttonRefresh \
         -image [vTcl:image:get_image "refresh.gif"] \
         -command vTcl:init_wtree
-    button $base.frameTop.buttonClose \
-        -image [vTcl:image:get_image "ok.gif"] \
-        -command "wm withdraw .vTcl.tree"
-    frame $base.cpd21 -relief raised
+    ::vTcl::OkButton $base.frameTop.buttonClose -command "Window hide $base"
+    frame $base.cpd21 -relief sunken -borderwidth 2
     scrollbar $base.cpd21.01 \
         -command "$base.cpd21.03 xview" -orient horizontal
     scrollbar $base.cpd21.02 \
         -command "$base.cpd21.03 yview"
-    canvas $base.cpd21.03 \
-        -background #ffffff -borderwidth 2 -closeenough 1.0 -relief sunken \
+    canvas $base.cpd21.03 -highlightthickness 0 \
+        -background #ffffff -borderwidth 0 -closeenough 1.0 -relief flat \
         -xscrollcommand "$base.cpd21.01 set" \
         -yscrollcommand "$base.cpd21.02 set"
 

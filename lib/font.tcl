@@ -137,12 +137,6 @@ proc vTcl:font:get_font_dlg {base font_desc} {
     set vTcl(x,$base,overstrike) [font configure $vTcl(x,$base,font) -overstrike]
     set vTcl(x,$base,size)       [font configure $vTcl(x,$base,font) -size]
 
-    # vTcl:log "vTcl:font:get_font_dlg: font=$vTcl(x,$base,font)"
-    # vTcl:log "vTcl:font:get_font_dlg: $font_desc"
-    # vTcl:log "weight = $vTcl(x,$base,weight)"
-    # vTcl:log "slant  = $vTcl(x,$base,slant)"
-    # vTcl:log "size   = $vTcl(x,$base,size)"
-
     ###################
     # CREATING WIDGETS
     ###################
@@ -159,9 +153,8 @@ proc vTcl:font:get_font_dlg {base font_desc} {
         -relief flat \
         -width 125
     frame $base.fra28.cpd29 \
-        -borderwidth 2 \
-        -relief raised -width 30
-    listbox $base.fra28.cpd29.01 \
+        -borderwidth 1 -relief sunken -width 30
+    listbox $base.fra28.cpd29.01 -borderwidth 0 \
         -xscrollcommand "$base.fra28.cpd29.02 set" \
         -yscrollcommand "$base.fra28.cpd29.03 set"
     bind $base.fra28.cpd29.01 <Button-1> \
@@ -254,15 +247,19 @@ proc vTcl:font:get_font_dlg {base font_desc} {
     }
     frame $base.fra27 \
         -relief flat
-    button $base.fra27.but28 \
-        -padx 9 -text OK -width 6 \
-        -command "vTcl:font:button_ok $base"
-    button $base.fra27.but29 \
-        -padx 9 -text Cancel -width 6 \
+    ::vTcl::OkButton $base.fra27.but28 -command "vTcl:font:button_ok $base"
+    ::vTcl::CancelButton $base.fra27.but29 \
         -command "vTcl:font:button_cancel $base"
     ###################
     # SETTING GEOMETRY
     ###################
+    pack $base.fra27 \
+        -in $base -anchor e -side top -pady 2
+    pack $base.fra27.but28 \
+        -in $base.fra27 -anchor center -padx 10 -pady 5 -side left
+    pack $base.fra27.but29 \
+        -in $base.fra27 -anchor center -padx 10 -pady 5 -side right
+
     pack $base.fra28 \
         -in $base -anchor center -expand 1 -fill both -side top
     grid columnconf $base.fra28 0 -weight 1
@@ -322,12 +319,6 @@ proc vTcl:font:get_font_dlg {base font_desc} {
     grid $base.cpd43.03 \
         -in $base.cpd43 -column 0 -row 0 -columnspan 1 -rowspan 1 \
         -sticky nesw
-    pack $base.fra27 \
-        -in $base -anchor center -side top -pady 2
-    pack $base.fra27.but28 \
-        -in $base.fra27 -anchor center -padx 10 -pady 5 -side left
-    pack $base.fra27.but29 \
-        -in $base.fra27 -anchor center -padx 10 -pady 5 -side right
 
     vTcl:font:fill_fonts $base
     vTcl:font:init_fontselect $base
@@ -346,10 +337,8 @@ proc vTcl:font:get_font_dlg {base font_desc} {
     	"ok" {
     		return [font configure $vTcl(x,$base,font)]
     	}
-    	default -
-    	"cancel" {
-    		return ""
-    	}
+    	"cancel" -
+    	default  { return }
     }
 }
 
@@ -457,7 +446,7 @@ proc vTcl:font:ask_delete_font {key} {
      set descr [font configure $object]
 
      set result [
-          tk_messageBox \
+          ::vTcl::MessageBox \
 		-message "Do you want to remove '$descr' from the project?" \
 		-title "Visual Tcl" \
 		-type yesno \
@@ -599,7 +588,7 @@ proc vTclWindow.vTcl.fontManager {args} {
 
     frame $base.butfr
 
-    button $base.butfr.but30 \
+    vTcl:toolbar_button $base.butfr.but30 \
         -command {set font_desc "-family {Helvetica} -size 12"
 
 set font_desc [vTcl:font:prompt_user_font_2 $font_desc]
@@ -613,12 +602,11 @@ if {$font_desc != ""} {
 }} \
         -padx 9 -pady 3 -image [vTcl:image:get_image add.gif]
 
-    button $base.butfr.but31 \
-    	-command "wm withdraw $base" -image [vTcl:image:get_image ok.gif]
+    ::vTcl::OkButton $base.butfr.but31 -command "Window hide $base"
 
     frame $base.cpd31 \
-        -borderwidth 1 -height 30 \
-        -relief raised \
+        -borderwidth 2 -height 30 \
+        -relief sunken \
         -width 30
     scrollbar $base.cpd31.01 \
         -command "$base.cpd31.03 xview" -cursor left_ptr \
@@ -628,7 +616,7 @@ if {$font_desc != ""} {
         -orient vert
     text $base.cpd31.03 \
         -background white -cursor left_ptr \
-        -foreground #000000 -height 1 \
+        -foreground #000000 -height 1 -borderwidth 0 \
         -state disabled -width 8 -wrap none \
         -xscrollcommand "$base.cpd31.01 set" \
         -yscrollcommand "$base.cpd31.02 set"
@@ -641,7 +629,7 @@ if {$font_desc != ""} {
     vTcl:set_balloon $base.butfr.but30 "Add new font"
     pack $base.butfr.but31 \
         -anchor nw -expand 0 -fill none -side right
-    vTcl:set_balloon $base.butfr.but30 "Close"
+    vTcl:set_balloon $base.butfr.but31 "Close"
 
     pack $base.cpd31 \
         -in $base -anchor center -expand 1 -fill both -side top

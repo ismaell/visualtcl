@@ -21,13 +21,49 @@
 ##############################################################################
 #
 
+proc vTcl:toolbar_button {args} {
+    eval button $args
+    set path [lindex $args 0]
+    $path configure -relief flat -highlightthickness 0 -height 23 -width 23
+    bind $path <Enter> {
+	if {[%W cget -state] != "disabled"} {
+	    %W configure -relief raised
+	}
+    }
+    bind $path <Leave> "%W configure -relief flat"
+}
+
+proc vTcl:toolbar_menubutton {args} {
+    eval menubutton $args
+    set path [lindex $args 0]
+    $path configure -relief flat -highlightthickness 0 -height 23 -width 23
+    bind $path <Enter> {
+	if {[%W cget -state] != "disabled"} {
+	    %W configure -relief raised
+	}
+    }
+    bind $path <Leave> "%W configure -relief flat"
+    bind $path <ButtonPress-1> "%W configure -relief flat"
+}
+
+proc vTcl:toolbar_label {args} {
+    eval label $args
+    set path [lindex $args 0]
+    $path configure -relief flat -highlightthickness 0 -height 23 -width 23
+    bind $path <Enter> {
+	if {[%W cget -state] != "disabled"} {
+	    %W configure -relief raised
+	}
+    }
+    bind $path <Leave> "%W configure -relief flat"
+}
+
 proc vTcl:portable_filename {filename} {
+    set result "\[file join "
+    append result "[file split $filename]"
+    append result "\]"
 
-   set result "\[file join "
-   append result "[file split $filename]"
-   append result "\]"
-
-   return $result
+    return $result
 }
 
 proc vTcl:at {varname} {
@@ -286,7 +322,8 @@ proc vTcl:show_bindings {} {
         Window show .vTcl.bind
         vTcl:get_bind $vTcl(w,widget)
     } else {
-        vTcl:dialog "No widget selected!"
+        ::vTcl::MessageBox -icon error -message "No widget selected!" \
+            -title "Error!" -type ok
     }
 }
 
@@ -389,63 +426,11 @@ proc vTcl:find_new_tops {} {
 }
 
 proc vTcl:error {mesg} {
-    vTcl:dialog $mesg
+    ::vTcl::MessageBox -icon error -message $mesg -title "Error!"
 }
 
-proc vTcl:dialog {mesg {options Ok} {root 0}} {
-    global vTcl tcl_platform
-    set vTcl(x_mesg) ""
-    if {$root == 0} {
-        set base .vTcl.message
-    } else {
-        set base .vTcl:message
-    }
-    set sw [winfo screenwidth .]
-    set sh [winfo screenheight .]
-    if {![winfo exists $base]} {
-        toplevel $base -class vTcl
-	wm withdraw $base
-        wm title $base "Visual Tcl Message"
-        wm transient $base .vTcl
-        frame $base.f -bd 2 -relief groove
-        label $base.f.t -bd 0 -relief flat -text $mesg -justify left \
-            -font $vTcl(pr,font_dlg)
-        frame $base.o -bd 1 -relief sunken
-        foreach i $options {
-            set n [string tolower $i]
-            button $base.o.$n -text $i -width 5 \
-            -command "
-                set vTcl(x_mesg) $i
-                destroy $base
-            "
-            pack $base.o.$n -side left -expand 1 -fill x
-        }
-        pack $base.f.t -side top -expand 1 -fill both -ipadx 5 -ipady 5
-        pack $base.f -side top -expand 1 -fill both -padx 2 -pady 2
-        pack $base.o -side top -fill x -padx 2 -pady 2
-    }
-    update idletasks
-    set w [winfo reqwidth $base]
-    set h [winfo reqheight $base]
-    set x [expr ($sw - $w)/2]
-    set y [expr ($sh - $h)/2]
-    if {$tcl_platform(platform) != "unix"} {
-        wm deiconify $base
-    }
-    wm geometry $base +$x+$y
-    if {$tcl_platform(platform) == "unix"} {
-        wm deiconify $base
-    }
-    grab $base
-    tkwait window $base
-    grab release $base
-    return $vTcl(x_mesg)
-}
-
-# @@change by Christian Gavin 3/18/2000
 # procedures to manage modal dialog boxes
 # from "Effective Tcl/Tk Programming, by Mark Harrison, Michael McLennan"
-# @@end_change
 
 ##############################################################################
 # MODAL DIALOG BOXES
@@ -733,13 +718,13 @@ proc vTcl:namespace_tree {{root "::"}} {
 }
 
 proc vTcl:copy_widgetname {} {
-    global vTcl
-    clipboard clear
-    clipboard append $vTcl(w,widget)
+    global fakeClipboard vTcl
+    set fakeClipboard $vTcl(w,widget)
+    .vTcl.widgetname selection range 0 end
 }
 
 proc echo {args} {
-    vTcl:show_console
+    ::vTcl::InitTkcon
     tkcon_puts $args
 }
 
@@ -751,6 +736,18 @@ proc incr0 {varName {num 1}} {
 
 proc vTcl:WrongNumArgs {string} {
     return "wrong # args: should be \"$string\""
+}
+
+proc vTcl:check_mouse_coords {} {
+
+    global vTcl
+
+    if {$vTcl(mouse,X) == 0} {
+        set vTcl(mouse,X) [expr [winfo screenwidth .] / 2]
+    }
+    if {$vTcl(mouse,Y) == 0} {
+        set vTcl(mouse,Y) [expr [winfo screenheight .] / 2]
+    }
 }
 
 proc vTcl:set_mouse_coords {X Y x y} {
@@ -775,7 +772,8 @@ proc vTcl:lib:add_widgets_to_toolbar {list} {
 	    vTcl:$i:ToolBarSetup
 	    continue
 	}
-	vTcl:toolbar_add $i $classes($i,balloon) $classes($i,icon)
+	vTcl:toolbar_add $i $classes($i,balloon) \
+	    $classes($i,icon) $classes($i,addOptions)
     }
 }
 
@@ -1227,6 +1225,17 @@ proc ::vTcl::change {} {
     set vTcl(change) 1
 }
 
+proc vTclWindow.vTcl.tkcon {args} {
+    if {[winfo exists .vTcl.tkcon]} {
+        wm deiconify .vTcl.tkcon
+    } else {
+        vTcl:show_console show
+        after idle {
+            catch {wm geometry .vTcl.tkcon $vTcl(geometry,.vTcl.tkcon)}
+        }
+    }
+}
+
 proc vTcl:show_console {{show show}} {
     ::vTcl::InitTkcon
     tkcon $show
@@ -1235,10 +1244,9 @@ proc vTcl:show_console {{show show}} {
 proc ::vTcl::InitTkcon {} {
     if {[catch {winfo exists $::tkcon::PRIV(root)}]} {
     	::tkcon::Init
-	## Attach ourselves to the main vTcl interp.
 	::tkcon::Attach Main slave
 	tkcon title "Visual Tcl"
-    }	
+    }
 }
 
 proc vTcl:canvas:see {c item} {
@@ -1272,4 +1280,24 @@ proc ::vTcl::web_browser {} {
     	if {![file executable [file join $path netscape]]} { continue }
 	return [file join $path netscape]
     }
+}
+
+proc ::vTcl::OkButton {path args} {
+    global vTcl
+    vTcl:toolbar_button $path -image [vTcl:image:get_image ok.gif]
+    eval $path configure $args
+}
+
+proc ::vTcl::CancelButton {path args} {
+    global vTcl
+    vTcl:toolbar_button $path -image [vTcl:image:get_image remove.gif]
+    eval $path configure $args
+}
+
+proc ::vTcl::MessageBox {args} {
+    global tk_strictMotif
+    set tk_strictMotif 0
+    set response [eval tk_messageBox $args]
+    set tk_strictMotif 1
+    return $response
 }

@@ -83,6 +83,8 @@ proc vTcl:set_font {which widget option} {
             $widget conf -font [list $base $size $style]
         }
     }
+    set vTcl(w,opt,-font) [$widget cget -font]
+    vTcl:prop:save_opt $widget -font vTcl(w,opt,-font)
 }
 
 proc vTcl:widget_set_relief {relief} {
@@ -90,6 +92,7 @@ proc vTcl:widget_set_relief {relief} {
     if {$vTcl(w,widget) == ""} {return}
     if {[catch {$vTcl(w,widget) cget -relief}]} {return}
     $vTcl(w,widget) conf -relief $relief
+    vTcl:prop:save_opt $vTcl(w,widget) -relief vTcl(w,opt,-relief)
 }
 
 proc vTcl:widget_set_border {border} {
@@ -104,6 +107,7 @@ proc vTcl:widget_set_anchor {anchor} {
     if {$vTcl(w,widget) == ""} {return}
     if {[catch {$vTcl(w,widget) cget -anchor}]} {return}
     $vTcl(w,widget) conf -anchor $anchor
+    vTcl:prop:save_opt $vTcl(w,widget) -anchor vTcl(w,opt,-anchor)
 }
 
 proc vTcl:widget_set_pack_side {side} {
@@ -178,7 +182,8 @@ proc vTcl:attrbar:toggle_console {} {
 proc vTcl:attrbar {args} {
     global vTcl tk_version
 
-    set vTcl(attrbar,console_state) [info exists vTcl(geometry,.vTcl.con)]
+    set vTcl(attrbar,console_state) \
+        [expr [lsearch -exact $vTcl(gui,showlist) .vTcl.tkcon] != -1]
 
     set base .vTcl
     frame .vTcl.attr \
@@ -186,7 +191,7 @@ proc vTcl:attrbar {args} {
     pack .vTcl.attr \
         -expand 1 -fill x -side top
     frame .vTcl.attr.01 \
-        -borderwidth 1 -height 20 -relief raised -width 20
+        -borderwidth 1 -height 20 -width 20 -relief raised
     pack .vTcl.attr.01 \
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 3 -pady 2 \
         -side left
@@ -211,7 +216,7 @@ proc vTcl:attrbar {args} {
     pack .vTcl.attr.01.03 \
         -anchor center -padx 2 -pady 2 -side left
 
-    frame .vTcl.attr.console -borderwidth 1 -relief raised
+    frame .vTcl.attr.console -borderwidth 1 -relief flat
     button .vTcl.attr.console.console_toggle -image tconsole -highlightthickness 0 \
         -command vTcl:attrbar:toggle_console
     if {$vTcl(attrbar,console_state)} {
@@ -221,10 +226,10 @@ proc vTcl:attrbar {args} {
     pack .vTcl.attr.console.console_toggle -side left -padx 2 -pady 1
 
     frame .vTcl.attr.04 \
-        -borderwidth 1 -height 20 -relief raised -width 20
+        -borderwidth 1 -height 20 -relief flat -width 20
     pack .vTcl.attr.04 \
         -anchor center -expand 0 -fill none -padx 3 -pady 2 -side left
-    menubutton .vTcl.attr.04.relief -bd 1 -relief raised -image relief \
+    vTcl:toolbar_menubutton .vTcl.attr.04.relief -bd 1 -relief raised -image relief \
         -highlightthickness 0 -menu .vTcl.attr.04.relief.m
     menu .vTcl.attr.04.relief.m -tearoff 0
     .vTcl.attr.04.relief.m add radiobutton -image rel_raised -command {
@@ -244,7 +249,7 @@ proc vTcl:attrbar {args} {
         vTcl:widget_set_relief flat
     } -variable vTcl(w,opt,-relief) -value flat
     vTcl:set_balloon .vTcl.attr.04.relief "border"
-    menubutton .vTcl.attr.04.border -bd 1 -relief raised -image border \
+    vTcl:toolbar_menubutton .vTcl.attr.04.border -bd 1 -relief raised -image border \
         -highlightthickness 0 -menu .vTcl.attr.04.border.m
     menu .vTcl.attr.04.border.m -tearoff 0
     .vTcl.attr.04.border.m add radiobutton -label 1 -command {
@@ -264,7 +269,7 @@ proc vTcl:attrbar {args} {
         vTcl:widget_set_border 0
     } -variable vTcl(w,opt,-borderwidth) -value 0
     vTcl:set_balloon .vTcl.attr.04.border "border width"
-    menubutton .vTcl.attr.04.anchor -bd 1 -relief raised -image anchor \
+    vTcl:toolbar_menubutton .vTcl.attr.04.anchor -bd 1 -relief raised -image anchor \
         -highlightthickness 0 -menu .vTcl.attr.04.anchor.m
     menu .vTcl.attr.04.anchor.m -tearoff 0
     .vTcl.attr.04.anchor.m add radiobutton -image anchor_c -command {
@@ -295,7 +300,7 @@ proc vTcl:attrbar {args} {
         vTcl:widget_set_anchor se
     } -variable vTcl(w,opt,-anchor) -value se
     vTcl:set_balloon .vTcl.attr.04.anchor "label anchor"
-    menubutton .vTcl.attr.04.pack -bd 1 -relief raised -image pack_img \
+    vTcl:toolbar_menubutton .vTcl.attr.04.pack -bd 1 -relief raised -image pack_img \
         -highlightthickness 0 -menu .vTcl.attr.04.pack.m
     menu .vTcl.attr.04.pack.m -tearoff 0
     .vTcl.attr.04.pack.m add radiobutton -image anchor_n -command {
@@ -317,11 +322,11 @@ proc vTcl:attrbar {args} {
     pack .vTcl.attr.04.pack   -side left -padx 2 -pady 2
 
     frame .vTcl.attr.010 \
-        -borderwidth 1 -height 20 -relief raised -width 20
+        -borderwidth 1 -height 20 -relief flat -width 20
     pack .vTcl.attr.010 \
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 3 -pady 2 \
         -side left
-    button .vTcl.attr.010.lab41 \
+    vTcl:toolbar_button .vTcl.attr.010.lab41 \
         -bd 1 -image fg -pady 3 -padx 2 -highlightthickness 0 -command {
             vTcl:widget_set_fg .vTcl.attr.010.lab41
         }
@@ -329,7 +334,7 @@ proc vTcl:attrbar {args} {
     pack .vTcl.attr.010.lab41 \
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 2 -pady 2 \
         -side left
-    button .vTcl.attr.010.lab42 \
+    vTcl:toolbar_button .vTcl.attr.010.lab42 \
         -bd 1 -pady 3 -image bg -padx 2 -highlightthickness 0 -command {
             vTcl:widget_set_bg .vTcl.attr.010.lab42
         }
@@ -338,28 +343,26 @@ proc vTcl:attrbar {args} {
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 2 -pady 2 \
         -side left
 
-    # Font Browsing in tk8.0 or later
+    ## Font Browsing
     #
-    if {$tk_version >= 8} {
-
     frame .vTcl.attr.011 \
-        -borderwidth 1 -height 20 -relief raised -width 20
+        -borderwidth 1 -height 20 -relief flat -width 20
     pack .vTcl.attr.011 \
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 3 -pady 2 \
         -side left
-    menubutton .vTcl.attr.011.lab41 \
+    vTcl:toolbar_menubutton .vTcl.attr.011.lab41 \
         -bd 1 -relief raised -image fontbase -pady 3 -padx 2 \
         -highlightthickness 0 -menu .vTcl.attr.011.lab41.m
     menu .vTcl.attr.011.lab41.m -tearoff 0
     vTcl:fill_font_menu .vTcl.attr.011.lab41.m
     vTcl:set_balloon .vTcl.attr.011.lab41 "font"
-    menubutton .vTcl.attr.011.lab42 \
+    vTcl:toolbar_menubutton .vTcl.attr.011.lab42 \
         -bd 1 -relief raised -image fontsize -pady 3 -padx 2 \
         -highlightthickness 0 -menu .vTcl.attr.011.lab42.m
     menu .vTcl.attr.011.lab42.m -tearoff 0
     vTcl:fill_fontsize_menu .vTcl.attr.011.lab42.m
     vTcl:set_balloon .vTcl.attr.011.lab42 "font size"
-    menubutton .vTcl.attr.011.lab43 \
+    vTcl:toolbar_menubutton .vTcl.attr.011.lab43 \
         -bd 1 -relief raised -image fontstyle -pady 3 -padx 2 \
         -highlightthickness 0 -menu .vTcl.attr.011.lab43.m
     menu .vTcl.attr.011.lab43.m -tearoff 0
@@ -370,7 +373,7 @@ proc vTcl:attrbar {args} {
     .vTcl.attr.011.lab43.m add check -variable vTcl(w,fontstyle,underline) \
         -label underline -comm "vTcl:set_font style \$vTcl(w,widget) underline"
     vTcl:set_balloon .vTcl.attr.011.lab43 "font style"
-    menubutton .vTcl.attr.011.lab44 \
+    vTcl:toolbar_menubutton .vTcl.attr.011.lab44 \
         -bd 1 -relief raised -image justify -pady 3 -padx 2 \
         -highlightthickness 0 -menu .vTcl.attr.011.lab44.m
     menu .vTcl.attr.011.lab44.m -tearoff 0
@@ -386,10 +389,8 @@ proc vTcl:attrbar {args} {
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 2 -pady 2 \
         -side left
 
-    }
-
     frame .vTcl.attr.016 \
-        -borderwidth 1 -height 20 -relief raised -width 20
+        -borderwidth 1 -height 20 -relief flat -width 20
     pack .vTcl.attr.016 \
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 3 -pady 2 \
         -side left

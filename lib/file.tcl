@@ -20,7 +20,6 @@
 
 ##############################################################################
 #
-#
 # This file has been modified by:
 #   Christian Gavin
 #   Damon Courtney
@@ -76,7 +75,7 @@ proc vTcl:is_vtcl_prj {file} {
     }
 
     if !$found {
-	tk_messageBox -title "Error loading file" \
+	::vTcl::MessageBox -title "Error loading file" \
 	              -message "This is not a vTcl project!" \
 	              -icon error \
 	              -type ok
@@ -92,7 +91,7 @@ proc vTcl:is_vtcl_prj {file} {
 
     	if {$vmajor > $actual_major ||
     	    ($vmajor == $actual_major && $vminor > $actual_minor)} {
-		tk_messageBox -title "Error loading file" \
+		::vTcl::MessageBox -title "Error loading file" \
 		              -message "You are trying to load a project created using Visual Tcl v$vmajor.$vminor\n\nPlease update to vTcl $vmajor.$vminor and try again." \
 	              -icon error \
 	              -type ok
@@ -126,7 +125,8 @@ proc vTcl:source {file} {
 
     vTcl:statbar 20
     if [catch {uplevel #0 [list source $file]} err] {
-        vTcl:dialog "Error Sourcing Project\n$err"
+        ::vTcl::MessageBox -icon error -message "Error Sourcing Project\n$err" \
+            -title "File Error!"
 	global errorInfo
     }
     vTcl:statbar 35
@@ -199,18 +199,16 @@ proc vTcl:open {{file ""}} {
     vTcl:load_lib vtclib.tcl;            vTcl:statbar 60
 
     vTcl:list add "init main" vTcl(procs)
-    vTcl:status "Setting up bind tree"
-    vTcl:setup_bind_tree .;              vTcl:statbar 65
     vTcl:status "Updating top list"
-    vTcl:update_top_list;                vTcl:statbar 75
+    vTcl:update_top_list;                vTcl:statbar 65
     vTcl:status "Updating variable list"
-    vTcl:update_var_list;                vTcl:statbar 85
+    vTcl:update_var_list;                vTcl:statbar 70
     vTcl:status "Updating proc list"
-    vTcl:update_proc_list;               vTcl:statbar 90
+    vTcl:update_proc_list;               vTcl:statbar 75
     vTcl:status "Updating aliases"
-    vTcl:update_aliases;                 vTcl:statbar 92
+    vTcl:update_aliases;                 vTcl:statbar 80
 
-    vTcl:status "Loading Project Info";  vTcl:statbar 95
+    vTcl:status "Loading Project Info";  vTcl:statbar 85
 
     set vTcl(project,file) $file
     set vTcl(project,name) [file tail $file]
@@ -229,13 +227,21 @@ proc vTcl:open {{file ""}} {
     ## If there are project settings, load them
     if {![lempty [info proc vTcl:project:info]]} { vTcl:project:info }
 
+    ## Setup the bind tree after we have loaded project info, so
+    ## that registration of children in childsites works OK
+    vTcl:status "Setting up bind tree"
+    vTcl:setup_bind_tree .;              vTcl:statbar 90
+
     vTcl:status "Registering widgets"
     vTcl:widget:register_all_widgets;	 vTcl:statbar 97
-    
+
     wm title .vTcl "Visual Tcl - $vTcl(project,name)"
     vTcl:status "Done Loading"
     vTcl:statbar 0
     set vTcl(newtops) [expr [llength $vTcl(tops)] + 1]
+
+    ## convert older projects
+    vTcl:convert_tops
 
     unset vTcl(sourcing)
 
@@ -255,17 +261,20 @@ proc vTcl:open {{file ""}} {
 proc vTcl:close {} {
     global vTcl widgetNums
     if {$vTcl(change) > 0} {
-        switch [vTcl:dialog "Your application has unsaved changes.\nDo you wish to save?" "Yes No Cancel"] {
-            Yes {
+        set result [::vTcl::MessageBox -default yes -icon question -message \
+            "Your application has unsaved changes. Do you wish to save?" \
+            -title "Save Changes?" -type yesnocancel]
+        switch $result {
+            yes {
                 if {[vTcl:save_as] == -1} { return -1 }
             }
-            Cancel {
+            cancel {
                 return -1
             }
         }
     }
 
-    set tops [winfo children .]
+    set tops $vTcl(tops)
     foreach i $tops {
         if {$i != ".vTcl" && $i != ".__tk_filedialog"} {
             # list widget tree without including $i (it's why the "0" parameter)
@@ -280,7 +289,17 @@ proc vTcl:close {} {
             set _cmds [info commands $i.*]
             foreach _cmd $_cmds {catch {rename $_cmd ""}}
         }
+
+        ## Destroy the widget namespace, as well as the namespaces of
+        ## all it's subwidgets
+        set namespaces [vTcl:namespace_tree ::widgets]
+        foreach namespace $namespaces {
+            if {[string match ::widgets::$i* $namespace]} {
+                catch {namespace delete $namespace} error
+            }
+        }
     }
+
     set vTcl(tops) ""
     set vTcl(newtops) 1
     catch {unset widgetNums}
@@ -377,7 +396,7 @@ proc vTcl:save_as_binary {} {
     ## Guess the ostag and look for an appropriate freewrap binary.
     ##
     if {[string tolower $tcl_platform(platform)] == "windows"} {
-	set freewrap [file join $env(VTCL_HOME) Freewrap Windows freewrap]
+	set freewrap [file join $env(VTCL_HOME) Freewrap Windows bin freewrap.exe]
     } else {
 	set ostag [exec $env(VTCL_HOME)/Freewrap/config.guess]
 	set freewrap [file join $env(VTCL_HOME) Freewrap $ostag bin freewrap]
@@ -520,7 +539,9 @@ proc vTcl:quit {} {
     }
 
     if {$vTcl(quit)} {
-	if {[vTcl:dialog "Are you sure\nyou want to quit?" "Yes No"] == "No"} {
+	if {[::vTcl::MessageBox -default no -icon question -message \
+             "Are you sure you want to quit?" -title "Really Quit?" \
+             -type yesno] == "no"} {
 	    return
 	}
     }
@@ -559,13 +580,10 @@ proc vTcl:save_prefs {} {
 
     if {![info exists vTcl(rcFiles)]} { set vTcl(rcFiles) {} }
     append output "set vTcl(rcFiles) \[list $vTcl(rcFiles)\]\n"
-    if {[catch {open $vTcl(CONF_FILE) w} fp]} {
-    	set vTcl(CONF_FILE) [file join $vTcl(VTCL_HOME) .vtclrc]
-	catch {open $vTcl(CONF_FILE) w} fp
-    }
     catch {
-        puts $fp $output
-        close $fp
+        set file [open $vTcl(CONF_FILE) w]
+        puts $file $output
+        close $file
     }
 }
 
@@ -587,6 +605,9 @@ proc vTcl:find_files {base pattern} {
 
 proc vTcl:get_file {mode {title File} {ext .tcl}} {
     global vTcl tk_version tcl_platform tcl_version tk_strictMotif
+    if {![info exists vTcl(pr,initialdir)]} {
+        set vTcl(pr,initialdir) [pwd]
+    }
     if {[string tolower $mode] == "open"} {
         set vTcl(file,mode) "Open"
     } else {
@@ -598,7 +619,7 @@ proc vTcl:get_file {mode {title File} {ext .tcl}} {
     switch $mode {
         open {
             set file [tk_getOpenFile -defaultextension $ext \
-                -initialdir [pwd] -filetypes $types]
+                -initialdir $vTcl(pr,initialdir) -filetypes $types]
         }
         save {
             set initname [file tail $vTcl(project,file)]
@@ -607,15 +628,18 @@ proc vTcl:get_file {mode {title File} {ext .tcl}} {
             }
             if {$tcl_platform(platform) == "macintosh"} then {
                 set file [tk_getSaveFile -defaultextension $ext \
-                    -initialdir [pwd] -initialfile $initname]
+                    -initialdir $vTcl(pr,initialdir) -initialfile $initname]
             } else {
                 set file [tk_getSaveFile -defaultextension $ext \
-                    -initialdir [pwd] -filetypes $types \
+                    -initialdir $vTcl(pr,initialdir) -filetypes $types \
                     -initialfile $initname]
             }
         }
     }
     set tk_strictMotif 1
+    if {$file != ""} {
+        set vTcl(pr,initialdir) [file dirname $file]
+    }
     catch {cd [file dirname $file]}
     return $file
 }

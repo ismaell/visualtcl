@@ -33,8 +33,6 @@ proc vTcl:prefs:init {base} {
        variable balloon          ""
        variable getname          ""
        variable shortname        ""
-       variable fullcfg          ""
-       variable saveglob         ""
        variable winfocus         ""
        variable autoplace        ""
        variable cmdalias         ""
@@ -51,6 +49,7 @@ proc vTcl:prefs:init {base} {
        variable saveimagesinline ""
        variable projfile         ""
        variable saveasexecutable ""
+       variable bgcolor		 ""
     }
 
     set prefs::font_dlg [eval font create [font actual $vTcl(pr,font_dlg)]]
@@ -67,11 +66,13 @@ proc vTcl:prefs:init {base} {
     set tb_basics  [vTcl:tabnotebook_page $tb "Basics"]
     set tb_project [vTcl:tabnotebook_page $tb "Project"]
     set tb_fonts   [vTcl:tabnotebook_page $tb "Fonts"]
+    set tb_bgcolor [vTcl:tabnotebook_page $tb "Colors"]
     set tb_images  [vTcl:tabnotebook_page $tb "Images"]
 
     vTcl:prefs:basics  $tb_basics
     vTcl:prefs:project $tb_project
     vTcl:prefs:fonts   $tb_fonts
+    vTcl:prefs:bgcolor $tb_bgcolor
     vTcl:prefs:images  $tb_images
 }
 
@@ -183,9 +184,8 @@ proc vTclWindow.vTcl.infolibs {{base ""} {container 0}} {
         -command "$base.cpd39.01 xview" -orient horiz
     scrollbar $base.cpd39.03 \
         -command "$base.cpd39.01 yview" -orient vert
-    button $base.but40 \
-        -padx 9 -pady 3 -command {wm withdraw .vTcl.infolibs} \
-	-image [vTcl:image:get_image ok.gif]
+    ::vTcl::OkButton $base.but40 -command "Window hide $base"
+
     ###################
     # SETTING GEOMETRY
     ###################
@@ -233,10 +233,6 @@ proc {vTcl:prefs:data_exchange} {save_and_validate} {
 	prefs::getname          $save_and_validate
     vTcl:data_exchange_var vTcl(pr,shortname)        \
 	prefs::shortname        $save_and_validate
-    vTcl:data_exchange_var vTcl(pr,fullcfg)          \
-	prefs::fullcfg          $save_and_validate
-    vTcl:data_exchange_var vTcl(pr,saveglob)         \
-	prefs::saveglob         $save_and_validate
     vTcl:data_exchange_var vTcl(pr,winfocus)         \
 	prefs::winfocus         $save_and_validate
     vTcl:data_exchange_var vTcl(pr,autoplace)        \
@@ -265,6 +261,8 @@ proc {vTcl:prefs:data_exchange} {save_and_validate} {
     	prefs::projfile         $save_and_validate
     vTcl:data_exchange_var vTcl(pr,saveasexecutable) \
         prefs::saveasexecutable $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,bgcolor) \
+        prefs::saveasexecutable $save_and_validate
 
     if {$save_and_validate} {
     	set vTcl(pr,font_dlg)   [font configure $prefs::font_dlg]
@@ -286,12 +284,6 @@ proc {vTcl:prefs:basics} {tab} {
 	vTcl:formCompound:add $tab checkbutton \
 		-text "Short automatic widget names" \
 		-variable prefs::shortname
-	vTcl:formCompound:add $tab checkbutton \
-		-text "Save verbose widget configuration" \
-		-variable prefs::fullcfg
-	vTcl:formCompound:add $tab checkbutton \
-		-text "Save global variable values" \
-		-variable prefs::saveglob
 	vTcl:formCompound:add $tab checkbutton \
 		-text "Window focus selects window" \
 		-variable prefs::winfocus
@@ -393,6 +385,38 @@ proc {vTcl:prefs:fonts} {tab} {
 		-command "vTcl:prefs:browse_font $prefs::font_fixed"]
 	pack configure $last -side right
 }
+
+proc {vTcl:prefs:bgcolor} {tab} { 
+    switch $prefs::bgcolor {
+	""        {set prefs::bgcolortype auto}
+	"#d9d9d9" {set prefs::bgcolortype default}
+	default   {set prefs::bgcolortype custom}
+    }
+
+    set last  [vTcl:formCompound:add $tab  label \
+	-text "Background Color" -background gray -relief raised]
+    pack configure $last -fill x
+
+    vTcl:formCompound:add $tab radiobutton \
+	-text "Autodetect system colors" \
+	-variable prefs::bgcolortype -value auto \
+	-command "set prefs::bgcolor {}"
+
+    vTcl:formCompound:add $tab radiobutton \
+	-text "Use Visual Tcl default color" \
+	-variable prefs::bgcolortype -value default \
+	-command "set prefs::bgcolor #d9d9d9"
+
+    vTcl:formCompound:add $tab radiobutton \
+	-text "Choose a custom color" \
+	-variable prefs::bgcolortype -value custom \
+	-command {
+	    set color [tk_chooseColor] 
+	    if {![string equal $color ""]} { 
+		set prefs::bgcolor $color
+	    }
+	}
+} 
 
 proc {vTcl:prefs:images} {tab} {
 

@@ -21,37 +21,6 @@
 ##############################################################################
 #
 
-proc vTcl:save_vars {} {
-    global vTcl
-    set output ""
-    set list $vTcl(vars)
-    vTcl:list add widget list
-    foreach i $list {
-        catch {
-            if {[vTcl:valid_varname $i]} {
-                global $i
-                append output "global $i; "
-                if {[array exists $i] == 1} {
-                    append output "\n"
-                    set names [lsort [array names $i]]
-                    foreach j $names {
-                        set value "[subst $$i\($j\)]"
-                        if {$vTcl(pr,saveglob) == 1} {
-                            append output "$vTcl(tab)set $i\($j\) \{$value\}\n"
-                        }
-                    }
-                } else {
-                    if {$vTcl(pr,saveglob) == 1} {
-                        append output "set $i \{[subst $\{$i\}]\}"
-                    }
-                    append output "\n"
-                }
-            }
-        }
-    }
-    return "$output"
-}
-
 proc vTcl:save_procs {} {
     global vTcl
     set output ""
@@ -66,11 +35,13 @@ proc vTcl:save_procs {} {
                     lappend args $j
                 }
             }
+            append output {###########################################################}
+            append output "\n\#\# Procedure:  $i\n"
             set body [string trim [info body $i]]
             if {($body != "" || $i == "main") && $i != "init"} {
 
                 if {[regexp (.*):: $i matchAll context] } {
-                   append output "\nnamespace eval ${context} \{\n"
+                   append output "\nnamespace eval [list ${context}] \{\n"
                 }
 
                 append output "\nproc \{$i\} \{$args\} \{\n$body\n\}\n"
@@ -89,7 +60,7 @@ proc vTcl:export_procs {} {
 
     set output ""
     vTcl:dump:not_sourcing_header output
-    set children [vTcl:list_widget_tree .]
+    set children [vTcl:complete_widget_tree . 0]
 
     foreach child $children {
         lappend classList [vTcl:get_class $child]
@@ -119,7 +90,7 @@ proc vTcl:export_procs {} {
 	    && ![vTcl:streq $i "init"]} {
 
             if {[regexp (.*):: $i matchAll context] } {
-               append output "\nnamespace eval ${context} \{\n"
+               append output "\nnamespace eval [list ${context}] \{\n"
             }
 
             append output "\nproc \{$i\} \{$args\} \{\n$body\n\}\n"
@@ -268,13 +239,13 @@ proc vTcl:get_class {target {lower 0}} {
     return $class
 }
 
-# if basename is 1 then the -in option will have the
-# first path component replaced by $base
+# if basename is not empty then the -in option will have the
+# value specified by basename
 #
 # example: -in .top27.fra32
 #       => -in $base.fra32
 
-proc vTcl:get_mgropts {opts {basename 0}} {
+proc vTcl:get_mgropts {opts {basename {}}} {
 #    if {[lindex $opts 0] == "-in"} {
 #        set opts [lrange $opts 2 end]
 #    }
@@ -298,9 +269,8 @@ proc vTcl:get_mgropts {opts {basename 0}} {
                     }
                 }
                 -in {
-                    if {$basename} {
-                    	set v [vTcl:base_name $v]
-                    	vTcl:log "Base name $v!"
+                    if {$basename != ""} {
+                    	set v $basename
                     }
 
                     if {$v != ""} {
@@ -342,10 +312,9 @@ proc vTcl:get_opts_special {opts w {save_always ""}} {
         lassign $i opt x x def val
         if {[vTcl:streq $opt "-class"]} { continue }
         if {![info exists save($opt)]} { set save($opt) 0 }
-        if {!$save($opt) &&
-          [lsearch -exact $save_always $opt] == -1} { continue }
+        if {!$save($opt) && [lsearch -exact $save_always $opt] == -1} {continue}
 
-        if [info exists vTcl(option,translate,$opt)] {
+        if {[info exists vTcl(option,translate,$opt)]} {
             set val [$vTcl(option,translate,$opt) $val]
             vTcl:log "Translated option: $opt value: $val"
         }
@@ -367,7 +336,6 @@ proc vTcl:dump_widget_quick {target} {
 proc vTcl:dump_widget_opt {target basename} {
     global vTcl classes
     if {$target == "."} {
-        vTcl:log "root widget manager = [winfo manager .]"
         set mgr wm
     } else {
         set mgr [winfo manager $target]
@@ -402,12 +370,12 @@ proc vTcl:dump_widget_opt {target basename} {
         if {$class == "Toplevel"} {
             if {![lempty [wm transient $target]]} {
                 append result $vTcl(tab)
-                append result "wm transient $target [wm transient $target]"
+                append result "wm transient $basename [wm transient $target]"
                 append result "\; update\n"
             }
             if {[wm state $target] == "withdrawn"} {
                 append result $vTcl(tab)
-                append result "wm withdraw $target\n"
+                append result "wm withdraw $basename\n"
             }
         }
     }
@@ -432,7 +400,7 @@ proc vTcl:dump_widget_opt {target basename} {
 }
 
 proc vTcl:dump_widget_geom {target basename} {
-    global vTcl
+    global vTcl classes
     if {$target == "."} {
         set mgr wm
     } else {
@@ -456,8 +424,17 @@ proc vTcl:dump_widget_geom {target basename} {
         && $mgr != "tixForm"} {
         set opts [$mgr info $target]
         set result "$vTcl(tab)$mgr $basename \\\n"
-        append result "[vTcl:clean_pairs [vTcl:get_mgropts $opts 1]]\n"
+        set basesplit  [split $basename .]
+        set length     [llength $basesplit]
+        set parentname [join [lrange $basesplit 0 [expr $length - 2]] .]
+        append result "[vTcl:clean_pairs [vTcl:get_mgropts $opts $parentname]]\n"
     }
+
+    ## Megawidgets are like blackboxes. We don't want to know what's inside,
+    ## and besides, they are supposed to configure themselves on construction.
+    if {[info exists classes($class,megaWidget)] &&
+        $classes($class,megaWidget)} {return $result}
+
     set pre g
     set gcolumn [lindex [grid size $target] 0]
     set grow [lindex [grid size $target] 1]
@@ -642,9 +619,6 @@ proc vTcl:dump_top {target} {
     global vTcl
     set output ""
     set proc_base $vTcl(winname)$target
-    foreach i "$vTcl(winname)(pre)$target $vTcl(winname)(post)$target" {
-        append output [vTcl:maybe_dump_proc $i]
-    }
     if {![winfo exists $target]} {
         if {[info procs $proc_base] == ""} {
             return ""
@@ -673,6 +647,7 @@ proc vTcl:dump_top {target} {
     vTcl:statbar [expr {($vTcl(num,index) * 100) / $vTcl(num,total)}]
 
     append output [vTcl:dump:widgets $target]
+    append output "\n$vTcl(tab)vTcl:FireEvent \$base <<Ready>>\n"
 
     append output "\}\n"
     return $output
@@ -684,7 +659,7 @@ proc vTcl:dump:aliases {target} {
     	return ""
     }
 
-    global widget
+    global widget classes
     global vTcl
 
     set output "\n$vTcl(tab)global widget\n"
@@ -696,39 +671,24 @@ proc vTcl:dump:aliases {target} {
         # don't dump aliases to non-existing widgets
         if {![winfo exists $widget($value)]} continue
 
-        regexp {rev,(.*)} $name matchAll namenorev
-
-        append output $vTcl(tab)
-        append output "set widget(rev,[vTcl:base_name $namenorev]) \{$value\}\n"
-
         set alias $value
-        if {[info exists widget([vTcl:get_top_level_or_alias $target],$alias)]} {
-            set value $widget([vTcl:get_top_level_or_alias $target],$alias)
+        set top_or_alias [vTcl:get_top_level_or_alias $target]
+
+        if {[info exists widget($top_or_alias,$alias)]} {
+            set value $widget($top_or_alias,$alias)
         } else {
             set value $widget($alias)
         }
 
-        append output $vTcl(tab)
-        append output "set \{widget($alias)\} \"[vTcl:base_name $value]\"\n"
-
-        append output $vTcl(tab)
-        append output "set widget([vTcl:base_name [vTcl:get_top_level_or_alias $value]],$alias) \"[vTcl:base_name $value]\"\n"
-
-        if {$vTcl(pr,cmdalias)} {
-            append output $vTcl(tab)
-            set cmd [lindex [interp alias {} $alias] 0]
-            set widg [vTcl:base_name $value]
-            append output "interp alias {} $alias {} $cmd $widg\n"
-
-            if {[winfo toplevel $target] != $namenorev} {
-                append output $vTcl(tab)
-                set newalias [vTcl:get_top_level_or_alias $namenorev].$alias
-                if {[string match .top* $newalias]} {
-                    set newalias [vTcl:base_name $newalias]
-                }
-                append output "interp alias {} $newalias {} $cmd $widg\n"
-            }
+        if {$value == $target} {
+            set top_or_alias ""
         }
+
+        set c [vTcl:get_class $value]
+        append output $vTcl(tab)
+        append output "vTcl:DefineAlias \"[vTcl:base_name $value]\" \"$alias\""
+        append output " $classes($c,widgetProc)"
+        append output " \"[vTcl:base_name $top_or_alias]\" $vTcl(pr,cmdalias)\n"
     }
 
     return "$output\n"
@@ -753,6 +713,7 @@ proc vTcl:dump:widgets {target} {
             append output [$classes($class,dumpCmd) $i $basename]
 
         if {[string tolower $class] == "toplevel"} {
+            append output "$vTcl(tab)vTcl:FireEvent $basename <<Create>>\n"
             append output "$vTcl(tab)\}\n"
         }
 
@@ -832,8 +793,63 @@ proc vTcl:dump:gather_widget_info {} {
     set vTcl(dump,libraries) [vTcl:lrmdups $vTcl(dump,libraries)]
 }
 
+## tries to eliminate as many absolute paths as possible with childsites
+proc vTcl:dump:make_relative_paths {widget} {
+
+    global classes
+
+    ## Let's try to find a parent and it's childsites
+    set path ""
+    if {[vTcl:WidgetVar $widget parent_widget tmp]} {
+        set path $tmp
+        if {$path == $widget} {
+            if {[vTcl:WidgetVar [winfo parent $widget] parent_widget tmp]} {
+               set path $tmp
+            }
+        }
+    }
+
+    ## At this stage path either is "" (which means there is no
+    ## parent that is a megawidget) or contains the path of the
+    ## closest megawidget parent
+    if {$path == ""} {return $widget}
+
+    ## ask for the childsites
+    set class [vTcl:get_class $path]
+    if {[info exists classes($class,megaWidget)] &&
+        $classes($class,megaWidget)} {
+
+        ## it is a megawidget, ask for its childsites
+        set childsiteCmd [lindex $classes($class,treeChildrenCmd) 1]
+
+        ## no childsites in megawidget ? shouldn't happen at this point but...
+        set sites ""
+        if {$childsiteCmd != ""} {
+        set sites [$childsiteCmd $path]
+        }
+
+        ## let's see what we can do to subsitute absolute paths
+        set index 0
+        foreach site $sites {
+            set first [string first $site $widget]
+            if {$first == -1} {incr index; continue}
+
+            ## all right, let's replace!
+            set length [string length $site]
+            set widget [string replace $widget \
+                $first [expr $first + $length - 1] \
+                "\[lindex \[$childsiteCmd [vTcl:dump:make_relative_paths $path]\] $index\]"]
+
+            ## we'are done replacing
+            break
+        }
+    }
+
+    return $widget
+}
+
 proc vTcl:dump:project_info {basedir project} {
-    global vTcl
+    global vTcl classes
 
     set out   {}
     set multi 0
@@ -862,6 +878,8 @@ proc vTcl:dump:project_info {basedir project} {
             if {!$save($var)} { continue }
             lappend list $var $save($var)
         }
+
+        set widget [vTcl:dump:make_relative_paths $widget]
 
         append out $vTcl(tab)
         append out "namespace eval ::widgets::$widget \{\n"

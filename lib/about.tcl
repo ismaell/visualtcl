@@ -62,7 +62,7 @@ proc vTclWindow.vTcl.about {args} {
         -borderwidth 1 -font [vTcl:font:get_font "vTcl:font5"]
     label $base.lab21 \
         -borderwidth 1 -font [vTcl:font:get_font "vTcl:font5"] \
-        -text {Version 1.5.1b3} -foreground white -background black
+        -text {Version 1.5.2} -foreground white -background black
     ###################
     # SETTING GEOMETRY
     ###################
@@ -101,18 +101,6 @@ proc vTclWindow.vTcl.credits {base {container 0}} {
     set {widget(CreditsWindow)} "$base"
     set {widget(child,CreditsWindow)} ""
     interp alias {} CreditsWindow {} vTcl:Toplevel:WidgetProc $base
-    set widget(rev,$base.cpd24) {Frame1}
-    set {widget(Frame1)} "$base.cpd24"
-    set {widget(child,Frame1)} "cpd24"
-    interp alias {} Frame1 {} vTcl:Toplevel:WidgetProc $base.cpd24
-    set widget(rev,$base.cpd24.01) {Scrollbar1}
-    set {widget(Scrollbar1)} "$base.cpd24.01"
-    set {widget(child,Scrollbar1)} "cpd24.01"
-    interp alias {} Scrollbar1 {} vTcl:Toplevel:WidgetProc $base.cpd24.01
-    set widget(rev,$base.cpd24.02) {Scrollbar2}
-    set {widget(Scrollbar2)} "$base.cpd24.02"
-    set {widget(child,Scrollbar2)} "cpd24.02"
-    interp alias {} Scrollbar2 {} vTcl:Toplevel:WidgetProc $base.cpd24.02
     set widget(rev,$base.cpd24.03) {CreditsText}
     set {widget(CreditsText)} "$base.cpd24.03"
     set {widget(child,CreditsText)} "cpd24.03"
@@ -132,23 +120,22 @@ proc vTclWindow.vTcl.credits {base {container 0}} {
     wm resizable $base 1 1
     wm title $base "Visual Tcl Credits"
     }
-    button $base.but23 \
-        -command {Window hide $widget(CreditsWindow)} -text Close -width 8
+    ::vTcl::OkButton $base.but23 -command "Window hide $base"
     frame $base.cpd24 \
         -borderwidth 1 -height 30 -relief raised -width 30
     scrollbar $base.cpd24.01 \
         -command "$base.cpd24.03 xview" -orient horizontal
     scrollbar $base.cpd24.02 \
         -command "$base.cpd24.03 yview"
-    text $base.cpd24.03 \
-        -font -Adobe-Helvetica-Medium-R-Normal-*-*-120-*-*-*-*-*-* -height 1 \
+    text $base.cpd24.03 -height 1 -background white \
+        -font {-family helvetica -size 12} \
         -width 8 -wrap none -xscrollcommand "$base.cpd24.01 set" \
         -yscrollcommand "$base.cpd24.02 set"
     ###################
     # SETTING GEOMETRY
     ###################
     pack $base.but23 \
-        -in $base -anchor center -expand 0 -fill none -pady 5 -side bottom
+        -in $base -anchor e -expand 0 -fill none -pady 5 -side top
     pack $base.cpd24 \
         -in $base -anchor center -expand 1 -fill both -side top
     grid columnconf $base.cpd24 0 -weight 1
@@ -191,6 +178,7 @@ source bourbon_ware.tcl
 "
     CreditsText insert end \
          "\nTcl version $tcl_version\nTk version $tk_version"
+    CreditsText configure -state disabled
     bind $base <Key-Escape> "$base.but23 invoke"
 
     # avoid syntax coloring in credits text...

@@ -12,7 +12,9 @@ MegaWidget   yes
 proc vTcl:widget:tixSelect:inscmd {target} {
     # Add two buttons to start with.  Unfortunately, additional options have
     # to be added manually by the user, and the project re-read into vtcl.
-    $target add but1 -bitmap warning
-    $target add but2 -bitmap error
-    $target add but3 -bitmap info
+    return "
+        $target add but1 -bitmap warning
+        $target add but2 -bitmap error
+        $target add but3 -bitmap info
+    "
 }

@@ -45,7 +45,8 @@ proc vTcl:pop_action {} {
         incr vTcl(action_index) -1
         vTcl:setup_bind_tree .
     } else {
-        vTcl:dialog "Nothing to undo!"
+        ::vTcl::MessageBox -icon error -parent .vTcl -title "No undo!" \
+            -message "Nothing to undo!" -type ok
     }
 }
 
@@ -58,6 +59,9 @@ proc vTcl:redo_action {} {
         eval $vTcl(action,$vTcl(action_index),do)
         vTcl:setup_bind_tree .
     } else {
-        vTcl:dialog "Nothing to redo!"
+        ::vTcl::MessageBox -icon error -parent .vTcl -title "No redo!" \
+            -message "Nothing to redo!" -type ok
     }
 }
+
+

@@ -85,9 +85,12 @@ proc SetClassArray {} {
         $tmp(class),dumpChildren    1
         $tmp(class),megaWidget      0
         $tmp(class),dumpCmd         vTcl:dump_widget_opt
+        $tmp(class),compoundCmd     {}
+        $tmp(class),tagsCmd         {}
         $tmp(class),options         {}
         $tmp(class),defaultOptions  {}
         $tmp(class),insertCmd       {}
+        $tmp(class),selectCmd       {}
         $tmp(class),dblClickCmd     {}
         $tmp(class),exportCmds      {}
         $tmp(class),functionCmds    {}
@@ -103,6 +106,10 @@ proc SetClassArray {} {
         $tmp(class),treeLabel       $tmp(class)
         $tmp(class),treeChildrenCmd {}
         $tmp(class),deleteCmd       {}
+        $tmp(class),deleteSiteCmd   {}
+        $tmp(class),selectSiteCmd   {}
+        $tmp(class),defaultValues   {}
+        $tmp(class),dontSaveOptions {}
     "
 
     foreach elem [array names classes $tmp(class),*] {
@@ -192,9 +199,29 @@ proc DefaultOptions {args} {
     eval lappend tmp(defaultOptions) $args
 }
 
+proc DefaultValues {args} {
+    global tmp
+    eval lappend tmp(defaultValues) $args
+}
+
+proc DontSaveOptions {args} {
+    global tmp
+    eval lappend tmp(dontSaveOptions) $args
+}
+
 proc DumpCmd {val} {
     global tmp
     set tmp(dumpCmd) $val
+}
+
+proc CompoundCmd {val} {
+    global tmp
+    set tmp(compoundCmd) $val
+}
+
+proc TagsCmd {val} {
+    global tmp
+    set tmp(tagsCmd) $val
 }
 
 proc DumpChildren {val} {
@@ -216,9 +243,24 @@ proc InsertCmd {name} {
     set tmp(insertCmd) $name
 }
 
+proc SelectCmd {name} {
+    global tmp
+    set tmp(selectCmd) $name
+}
+
 proc DeleteCmd {name} {
     global tmp
     set tmp(deleteCmd) $name
+}
+
+proc DeleteSiteCmd {name} {
+    global tmp
+    set tmp(deleteSiteCmd) $name
+}
+
+proc SelectSiteCmd {name} {
+    global tmp
+    set tmp(selectSiteCmd) $name
 }
 
 proc DoubleClickCmd {name} {
@@ -303,12 +345,12 @@ proc ResizeCmd {val} {
 }
 
 proc SpecialOpt {args} {
-    global specialOpts
+    global specialOpts tmp
     lassign $args option text type choices title
-    set specialOpts($option,text) $text
-    set specialOpts($option,type) $type
-    set specialOpts($option,choices) $choices
-    set specialOpts($option,title) $title
+    set specialOpts($tmp(class),$option,text) $text
+    set specialOpts($tmp(class),$option,type) $type
+    set specialOpts($tmp(class),$option,choices) $choices
+    set specialOpts($tmp(class),$option,title) $title
 }
 
 proc AdditionalClasses {args} {

@@ -57,7 +57,6 @@ proc vTcl:widget:lib:lib_core {args} {
     append vTcl(head,core,importheader) {
     switch $tcl_platform(platform) {
 	windows {
-	    option add *Scrollbar.width 16
 	}
 	default {
 	    option add *Scrollbar.width 10
@@ -131,6 +130,10 @@ proc vTcl:edit_target_menu {target} {
         vTcl:widget:register_widget $menu -tearoff
         vTcl:setup_vTcl:bind $menu
         $target conf -menu $menu
+        foreach def {-activebackground -activeforeground
+                     -background -foreground} {
+            vTcl:prop:default_opt $menu $def vTcl(w,opt,$def)
+        }
     }
 
     set name [vTcl:rename $menu]
@@ -260,7 +263,7 @@ proc vTcl:core:menutranslate {value} {
 
 	global vTcl
 
-	if [regexp {((\.[a-zA-Z0-9]+)+)} $value matchAll path] {
+	if [regexp {((\.[a-zA-Z0-9_]+)+)} $value matchAll path] {
 
 		if {$matchAll == $value} {
 
@@ -282,16 +285,39 @@ set vTcl(option,noencase,-yscrollcommand) 1
 set vTcl(option,noencasewhen,-xscrollcommand) vTcl:core:noencasewhen
 set vTcl(option,noencasewhen,-yscrollcommand) vTcl:core:noencasewhen
 
-set vTcl(option,translate,-command) vTcl:core:scrollviewtranslate
+set vTcl(option,translate,-command) vTcl:core:commandtranslate
 set vTcl(option,noencase,-command) 1
+set vTcl(option,noencasewhen,-command) vTcl:core:noencasecommandwhen
 
-set vTcl(option,noencasewhen,-command) vTcl:core:noencasewhenscroll
+set vTcl(option,translate,-variable) vTcl:core:variabletranslate
+set vTcl(option,noencase,-variable) 1
+set vTcl(option,noencasewhen,-variable) vTcl:core:noencasewhen
+
+set vTcl(option,translate,-textvariable) vTcl:core:variabletranslate
+set vTcl(option,noencase,-textvariable) 1
+set vTcl(option,noencasewhen,-textvariable) vTcl:core:noencasewhen
+
+proc vTcl:core:variabletranslate {value} {
+
+        global vTcl
+
+	if {[regexp {(\.[\.a-zA-Z0-9_]+)::(.*)} $value matchAll path variable]} {
+
+            ## potential candidate, is it a window ?
+            if {![winfo exists $path]} {return $value}
+
+            set path [vTcl:base_name $path]
+            return "\"${path}\\::${variable}\""
+        }
+
+        return $value
+}
 
 proc vTcl:core:scrolltranslate {value} {
 
 	global vTcl
 
-	if [regexp {((\.[a-zA-Z0-9]+)+) set} $value matchAll path] {
+	if [regexp {((\.[a-zA-Z0-9_]+)+) set} $value matchAll path] {
 
                	set path [vTcl:base_name $path]
 
@@ -301,43 +327,63 @@ proc vTcl:core:scrolltranslate {value} {
       	return $value
 }
 
-proc vTcl:core:scrollviewtranslate {value} {
+proc vTcl:core:commandtranslate {value} {
 
-	global vTcl
+    global vTcl
 
-	if [regexp {((\.[a-zA-Z0-9]+)+) xview} $value matchAll path] {
+    if {[regexp {(\.[\.a-zA-Z0-9_]+) (x|y)view} $value matchAll path axis]} {
 
-               	set path [vTcl:base_name $path]
+       	set path [vTcl:base_name $path]
 
-		return "\"$path xview\""
-	} else {
+	return "\"$path ${axis}view\""
 
-		if [regexp {((\.[a-zA-Z0-9]+)+) yview} $value matchAll path] {
+    } elseif {[regexp {vTcl:DoCmdOption (\.[\.a-zA-Z0-9_]+) (.*)} $value matchAll path cmd]} {
 
-        	       	set path [vTcl:base_name $path]
+        set path [vTcl:base_name $path]
 
-			return "\"$path yview\""
-		}
-	}
+        return "\[list vTcl:DoCmdOption $path $cmd\]"
+    }
 
-      	return $value
+    return $value
 }
 
 proc vTcl:core:noencasewhen {value} {
 
-	return [string match {"$base*} $value]
+    if { [string match {"$base*} $value] ||
+         [string match {"$site*} $value] } {
+        return 1
+    }
+
+    return 0
 }
 
-proc vTcl:core:noencasewhenscroll {value} {
+proc vTcl:core:noencasecommandwhen {value} {
 
-	if { [string match {"$base*xview"} $value] ||
-             [string match {"$base*yview"} $value] } {
+	if { [string match {"$base*?view"} $value] ||
+             [string match {"$site*?view"} $value] ||
+             [string match {\[list vTcl:DoCmdOption $base*} $value] } {
 		return 1
 	} else {
 		return 0
 	}
 }
 
+proc vTcl:core:set_option {target option description} {
 
+    global vTcl
 
+    set value [$target cget $option]
+    set newvalue [vTcl:get_string $description $target $value]
 
+    if {! [vTcl:streq $value $newvalue]} {
+        $target configure $option $newvalue
+
+        # we better save that option, too
+        set vTcl(w,opt,$option) $newvalue
+        vTcl:prop:save_opt $target $option vTcl(w,opt,$option)
+
+        # keep showing the selection in the toplevel
+        # (do not destroy the selection handles)
+        vTcl:init_wtree 0
+    }
+}

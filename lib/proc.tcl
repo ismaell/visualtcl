@@ -23,7 +23,7 @@
 
 proc vTcl:delete_proc {name} {
     global vTcl
-    set result [tk_messageBox -type yesno \
+    set result [::vTcl::MessageBox -type yesno \
         -title "Visual Tcl" \
         -message "Are you sure you want to delete procedure $name ?"]
 
@@ -87,7 +87,7 @@ proc vTcl:update_proc {base} {
     set vTcl(pr,geom_proc) [wm geometry $base]
     set name [$base.f2.f8.procname get]
     set args [$base.f2.f9.args get]
-    set body [string trim [$base.f3.text get 0.0 end] "\n"]
+    set body [string trim [$base.f4.text get 0.0 end] "\n"]
     if {[lempty $name]} { return }
     if {[regexp (.*):: $name matchAll context]} {
 
@@ -118,7 +118,8 @@ proc vTcl:update_proc_list {{name {}}} {
         set plist [$vTcl(gui,proclist).f2.list get 0 end]
         set pindx [lsearch $plist $name]
         if {$pindx >= 0} {
-        $vTcl(gui,proclist).f2.list selection set $pindx
+            $vTcl(gui,proclist).f2.list selection set $pindx
+            $vTcl(gui,proclist).f2.list see $pindx
         }
     }
 }
@@ -187,43 +188,36 @@ proc vTclWindow.vTcl.proclist {args} {
     pack $base.frame7 \
         -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 \
         -side top
-    button $base.frame7.button8 \
+    vTcl:toolbar_button $base.frame7.button8 \
         -command {vTcl:show_proc ""} \
-         -padx 9 \
-        -pady 3 -image [vTcl:image:get_image add.gif]
+        -image [vTcl:image:get_image add.gif]
     pack $base.frame7.button8 \
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 0 -pady 0 \
         -side left
     vTcl:set_balloon $base.frame7.button8 "Add a new procedure"
-    button $base.frame7.button9 \
+    vTcl:toolbar_button $base.frame7.button9 \
         -command {
             set vTcl(x) [.vTcl.proclist.f2.list curselection]
             if {$vTcl(x) != ""} {
                 vTcl:show_proc [.vTcl.proclist.f2.list get $vTcl(x)]
             }
         } \
-        -padx 9 \
-        -pady 3 -image [vTcl:image:get_image open.gif]
+        -image [vTcl:image:get_image open.gif]
     pack $base.frame7.button9 \
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 0 -pady 0 \
         -side left
     vTcl:set_balloon $base.frame7.button9 "Edit selected procedure"
-    button $base.frame7.button10 \
-        -command {
-            set vTcl(x) [.vTcl.proclist.f2.list curselection]
-            if {$vTcl(x) != ""} {
-                vTcl:delete_proc [.vTcl.proclist.f2.list get $vTcl(x)]
-            }
-        } \
-        -padx 9 \
-        -pady 3 -image [vTcl:image:get_image remove.gif]
+    ::vTcl::CancelButton $base.frame7.button10 -command {
+	set vTcl(x) [.vTcl.proclist.f2.list curselection]
+	if {$vTcl(x) != ""} {
+	    vTcl:delete_proc [.vTcl.proclist.f2.list get $vTcl(x)]
+	}
+    }
     pack $base.frame7.button10 \
         -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 \
         -side left
     vTcl:set_balloon $base.frame7.button10 "Remove selected procedure"
-    button $base.frame7.button11 \
-        -command "wm withdraw $base" \
-        -image [vTcl:image:get_image ok.gif]
+    ::vTcl::OkButton $base.frame7.button11 -command "Window hide $base"
     pack $base.frame7.button11 \
         -expand 0 -side right
     vTcl:set_balloon $base.frame7.button11 "Close"
@@ -316,87 +310,95 @@ proc vTclWindow.vTcl.proc {args} {
         -anchor center -expand 1 -fill x -ipadx 0 -ipady 0 -padx 2 -pady 2 \
         -side left
     frame $base.f3 \
-        -borderwidth 2 -height 30 -relief groove -width 30
+        -borderwidth 2 -relief flat
     pack $base.f3 \
-        -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 3 -pady 3 \
-        -side top
+        -anchor center -expand 0 -fill x -side top
 
     # toolbar
     frame $base.f3.toolbar
     pack $base.f3.toolbar -side top -anchor nw -fill x
 
-    set butInsert [vTcl:formCompound:add $base.f3.toolbar button \
+    set butInsert [vTcl:formCompound:add $base.f3.toolbar vTcl:toolbar_button \
         -image [vTcl:image:get_image [file join $vTcl(VTCL_HOME) images edit inswidg.gif] ] \
-        -command "vTcl:insert_widget_in_text $base.f3.text" ]
+        -command "vTcl:insert_widget_in_text $base.f4.text" ]
     pack configure $butInsert -side left
     vTcl:set_balloon $butInsert "Insert selected widget command"
 
     set last [vTcl:formCompound:add $base.f3.toolbar frame -width 5]
     pack configure $last -side left
 
-    set last [vTcl:formCompound:add $base.f3.toolbar button \
+    set last [vTcl:formCompound:add $base.f3.toolbar vTcl:toolbar_button \
         -image [vTcl:image:get_image [file join $vTcl(VTCL_HOME) images edit copy.gif] ] \
-        -command "tk_textCopy $base.f3.text"]
+        -command "tk_textCopy $base.f4.text"]
     pack configure $last -side left
     vTcl:set_balloon $last "Copy selected text to clipboard"
 
-    set last [vTcl:formCompound:add $base.f3.toolbar button \
+    set last [vTcl:formCompound:add $base.f3.toolbar vTcl:toolbar_button \
         -image [vTcl:image:get_image [file join $vTcl(VTCL_HOME) images edit cut.gif] ]  \
-        -command "tk_textCut $base.f3.text"]
+        -command "tk_textCut $base.f4.text"]
     pack configure $last -side left
     vTcl:set_balloon $last "Cut selected text"
 
-    set last [vTcl:formCompound:add $base.f3.toolbar button \
+    set last [vTcl:formCompound:add $base.f3.toolbar vTcl:toolbar_button \
         -image [vTcl:image:get_image [file join $vTcl(VTCL_HOME) images edit paste.gif] ]  \
-        -command "tk_textPaste $base.f3.text"]
+        -command "tk_textPaste $base.f4.text"]
     pack configure $last -side left
     vTcl:set_balloon $last "Paste text from clipboard"
 
     set last [vTcl:formCompound:add $base.f3.toolbar frame -width 5]
     pack configure $last -side left
 
-    set butFind [vTcl:formCompound:add $base.f3.toolbar button \
+    set butFind [vTcl:formCompound:add $base.f3.toolbar vTcl:toolbar_button \
         -image [vTcl:image:get_image [file join $vTcl(VTCL_HOME) images edit search.gif] ] \
-	-command "::vTcl::findReplace::show $base.f3.text"]
+	-command "::vTcl::findReplace::show $base.f4.text"]
     pack configure $butFind -side left
     vTcl:set_balloon $butFind "Find/Replace"
 
-    set butCancel [vTcl:formCompound:add $base.f3.toolbar button \
-        -image [vTcl:image:get_image [file join $vTcl(VTCL_HOME) images edit remove.gif] ]  \
+    set butCancel [vTcl:formCompound:add $base.f3.toolbar ::vTcl::CancelButton \
         -command "vTcl:proc:edit_cancel $base"]
     pack configure $butCancel -side right
     vTcl:set_balloon $butCancel "Discard changes"
 
-    set butOK [vTcl:formCompound:add $base.f3.toolbar button \
-        -image [vTcl:image:get_image [file join $vTcl(VTCL_HOME) images edit ok.gif] ]  \
+    set butOK [vTcl:formCompound:add $base.f3.toolbar ::vTcl::OkButton \
         -command "vTcl:update_proc $base"]
     pack configure $butOK -side right
     vTcl:set_balloon $butOK "Save changes"
 
-    text $base.f3.text \
-        -height 7 -highlightthickness 0 -width 16 \
-        -wrap none -yscrollcommand "$base.f3.scrollbar4 set" \
-        -background white
-    pack $base.f3.text \
-        -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 2 -pady 2 \
-        -side left
+    frame $base.f4 \
+        -borderwidth 1 -height 30 -relief sunken -width 30
+    scrollbar $base.f4.01 \
+        -command "$base.f4.text xview" -highlightthickness 0 \
+        -orient horizontal
+    scrollbar $base.f4.02 \
+        -command "$base.f4.text yview" -highlightthickness 0
+    text $base.f4.text \
+        -background white -borderwidth 0 -height 3 -wrap none \
+        -relief flat -xscrollcommand "$base.f4.01 set" \
+        -yscrollcommand "$base.f4.02 set"
+    pack $base.f4 \
+        -in "$base" -anchor center -expand 1 -fill both -side top
+    grid columnconf $base.f4 0 -weight 1
+    grid rowconf $base.f4 0 -weight 1
+    grid $base.f4.01 \
+        -in "$base.f4" -column 0 -row 1 -columnspan 1 -rowspan 1 \
+        -sticky ew
+    grid $base.f4.02 \
+        -in "$base.f4" -column 1 -row 0 -columnspan 1 -rowspan 1 \
+        -sticky ns
+    grid $base.f4.text \
+        -in "$base.f4" -column 0 -row 0 -columnspan 1 -rowspan 1 \
+        -sticky nesw
 
-    bind $base.f3.text <KeyPress> "+::vTcl::proc_edit_change $base %K"
-    bind $base.f3.text <Control-Key-i> "$butInsert invoke"
-    bind $base.f3.text <Control-Key-f> "$butFind invoke"
+    bind $base.f4.text <KeyPress> "+::vTcl::proc_edit_change $base %K"
+    bind $base.f4.text <Control-Key-i> "$butInsert invoke"
+    bind $base.f4.text <Control-Key-f> "$butFind invoke"
     bind $base <Destroy> {
 	if {[winfo exists .vTcl.find]} { destroy .vTcl.find }
     }
 
-    scrollbar $base.f3.scrollbar4 \
-        -command "$base.f3.text yview"
-    pack $base.f3.scrollbar4 \
-        -anchor center -expand 0 -fill y -ipadx 0 -ipady 0 -padx 0 -pady 0 \
-        -side left
-
     set pname $base.f2.f8.procname
     set pargs $base.f2.f9.args
-    set pbody $base.f3.text
+    set pbody $base.f4.text
     $pname delete 0 end
     $pargs delete 0 end
     $pbody delete 0.0 end
@@ -422,7 +424,7 @@ proc vTclWindow.vTcl.proc {args} {
     # @@change by Christian Gavin 3/19/2000
     # syntax colouring
 
-    vTcl:syntax_color $base.f3.text
+    vTcl:syntax_color $base.f4.text
 
     # @@end_change
 }
@@ -434,16 +436,18 @@ proc vTcl:proc:edit_cancel {base} {
     	set vTcl(pr,geom_proc) [wm geometry $base]
         destroy $base
     } else {
-        vTcl:dialog "Buffer has changed. Do you\nwish to save the changes?" {Yes No Cancel}
-        switch $vTcl(x_mesg) {
-            No {
+        set result [::vTcl::MessageBox -default yes -icon question -message \
+            "Buffer has changed. Do you wish to save the changes?" \
+            -parent $base -title "Save Changes?" -type yesnocancel]
+        switch $result {
+            no {
                 grab release $base
                 destroy $base
             }
-            Yes {
+            yes {
                 vTcl:update_proc $base
             }
-            Cancel {}
+            cancel {}
         }
     }
 }

@@ -1,6 +1,213 @@
 ChangeLog for Visual Tcl:
 
+1.52 -> ?
+    o Using transparent GIF images.
+    o Added background color tab in preferences.
+    o Messages boxes don't use tk_strictMotif
+
+1.51 -> 1.52
+    o Fixed startup bug
+
+1.51b4 -> 1.51
+    o Filter dynamically created proc for progress bar widgets
+    o Used uplevel instead of eval for evaluation of scrollbar command in
+      multicolumn listbox
+    o Replaced vTcl:dialog by tk_messageBox everywhere.
+    o Modified demo app Visual Text to support tag names with spaces.
+    o Fixed problem when Tcl/Tk 8.3.3 from ActiveState passes a {} parameter
+      to the command line causing Visual Tcl to fail on startup
+    o Added code to dump a toolbar with its components.
+    o Don't allow inserting into widgets that are not part of the widget tree
+    o Fixed bug where combobox/mclistbox/progressbar code wouldn't be
+      saved with project in some situations
+    o File Open/Save remembers last directory
+    o Added "-listvariable" option for listbox
+    o Added "Reload" button to image manager, to reload images modified
+      by other programs like image editors.
+    o Added <<Ready>> event for toplevels
+    o Added <<Create>>, <<Show>> and <<Hide>> virtual events for toplevels.
+    o Updated demo app with these virtual events.
+    o Removed (pre) and (post) mechanism for toplevels.
+    o Added GPL copyright for Tk widgets description files.
+    o Fixed find/replace bug with dollar sign in text to find.
+    o Find/Replace highlights text when a match is found.
+    o Fixed bug when copy/paste widgets with non-standard binding tags
+    o When a toplevel is destroyed, refresh the bindings editor
+    o Added bitmapbutton compound and test app in demo folder
+    o Added toolbar buttons to visual text application
+    o Added horizontal scrollbars to command and proc editors
+    o No need to remove duplicates from the MRU list, because when a file
+      is added to this list, the code checks if the file already exists in the
+      list and removes it if needed, then adds it at the top of the list.
+    o Fixed bug where Tclets with pack or grid manager wouldn't run because
+      of wrong window path
+    o Simplified a bit demo app by removing alias for main window
+    o Fixed bug with %top substitution for menu items
+    o Automatically assigns a default variable for entry and scale widgets
+    o Added same %widget and %top mechanism for menu commands; this allows a
+      menu to know in which toplevel it is located, or to reconfigure itself
+      if needed
+    o Fixed bug where binding tags would all of a sudden disappear from a project
+      after bindings editor is being displayed.
+    o Added Ctrl + N, Ctrl + O, Ctrl + S, Ctrl + Q and F1 keyboard shortcuts
+      to demo application VisualText
+    o listbox and text widget on creation take default values for -font option
+    o new text widgets have a white background
+    o replaced %W by %widget for command options, to avoid
+      conflicts with %W from the bind command
+    o -command options can have substitution strings:
+      %W will be replaced by the widget path
+      %top will be replaced by the toplevel path
+    o Now checks for Tcl/Tk 8.3 version or higher
+    o Saves -variable with namespace as $base\::variable instead of .top22::variable
+    o Sets default -variable for checkbutton and radiobutton
+    o Added 'Insert image...' menu item to VisualText
+    o Replaced 'wm withdraw .top22' by 'wm withdraw $base' in saved project
+    o Added Shift + Click functionality to scrollbar to link to table widget
+    o Namespace'ized demo application VisualText
+    o Added 'About' box in Visual Text
+    o Now dumps procedures with a header including procedure name
+    o Added - to characters for commands in syntax colouring
+    o Fixing _ problem in toplevel names when saving projects with scrollbars
+    o Toplevels are now automatically assigned a namespace with the window
+      path, allowing the user to save his data inside. For example, a window
+      named .top22 will be assigned a ::.top22 namespace while a window named
+      my_own_window will have a ::my_own_window namespace. It is recommended
+      to use this namespace to store variables like check box variable, radio
+      box variable, etc.
+    o Fixed a few tix bugs: tixFileEntry, tixScrollHList
+    o Added -fillcolor option to tixMeter
+    o Fix cursor bug on insert if clicking too fast
+    o Fixed bug where closing menu editor wouldn't save changes
+    o Fixed aliases bugs in menu editor
+    o Removed a few unused variables in menu editor
+    o Made toplevel menus flat
+    o Added <Destroy> to simple bindings menu
+    o Removed <<TkCon*>> bindings from binding editor
+    o Added demo application 'visual-text.tcl' using Bryan Oakley's
+      code to dump an entire text widget contents into a file
+    o Prevent the same alias from being defined in two toplevels
+    o Center alias dialog and command dialog if no widget has been
+      selected using the mouse (it is possible to select a widget in
+      the widget tree)
+    o Use as many default values as possible for new menu widgets
+    o Fixed bug where Visual Tcl would switch the manager for a menu from
+      'wm' to 'place'
+    o When moving menu items up and down, selects item at new position
+    o Adopted Interned Explorer-like toolbar buttons for a much nicer look
+      (well, that's my opinion at least)
+    o Fixed lremove bug in bindings editor
+    o Added more default values to scale and message widget, to avoid
+      saving them in the project when not needed.
+    o Updated tix panedwindow and notebook to save childsites using
+      relative paths (eg. asking the megawidget the path to its childsites
+      instead of hardcoding it in the project)
+    o Found how to dump scrollbars with childsites to avoid absolute
+      widget paths.
+    o Made sure not-to-be-saved options won't be saved again after a
+      project is reloaded.
+    o Fixed bug for right-click context menu "Hide" doing nothing for
+      toplevels.
+    o Do not use the raise command on Linux, because it is too slow
+      (2 second delay waiting for faulty X-Windows implementation to
+       respond to message)
+    o Fixed balloon help already existing window bug.
+    o Cleaned up dumping megawidgets and their childsites. There are
+      no more absolute paths, instead the code asks for each childsite
+      in turn and stores its path into a variable. Still need to figure
+      out how to save scrollbars with this new mechanism.
+    o Fixed default options problem for megawidgets childsites.
+    o Added code to select pages in tabnotebook and notebook widgets
+      when selecting a frame in the widget tree
+    o Made sure Visual Tcl doesn't change the manager for childsites!
+      This was the "manager switches from pack to place" mysterious bug,
+      which is actually not a Tk bug at all. What happened is when
+      a widget is selected, if it is hidden, Visual Tcl tried to re-
+      manage it using the default manager.
+    o Unregister widgets (delete their namespace) when destroyed
+    o Cleaned up the keyboard scrolling in the property manager.
+    o Fixed a bug where options would get changed while scrolling in the
+      property manager.
+    o Fixed delete toplevel bug
+    o Added support for deleting childsites in notebook/panedwindow (Tix)
+    o Added support for deleting childsites in tabnotebook/notebook [Iwidgets]
+    o Added notebook widget for Itcl. Supports copy/paste.
+    o Common options like -background take their default values on project
+      load unless, of course, the option is saved in the project
+    o Support copy/paste for megawidgets tixPanedWindow and tixNoteBook
+    o Megawidgets don't save their internal grid geometry
+    o Added necessary compound code to allow copy/paste of megawidgets with
+      childsites. Enabled tabnotebook and panedwindow [Iwidgets] with this
+      functionality.
+    o Fixed copy/paste bug where megawidgets would lose their options after
+      saving.
+    o Added code to prevent special IWidgets binding tags from beeing saved
+      in the project.
+
+1.51b3 -> 1.51b4
+    o Now prevents the user from trying to assign the same alias to 2 or more
+      widgets inside the same toplevel.
+    o Added <Shift-ButtonRelease-1> command in the toolbar to auto-place widgets
+    o Added column and row stretch options to tkTable library
+    o When a toplevel compound is inserted, do not require the user to click
+      anywhere, because this does not make sense. Instead, insert the compound
+      directly.
+    o Fixed copy/paste problem for toplevels.
+    o Fixed "ask for widget name on insert" problem for toplevels.
+    o When inserting a compound, widgets are registered one at a time as
+      the compound is created, instead of after the compound creation. This
+      allows default values for the widget to be known and applied when
+      possible (see below).
+    o When inserting a compound, widgets for which options aren't specified
+      take their default values for the most common options like -background,
+      -highlightbackground, etc. This reduces the size of saved projects.
+    o Made the "-width" option for scrollbar widgets not saved by default (the
+      user can still override the option by clicking on the checkbox next to the
+      "-width" option)
+    o Have the most common options like -background, -activebackground etc.
+      take their default value when a widget is created, instead of using the
+      value from the options database. This saves space when saving projects, and
+      makes it easier to port them to other platforms.
+    o Fixed "Set command" bug where it would prevent from saving the project
+    o Made sure -label, -anchor and other options are saved
+    o Fixed error when inserting compound for the first time after starting vTcl
+    o The behavior for aliases in compounds is modified as such:
+      - if there are aliases in the compound, define them when compound is inserted
+        (so the alias will point to the pasted widget, not the original one, but
+         because vTcl allows same aliases to exist in several toplevels, this is
+         not a problem)
+      - if there are no aliases for subwidgets in the compound, and the
+        "Auto Aliasing for New Widgets" option is turned on, then new automatic
+        aliases are created
+      - if a compound is pasted into a toplevel with an alias that already exists
+        in the same toplevel, then a new automatic alias is created
+    o Added right-click menu in attributes editor to allow setting an option for
+      a range of widgets at once, as well as to save/not save options and restore
+      the default value for an option
+
 1.51b2 -> 1.51b3
+    o Usability improvements:
+      - added "Set Variable" for checkbutton and radiobutton
+      - added "Set Value" for radiobutton
+      - added "Edit Menu" for toplevel
+    o Cosmectic improvements:
+      - regrouped toolbar buttons and close button in the same line in both
+        the menu and the bindings editor
+    o Tried to fix the not-totally-fixed cursor bug. Seems the
+      ButtonRelease-1 gets processed before ButtonPress-1 returns,
+      so if ButtonRelease-1 comes too soon, it is posted as an
+      "after" job. This prevents the cursor from changing to "fleur"
+      in some situations.
+    o Widget tree keeps highlighting the selection after refresh
+    o TkCon restores position on vTcl startup
+    o Set string input dialog entry field to white background and
+      changed OK / Cancel buttons to icons (checkmark and red cross)
+    o Activating a widget now automatically scrolls widget tree into view
+    o Fixed message text input dialog Escape bug
+    o Added "Set Text Variable" context menu item to entry widget
+    o Fixed problem where vTcl was saving duplicate fonts.
+    o Fixed some bug where problems could occur from defining namespaces
+      with a space in the name.
     o Deleting a menu in the widget tree refreshes an open menu editor
     o Deleting a toplevel menu closes a possibly open menu editor
     o Editing a submenu brings menu editor for root menu and selects
@@ -70,7 +277,7 @@ ChangeLog for Visual Tcl:
     o Added Find/Replace in procedure editor
 
 1.22   -> 1.51b1
-	o Added a configure script to locate the best WISH shell.
+    o Added a configure script to locate the best WISH shell.
     o Changed the way libs are loaded
     o Support for mclistbox and combobox from Bryan Oakley. This time,
       no additional packages are needed, and when projects are saved, the

@@ -27,7 +27,7 @@
 
 ##############################################################################
 
-set version 1.5.1b3
+set version 1.5.2
 set bldroot /home/cgavin/vtcl
 set bldtmp $bldroot/build/tmp
 
@@ -81,7 +81,9 @@ eval exec cp [glob $bldroot/images/*.xpm]                 $copyroot/images
 eval exec cp [glob $bldroot/images/*.gif]                 $copyroot/images
 eval exec cp [glob $bldroot/images/edit/*.gif]            $copyroot/images/edit
 eval exec cp [glob $bldroot/doc/*.*]                      $copyroot/doc
-eval exec cp [glob $bldroot/demo/*.*]                     $copyroot/demo
+eval exec cp [glob $bldroot/demo/*.tcl]                   $copyroot/demo
+eval exec cp [glob $bldroot/demo/*.ttd]                   $copyroot/demo
+eval exec cp [glob $bldroot/demo/*.html]                  $copyroot/demo
 eval exec cp $bldroot/demo/README                         $copyroot/demo
 eval exec cp [glob $bldroot/demo/images/*.*]              $copyroot/demo/images
 eval exec cp [glob $bldroot/sample/*.tcl]                 $copyroot/sample

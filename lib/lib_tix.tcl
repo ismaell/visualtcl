@@ -21,29 +21,6 @@
 # Architecture by Stewart Allen
 # Implementation by Kenneth H. Cox <kcox@senteinc.com>
 
-#
-# Initializes this library
-#
-proc vTcl:lib_tix:init {} {
-    global vTcl
-
-    rename option _option
-    rename vTcl:lib_tix:ignore_option option
-
-    if {[catch {package require Tix} erg]} {
-        lappend vTcl(libNames) {(not detected) Tix Widget Support Library}
-        rename option vTcl:lib_tix:ignore_option
-        rename _option option
-        return 0
-    }
-
-    rename option vTcl:lib_tix:ignore_option
-    rename vTcl:lib_tix:monitor_option option
-
-    lappend vTcl(libNames) {Tix Widget Support Library}
-    return 1
-}
-
 proc vTcl:widget:lib:lib_tix {args} {
     global vTcl
 
@@ -139,6 +116,29 @@ proc vTcl:lib_tix:monitor_option {cmd args} {
 }
 
 #
+# Initializes this library
+#
+proc vTcl:lib_tix:init {} {
+    global vTcl
+
+    rename option _option
+    rename vTcl:lib_tix:ignore_option option
+
+    if {[catch {package require Tix} erg]} {
+        lappend vTcl(libNames) {(not detected) Tix Widget Support Library}
+        rename option vTcl:lib_tix:ignore_option
+        rename _option option
+        return 0
+    }
+
+    rename option vTcl:lib_tix:ignore_option
+    rename vTcl:lib_tix:monitor_option option
+
+    lappend vTcl(libNames) {Tix Widget Support Library}
+    return 1
+}
+
+#
 # move variable setup into proc so "sourcing" doesn't
 # install them.
 #
@@ -187,13 +187,6 @@ proc vTcl:dump:TixLabelEntry {target basename} {
     return $output
 }
 
-proc vTcl:dump:TixFileEntry {target basename} {
-    global vTcl
-    set output [vTcl:lib_tix:dump_widget_opt $target $basename]
-    append output "$target subwidget frame configure -highlightthickness 2\n"
-    return $output
-}
-
 proc vTcl:dump:TixSelect {target basename} {
     global vTcl
     set result [vTcl:lib_tix:dump_widget_opt $target $basename]
@@ -221,19 +214,28 @@ proc vTcl:dump:TixSelect {target basename} {
 # it dumps the geometry of $subwidget, but it doesn't dump $subwidget
 # itself (`vTcl:dump:widgets $subwidget' doesn't do the right thing if
 # the grid geometry manager is used to manage children of $subwidget.
-proc vTcl:lib_tix:dump_subwidgets {subwidget} {
-    global vTcl classes
+proc vTcl:lib_tix:dump_subwidgets {subwidget {sitebasename {}}} {
+    global vTcl basenames classes
     set output ""
     set widget_tree [vTcl:widget_tree $subwidget]
+    set length      [string length $subwidget]
+    set basenames($subwidget) $sitebasename
+
     foreach i $widget_tree {
+
         set basename [vTcl:base_name $i]
+
         # don't try to dump subwidget itself
         if {"$i" != "$subwidget"} {
+            set basenames($i) $basename
             set class [vTcl:get_class $i]
             append output [$classes($class,dumpCmd) $i $basename]
+            unset basenames($i)
         }
         append output [vTcl:dump_widget_geom $i $basename]
     }
+
+    unset basenames($subwidget)
     return $output
 }
 

@@ -52,14 +52,19 @@ proc vTcl:toolbar_create {args} {
     set vTcl(x,lastButton) $f
 }
 
-proc vTcl:toolbar_add {class name image {options ""}} {
+proc vTcl:toolbar_add {class name image cmd_add} {
     global vTcl
     set base .vTcl.toolbar
     if {![winfo exists $base]} { vTcl:toolbar_create }
     set f [vTcl:new_widget_name tb $base]
-    set command "vTcl:new_widget $class $f"
-    if {![lempty $options]} { append command " [list $options]" }
-    button $f -bd 1 -image $image -comm $command
+    button $f -bd 1 -image $image
+
+    bind $f <ButtonRelease-1> \
+        "vTcl:new_widget \$vTcl(pr,autoplace) $class $f \"$cmd_add\""
+
+    bind $f <Shift-ButtonRelease-1> \
+        "vTcl:new_widget 1 $class $f \"$cmd_add\""
+
     vTcl:set_balloon $f $name
     lappend vTcl(tool,list) $f
 }

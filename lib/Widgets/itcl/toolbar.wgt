@@ -1,3 +1,28 @@
+##############################################################################
+#
+# Visual TCL - A cross-platform application development environment
+#
+# Copyright (C) 2001 Christian Gavin
+#
+# Description file for [Incr Widgets]
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+##############################################################################
+#
+
 Class		Toolbar
 Lib		itcl
 
@@ -5,76 +30,44 @@ CreateCmd	::iwidgets::toolbar
 Icon		icon_toolbar.gif
 DumpChildren	no
 MegaWidget	yes
-InsertCmd	vTcl:widget:toolbar:inscmd
-TreeChildrenCmd	{
-		vTcl:widget:toolbar:treeChildrenCmd
-		vTcl:widget:toolbar:treeChildrenChildsite
-		}
-
-Function	"Add toolbar button" vTcl:widget:toolbar:addButton
+TagsCmd         vTcl:lib_itcl:tagscmd
+InsertCmd       vTcl:widget:toolbar:inscmd
+DumpCmd         vTcl:dump:toolbar
 
 proc vTcl:widget:toolbar:inscmd {target} {
+
+    global env
+
+    return "$target add button open \
+        -balloonstr \"Open\" \
+        -image [vTcl:image:get_image $env(VTCL_HOME)/images/edit/open.gif] \
+        -command {tk_messageBox -message {TODO: Open Command handler here!}}
+        $target add button save \
+        -balloonstr \"Save\" \
+        -image [vTcl:image:get_image $env(VTCL_HOME)/images/edit/save.gif] \
+        -command {tk_messageBox -message {TODO: Save Command handler here!}}"
+}
+
+proc vTcl:dump:toolbar {target basename} {
+
     global vTcl
+    set result [vTcl:dump_widget_opt $target $basename]
 
-    set comp [$target add button new \
-    -balloonstr "New" \
-    -image [vTcl:image:get_image $vTcl(VTCL_HOME)/images/edit/new.gif] \
-    -command {tk_messageBox -message {TODO: Command handler here!}}]
-    vTcl:widget:toolbar:bindComponent $target new $comp
+    set components [$target component]
+    foreach component $components {
+        if {$component == "hull"} {continue}
 
-    set comp [$target add button open \
-    -balloonstr "Open" \
-    -image [vTcl:image:get_image $vTcl(VTCL_HOME)/images/edit/open.gif] \
-    -command {tk_messageBox -message {TODO: Command handler here!}}]
-    vTcl:widget:toolbar:bindComponent $target open $comp
+        set path [$target component $component]
+        set class [vTcl:get_class $path]
 
-    set comp [$target add button save \
-    -balloonstr "Save" \
-    -image [vTcl:image:get_image $vTcl(VTCL_HOME)/images/edit/save.gif] \
-    -command {tk_messageBox -message {TODO: Command handler here!}}]
-    vTcl:widget:toolbar:bindComponent $target save $comp
-}
+        set conf [$target itemconfigure $component]
+        set pairs [vTcl:get_opts_special $conf $target \
+                "-text -command -image -balloonstr"]
 
-## Helper function to bind a component when it is created.
-## When it is destroyed, we call Itcl's proper delete function.
-proc vTcl:widget:toolbar:bindComponent {w name comp} {
-    bind $comp <Destroy> "$w delete [$w index $name]"
-}
-
-proc vTcl:widget:toolbar:addButton {{string ""}} {
-    global vTcl
-
-    set t $vTcl(w,widget)
-
-    if {[lempty $string]} { set string [vTcl:get_string "Button Name" $t] }
-
-    set component [$t add button $string]
-
-    vTcl:widget:toolbar:bindComponent $t $string $component
-    vTcl:place_handles $t
-    vTcl:setup_bind $component
-    vTcl:widget:register_widget_megachildren $t
-}
-
-proc vTcl:widget:toolbar:treeChildrenCmd {target {diff ""}} {
-    set children {}
-    set wantsdiff [expr {$diff != {}}]
-
-    set list [$target component]
-    ::vTcl::lremove list hull
-    foreach site $list {
-	set w [$target component $site]
-    	foreach child [vTcl:complete_widget_tree $w $wantsdiff] {
-	    lappend children $child$diff
-	}
+        append result "$vTcl(tab)$basename add [string tolower $class]"
+        append result " $component \\\n"
+        append result "[vTcl:clean_pairs $pairs]\n"
     }
-    return $children
-}
 
-proc vTcl:widget:toolbar:treeChildrenChildsite {target} {
-    set children {}
-    set list [$target component]
-    ::vTcl::lremove list hull
-    foreach comp $list { lappend children [$target component $comp] }
-    return $children
+    return $result
 }

@@ -1,57 +1,48 @@
 #!/bin/sh
 # the next line restarts using wish\
 exec wish "$0" "$@" 
-if {![info exist vTcl(sourcing)]} {
 
-        # Provoke name search
-        catch {package require foobar}
-        set names [package names]
+if {![info exists vTcl(sourcing)]} {
+    # Provoke name search
+    catch {package require bogus-package-name}
+    set packageNames [package names]
 
-        # Check if Itcl is available
-        if {[lsearch -exact $names Itcl] != -1} {
-            package require Itcl 3.0
-            namespace import itcl::*
-        }
+    switch $tcl_platform(platform) {
+	windows {
+	    option add *Scrollbar.width 16
+	}
+	default {
+	    option add *Scrollbar.width 10
+	}
+    }
+    
+    # Check if Itcl is available
+    if {[lsearch -exact $packageNames Itcl] != -1} {
+	package require Itcl 3.0
+    }
 
-        # Check if Itk is available
-        if {[lsearch -exact $names Itk] != -1} {
-            package require Itk 3.0
-        }
+    # Check if Itk is available
+    if {[lsearch -exact $packageNames Itk] != -1} {
+	package require Itk 3.0
+    }
 
-        # Check if Iwidgets is available
-        if {[lsearch -exact $names Iwidgets] != -1} {
-            package require Iwidgets 3.0
-            namespace import iwidgets::entryfield
-            namespace import iwidgets::spinint
-            namespace import iwidgets::combobox
-            namespace import iwidgets::scrolledlistbox
-            namespace import iwidgets::calendar
-            namespace import iwidgets::dateentry
-            namespace import iwidgets::scrolledhtml
-            namespace import iwidgets::toolbar
-            namespace import iwidgets::feedback
-            namespace import iwidgets::optionmenu
-            namespace import iwidgets::hierarchy
-            namespace import iwidgets::buttonbox
-            namespace import iwidgets::checkbox
-            namespace import iwidgets::radiobox
-            namespace import iwidgets::tabnotebook
-            namespace import iwidgets::panedwindow
-            namespace import iwidgets::scrolledtext
+    # Check if Iwidgets is available
+    if {[lsearch -exact $packageNames Iwidgets] != -1} {
+	package require Iwidgets 3.0
 
-            switch {$tcl_platform(platform)} {
-                windows {
-                    option add *Scrolledhtml.sbWidth    16
-                    option add *Scrolledtext.sbWidth    16
-                    option add *Scrolledlistbox.sbWidth 16
-                }
-                default {
-                    option add *Scrolledhtml.sbWidth    10
-                    option add *Scrolledtext.sbWidth    10
-                    option add *Scrolledlistbox.sbWidth 10
-                }
-            }
-        }
+	switch $tcl_platform(platform) {
+	    windows {
+		option add *Scrolledhtml.sbWidth    16
+		option add *Scrolledtext.sbWidth    16
+		option add *Scrolledlistbox.sbWidth 16
+	    }
+	    default {
+		option add *Scrolledhtml.sbWidth    10
+		option add *Scrolledtext.sbWidth    10
+		option add *Scrolledlistbox.sbWidth 10
+	    }
+	}
+    }
     
 }
 #############################################################################
@@ -62,21 +53,20 @@ if {![info exist vTcl(sourcing)]} {
 # VTCL LIBRARY PROCEDURES
 #
 
+if {![info exists vTcl(sourcing)]} {
 proc Window {args} {
     global vTcl
-    set cmd [lindex $args 0]
-    set name [lindex $args 1]
+    set cmd     [lindex $args 0]
+    set name    [lindex $args 1]
     set newname [lindex $args 2]
-    set rest [lrange $args 3 end]
-    if {$name == "" || $cmd == ""} {return}
-    if {$newname == ""} {
-        set newname $name
-    }
+    set rest    [lrange $args 3 end]
+    if {$name == "" || $cmd == ""} { return }
+    if {$newname == ""} { set newname $name }
     if {$name == "."} { wm withdraw $name; return }
     set exists [winfo exists $newname]
     switch $cmd {
         show {
-	    if {$exists} { wm deiconify $name; return }
+            if {$exists} { wm deiconify $newname; return }
             if {[info procs vTclWindow(pre)$name] != ""} {
                 eval "vTclWindow(pre)$name $newname $rest"
             }
@@ -92,73 +82,75 @@ proc Window {args} {
         destroy { if $exists {destroy $newname; return} }
     }
 }
+}
 
 if {![info exists vTcl(sourcing)]} {
 proc {vTcl:Toplevel:WidgetProc} {w args} {
-if {[llength $args] == 0} {
-    	return -code error [vTcl:WrongNumArgs "$w option ?arg arg ...?"]
+    if {[llength $args] == 0} {
+        return -code error "wrong # args: should be \"$w option ?arg arg ...?\""
     }
 
     ## The first argument is a switch, they must be doing a configure.
     if {[string index $args 0] == "-"} {
-    	set command configure
+        set command configure
 
-	## There's only one argument, must be a cget.
-	if {[llength $args] == 1} {
-	    set command cget
-	}
+        ## There's only one argument, must be a cget.
+        if {[llength $args] == 1} {
+            set command cget
+        }
     } else {
-    	set command [lindex $args 0]
-	set args [lrange $args 1 end]
+        set command [lindex $args 0]
+        set args [lrange $args 1 end]
     }
 
     switch -- $command {
-	"hide" -
-	"Hide" {
-	    Window hide $w
-	}
+        "hide" -
+        "Hide" {
+            Window hide $w
+        }
 
-	"show" -
-	"Show" {
-	    Window show $w
-	}
+        "show" -
+        "Show" {
+            Window show $w
+        }
 
-	"ShowModal" {
-	    Window show $w
-          raise $w
-	    grab $w
-	    tkwait window $w
-	    grab release $w
-	}
+        "ShowModal" {
+            Window show $w
+            raise $w
+            grab $w
+            tkwait window $w
+            grab release $w
+        }
 
-    	default {
-	    eval $w $command $args
-	}
+        default {
+            eval $w $command $args
+        }
     }
 }
 
 proc {vTcl:WidgetProc} {w args} {
-if {[llength $args] == 0} {
-    	return -code error "wrong # args: should be \"$w option ?arg arg ...?\""
+    if {[llength $args] == 0} {
+        return -code error "wrong # args: should be \"$w option ?arg arg ...?\""
     }
 
     ## The first argument is a switch, they must be doing a configure.
     if {[string index $args 0] == "-"} {
-    	set command configure
+        set command configure
 
-	## There's only one argument, must be a cget.
-	if {[llength $args] == 1} {
-	    set command cget
-	}
+        ## There's only one argument, must be a cget.
+        if {[llength $args] == 1} {
+            set command cget
+        }
     } else {
-    	set command [lindex $args 0]
-	set args [lrange $args 1 end]
+        set command [lindex $args 0]
+        set args [lrange $args 1 end]
     }
 
     eval $w $command $args
 }
 }
 
+if {[info exists vTcl(sourcing)]} {
 proc vTcl:project:info {} {
     namespace eval ::widgets::.top35 {
         array set save {-background 1 -highlightbackground 1 -highlightcolor 1}
@@ -203,7 +195,7 @@ proc vTcl:project:info {} {
         set tagslist {}
     }
 }
-
+}
 #################################
 # USER DEFINED PROCEDURES
 #
@@ -272,7 +264,7 @@ proc vTclWindow.top35 {base {container 0}} {
         -background #bcbcbc -highlightbackground #bcbcbc \
         -highlightcolor #000000 
     wm focusmodel $base passive
-    wm geometry $base 450x368+98+146; update
+    wm geometry $base 450x368+102+166; update
     wm maxsize $base 1009 738
     wm minsize $base 1 1
     wm overrideredirect $base 0
@@ -280,7 +272,7 @@ proc vTclWindow.top35 {base {container 0}} {
     wm deiconify $base
     wm title $base "New Toplevel 2"
     }
-    tabnotebook $base.tab36 \
+    ::iwidgets::tabnotebook $base.tab36 \
         -tabpos n 
     bindtags $base.tab36 "itk-delete-.top35.tab36 $base.tab36 Tabnotebook $base all"
     $base.tab36 add \
@@ -290,10 +282,7 @@ proc vTclWindow.top35 {base {container 0}} {
     $base.tab36 add \
         -label {Page 3} 
     frame $base.tab36.canvas.notebook.cs.page1.cs.fra36
-    pack $base.tab36.canvas.notebook.cs.page1.cs.fra36 \
-        -in $base.tab36.canvas.notebook.cs.page1.cs -anchor center -expand 1 \
-        -fill both -side top 
-    checkbox $base.tab36.canvas.notebook.cs.page1.cs.fra36.che37 \
+    ::iwidgets::checkbox $base.tab36.canvas.notebook.cs.page1.cs.fra36.che37 \
         -background #febcbc -labeltext Settings! 
     bindtags $base.tab36.canvas.notebook.cs.page1.cs.fra36.che37 "itk-delete-.top35.tab36.canvas.notebook.cs.page1.cs.fra36.che37 $base.tab36.canvas.notebook.cs.page1.cs.fra36.che37 Checkbox $base all"
     $base.tab36.canvas.notebook.cs.page1.cs.fra36.che37 add chk0 \
@@ -305,13 +294,7 @@ proc vTclWindow.top35 {base {container 0}} {
     $base.tab36.canvas.notebook.cs.page1.cs.fra36.che37 add chk2 \
         -background #febcbc -text {Check 3} \
         -variable ::iwidgets::Checkbox::buttonVar(::.top35.tab36.canvas.notebook.cs.page1.cs.fra36.che37,check3) 
-    pack $base.tab36.canvas.notebook.cs.page1.cs.fra36.che37 \
-        -in $base.tab36.canvas.notebook.cs.page1.cs.fra36 -anchor n -expand 1 \
-        -fill both -side left 
-    grid columnconf $base.tab36.canvas.notebook.cs.page1.cs.fra36.che37 1 -weight 1
-    grid rowconf $base.tab36.canvas.notebook.cs.page1.cs.fra36.che37 1 -weight 1
-    grid rowconf $base.tab36.canvas.notebook.cs.page1.cs.fra36.che37 0 -minsize 8
-    checkbox $base.tab36.canvas.notebook.cs.page1.cs.fra36.che38 \
+    ::iwidgets::checkbox $base.tab36.canvas.notebook.cs.page1.cs.fra36.che38 \
         -background #bce8bc -labeltext {Settings 2} 
     bindtags $base.tab36.canvas.notebook.cs.page1.cs.fra36.che38 "itk-delete-.top35.tab36.canvas.notebook.cs.page1.cs.fra36.che38 $base.tab36.canvas.notebook.cs.page1.cs.fra36.che38 Checkbox $base all"
     $base.tab36.canvas.notebook.cs.page1.cs.fra36.che38 add chk0 \
@@ -323,17 +306,8 @@ proc vTclWindow.top35 {base {container 0}} {
     $base.tab36.canvas.notebook.cs.page1.cs.fra36.che38 add chk2 \
         -background #bce8bc -text {Check 3} \
         -variable ::iwidgets::Checkbox::buttonVar(::.top35.tab36.canvas.notebook.cs.page1.cs.fra36.che38,check3) 
-    pack $base.tab36.canvas.notebook.cs.page1.cs.fra36.che38 \
-        -in $base.tab36.canvas.notebook.cs.page1.cs.fra36 -anchor n -expand 1 \
-        -fill both -side left 
-    grid columnconf $base.tab36.canvas.notebook.cs.page1.cs.fra36.che38 1 -weight 1
-    grid rowconf $base.tab36.canvas.notebook.cs.page1.cs.fra36.che38 1 -weight 1
-    grid rowconf $base.tab36.canvas.notebook.cs.page1.cs.fra36.che38 0 -minsize 8
     frame $base.tab36.canvas.notebook.cs.page1.cs.fra34
-    pack $base.tab36.canvas.notebook.cs.page1.cs.fra34 \
-        -in $base.tab36.canvas.notebook.cs.page1.cs -anchor center -expand 0 \
-        -fill x -side top 
-    radiobox $base.tab36.canvas.notebook.cs.page1.cs.fra34.rad35 \
+    ::iwidgets::radiobox $base.tab36.canvas.notebook.cs.page1.cs.fra34.rad35 \
         -background #bc725c -labeltext {Settings 3} 
     bindtags $base.tab36.canvas.notebook.cs.page1.cs.fra34.rad35 "itk-delete-.top35.tab36.canvas.notebook.cs.page1.cs.fra34.rad35 $base.tab36.canvas.notebook.cs.page1.cs.fra34.rad35 Radiobox $base all"
     $base.tab36.canvas.notebook.cs.page1.cs.fra34.rad35 add rad0 \
@@ -345,12 +319,31 @@ proc vTclWindow.top35 {base {container 0}} {
     $base.tab36.canvas.notebook.cs.page1.cs.fra34.rad35 add rad2 \
         -background #bc725c -text {Radio 3} \
         -variable ::iwidgets::Radiobox::_modes(::.top35.tab36.canvas.notebook.cs.page1.cs.fra34.rad35) 
+    pack $base.tab36.canvas.notebook.cs.page1.cs.fra36 \
+        -in $base.tab36.canvas.notebook.cs.page1.cs -anchor center -expand 1 \
+        -fill both -side top 
+    pack $base.tab36.canvas.notebook.cs.page1.cs.fra36.che37 \
+        -in $base.tab36.canvas.notebook.cs.page1.cs.fra36 -anchor n -expand 1 \
+        -fill both -side left 
+    grid columnconf $base.tab36.canvas.notebook.cs.page1.cs.fra36.che37 1 -weight 1
+    grid rowconf $base.tab36.canvas.notebook.cs.page1.cs.fra36.che37 1 -weight 1
+    grid rowconf $base.tab36.canvas.notebook.cs.page1.cs.fra36.che37 0 -minsize 8
+    pack $base.tab36.canvas.notebook.cs.page1.cs.fra36.che38 \
+        -in $base.tab36.canvas.notebook.cs.page1.cs.fra36 -anchor n -expand 1 \
+        -fill both -side left 
+    grid columnconf $base.tab36.canvas.notebook.cs.page1.cs.fra36.che38 1 -weight 1
+    grid rowconf $base.tab36.canvas.notebook.cs.page1.cs.fra36.che38 1 -weight 1
+    grid rowconf $base.tab36.canvas.notebook.cs.page1.cs.fra36.che38 0 -minsize 8
+    pack $base.tab36.canvas.notebook.cs.page1.cs.fra34 \
+        -in $base.tab36.canvas.notebook.cs.page1.cs -anchor center -expand 0 \
+        -fill x -side top 
     pack $base.tab36.canvas.notebook.cs.page1.cs.fra34.rad35 \
         -in $base.tab36.canvas.notebook.cs.page1.cs.fra34 -anchor center \
         -expand 0 -fill x -side top 
     grid columnconf $base.tab36.canvas.notebook.cs.page1.cs.fra34.rad35 1 -weight 1
     grid rowconf $base.tab36.canvas.notebook.cs.page1.cs.fra34.rad35 1 -weight 1
     grid rowconf $base.tab36.canvas.notebook.cs.page1.cs.fra34.rad35 0 -minsize 8
+    $base.tab36 select 0
     frame $base.fra37 \
         -background #bcbcbc -borderwidth 2 -height 75 \
         -highlightbackground #bcbcbc -highlightcolor #000000 -width 125 

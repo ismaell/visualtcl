@@ -22,28 +22,24 @@
 #
 
 proc vTcl:entry_or_text {w} {
-    if {$w != "" &&
-        [string match .vTcl* $w] &&
-        ([vTcl:get_class $w] == "Text" ||
-         [vTcl:get_class $w] == "Entry")} then {
-		return 1
-    } else {
-		return 0
-	}
+    if {[lempty $w] || ![string match .vTcl* $w]} { return 0 }
+    set c [vTcl:get_class $w]
+    if {[vTcl:streq $c "Text"] || [vTcl:streq $c "Entry"]} { return 1 }
+    return 0
 }
 
 proc vTcl:copy {{w ""}} {
-    # cut/copy/paste handled by text widget only
-    if {[vTcl:entry_or_text $w]} then return
+    # Cut/copy/paste handled by text widget only
+    if {[vTcl:entry_or_text $w]} { return }
 
     global vTcl
     set vTcl(buffer) [vTcl:create_compound $vTcl(w,widget)]
-    set vTcl(buffer,type) [vTcl:lower_first $vTcl(w,class)]
+    set vTcl(buffer,class) $vTcl(w,class)
 }
 
 proc vTcl:cut {{w ""}} {
-    # cut/copy/paste handled by text widget only
-    if {[vTcl:entry_or_text $w]} then return
+    # Cut/copy/paste handled by text widget only
+    if {[vTcl:entry_or_text $w]} { return }
 
     global vTcl
     if { $vTcl(w,widget) == "." } { return }
@@ -53,14 +49,25 @@ proc vTcl:cut {{w ""}} {
 }
 
 proc vTcl:delete {{w ""}} {
-    # cut/copy/paste handled by text widget only
-    if {[vTcl:entry_or_text $w]} then return
+    # Cut/copy/paste handled by text widget only
+    if {[vTcl:entry_or_text $w]} { return }
 
     global vTcl classes
-    if { $vTcl(w,widget) == "." } { return }
 
     set w $vTcl(w,widget)
+
     if {[lempty $w]} { return }
+    if {[vTcl:streq $w "."]} { return }
+
+    set class [winfo class $w]
+
+    if {[vTcl:streq $class "Toplevel"] && ![lempty [vTcl:get_children $w]]} {
+        set result [::vTcl::MessageBox -type yesno \
+            -title "Visual Tcl" \
+            -message "Are you sure you want to delete top-level window $w ?"]
+
+        if {$result == "no"} { return 0 }
+    }
 
     vTcl:destroy_handles
 
@@ -68,7 +75,6 @@ proc vTcl:delete {{w ""}} {
     # list widget tree without including $w (it's why the "0" parameter)
     set children [vTcl:widget_tree $w 0]
     set parent [winfo parent $vTcl(w,widget)]
-    set class [winfo class $w]
 
     set buffer [vTcl:create_compound $vTcl(w,widget)]
     set do ""
@@ -87,19 +93,18 @@ proc vTcl:delete {{w ""}} {
     set undo "vTcl:insert_compound $vTcl(w,widget) \{$buffer\} $vTcl(w,def_mgr)"
     vTcl:push_action $do $undo
 
-    catch {namespace delete ::widgets::$vTcl(w,widget)} error
+    ## Destroy the widget namespace, as well as the namespaces of
+    ## all it's subwidgets
+    set namespaces [vTcl:namespace_tree ::widgets]
+    foreach namespace $namespaces {
+        if {[string match ::widgets::$vTcl(w,widget)* $namespace]} {
+            catch {namespace delete $namespace} error
+        }
+    }
 
     ## If it's a toplevel window, remove it from the tops list.
     if {$class == "Toplevel"} {
-        lremove vTcl(tops) $w
-
         if {[info procs vTclWindow$w] != ""} {
-            rename vTclWindow$w {}
-        }
-        if {[info procs vTclWindow(pre)$w] != ""} {
-            rename vTclWindow$w {}
-        }
-        if {[info procs vTclWindow(post)$w] != ""} {
             rename vTclWindow$w {}
         }
     }
@@ -119,15 +124,13 @@ proc vTcl:delete {{w ""}} {
 
     if {[lempty $vTcl(widgets,$top)] || ![winfo exists $n]} { set n $parent }
 
-    # @@change by Christian Gavin 3/5/2000
     # automatically refresh widget tree after delete operation
 
     after idle {vTcl:init_wtree}
 
-    # @@end_change
-
     if {[vTcl:streq $n "."]} {
         vTcl:prop:clear
+        ::widgets_bindings::init_ui
         return
     }
 
@@ -135,8 +138,8 @@ proc vTcl:delete {{w ""}} {
 }
 
 proc vTcl:paste {{fromMouse ""} {w ""}} {
-    # cut/copy/paste handled by text widget only
-    if {[vTcl:entry_or_text $w]} then return
+    # Cut/copy/paste handled by text widget only
+    if {[vTcl:entry_or_text $w]} { return }
 
     global vTcl
 
@@ -147,7 +150,7 @@ proc vTcl:paste {{fromMouse ""} {w ""}} {
     	set opts "-x $vTcl(mouse,x) -y $vTcl(mouse,y)"
     }
 
-    set name [vTcl:new_widget_name $vTcl(buffer,type) $vTcl(w,insert)]
+    set name [vTcl:new_widget_name $vTcl(buffer,class) $vTcl(w,insert)]
     set do "
 	vTcl:insert_compound $name [list $vTcl(buffer)] $vTcl(w,def_mgr) \
 	    [list $opts]
@@ -387,10 +390,11 @@ proc ::vTcl::findReplace::find {{replace 0}} {
     set text [$base.fra22.findEnt get]
     if {[llength $text] == 0} { return }
 
-    set i [eval $txtbox search $switches $text $index $stop]
+    set i [eval $txtbox search $switches [list $text] $index $stop]
     if {[llength $i] == 0} {
 	if {!$replace} {
-	    set x [tk_messageBox -title "No match" -parent $base -type yesno \
+	    set x [::vTcl::MessageBox -title "No match" -parent $base \
+		-type yesno \
 		-message "   Cannot find \"$text\"\nSearch again from the $start?"]
 	    if {[string compare $x "yes"] == 0} {
 		set index 0.0
@@ -407,12 +411,10 @@ proc ::vTcl::findReplace::find {{replace 0}} {
     set index $selLast
     if {$up} { set index $selFirst }
 
-    if {!$replace} {
 	$txtbox tag remove sel 0.0 end
 	$txtbox tag add sel $i "$i + $count chars"
 	$txtbox see $i
 	focus $txtbox
-    }
 
     return $i
 }
@@ -431,14 +433,13 @@ proc ::vTcl::findReplace::replace {} {
     while {[::vTcl::findReplace::find 1] > -1} {
 	set ln [lindex [split $selFirst .] 0]
 	$txtbox see $selFirst
-	set x [tk_dialog .__replace__ "Match found" \
-	    "Match found on line $ln\nReplace this instance?" {} 0 Yes No Cancel]
+	set x [::vTcl::MessageBox -title "Match found" -parent $base \
+		-type yesnocancel \
+	       -message "Match found on line $ln\nReplace this instance?" \
+               -icon question]
 
-	switch $x {
-	    "-1" -
-	    "1"  { continue }
-	    "2"  { break }
-	}
+	if {$x != "yes"} { continue }
+
 	$txtbox delete $selFirst $selLast
 	$txtbox insert $selFirst $text
     }
@@ -451,7 +452,8 @@ proc ::vTcl::findReplace::replace {} {
     }
 
     set text [$base.fra22.findEnt get]
-    set x [tk_messageBox -title "No match found" -parent $base -type yesno \
+    set x [::vTcl::MessageBox -title "No match found" -parent $base \
+	-type yesno \
 	-message "   Cannot find \"$text\"\nSearch again from the $start?"]
 
     if {[vTcl:streq $x "yes"]} { ::vTcl::findReplace::replace }

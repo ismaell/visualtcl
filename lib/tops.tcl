@@ -33,31 +33,10 @@ proc vTcl:wm_take_focus {target} {
 proc vTcl:destroy_top {target} {
     global vTcl
 
-    set result [tk_messageBox -type yesno \
-        -title "Visual Tcl" \
-        -message "Are you sure you want to delete top-level window $target ?"]
-
-    if {$result == "no"} {
-        return 0
-    }
-
-    vTcl:select_widget $target
+    vTcl:active_widget $target
     vTcl:delete
 
-#    if [winfo exists $target] {
-#        if {[vTcl:get_class $target] == "Toplevel"} {
-#            if {$vTcl(w,toplevel) == $target} {
-#                 vTcl:select_widget .
-#             }
-#            destroy $target
-#        }
-#    }
-#    set x [lsearch $vTcl(tops) $target]
-#    if {$x >= 0} {
-#        set vTcl(tops) [lreplace $vTcl(tops) $x $x]
-#    }
-#
-    return 1
+    return [expr ![winfo exists $target]]
 }
 
 proc vTcl:show_top {target} {
@@ -66,12 +45,12 @@ proc vTcl:show_top {target} {
     if [winfo exists $target] {
         if {[vTcl:get_class $target] == "Toplevel"} {
             wm deiconify $target
-            raise $target
+            vTcl:raise $target
         }
     } else {
         Window show $target
         wm deiconify $target
-        raise $target
+        vTcl:raise $target
         vTcl:widget:register_all_widgets $target
         vTcl:setup_bind_tree $target
         vTcl:update_top_list
@@ -104,15 +83,22 @@ proc vTcl:update_top_list {} {
             set vTcl(tops,$index) $i
             incr index
         }
-        foreach i $vTcl(tops) {
-            if {![winfo exists $i]} {
-                # this is to convert 1.22 projects to 1.51
-                # 1.51 hidden toplevels exists but are hidden
-                # 1.2x hidden toplevels don't exist at all except
-                # their proc
-                vTcl:show_top $i
-                vTcl:hide_top $i
-            }
+    }
+}
+
+# convert hidden toplevels from a 1.22 project to a 1.51 project
+proc vTcl:convert_tops {} {
+
+    global vTcl
+
+    foreach i $vTcl(tops) {
+        if {![winfo exists $i]} {
+            # this is to convert 1.22 projects to 1.51
+            # 1.51 hidden toplevels exist but are hidden
+            # 1.2x hidden toplevels don't exist at all except
+            # their proc
+            vTcl:show_top $i
+            vTcl:hide_top $i
         }
     }
 }
@@ -158,8 +144,8 @@ proc vTclWindow.vTcl.toplist {args} {
         -borderwidth 1 -height 30 -relief sunken -width 30 
     pack .vTcl.toplist.frame7 \
         -in .vTcl.toplist -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 \
-        -padx 0 -pady 0 -side top 
-    button .vTcl.toplist.frame7.button8 \
+        -padx 0 -pady 0 -side top
+    vTcl:toolbar_button .vTcl.toplist.frame7.button8 \
         -command {
             set vTcl(x) [.vTcl.toplist.f2.list curselection]
             if {$vTcl(x) != ""} {
@@ -172,7 +158,7 @@ proc vTclWindow.vTcl.toplist {args} {
         -in .vTcl.toplist.frame7 -anchor center -expand 0 -fill none -ipadx 0 \
         -ipady 0 -padx 0 -pady 0 -side left 
     vTcl:set_balloon .vTcl.toplist.frame7.button8 "Show toplevel window"
-    button .vTcl.toplist.frame7.button9 \
+    vTcl:toolbar_button .vTcl.toplist.frame7.button9 \
         -command {
             set vTcl(x) [.vTcl.toplist.f2.list curselection]
             if {$vTcl(x) != ""} {
@@ -183,26 +169,19 @@ proc vTclWindow.vTcl.toplist {args} {
         -pady 3 -image [vTcl:image:get_image hide.gif]
     pack .vTcl.toplist.frame7.button9 \
         -in .vTcl.toplist.frame7 -anchor center -expand 0 -fill none -ipadx 0 \
-        -ipady 0 -padx 0 -pady 0 -side left 
+        -ipady 0 -padx 0 -pady 0 -side left
     vTcl:set_balloon .vTcl.toplist.frame7.button9 "Hide toplevel window"
-    button .vTcl.toplist.frame7.button10 \
-        -command {
-            set vTcl(x) [.vTcl.toplist.f2.list curselection]
-            if {$vTcl(x) != ""} {
-                if {[vTcl:destroy_top $vTcl(tops,$vTcl(x))]} {
-		    .vTcl.toplist.f2.list delete $vTcl(x)
-		}
-            }
-        } \
-         -padx 9 \
-        -pady 3 -image [vTcl:image:get_image remove.gif]
+    ::vTcl::CancelButton $base.frame7.button10 -command {
+	set vTcl(x) [.vTcl.toplist.f2.list curselection]
+	if {$vTcl(x) != ""} {
+	    vTcl:destroy_top $vTcl(tops,$vTcl(x))
+	}
+    }
     pack .vTcl.toplist.frame7.button10 \
         -in .vTcl.toplist.frame7 -anchor center -expand 0 -fill none -ipadx 0 \
-        -ipady 0 -padx 0 -pady 0 -side left 
+        -ipady 0 -padx 0 -pady 0 -side left
     vTcl:set_balloon .vTcl.toplist.frame7.button10 "Delete toplevel window"
-    button $base.frame7.button11 \
-    	-command "vTcl:toplist:show 0" \
-	-image [vTcl:image:get_image ok.gif]
+    ::vTcl::OkButton $base.frame7.button11 -command "vTcl:toplist:show 0"
     pack $base.frame7.button11 \
     	-expand 0 -side right
     vTcl:set_balloon $base.frame7.button11 "Close"
@@ -211,24 +190,40 @@ proc vTclWindow.vTcl.toplist {args} {
         -borderwidth 1 -height 30 -relief sunken -width 30 
     pack .vTcl.toplist.f2 \
         -in .vTcl.toplist -anchor center -expand 1 -fill both -ipadx 0 \
-        -ipady 0 -padx 0 -pady 0 -side top 
+        -ipady 0 -padx 0 -pady 0 -side top
     listbox .vTcl.toplist.f2.list \
         -yscrollcommand {.vTcl.toplist.f2.sb4 set} -exportselection 0 \
         -background white
     pack .vTcl.toplist.f2.list \
         -in .vTcl.toplist.f2 -anchor center -expand 1 -fill both -ipadx 0 \
-        -ipady 0 -padx 0 -pady 0 -side left 
+        -ipady 0 -padx 0 -pady 0 -side left
     scrollbar .vTcl.toplist.f2.sb4 \
         -command {.vTcl.toplist.f2.list yview}
     pack .vTcl.toplist.f2.sb4 \
         -in .vTcl.toplist.f2 -anchor center -expand 0 -fill y -ipadx 0 \
-        -ipady 0 -padx 0 -pady 0 -side right 
+        -ipady 0 -padx 0 -pady 0 -side right
 
     vTcl:setup_vTcl:bind .vTcl.toplist
     catch {wm geometry .vTcl.toplist $vTcl(geometry,.vTcl.toplist)}
     update idletasks
     wm deiconify .vTcl.toplist
+
+    # ok, let's add a special tag to override the <KeyPress-Delete> mechanism
+
+    # first, make sure the list gets the focus when it's clicked on
+    bind .vTcl.toplist.f2.list <ButtonPress-1> {
+        focus .vTcl.toplist.f2.list
+    }
+
+    # bind all controls in the window
+    foreach child [vTcl:list_widget_tree .vTcl.toplist] {
+        bindtags $child "_vTclTopDelete [bindtags $child]"
+    }
+
+    bind _vTclTopDelete <KeyPress-Delete> {
+        .vTcl.toplist.frame7.button10 invoke
+
+        # stop event processing here
+        break
+    }
 }
-
-
-

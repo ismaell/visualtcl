@@ -109,7 +109,7 @@ namespace eval ::menu_edit {
                     set ::${top}::$ctrl.state      [$ctrl cget -state]
                     set ::${top}::$ctrl.background [$ctrl cget -background]
 
-                    $ctrl configure -state disabled -background gray
+                    $ctrl configure -state disabled
                 }
 
             }
@@ -252,6 +252,12 @@ namespace eval ::menu_edit {
     proc {::menu_edit::fill_command} {top command} {
         global widget
 
+        ## if the command is in the form "vTcl:DoCmdOption target cmd",
+        ## then extracts the command, otherwise use the command as is
+        if {[regexp {vTcl:DoCmdOption [^ ]+ (.*)} $command matchAll realCmd]} {
+            lassign $command dummy1 dummy2 command
+        }
+
         $top.MenuText delete 0.0 end
         $top.MenuText insert end $command
 
@@ -305,7 +311,6 @@ namespace eval ::menu_edit {
                 "command" {
                     set mlabel   [$m entrycget $i -label]
                     set maccel   [$m entrycget $i -accel]
-                    set mcommand [$m entrycget $i -command]
 
                     if {$maccel != ""} {
                         $top.MenuListbox insert end \
@@ -412,7 +417,24 @@ namespace eval ::menu_edit {
         eval $m insert $new_i $mtype [join $optval]
 
         ::menu_edit::fill_menu_list $top [vTcl:at ::${top}::menu]
-        ::menu_edit::show_menu $top $index
+
+        # let's select the same menu at its new location
+        set size [$top.MenuListbox index end]
+
+        for {set ii 0} {$ii < $size} {incr ii} {
+
+            set mm ""
+            set mi ""
+
+            ::menu_edit::get_menu_index $top $ii mm mi
+            if {$mm == $m && $new_i == $mi} {
+                $top.MenuListbox selection clear 0 end
+                $top.MenuListbox selection set $ii
+                $top.MenuListbox activate $ii
+                ::menu_edit::show_menu $top $ii
+                break
+            }
+        }
     }
 
     proc {::menu_edit::new_item} {top type} {
@@ -446,6 +468,10 @@ namespace eval ::menu_edit {
                 $menu add $type -label "New cascade" -menu $nmenu
                 vTcl:init_wtree
                 vTcl:active_widget $nmenu
+                foreach def {-activebackground -activeforeground
+                             -background -foreground} {
+                    vTcl:prop:default_opt $nmenu $def vTcl(w,opt,$def)
+                }
             }
             "command" {
                 $menu add $type -label "New command"  \
@@ -470,18 +496,18 @@ namespace eval ::menu_edit {
     proc {::menu_edit::post_context_new_menu} {top X Y} {
         global widget
 
-        tk_popup $widget(NewMenuContextPopup) $X $Y
+        tk_popup $widget($top,NewMenuContextPopup) $X $Y
     }
 
 
     proc {::menu_edit::post_new_menu} {top} {
         global widget
 
-        set x [winfo rootx  $widget(NewMenu)]
-        set y [winfo rooty  $widget(NewMenu)]
-        set h [winfo height $widget(NewMenu)]
+        set x [winfo rootx  $widget($top,NewMenu)]
+        set y [winfo rooty  $widget($top,NewMenu)]
+        set h [winfo height $widget($top,NewMenu)]
 
-        tk_popup $widget(NewMenuToolbarPopup)  $x [expr $y + $h]
+        tk_popup $widget($top,NewMenuToolbarPopup)  $x [expr $y + $h]
     }
 
     proc {::menu_edit::indicate_label_or_image} {top} {
@@ -677,6 +703,13 @@ namespace eval ::menu_edit {
 
         set oldvalue [$menu entrycget $index $option]
 
+        if {$option == "-command"} {
+            ## if the command is non null, replace it by DoCmdOption
+            if {$value != "" && [string match *%* $value]} {
+                set value [list vTcl:DoCmdOption $menu $value]
+            }
+        }
+
         if {$value != $oldvalue} {
             $menu entryconfigure $index $option $value
 
@@ -722,7 +755,7 @@ namespace eval ::menu_edit {
 
     proc {::menu_edit::ask_delete_menu} {top} {
 
-        if {[tk_messageBox -message {Delete menu ?} \
+        if {[::vTcl::MessageBox -message {Delete menu ?} \
                            -title {Menu editor} -type yesno] == "yes"} {
             ::menu_edit::delete_item $top
         }
@@ -853,107 +886,61 @@ proc vTclWindow.vTclMenuEdit {base menu} {
     ###################
     # DEFINING ALIASES
     ###################
-    set widget(rev,$base.cpd24.01.cpd25.01) {MenuListbox}
-    set {widget(MenuListbox)} "$base.cpd24.01.cpd25.01"
     set widget($base,MenuListbox) "$base.cpd24.01.cpd25.01"
     interp alias {} $base.MenuListbox {} \
         vTcl:WidgetProc $base.cpd24.01.cpd25.01
-    set widget(rev,$base.cpd24.01.cpd25.01.m24) {NewMenuToolbarPopup}
-    set {widget(NewMenuToolbarPopup)} "$base.cpd24.01.cpd25.01.m24"
-    set widget(NewMenuToolbarPopup,NewMenuToolbarPopup) \
+    set widget($base,NewMenuToolbarPopup) \
         "$base.cpd24.01.cpd25.01.m24"
-    set widget(rev,$base.cpd24.01.cpd25.01.m25) {NewMenuContextPopup}
-    set {widget(NewMenuContextPopup)} "$base.cpd24.01.cpd25.01.m25"
-    set widget(NewMenuContextPopup,NewMenuContextPopup) \
+    set widget($base,NewMenuContextPopup) \
         "$base.cpd24.01.cpd25.01.m25"
-    set widget(rev,$base.cpd24.01.fra20.but21) {NewMenu}
-    set {widget(NewMenu)} "$base.cpd24.01.fra20.but21"
-    set widget($base,NewMenu) "$base.cpd24.01.fra20.but21"
+    set widget($base,NewMenu) "$base.fra21.but21"
     interp alias {} $base.NewMenu {} \
-        vTcl:WidgetProc $base.cpd24.01.fra20.but21
-    set widget(rev,$base.cpd24.01.fra20.but22) {DeleteMenu}
-    set {widget(DeleteMenu)} "$base.cpd24.01.fra20.but22"
-    set widget($base,DeleteMenu) "$base.cpd24.01.fra20.but22"
+        vTcl:WidgetProc $base.fra21.but21
+    set widget($base,DeleteMenu) "$base.fra21.but22"
     interp alias {} $base.DeleteMenu {} \
-        vTcl:WidgetProc $base.cpd24.01.fra20.but22
-    set widget(rev,$base.cpd24.01.fra20.but23) {MoveMenuUp}
-    set {widget(MoveMenuUp)} "$base.cpd24.01.fra20.but23"
-    set widget($base,MoveMenuUp) "$base.cpd24.01.fra20.but23"
+        vTcl:WidgetProc $base.fra21.but22
+    set widget($base,MoveMenuUp) "$base.fra21.but23"
     interp alias {} $base.MoveMenuUp {} \
-        vTcl:WidgetProc $base.cpd24.01.fra20.but23
-    set widget(rev,$base.cpd24.01.fra20.but24) {MoveMenuDown}
-    set {widget(MoveMenuDown)} "$base.cpd24.01.fra20.but24"
-    set widget($base,MoveMenuDown) "$base.cpd24.01.fra20.but24"
+        vTcl:WidgetProc $base.fra21.but23
+    set widget($base,MoveMenuDown) "$base.fra21.but24"
     interp alias {} $base.MoveMenuDown {} \
-        vTcl:WidgetProc $base.cpd24.01.fra20.but24
-    set widget(rev,$base.cpd24.02.but27) {BrowseImage}
-    set {widget(BrowseImage)} "$base.cpd24.02.but27"
+        vTcl:WidgetProc $base.fra21.but24
     set widget($base,BrowseImage) "$base.cpd24.02.but27"
     interp alias {} $base.BrowseImage {} vTcl:WidgetProc $base.cpd24.02.but27
-    set widget(rev,$base.cpd24.02.ent23) {EntryLabel}
-    set {widget(EntryLabel)} "$base.cpd24.02.ent23"
     set widget($base,EntryLabel) "$base.cpd24.02.ent23"
     interp alias {} $base.EntryLabel {} vTcl:WidgetProc $base.cpd24.02.ent23
-    set widget(rev,$base.cpd24.02.ent24) {EntryImage}
-    set {widget(EntryImage)} "$base.cpd24.02.ent24"
     set widget($base,EntryImage) "$base.cpd24.02.ent24"
     interp alias {} $base.EntryImage {} vTcl:WidgetProc $base.cpd24.02.ent24
-    set widget(rev,$base.cpd24.02.ent25) {EntryVariable}
-    set {widget(EntryVariable)} "$base.cpd24.02.ent25"
     set widget($base,EntryVariable) "$base.cpd24.02.ent25"
     interp alias {} $base.EntryVariable {} \
         vTcl:WidgetProc $base.cpd24.02.ent25
-    set widget(rev,$base.cpd24.02.ent27) {EntryValueOn}
-    set {widget(EntryValueOn)} "$base.cpd24.02.ent27"
     set widget($base,EntryValueOn) "$base.cpd24.02.ent27"
     interp alias {} $base.EntryValueOn {} vTcl:WidgetProc $base.cpd24.02.ent27
-    set widget(rev,$base.cpd24.02.ent29) {EntryAccelerator}
-    set {widget(EntryAccelerator)} "$base.cpd24.02.ent29"
     set widget($base,EntryAccelerator) "$base.cpd24.02.ent29"
     interp alias {} $base.EntryAccelerator {} \
         vTcl:WidgetProc $base.cpd24.02.ent29
-    set widget(rev,$base.cpd24.02.ent30) {EntryValueOff}
-    set {widget(EntryValueOff)} "$base.cpd24.02.ent30"
     set widget($base,EntryValueOff) "$base.cpd24.02.ent30"
     interp alias {} $base.EntryValueOff {} \
         vTcl:WidgetProc $base.cpd24.02.ent30
-    set widget(rev,$base.cpd24.02.fra22.cpd32.03) {MenuText}
-    set {widget(MenuText)} "$base.cpd24.02.fra22.cpd32.03"
     set widget($base,MenuText) "$base.cpd24.02.fra22.cpd32.03"
     interp alias {} $base.MenuText {} \
         vTcl:WidgetProc $base.cpd24.02.fra22.cpd32.03
-    set widget(rev,$base.cpd24.02.fra22.lab31) {LabelCommand}
-    set {widget(LabelCommand)} "$base.cpd24.02.fra22.lab31"
     set widget($base,LabelCommand) "$base.cpd24.02.fra22.lab31"
     interp alias {} $base.LabelCommand {} \
         vTcl:WidgetProc $base.cpd24.02.fra22.lab31
-    set widget(rev,$base.cpd24.02.lab22) {LabelVariable}
-    set {widget(LabelVariable)} "$base.cpd24.02.lab22"
     set widget($base,LabelVariable) "$base.cpd24.02.lab22"
     interp alias {} $base.LabelVariable {} vTcl:WidgetProc $base.cpd24.02.lab22
-    set widget(rev,$base.cpd24.02.lab26) {LabelValueOn}
-    set {widget(LabelValueOn)} "$base.cpd24.02.lab26"
     set widget($base,LabelValueOn) "$base.cpd24.02.lab26"
     interp alias {} $base.LabelValueOn {} vTcl:WidgetProc $base.cpd24.02.lab26
-    set widget(rev,$base.cpd24.02.lab28) {LabelAccelerator}
-    set {widget(LabelAccelerator)} "$base.cpd24.02.lab28"
     set widget($base,LabelAccelerator) "$base.cpd24.02.lab28"
     interp alias {} $base.LabelAccelerator {} \
         vTcl:WidgetProc $base.cpd24.02.lab28
-    set widget(rev,$base.cpd24.02.lab29) {LabelValueOff}
-    set {widget(LabelValueOff)} "$base.cpd24.02.lab29"
     set widget($base,LabelValueOff) "$base.cpd24.02.lab29"
     interp alias {} $base.LabelValueOff {} vTcl:WidgetProc $base.cpd24.02.lab29
-    set widget(rev,$base.cpd24.02.rad20) {RadioLabel}
-    set {widget(RadioLabel)} "$base.cpd24.02.rad20"
     set widget($base,RadioLabel) "$base.cpd24.02.rad20"
     interp alias {} $base.RadioLabel {} vTcl:WidgetProc $base.cpd24.02.rad20
-    set widget(rev,$base.cpd24.02.rad21) {RadioImage}
-    set {widget(RadioImage)} "$base.cpd24.02.rad21"
     set widget($base,RadioImage) "$base.cpd24.02.rad21"
     interp alias {} $base.RadioImage {} vTcl:WidgetProc $base.cpd24.02.rad21
-    set widget(rev,$base.fra21.but22) {MenuOK}
-    set {widget(MenuOK)} "$base.fra21.but22"
     set widget($base,MenuOK) "$base.fra21.but22"
     interp alias {} $base.MenuOK {} vTcl:WidgetProc $base.fra21.but22
 
@@ -961,17 +948,17 @@ proc vTclWindow.vTclMenuEdit {base menu} {
     # CREATING WIDGETS
     ###################
     toplevel $base -class Toplevel -menu $base.m22
+    wm overrideredirect $base 0
     wm focusmodel $base passive
-    wm geometry $base 550x450+323+138; update
+    wm geometry $base 550x450+323+138
+    wm withdraw $base
     wm maxsize $base 1284 1010
     wm minsize $base 100 1
-    wm overrideredirect $base 0
     wm resizable $base 1 1
-    wm deiconify $base
     wm title $base "Menu editor"
     wm transient $base .vTcl
 
-    menu $base.m22 -tearoff 0
+    menu $base.m22 -tearoff 0 -relief flat
     $base.m22 add cascade \
         -menu "$base.m22.men23" -label Insert
     $base.m22 add cascade \
@@ -1014,30 +1001,23 @@ proc vTclWindow.vTclMenuEdit {base menu} {
 
     frame $base.fra21 \
         -borderwidth 2 -height 75 -width 125
-    button $base.fra21.but22 \
-        -image [vTcl:image:get_image "ok.gif"] \
-        -text button -command "destroy $base"
+    ::vTcl::OkButton $base.fra21.but32 \
+	-command "::menu_edit::update_current $base; destroy $base"
     frame $base.cpd24 \
         -background #000000 -height 100 -width 200
     frame $base.cpd24.01 \
         -background #9900991B99FE
-    frame $base.cpd24.01.fra20 \
-        -borderwidth 2 -height 75 -width 125
-    label $base.cpd24.01.fra20.but21 -width 20 -height 20 \
-        -image [vTcl:image:get_image "add.gif"] -relief raised
-    bind $base.cpd24.01.fra20.but21 <ButtonPress-1> {
+    vTcl:toolbar_label $base.fra21.but21 \
+        -image [vTcl:image:get_image "add.gif"]
+    bind $base.fra21.but21 <ButtonPress-1> {
         ::menu_edit::post_new_menu [winfo toplevel %W]
     }
-    button $base.cpd24.01.fra20.but22 \
-        -command "::menu_edit::ask_delete_menu $base" \
-        -image [vTcl:image:get_image "remove.gif"] \
-        -text button
-    button $base.cpd24.01.fra20.but23 \
-        -command "::menu_edit::move_item $base up" -height 20 -image up \
-        -text button -width 20
-    button $base.cpd24.01.fra20.but24 \
-        -command "::menu_edit::move_item $base down" -height 20 -image down \
-        -text button -width 20
+    ::vTcl::CancelButton $base.fra21.but22 \
+	-command "::menu_edit::ask_delete_menu $base"
+    vTcl:toolbar_button $base.fra21.but23 \
+        -command "::menu_edit::move_item $base up" -image up
+    vTcl:toolbar_button $base.fra21.but24 \
+        -command "::menu_edit::move_item $base down" -image down
     frame $base.cpd24.01.cpd25 \
         -borderwidth 1 -height 30 -relief raised -width 30
     listbox $base.cpd24.01.cpd25.01 \
@@ -1049,15 +1029,9 @@ proc vTclWindow.vTclMenuEdit {base menu} {
     bind $base.cpd24.01.cpd25.01 <Button-1> {
         focus %W
     }
-    bind $base.cpd24.01.cpd25.01 <ButtonRelease-1> {
-        ::menu_edit::update_current [winfo toplevel %W]
-
-        set indices [%W curselection]
-        set index [lindex $indices 0]
-
-        if {$index != ""} {
-            ::menu_edit::show_menu [winfo toplevel %W] $index
-        }
+    bind $base.cpd24.01.cpd25.01 <<ListboxSelect>> {
+        ::menu_edit::click_listbox [winfo toplevel %W]
+        after idle {focus %W}
     }
     bind $base.cpd24.01.cpd25.01 <ButtonRelease-3> {
         ::menu_edit::update_current [winfo toplevel %W]
@@ -1072,18 +1046,6 @@ proc vTclWindow.vTclMenuEdit {base menu} {
         }
 
         ::menu_edit::post_context_new_menu [winfo toplevel %W] %X %Y
-    }
-    bind $base.cpd24.01.cpd25.01 <KeyRelease-Down> {
-        ::menu_edit::click_listbox [winfo toplevel %W]
-    }
-    bind $base.cpd24.01.cpd25.01 <KeyRelease-Up> {
-        ::menu_edit::click_listbox [winfo toplevel %W]
-    }
-    bind $base.cpd24.01.cpd25.01 <KeyRelease-Prior> {
-        ::menu_edit::click_listbox [winfo toplevel %W]
-    }
-    bind $base.cpd24.01.cpd25.01 <KeyRelease-Next> {
-        ::menu_edit::click_listbox [winfo toplevel %W]
     }
     menu $base.cpd24.01.cpd25.01.m24 \
         -activeborderwidth 1 -tearoff 0
@@ -1231,26 +1193,24 @@ proc vTclWindow.vTclMenuEdit {base menu} {
     ###################
     pack $base.fra21 \
         -in $base -anchor center -expand 0 -fill x -side top
-    pack $base.fra21.but22 \
+    pack $base.fra21.but32 \
         -in $base.fra21 -anchor center -expand 0 -fill none -side right
     pack $base.cpd24 \
         -in $base -anchor center -expand 1 -fill both -side top
     place $base.cpd24.01 \
         -x 0 -y 0 -width -1 -relwidth 0.3612 -relheight 1 -anchor nw \
         -bordermode ignore
-    pack $base.cpd24.01.fra20 \
-        -in $base.cpd24.01 -anchor center -expand 0 -fill x -side top
-    pack $base.cpd24.01.fra20.but21 \
-        -in $base.cpd24.01.fra20 -anchor center -expand 0 -fill none \
+    pack $base.fra21.but21 \
+        -in $base.fra21 -anchor center -expand 0 -fill none \
         -side left
-    pack $base.cpd24.01.fra20.but22 \
-        -in $base.cpd24.01.fra20 -anchor center -expand 0 -fill none \
+    pack $base.fra21.but22 \
+        -in $base.fra21 -anchor center -expand 0 -fill none \
         -side left
-    pack $base.cpd24.01.fra20.but23 \
-        -in $base.cpd24.01.fra20 -anchor center -expand 0 -fill none \
+    pack $base.fra21.but23 \
+        -in $base.fra21 -anchor center -expand 0 -fill none \
         -side left
-    pack $base.cpd24.01.fra20.but24 \
-        -in $base.cpd24.01.fra20 -anchor center -expand 0 -fill none \
+    pack $base.fra21.but24 \
+        -in $base.fra21 -anchor center -expand 0 -fill none \
         -side left
     pack $base.cpd24.01.cpd25 \
         -in $base.cpd24.01 -anchor center -expand 1 -fill both -side top
@@ -1337,13 +1297,13 @@ proc vTclWindow.vTclMenuEdit {base menu} {
         -x 0 -relx 0.3612 -y 0 -rely 0.9 -width 10 -height 10 -anchor s \
         -bordermode ignore
 
-    vTcl:set_balloon $widget(NewMenu) \
+    vTcl:set_balloon $widget($base,NewMenu) \
         "Create a new menu item or a new submenu"
-    vTcl:set_balloon $widget(DeleteMenu) \
+    vTcl:set_balloon $widget($base,DeleteMenu) \
         "Delete an existing menu item or submenu"
-    vTcl:set_balloon $widget(MoveMenuUp) \
+    vTcl:set_balloon $widget($base,MoveMenuUp) \
         "Move menu up"
-    vTcl:set_balloon $widget(MoveMenuDown) \
+    vTcl:set_balloon $widget($base,MoveMenuDown) \
         "Move menu down"
 
     array set ::${base}::uistate {
@@ -1408,4 +1368,6 @@ proc vTclWindow.vTclMenuEdit {base menu} {
 
         break
     }
+
+    wm deiconify $base
 }

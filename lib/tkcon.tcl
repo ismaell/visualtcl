@@ -518,7 +518,7 @@ proc ::tkcon::InitUI {title} {
 	set PRIV(menubar) [frame $w.mbar -relief raised -bd 1]
     }
     ## Scrollbar
-    set PRIV(scrolly) [scrollbar $w.sy -takefocus 0 -bd 1 \
+    set PRIV(scrolly) [scrollbar $w.sy -takefocus 0 \
 	    -command [list $con yview]]
 
     InitMenus $PRIV(menubar) $title
@@ -1488,7 +1488,8 @@ proc ::tkcon::XauthSecure {} {
 	exec xhost -$host
     }
     exec xhost -
-    tk_messageBox -title "Xhost secured" -message "Xhost secured" -icon info
+    ::vTcl::MessageBox -title "Xhost secured" -message "Xhost secured" \
+	-icon info
 }
 
 ## ::tkcon::FindBox - creates minimal dialog interface to ::tkcon::Find
@@ -1781,7 +1782,7 @@ proc ::tkcon::NewSocket {} {
     if {[catch {
 	set sock [socket $host $port]
     } err]} {
-	tk_messageBox -title "Socket Connection Error" \
+	::vTcl::MessageBox -title "Socket Connection Error" \
 		-message "Unable to connect to \"$host:$port\":\n$err" \
 		-icon error -type ok
     } else {
@@ -2062,7 +2063,7 @@ proc ::tkcon::MainInit {} {
 	    } else {
 		set myd "myDisplay:0"
 	    }
-	    tk_messageBox -title "Display Connection Error" \
+	    ::vTcl::MessageBox -title "Display Connection Error" \
 		    -message "Unable to connect to \"$disp\":\n$err\
 		    \nMake sure you have xauth-based permissions\
 		    (xauth add $myd . `mcookie`), and xhost is disabled\
@@ -2074,7 +2075,7 @@ proc ::tkcon::MainInit {} {
 	set DISP($disp) $dt
 	wm withdraw $dt
 	bind $dt <Destroy> [subst {catch {unset ::tkcon::DISP($disp)}}]
-	tk_messageBox -title "$disp Connection" \
+	::vTcl::MessageBox -title "$disp Connection" \
 		-message "Connected to \"$disp\", found:\n[join $interps \n]" \
 		-type ok
     }
@@ -3812,7 +3813,7 @@ proc tcl_unknown args {
 		    scale scrollbar selection send spinbox \
 		    text tk tkwait toplevel winfo wm
 	    if {[lsearch -exact $tkcmds $name] >= 0 && \
-		    [tkcon master tk_messageBox -icon question -parent . \
+		    [tkcon master ::vTcl::MessageBox -icon question -parent . \
 		    -title "Load Tk?" -type retrycancel -default retry \
 		    -message "This appears to be a Tk command, but Tk\
 		    has not yet been loaded.  Shall I retry the command\

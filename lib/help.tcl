@@ -39,18 +39,14 @@ proc vTclWindow.vTcl.help {args} {
     frame .vTcl.help.fra18 \
         -borderwidth 1 -height 30 -relief raised -width 30 
     text .vTcl.help.fra18.tex22 \
-        -height 15 -width 80 \
+        -height 15 -width 80 -background white \
         -xscrollcommand {.vTcl.help.fra18.scr23 set} \
         -yscrollcommand {.vTcl.help.fra18.scr24 set} -wrap none
     scrollbar .vTcl.help.fra18.scr23 \
         -command {.vTcl.help.fra18.tex22 xview} -orient horiz
     scrollbar .vTcl.help.fra18.scr24 \
         -command {.vTcl.help.fra18.tex22 yview} -orient vert
-    button .vTcl.help.but21 \
-        -command {
-            wm withdraw .vTcl.help
-        } -highlightthickness 0 -padx 9 -pady 3 \
-        -image [vTcl:image:get_image ok.gif]
+    ::vTcl::OkButton $base.but21 -command "Window hide $base"
     pack .vTcl.help.but21 \
         -anchor e -expand 0 -fill none -padx 2 -pady 2 -side top 
     pack .vTcl.help.fra18 \
@@ -115,19 +111,6 @@ proc vTcl:Help {helpName} {
 ###
 proc vTcl:BindHelp {w help} {
     bind $w <Key-F1> "vTcl:Help $help"
-}
-
-proc ::vTcl::PropertyHelp {} {
-    global vTcl
-
-    if {![info exists vTcl(propmgr,opt)]} {
-    	vTcl:Help PropManager
-	return
-    }
-    ## Remove the - from the option.
-    set opt [string range $vTcl(propmgr,opt) 1 end]
-
-    vTcl:Help [file join Properties $opt]
 }
 
 proc vTclWindow.vTcl.tip {base {container 0}} {
@@ -243,7 +226,7 @@ proc vTclWindow.vTcl.tip {base {container 0}} {
         -command "$base.cpd25.03 xview" -orient horizontal
     scrollbar $base.cpd25.02 \
         -command "$base.cpd25.03 yview"
-    text $base.cpd25.03 \
+    text $base.cpd25.03 -background white \
         -font -Adobe-Helvetica-Medium-R-Normal-*-*-120-*-*-*-*-*-* -height 1 \
         -xscrollcommand "$base.cpd25.01 set" \
         -yscrollcommand "$base.cpd25.02 set" 
@@ -328,8 +311,11 @@ namespace eval ::vTcl::news {
     }
 
     proc ::vTcl::news::get_news {} {
+	global vTcl
 	variable http
 	variable URL
+
+	after cancel $vTcl(tmp,newsAfter)
 
 	vTcl:status "Getting news..."
 
@@ -381,12 +367,7 @@ namespace eval ::vTcl::news {
 	    -xscrollcommand "$base.f.hs set" \
 	    -yscrollcommand "$base.f.vs set" \
 	    -cursor arrow
-	button $base.b \
-	    -anchor center \
-	    -image [vTcl:image:get_image ok.gif] \
-	    -command "
-		wm withdraw $base
-	    "
+	::vTcl::OkButton $base.b -anchor center -command "Window hide $base"
 
 	###################
 	# SETTING GEOMETRY

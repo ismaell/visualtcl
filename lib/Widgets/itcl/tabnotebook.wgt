@@ -1,3 +1,28 @@
+##############################################################################
+#
+# Visual TCL - A cross-platform application development environment
+#
+# Copyright (C) 2001 Christian Gavin
+#
+# Description file for [Incr Widgets]
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+##############################################################################
+#
+
 Class		Tabnotebook
 Lib		itcl
 
@@ -6,18 +31,28 @@ Icon		icon_tabnotebook.gif
 DumpChildren	no
 MegaWidget	yes
 InsertCmd	vTcl:widget:tabnotebook:inscmd
-TreeChildrenCmd	"vTcl:widget:tabnotebook:treeChildrenCmd
-		vTcl:widget:tabnotebook:treeChildrenChildsite"
+SelectSiteCmd   vTcl:widget:tabnotebook:selectSiteCmd
+DeleteSiteCmd   vTcl:widget:tabnotebook:deleteSiteCmd
+TagsCmd         vTcl:lib_itcl:tagscmd
+TreeChildrenCmd	{vTcl:widget:tabnotebook:treeChildrenCmd
+		 vTcl:widget:tabnotebook:treeChildrenChildsite}
 DumpCmd		vTcl:dump:tabnotebook
-
+CompoundCmd     vTcl:compound:tabnotebook
+ResizeCmd       vTcl:widget:tabnotebook:resizeCmd
 
 AdditionalClasses Notebook Tabset Page
 
+proc vTcl:widget:tabnotebook:resizeCmd {target w h} {
+    # need to find out why tabnotebook doesn't resize properly in vTcl
+    $target configure -width $w -height $h
+}
+
 proc vTcl:widget:tabnotebook:inscmd {target} {
-    $target add -label {Page 1}
-    $target add -label {Page 2}
-    $target add -label {Page 3}
-    $target select 0
+
+    return "$target add -label {Page 1} ;\
+            $target add -label {Page 2} ;\
+            $target add -label {Page 3} ;\
+            $target select 0"
 }
 
 # All right, I explain it: -4 is the number of levels
@@ -27,6 +62,7 @@ proc vTcl:widget:tabnotebook:inscmd {target} {
 # lines)
 
 proc vTcl:widget:tabnotebook:treeChildrenCmd {target {diff \#-4}} {
+
     set children ""
     set wantsdiff [expr {$diff != ""}]
 
@@ -35,6 +71,7 @@ proc vTcl:widget:tabnotebook:treeChildrenCmd {target {diff \#-4}} {
             lappend children $child$diff
         }
     }
+
     return $children
 }
 
@@ -43,21 +80,72 @@ proc vTcl:widget:tabnotebook:treeChildrenChildsite {target} {
     return [$target childsite]
 }
 
+proc vTcl:widget:tabnotebook:deleteSiteCmd {target site} {
+
+    set index [lsearch -exact [$target childsite] $site]
+
+    if {$index != -1} {
+        $target delete $index
+        $target select 0
+    }
+}
+
+proc vTcl:widget:tabnotebook:selectSiteCmd {target site} {
+
+    set index [lsearch -exact [$target childsite] $site]
+
+    if {$index != -1} {
+        $target select $index
+    }
+}
+
 proc vTcl:dump:tabnotebook {target basename} {
+
     global vTcl
 
     set result [vTcl:dump_widget_opt $target $basename]
     set entries [$target childsite]
-    set size [llength $entries]
+    set size    [llength $entries]
     for {set i 0} {$i < $size} {incr i} {
         set conf [$target pageconfigure $i]
         set pairs [vTcl:conf_to_pairs $conf ""]
         append result "$vTcl(tab)$basename add \\\n"
         append result "[vTcl:clean_pairs $pairs]\n"
     }
-    foreach page $entries {
-        append result [vTcl:lib_itcl:dump_subwidgets $page]
+    for {set i 0} {$i < $size} {incr i} {
+        set page [lindex $entries $i]
+        append result "$vTcl(tab)"
+        set sitevariable "site_[llength [split $page .]]_$i"
+        append result "set $sitevariable "
+        append result "\[lindex \[$basename childsite\] $i\]\n"
+        append result [vTcl:lib_itcl:dump_subwidgets $page \$$sitevariable]
     }
     append result "$vTcl(tab)$basename select 0\n"
+    return $result
+}
+
+## this function returns the necessary code to insert all
+## the childsites into the tabnotebook widget (basically
+## the returned code will be stored in a compound)
+##
+## the returned code makes the body of a procedure whose
+## parameter is 'target'; to insert the childsites into the
+## compound, this procedure should be called with target
+## pointing to the new widget
+
+proc vTcl:compound:tabnotebook {target} {
+    set result ""
+
+    set entries [$target childsite]
+    set size [llength $entries]
+    for {set i 0} {$i < $size} {incr i} {
+        set conf [$target pageconfigure $i]
+        set pairs [vTcl:conf_to_pairs $conf ""]
+        append result "set site \[\$target add $pairs\]; "
+        set compound [vTcl:create_compound [lindex $entries $i]]
+        append result "vTcl:insert_compound \$site [list $compound] pack \{\}; "
+    }
+
+    append result "\$target select 0; "
     return $result
 }

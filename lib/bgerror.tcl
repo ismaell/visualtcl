@@ -632,6 +632,7 @@ proc vTclWindow.vTcl.stack_trace {base {container 0}} {
     ###################
     if {!$container} {
         toplevel $base -class Toplevel
+        wm transient $base .vTcl
         wm focusmodel $base passive
         wm geometry $base 575x446+139+158
         wm minsize $base 1 1
@@ -643,9 +644,10 @@ proc vTclWindow.vTcl.stack_trace {base {container 0}} {
     frame $base.cpd18 \
         -background #000000 -height 100 -highlightcolor #000000 -width 200
     frame $base.cpd18.01
-    label $base.cpd18.01.lab19 \
-        -borderwidth 1 -relief raised \
-        -text Error
+    frame $base.cpd18.01.fratop
+    label $base.cpd18.01.fratop.lab19 \
+        -borderwidth 1 -relief flat -text Error
+    ::vTcl::OkButton $base.cpd18.01.fratop.close -command "destroy $base"
     frame $base.cpd18.01.cpd20 \
         -borderwidth 1 -height 30 -relief raised -width 30
     scrollbar $base.cpd18.01.cpd20.01 \
@@ -763,8 +765,12 @@ proc vTclWindow.vTcl.stack_trace {base {container 0}} {
     place $base.cpd18.01 \
         -x 0 -y 0 -relwidth 1 -height -1 -relheight 0.2939 -anchor nw \
         -bordermode ignore
-    pack $base.cpd18.01.lab19 \
-        -in $base.cpd18.01 -anchor center -expand 0 -fill x -side top
+    pack $base.cpd18.01.fratop \
+        -in $base.cpd18.01 -fill x -side top
+    pack $base.cpd18.01.fratop.lab19 \
+        -in $base.cpd18.01.fratop -anchor center -expand 0 -fill x -side left
+    pack $base.cpd18.01.fratop.close \
+        -in $base.cpd18.01.fratop -side right
     pack $base.cpd18.01.cpd20 \
         -in $base.cpd18.01 -anchor center -expand 1 -fill both -side top
     grid columnconf $base.cpd18.01.cpd20 0 -weight 1
@@ -831,6 +837,8 @@ proc vTclWindow.vTcl.stack_trace {base {container 0}} {
     place $base.cpd18.03 \
         -x 0 -relx 0.9 -y 0 -rely 0.2939 -width 10 -height 10 -anchor e \
         -bordermode ignore
+
+    vTcl:set_balloon $base.cpd18.01.fratop.close "Close"
 }
 
 proc vTclWindow.vTcl.bgerror {base {container 0}} {

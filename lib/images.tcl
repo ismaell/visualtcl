@@ -305,7 +305,7 @@ proc {vTcl:image:new_image_file} {} {
     # just double-check that it doesn't exist!
 
     if {[lsearch -exact $vTcl(images,files) $newImageFile] != -1} {
-	tk_messageBox -title "New image" \
+	::vTcl::MessageBox -title "New image" \
 	    -message "Image already imported!" \
 	    -icon error
 
@@ -333,7 +333,7 @@ proc vTcl:image:replace_image {filename} {
     # just double-check that it doesn't exist!
 
     if {[lsearch -exact $vTcl(images,files) $newImageFile] != -1} {
-	tk_messageBox \
+	::vTcl::MessageBox \
 	    -title "New image" \
 	    -message "Image already imported!" \
 	    -icon error
@@ -653,7 +653,7 @@ proc vTcl:image:delete_image {image} {
 
 proc vTcl:image:ask_delete_image {image} {
     set result [
-	tk_messageBox \
+	::vTcl::MessageBox \
 	    -message "Do you want to remove $image from the project?" \
 	    -title "Visual Tcl" \
 	    -type yesno \
@@ -677,6 +677,15 @@ proc vTcl:image:remove_user_images {} {
     }
 
     vTcl:image:refresh_manager
+}
+
+proc vTcl:image:reload_images {} {
+    global vTcl
+
+    foreach image $vTcl(images,files) {
+        set object [vTcl:image:get_image $image]
+        $object configure -file $image
+    }
 }
 
 proc vTclWindow.vTcl.imgManager {args} {
@@ -709,8 +718,8 @@ proc vTclWindow.vTcl.imgManager {args} {
     wm transient .vTcl.imgManager .vTcl
 
     frame $base.cpd29 \
-        -borderwidth 1 -height 30 \
-        -relief raised \
+        -borderwidth 2 -height 30 \
+        -relief sunken \
         -width 30
     scrollbar $base.cpd29.01 \
         -command "$base.cpd29.03 xview" -cursor left_ptr \
@@ -720,17 +729,18 @@ proc vTclWindow.vTcl.imgManager {args} {
         -orient vert
     text $base.cpd29.03 \
         -background white -cursor left_ptr \
-        -height 1 \
+        -height 1 -borderwidth 0 \
         -state disabled -tabs {0.2i 3i 3.75i} \
         -width 8 -wrap none -xscrollcommand "$base.cpd29.01 set" \
         -yscrollcommand "$base.cpd29.02 set"
     frame $base.butfr
-    button $base.butfr.but32 \
+    vTcl:toolbar_button $base.butfr.but32 \
         -command vTcl:image:new_image_file \
-        -padx 9 -pady 3 -image [vTcl:image:get_image add.gif]
-    button $base.butfr.but33 \
-    	-command "wm withdraw $base" \
-	-image [vTcl:image:get_image ok.gif]
+        -padx 3 -pady 3 -image [vTcl:image:get_image add.gif]
+    vTcl:toolbar_button $base.butfr.but34 \
+        -command vTcl:image:reload_images \
+        -padx 3 -pady 3 -image [vTcl:image:get_image refresh.gif]
+    ::vTcl::OkButton $base.butfr.but33 -command "Window hide $base"
     ###################
     # SETTING GEOMETRY
     ###################
@@ -749,6 +759,9 @@ proc vTclWindow.vTcl.imgManager {args} {
     pack $base.butfr.but32 \
         -anchor nw -expand 0 -fill none -side left
     vTcl:set_balloon $base.butfr.but32 "Add new image"
+    pack $base.butfr.but34 \
+        -anchor nw -expand 0 -fill none -side left
+    vTcl:set_balloon $base.butfr.but34 "Reload images"
     pack $base.butfr.but33 \
     	-anchor nw -expand 0 -fill none -side right
     vTcl:set_balloon $base.butfr.but33 "Close"
@@ -814,6 +827,6 @@ proc vTcl:image:get_manager_position {} {
 proc vTcl:image:external_editor {imageName} {
     global vTcl
     if {[catch {exec "$vTcl(pr,imageeditor)" "$imageName" &}]} {
-        vTcl:error "Could not execute external image editor"
+        vTcl:error "Could not execute external image editor!"
     }
 }

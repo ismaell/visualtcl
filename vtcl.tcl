@@ -219,6 +219,8 @@ vTcl:WindowsCleanup
 proc vTcl:setup_gui {} {
     global vTcl tcl_platform tk_version
 
+    # rename exit vTcl:exit
+
     vTcl:splash_status "Setting Up Workspace"
 
     if {$tcl_platform(platform) == "macintosh"} {
@@ -236,15 +238,19 @@ proc vTcl:setup_gui {} {
 
     if {$tcl_platform(platform) == "unix"} {
         option add *vTcl*Scrollbar.width 10
+        option add *vTcl*Scrollbar.highlightThickness 0
+        option add *vTcl*Scrollbar.elementBorderWidth 2
+        option add *vTcl*Scrollbar.borderWidth 2
         option add *Scrollbar.width 10
         option add *vTcl*font {Helvetica 12}
     }
 
     if {$tcl_platform(platform) == "windows"} {
-        option add *Scrollbar.width 16
-        option add *vTcl*Scrollbar.width 16
+        option add *Button.padY 0
     }
 
+    option add *vTcl*Checkbutton.highlightBackground #d9d9d9
+    option add *vTcl*Radiobutton.highlightBackground #d9d9d9
     option add *vTcl*Text*font $vTcl(pr,font_fixed)
 
     option add *vTcl*background #d9d9d9
@@ -294,9 +300,7 @@ proc vTclWindow.vTcl {args} {
     frame .vTcl.stat -relief flat
     pack $tmp -side top -expand 1 -fill x
 
-    if {$tcl_version >= 8} {
-	.vTcl conf -menu .vTcl.m
-    }
+    .vTcl conf -menu .vTcl.m
 
     foreach menu {file edit mode compound options window} {
 	if {$tcl_version >= 8} {
@@ -309,13 +313,7 @@ proc vTclWindow.vTcl {args} {
 	}
     }
 
-    if {$tcl_version >= 8} {
-	vTcl:menu:insert .vTcl.m.help help .vTcl.m
-    } else {
-	menubutton $tmp.help -text Help -menu $tmp.help.m -anchor w
-	vTcl:menu:insert $tmp.help.m help
-	pack $tmp.help -side right
-    }
+    vTcl:menu:insert .vTcl.m.help help .vTcl.m
 
     # RIGHT CLICK MENU
     set vTcl(gui,rc_menu) .vTcl.menu_rc
@@ -364,6 +362,10 @@ proc vTclWindow.vTcl {args} {
     $vTcl(gui,rc_menu) add command -label "Copy Widgetname" -command {
 	vTcl:copy_widgetname
     }
+    $vTcl(gui,rc_menu) add separator
+    $vTcl(gui,rc_menu) add command -label "Bindings" -command {
+        vTcl:show_bindings
+    }
 
     # MINI-ATTRIBUTE AREA
     vTcl:attrbar
@@ -389,17 +391,24 @@ proc vTclWindow.vTcl {args} {
     ## Create a hidden entry widget that holds the name of the current widget.
     ## We use this for copying the widget name and using it globally.
     entry .vTcl.widgetname -textvariable vTcl(w,widget)
+
+    ## Make the menu flat
+    .vTcl.m configure -relief flat
 }
 
 proc vTcl:vtcl:remap {w} {
     global vTcl
 
     if {![vTcl:streq $w ".vTcl"]} { return }
+    if {![info exists vTcl(tops,unmapped)]} { return }
 
-    foreach i $vTcl(tops) {
-	if {![winfo exists $i]} { continue }
-	vTcl:show_top $i
+    foreach i $vTcl(tops,unmapped) {
+        if {![winfo exists $i]} { continue }
+
+        vTcl:show_top $i
     }
+
+    set vTcl(tops,unmapped) ""
 }
 
 proc vTcl:vtcl:unmap {w} {
@@ -408,9 +417,14 @@ proc vTcl:vtcl:unmap {w} {
     if {![vTcl:streq $w ".vTcl"]} { return }
     if {[vTcl:streq [wm state $w] "normal"]} { return }
 
+    set vTcl(tops,unmapped) ""
+
     foreach i $vTcl(tops) {
 	if {![winfo exists $i]} { continue }
-	vTcl:hide_top $i
+        if {[wm state $i] != "withdrawn"} {
+            vTcl:hide_top $i
+            lappend vTcl(tops,unmapped) $i
+        }
     }
 }
 
@@ -465,7 +479,8 @@ proc vTcl:define_bindings {} {
     bind Text <Key-Return>    {
 
         # exclude user inserted text widgets from vTcl bindings
-        if {! [string match .vTcl* %W] } {
+        if {(! [string match .vTcl* %W]) ||
+            [info exists %W.nosyntax] } {
             tkTextInsert %W "\n"
             focus %W
             break
@@ -489,7 +504,8 @@ proc vTcl:define_bindings {} {
     bind Text <KeyRelease>   {
 
         # exclude user inserted text widgets from vTcl bindings
-        if {! [string match .vTcl* %W] } {
+        if {(! [string match .vTcl* %W]) ||
+            [info exists %W.nosyntax]  } {
             break
         }
 
@@ -612,14 +628,15 @@ proc vTcl:main {argc argv} {
     catch {package require Unsafe} ; #for running in Netscape
     catch {package require dde}    ; #for windows
     catch {package require Tk}     ; #for dynamic loading tk
-    if {$tcl_version < 8.0} {
+
+    if {$tcl_version < 8.3} {
         wm deiconify .
         wm title . "Time to upgrade"
         frame .f -relief groove -bd 2
         pack .f -expand 1 -fill both -padx 2 -pady 2
         label .f.l1 -text "This version of Tk is too old..."
-        label .f.l2 -text "Tcl8.0 and Tk8.0 or newer required"
-        button .f.b -text "Bummer!" -command {exit}
+        label .f.l2 -text "Tcl8.3 and Tk8.3 or newer required"
+        button .f.b -text "Close" -command {exit}
         pack .f.l1 .f.l2 -side top -padx 5
         pack .f.b -side top -pady 5
 	return
@@ -645,7 +662,7 @@ proc vTcl:main {argc argv} {
     }
     if {![file isdir $env(VTCL_HOME)]} { set vTcl(VTCL_HOME) [pwd] }
     vTcl:setup
-    if {$argc > 0} {
+    if {$argc > 1} {
 	set file [lindex $argv end]
 	if {[file exists $file]} {
 	    vTcl:open $file
@@ -667,11 +684,15 @@ proc vTcl:main {argc argv} {
     vTcl:splash_status "              vTcl Loaded" -nodots
     after 1000 "destroy .x"
 
-    if {[info exists vTcl(pr,dontshowtips)]} {
-        if {!$vTcl(pr,dontshowtips) } { Window show .vTcl.tip }
+    if {[info exists vTcl(pr,dontshowtips)] && !$vTcl(pr,dontshowtips)} {
+        Window show .vTcl.tip
     }
 
-    after 5000 ::vTcl::news::get_news
+    ## init the bindings editor
+    ::widgets_bindings::init
+
+    ## Show vTcl news.
+    set vTcl(tmp,newsAfter) [after 5000 ::vTcl::news::get_news]
 }
 
 vTcl:main $argc $argv

@@ -49,7 +49,7 @@ proc vTcl:create_tclet {target} {
         puts $out $header
 
         ## Gather information about fonts and images.
-        vTcl:dump:widget_fonts_and_images
+        vTcl:dump:gather_widget_info
 
         ## Save only fonts and images we need
         ## All images are saved inline in a tclet
@@ -141,7 +141,17 @@ proc vTcl:tclet_from_cmpd {base name compound {level 0}} {
             if {$mgrt == "place" && $mgri == ""} {
                 set mgri "-x 5 -y 5"
             }
-            append todo "$mgrt $name \\\n[vTcl:clean_pairs $mgri 4]\n"
+            set mgri [vTcl:name_replace_list $base $mgri]
+            set mgrii ""
+            for {set ii 0} {$ii < [llength $mgri]} {incr ii 2} {
+                set item  [lindex $mgri $ii]
+                set value [lindex $mgri [expr $ii+1]]
+                if {$item == "-in" && [string trim $value] == ""} {
+                    continue
+                }
+                lappend mgrii $item $value
+            }
+            append todo "$mgrt $name \\\n[vTcl:clean_pairs $mgrii 4]\n"
         }
         set index 0
         incr level

@@ -1,14 +1,74 @@
+##############################################################################
+#
+# Visual TCL - A cross-platform application development environment
+#
+# Copyright (C) 2001 Damon Courtney
+#
+# Description file for Tk Widget
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+##############################################################################
+#
+
 Class		Toplevel
 Lib		core
 
 Icon		icon_toplevel.gif
+CreateCmd   vTcl:toplevel
 DoubleClickCmd	vTcl:widget:toplevel:dblclkcmd
 
 TreeLabel	@vTcl:core:get_widget_tree_label
 InsertCmd	vTcl:widget:toplevel:inscmd
+DeleteCmd       vTcl:widget:toplevel:deletecmd
 WidgetProc	vTcl:Toplevel:WidgetProc
+DefaultValues   -background -highlightbackground -highlightcolor
 
+Function        "Edit Menu..."              vTcl:widget:toplevel:edit_menu
 Function	"Set New Toplevel Geometry" vTcl:widget:toplevel:set_new_geom
+Function        "Adjust Size To Children"   vTcl:widget:toplevel:adjust_size
+
+Export          vTcl:DefineAlias
+Export          vTcl:toplevel
+Export          vTcl:DoCmdOption
+Export          vTcl:FireEvent
+
+proc vTcl:DoCmdOption {target cmd} {
+
+    ## menus are considered toplevel windows
+    set parent $target
+    while {[winfo class $parent] == "Menu"} {
+        set parent [winfo parent $parent]
+    }
+
+    regsub -all {\%widget} $cmd $target cmd
+    regsub -all {\%top} $cmd [winfo toplevel $parent] cmd
+
+    uplevel #0 [list eval $cmd]
+}
+
+proc vTcl:toplevel {args} {
+    uplevel #0 eval toplevel $args
+    set target [lindex $args 0]
+    namespace eval ::$target {}
+}
+
+proc vTcl:widget:toplevel:edit_menu {} {
+    global vTcl
+    vTcl:widget:toplevel:dblclkcmd $vTcl(w,widget)
+}
 
 proc vTcl:widget:toplevel:dblclkcmd {target} {
     global vTcl
@@ -19,16 +79,33 @@ proc vTcl:widget:toplevel:dblclkcmd {target} {
 
 proc vTcl:widget:toplevel:inscmd {target} {
     global vTcl
-    wm geometry $target $vTcl(pr,geom_new)
-    wm protocol $target WM_DELETE_WINDOW {vTcl:hide_top $target}
-    if {$vTcl(pr,winfocus)} {
-	wm protocol $target WM_TAKE_FOCUS {vTcl:wm_take_focus $target}
-    }
-    wm title $target "New Toplevel $vTcl(newtops)"
-    incr vTcl(newtops)
-    set vTcl(w,insert) $target
-    lappend vTcl(tops) $target
+    return "
+    	wm geometry $target $vTcl(pr,geom_new)
+	wm protocol $target WM_DELETE_WINDOW {vTcl:hide_top $target}
+	if {$vTcl(pr,winfocus) == 1} {
+	    wm protocol $target WM_TAKE_FOCUS {vTcl:wm_take_focus $target}
+	}
+	wm title $target \"New Toplevel $vTcl(newtops)\"
+	incr vTcl(newtops)
+	set vTcl(w,insert) $target
+	lappend vTcl(tops) $target
+	vTcl:update_top_list
+    "
+}
+
+proc vTcl:widget:toplevel:deletecmd {target} {
+    global vTcl
+
+    set vTcl(tops) [lremove $vTcl(tops) $target]
+    destroy $target
+    namespace delete ::$target
     vTcl:update_top_list
+}
+
+proc vTcl:widget:toplevel:adjust_size {} {
+    global vTcl
+
+    wm geometry $vTcl(w,widget) {}
 }
 
 proc vTcl:widget:toplevel:set_new_geom {} {

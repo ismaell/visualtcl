@@ -34,13 +34,14 @@
 # {type} {option list} {manager specific list}
 
 global vTcl
+namespace eval ::vTcl::balloon {}
 
 set vTcl(action)         ""
 set vTcl(action_index)   -1
 set vTcl(action_limit)   -1
-set vTcl(balloon,first)  0
-set vTcl(balloon,set)    0
-set vTcl(balloon,soon)   0
+set ::vTcl::balloon::first  0
+set ::vTcl::balloon::set    0
+set ::vTcl::balloon::soon   0
 set vTcl(bind,ignore)    ""
 set vTcl(change)         0
 set vTcl(console)        0
@@ -68,7 +69,7 @@ set vTcl(gui,prefs)      "$vTcl(gui,main).prefs"
 set vTcl(gui,rc_menu)    "$vTcl(gui,main).rc"
 set vTcl(gui,varlist)    "$vTcl(gui,main).varlist"
 set vTcl(gui,statbar)    "$vTcl(gui,main).stat.f.bar"
-set vTcl(gui,showlist)   ".vTcl.mgr .vTcl.ae"
+set vTcl(gui,showlist)   ".vTcl.ae"
 set vTcl(h,exist)        0
 set vTcl(h,size)         3
 set vTcl(hide)           ""
@@ -110,6 +111,8 @@ set vTcl(pr,imageeditor) ""
 set vTcl(pr,saveimagesinline) 0
 set vTcl(pr,projfile)    0
 set vTcl(pr,saveasexecutable) 1
+set vTcl(pr,dontshowtips) 0
+set vTcl(pr,bgcolor) ""
 set vTcl(numRcFiles)	 5
 # end preferences
 set vTcl(proc,name)      ""
@@ -144,7 +147,7 @@ set vTcl(w,widget)       ""
 set vTcl(winname)        "vTclWindow"
 set vTcl(windows)        ".vTcl.toolbar .vTcl.mgr .vTcl.ae .vTcl.wstat
                           .vTcl.proclist .vTcl.toplist .vTcl.tree
-                          .vTcl.con .vTcl.prefs .vTcl.about .vTcl.bind .vTcl.imgManager
+                          .vTcl.tkcon .vTcl.prefs .vTcl.about .vTcl.bind .vTcl.imgManager
                           .vTcl.fontManager .vTcl.inspector"
 set vTcl(newtops)        1
 set vTcl(mode)           "EDIT"
@@ -305,7 +308,7 @@ set vTcl(syntax,vTcl:dollar,configure)  {-foreground #00A000}
 set vTcl(syntax,vTcl:bracket)           {\[|\]|\{|\}}
 set vTcl(syntax,vTcl:bracket,configure) {-foreground #FF0000}
 
-set vTcl(syntax,vTcl:command)           {[a-zA-Z0-9_:]+}
+set vTcl(syntax,vTcl:command)           {[a-zA-Z0-9_\-:]+}
 set vTcl(syntax,vTcl:command,configure) {-foreground #B000B0}
 set vTcl(syntax,vTcl:command,validate)  vTcl:syntax:iscommand
 
