@@ -58,6 +58,8 @@ proc vTcl:delete {} {
     set undo "vTcl:insert_compound $vTcl(w,widget) \{$buffer\} $vTcl(w,def_mgr)"
     vTcl:push_action $do $undo
 
+    catch {namespace delete ::widgets::$vTcl(w,widget)} error
+
     ## If it's a toplevel window, remove it from the tops list.
     if {$class == "Toplevel"} { lremove vTcl(tops) $w }
 

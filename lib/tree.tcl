@@ -241,4 +241,5 @@ proc vTclWindow.vTcl.tree {args} {
     catch {wm geometry .vTcl.tree $vTcl(geometry,.vTcl.tree)}
     vTcl:init_wtree
     vTcl:setup_vTcl:bind .vTcl.tree
+    vTcl:BindHelp .vTcl.tree WidgetTree
 }
