@@ -136,9 +136,9 @@ proc vTcl:load_widgets {} {
     }
 }
 
-proc vTcl:load_libs {} {
+proc vTcl:load_libs {libs} {
     global vTcl
-    foreach i $vTcl(LIBS) {
+    foreach i $libs {
         vTcl:load_lib $i
     }
 }
@@ -180,7 +180,7 @@ proc vTcl:setup {} {
 
     set vTcl(LIB_DIR)   [file join $vTcl(VTCL_HOME) lib]
     set vTcl(LIB_WIDG)  [glob -nocomplain [file join $vTcl(LIB_DIR) lib_*.tcl]]
-    set vTcl(LIBS)      "globals.tcl about.tcl propmgr.tcl balloon.tcl
+    set LIBS            "globals.tcl about.tcl propmgr.tcl balloon.tcl
         		attrbar.tcl bgerror.tcl bind.tcl command.tcl color.tcl
 			tkcon.tcl compound.tcl compounds.tcl do.tcl
 			dragsize.tcl dump.tcl edit.tcl file.tcl font.tcl
@@ -197,7 +197,7 @@ proc vTcl:setup {} {
     set tk_strictMotif    1
     wm withdraw .
     vTcl:splash
-    vTcl:load_libs
+    vTcl:load_libs $LIBS
 
     ::vTcl::load_bwidgets
     vTcl:load_widgets
@@ -213,7 +213,15 @@ proc vTcl:setup {} {
     # initializes the stock fonts database
     vTcl:font:init_stock
 
+    # make sure TkCon doesn't see command line arguments here
+    set argc $::argc
+    set argv $::argv
+    set ::argc 0
+    set ::argv {}
     vTcl:setup_gui
+    set ::argc $argc
+    set ::argv $argv
+    
     update idletasks
     set vTcl(start,procs)   [lsort [info procs]]
     set vTcl(start,globals) [lsort [info globals]]
@@ -672,12 +680,17 @@ proc vTcl:main {argc argv} {
     ## init the bindings editor
     ::widgets_bindings::init
 
-    ## load file passed in command line
+    vTcl:splash_status "              vTcl Loaded" -nodots
+    after 1000 {if {[winfo exists .x]} {destroy .x}}
+
+    ## load file passed in command line, get rid of splash window right here
     if {$argc > 0 && [lindex $argv end] != ""} {
 	set file [lindex $argv end]
 	if {[file exists $file]} {
+	    destroy .x
 	    vTcl:open $file
 	} elseif {[file exists [file join [pwd] $file]]} {
+	    destroy .x
 	    vTcl:open [file join [pwd] $file]
 	}
     }
@@ -695,9 +708,6 @@ proc vTcl:main {argc argv} {
             }
 	}
     }
-
-    vTcl:splash_status "              vTcl Loaded" -nodots
-    after 1000 "destroy .x"
 
     if {[info exists vTcl(pr,dontshowtips)] && !$vTcl(pr,dontshowtips)} {
         Window show .vTcl.tip

@@ -34,6 +34,7 @@ DefaultOptions	-width 300 -height 200
 DefaultValues   -background -foreground -font
 ClassOption     -_bwidgets_notebook_pages
 InsertCmd       vTcl::widgets::bwidgets::notebook::insertCmd
+DeleteCmd       vTcl::widgets::bwidgets::notebook::deleteCmd
 TreeChildrenCmd	{vTcl::widgets::bwidgets::notebook::treeChildrenCmd
 		 vTcl::widgets::bwidgets::notebook::treeChildrenChildsite}
 SelectSiteCmd   vTcl::widgets::bwidgets::notebook::selectSiteCmd
@@ -55,6 +56,9 @@ OptionConfigCmd -_bwidgets_notebook_pages     editArg    vTcl::widgets::bwidgets
 NewOption -createcmd		"create cmd"		command
 NewOption -raisecmd		"raise cmd"		command
 NewOption -leavecmd		"leave cmd"		command
+
+## Right-click menu
+Function        "Edit Pages..."  vTcl::widgets::bwidgets::notebook::editCmd
 
 namespace eval ::vTcl::widgets::bwidgets::notebook::edit {
 
@@ -121,6 +125,17 @@ namespace eval ::vTcl::widgets::bwidgets::notebook::edit {
 }
 
 namespace eval vTcl::widgets::bwidgets::notebook {
+
+    proc editCmd {} {
+        set target $::vTcl(w,widget)
+	::vTcl::itemEdit::edit $target ::vTcl::widgets::bwidgets::notebook::edit
+    }
+
+    proc deleteCmd {target} {
+	bindtags $target "nothing"
+        NoteBook::_destroy $target
+	destroy $target
+    }
 
     proc insertCmd {target} {
         $target insert end page1 -text {Page 1}

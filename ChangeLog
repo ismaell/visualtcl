@@ -1,6 +1,11 @@
 ChangeLog for Visual Tcl:
 
 1.6.0a2 ->
+    o Fixed bug where TkCon would load a project then vTcl would load it one
+      more time.
+    o Fixed bug where .x would appear in widget tree when loading a project
+      on the command line.
+    o Fixed bug where deleting a bwidget notebook resulted in an error box.
     o Variables with the form .top33::my_var are now replaced by $top\::my_var
       instead of $base\::my_var. 
     o Binding tags now use $top to refer to the top level window. This will
