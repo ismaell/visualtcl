@@ -478,15 +478,13 @@ proc vTcl:save2 {file} {
     # proc can call any user proc
 
     if {$vTcl(save) == "all"} {
-        set body [string trim [info body init]]
 	puts $output $vTcl(head,exports)
-	puts $output [vTcl:vtcl_library_procs]
 	puts $output [vTcl:export_procs]
 	puts $output [vTcl:dump:project_info \
 	    [file dirname $file] $vTcl(project,name)]
         puts $output $vTcl(head,procs)
         puts $output [vTcl:save_procs]
-        puts $output "proc init \{argc argv\} \{\n$body\n\}\n"
+        puts $output [vTcl:dump_proc init "Initialization "]
         puts $output "init \$argc \$argv\n"
         puts $output $vTcl(head,gui)
         puts $output [vTcl:save_tree . [file dirname $file] $vTcl(project,name)]

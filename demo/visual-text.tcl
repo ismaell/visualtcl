@@ -3,6 +3,7 @@
 exec wish "$0" "$@" 
 
 if {![info exists vTcl(sourcing)]} {
+
     switch $tcl_platform(platform) {
 	windows {
 	}
@@ -14,13 +15,16 @@ if {![info exists vTcl(sourcing)]} {
 }
 
 
-############################
-# vTcl Code to Load Stock Images
+#############################################################################
+## vTcl Code to Load Stock Images
 
 
 if {![info exist vTcl(sourcing)]} {
-proc vTcl:rename {name} {
-    regsub -all "\\." $name "_" ret
+#############################################################################
+## Procedure:  vTcl:rename
+
+proc {vTcl:rename} {name} {
+regsub -all "\\." $name "_" ret
     regsub -all "\\-" $ret "_" ret
     regsub -all " " $ret "_" ret
     regsub -all "/" $ret "__" ret
@@ -29,8 +33,11 @@ proc vTcl:rename {name} {
     return [string tolower $ret]
 }
 
-proc vTcl:image:create_new_image {filename description type data} {
-    global vTcl env
+#############################################################################
+## Procedure:  vTcl:image:create_new_image
+
+proc {vTcl:image:create_new_image} {filename {description {no description}} {type {}} {data {}}} {
+global vTcl env
 
     # Does the image already exist?
     if {[info exists vTcl(images,files)]} {
@@ -69,8 +76,11 @@ proc vTcl:image:create_new_image {filename description type data} {
     return $object
 }
 
-proc vTcl:image:get_image {filename} {
-    global vTcl
+#############################################################################
+## Procedure:  vTcl:image:get_image
+
+proc {vTcl:image:get_image} {filename} {
+global vTcl
     set reference [vTcl:rename $filename]
 
     # Let's do some checking first
@@ -90,8 +100,11 @@ proc vTcl:image:get_image {filename} {
     return $vTcl(images,$reference,image)
 }
 
-proc vTcl:image:get_creation_type {filename} {
-    set ext [file extension $filename]
+#############################################################################
+## Procedure:  vTcl:image:get_creation_type
+
+proc {vTcl:image:get_creation_type} {filename} {
+set ext [file extension $filename]
     set ext [string tolower $ext]
 
     switch $ext {
@@ -102,8 +115,11 @@ proc vTcl:image:get_creation_type {filename} {
     }
 }
 
-proc vTcl:image:broken_image {} {
-    return {
+#############################################################################
+## Procedure:  vTcl:image:broken_image
+
+proc {vTcl:image:broken_image} {} {
+return {
         R0lGODdhFAAUAPcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwICAgP8AAAD/
         AP//AAAA//8A/wD//////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
         AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
@@ -297,8 +313,11 @@ WK8m3Mq1q1eEAQEAOw==}}
 #
 
 if {![info exists vTcl(sourcing)]} {
-proc Window {args} {
-    global vTcl
+#############################################################################
+## Library Procedure:  Window
+
+proc {Window} {args} {
+global vTcl
     set cmd     [lindex $args 0]
     set name    [lindex $args 1]
     set newname [lindex $args 2]
@@ -328,11 +347,11 @@ proc Window {args} {
         destroy { if $exists {destroy $newname; return} }
     }
 }
-}
+#############################################################################
+## Library Procedure:  vTcl:DefineAlias
 
-if {![info exists vTcl(sourcing)]} {
 proc {vTcl:DefineAlias} {target alias widgetProc top_or_alias cmdalias} {
-    global widget
+global widget
 
     set widget($alias) $target
     set widget(rev,$target) $alias
@@ -349,9 +368,11 @@ proc {vTcl:DefineAlias} {target alias widgetProc top_or_alias cmdalias} {
         }
     }
 }
+#############################################################################
+## Library Procedure:  vTcl:DoCmdOption
 
 proc {vTcl:DoCmdOption} {target cmd} {
-    ## menus are considered toplevel windows
+## menus are considered toplevel windows
     set parent $target
     while {[winfo class $parent] == "Menu"} {
         set parent [winfo parent $parent]
@@ -362,9 +383,11 @@ proc {vTcl:DoCmdOption} {target cmd} {
 
     uplevel #0 [list eval $cmd]
 }
+#############################################################################
+## Library Procedure:  vTcl:FireEvent
 
 proc {vTcl:FireEvent} {target event} {
-    foreach bindtag [bindtags $target] {
+foreach bindtag [bindtags $target] {
         set tag_events [bind $bindtag]
         set stop_processing 0
         foreach tag_event $tag_events {
@@ -384,9 +407,11 @@ proc {vTcl:FireEvent} {target event} {
         if {$stop_processing} {break}
     }
 }
+#############################################################################
+## Library Procedure:  vTcl:Toplevel:WidgetProc
 
 proc {vTcl:Toplevel:WidgetProc} {w args} {
-    global tcl_platform
+global tcl_platform
 
     if {[llength $args] == 0} {
         return -code error "wrong # args: should be \"$w option ?arg arg ...?\""
@@ -427,9 +452,11 @@ proc {vTcl:Toplevel:WidgetProc} {w args} {
         }
     }
 }
+#############################################################################
+## Library Procedure:  vTcl:WidgetProc
 
 proc {vTcl:WidgetProc} {w args} {
-    if {[llength $args] == 0} {
+if {[llength $args] == 0} {
         return -code error "wrong # args: should be \"$w option ?arg arg ...?\""
     }
 
@@ -448,15 +475,18 @@ proc {vTcl:WidgetProc} {w args} {
 
     eval $w $command $args
 }
+#############################################################################
+## Library Procedure:  vTcl:toplevel
 
 proc {vTcl:toplevel} {args} {
-    uplevel #0 eval toplevel $args
+uplevel #0 eval toplevel $args
     set target [lindex $args 0]
     namespace eval ::$target {}
 }
 }
 
 if {[info exists vTcl(sourcing)]} {
+
 proc vTcl:project:info {} {
     namespace eval ::widgets::.top18 {
         array set save {}
@@ -838,7 +868,7 @@ proc vTcl:project:info {} {
 #################################
 # USER DEFINED PROCEDURES
 #
-###########################################################
+#############################################################################
 ## Procedure:  ::about::init
 
 namespace eval ::about {
@@ -857,7 +887,7 @@ AboutVisualText.AboutText configure -state disabled
 }
 
 }
-###########################################################
+#############################################################################
 ## Procedure:  ::bitmapbutton::get_parent
 
 namespace eval ::bitmapbutton {
@@ -873,7 +903,7 @@ return [join $parent_items .]
 }
 
 }
-###########################################################
+#############################################################################
 ## Procedure:  ::bitmapbutton::init
 
 namespace eval ::bitmapbutton {
@@ -888,7 +918,7 @@ namespace eval ::${N} {
 }
 
 }
-###########################################################
+#############################################################################
 ## Procedure:  ::bitmapbutton::mouse_down
 
 namespace eval ::bitmapbutton {
@@ -905,7 +935,7 @@ set ::${N}::state "mouse_down"
 }
 
 }
-###########################################################
+#############################################################################
 ## Procedure:  ::bitmapbutton::mouse_inside
 
 namespace eval ::bitmapbutton {
@@ -941,7 +971,7 @@ if {$button_X <= $X &&
 }
 
 }
-###########################################################
+#############################################################################
 ## Procedure:  ::bitmapbutton::mouse_up
 
 namespace eval ::bitmapbutton {
@@ -983,7 +1013,7 @@ if {$S == "mouse_down" } {
 }
 
 }
-###########################################################
+#############################################################################
 ## Procedure:  ::bitmapbutton::set_command
 
 namespace eval ::bitmapbutton {
@@ -997,7 +1027,7 @@ set ::${N}::command $cmd
 }
 
 }
-###########################################################
+#############################################################################
 ## Procedure:  ::bitmapbutton::show_state
 
 namespace eval ::bitmapbutton {
@@ -1031,7 +1061,7 @@ switch $S {
 }
 
 }
-###########################################################
+#############################################################################
 ## Procedure:  ::delete_tag::do_modal
 
 namespace eval ::delete_tag {
@@ -1070,7 +1100,7 @@ $mainw.MainText tag delete $tag
 }
 
 }
-###########################################################
+#############################################################################
 ## Procedure:  ::edit_tag::add_new_tag
 
 namespace eval ::edit_tag {
@@ -1084,7 +1114,7 @@ eval $mainw.MainText tag add [list $tag_name] $selrange
 }
 
 }
-###########################################################
+#############################################################################
 ## Procedure:  ::edit_tag::do_modal
 
 namespace eval ::edit_tag {
@@ -1099,7 +1129,7 @@ Window hide $w
 }
 
 }
-###########################################################
+#############################################################################
 ## Procedure:  ::edit_tag::enable_ok
 
 namespace eval ::edit_tag {
@@ -1117,7 +1147,7 @@ if {$tag_name == ""} {
 }
 
 }
-###########################################################
+#############################################################################
 ## Procedure:  ::edit_tag::get_status
 
 namespace eval ::edit_tag {
@@ -1130,7 +1160,7 @@ return $edit_tag_status
 }
 
 }
-###########################################################
+#############################################################################
 ## Procedure:  ::edit_tag::init_edit_tag
 
 namespace eval ::edit_tag {
@@ -1160,7 +1190,7 @@ $wa.TagSampleText insert end "The Quick Brown Fox jumped over a lazy dog's back"
 }
 
 }
-###########################################################
+#############################################################################
 ## Procedure:  ::edit_tag::prepare_edit_tag
 
 namespace eval ::edit_tag {
@@ -1219,7 +1249,7 @@ if {$overstrike_check == ""} {set overstrike_check 0}
 }
 
 }
-###########################################################
+#############################################################################
 ## Procedure:  ::edit_tag::set_existing_tag
 
 namespace eval ::edit_tag {
@@ -1253,7 +1283,7 @@ $mainw.MainText tag configure $tag_name -foreground [$wa.TagForeground cget -bac
 }
 
 }
-###########################################################
+#############################################################################
 ## Procedure:  ::edit_tag::update_sample
 
 namespace eval ::edit_tag {
@@ -1284,7 +1314,7 @@ $wa.TagSampleText tag configure sample -foreground [$wa.TagForeground cget -back
 }
 
 }
-###########################################################
+#############################################################################
 ## Procedure:  ::ttd::get
 
 namespace eval ::ttd {
@@ -1437,7 +1467,7 @@ proc {::ttd::get} {args} {
 }
 
 }
-###########################################################
+#############################################################################
 ## Procedure:  ::ttd::init
 
 namespace eval ::ttd {
@@ -1521,7 +1551,7 @@ set ttdCode {
 }
 
 }
-###########################################################
+#############################################################################
 ## Procedure:  ::ttd::insert
 
 namespace eval ::ttd {
@@ -1560,7 +1590,7 @@ proc {::ttd::insert} {w ttd} {
 }
 
 }
-###########################################################
+#############################################################################
 ## Procedure:  ::visual_text::apply_tag
 
 namespace eval ::visual_text {
@@ -1580,7 +1610,7 @@ if {[$w.TagsListbox itemcget $index -background] == "white"} {
 }
 
 }
-###########################################################
+#############################################################################
 ## Procedure:  ::visual_text::command-add_tag
 
 namespace eval ::visual_text {
@@ -1610,7 +1640,7 @@ if {[::edit_tag::get_status $w] != "OK"} return
 }
 
 }
-###########################################################
+#############################################################################
 ## Procedure:  ::visual_text::command-edit_tag
 
 namespace eval ::visual_text {
@@ -1633,7 +1663,7 @@ if {[::edit_tag::get_status $w] != "OK"} return
 }
 
 }
-###########################################################
+#############################################################################
 ## Procedure:  ::visual_text::command-new
 
 namespace eval ::visual_text {
@@ -1649,7 +1679,7 @@ $mainw.MainText delete 1.0 end
 }
 
 }
-###########################################################
+#############################################################################
 ## Procedure:  ::visual_text::command-open
 
 namespace eval ::visual_text {
@@ -1682,7 +1712,7 @@ global filename widget tk_strictMotif
 }
 
 }
-###########################################################
+#############################################################################
 ## Procedure:  ::visual_text::command-save
 
 namespace eval ::visual_text {
@@ -1710,7 +1740,7 @@ global filename tk_strictMotif widget
 }
 
 }
-###########################################################
+#############################################################################
 ## Procedure:  ::visual_text::fill_tags
 
 namespace eval ::visual_text {
@@ -1748,7 +1778,7 @@ $mainw.TagsText configure -state disabled
 }
 
 }
-###########################################################
+#############################################################################
 ## Procedure:  ::visual_text::insert_image
 
 namespace eval ::visual_text {
@@ -1775,7 +1805,7 @@ $mainw.MainText image create insert -image $object
 }
 
 }
-###########################################################
+#############################################################################
 ## Procedure:  ::visual_text::main
 
 namespace eval ::visual_text {
@@ -1798,7 +1828,7 @@ wm protocol $W WM_DELETE_WINDOW {exit}
 }
 
 }
-###########################################################
+#############################################################################
 ## Procedure:  ::visual_text::show_insert_position
 
 namespace eval ::visual_text {
@@ -1810,7 +1840,7 @@ $mainw.LineCol configure -text "Line $line Col $col"
 }
 
 }
-###########################################################
+#############################################################################
 ## Procedure:  ::visual_text::show_tags_at_insert
 
 namespace eval ::visual_text {
@@ -1840,7 +1870,7 @@ for {set i 0} {$i < [llength $listtags]} {incr i} {
 }
 
 }
-###########################################################
+#############################################################################
 ## Procedure:  ::visual_text::show_tags_at_selection
 
 namespace eval ::visual_text {
@@ -1905,7 +1935,7 @@ for {set i 0} {$i < [llength $listtags]} {incr i} {
 }
 
 }
-###########################################################
+#############################################################################
 ## Procedure:  compare_range
 
 proc {compare_range} {range1 range2} {
@@ -1933,7 +1963,7 @@ if {$line1 == $line2} {
     return 1
 }
 }
-###########################################################
+#############################################################################
 ## Procedure:  get_option
 
 proc {get_option} {opts opt} {
@@ -1945,9 +1975,7 @@ if {$index == -1} {
 incr index
 return [lindex $opts $index]
 }
-###########################################################
-## Procedure:  init
-###########################################################
+#############################################################################
 ## Procedure:  main
 
 proc {main} {argc argv} {
@@ -1964,7 +1992,10 @@ if {![winfo exists .vTcl]} {
 }
 }
 
-proc init {argc argv} {
+#############################################################################
+## Initialization Procedure:  init
+
+proc {init} {argc argv} {
 global filename
 set filename ""
 }
@@ -2181,7 +2212,7 @@ proc vTclWindow.top21 {base} {
     vTcl:toplevel $base -class Toplevel \
         -menu "$base.m26" 
     wm focusmodel $base passive
-    wm geometry $base 678x575+130+67; update
+    wm geometry $base 678x575+130+89; update
     wm maxsize $base 1009 738
     wm minsize $base 100 1
     wm overrideredirect $base 0
@@ -2951,12 +2982,18 @@ proc vTclWindow.top22 {base} {
     vTcl:FireEvent $base <<Ready>>
 }
 
+#############################################################################
+## Binding tag:  FlatToolbarButton
+
 bind "FlatToolbarButton" <Enter> {
     %W configure -relief raised
 }
 bind "FlatToolbarButton" <Leave> {
     %W configure -relief flat
 }
+#############################################################################
+## Binding tag:  Accelerators
+
 bind "Accelerators" <Control-Key-c> {
     ## Visual Tcl already has bindings for text widgets
 if {![info exists vTcl]} {
@@ -2990,6 +3027,9 @@ if {![info exists vTcl]} {
 bind "Accelerators" <Key-F1> {
     AboutVisualText show
 }
+#############################################################################
+## Binding tag:  BitmapButtonTop
+
 bind "BitmapButtonTop" <Button-1> {
     ::bitmapbutton::mouse_down %W %X %Y
 }
@@ -3015,6 +3055,9 @@ bind "BitmapButtonTop" <KeyRelease-space> {
 bind "BitmapButtonTop" <Motion> {
     ::bitmapbutton::mouse_inside %W %X %Y
 }
+#############################################################################
+## Binding tag:  BitmapButtonSub1
+
 bind "BitmapButtonSub1" <Button-1> {
     ::bitmapbutton::mouse_down [::bitmapbutton::get_parent %W] %X %Y
 }
@@ -3024,6 +3067,9 @@ bind "BitmapButtonSub1" <ButtonRelease-1> {
 bind "BitmapButtonSub1" <Motion> {
     ::bitmapbutton::mouse_inside [::bitmapbutton::get_parent %W] %X %Y
 }
+#############################################################################
+## Binding tag:  BitmapButtonSub2
+
 bind "BitmapButtonSub2" <Button-1> {
     ::bitmapbutton::mouse_down [::bitmapbutton::get_parent %W 2] %X %Y
 }
@@ -3033,6 +3079,9 @@ bind "BitmapButtonSub2" <ButtonRelease-1> {
 bind "BitmapButtonSub2" <Motion> {
     ::bitmapbutton::mouse_inside [::bitmapbutton::get_parent %W 2] %X %Y
 }
+#############################################################################
+## Binding tag:  BitmapButtonSub3
+
 bind "BitmapButtonSub3" <Button-1> {
     ::bitmapbutton::mouse_down [::bitmapbutton::get_parent %W 3] %X %Y
 }

@@ -613,13 +613,6 @@ proc vTcl:font:prompt_font_manager {} {
     Window show .vTcl.fontManager
 }
 
-proc vTcl:font:dump_proc {fileID name} {
-    puts $fileID "proc $name {" nonewline
-    puts $fileID "[info args $name]} {" nonewline
-    puts $fileID "[info body $name]}"
-    puts $fileID ""
-}
-
 proc vTcl:font:generate_font_stock {fileID} {
     global vTcl
 
@@ -628,13 +621,15 @@ proc vTcl:font:generate_font_stock {fileID} {
     	return
     }
 
-    puts $fileID {############################}
+    puts $fileID {#############################################################################}
     puts $fileID "\# vTcl Code to Load Stock Fonts\n"
     puts $fileID "\nif {!\[info exist vTcl(sourcing)\]} \{"
     puts $fileID "set vTcl(fonts,counter) 0"
 
-    vTcl:font:dump_proc $fileID "vTcl:font:add_font"
-    vTcl:font:dump_proc $fileID "vTcl:font:get_font"
+    foreach i {vTcl:font:add_font
+               vTcl:font:get_font} {
+        puts $fileID [vTcl:dump_proc $i]
+    }
 
     foreach font $vTcl(dump,stockFonts) {
 	puts $fileID "vTcl:font:add_font \\"
@@ -651,7 +646,7 @@ proc vTcl:font:generate_font_user {fileID} {
 
     if {[lempty $vTcl(dump,userFonts)]} { return }
 
-    puts $fileID {############################}
+    puts $fileID {#############################################################################}
     puts $fileID "\# vTcl Code to Load User Fonts\n"
 
     foreach font $vTcl(dump,userFonts) {

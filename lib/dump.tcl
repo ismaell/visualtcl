@@ -21,35 +21,44 @@
 ##############################################################################
 #
 
+proc vTcl:dump_proc {i {type ""}} {
+    if {[info procs $i] == ""} {return ""}
+
+    set output ""
+    set args ""
+    foreach j [info args $i] {
+        if {[info default $i $j value]} {
+            lappend args [list $j $value]
+        } else {
+            lappend args $j
+        }
+    }
+
+    set body [string trim [info body $i]]
+
+    append output {#############################################################################}
+    append output "\n\#\# ${type}Procedure:  $i\n"
+
+    if {[regexp (.*):: $i matchAll context] } {
+        append output "\nnamespace eval [list ${context}] \{\n"
+    }
+
+    append output "\nproc \{$i\} \{$args\} \{\n$body\n\}\n"
+
+    if {[regexp (.*):: $i]} {
+        append output "\n\}\n"
+    }
+
+    return $output
+}
+
 proc vTcl:save_procs {} {
     global vTcl
     set output ""
     set list $vTcl(procs)
     foreach i $list {
-        if {[vTcl:ignore_procname_when_saving $i] == 0} {
-            set args ""
-            foreach j [info args $i] {
-                if {[info default $i $j value]} {
-                    lappend args [list $j $value]
-                } else {
-                    lappend args $j
-                }
-            }
-            append output {###########################################################}
-            append output "\n\#\# Procedure:  $i\n"
-            set body [string trim [info body $i]]
-            if {($body != "" || $i == "main") && $i != "init"} {
-
-                if {[regexp (.*):: $i matchAll context] } {
-                   append output "\nnamespace eval [list ${context}] \{\n"
-                }
-
-                append output "\nproc \{$i\} \{$args\} \{\n$body\n\}\n"
-
-                if {[regexp (.*):: $i]} {
-                   append output "\n\}\n"
-                }
-            }
+        if {[vTcl:ignore_procname_when_saving $i] == 0 && $i != "init"} {
+            append output [vTcl:dump_proc $i]
         }
     }
     return $output
@@ -75,46 +84,10 @@ proc vTcl:export_procs {} {
         }
     }
 
-    foreach i [vTcl:lrmdups $list] {
-
-        set args ""
-        foreach j [info args $i] {
-            if {[info default $i $j value]} {
-                lappend args [list $j $value]
-            } else {
-                lappend args $j
-            }
-        }
-        set body [string trim [info body $i] "\n"]
-	if {(![lempty $body] || [vTcl:streq $i "main"]) \
-	    && ![vTcl:streq $i "init"]} {
-
-            if {[regexp (.*):: $i matchAll context] } {
-               append output "\nnamespace eval [list ${context}] \{\n"
-            }
-
-            append output "\nproc \{$i\} \{$args\} \{\n$body\n\}\n"
-
-            if {[regexp (.*):: $i]} {
-               append output "\n\}\n"
-            }
-        }
-    }
-    vTcl:dump:sourcing_footer output
-    return $output
-}
-
-proc vTcl:vtcl_library_procs {} {
-    global vTcl classes tcl_platform
-
-    set list {
-        Window
+    foreach i [concat Window [vTcl:lrmdups $list]] {
+        append output [vTcl:dump_proc $i "Library "]
     }
 
-    vTcl:dump:not_sourcing_header output
-    foreach proc $list {
-        append output [vTcl:maybe_dump_proc $proc]
-    }
     vTcl:dump:sourcing_footer output
     return $output
 }
@@ -468,6 +441,8 @@ proc vTcl:dump:dump_user_bind {} {
     set result ""
 
     foreach tag $tags {
+        append result {#############################################################################}
+        append result "\n\#\# Binding tag:  $tag\n\n"
         set bindlist [lsort [bind $tag]]
         foreach event $bindlist {
             set command [bind $tag $event]
@@ -610,27 +585,6 @@ proc vTcl:dump_top_widget {target basename} {
     return $result
 }
 
-# kc: dump all procs in the same manner, including support of default
-# arguments.
-# returns: definition of proc if it exists, empty string otherwise
-proc vTcl:maybe_dump_proc {i} {
-    global vTcl
-    if {[info procs $i] != ""} {
-        set args ""
-        foreach j [info args $i] {
-            if {[info default $i $j value]} {
-                lappend args [list $j $value]
-            } else {
-                lappend args $j
-            }
-        }
-        set body [string trim [info body $i]]
-        return "\nproc $i \{$args\} \{\n$vTcl(tab)$body\n\}\n"
-    }
-    return ""
-}
-
-
 proc vTcl:dump_top {target} {
     global vTcl
     set output ""
@@ -639,7 +593,7 @@ proc vTcl:dump_top {target} {
         if {[info procs $proc_base] == ""} {
             return ""
         }
-        append output [vTcl:maybe_dump_proc $proc_base]
+        append output [vTcl:dump_proc $proc_base]
         return $output
     }
     if {[winfo class $target] != "Toplevel" && $target != "."} {
@@ -933,12 +887,12 @@ proc vTcl:dump:project_info {basedir project} {
 
 proc vTcl:dump:sourcing_header {varName} {
     upvar 1 $varName var
-    append var "\nif {\[info exists vTcl(sourcing)\]} \{"
+    append var "\nif {\[info exists vTcl(sourcing)\]} \{\n"
 }
 
 proc vTcl:dump:not_sourcing_header {varName} {
     upvar 1 $varName var
-    append var "\nif {!\[info exists vTcl(sourcing)\]} \{"
+    append var "\nif {!\[info exists vTcl(sourcing)\]} \{\n"
 }
 
 proc vTcl:dump:sourcing_footer {varName} {

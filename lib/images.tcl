@@ -522,13 +522,6 @@ proc vTcl:prompt_user_image2 {image} {
     }
 }
 
-proc vTcl:image:dump_proc {fileID name} {
-    puts $fileID "proc $name {" nonewline
-    puts $fileID "[info args $name]} {" nonewline
-    puts $fileID "[info body $name]}"
-    puts $fileID ""
-}
-
 proc vTcl:image:dump_create_image {image} {
 
     global vTcl
@@ -585,15 +578,17 @@ proc vTcl:image:generate_image_stock {fileID} {
     }
 
     puts $fileID "\n"
-    puts $fileID {############################}
-    puts $fileID "\# vTcl Code to Load Stock Images\n"
+    puts $fileID {#############################################################################}
+    puts $fileID "\#\# vTcl Code to Load Stock Images\n"
     puts $fileID "\nif {!\[info exist vTcl(sourcing)\]} \{"
 
-    vTcl:image:dump_proc $fileID "vTcl:rename"
-    vTcl:image:dump_proc $fileID "vTcl:image:create_new_image"
-    vTcl:image:dump_proc $fileID "vTcl:image:get_image"
-    vTcl:image:dump_proc $fileID "vTcl:image:get_creation_type"
-    vTcl:image:dump_proc $fileID "vTcl:image:broken_image"
+    foreach i {vTcl:rename
+               vTcl:image:create_new_image
+               vTcl:image:get_image
+               vTcl:image:get_creation_type
+               vTcl:image:broken_image} {
+        puts $fileID [vTcl:dump_proc $i]
+    }
 
     puts $fileID [vTcl:image:dump_create_image_header]
 
@@ -611,8 +606,8 @@ proc vTcl:image:generate_image_user {fileID} {
 
     if {[lempty $vTcl(dump,userImages)]} { return }
 
-    puts $fileID {############################}
-    puts $fileID "\# vTcl Code to Load User Images\n"
+    puts $fileID {#############################################################################}
+    puts $fileID "\#\# vTcl Code to Load User Images\n"
 
     puts $fileID [vTcl:image:dump_create_image_header]
 
