@@ -83,6 +83,30 @@ namespace eval ::stack_trace {
         return "proc $procname [list $args] \{\n$body\n\}"
     }
 
+    proc {::stack_trace::get_proc_instruction} {procname lineno} {
+
+        set body [uplevel #0 "info body $procname"]
+        set body [split $body \n]
+        set size [llength $body]
+
+	    set line [lindex $body [expr $lineno - 1] ]
+
+        while {! [info complete $line] } {
+
+            incr lineno
+
+            # end of procedure reached
+            if {$lineno == $size} {
+               break
+            }
+
+            append line \n
+            append line [lindex $body [expr $lineno - 1] ]
+        }
+
+        return $line
+    }
+
     proc {::stack_trace::highlight_details} {top lineno} {
 
         global widget vTcl
@@ -102,6 +126,8 @@ namespace eval ::stack_trace {
             -background white \
             -foreground black  \
             -borderwidth 2
+
+        $t see $lineno.0
     }
 
     proc {::stack_trace::init_bgerror} {top error errorInfo} {
@@ -455,11 +481,15 @@ proc vTclWindow.vTcl.bgerror {base {container 0}} {
         -activebackground #dcdcdc -activeforeground #000000 \
         -background #dcdcdc -foreground #000000 -highlightbackground #dcdcdc \
         -highlightcolor #000000 -padx 9 -pady 3 -text OK \
-        -command "destroy $base"
+        -command "
+            set [vTcl:rename $base.dialogStatus] ok
+            destroy $base"
     button $base.fra25.but27 \
         -activebackground #dcdcdc -activeforeground #000000 \
         -background #dcdcdc -foreground #000000 -highlightbackground #dcdcdc \
-        -highlightcolor #000000 -padx 9 -pady 3 -text {Skip messages}
+        -highlightcolor #000000 -padx 9 -pady 3 -text {Skip messages} \
+        -command "set [vTcl:rename $base.dialogStatus] skip
+                  destroy $base"
     button $base.fra25.but28 \
         -activebackground #dcdcdc -activeforeground #000000 \
         -background #dcdcdc -foreground #000000 -highlightbackground #dcdcdc \
@@ -468,6 +498,7 @@ proc vTclWindow.vTcl.bgerror {base {container 0}} {
             set newtop .vTcl.stack_trace$::stack_trace::boxIndex
             vTclWindow.vTcl.stack_trace \$newtop
             ::stack_trace::init_bgerror \$newtop [list $error] [list $errorInfo]
+            set [vTcl:rename $base.dialogStatus] ok
             after idle \{destroy $base\}"
 
     ###################
@@ -509,9 +540,24 @@ proc bgerror {error} {
 
     global [vTcl:rename $top.error]
     global [vTcl:rename $top.errorInfo]
+    global [vTcl:rename $top.dialogStatus]
 
     set [vTcl:rename $top.error] $error
     set [vTcl:rename $top.errorInfo] $errorInfo
+    set [vTcl:rename $top.dialogStatus] 0
 
     vTclWindow.vTcl.bgerror $top
+
+	vwait [vTcl:rename $top.dialogStatus]
+
+    eval set status $[vTcl:rename $top.dialogStatus]
+
+    if {$status == "skip"} {
+
+		return -code break
+
+    } else {
+
+        return
+    }
 }
