@@ -1,6 +1,9 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Fix in compound code for copy/paste of BWidget notebook.
+    o Again use raise command if tk >= 8.3.4 where the 2-second delay on
+      some X Windows managers has been fixed.
     o Added support for BWidget combo box.
     o Modified notebook class of BWidget to use class bindings instead of
       widget bindings. This prevents saving bindings into the project.
