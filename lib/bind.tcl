@@ -100,18 +100,21 @@ proc vTclWindow.vTcl.bind {args} {
         -relheight {} -anchor nw -bordermode ignore 
     button .vTcl.bind.fra9.fra12.but13 \
         -command vTcl:add_bind \
+         \
         -highlightthickness 0 -padx 9 -pady 3 -text Add -width 5 
     pack .vTcl.bind.fra9.fra12.but13 \
         -in .vTcl.bind.fra9.fra12 -anchor center -expand 1 -fill both \
         -ipadx 0 -ipady 0 -padx 2 -pady 2 -side left 
     button .vTcl.bind.fra9.fra12.but14 \
         -command vTcl:update_bind \
+         \
         -highlightthickness 0 -padx 9 -pady 3 -text Update -width 5 
     pack .vTcl.bind.fra9.fra12.but14 \
         -in .vTcl.bind.fra9.fra12 -anchor center -expand 1 -fill both \
         -ipadx 0 -ipady 0 -padx 2 -pady 2 -side left 
     button .vTcl.bind.fra9.fra12.but15 \
         -command vTcl:delete_bind \
+         \
         -highlightthickness 0 -padx 9 -pady 3 -text Delete -width 5 
     pack .vTcl.bind.fra9.fra12.but15 \
         -in .vTcl.bind.fra9.fra12 -anchor center -expand 1 -fill both \
@@ -128,6 +131,7 @@ proc vTclWindow.vTcl.bind {args} {
         -x 5 -relx 0 -y 225 -rely 0 -width 395 -relwidth {} -height 110 \
         -relheight {} -anchor nw -bordermode ignore 
     listbox .vTcl.bind.fra9.fra9.lis10 \
+         \
         -highlightthickness 0 \
         -yscrollcommand {.vTcl.bind.fra9.fra9.scr11 set} 
     pack .vTcl.bind.fra9.fra9.lis10 \
@@ -143,6 +147,7 @@ proc vTclWindow.vTcl.bind {args} {
         -in .vTcl.bind.fra9.fra9 -anchor center -expand 0 -fill y -ipadx 0 \
         -ipady 0 -padx 0 -pady 0 -side right 
     entry .vTcl.bind.fra9.ent14 \
+         \
         -highlightthickness 0 -textvariable vTcl(bind,scratch) 
     bind .vTcl.bind.fra9.ent14 <KeyPress> {
         append vTcl(bind,event) "<Key-%K>"
@@ -151,6 +156,7 @@ proc vTclWindow.vTcl.bind {args} {
         -x 75 -relx 0 -y 5 -rely 0 -width 60 -relwidth {} -height 20 \
         -relheight {} -anchor nw -bordermode ignore 
     entry .vTcl.bind.fra9.ent15 \
+         \
         -highlightthickness 0 -textvariable vTcl(bind,event) 
     place .vTcl.bind.fra9.ent15 \
         -x 60 -relx 0 -y 143 -rely 0 -width 340 -relwidth {} -height 20 \
@@ -167,38 +173,45 @@ proc vTclWindow.vTcl.bind {args} {
         -in .vTcl.bind.fra9.fra16 -anchor center -expand 0 -fill y -ipadx 0 \
         -ipady 0 -padx 0 -pady 0 -side right 
     text .vTcl.bind.fra9.fra16.tex21 \
+         \
         -highlightthickness 0 \
         -yscrollcommand {.vTcl.bind.fra9.fra16.scr20 set} 
     pack .vTcl.bind.fra9.fra16.tex21 \
         -in .vTcl.bind.fra9.fra16 -anchor center -expand 1 -fill both \
         -ipadx 0 -ipady 0 -padx 0 -pady 0 -side top 
     label .vTcl.bind.fra9.lab23 \
+         \
         -relief groove -text {Type -->} 
     place .vTcl.bind.fra9.lab23 \
         -x 5 -relx 0 -y 5 -rely 0 -width 65 -relwidth {} -height 20 \
         -relheight {} -anchor nw -bordermode ignore 
     label .vTcl.bind.fra9.lab24 \
+         \
         -relief groove -text Command 
     place .vTcl.bind.fra9.lab24 \
         -x 5 -relx 0 -y 28 -rely 0 -width 395 -relwidth {} -height 20 \
         -relheight {} -anchor nw -bordermode ignore 
     label .vTcl.bind.fra9.lab25 \
+         \
         -relief groove -text Event 
     place .vTcl.bind.fra9.lab25 \
         -x 5 -relx 0 -y 143 -rely 0 -width 50 -relwidth {} -height 20 \
         -relheight {} -anchor nw -bordermode ignore 
     label .vTcl.bind.fra9.lab26 \
+         \
         -relief groove -text Tags 
     place .vTcl.bind.fra9.lab26 \
         -x 5 -relx 0 -y 166 -rely 0 -width 50 -relwidth {} -height 20 \
         -relheight {} -anchor nw -bordermode ignore 
     entry .vTcl.bind.fra9.ent27 \
+         \
         -highlightthickness 0 -textvariable vTcl(bind,tags) 
     place .vTcl.bind.fra9.ent27 \
         -x 60 -relx 0 -y 166 -rely 0 -width 340 -relwidth {} -height 20 \
         -relheight {} -anchor nw -bordermode ignore 
     menubutton .vTcl.bind.fra9.men1 \
         -borderwidth 1 \
+         \
         -menu .vTcl.bind.fra9.men1.m -padx 5 -pady 4 -relief raised \
         -text Mouse 
     place .vTcl.bind.fra9.men1 \
@@ -245,6 +258,7 @@ proc vTclWindow.vTcl.bind {args} {
         -state normal -underline -1 
     menubutton .vTcl.bind.fra9.men2 \
         -borderwidth 1 \
+         \
         -menu .vTcl.bind.fra9.men2.m -padx 5 -pady 4 -relief raised -text Key 
     place .vTcl.bind.fra9.men2 \
         -x 210 -relx 0 -y 5 -rely 0 -width 60 -relwidth {} -height 20 \

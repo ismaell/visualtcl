@@ -7,5 +7,5 @@ VTCL_HOME=`pwd`
 export PATH_TO_WISH
 export VTCL_HOME
 
-exec ${PATH_TO_WISH} ${VTCL_HOME}/vt.tcl
+exec ${PATH_TO_WISH} ${VTCL_HOME}/vt.tcl 
 

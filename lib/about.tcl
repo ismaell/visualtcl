@@ -2,7 +2,7 @@
 #
 # about.tcl - dialog "about Visual Tcl"
 #
-# Copyright (C) 1996-1999 Stewart Allen
+# Copyright (C) 1996-1998 Stewart Allen
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -38,7 +38,7 @@ proc vTclWindow.vTcl.about {args} {
         -padx 5 -pady 5 -side top 
     label .vTcl.about.lab7 \
         -borderwidth 0 \
-        -text {Copyright (C) 1996-1999 Stewart Allen} 
+        -text {Copyright (C) 1996-1998 Stewart Allen} 
     pack .vTcl.about.lab7 \
         -in .vTcl.about -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 \
         -padx 1 -pady 1 -side top 

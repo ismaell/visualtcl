@@ -31,19 +31,19 @@ ChangeLog for Visual Tcl:
     o Additional blt widget support (Thanks Victor)
 
 1.10 -> 1.11 (February 1, 1998)
-    o Changed child windows back to "transient" since tk80 bug
-      fixed in latest release. Removed "intelligent" deiconification.
-    o Root menu now uses Tk8 System menus when available
-    o Many fixes for Macintosh (including startup instructions)
-    o Removed variable inspector
-    o Fixed dialog race condition
-    o vtcl Now accepts spaces (and meta chars) in procedure names
-    o Replaced lib_blt.tcl and lib_itcl.tcl files
-    o vtcl Now saves children of Canvases
-    o Fixed saving of root (tk8) menus
-    o Thanks to Fabien Coutant, Kenn Persinger and Jim Kramer
-      for numerous patches.
-    o Fixed compound menu
+	o Changed child windows back to "transient" since tk80 bug
+	  fixed in latest release. Removed "intelligent" deiconification.
+	o Root menu now uses Tk8 System menus when available
+	o Many fixes for Macintosh (including startup instructions)
+	o Removed variable inspector
+	o Fixed dialog race condition
+	o vtcl Now accepts spaces (and meta chars) in procedure names
+	o Replaced lib_blt.tcl and lib_itcl.tcl files
+	o vtcl Now saves children of Canvases
+	o Fixed saving of root (tk8) menus
+	o Thanks to Fabien Coutant, Kenn Persinger and Jim Kramer
+	  for numerous patches.
+	o Fixed compound menu
 
 1.09 -> 1.10 (May 31, 1997)
     o Added "No clobbering" safeties on functions, vars and menus
