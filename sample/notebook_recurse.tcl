@@ -152,11 +152,44 @@ proc {vTcl:WidgetProc} {w args} {
 
 if {[info exists vTcl(sourcing)]} {
 proc vTcl:project:info {} {
-    namespace eval ::widgets::.top31 {
-        array set save {-background 1 -highlightbackground 1 -highlightcolor 1}
+    namespace eval ::widgets::.top35 {
+        array set save {}
     }
-    namespace eval ::widgets::.top31.hie32 {
-        array set save {-querycommand 1 -sbwidth 1}
+    namespace eval ::widgets::.top35.tab36 {
+        array set save {-tabpos 1}
+    }
+    namespace eval ::widgets::.top35.tab36.canvas.notebook.cs.page1.cs {
+        array set save {}
+    }
+    namespace eval ::widgets::.top35.tab36.canvas.notebook.cs.page1.cs.but37 {
+        array set save {-text 1}
+    }
+    namespace eval ::widgets::.top35.tab36.canvas.notebook.cs.page1.cs.lab38 {
+        array set save {-borderwidth 1 -relief 1 -text 1}
+    }
+    namespace eval ::widgets::.top35.tab36.canvas.notebook.cs.page2.cs {
+        array set save {}
+    }
+    namespace eval ::widgets::.top35.tab36.canvas.notebook.cs.page2.cs.scr39 {
+        array set save {-height 1 -width 1}
+    }
+    namespace eval ::widgets::.top35.tab36.canvas.notebook.cs.page3.cs {
+        array set save {}
+    }
+    namespace eval ::widgets::.top35.tab36.canvas.notebook.cs.page3.cs.tab35 {
+        array set save {}
+    }
+    namespace eval ::widgets::.top35.tab36.canvas.notebook.cs.page3.cs.tab35.canvas.notebook.cs.page1.cs {
+        array set save {}
+    }
+    namespace eval ::widgets::.top35.tab36.canvas.notebook.cs.page3.cs.tab35.canvas.notebook.cs.page1.cs.but36 {
+        array set save {-text 1}
+    }
+    namespace eval ::widgets::.top35.tab36.canvas.notebook.cs.page3.cs.tab35.canvas.notebook.cs.page2.cs {
+        array set save {}
+    }
+    namespace eval ::widgets::.top35.tab36.canvas.notebook.cs.page3.cs.tab35.canvas.notebook.cs.page3.cs {
+        array set save {}
     }
     namespace eval ::widgets_bindings {
         set tagslist {}
@@ -167,45 +200,8 @@ proc vTcl:project:info {} {
 # USER DEFINED PROCEDURES
 #
 
-proc {ls} {dir_} {
-global vTcl
-
-if {! [info exists vTcl(hierarchy,root)] } {
-
-    # a kinda unix-centric view
-    set vTcl(hierarchy,root) "/usr"
-}
-
-if {$dir_ == ""} {
-
-    set dir $vTcl(hierarchy,root)
-} else {
-
-    set dir $dir_
-}
-
-if {! [file isdirectory $dir]} {
-    return
-}
-
-cd $dir
-set returnList ""
-foreach file [lsort [glob -nocomplain *]] {
-
-    lappend returnList [list [file join $dir $file] $file]
-}
-
-return $returnList
-}
-
-proc {test_func} {} {
-global widget
-
-$widget(files_browser) expand /usr
-}
-
 proc {main} {argc argv} {
-wm protocol .top31 WM_DELETE_WINDOW {exit}
+wm protocol .top35 WM_DELETE_WINDOW {exit}
 }
 
 proc init {argc argv} {
@@ -241,50 +237,81 @@ proc vTclWindow. {base {container 0}} {
     ###################
 }
 
-proc vTclWindow.top31 {base {container 0}} {
+proc vTclWindow.top35 {base {container 0}} {
     if {$base == ""} {
-        set base .top31
+        set base .top35
     }
     if {[winfo exists $base] && (!$container)} {
         wm deiconify $base; return
     }
 
     global widget
-    set widget(rev,$base.hie32) {files_browser}
-    set {widget(files_browser)} "$base.hie32"
-    set widget($base,files_browser) "$base.hie32"
-    interp alias {} files_browser {} .top31.hie32 $base.hie32
-    interp alias {} $base.files_browser {} .top31.hie32 $base.hie32
 
     ###################
     # CREATING WIDGETS
     ###################
     if {!$container} {
-    toplevel $base -class Toplevel \
-        -background #bcbcbc -highlightbackground #bcbcbc \
-        -highlightcolor #000000 
+    toplevel $base -class Toplevel
     wm focusmodel $base passive
-    wm geometry $base 377x308+98+152; update
-    wm maxsize $base 1009 738
-    wm minsize $base 1 1
+    wm geometry $base 336x277+101+145; update
+    wm maxsize $base 1284 1010
+    wm minsize $base 100 1
     wm overrideredirect $base 0
     wm resizable $base 1 1
     wm deiconify $base
-    wm title $base "Hierarchy Test"
+    wm title $base "New Toplevel 1"
     }
-    ::iwidgets::hierarchy $base.hie32 \
-        -querycommand {ls %n} -sbwidth 10 
-    bindtags $base.hie32 "itk-delete-.top31.hie32 $base.hie32 Hierarchy $base all"
+    ::iwidgets::tabnotebook $base.tab36 \
+        -tabpos n 
+    bindtags $base.tab36 "itk-delete-.top35.tab36 $base.tab36 Tabnotebook $base all"
+    $base.tab36 add \
+        -background #d9d9d9 -label {Page 1} 
+    $base.tab36 add \
+        -background #d9d9d9 -label {Page 2} 
+    $base.tab36 add \
+        -background #d9d9d9 -label {Page 3} 
+    button $base.tab36.canvas.notebook.cs.page1.cs.but37 \
+        -text button 
+    label $base.tab36.canvas.notebook.cs.page1.cs.lab38 \
+        -borderwidth 1 -relief raised -text label 
+    place $base.tab36.canvas.notebook.cs.page1.cs.but37 \
+        -x 20 -y 10 -anchor nw -bordermode ignore 
+    place $base.tab36.canvas.notebook.cs.page1.cs.lab38 \
+        -x 20 -y 50 -anchor nw -bordermode ignore 
+    ::iwidgets::scrolledlistbox $base.tab36.canvas.notebook.cs.page2.cs.scr39 \
+        -height 218 -width 300 
+    bindtags $base.tab36.canvas.notebook.cs.page2.cs.scr39 "itk-delete-.top35.tab36.canvas.notebook.cs.page2.cs.scr39 $base.tab36.canvas.notebook.cs.page2.cs.scr39 Scrolledlistbox $base all"
+    place $base.tab36.canvas.notebook.cs.page2.cs.scr39 \
+        -x 20 -y 10 -width 300 -height 218 -anchor nw -bordermode ignore 
+    grid columnconf $base.tab36.canvas.notebook.cs.page2.cs.scr39 0 -weight 1
+    grid rowconf $base.tab36.canvas.notebook.cs.page2.cs.scr39 0 -weight 1
+    ::iwidgets::tabnotebook $base.tab36.canvas.notebook.cs.page3.cs.tab35
+    bindtags $base.tab36.canvas.notebook.cs.page3.cs.tab35 "itk-delete-.top35.tab36.canvas.notebook.cs.page3.cs.tab35 $base.tab36.canvas.notebook.cs.page3.cs.tab35 Tabnotebook $base all"
+    $base.tab36.canvas.notebook.cs.page3.cs.tab35 add \
+        -background #d9d9d9 -label {Page 1} 
+    $base.tab36.canvas.notebook.cs.page3.cs.tab35 add \
+        -background #d9d9d9 -label {Page 2} 
+    $base.tab36.canvas.notebook.cs.page3.cs.tab35 add \
+        -background #d9d9d9 -label {Page 3} 
+    button $base.tab36.canvas.notebook.cs.page3.cs.tab35.canvas.notebook.cs.page1.cs.but36 \
+        -text button 
+    pack $base.tab36.canvas.notebook.cs.page3.cs.tab35.canvas.notebook.cs.page1.cs.but36 \
+        \
+        -in $base.tab36.canvas.notebook.cs.page3.cs.tab35.canvas.notebook.cs.page1.cs \
+        -anchor center -expand 0 -fill none -side top 
+    $base.tab36.canvas.notebook.cs.page3.cs.tab35 select 0
+    pack $base.tab36.canvas.notebook.cs.page3.cs.tab35 \
+        -in $base.tab36.canvas.notebook.cs.page3.cs -anchor center -expand 1 \
+        -fill both -side top 
+    $base.tab36 select 0
     ###################
     # SETTING GEOMETRY
     ###################
-    pack $base.hie32 \
+    pack $base.tab36 \
         -in $base -anchor center -expand 1 -fill both -side top 
-    grid columnconf $base.hie32 0 -weight 1
-    grid rowconf $base.hie32 0 -weight 1
 }
 
 Window show .
-Window show .top31
+Window show .top35
 
 main $argc $argv
