@@ -623,43 +623,6 @@ proc vTcl:define_bindings {} {
 proc vTcl:main {argc argv} {
     global env vTcl tcl_version tcl_platform
 
-    if {[namespace children :: ::freewrap] == "::freewrap"} {
-        # folder name at the time it was wrapped
-        set env(VTCL_HOME) "C:/My Documents/vtcl"
-
-        # info about the list of files
-        set listID [open $env(VTCL_HOME)/wrap.txt r]
-        set vTcl(wrapped) [split [read $listID] \n]
-        close $listID
-
-        # special glob procedure
-        rename glob vTcl:glob
-
-        proc glob {args} {
-
-            global vTcl
-            set index 0
-            if {[lindex $args 0] == "-nocomplain"} {
-                incr index
-            }
-
-            set pattern [lindex $args $index]
-            set result ""
-
-            foreach wrapped $vTcl(wrapped) {
-                if [string match $pattern $wrapped] {
-                    lappend result $wrapped
-                }
-            }
-
-            if {$result == ""} {
-                return [eval vTcl:glob $args]
-            } else {
-                return $result
-            }
-        }
-    }
-
     catch {package require Unsafe} ; #for running in Netscape
     catch {package require dde}    ; #for windows
     catch {package require Tk}     ; #for dynamic loading tk
