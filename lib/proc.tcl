@@ -475,6 +475,12 @@ namespace eval ::vTcl::proc {
 
         set vTcl(proc,$w,chg) 1
     }
-}
 
+    proc add_procs {procs} {
+        foreach name $procs {
+            vTcl:list add "{$name}" ::vTcl(procs)
+        }
+        vTcl:update_proc_list
+    }
+}
 

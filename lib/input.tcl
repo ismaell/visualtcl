@@ -171,6 +171,90 @@ proc vTcl:text_window {base title target} {
     focus $base.cpd48.03
 }
 
+namespace eval ::vTcl::input::lineInput {
+
+proc getLine {title description legend args} {
+    set base .vTcl.lineInput
+    set top $base
+    ###################
+    # CREATING WIDGETS
+    ###################
+    vTcl:toplevel $top -class Toplevel
+    wm focusmodel $top passive
+    wm geometry $top 5x5+341+318; update
+    wm maxsize $top 1284 1006
+    wm minsize $top 111 1
+    wm overrideredirect $top 0
+    wm resizable $top 1 1
+    wm title $top "$title"
+    bindtags $top "$top Toplevel all _TopLevel"
+    vTcl:FireEvent $top <<Create>>
+    wm transient .vTcl.lineInput .vTcl
+    wm protocol $top WM_DELETE_WINDOW "set ::${top}::status cancel"
+
+    bind $top <KeyPress-Return> "set ::${top}::status ok"
+    bind $top <KeyPress-Escape> "set ::${top}::status cancel"
+
+    set ::${top}::description $description
+    set ::${top}::legend $legend
+    set ::${top}::status ""
+
+    label $top.lab80 \
+        -anchor w -textvariable "$top\::description" -justify left
+    frame $top.fra81 \
+        -borderwidth 2 -height 75 -width 125 
+    set site_3_0 $top.fra81
+    entry $site_3_0.ent83 \
+        -background white -textvariable "$top\::entry" 
+    vTcl:DefineAlias "$site_3_0.ent83" "LineEntry" vTcl:WidgetProc "$top" 1
+    label $site_3_0.lab82 \
+        -anchor w -textvariable "$top\::legend" -justify left
+    pack $site_3_0.ent83 \
+        -in $site_3_0 -anchor center -expand 1 -fill x -padx 5 -pady 5 \
+        -side right 
+    pack $site_3_0.lab82 \
+        -in $site_3_0 -anchor center -expand 0 -fill none -padx 5 -pady 5 \
+        -side left 
+    frame $top.fra84 \
+        -borderwidth 2 -height 75 -width 125 
+    set site_3_0 $top.fra84
+    button $site_3_0.but85 -command "set ::${top}::status ok" \
+        -pady 0 -text OK -width 8 
+    button $site_3_0.but86 -command "set ::${top}::status cancel" \
+        -pady 0 -text Cancel -width 8 
+    pack $site_3_0.but85 \
+        -in $site_3_0 -anchor center -expand 0 -fill none -padx 5 -pady 5 \
+        -side left 
+    pack $site_3_0.but86 \
+        -in $site_3_0 -anchor center -expand 0 -fill none -padx 5 -pady 5 \
+        -side right 
+    ###################
+    # SETTING GEOMETRY
+    ###################
+    pack $top.lab80 \
+        -in $top -anchor center -expand 0 -fill x -padx 5 -pady 5 -side top 
+    pack $top.fra81 \
+        -in $top -anchor center -expand 0 -fill x -side top 
+    pack $top.fra84 \
+        -in $top -anchor center -expand 0 -fill none -side top 
+
+    vTcl:FireEvent $base <<Ready>>
+    wm deiconify $top
+    wm geometry $top {}
+
+    grab set $base
+    vwait ::${top}::status
+    grab release $base
+    if {[set ::${top}::status] == "cancel"} {
+        destroy $base
+        return ""
+    }
+
+    destroy $base
+    return [set ::${top}::entry]
+}
+}; ## namespace eval ::vTcl::input::lineInput
+
 namespace eval ::vTcl::input::listboxSelect {
 
 proc updateSelection {top} {
@@ -213,6 +297,9 @@ proc select {contents title {selectMode single} args} {
     vTcl:FireEvent $top <<Create>>
     wm transient .vTcl.listboxSelect .vTcl
     wm protocol $top WM_DELETE_WINDOW "set ::${top}::status cancel"
+
+    bind $top <KeyPress-Return> "set ::${top}::status ok"
+    bind $top <KeyPress-Escape> "set ::${top}::status cancel"
 
     set ::${top}::listContents $contents
     set ::${top}::status ""
@@ -303,5 +390,5 @@ proc select {contents title {selectMode single} args} {
     destroy $base
     return [vTcl:at ::${top}::selectedItems]
 }
-}
+} ; ## namespace eval ::vTcl::input::listboxSelect
 
