@@ -20,10 +20,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-# @@change by Christian Gavin March 2000
-# new file to display a font manager and a font selector for properties
-# @@end_change
-
 proc vTcl:font:prompt_user_font {target option} {
 	
     global vTcl
@@ -183,7 +179,8 @@ proc vTcl:font:get_font_dlg {base font_desc} {
         -highlightcolor #000000 -selectbackground #000080 \
         -selectforeground #ffffff -xscrollcommand "$base.fra28.cpd29.02 set" \
         -yscrollcommand "$base.fra28.cpd29.03 set"
-    bind $base.fra28.cpd29.01 <Button-1> "vTcl:font:font_select_family $base %W %y"
+    bind $base.fra28.cpd29.01 <Button-1> \
+    	"vTcl:font:font_select_family $base %W %y"
     scrollbar $base.fra28.cpd29.02 \
         -activebackground #bcbcbc -background #bcbcbc -borderwidth 1 \
         -command "$base.fra28.cpd29.01 xview" -cursor left_ptr \
@@ -582,12 +579,15 @@ proc {vTcl:font:display_fonts_in_text} {t} {
  	        vTcl:font:create_link $t vTcl:hilite_delete_$object \
  	       		"vTcl:font:ask_delete_font $vTcl(fonts,$object,key)"
 	        $t insert end " "
+
+	        $t insert end "Change" "vTcl:hilite_change_$object"
+	        vTcl:font:create_link $t vTcl:hilite_change_$object \
+	        	"vTcl:font:font_change $object"
+	        $t insert end "\n"
 	}
 
-        $t insert end "Change" "vTcl:hilite_change_$object"
-        vTcl:font:create_link $t vTcl:hilite_change_$object "vTcl:font:font_change $object"
-        $t insert end "\n"
-        $t insert end "_________________________________________________________________\n"
+        $t insert end \
+        "_________________________________________________________________\n"
 
         $t tag configure vTcl:$object -font $object -justify left
         $t insert end "\n"
@@ -744,7 +744,8 @@ proc vTcl:font:generate_font_stock {fileID} {
 
 		if {[vTcl:font:get_type $font] == "stock"} {
 			
-			puts $fileID "vTcl:font:add_font \"[font configure $font]\" [vTcl:font:get_type $font] " nonewline
+			puts $fileID \
+ "vTcl:font:add_font \"[font configure $font]\" [vTcl:font:get_type $font] " nonewline
 			puts $fileID "[vTcl:font:get_key $font]"
 		}
 	}
@@ -763,7 +764,8 @@ proc vTcl:font:generate_font_user {fileID} {
 
 		if {[vTcl:font:get_type $font] == "user"} {
 			
-			puts $fileID "vTcl:font:add_font \"[font configure $font]\" [vTcl:font:get_type $font] " nonewline
+			puts $fileID \
+ "vTcl:font:add_font \"[font configure $font]\" [vTcl:font:get_type $font] " nonewline
 			puts $fileID "[vTcl:font:get_key $font]"
 		}
 	}	
@@ -845,7 +847,8 @@ proc {vTcl:font:fill_noborder_font_list} {t} {
 
 	foreach object $vTcl(fonts,objects) {
 
-	    $t insert end "ABDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwyz 0123456789\n" \
+	    $t insert end \
+	    	"ABDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwyz 0123456789\n" \
 	       vTcl:font_list:$object
       
 	    $t tag configure vTcl:font_list:$object -font $object
