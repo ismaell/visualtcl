@@ -160,7 +160,7 @@ proc vTcl:Toplevel:WidgetProc {w args} {
             grab release $w
         }
         default {
-            eval $w $command $args
+            uplevel $w $command $args
         }
     }
 }

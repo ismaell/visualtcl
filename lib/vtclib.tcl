@@ -69,7 +69,7 @@ proc vTcl:WidgetProc {w args} {
         set command [lindex $args 0]
         set args [lrange $args 1 end]
     }
-    eval $w $command $args
+    uplevel $w $command $args
 }
 
 proc vTcl:DefineAlias {target alias widgetProc top_or_alias cmdalias} {
