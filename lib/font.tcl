@@ -167,145 +167,99 @@ proc vTcl:font:get_font_dlg {base font_desc} {
     wm resizable $base 1 1
     wm title $base "Font selector"
     frame $base.fra28 \
-        -background #bcbcbc -borderwidth 2 -height 75 \
-        -highlightbackground #bcbcbc -highlightcolor #000000 -relief groove \
+        -borderwidth 2 -height 75 \
+        -relief groove \
         -width 125 
     frame $base.fra28.cpd29 \
-        -background #bcbcbc -borderwidth 1 -highlightbackground #bcbcbc \
-        -highlightcolor #000000 -relief raised -width 30 
+        -borderwidth 1 \
+        -relief raised -width 30 
     listbox $base.fra28.cpd29.01 \
-        -background #bcbcbc \
-        -foreground #000000 -highlightbackground #f3f3f3 \
-        -highlightcolor #000000 -selectbackground #000080 \
-        -selectforeground #ffffff -xscrollcommand "$base.fra28.cpd29.02 set" \
+        -xscrollcommand "$base.fra28.cpd29.02 set" \
         -yscrollcommand "$base.fra28.cpd29.03 set"
     bind $base.fra28.cpd29.01 <Button-1> \
     	"vTcl:font:font_select_family $base %W %y"
     scrollbar $base.fra28.cpd29.02 \
-        -activebackground #bcbcbc -background #bcbcbc -borderwidth 1 \
+        -borderwidth 1 \
         -command "$base.fra28.cpd29.01 xview" -cursor left_ptr \
-        -highlightbackground #bcbcbc -highlightcolor #000000 -orient horiz \
-        -troughcolor #bcbcbc
+        -orient horiz
     scrollbar $base.fra28.cpd29.03 \
-        -activebackground #bcbcbc -background #bcbcbc -borderwidth 1 \
+        -borderwidth 1 \
         -command "$base.fra28.cpd29.01 yview" -cursor left_ptr \
-        -highlightbackground #bcbcbc -highlightcolor #000000 -orient vert \
-        -troughcolor #bcbcbc
+        -orient vert
     label $base.fra28.lab30 \
-        -background #bcbcbc -borderwidth 1 \
-        -foreground #000000 -highlightbackground #bcbcbc \
-        -highlightcolor #000000 -padx 5 -pady 0 -text Size: 
+        -borderwidth 1 \
+        -padx 5 -pady 0 -text Size: 
     label $base.fra28.lab31 \
-        -background #bcbcbc -borderwidth 1 \
-        -foreground #000000 -highlightbackground #bcbcbc \
-        -highlightcolor #000000 -padx 5 -text Weight: 
+        -borderwidth 1 \
+        -padx 5 -text Weight: 
     label $base.fra28.lab32 \
-        -background #bcbcbc -borderwidth 1 \
-        -foreground #000000 -highlightbackground #bcbcbc \
-        -highlightcolor #000000 -padx 5 -text Slant: 
+        -borderwidth 1 \
+        -padx 5 -text Slant: 
     checkbutton $base.fra28.che34 \
-        -activebackground #bcbcbc -activeforeground #000000 -anchor n \
-        -background #bcbcbc \
-        -foreground #000000 -highlightbackground #bcbcbc \
-        -highlightcolor #000000 -text Underline \
+        -text Underline \
         -variable vTcl(x,$base,underline) 
     checkbutton $base.fra28.che35 \
-        -activebackground #bcbcbc -activeforeground #000000 \
-        -background #bcbcbc \
-        -foreground #000000 -highlightbackground #bcbcbc \
-        -highlightcolor #000000 -text Overstrike \
+        -text Overstrike \
         -variable vTcl(x,$base,overstrike) 
     entry $base.fra28.ent36 \
-        -background #bcbcbc \
-        -foreground #000000 -highlightbackground #f3f3f3 \
-        -highlightcolor #000000 -selectbackground #000080 \
-        -selectforeground #ffffff -textvariable vTcl(x,$base,size) -width 10 
+        -textvariable vTcl(x,$base,size) -width 10 
     menubutton $base.fra28.men37 \
-        -activebackground #bcbcbc -activeforeground #000000 \
-        -background #bcbcbc \
-        -foreground #000000 -highlightbackground #bcbcbc \
-        -highlightcolor #000000 -menu $base.fra28.men37.m -padx 4 -pady 3 \
+        -menu $base.fra28.men37.m -padx 4 -pady 3 \
         -relief raised -text normal -textvariable vTcl(x,$base,weight) \
         -width 10 
     menu $base.fra28.men37.m \
-        -activebackground #bcbcbc -activeforeground #000000 \
-        -background #bcbcbc \
-        -foreground #000000 -tearoff 0 
+        -tearoff 0 
     $base.fra28.men37.m add command \
         -command "set vTcl(x,$base,weight) normal" -label normal 
     $base.fra28.men37.m add command \
         -command "set vTcl(x,$base,weight) bold" -label bold 
     menubutton $base.fra28.men38 \
-        -activebackground #bcbcbc -activeforeground #000000 \
-        -background #bcbcbc \
-        -foreground #000000 -highlightbackground #bcbcbc \
-        -highlightcolor #000000 -menu $base.fra28.men38.m -padx 4 -pady 3 \
+        -menu $base.fra28.men38.m -padx 4 -pady 3 \
         -relief raised -text roman -textvariable vTcl(x,$base,slant) \
         -width 10 
     menu $base.fra28.men38.m \
-        -activebackground #bcbcbc -activeforeground #000000 \
-        -background #bcbcbc \
-        -foreground #000000 -tearoff 0 
+        -tearoff 0 
     $base.fra28.men38.m add command \
         -command "set vTcl(x,$base,slant) roman" -label roman 
     $base.fra28.men38.m add command \
         -command "set vTcl(x,$base,slant) italic" -label italic 
     label $base.fra28.lab39 \
-        -background #bcbcbc -borderwidth 1 \
-        -foreground #000000 -highlightbackground #bcbcbc \
-        -highlightcolor #000000 
+        -borderwidth 1
     button $base.fra28.but32 \
-        -activebackground #bcbcbc -activeforeground #000000 \
-        -background #bcbcbc \
         -command "incr vTcl(x,$base,size)" \
-        -foreground #000000 -highlightbackground #bcbcbc \
-        -highlightcolor #000000 -padx 2 -pady 0 -text + 
+        -padx 2 -pady 0 -text + 
     button $base.fra28.but33 \
-        -activebackground #bcbcbc -activeforeground #000000 \
-        -background #bcbcbc \
         -command "incr vTcl(x,$base,size) -1" \
-        -foreground #000000 -highlightbackground #bcbcbc \
-        -highlightcolor #000000 -padx 2 -pady 0 -text - 
+        -padx 2 -pady 0 -text - 
     label $base.lab41 \
-        -background #bcbcbc -borderwidth 1 \
-        -foreground #000000 -highlightbackground #bcbcbc \
-        -highlightcolor #000000 -text Sample 
+        -borderwidth 1 \
+        -text Sample 
     frame $base.cpd43 \
-        -background #bcbcbc -borderwidth 1 -highlightbackground #bcbcbc \
-        -highlightcolor #000000 -relief raised -width 50 
+        -borderwidth 1 \
+        -relief raised -width 50 
     scrollbar $base.cpd43.01 \
-        -activebackground #bcbcbc -background #bcbcbc -borderwidth 1 \
+        -borderwidth 1 \
         -command "$base.cpd43.03 xview" -cursor left_ptr \
-        -highlightbackground #bcbcbc -highlightcolor #000000 -orient horiz \
-        -troughcolor #bcbcbc 
+        -orient horiz
     scrollbar $base.cpd43.02 \
-        -activebackground #bcbcbc -background #bcbcbc -borderwidth 1 \
+        -borderwidth 1 \
         -command "$base.cpd43.03 yview" -cursor left_ptr \
-        -highlightbackground #bcbcbc -highlightcolor #000000 -orient vert \
-        -troughcolor #bcbcbc
+        -orient vert
     text $base.cpd43.03 \
-        -background #bcbcbc \
         -font $vTcl(x,$base,font) \
-        -foreground #000000 -height 3 -highlightbackground #f3f3f3 \
-        -highlightcolor #000000 -selectbackground #000080 \
-        -selectforeground #ffffff -width 8 -wrap none \
+        -height 3 \
+        -width 8 -wrap none \
         -xscrollcommand "$base.cpd43.01 set" \
         -yscrollcommand "$base.cpd43.02 set" 
     frame $base.fra27 \
-        -background #bcbcbc -borderwidth 2 -height 75 \
-        -highlightbackground #bcbcbc -highlightcolor #000000 -relief groove \
+        -borderwidth 2 -height 75 \
+        -relief groove \
         -width 125 
     button $base.fra27.but28 \
-        -activebackground #bcbcbc -activeforeground #000000 \
-        -background #bcbcbc \
-        -foreground #000000 -highlightbackground #bcbcbc \
-        -highlightcolor #000000 -padx 9 -pady 3 -text OK \
+        -padx 9 -pady 3 -text OK \
         -command "vTcl:font:button_ok $base"
     button $base.fra27.but29 \
-        -activebackground #bcbcbc -activeforeground #000000 \
-        -background #bcbcbc \
-        -foreground #000000 -highlightbackground #bcbcbc \
-        -highlightcolor #000000 -padx 9 -pady 3 -text Cancel \
+        -padx 9 -pady 3 -text Cancel \
         -command "vTcl:font:button_cancel $base"
     ###################
     # SETTING GEOMETRY
@@ -651,14 +605,9 @@ proc vTclWindow.vTcl.fontManager {args} {
     wm transient .vTcl.fontManager .vTcl
     
     button $base.but29 \
-        -activebackground #bcbcbc -activeforeground #000000 \
-        -background #bcbcbc \
-        -foreground #000000 -highlightbackground #bcbcbc \
-        -highlightcolor #000000 -padx 9 -pady 3 -text Close \
+        -padx 9 -pady 3 -text Close \
         -command "wm withdraw $base"
     button $base.but30 \
-        -activebackground #bcbcbc -activeforeground #000000 \
-        -background #bcbcbc \
         -command {set font_desc "-family {Helvetica} -size 12"
 
 set font_desc [vTcl:font:prompt_user_font_2 $font_desc]
@@ -670,27 +619,23 @@ if {$font_desc != ""} {
    vTcl:font:display_fonts $vTcl(fonts,font_mgr,win)
    $vTcl(fonts,font_mgr,win).cpd31.03 yview end
 }} \
-        -foreground #000000 -highlightbackground #bcbcbc \
-        -highlightcolor #000000 -padx 9 -pady 3 -text {Add new font...}
+        -padx 9 -pady 3 -text {Add new font...}
     frame $base.cpd31 \
-        -background #bcbcbc -borderwidth 1 -height 30 \
-        -highlightbackground #bcbcbc -highlightcolor #000000 -relief raised \
+        -borderwidth 1 -height 30 \
+        -relief raised \
         -width 30
     scrollbar $base.cpd31.01 \
-        -activebackground #bcbcbc -background #bcbcbc -borderwidth 1 \
+        -borderwidth 1 \
         -command "$base.cpd31.03 xview" -cursor left_ptr \
-        -highlightbackground #bcbcbc -highlightcolor #000000 -orient horiz \
-        -troughcolor #bcbcbc
+        -orient horiz
     scrollbar $base.cpd31.02 \
-        -activebackground #bcbcbc -background #bcbcbc -borderwidth 1 \
+        -borderwidth 1 \
         -command "$base.cpd31.03 yview" -cursor left_ptr \
-        -highlightbackground #bcbcbc -highlightcolor #000000 -orient vert \
-        -troughcolor #bcbcbc
+        -orient vert
     text $base.cpd31.03 \
         -background #bcbcbc -cursor left_ptr \
-        -foreground #000000 -height 1 -highlightbackground #f3f3f3 \
-        -highlightcolor #000000 -selectbackground #000080 \
-        -selectforeground #ffffff -state disabled -width 8 -wrap none \
+        -foreground #000000 -height 1 \
+        -state disabled -width 8 -wrap none \
         -xscrollcommand "$base.cpd31.01 set" \
         -yscrollcommand "$base.cpd31.02 set"
     ###################

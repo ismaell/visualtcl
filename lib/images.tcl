@@ -613,9 +613,7 @@ proc vTclWindow.vTcl.imgManager {args} {
     ###################
     # CREATING WIDGETS
     ###################
-    toplevel $base -class Toplevel \
-        -background #bcbcbc -highlightbackground #bcbcbc \
-        -highlightcolor #000000 
+    toplevel $base -class Toplevel
     wm focusmodel $base passive
     wm geometry $base 494x581+405+156
     wm maxsize $base 1009 738
@@ -628,45 +626,36 @@ proc vTclWindow.vTcl.imgManager {args} {
     wm transient .vTcl.imgManager .vTcl
     
     label $base.lab28 \
-        -background #bcbcbc -borderwidth 1 \
-        -foreground #000000 -highlightbackground #bcbcbc \
-        -highlightcolor #000000 -relief sunken -text Images 
+        -borderwidth 1 \
+        -relief sunken -text Images 
     frame $base.cpd29 \
-        -background #bcbcbc -borderwidth 1 -height 30 \
-        -highlightbackground #bcbcbc -highlightcolor #000000 -relief raised \
+        -borderwidth 1 -height 30 \
+        -relief raised \
         -width 30 
     scrollbar $base.cpd29.01 \
-        -activebackground #bcbcbc -background #bcbcbc -borderwidth 1 \
+        -borderwidth 1 \
         -command "$base.cpd29.03 xview" -cursor left_ptr \
-        -highlightbackground #bcbcbc -highlightcolor #000000 -orient horiz \
-        -troughcolor #bcbcbc
+        -orient horiz
     scrollbar $base.cpd29.02 \
-        -activebackground #bcbcbc -background #bcbcbc -borderwidth 1 \
+        -borderwidth 1 \
         -command "$base.cpd29.03 yview" -cursor left_ptr \
-        -highlightbackground #bcbcbc -highlightcolor #000000 -orient vert \
-        -troughcolor #bcbcbc 
+        -orient vert
     text $base.cpd29.03 \
         -background #bcbcbc -cursor left_ptr \
-        -foreground #000000 -height 1 -highlightbackground #f3f3f3 \
-        -highlightcolor #000000 -selectbackground #000080 \
-        -selectforeground #ffffff -state disabled -tabs {0.2i 3i 3.75i} \
+        -height 1 \
+        -state disabled -tabs {0.2i 3i 3.75i} \
         -width 8 -wrap none -xscrollcommand "$base.cpd29.01 set" \
         -yscrollcommand "$base.cpd29.02 set"
     frame $base.fra30 \
-        -background #bcbcbc -borderwidth 2 -height 75 \
-        -highlightbackground #bcbcbc -highlightcolor #000000 -relief groove \
+        -borderwidth 2 -height 75 \
+        -relief groove \
         -width 125 
     button $base.fra30.but31 \
-        -activebackground #bcbcbc -activeforeground #000000 \
-        -background #bcbcbc \
-        -foreground #000000 -highlightbackground #bcbcbc \
-        -highlightcolor #000000 -padx 9 -pady 3 -text Close \
+        -padx 9 -pady 3 -text Close \
         -command "wm withdraw $base"
     button $base.but32 \
-        -activebackground #bcbcbc -activeforeground #000000 \
-        -background #bcbcbc -command vTcl:image:new_image_file \
-        -foreground #000000 -highlightbackground #bcbcbc \
-        -highlightcolor #000000 -padx 9 -pady 3 -text {Add new image...} 
+        -command vTcl:image:new_image_file \
+        -padx 9 -pady 3 -text {Add new image...} 
     ###################
     # SETTING GEOMETRY
     ###################
