@@ -1,6 +1,6 @@
 set vTcl(cmpd,list) "bitmapbutton"
 
-set {vTcl(cmpd:bitmapbutton)} {{Frame {-borderwidth 2 -relief raised -takefocus 1} {place {-x 30 -y 60 -anchor nw}} {{{.top18.cpd19 Frame .top18 all BitmapButtonTop}} {BitmapButtonTop <Motion> {
+set {vTcl(cmpd:bitmapbutton)} {{Frame {-borderwidth 2 -relief raised -takefocus 1} {place {-x 30 -y 60 -anchor nw}} {{{.top18.cpd19 Frame %top all BitmapButtonTop}} {BitmapButtonTop <Motion> {
     ::bitmapbutton::mouse_inside %W %X %Y
 }} {BitmapButtonTop <KeyRelease-space> {
     #TODO: your <KeyRelease-space> event handler here
@@ -18,49 +18,49 @@ set {vTcl(cmpd:bitmapbutton)} {{Frame {-borderwidth 2 -relief raised -takefocus 
     ::bitmapbutton::mouse_up %W %X %Y
 }} {BitmapButtonTop <Button-1> {
     ::bitmapbutton::mouse_down %W %X %Y
-}}} {} {{Frame {-borderwidth 2 -height 3} {pack {-in .top18.cpd19 -anchor center -expand 0 -fill none -side top}} {{{.top18.cpd19.upframe Frame .top18 all BitmapButtonSub1}} {BitmapButtonSub1 <Motion> {
+}}} {} {{Frame {-borderwidth 2 -height 3} {pack {-in .top18.cpd19 -anchor center -expand 0 -fill none -side top}} {{{.top18.cpd19.upframe Frame %top all BitmapButtonSub1}} {BitmapButtonSub1 <Motion> {
     ::bitmapbutton::mouse_inside [::bitmapbutton::get_parent %W] %X %Y
 }} {BitmapButtonSub1 <ButtonRelease-1> {
     ::bitmapbutton::mouse_up [::bitmapbutton::get_parent %W] %X %Y
 }} {BitmapButtonSub1 <Button-1> {
     ::bitmapbutton::mouse_down [::bitmapbutton::get_parent %W] %X %Y
-}}} {} {} .upframe {} {} {} {} {}} {Frame {-borderwidth 2} {pack {-in .top18.cpd19 -anchor center -expand 0 -fill none -side top}} {{{.top18.cpd19.centerframe Frame .top18 all BitmapButtonSub1}} {BitmapButtonSub1 <Motion> {
+}}} {} {} .upframe {} {} {} {} {}} {Frame {-borderwidth 2} {pack {-in .top18.cpd19 -anchor center -expand 0 -fill none -side top}} {{{.top18.cpd19.centerframe Frame %top all BitmapButtonSub1}} {BitmapButtonSub1 <Motion> {
     ::bitmapbutton::mouse_inside [::bitmapbutton::get_parent %W] %X %Y
 }} {BitmapButtonSub1 <ButtonRelease-1> {
     ::bitmapbutton::mouse_up [::bitmapbutton::get_parent %W] %X %Y
 }} {BitmapButtonSub1 <Button-1> {
     ::bitmapbutton::mouse_down [::bitmapbutton::get_parent %W] %X %Y
-}}} {} {{Frame {-borderwidth 2 -width 3} {pack {-in .top18.cpd19.centerframe -anchor center -expand 0 -fill none -side left}} {{{.top18.cpd19.centerframe.leftframe Frame .top18 all BitmapButtonSub2}} {BitmapButtonSub2 <Motion> {
+}}} {} {{Frame {-borderwidth 2 -width 3} {pack {-in .top18.cpd19.centerframe -anchor center -expand 0 -fill none -side left}} {{{.top18.cpd19.centerframe.leftframe Frame %top all BitmapButtonSub2}} {BitmapButtonSub2 <Motion> {
     ::bitmapbutton::mouse_inside [::bitmapbutton::get_parent %W 2] %X %Y
 }} {BitmapButtonSub2 <ButtonRelease-1> {
     ::bitmapbutton::mouse_up [::bitmapbutton::get_parent %W 2] %X %Y
 }} {BitmapButtonSub2 <Button-1> {
     ::bitmapbutton::mouse_down [::bitmapbutton::get_parent %W 2] %X %Y
-}}} {} {} .centerframe.leftframe {} {} {} {} {}} {Frame {-borderwidth 2 -width 2} {pack {-in .top18.cpd19.centerframe -anchor center -expand 0 -fill none -side right}} {{{.top18.cpd19.centerframe.rightframe Frame .top18 all BitmapButtonSub2}} {BitmapButtonSub2 <Motion> {
+}}} {} {} .centerframe.leftframe {} {} {} {} {}} {Frame {-borderwidth 2 -width 2} {pack {-in .top18.cpd19.centerframe -anchor center -expand 0 -fill none -side right}} {{{.top18.cpd19.centerframe.rightframe Frame %top all BitmapButtonSub2}} {BitmapButtonSub2 <Motion> {
     ::bitmapbutton::mouse_inside [::bitmapbutton::get_parent %W 2] %X %Y
 }} {BitmapButtonSub2 <ButtonRelease-1> {
     ::bitmapbutton::mouse_up [::bitmapbutton::get_parent %W 2] %X %Y
 }} {BitmapButtonSub2 <Button-1> {
     ::bitmapbutton::mouse_down [::bitmapbutton::get_parent %W 2] %X %Y
-}}} {} {} .centerframe.rightframe {} {} {} {} {}} {Frame {-borderwidth 1} {pack {-in .top18.cpd19.centerframe -anchor center -expand 0 -fill none -side top}} {{{.top18.cpd19.centerframe.05 Frame .top18 all BitmapButtonSub2}} {BitmapButtonSub2 <Motion> {
+}}} {} {} .centerframe.rightframe {} {} {} {} {}} {Frame {-borderwidth 1} {pack {-in .top18.cpd19.centerframe -anchor center -expand 0 -fill none -side top}} {{{.top18.cpd19.centerframe.05 Frame %top all BitmapButtonSub2}} {BitmapButtonSub2 <Motion> {
     ::bitmapbutton::mouse_inside [::bitmapbutton::get_parent %W 2] %X %Y
 }} {BitmapButtonSub2 <ButtonRelease-1> {
     ::bitmapbutton::mouse_up [::bitmapbutton::get_parent %W 2] %X %Y
 }} {BitmapButtonSub2 <Button-1> {
     ::bitmapbutton::mouse_down [::bitmapbutton::get_parent %W 2] %X %Y
-}}} {} {{Label {-borderwidth 0 -image image6 -text label} {pack {-in .top18.cpd19.centerframe.05 -anchor center -expand 0 -fill none -side top}} {{{.top18.cpd19.centerframe.05.06 Label .top18 all BitmapButtonSub3}} {BitmapButtonSub3 <Motion> {
+}}} {} {{Label {-borderwidth 0 -image image6 -text label} {pack {-in .top18.cpd19.centerframe.05 -anchor center -expand 0 -fill none -side top}} {{{.top18.cpd19.centerframe.05.06 Label %top all BitmapButtonSub3}} {BitmapButtonSub3 <Motion> {
     ::bitmapbutton::mouse_inside [::bitmapbutton::get_parent %W 3] %X %Y
 }} {BitmapButtonSub3 <ButtonRelease-1> {
     ::bitmapbutton::mouse_up [::bitmapbutton::get_parent %W 3] %X %Y
 }} {BitmapButtonSub3 <Button-1> {
     ::bitmapbutton::mouse_down [::bitmapbutton::get_parent %W 3] %X %Y
-}}} {} {} .centerframe.05.06 {} {} {} {} {}} {Label {-borderwidth 1 -text Button} {pack {-in .top18.cpd19.centerframe.05 -anchor center -expand 0 -fill none -side top}} {{{.top18.cpd19.centerframe.05.07 Label .top18 all BitmapButtonSub3}} {BitmapButtonSub3 <Motion> {
+}}} {} {} .centerframe.05.06 {} {} {} {} {}} {Label {-borderwidth 1 -text Button} {pack {-in .top18.cpd19.centerframe.05 -anchor center -expand 0 -fill none -side top}} {{{.top18.cpd19.centerframe.05.07 Label %top all BitmapButtonSub3}} {BitmapButtonSub3 <Motion> {
     ::bitmapbutton::mouse_inside [::bitmapbutton::get_parent %W 3] %X %Y
 }} {BitmapButtonSub3 <ButtonRelease-1> {
     ::bitmapbutton::mouse_up [::bitmapbutton::get_parent %W 3] %X %Y
 }} {BitmapButtonSub3 <Button-1> {
     ::bitmapbutton::mouse_down [::bitmapbutton::get_parent %W 3] %X %Y
-}}} {} {} .centerframe.05.07 {} {} {} {} {}} } .centerframe.05 {} {} {} {} {}} } .centerframe {} {} {} {} {}} {Frame {-borderwidth 2 -height 2 -relief groove} {pack {-in .top18.cpd19 -anchor center -expand 0 -fill none -side bottom}} {{{.top18.cpd19.downframe Frame .top18 all BitmapButtonSub1}} {BitmapButtonSub1 <Motion> {
+}}} {} {} .centerframe.05.07 {} {} {} {} {}} } .centerframe.05 {} {} {} {} {}} } .centerframe {} {} {} {} {}} {Frame {-borderwidth 2 -height 2 -relief groove} {pack {-in .top18.cpd19 -anchor center -expand 0 -fill none -side bottom}} {{{.top18.cpd19.downframe Frame %top all BitmapButtonSub1}} {BitmapButtonSub1 <Motion> {
     ::bitmapbutton::mouse_inside [::bitmapbutton::get_parent %W] %X %Y
 }} {BitmapButtonSub1 <ButtonRelease-1> {
     ::bitmapbutton::mouse_up [::bitmapbutton::get_parent %W] %X %Y

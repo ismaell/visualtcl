@@ -336,7 +336,7 @@ proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
                 # the target, or a binding for a bindtag (ya follow me?)
                 switch -exact -- [llength $j] {
                 1 {
-                    append todo "bindtags $name [list [vTcl:name_replace $base [lindex $j 0]]]; "
+                    append todo "bindtags $name \[vTcl:unnormalize_bindtags $name [vTcl:name_replace $base $j]\];"
                 }
                 2 {
                     set e [lindex $j 0]
@@ -404,6 +404,49 @@ proc vTcl:create_compound {target {cmpdname ""}} {
     return $ret
 }
 
+# in a list of bindtags, replace a toplevel bindtag by %top
+# for example:
+#    target   = ".top18.cpd19"
+#    bindtags = "Frame .top18.cpd19 .top18 all"
+# =>
+#    returns    "Frame .top18.cpd19 %top all"
+
+proc vTcl:normalize_bindtags {target bindtags} {
+
+    set result ""
+    foreach bindtag $bindtags {
+        if {[winfo exists $bindtag] &&
+            $bindtag == [winfo toplevel $target]} {
+            lappend result %top
+        } else {
+            lappend result $bindtag
+        }
+    }
+
+    return $result
+}
+
+# in a list of bindtags, replace %top by the toplevel of
+# the given target, for example:
+#    target = .top19.cpd20
+#    bindtags = "Frame .top18.cpd19 %top all"
+# =>
+#    returns    "Frame .top18.cpd19 .top19 all"
+
+proc vTcl:unnormalize_bindtags {target bindtags} {
+
+    set result ""
+    foreach bindtag $bindtags {
+        if {$bindtag == "%top"} {
+            lappend result [winfo toplevel $target]
+        } else {
+            lappend result $bindtag
+        }
+    }
+
+    return $result
+}
+
 proc vTcl:gen_compound {target {name ""} {cmpdname ""}} {
     global vTcl widget classes
     set ret ""
@@ -458,7 +501,7 @@ proc vTcl:gen_compound {target {name ""} {cmpdname ""}} {
     set bindtags $vTcl(bindtags,$target)
     if {$bindtags != [::widgets_bindings::get_standard_bindtags $target] } {
         # append the list of binding tags
-        lappend bind [list $bindtags]
+        lappend bind [list [vTcl:normalize_bindtags $target $bindtags]]
 
         # keep all bindings definitions with the compound
         # (even if children define them too)
