@@ -81,6 +81,8 @@ eval exec cp [glob $bldroot/images/*.xpm]                 $copyroot/images
 eval exec cp [glob $bldroot/images/*.gif]                 $copyroot/images
 eval exec cp [glob $bldroot/images/edit/*.gif]            $copyroot/images/edit
 eval exec cp [glob $bldroot/doc/*.*]                      $copyroot/doc
+exec cp $bldroot/lib/mclistbox-1.02/mclistbox.html        $copyroot/doc
+exec cp $bldroot/lib/combobox-2.0/combobox.html           $copyroot/doc
 eval exec cp [glob $bldroot/demo/*.*]                     $copyroot/demo
 eval exec cp $bldroot/demo/README                         $copyroot/demo
 eval exec cp [glob $bldroot/demo/images/*.*]              $copyroot/demo/images
