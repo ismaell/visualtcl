@@ -263,12 +263,14 @@ set vTcl(opt,list) "
     -selectimage
 
     -command
+    -selectcommand
     -xscrollcommand
     -yscrollcommand
 
     -text
     -textvariable
     -font
+    -labelfont
     -justify
     -wrap
     -wraplength
@@ -350,6 +352,7 @@ set vTcl(opt,-insertontime)        { {insert on time} {}      type    {} }
 set vTcl(opt,-insertwidth)         { {insert wd}     {}       type    {} }
 set vTcl(opt,-jump)                { jump            {}       boolean {0 1} }
 set vTcl(opt,-justify)             { justify         {}       choice  {left right center} }
+set vTcl(opt,-labelfont)           { {Label Font}    {}       font    {} }
 set vTcl(opt,-menu)                { menu            {}       menu    {} }
 set vTcl(opt,-offvalue)            { {off value}     {}       type    {} }
 set vTcl(opt,-onvalue)             { {on value}      {}       type    {} }
@@ -364,9 +367,11 @@ set vTcl(opt,-scrollregion)        { {scroll region} {}       type    {} }
 set vTcl(opt,-selectbackground)    { {select bg}     Colors   color   {} }
 set vTcl(opt,-selectborderwidth)   { {select bd}     {}       type    {} }
 set vTcl(opt,-selectcolor)         { {select color}  Colors   color   {} }
+set vTcl(opt,-selectcommand)       { {Select Cmd}    {}       command {} }
 set vTcl(opt,-selectforeground)    { {select fg}     Colors   color   {} }
 set vTcl(opt,-selectimage)         { {select image}  {}       image   {} }
-set vTcl(opt,-selectmode)          { {select mode}   {}       type    {} }
+set vTcl(opt,-selectmode)          { {select mode}   {}       choice  {single browse multiple extended 
+                                                                       normal immediate} }
 set vTcl(opt,-setgrid)             { {set grid}      {}       boolean {0 1} }
 set vTcl(opt,-show)                { show            {}       type    {} }
 set vTcl(opt,-showvalue)           { {show value}    {}       boolean {0 1} }
@@ -396,6 +401,9 @@ set vTcl(opt,-xscrollincrement)    { {x increment}   {}       type    {} }
 set vTcl(opt,-yscrollincrement)    { {y increment}   {}       type    {} }
 set vTcl(opt,-xscrollcommand)      { {x scroll cmd}  {}       command {} }
 set vTcl(opt,-yscrollcommand)      { {y scroll cmd}  {}       command {} }
+
+set vTcl(option,translate,-labelfont) vTcl:font:translate
+set vTcl(option,noencase,-labelfont) 1
 
 set vTcl(head,proj) [string trim {
 #############################################################################

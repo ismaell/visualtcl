@@ -228,7 +228,6 @@ proc vTcl:lib_itcl:setup {} {
 	        -validate \
 	        -labeltext \
 	        -labelpos \
-	        -labelfont \
 	        -textfont \
 	        -items \
 	        -decrement \
@@ -273,7 +272,6 @@ proc vTcl:lib_itcl:setup {} {
 	        -nodeicon \
 	        -openicon \
 	        -querycommand \
-	        -selectcommand \
 	        -textbackground \
 	        -textfont \
 	        -angle \
@@ -334,7 +332,6 @@ proc vTcl:lib_itcl:setup {} {
 	set vTcl(opt,-nodeicon)       { {Node Icon}        {}       image   {} }
 	set vTcl(opt,-openicon)       { {Open Icon}        {}       image   {} }
 	set vTcl(opt,-querycommand)   { {Query Cmd}        {}       command {} }
-	set vTcl(opt,-selectcommand)  { {Select Cmd}       {}       command {} }
 	set vTcl(opt,-textbackground) { {Text BgColor}     Colors   color   {} }
 	set vTcl(opt,-textfont)       { {Text Font}        {}       font    {} }
 	set vTcl(opt,-clicktime)      { {Click Time}       {}       type    {} }
@@ -350,7 +347,6 @@ proc vTcl:lib_itcl:setup {} {
 	set vTcl(opt,-balloonforeground) { {Balloon Fg}       Colors   color   {} }
 	set vTcl(opt,-helpvariable)      { {Help Var}      {}       type    {} }
 #	set vTcl(opt,-plotbackground) { {Plot BgColor}     Colors   color   {} }
-	set vTcl(opt,-labelfont)      { {Label Font}       {}       font    {} }
 	set vTcl(opt,-textfont)       { {Text Font}        {}       font    {} }
 	set vTcl(opt,-labelpos)       { {Label Pos}        {}  
 	                                choice  {n ne e se s sw w nw center} }
@@ -528,14 +524,10 @@ proc vTcl:lib_itcl:setup {} {
 	# translation of option values for Itcl widgets so that
 	# fonts are correctly saved
 	
-	set vTcl(option,translate,-labelfont) vTcl:font:translate
-	set vTcl(option,noencase,-labelfont) 1
 	set vTcl(option,translate,-textfont) vTcl:font:translate
 	set vTcl(option,noencase,-textfont) 1
 	set vTcl(option,translate,-balloonfont) vTcl:font:translate
 	set vTcl(option,noencase,-balloonfont) 1
-	set vTcl(option,translate,-textfont) vTcl:font:translate
-	set vTcl(option,noencase,-textfont) 1
 
 	# @@end_change
 	
