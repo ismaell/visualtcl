@@ -1,0 +1,49 @@
+## This is a super class of the scrollbar_v and scrollbar_h types.
+
+Class		Scrollbar
+IsSuperClass	yes
+DoubleClickCmd	vTcl:set_command
+TypeCmd		vTcl:scrollbar:get_type
+
+Function	"Attach to Widget"	vTcl:scrollbar:attach
+
+proc vTcl:scrollbar:get_type {w} {
+    if {[catch {$w cget -orient} orient]} { return "scrollbar" }
+    if {$orient == "horizontal"} { return "scrollbar_h" }
+    return "scrollbar_v"
+}
+
+proc vTcl:scrollbar:attach {} {
+    global vTcl widgetSelected
+
+    set w $vTcl(w,widget)
+    set status $vTcl(status)
+
+    catch {unset widgetSelected}
+    vTcl:status "Select a widget to attach scrollbar to"
+    vwait widgetSelected
+
+    ## Widget we're attaching to.
+    set a $vTcl(w,widget)
+
+    vTcl:status $status
+
+    set orient [$w cget -orient]
+
+    if {$orient == "horizontal"} {
+    	set cmd xview
+	set opt -xscrollcommand
+    } else {
+    	set cmd yview
+	set opt -yscrollcommand
+    }
+
+    if {[catch {$a cget $opt}]} {
+    	bell
+	error "Cannot attach scrollbar to that!"
+	return
+    }
+
+    $w configure -command "$a $cmd"
+    $a configure $opt "$w set"
+}

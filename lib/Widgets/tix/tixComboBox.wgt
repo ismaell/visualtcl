@@ -1,0 +1,7 @@
+Name		tixComboBox
+Lib		tix
+
+Class		TixComboBox
+TreeLabel	Tix ComboBox
+DumpCmd		vTcl:lib_tix:dump_widget_opt
+DumpChildren	no

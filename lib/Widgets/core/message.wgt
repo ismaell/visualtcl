@@ -1,0 +1,7 @@
+Name		message
+Lib		core
+
+Class		Message
+Icon		icon_message.gif
+DefaultOptions	-text message -width 60
+DoubleClickCmd	vTcl:set_text

@@ -1,0 +1,20 @@
+Name		tixPanedWindow
+Lib		tix
+
+Class		TixPanedWindow
+TreeLabel	Tix PanedWindow
+DefaultOptions	-orient vertical
+DumpCmd		vTcl:dump:TixPanedWindow
+DumpChildren	no
+InsertCmd	vTcl:widget:tixPanedWindow:inscmd
+
+proc vTcl:widget:tixPanedWindow:inscmd {target} {
+    # Add two pages to start with.  Unfortunately, additional pages have
+    # to be added manually by the user, and the project re-read into vtcl.
+    return "
+        $target add page1
+        $target add page2
+        $target subwidget page1 configure -width 30 -height 30;
+        $target subwidget page2 configure -width 30 -height 30;
+    "
+}

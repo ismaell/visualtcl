@@ -1,0 +1,97 @@
+## Define all the default options.
+
+NewOption -activebackground	"active bg"		color	{}	Colors
+NewOption -activeforeground	"active fg"		color	{}	Colors
+NewOption -activerelief		"active relief"		choice \
+  "flat groove raised ridge sunken"
+NewOption -anchor		"anchor"		choice \
+  "n ne e se s sw w nw center"
+NewOption -aspect		"aspect"		type
+NewOption -background		"background"		color	{}	Colors
+NewOption -bd			"borderwidth"		type
+NewOption -bitmap		"bitmap"		type
+NewOption -bg			"background"		color	{}	Colors
+NewOption -bordermode		"border mode"		choice \
+  "inside ignore outside"
+NewOption -borderwidth		"borderwidth"		type
+NewOption -closeenough		"closeness"		type
+NewOption -command		"command"		command
+NewOption -confine		"confine"		boolean	"0 1"
+NewOption -cursor		"cursor"		type
+NewOption -disabledforeground	"disabled fg"		color	{}	Colors
+NewOption -editable		"editable"		boolean	"0 1"
+NewOption -elementborderwidth	"element bd"		type
+NewOption -exportselection	"export"		boolean	"0 1"
+NewOption -fg			"foreground"		color	{}	Colors
+NewOption -foreground		"foreground"		color	{}	Colors
+NewOption -font			"font"			font
+NewOption -height		"height"		type
+NewOption -highlightbackground 	"highlight bg"		color	{}	Colors
+NewOption -highlightcolor	"highlight color"	color	{}	Colors
+NewOption -highlightthickness	"highlight bd"	type
+NewOption -image		"image"			image
+NewOption -indicatoron		"indicator"		boolean	"0 1"
+NewOption -insertbackground	"insert bg"		color	{}	Colors
+NewOption -insertborderwidth	"insert bd"		type
+NewOption -insertofftime	"insert off time"	type
+NewOption -insertontime		"insert on time"	type
+NewOption -invalidcommand	"inv. cmd"		command
+NewOption -jump			"jump"			boolean	"0 1"
+NewOption -justify		"justify"		choice \
+  "left right center"
+NewOption -labelfont		"label font"		font
+NewOption -menu			"menu"			menu
+NewOption -offvalue		"off value"		type
+NewOption -onvalue		"on value"		type
+NewOption -orient		"orient"		choice \
+  "vertical horizontal"
+NewOption -padx			"x pad"			type
+NewOption -pady			"y pad"			type
+NewOption -relief		"relief"		choice	\
+  "flat groove raised ridge sunken"
+NewOption -repeatdelay		"repeat delay"		type
+NewOption -repeatinterval	"repeat intrvl"		type
+NewOption -screen		"screen"		type
+NewOption -scrollregion		"scroll region"		type
+NewOption -selectbackground	"select bg"		color	{}	Colors
+NewOption -selectborderwidth	"select bd"		type
+NewOption -selectcolor		"select color"		color	{}	Colors
+NewOption -selectcommand	"select cmd"		command
+NewOption -selectforeground	"select fg"		color	{}	Colors
+NewOption -selectimage		"select image"		image
+NewOption -selectmode		"select mode"		choice \
+  "single browse multiple extended"
+NewOption -setgrid		"set grid"		boolean	"0 1"
+NewOption -show			"show"			type
+NewOption -showvalue		"show value"		boolean	"0 1"
+NewOption -sliderlength		"slider length"		type
+NewOption -sliderrelief		"slider relief"		choice \
+  "flat groove raised ridge sunken"
+NewOption -spacing1		"spacing1"		type
+NewOption -spacing2		"spacing2"		type
+NewOption -spacing3		"spacing3"		type
+NewOption -state		"state"			choice \
+  "normal active disabled"
+NewOption -tabs			"tabs"			type
+NewOption -takefocus		"take focus"		type
+NewOption -text			"text"			type
+NewOption -textvariable		"text var"		type
+NewOption -tickinterval		"tick interval"		type
+NewOption -from			"from value"		type
+NewOption -to			"to value"		type
+NewOption -label		"label"			type
+NewOption -resolution		"resolution"		type
+NewOption -troughcolor		"trough color"		color	{}	Colors
+NewOption -underline		"underline"		type
+NewOption -value		"value"			type
+NewOption -variable		"variable"		type
+NewOption -validatecommand	"validate cmd"		command
+NewOption -validate		"validate"		type
+NewOption -width		"width"			type
+NewOption -wrap			"wrap"			choice \
+  "char none word"
+NewOption -wraplength		"wrap length"		type
+NewOption -xscrollcommand	"x scroll cmd"		command
+NewOption -xscrollincrement	"x increment"		type
+NewOption -yscrollcommand	"y scroll cmd"		command
+NewOption -yscrollincrement	"y increment"		type

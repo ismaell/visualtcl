@@ -1,0 +1,9 @@
+SuperClass	scrollbar
+
+Name		scrollbar_v
+Lib		core
+
+Class		Scrollbar
+Icon		icon_scrollbar_v.gif
+Balloon		vertical scrollbar
+AddOptions	-orient vertical

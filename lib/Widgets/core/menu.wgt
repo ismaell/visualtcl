@@ -1,0 +1,12 @@
+Name		menu
+Lib		core
+
+Class		Menu
+Icon		icon_menu.gif
+TreeLabel	@vTcl:core:get_menu_label
+
+NewOption -menuspecial		"menu"			menuspecial
+NewOption -tearoff		"tearoff"		boolean	"0 1"
+NewOption -postcommand		"post cmd"		command
+NewOption -tearoffcommand	"tearoff cmd"		command
+NewOption -title		"title"			type

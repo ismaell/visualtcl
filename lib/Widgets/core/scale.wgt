@@ -1,0 +1,12 @@
+## This is a super class of the scale_v and scale_h types.
+
+Class		Scale
+IsSuperClass	yes
+DoubleClickCmd	vTcl:set_command
+TypeCmd		vTcl:scale:get_type
+
+proc vTcl:scale:get_type {w} {
+    if {[catch {$w cget -orient} orient]} { return "scale" }
+    if {$orient == "horizontal"} { return "scale_h" }
+    return "scale_v"
+}

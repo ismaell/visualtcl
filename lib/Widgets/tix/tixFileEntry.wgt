@@ -1,0 +1,15 @@
+Name		tixFileEntry
+Lib		tix
+
+Class		TixFileEntry
+TreeLabel	Tix FileEntry
+DefaultOptions	-label "FileEntry:" -options {label.anchor e}
+DumpCmd		vTcl:dump:TixFileEntry
+DumpChildren	no
+InsertCmd	vTcl:widget:tixFileEntry:inscmd
+
+proc vTcl:widget:tixFileEntry:inscmd {target} {
+    return "
+    	$target subwidget frame configure -highlightthickness 2
+    "
+}

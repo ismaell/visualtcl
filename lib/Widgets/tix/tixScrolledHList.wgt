@@ -1,0 +1,7 @@
+Name		tixScrolledHList
+Lib		tix
+
+Class		TixScrolledHList
+TreeLabel	Tix ScrolledHlist
+DumpCmd		vTcl:lib_tix:dump_widget_opt
+DumpChildren	no

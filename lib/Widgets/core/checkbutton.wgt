@@ -1,0 +1,8 @@
+Name		checkbutton
+Lib		core
+
+Class		Checkbutton
+Icon		icon_checkbutton.gif
+DefaultOptions	-text check
+DoubleClickCmd	vTcl:set_command
+TreeLabel	@vTcl:core:get_widget_tree_label

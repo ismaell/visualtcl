@@ -1,0 +1,8 @@
+Name		radiobutton
+Lib		core
+
+Class		Radiobutton
+Icon		icon_radiobutton.gif
+DefaultOptions	-text radio
+DoubleClickCmd	vTcl:set_command
+TreeLabel	@vTcl:core:get_widget_tree_label

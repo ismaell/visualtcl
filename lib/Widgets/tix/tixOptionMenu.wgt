@@ -1,0 +1,19 @@
+Name		tixOptionMenu
+Lib		tix
+
+Class		TixOptionMenu
+TreeLabel	Tix OptionMenu
+DefaultOptions	-label "OptionMenu:" -options {label.anchor e}
+DumpCmd		vTcl:dump:TixOptionMenu
+DumpChildren	no
+InsertCmd	vTcl:widget:tixOptionMenu:inscmd
+
+proc vTcl:widget:tixOptionMenu:inscmd {target} {
+    # Add two options to start with.  Unfortunately, additional options have
+    # to be added manually by the user, and the project re-read into vtcl.
+    return "
+        $target add command opt1 -label {Option 1}
+        $target add separator sep
+        $target add command opt2 -label {Option 2}
+    "
+}

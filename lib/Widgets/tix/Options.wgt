@@ -1,0 +1,38 @@
+## Define all the Tix options.
+
+NewOption -activatecmd		"activate cmd"		longname command
+NewOption -after		"after"			longname type
+NewOption -allowzero		"allow zero"		longname choice "1 0"
+NewOption -before		"before"		longname type
+NewOption -browsecmd		"browse cmd"		longname command
+NewOption -buttons		"buttons"		longname type
+NewOption -createcmd		"create cmd"		longname type
+NewOption -dynamicgeometry	"dymanic geometry"	longname choice "1 0"
+NewOption -editable		"editable"		longname choice "0 1"
+NewOption -expand		"expand"		longname type
+NewOption -fancy		"fancy"			longname choice "0 1"
+NewOption -handleactivebg	"handle activebg"	longname type
+NewOption -handlebg		"handle bgcolor"	longname type
+NewOption -history		"history"		longname choice \
+  "false true"
+NewOption -label		"label"			longname type
+NewOption -listcmd		"list cmd"		longname command
+NewOption -listwidth		"list width"		longname type
+NewOption -max			"maxsize"		longname type
+NewOption -min			"minsize"		longname type
+NewOption -options		"options"		longname type
+NewOption -panebd		"paneborder width"	longname type
+NewOption -panerelief		"paneborder relief"	longname choice \
+  "sunken raised groove ridge flat"
+NewOption -postcmd		"post cmd"		longname command
+NewOption -prunehistory		"prune history"		longname choice \
+  "false true"
+NewOption -radio		"radio"			longname choice "0 1"
+NewOption -raisecmd		"raise cmd"		longname command
+NewOption -scrollbar		"scrollbar"		longname choice \
+  "auto both none x y"
+NewOption -separatoractivebg	"separator activebg"	longname type
+NewOption -separatorbg		"separator bgcolor"	longname type
+NewOption -size			"size"			longname type
+NewOption -spring		"spring"		longname choice "1 0"
+NewOption -validatecmd		"validate cmd"		longname command

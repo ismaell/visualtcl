@@ -1,0 +1,12 @@
+Name		listbox
+Lib		core
+
+Class		Listbox
+Icon		icon_listbox.gif
+DoubleClickCmd	vTcl:set_list
+TreeLabel	@vTcl:core:get_widget_tree_label
+InsertCmd	vTcl:widget:listbox:inscmd
+
+proc vTcl:widget:listbox:inscmd {target} {
+    return "$target insert end listbox"
+}
