@@ -111,10 +111,12 @@ proc vTcl:FireEvent {target event} {
             if {$tag_event == $event} {
                 set bind_code [bind $bindtag $tag_event]
                 regsub -all %W $bind_code $target bind_code
-                set result [catch {uplevel #0 $bind_code}]
+                set result [catch {uplevel #0 $bind_code} errortext]
                 if {$result == 3} {
-                   # break exception, stop processing
-                   set stop_processing 1
+                    # break exception, stop processing
+                    set stop_processing 1
+                } elseif {$result != 0} {
+                    bgerror $errortext
                 }
                 break
             }
