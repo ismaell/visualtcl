@@ -508,8 +508,10 @@ proc vTcl:font:ask_delete_font {key} {
 	
      if {$result == "yes"} {
 		
+	  set pos [vTcl:font:get_manager_position]
+
           vTcl:font:delete_font $key
-          vTcl:font:refresh_manager
+          vTcl:font:refresh_manager $pos
      }
 }
 
@@ -612,7 +614,9 @@ proc {vTcl:font:font_change} {object} {
 
         vTcl:log "change font: $font_desc"
         eval font configure $object $font_desc
-                   vTcl:font:display_fonts $vTcl(fonts,font_mgr,win)
+        
+        set pos [vTcl:font:get_manager_position]
+        vTcl:font:refresh_manager $pos
      }
 }
 
@@ -899,7 +903,7 @@ proc vTcl:font:prompt_noborder_fontlist {font} {
 				[vTcl:font:add_font $font_desc user]
 				
 			# refresh font manager
-			vTcl:font:refresh_manager
+			vTcl:font:refresh_manager 1.0
 
 		} else {
 			set vTcl(font,noborder_fontlist,font) ""
@@ -925,7 +929,7 @@ proc vTcl:font:translate {value} {
       	return $value
 }
 
-proc vTcl:font:refresh_manager {} {
+proc vTcl:font:refresh_manager {{position 0.0}} {
 
 	global vTcl
 	
@@ -934,7 +938,14 @@ proc vTcl:font:refresh_manager {} {
 		if [winfo exists $vTcl(fonts,font_mgr,win)] {
 	
 			vTcl:font:display_fonts $vTcl(fonts,font_mgr,win)
-			$vTcl(fonts,font_mgr,win).cpd31.03 yview end
+			$vTcl(fonts,font_mgr,win).cpd31.03 yview moveto $position
 		}
 	}		
+}
+
+proc vTcl:font:get_manager_position {} {
+	
+	global vTcl
+	
+	return [lindex [$vTcl(fonts,font_mgr,win).cpd31.03 yview] 0]
 }

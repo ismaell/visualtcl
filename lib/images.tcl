@@ -293,7 +293,7 @@ proc {vTcl:image:new_image_file} {} {
 	         set object [vTcl:image:create_new_image $newImageFile "user image" "user"]
          
 	         # let's refresh!
-	         vTcl:image:refresh_manager
+	         vTcl:image:refresh_manager 1.0
 		 
 		 return $object
 	    } 
@@ -339,7 +339,8 @@ proc vTcl:image:replace_image {filename} {
 		unset vTcl(images,$oldreference,description)
 		unset vTcl(images,$oldreference,type)
 		
-		vTcl:image:refresh_manager
+		set pos [vTcl:image:get_manager_position]
+		vTcl:image:refresh_manager $pos
 	    }
 	}
 }
@@ -573,8 +574,10 @@ proc vTcl:image:ask_delete_image {image} {
 	
 	if {$result == "yes"} {
 		
+		set pos [vTcl:image:get_manager_position]
+
 		vTcl:image:delete_image $image
-		vTcl:image:refresh_manager
+		vTcl:image:refresh_manager $pos
 	}
 }
 
@@ -720,7 +723,7 @@ proc vTcl:image:translate {value} {
       	return $value
 }
 
-proc vTcl:image:refresh_manager {} {
+proc vTcl:image:refresh_manager {{position 0.0}} {
 
 	global vTcl
 		
@@ -729,7 +732,14 @@ proc vTcl:image:refresh_manager {} {
 	       	if [winfo exists $vTcl(images,manager_dlg,win)] {
 
 	         	vTcl:image:init_img_manager
-			$vTcl(images,manager_dlg,win).cpd29.03 yview end
+			$vTcl(images,manager_dlg,win).cpd29.03 yview moveto $position
 		}
 	}
+}
+
+proc vTcl:image:get_manager_position {} {
+	
+	global vTcl
+	
+	return [lindex [$vTcl(images,manager_dlg,win).cpd29.03 yview] 0]
 }
