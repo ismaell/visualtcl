@@ -151,10 +151,10 @@ proc vTcl:get_mgropts {opts {basename 0}} {
                 }
                 -in {
                     if {$basename} {
-                    	set v [vTcl:base_name $v]	
+                    	set v [vTcl:base_name $v]
                     	vTcl:log "Base name $v!"
                     }
-                    
+
                     if {$v != ""} {
                         lappend nopts $o $v
                     }
@@ -188,20 +188,20 @@ proc vTcl:get_opts {opts} {
 # converts font object names to font keys before saving
 
 proc vTcl:get_opts_special {opts} {
-	
+
     global vTcl
     set ret ""
     foreach i $opts {
         set o [lindex $i 0]
         set v [lindex $i 4]
         if {$o != "-class" && $v != [lindex $i 3]} {
-        	
+
 	    if [info exists vTcl(option,translate,$o)] {
-	    	
+
 	    	set v [$vTcl(option,translate,$o) $v]
 	    	vTcl:log "Translated option: $o value: $v"
 	    }
-	                
+
             lappend ret $o $v
         }
     }
@@ -233,15 +233,15 @@ proc vTcl:dump_widget_opt {target basename} {
         if {$mgr == "wm" && $class != "Menu"} {
             append result " -class [winfo class $target]"
         }
-        
+
         # @@change by Christian Gavin 3/18/2000
         # use special proc to convert image names to filenames before
         # saving to disk
-        
+
         set p [vTcl:get_opts_special $opt]
-        
+
         # @@end_change
-        
+
         if {$p != ""} {
             append result " \\\n[vTcl:clean_pairs $p]\n"
         } else {
@@ -323,7 +323,11 @@ proc vTcl:dump_menu_widget {target basename} {
                 append result "$vTcl(tab)$basename add separator\n"
             }
             default {
-                set pairs [vTcl:conf_to_pairs $conf ""]
+                # set pairs [vTcl:conf_to_pairs $conf ""]
+
+		# to allow option translation
+		set pairs [vTcl:get_opts_special $conf]
+
                 append result "$vTcl(tab)$basename add $type \\\n"
                 append result "[vTcl:clean_pairs $pairs]\n"
             }
@@ -437,17 +441,17 @@ proc vTcl:dump:widgets {target} {
     foreach i $tree {
         set basename [vTcl:base_name $i]
         set class [vTcl:get_class $i]
-        
+
         if {[string tolower $class] == "toplevel"} {
         	append output "$vTcl(tab)if \{!\$container\} \{\n"
         }
-        
+
         append output [$vTcl($class,dump_opt) $i $basename]
-        
+
         if {[string tolower $class] == "toplevel"} {
         	append output "$vTcl(tab)\}\n"
 	}
-	        
+
         incr vTcl(num,index)
         vTcl:statbar [expr {($vTcl(num,index) * 100) / $vTcl(num,total)}]
     }

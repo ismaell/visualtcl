@@ -151,7 +151,7 @@ proc vTcl:select_widget {target} {
     global vTcl
     vTcl:log "vTcl:select_widget $target"
     if {$target == $vTcl(w,widget)} {
-        
+
         # @@change by Christian Gavin 3/13/2000
         # show selection in widget tree
         vTcl:show_selection_in_tree $target
@@ -206,6 +206,12 @@ proc vTcl:list_widget_tree {target {which ""}} {
     set w_tree "$target "
     set children [vTcl:get_children $target]
     foreach i $children {
+
+	# don't include temporary windows
+	if {[string match {*#*} $i]} {
+	    continue
+	}
+
         append w_tree "[vTcl:list_widget_tree $i $which] "
     }
     return $w_tree
@@ -468,22 +474,22 @@ proc vTcl:new_widget {type {options ""}} {
         set new_widg [vTcl:new_widget_name $type $vTcl(w,insert)]
     }
     if {$new_widg != ""} {
-    	
+
     	set created_widget [vTcl:create_widget $type $options $new_widg]
-        
+
         # @@change by Christian Gavin 3/5/2000
         #
         # when new widget is inserted, automatically refresh
         # widget tree
-        
+
         # we do not destroy the handles that were just created
         # (remember, the handles are used to grab and move a widget
         # around)
-        
+
         after idle "\
 	        vTcl:init_wtree 0
 	        vTcl:show_selection_in_tree $created_widget"
-        
+
         # @@end_change
     }
 }
@@ -542,7 +548,7 @@ proc vTcl:set_alias {target} {
 
 	vTcl:update_widget_info $target
 	vTcl:prop:update_attr
-	
+
 	# @@end_change
     }
 }
@@ -673,14 +679,14 @@ proc vTcl:manager_update {mgr} {
 # given text widget
 
 proc vTcl:insert_widget_in_text {t} {
-	
+
 	global vTcl
-	
+
 	if {$vTcl(w,alias) != ""} {
 		set name \$widget\($vTcl(w,alias)\)
 	} else {
 		set name $vTcl(w,widget)
 	}
-	
+
 	$t insert insert $name
 }
