@@ -882,10 +882,9 @@ proc vTclWindow.vTclMenuEdit {base menu} {
         -background #9900991B99FE
     frame $base.cpd24.01.fra20 \
         -borderwidth 2 -height 75 -width 125
-    button $base.cpd24.01.fra20.but21 \
-        -image [vTcl:image:get_image "add.gif"] \
-        -text button
-    bind $base.cpd24.01.fra20.but21 <ButtonRelease-1> {
+    label $base.cpd24.01.fra20.but21 \
+        -image [vTcl:image:get_image "add.gif"] -relief raised
+    bind $base.cpd24.01.fra20.but21 <ButtonPress-1> {
         ::menu_edit::post_new_menu [winfo toplevel %W]
     }
     button $base.cpd24.01.fra20.but22 \
