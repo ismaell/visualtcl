@@ -38,10 +38,18 @@ proc vTcl:widget:lib:lib_bwidget {args} {
 
     set order {
 	ArrowButton
+	Button
+	Entry
+	Label
+	LabelEntry
+	LabelFrame
+	MainFrame
 	NoteBook
+	PagesManager
 	ProgressBar
 	ScrollView
 	Separator
+	TitleFrame
 	Tree
     }
 

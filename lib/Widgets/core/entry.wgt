@@ -35,6 +35,11 @@ DefaultValues   -foreground -highlightbackground \
 DefaultOptions  -background white
 Function        "Set Text Variable" vTcl:widget:entry:SetTextVariable
 
+## If we're using Tcl 8.4, we need to add the readonly option.
+if {[info tclversion] > 8.3} {
+    SpecialOpt -state "state" choice {normal disabled readonly}
+}
+
 proc vTcl:widget:entry:inscmd {target} {
     set last [lindex [split $target .] end]
     set last [vTcl:rename $last]
