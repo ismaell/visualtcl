@@ -153,8 +153,10 @@ proc vTclWindow.vTcl.ae {args} {
     label $w.la -text "Alias"  -width 11 -anchor w
     vTcl:entry $w.ea -width 12 -textvariable vTcl(w,alias) \
         -relief sunken
-    bind $w.ea <KeyRelease-Return> {
-        ::vTcl::properties::setAlias $::vTcl(w,widget) ::vTcl(w,alias)}
+    bind $w.ea <KeyRelease-Return> "
+        ::vTcl::properties::setAlias \$::vTcl(w,widget) ::vTcl(w,alias) $w.ea"
+    bind $w.ea <FocusOut> "
+        ::vTcl::properties::setAlias \$::vTcl(w,widget) ::vTcl(w,alias) $w.ea"
     label $w.li -text "Insert Point" -width 11 -anchor w
         vTcl:entry $w.ei -width 12 -textvariable vTcl(w,insert) \
         -relief sunken   -state disabled
@@ -1231,13 +1233,30 @@ proc vTcl:propmgr:scrollWheelMouse {delta label} {
 
 namespace eval ::vTcl::properties {
 
-    proc setAlias {target aliasVar} {
+    proc setAlias {target aliasVar entryWidget} {
+        if {![winfo exists $target]} return
+
         set alias [set $aliasVar]
+
+        ## has the alias changed ? no, really, just asking
+        if {[info exists ::widget(rev,$target)] &&
+            $::widget(rev,$target) == $alias} {
+            return
+        }
+
         set valid [vTcl:valid_alias $target $alias]
         if {!$valid} {
+            ## disable focusOut binding before showing message box
+            set oldBind [bind $entryWidget <FocusOut>]
+
+            ## now we can show the message box
             ::vTcl::MessageBox -message "Alias '$alias' already exists"
+
+            ## restore focusOut binding after message box is dismissed
+            bind $entryWidget <FocusOut> $oldBind
             return
         }
         vTcl:set_alias $target $alias
     }
 }
+
