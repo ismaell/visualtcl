@@ -120,3 +120,7 @@ ResizeCmd	<proc>
 		    Width is the new width for the widget
 		    Height is the new height for the widget
 		(default is vTcl:adjust_widget_size)
+
+AdditionalClasses <class> <class> ...
+        Lists classes of children that vTcl should know of (eg.
+        Notebook, Tabset, Page, ... for Iwidgets)
