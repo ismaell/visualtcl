@@ -116,8 +116,10 @@ proc vTcl:load_lib {lib} {
     set file [file join $vTcl(LIB_DIR) $lib]
     if {[file exists $file] == 0} {
         vTcl:log "Missing Libary: $lib"
+        return 0
     } else {
         uplevel #0 [list source $file]
+        return 1
     }
 }
 
@@ -146,11 +148,15 @@ proc vTcl:load_widgets {} {
     }
 
     foreach i $toload {
-	set lib [lindex [split [file root $i] _] end]
-	vTcl:LoadWidgets [file join $vTcl(VTCL_HOME) lib Widgets $lib]
-        vTcl:load_lib $i
-        lappend vTcl(w,libs) [lindex [split [lindex [file split $i] end] .] 0]
+        set lib [lindex [split [file root $i] _] end]
+        if {[vTcl:load_lib $i]} {
+            set libname [lindex [split [lindex [file split $i] end] .] 0]
+            lappend vTcl(w,libs) $libname
+            vTcl:$libname:init
+            vTcl:LoadWidgets [file join $vTcl(VTCL_HOME) lib Widgets $lib]
+        }
     }
+    unset libname
 }
 
 proc vTcl:load_libs {} {
@@ -205,6 +211,11 @@ proc vTcl:setup {} {
 			misc.tcl name.tcl prefs.tcl proc.tcl tclet.tcl
 			toolbar.tcl tops.tcl tree.tcl var.tcl vtclib.tcl
 			widget.tcl help.tcl menus.tcl"
+
+    # UKo 2000-12-10: initiate some variables
+    set vTcl(libs)      {}
+    set vTcl(classes)   {}
+    set vTcl(options)   {}
 
     set tk_strictMotif    1
     wm withdraw .
@@ -524,7 +535,7 @@ proc vTcl:define_bindings {} {
             "%K"=="space"||
             "%K"=="End"||
             "%K"=="Home"||
-            [regexp {[]")\}]} %A]} {
+            [regexp {[]\")\}]} %A]} {
 
 		scan [%W index insert] %%d pos
 
