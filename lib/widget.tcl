@@ -483,13 +483,21 @@ proc vTcl:setup_bind {target} {
     global vTcl
     if {[lsearch [bindtags $target] vTcl(b)] < 0 &&
         [lsearch [bindtags $target] vTcl(a)] < 0} {
+
         set vTcl(bindtags,$target) [bindtags $target]
-        if {[vTcl:get_class $target] == "Toplevel"} {
+
+        set class [vTcl:get_class $target]
+
+        if { $class == "Toplevel"} {
             wm protocol $target WM_DELETE_WINDOW "vTcl:hide_top $target"
             if {$vTcl(pr,winfocus) == 1} {
                 wm protocol $target WM_TAKE_FOCUS "vTcl:wm_take_focus $target"
             }
             bindtags $target "vTcl(bindtags,$target) vTcl(b) vTcl(c)"
+
+        } elseif { $class == "Menu" } {
+            bindtags $target "vTcl(a) $vTcl(bindtags,$target)"
+
         } else {
             bindtags $target vTcl(b)
         }

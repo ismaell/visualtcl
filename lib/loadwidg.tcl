@@ -278,3 +278,12 @@ proc SpecialOpt {args} {
     set specialOpts($option,choices) $choices
     set specialOpts($option,title) $title
 }
+
+proc AdditionalClasses {args} {
+
+    global vTcl
+
+    foreach arg $args {
+        lappend vTcl(classes) $arg
+    }
+}
