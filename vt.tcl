@@ -422,8 +422,12 @@ proc vTcl:vtcl:remap {w} {
     }
 }
 
-proc vTcl:vtcl:unmap {} {
+proc vTcl:vtcl:unmap {w} {
     global vTcl
+
+    if {![vTcl:streq $w ".vTcl"]} { return }
+    if {[vTcl:streq [wm state $w] "normal"]} { return }
+
     foreach i $vTcl(tops) {
 	if {![winfo exists $i]} { continue }
 	vTcl:hide_top $i
@@ -579,7 +583,7 @@ proc vTcl:define_bindings {} {
     }
 
     ## If we iconify or deiconify vTcl, take the top windows with us.
-    bind .vTcl <Unmap> { vTcl:vtcl:unmap }
+    bind .vTcl <Unmap> { vTcl:vtcl:unmap %W }
     bind .vTcl <Map> { vTcl:vtcl:remap %W }
 
     vTcl:status "Status"
