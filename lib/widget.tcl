@@ -747,7 +747,7 @@ proc vTcl:auto_place_widget {class {options ""}} {
     }
     ## last call
     set moreOptions ""
-    if {![vTcl::widgets::queryInsertOptions $class moreOptions]} {
+    if {![vTcl::widgets::queryInsertOptions $class $options moreOptions]} {
         return
     }
 
@@ -1135,7 +1135,9 @@ proc vTcl:new_widget {autoplace class button {options ""}} {
     # how we came here), but then the button class raises the button
     # again, so we wait until we have some free time
 
-    after 0 "$button configure -relief sunken"
+    if {[winfo exists $button]} {
+       after 0 "$button configure -relief sunken"
+    }
 
     vTcl:status "Insert $class"
 
@@ -1152,7 +1154,9 @@ proc vTcl:place_widget {class button options rx ry x y} {
     global vTcl
 
     if { !$vTcl(pr,multiplace) } {
-        $button configure -relief raised
+        if {[winfo exists $button]} {
+            $button configure -relief raised
+        }
         vTcl:status "Status"
         vTcl:rebind_button_1
     }
@@ -1177,7 +1181,7 @@ proc vTcl:place_widget {class button options rx ry x y} {
 
     ## last call
     set moreOptions ""
-    if {![vTcl::widgets::queryInsertOptions $class moreOptions]} {
+    if {![vTcl::widgets::queryInsertOptions $class $options moreOptions]} {
         return
     }
 
@@ -1544,7 +1548,7 @@ namespace eval vTcl::widgets {
     }
 
     ## asks a widget class if can insert and if so returns additional options
-    proc queryInsertOptions {class refOptions} {
+    proc queryInsertOptions {class addOptions refOptions} {
         upvar $refOptions options
 
         if {![info exists ::classes($class,queryInsertOptionsCmd)]} {
@@ -1553,7 +1557,8 @@ namespace eval vTcl::widgets {
             return 1
         }
 
-        return [$::classes($class,queryInsertOptionsCmd) options]
+        return [$::classes($class,queryInsertOptionsCmd) $addOptions options]
     }
 }
+
 

@@ -135,8 +135,18 @@ namespace eval vTcl::widgets::core::compoundcontainer {
         }
     }
 
-    proc queryInsertOptionsCmd {refOptions} {
+    proc queryInsertOptionsCmd {addOptions refOptions} {
         upvar $refOptions options
+        set type user
+
+        ## specifiying a compound class ?
+        if {[lindex $addOptions 0] == "-compoundClass"} {
+            ## add into project info
+            set compoundName [lindex $addOptions 1]
+            ::vTcl::project::addCompound main $type [join $compoundName]
+            set options ""
+            return 1
+        }
 
         set userCmpds [lsort [vTcl::compounds::enumerateCompounds user]]
         set items ""
@@ -155,8 +165,6 @@ namespace eval vTcl::widgets::core::compoundcontainer {
         if {$compoundName == ""} {
             return 0
         }
-
-        set type user
 
         ## last check, do we satisfy the dependencies ?
         set required [::vTcl::compounds::getLibraries $type [join $compoundName]]
@@ -239,6 +247,7 @@ namespace eval vTcl::widgets::core::compoundcontainer {
         return "Compound Container: [join $compoundClass]"
     }
 }
+
 
 
 

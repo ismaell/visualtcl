@@ -651,6 +651,13 @@ namespace eval ::vTcl::compounds {
             return
         }
 
+        ## if it is a megawidget, insert it using the compound container
+        if {$rootclass == "MegaWidget"} {
+            vTcl:new_widget $::vTcl(pr,autoplace) CompoundContainer dummy \
+               [list -compoundClass $compoundName]
+            return
+        }
+
         if {$::vTcl(pr,autoplace) || $rootclass == "Toplevel"} {
             autoPlaceCompound $type $compoundName wm {}
             return
@@ -772,4 +779,5 @@ namespace eval ::vTcl::compounds {
         namespace delete $spc
     }
 }
+
 
