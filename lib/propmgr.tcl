@@ -98,10 +98,16 @@ proc vTclWindow.vTcl.ae {args} {
     wm transient $vTcl(gui,ae) .vTcl
     wm overrideredirect $ae 0
 
+    if {$tcl_platform(platform) == "windows"} {
+	set scrincr 25
+    } else {
+	set scrincr 20
+    }
+
     canvas $ae.c -highlightthickness 0 \
 	-xscrollcommand "$ae.sh set" \
 	-yscrollcommand "$ae.sv set" \
-	-yscrollincrement 20
+	-yscrollincrement $scrincr
     scrollbar $ae.sh -orient horiz -command "$ae.c xview" -takefocus 0
     scrollbar $ae.sv -orient vert  -command "$ae.c yview" -takefocus 0
 
@@ -381,6 +387,12 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
     # Hack for Tix
     if {[winfo exists $top.$option]} { return }
 
+    if {![lempty $isGeomOpt]} {
+	set isGeomOpt 1
+    } else {
+	set isGeomOpt 0
+    }
+
     if {$prefix == "opt"} {
 	if {[info exists specialOpts($vTcl(w,class),$option,type)]} {
 	    set text    $specialOpts($vTcl(w,class),$option,text)
@@ -574,7 +586,7 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
     ## manager with the directional keys.  We don't want to append geometry
     ## options, we just handle them later.
     set c [vTcl:get_class $vTcl(w,widget)]
-    if {[lempty $isGeomOpt]} {
+    if {!$isGeomOpt} {
 	lappend vTcl(propmgr,labels,$c) $label
     } else {
 	lappend vTcl(propmgr,labels,$vTcl(w,manager)) $label
@@ -616,11 +628,17 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
     bind $focusControl <Key-Down>   "vTcl:propmgr:focusNext $label"
 
     if {[vTcl:streq $prefix "opt"]} {
-    	set saveCheck [checkbutton ${base}_save -pady 0]
+	set saveCheck [checkbutton ${base}_save -pady 0]
 	vTcl:set_balloon $saveCheck "Check to save option"
 	grid $top.$option $base $saveCheck -sticky news
     } else {
 	grid $top.$option $base -sticky news
+	global tcl_platform
+	## If we're on windows, we need geometry labels to be padded a little
+	## to match the rest of the labels in the options.
+	if {$tcl_platform(platform) == "windows"} {
+	    $label configure -pady 4
+	}
     }
 }
 
@@ -756,9 +774,14 @@ proc vTcl:propmgr:scrollToLabel {c w units} {
     set split [lrange $split 0 4]
     set frame [join $split .]
 
+    if {$units > 0} {
+	set offset [expr 2 * [winfo height $w]]
+    } else {
+	set offset [winfo height $w]
+    }
     lassign [$c cget -scrollregion] foo foo cx cy
     lassign [vTcl:split_geom [winfo geometry $w]] foo foo ix iy
-    set yt [expr $iy.0 + $vTcl(propmgr,frame,$frame) + 20]
+    set yt [expr $iy.0 + $vTcl(propmgr,frame,$frame) + $offset]
     lassign [$c yview] topY botY
     set topY [expr $topY * $cy]
     set botY [expr $botY * $cy]
