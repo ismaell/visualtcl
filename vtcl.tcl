@@ -275,6 +275,7 @@ proc vTcl:setup_gui {} {
     option add *vTcl*font $vTcl(pr,font_dlg)
     option add *vTcl*Text*font $vTcl(pr,font_fixed)
     option add *NoteBook.font $vTcl(pr,font_dlg)
+    option add *__tk__messagebox*font $vTcl(pr,font_dlg)
 
     if {[info exists vTcl(pr,bgcolor)] && ![lempty $vTcl(pr,bgcolor)]} {
         tk_setPalette $vTcl(pr,bgcolor)
