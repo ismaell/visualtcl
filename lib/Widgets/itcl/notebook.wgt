@@ -146,7 +146,6 @@ namespace eval vTcl::widgets::iwidgets::notebook {
             append result "\[lindex \[$basename childsite\] $i\]\n"
             append result [$classes(Frame,dumpInfoCmd) $page \$$sitevariable]
         }
-        append result "$vTcl(tab)$basename select 0\n"
         return $result
     }
 
