@@ -46,5 +46,6 @@ namespace eval vTcl::widgets::iwidgets::scrolledtext {
 	if {$textfont != ""} {
 	    lappend result $textfont
 	}
+	return $result
     }
 }
