@@ -56,6 +56,7 @@ proc vTcl:delete {} {
     	append do "vTcl:unset_alias $child; "
     }
     append do "vTcl:unset_alias $vTcl(w,widget); "
+    append do "vTcl:setup_unbind $vTcl(w,widget); "
     append do "destroy $vTcl(w,widget)"
     set undo "vTcl:insert_compound $vTcl(w,widget) \{$buffer\} $vTcl(w,def_mgr)"
     vTcl:push_action $do $undo
@@ -82,7 +83,7 @@ proc vTcl:delete {} {
 
     # @@change by Christian Gavin 3/5/2000
     # automatically refresh widget tree after delete operation
-    
+
     after idle {vTcl:init_wtree}
 
     # @@end_change
