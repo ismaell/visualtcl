@@ -21,10 +21,6 @@
 ##############################################################################
 #
 
-proc vTclWindow(post).vTcl.bind {args} {
-    vTcl:setup_vTcl:bind .vTcl.bind
-}
-
 proc vTcl:get_bind {target} {
     if {[winfo exists .vTcl.bind]} {
         ::widgets_bindings::fill_bindings $target 0
@@ -167,12 +163,12 @@ proc vTclWindow.vTcl.bind {args} {
     $base.fra22.men20.m add command \
         -command {::widgets_bindings::add_binding <Enter>} -label Enter
     $base.fra22.men20.m add command \
-        -command {::widgets_bindings::add_binding <Leave>} -label Leave 
+        -command {::widgets_bindings::add_binding <Leave>} -label Leave
     $base.fra22.men20.m add command \
         -command {::widgets_bindings::add_binding <KeyPress>} -label KeyPress
     $base.fra22.men20.m add command \
         -command {::widgets_bindings::add_binding <KeyRelease>} \
-        -label KeyRelease 
+        -label KeyRelease
     $base.fra22.men20.m add command \
         -command {::widgets_bindings::add_binding <FocusIn>} -label FocusIn
     $base.fra22.men20.m add command \
@@ -317,7 +313,7 @@ proc vTclWindow.vTcl.bind {args} {
 
     frame $base.cpd21.03 \
         -background #ff0000 -borderwidth 2 -highlightbackground #dcdcdc \
-        -highlightcolor #000000 -relief raised 
+        -highlightcolor #000000 -relief raised
     bind $base.cpd21.03 <B1-Motion> {
         set root [ split %W . ]
         set nb [ llength $root ]
@@ -327,7 +323,7 @@ proc vTclWindow.vTcl.bind {args} {
         set width [ winfo width $root ].0
 
         set val [ expr (%X - [winfo rootx $root]) /$width ]
-    
+
         if { $val >= 0 && $val <= 1.0 } {
         
             place $root.01 -relwidth $val
@@ -339,7 +335,7 @@ proc vTclWindow.vTcl.bind {args} {
     # SETTING GEOMETRY
     ###################
     pack $base.fra22 \
-        -in $base -anchor center -expand 0 -fill x -side top 
+        -in $base -anchor center -expand 0 -fill x -side top
     pack $base.fra22.but34 \
         -in $base.fra22 -anchor center -expand 0 -fill none -side right
     pack $base.cpd21 \
@@ -366,7 +362,7 @@ proc vTclWindow.vTcl.bind {args} {
         -in $base.fra22 -anchor center -expand 0 -fill none \
         -side left 
     pack $base.cpd21.01.cpd25 \
-        -in $base.cpd21.01 -anchor center -expand 1 -fill both -side top 
+        -in $base.cpd21.01 -anchor center -expand 1 -fill both -side top
     grid columnconf $base.cpd21.01.cpd25 0 -weight 1
     grid rowconf $base.cpd21.01.cpd25 0 -weight 1
     grid $base.cpd21.01.cpd25.01 \
@@ -415,6 +411,20 @@ proc vTclWindow.vTcl.bind {args} {
     ## only initializes UI stuff; the list of bindings tags has already
     ## been initialized either on vTcl startup or when closing a project
     ::widgets_bindings::init_ui
+
+    ## setup standard bindings
+    vTcl:setup_vTcl:bind .vTcl.bind
+
+    ## override global <KeyPress-Delete> accelerator for the listbox
+    bind _vTclBindDelete <KeyPress-Delete> {
+        ::widgets_bindings::delete_binding
+
+        # stop event processing here
+        break
+    }
+
+    bindtags $widget(ListboxBindings) \
+        "_vTclBindDelete [bindtags $widget(ListboxBindings)]"
 
     catch {wm geometry $base $vTcl(geometry,$base)}
     wm deiconify $base
@@ -1308,7 +1318,7 @@ namespace eval ::widgets_bindings {
 
     proc {::widgets_bindings::set_modifier_in_event} {event modifier} {
         global widget
-        
+
         # modifiers not allowed for virtual events
         if {[string match <<*>> $event]} {
             return $event
@@ -1353,7 +1363,7 @@ namespace eval ::widgets_bindings {
         TextBindings configure  -state normal
         TextBindings delete 0.0 end
         TextBindings insert 0.0 $bindcode
-                
+
         if {[::widgets_bindings::is_editable_tag $tag] &&
             $event != ""} {
             TextBindings configure  -background white -state normal

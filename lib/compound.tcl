@@ -77,6 +77,18 @@ proc vTcl:name_replace {name s} {
     return $s
 }
 
+proc vTcl:name_replace_list {name list} {
+    global vTcl
+    set result ""
+    foreach s $list {
+        foreach i $vTcl(cmp,alias) {
+            set s [vTcl:replace [lindex $i 0] $name[lindex $i 1] $s]
+        }
+        lappend result $s
+    }
+    return $result
+}
+
 proc vTcl:put_compound {text compound} {
     global vTcl
 

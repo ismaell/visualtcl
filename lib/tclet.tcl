@@ -141,12 +141,12 @@ proc vTcl:tclet_from_cmpd {base name compound {level 0}} {
             if {$mgrt == "place" && $mgri == ""} {
                 set mgri "-x 5 -y 5"
             }
-            set mgri [vTcl:name_replace $base $mgri]
+            set mgri [vTcl:name_replace_list $base $mgri]
             set mgrii ""
             for {set ii 0} {$ii < [llength $mgri]} {incr ii 2} {
                 set item  [lindex $mgri $ii]
                 set value [lindex $mgri [expr $ii+1]]
-                if {$item == "-in" && [string trim $value] == {""}} {
+                if {$item == "-in" && [string trim $value] == ""} {
                     continue
                 }
                 lappend mgrii $item $value

@@ -305,7 +305,7 @@ proc vTcl:get_mgropts {opts {basename {}}} {
                     }
 
                     if {$v != ""} {
-                        lappend nopts $o \"$v\"
+                        lappend nopts $o $v
                     }
                 }
                 default {
