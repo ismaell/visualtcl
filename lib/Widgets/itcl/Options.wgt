@@ -103,3 +103,4 @@ NewOption -_itcl_notebook_pages  "pages"    combobox
 OptionConfigCmd -_itcl_notebook_pages       config     vTcl:lib_itcl:config_pages
 OptionConfigCmd -_itcl_notebook_pages       update     vTcl:lib_itcl:update_pages
 OptionConfigCmd -_itcl_notebook_pages       get        vTcl:lib_itcl:get_pages
+OptionConfigCmd -_itcl_notebook_pages       select     vTcl:lib_itcl:select_page

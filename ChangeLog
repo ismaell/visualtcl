@@ -1,6 +1,7 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Selection of tab/notebook pages from attributes editor.
     o Laying out the foundation for custom class options. Current custom class
       option is -_tooltip. Each custom class option has commands for config-
       uring and updating the option in the attributes manager.

@@ -30,6 +30,7 @@ CreateCmd	::iwidgets::notebook
 Icon		icon_notebook.gif
 DumpChildren	no
 MegaWidget	yes
+ClassOption     -_itcl_notebook_pages
 InsertCmd	vTcl:widget:notebook:inscmd
 SelectSiteCmd   vTcl:widget:notebook:selectSiteCmd
 DeleteSiteCmd   vTcl:widget:notebook:deleteSiteCmd

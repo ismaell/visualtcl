@@ -365,8 +365,17 @@ proc vTcl:prop:update_attr {} {
 
 proc vTcl:prop:combo_update {w var args} {
     if {[winfo exists $w]} {
-        $w configure -values [vTcl:at ::$var]
+        set values [vTcl:at ::$var]
+        set index [lindex $values 0]
+        $w configure -values [lrange $values 1 end]
+        if {$index != -1} {
+            $w setvalue @$index
+        }
     }
+}
+
+proc vTcl:prop:combo_select {w option} {
+    $::configcmd($option,select) $::vTcl(w,widget) [$w getvalue]
 }
 
 proc vTcl:prop:new_attr {top option variable config_cmd prefix {isGeomOpt ""}} {
@@ -426,11 +435,17 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix {isGeomOpt ""}} {
             pack ${base}.y ${base}.n -side left -expand 1 -fill both
         }
         combobox {
-            ComboBox $base -width 12
+            frame $base
+            ComboBox ${base}.c -width 8 -editable 0 \
+                -modifycmd "vTcl:prop:combo_select ${base}.c $option"
+            button ${base}.b -image ellipses -width 12 -padx 0 -pady 1
+            pack ${base}.c -side left -fill x -expand 1
+            pack ${base}.b -side right -fill none -expand 0
+	    set focusControl ${base}.c
             if {[trace vinfo ::$variable] == ""} {
-                trace variable ::$variable w "vTcl:prop:combo_update $base $variable"
+                trace variable ::$variable w "vTcl:prop:combo_update ${base}.c $variable"
             } else {
-                vTcl:prop:combo_update $base $variable
+                vTcl:prop:combo_update ${base}.c $variable
             }
         }
         choice {

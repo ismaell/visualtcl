@@ -203,14 +203,23 @@ proc vTcl:lib_itcl:update_pages {target var} {
     global vTcl
 
     ## there is a trace on var to update the combobox
+    ## first item in the list is the current index
     set sites [$target childsite]
+    set current [$target index select]
     set num_pages [llength $sites]
-    set ::$var {}
+    set values $current
     for {set i 0} {$i < $num_pages} {incr i} {
         set label_opt [$target pageconfigure $i -label]
-        lappend ::$var [lindex $label_opt 4]
+        lappend values [lindex $label_opt 4]
     }
+
+    ## this will trigger the trace
+    set ::$var $values
 }
 
 proc vTcl:lib_itcl:config_pages {target var} {
+}
+
+proc vTcl:lib_itcl:select_page {target index} {
+    $target select $index
 }
