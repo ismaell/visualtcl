@@ -100,9 +100,11 @@ proc vTcl:init_wtree {{wants_destroy_handles 1}} {
                 incr l([expr $depth - 1]) -1
             }
             button $b.$j -image ctl_$c -command "
-                vTcl:show $i
-                vTcl:active_widget $i
-                vTcl:show_selection $b.$j
+                if \{\$vTcl(mode) == \"EDIT\"\} \{
+                	vTcl:show $i
+                	vTcl:active_widget $i
+                	vTcl:show_selection $b.$j
+                \}
             "
             vTcl:set_balloon $b.$j $i
             $b create window $x $y -window $b.$j -anchor nw -tags $b.$j
