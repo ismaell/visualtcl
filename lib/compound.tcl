@@ -144,7 +144,27 @@ proc vTcl:insert_compound {name compound {gmgr pack} {gopt ""}} {
     set undo "destroy $name"
     vTcl:push_action $do $undo
     lappend vTcl(widgets,[winfo toplevel $name]) $name
-    vTcl:widget:register_all_widgets $name
+
+    # moved to widget creation inside compound
+    # vTcl:widget:register_all_widgets $name
+}
+
+## -background #dcdcdc -text {foobar} ...
+## =>
+## -background -text ...
+
+proc vTcl:options_only {opts} {
+
+    set result ""
+
+    set l [llength $opts]
+    set i 0
+    while {$i < $l} {
+        lappend result [lindex $opts $i]
+        incr i 2
+    }
+
+    return $result
 }
 
 proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
@@ -166,16 +186,14 @@ proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
         set proc [string trim [lindex $i 9]]
         set cmpdname [string trim [lindex $i 10]]
         set topopt [string trim [lindex $i 11]]
-        #
-        # process procs first in case there are dependencies (init)
-        #
+
+        ## process procs first in case there are dependencies (init)
         foreach j $proc {
             set nme [lindex $j 0]
             set arg [lindex $j 1]
             set bdy [lindex $j 2]
 
-            # if the proc name is in a namespace, make sure the
-            # namespace exists
+            ## if the proc name is in a namespace, make sure namespace exists
 	    if {[string match ::${cmpdname}::* $nme]} {
                 namespace eval ::${cmpdname} [list proc $nme $arg $bdy]
             } else {
@@ -206,8 +224,9 @@ proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
             vTcl:update_top_list
         }
 
+        set replaced_opts [vTcl:name_replace $base $opts]
         append todo "$classes($class,createCmd) $name "
-	append todo "[vTcl:name_replace $base $opts]; "
+	append todo "$replaced_opts; "
         if {$mgrt != "" && $mgrt != "wm"} {
             if {$mgrt == "place" && $mgri == ""} {
                 set mgri "-x 5 -y 5"
@@ -232,6 +251,19 @@ proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
                 }
             }
         }
+
+        ## widget registration
+        append todo "vTcl:widget:register_widget $name; "
+
+        ## restore default values
+        set opts_only [vTcl:options_only $replaced_opts]
+        foreach def $classes($class,defaultValues) {
+            ## only replace the options not specified in the compound
+            if {[lsearch -exact $opts_only $def] == -1} {
+                append todo "vTcl:prop:default_opt $name $def vTcl(w,opt,$def); "
+            }
+        }
+
         set index 0
         incr level
         foreach j $bind {
