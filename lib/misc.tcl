@@ -757,10 +757,10 @@ proc lassign {list args} {
 proc vTcl:namespace_tree {{root "::"}} {
 
     set children [namespace children $root]
-    set result "$root"
+    set result ""
+    lappend result $root
 
     foreach child $children {
-
         foreach subchild [vTcl:namespace_tree $child] {
 
             lappend result $subchild
@@ -1461,5 +1461,6 @@ namespace eval ::vTcl::ui::attributes {
         }
     }
 }
+
 
 

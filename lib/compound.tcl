@@ -570,7 +570,11 @@ proc vTcl:name_compound {t} {
     if {$t == "" || ![winfo exists $t]} {return}
     set name [vTcl:get_string "Name Compound" $t]
     if {$name == ""} {return}
-    eval [vTcl::compounds::createCompound $t user::[list $name]]
+
+    ## selection of list of procs to include
+    set includedProcs [::vTcl::input::listboxSelect::select $vTcl(procs) extended]
+
+    eval [vTcl::compounds::createCompound $t user $name $includedProcs]
     vTcl:cmp_user_menu
 }
 
@@ -582,14 +586,14 @@ namespace eval ::vTcl::compounds {
     namespace eval system {}
     namespace eval user   {}
 
-    proc createCompound {target compoundName \
+    proc createCompound {target type compoundName \
                         {procs {}} {initCmd {}} {mainCmd {}}} {
 
         ## we don't want handles to be enumerated with the widget
         vTcl:destroy_handles
 
         set output ""
-        append output "namespace eval [list ::vTcl::compounds::$compoundName] \{\n"
+        append output "namespace eval \{::vTcl::compounds::${type}::[list $compoundName]\} \{\n"
 
         ## basic compound information
         set class [vTcl:get_class $target]
@@ -599,6 +603,9 @@ namespace eval ::vTcl::compounds {
         ## append of version of vTcl:DefineAlias that is local to this namespace
         append output "\n"
         append output "proc vTcl:DefineAlias \{target alias args\} \{\n"
+        append output "    if \{!\[info exists ::vTcl(running)\]\} \{\n"
+        append output "        return \[eval ::vTcl:DefineAlias \$target \$alias \$args\]\n"
+        append output "    \}\n"
         append output "    set class \[vTcl:get_class \$target\]\n"
         append output "    vTcl:set_alias \$target \[vTcl:next_widget_name \$class \$target \$alias\] -noupdate\n"
         append output "\}\n"
@@ -710,16 +717,10 @@ namespace eval ::vTcl::compounds {
         set spc ${type}::[list $compoundName]
         if {![lempty [vTcl:at ${spc}::procs]]} {
             ${spc}::procsCmd
-            set ::vTcl(procs) [concat $::vTcl(procs) [vTcl:at ${spc}::procs]]
-            set ::vTcl(procs) [vTcl:lrmdups $::vTcl(procs)]
-            vTcl:update_proc_list
         }
 
         if {![lempty [vTcl:at ${spc}::bindtags]]} {
             ${spc}::bindtagsCmd
-            foreach tag [vTcl:at ${spc}::bindtags] {
-                ::widgets_bindings::add_tag_to_tagslist $tag
-            }
         }
     }
 
@@ -812,4 +813,5 @@ namespace eval ::vTcl::compounds {
         return [vTcl:at ${spc}::class]
     }
 }
+
 
