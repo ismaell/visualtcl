@@ -595,6 +595,7 @@ proc vTcl:dump:widgets {target} {
     set classes(Frame,dumpChildren)      0
     set classes(MegaWidget,dumpChildren) 0
     set classes(Menu,dumpChildren)       0
+    set classes(Menubutton,dumpChildren) 0
     set tree [vTcl:widget_tree $target]
 
     append output $vTcl(head,proc,widgets)
@@ -623,6 +624,7 @@ proc vTcl:dump:widgets {target} {
     set classes(Frame,dumpChildren)      1
     set classes(MegaWidget,dumpChildren) 1
     set classes(Menu,dumpChildren)       1
+    set classes(Menubutton,dumpChildren) 1
 
     return $output
 }
@@ -796,12 +798,4 @@ proc vTcl:dump:sourcing_footer {varName} {
     if {![vTcl:streq [string index $var end] "\n"]} { append var "\n" }
     append var "\}\n"
 }
-
-
-
-
-
-
-
-
 
