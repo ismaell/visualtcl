@@ -66,7 +66,7 @@ global vTcl
     set vTcl(color,widget)   $widget
     set vTcl(color,option)   $option
     set vTcl(color,variable) $variable
-    set color [subst $$variable]
+    set color [vTcl:at $variable]
     if {$color == ""} {
         set color "#000000"
     } elseif {[string range $color 0 0] != "#" } {

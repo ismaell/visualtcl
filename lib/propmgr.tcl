@@ -237,7 +237,9 @@ proc vTcl:focus_out_cmd {} {
         if {![winfo exists $w]} {
             continue
         }
-        eval $::vTcl::config($w)
+        catch {
+            eval $::vTcl::config($w)
+        }
         unset ::vTcl::config($w)
     }
 

@@ -41,6 +41,11 @@ DeleteSiteCmd   vTcl::widgets::bwidgets::notebook::deleteSiteCmd
 DumpCmd         vTcl::widgets::bwidgets::notebook::dumpCmd
 CompoundCmd     vTcl::widgets::bwidgets::notebook::compoundCmd
 
+## Page-specific options
+NewOption -createcmd		"create cmd"		command
+NewOption -raisecmd		"raise cmd"		command
+NewOption -leavecmd		"leave cmd"		command
+
 namespace eval ::vTcl::widgets::bwidgets::notebook::edit {
 
     proc getItems {target} {
@@ -67,6 +72,12 @@ namespace eval ::vTcl::widgets::bwidgets::notebook::edit {
         $target raise $newpage
         vTcl:init_wtree
         return "New Page"
+    }
+
+    proc itemConfigure {target index} {
+        set pages [$target pages]
+        set page [lindex $pages $index]
+        return [$target itemconfigure $page]
     }
 }
 

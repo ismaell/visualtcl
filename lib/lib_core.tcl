@@ -502,6 +502,8 @@ proc vTclWindow.vTcl.itemEdit {base} {
     # DEFINING ALIASES
     ###################
     vTcl:DefineAlias $base.cpd37.01.cpd38.01 ItemsListbox vTcl:WidgetProc $base 1
+    vTcl:DefineAlias $base.cpd37.02.sw.c.f PropertiesFrame vTcl:WidgetProc $base 1
+    vTcl:DefineAlias $base.cpd37.02.sw.c PropertiesCanvas vTcl:WidgetProc $base 1
 
     frame $base.fra34 \
         -width 125
@@ -525,8 +527,7 @@ proc vTclWindow.vTcl.itemEdit {base} {
     vTcl:set_balloon $base.fra34.but39 {Close}
     frame $base.cpd37 \
         -background #000000 -height 100 -width 200
-    frame $base.cpd37.01 \
-        -background #9900991B99FE
+    frame $base.cpd37.01
     frame $base.cpd37.01.cpd38 \
         -borderwidth 1 -height 30 -relief raised -width 30
     listbox $base.cpd37.01.cpd38.01 \
@@ -538,8 +539,7 @@ proc vTclWindow.vTcl.itemEdit {base} {
         -command "$base.cpd37.01.cpd38.01 xview" -orient horizontal
     scrollbar $base.cpd37.01.cpd38.03 \
         -command "$base.cpd37.01.cpd38.01 yview"
-    frame $base.cpd37.02 \
-        -background #9900991B99FE
+    frame $base.cpd37.02
     frame $base.cpd37.03 \
         -background #ff0000 -borderwidth 2 -relief raised
     bind $base.cpd37.03 <B1-Motion> {
@@ -557,6 +557,9 @@ proc vTclWindow.vTcl.itemEdit {base} {
         place $root.02 -relwidth [ expr 1.0 - $val ]
     }
     }
+    ScrolledWindow $base.cpd37.02.sw
+    canvas $base.cpd37.02.sw.c \
+        -highlightthickness 0 -yscrollincrement 20
     ###################
     # SETTING GEOMETRY
     ###################
@@ -596,6 +599,18 @@ proc vTclWindow.vTcl.itemEdit {base} {
     place $base.cpd37.03 \
         -x 0 -relx 0.3588 -y 0 -rely 0.9 -width 10 -height 10 -anchor s \
         -bordermode ignore
+    pack $base.cpd37.02.sw \
+        -in $base.cpd37.02 -anchor center -expand 1 -fill both -side top
+    pack $base.cpd37.02.sw.c \
+        -in $base.cpd37.02.sw
+
+    ## tell the scrolledwindow what widget it should scroll
+    $base.cpd37.02.sw setwidget $base.cpd37.02.sw.c
+
+    ## insert a frame into the canvas so we can put stuff in it
+    frame $base.cpd37.02.sw.c.f
+    $base.cpd37.02.sw.c create window 0 0 -window $base.cpd37.02.sw.c.f \
+        -anchor nw -tag properties
 
     vTcl:center $base 510 343
     wm deiconify $base
@@ -605,47 +620,74 @@ proc vTclWindow.vTcl.itemEdit {base} {
 
 namespace eval ::vTcl::itemEdit {
 
-    variable dlgStatus
     variable cmds
     variable target
-    set dlgStatus 0
+    variable counter
+    set counter 0
 
     proc edit {target cmds} {
-        set top .vTcl.itemEdit
-        Window show $top
+        variable counter
+        incr counter
+        set top .vTcl.itemEdit_$counter
+        Window show .vTcl.itemEdit $top
         init $top $target $cmds
-        vTcl:dialog_wait $top ::vTcl::itemEdit::dlgStatus 1
-        destroy $top
     }
 
     proc init {top w cmdsEdit} {
         variable cmds
         variable target
 
-        set cmds $cmdsEdit
-        set target $w
-        set list_items [::${cmds}::getItems $target]
-        set current [lindex $list_items 0]
+        set cmds($top) $cmdsEdit
+        set target($top) $w
+        set list_items [::$cmds($top)::getItems $target($top)]
+        set current    [lindex $list_items 0]
         set list_items [lrange $list_items 1 end]
         set ::${top}::list_items $list_items
         ${top}.ItemsListbox selection set $current
+        initProperties $top
+    }
+
+    proc initProperties {top} {
+        variable cmds
+        variable target
+        variable counter
+
+        set current [${top}.ItemsListbox curselection]
+        set properties [::$cmds($top)::itemConfigure $target($top) $current]
+
+        ## let's just assume that all subitems have the same properties
+        foreach property $properties {
+            set option [lindex $property 0]
+            set value  [lindex $property 4]
+            set variable ::vTcl::itemEdit::${option}_$counter
+            set $variable $value
+            set f $::widget(${top},PropertiesFrame).$option
+            frame $f
+            ::vTcl::ui::attributes::newAttribute \
+                $f $option $variable toto
+            pack $f -side top -fill x -expand 0
+        }
+
+        ## calculate the scrolling region
+        update idletasks
+        set w [winfo width  $::widget(${top},PropertiesFrame)]
+        set h [winfo height $::widget(${top},PropertiesFrame)]
+        ${top}.PropertiesCanvas configure -scrollregion [list 0 0 $w $h]
     }
 
     proc close {top} {
-        variable dlgStatus
-
-        set dlgStatus 1
+        destroy $top
     }
 
     proc addItem {top} {
         variable cmds
         variable target
 
-        set added [::${cmds}::addItem $target]
+        set added [::$cmds($top)::addItem $target($top)]
         lappend ::${top}::list_items $added
         ${top}.ItemsListbox selection clear 0 end
         ${top}.ItemsListbox selection set end
-        vTcl:setup_bind_tree $target
+        vTcl:setup_bind_tree $target($top)
     }
 
     proc removeItem {top} {
@@ -653,7 +695,7 @@ namespace eval ::vTcl::itemEdit {
         variable target
 
         set current [${top}.ItemsListbox curselection]
-        ::${cmds}::removeItem $target [lindex $current 0]
+        ::$cmds($top)::removeItem $target($top) [lindex $current 0]
     }
 
     proc moveUpOrDown {top direction} {

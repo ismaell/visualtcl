@@ -54,6 +54,11 @@ NewOption -labelrelief       {Label Relief}     relief
 NewOption -labels            {Show Labels}      boolean  {0 1}
 NewOption -resizablecolumns  {Resizable Cols}   boolean  {0 1}
 
+## New options for columns
+NewOption -position          {Col Position}	type
+NewOption -resizable         {Col Resizable}    boolean  {0 1}
+NewOption -visible           {Col Visible}      boolean  {0 1}
+
 ## Multicolumn listbox support
 NewOption -_mclistbox_columns  "columns"  combobox
 ClassOption -_mclistbox_columns
@@ -88,6 +93,12 @@ namespace eval ::vTcl::widgets::vtcl::mclistbox::edit {
         }
         $target column add $newpage -label "Column $index"
         return "Column $index"
+    }
+
+    proc itemConfigure {target index} {
+        set columns [$target column names]
+        set column  [lindex $columns $index]
+        return [$target column configure $column]
     }
 }
 
@@ -126,11 +137,13 @@ namespace eval ::vTcl::widgets::vtcl::mclistbox {
     proc dumpCmd {target basename} {
         set result [vTcl:dump_widget_opt $target $basename]
         set names [$target column names]
+        set index 1
         foreach name $names {
             set conf [$target column configure $name]
             set pairs [vTcl:conf_to_pairs $conf ""]
-            append result "$::vTcl(tab)$basename column add \\\n"
+            append result "$::vTcl(tab)$basename column add col$index \\\n"
             append result "[vTcl:clean_pairs $pairs]\n"
+            incr index
         }
         return $result
     }

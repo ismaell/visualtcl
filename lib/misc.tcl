@@ -1126,3 +1126,110 @@ proc ::vTcl::MessageBox {args} {
     set tk_strictMotif 1
     return $response
 }
+
+##############################################################################
+## Attributes editing
+
+namespace eval ::vTcl::ui::attributes {
+
+    proc newAttribute {top option variable config_cmd} {
+        set class $::vTcl(w,class)
+	if {[info exists ::specialOpts($class,$option,type)]} {
+	    set text    $::specialOpts($class,$option,text)
+	    set type    $::specialOpts($class,$option,type)
+	    set choices $::specialOpts($class,$option,choices)
+	} else {
+	    set text    $::options($option,text)
+	    set type    $::options($option,type)
+	    set choices $::options($option,choices)
+        }
+
+        ## the option label
+        set label $top.$option
+        label $label -text $text -anchor w -width 11 -fg black \
+    	    -relief $::vTcl(pr,proprelief)
+        ## the option value
+        set base $top.t${option}
+        set focusControl $base
+
+        switch $type {
+            boolean {
+                frame $base
+                radiobutton ${base}.y \
+                    -variable $variable -value 1 -text "Yes" -relief sunken  \
+                    -command "$config_cmd" -padx 0 -pady 1
+                radiobutton ${base}.n \
+                    -variable $variable -value 0 -text "No" -relief sunken  \
+                    -command "$config_cmd" -padx 0 -pady 1
+                pack ${base}.y ${base}.n -side left -expand 1 -fill both
+            }
+            choice {
+                ComboBox ${base} -editable 0 -width 12 -values $choices \
+                    -modifycmd "vTcl:prop:choice_select ${base} $variable; $config_cmd"
+                trace variable $variable w "vTcl:prop:choice_update ${base} $variable"
+                vTcl:prop:choice_update ${base} $variable
+            }
+            color {
+                frame $base
+                vTcl:entry ${base}.l -relief sunken  \
+                    -textvariable $variable -width 8 \
+                    -highlightthickness 1 -fg black
+                bind ${base}.l <KeyRelease-Return> \
+                    "$config_cmd; ${base}.f conf -bg \$$variable"
+                frame ${base}.f -relief raised \
+                    -bg [vTcl:at $variable] -bd 2 -width 20 -height 5
+                bind ${base}.f <ButtonPress> \
+                    "todo: complete code here"
+                pack ${base}.l -side left -expand 1 -fill x
+                pack ${base}.f -side right -fill y -pady 1 -padx 1
+	        set focusControl ${base}.l
+            }
+            command {
+                frame $base
+                vTcl:entry ${base}.l -relief sunken  \
+                    -textvariable $variable -width 8 \
+                    -highlightthickness 1 -fg black
+                button ${base}.f \
+                    -image ellipses  -width 12 \
+                    -highlightthickness 1 -fg black -padx 0 -pady 1 \
+                    -command "todo: complete code here"
+                pack ${base}.l -side left -expand 1 -fill x
+                pack ${base}.f -side right -fill y -pady 1 -padx 1
+	        set focusControl ${base}.l
+            }
+            font {
+                frame $base
+                vTcl:entry ${base}.l -relief sunken  \
+                    -textvariable $variable -width 8 \
+                    -highlightthickness 1 -fg black
+                button ${base}.f \
+                    -image ellipses  -width 12 \
+                    -highlightthickness 1 -fg black -padx 0 -pady 1 \
+                    -command "todo: complete code here"
+                pack ${base}.l -side left -expand 1 -fill x
+                pack ${base}.f -side right -fill y -pady 1 -padx 1
+                set focusControl ${base}.l
+            }
+            image {
+                frame $base
+                vTcl:entry ${base}.l -relief sunken  \
+                    -textvariable $variable -width 8 \
+                    -highlightthickness 1 -fg black
+                button ${base}.f \
+                    -image ellipses  -width 12 \
+                    -highlightthickness 1 -fg black -padx 0 -pady 1 \
+                    -command "todo: complete code here"
+                pack ${base}.l -side left -expand 1 -fill x
+                pack ${base}.f -side right -fill y -pady 1 -padx 1
+	        set focusControl ${base}.l
+            }
+            default {
+                vTcl:entry $base \
+                    -textvariable $variable -width 12 -highlightthickness 1
+	    }
+        }
+
+        grid $label $base -sticky news
+        grid columnconf $top 1 -weight 1
+    }
+}
