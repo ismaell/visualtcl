@@ -123,6 +123,8 @@ set vTcl(proc,body)      ""
 set vTcl(proc,ignore)    "tcl.*|tk.*|auto_.*|vTcl:.*|bgerror|\\..*"
 set vTcl(project,name)   ""
 set vTcl(project,file)   ""
+set vTcl(project,dir)    "Projects"
+set vTcl(project,types)  {"Visual Tcl Project"}
 set vTcl(quit)           0
 set vTcl(tool,list)      ""
 set vTcl(tool,last)      ""

@@ -30,19 +30,30 @@ proc vTcl:new {} {
     global vTcl
     if { [vTcl:close] == -1 } { return }
 
-    set vTcl(mode) EDIT
+    ## Run through the Project Wizard to setup the new project.
+    Window show .vTcl.newProjectWizard
 
-    set w [vTcl:auto_place_widget Toplevel]
-    if {$w != ""} {
-        wm geometry $w $vTcl(pr,geom_new)
-    }
+    tkwait variable ::NewWizard::Done
+
+    set vTcl(mode) EDIT
 
     vTcl:setup_bind_tree .
     vTcl:update_top_list
     vTcl:update_var_list
     vTcl:update_proc_list
-    set vTcl(project,name) "unknown.tcl"
+
+    if {[lempty $::NewWizard::ProjectFile]} {
+	set vTcl(project,name) "unknown.tcl"
+    } else {
+    	set vTcl(project,name) \
+	    [file join $::NewWizard::ProjectFolder $::NewWizard::ProjectFile]
+	set vTcl(project,file) $vTcl(project,name)
+    }
+
     wm title $vTcl(gui,main) "Visual Tcl - $vTcl(project,name)"
+
+    set w [vTcl:auto_place_widget Toplevel]
+    if {$w != ""} { wm geometry $w $vTcl(pr,geom_new) }
 }
 
 proc vTcl:file_source {} {

@@ -1,6 +1,8 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Added a "New Project Wizard" that appears when a new project is
+      created.  Still in the fledgling stages, but it's there.
     o Better way of exiting a user app. When toplevels are created, a count
       is maintained. When count goes back to zero, application exits. Defined
       a special binding tag for this.
