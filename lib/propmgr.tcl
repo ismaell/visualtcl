@@ -378,6 +378,25 @@ proc vTcl:prop:combo_select {w option} {
     $::configcmd($option,select) $::vTcl(w,widget) [$w getvalue]
 }
 
+proc vTcl:prop:choice_update {w var args} {
+    if {[winfo exists $w]} {
+        set values [$w cget -values]
+        set value  [vTcl:at ::$var]
+        set index [lsearch -exact $values $value]
+        if {$index != -1} {
+            $w setvalue @$index
+        }
+    }
+}
+
+proc vTcl:prop:choice_select {w var} {
+    set index [$w getvalue]
+    set values [$w cget -values]
+    if {$index != -1} {
+        set ::$var [lindex $values $index]
+    }
+}
+
 proc vTcl:prop:new_attr {top option variable config_cmd prefix {isGeomOpt ""}} {
     global vTcl $variable options specialOpts propmgrLabels
 
@@ -449,31 +468,12 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix {isGeomOpt ""}} {
             }
         }
         choice {
-            frame $base
-            menubutton ${base}.l \
-                -textvariable $variable  -width 12 -menu ${base}.l.m \
-                -highlightthickness 1 -relief sunken -anchor w -fg black \
-                -padx 0 -pady 1
-            menu ${base}.l.m -tearoff 0
-            foreach i $choices {
-                ${base}.l.m add command -label "$i" -command \
-                    "set $variable $i; $config_cmd; "
+            ComboBox ${base} -editable 0 -width 12 -values $choices \
+                -modifycmd "vTcl:prop:choice_select ${base} $variable; $config_cmd"
+            if {[trace vinfo ::$variable] == ""} {
+                trace variable ::$variable w "vTcl:prop:choice_update ${base} $variable"
             }
-            button ${base}.f -relief raised  -image file_down \
-                -height 5 -command "
-		    focus $base.l
-		    vTcl:propmgr:select_attr $top $option
-		    tkMbPost ${base}.l
-		"
-            pack ${base}.l -side left -expand 1 -fill x
-            pack ${base}.f -side right -fill y -pady 1 -padx 1
-
-	    bind $base.l <Button-1> "
-	    	focus $base.l
-		vTcl:propmgr:select_attr $top $option
-	    "
-
-	    set focusControl ${base}.l
+            vTcl:prop:choice_update ${base} $variable
         }
         menu {
             button $base \
