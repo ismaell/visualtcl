@@ -1472,3 +1472,17 @@ proc vTcl:widget:register_all_widgets {{w .}} {
     }
 }
 
+namespace eval vTcl::widgets {
+
+    proc saveOptions {w optionName} {
+        namespace eval ::widgets::${w}::options {}
+        namespace eval ::widgets::${w}::save    {}
+        vTcl:WidgetVar $w options
+        vTcl:WidgetVar $w save
+        
+        set value [$w cget $optionName]
+        set options($optionName) $value
+        set save($optionName) 1
+    }
+}
+
