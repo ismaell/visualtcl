@@ -9,6 +9,12 @@ DumpCmd		vTcl:dump:radiobox
 InsertCmd	vTcl:widget:radiobox:inscmd
 DefaultOptions	-labeltext "Radiobox"
 
+proc vTcl:widget:radiobox:inscmd {target} {
+    $target add radio1   -text {Radio 1}
+    $target add radio2   -text {Radio 2}
+    $target add radio3   -text {Radio 3}
+}
+
 proc vTcl:dump:radiobox {target basename} {
 
     global vTcl

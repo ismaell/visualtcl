@@ -6,5 +6,5 @@ DoubleClickCmd	vTcl:set_list
 InsertCmd	vTcl:widget:listbox:inscmd
 
 proc vTcl:widget:listbox:inscmd {target} {
-    return "$target insert end listbox"
+    $target insert end listbox
 }

@@ -5,3 +5,73 @@ CreateCmd	::iwidgets::toolbar
 Icon		icon_toolbar.gif
 DumpChildren	no
 MegaWidget	yes
+InsertCmd	vTcl:widget:toolbar:inscmd
+TreeChildrenCmd	{
+		vTcl:widget:toolbar:treeChildrenCmd
+		vTcl:widget:toolbar:treeChildrenChildsite
+		}
+
+Function	"Add toolbar button" vTcl:widget:toolbar:addButton
+
+proc vTcl:widget:toolbar:inscmd {target} {
+    global vTcl
+
+    $target add button new \
+    -balloonstr "New" \
+    -image [vTcl:image:get_image $vTcl(VTCL_HOME)/images/edit/new.gif] \
+    -command {tk_messageBox -message {TODO: Command handler here!}}
+
+    $target add button open \
+    -balloonstr "Open" \
+    -image [vTcl:image:get_image $vTcl(VTCL_HOME)/images/edit/open.gif] \
+    -command {tk_messageBox -message {TODO: Command handler here!}}
+
+    $target add button save \
+    -balloonstr "Save" \
+    -image [vTcl:image:get_image $vTcl(VTCL_HOME)/images/edit/save.gif] \
+    -command {tk_messageBox -message {TODO: Command handler here!}}
+}
+
+## Helper function to bind a component when it is created.  When it is
+## destroyed, we call Itcl's proper delete function.
+proc vTcl:widget:toolbar:bindComponent {w comp} {
+    # bind $comp <Destroy> "$w delete [$w index $comp]"
+}
+
+proc vTcl:widget:toolbar:addButton {{string ""}} {
+    global vTcl
+
+    set t $vTcl(w,widget)
+
+    if {[lempty $string]} { set string [vTcl:get_string "Button Name" $t] }
+
+    set component [$t add button $string]
+
+    vTcl:widget:toolbar:bindComponent $t $string
+    vTcl:place_handles $t
+    vTcl:setup_bind $component
+    vTcl:widget:register_widget_megachildren $t
+}
+
+proc vTcl:widget:toolbar:treeChildrenCmd {target {diff ""}} {
+    set children {}
+    set wantsdiff [expr {$diff != {}}]
+
+    set list [$target component]
+    ::vTcl::lremove list hull
+    foreach site $list {
+	set w [$target component $site]
+    	foreach child [vTcl:complete_widget_tree $w $wantsdiff] {
+	    lappend children $child$diff
+	}
+    }
+    return $children
+}
+
+proc vTcl:widget:toolbar:treeChildrenChildsite {target} {
+    set children {}
+    set list [$target component]
+    ::vTcl::lremove list hull
+    foreach comp $list { lappend children [$target component $comp] }
+    return $children
+}

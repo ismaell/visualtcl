@@ -5,3 +5,8 @@ CreateCmd	::iwidgets::entryfield
 Icon		icon_entryfield.gif
 DumpChildren	no
 MegaWidget	yes
+InsertCmd	vTcl:widget:entryfield:inscmd
+
+proc vTcl:widget:entryfield:inscmd {target} {
+    $target configure -labeltext "Label:"
+}

@@ -10,5 +10,5 @@ MegaWidget   yes
 InsertCmd	vTcl:widget:tixMeter:inscmd
 
 proc vTcl:widget:tixMeter:inscmd {target} {
-    return "$target configure -value .3"
+    $target configure -value .3
 }

@@ -15,7 +15,8 @@ InsertCmd	vTcl:widget:panedwindow:inscmd
 AdditionalClasses Pane
 
 proc vTcl:widget:panedwindow:inscmd {target} {
-    return "$target add pane1; $target add pane2"
+    $target add pane1
+    $target add pane2
 }
 
 # All right, I explain it: -1 is the number of levels

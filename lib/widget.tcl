@@ -520,7 +520,7 @@ proc vTcl:setup_bind {target} {
 
         set class [vTcl:get_class $target]
 
-        if { $class == "Toplevel"} {
+        if {$class == "Toplevel"} {
             wm protocol $target WM_DELETE_WINDOW "vTcl:hide_top $target"
             if {$vTcl(pr,winfocus) == 1} {
                 wm protocol $target WM_TAKE_FOCUS "vTcl:wm_take_focus $target"
@@ -650,7 +650,7 @@ proc vTcl:create_widget {class options new_widg x y} {
     append do "$classes($c,defaultOptions) $options;"
 
     if {![lempty $classes($c,insertCmd)]} {
-        append do "[$classes($c,insertCmd) $new_widg];"
+        append do "$classes($c,insertCmd) $new_widg;"
     }
     if {$class != "Toplevel"} {
         append do "$vTcl(w,def_mgr) $new_widg $vTcl($vTcl(w,def_mgr),insert)"
@@ -1081,17 +1081,15 @@ proc vTcl:widget:register_widget_megachildren {w} {
 
     set wdg_class [vTcl:get_class $w]
 
-    # if this is a megawidget, register special information in the
+    # If this is a megawidget, register special information in the
     # children to allow the megawidget to be manipulated as one unit
     # when the user clicks on such a child, and such an information is
     # found, then the parent will be selected instead
 
-    # puts "vTcl:widget:register_widget_megachildren $w"
-
     if {[info exists classes(${wdg_class},megaWidget)]} {
         if {$classes(${wdg_class},megaWidget)} {
 
-            # get all children
+            # Get all children
             set children [vTcl:list_widget_tree $w "" 1 1]
             foreach child $children {
                 namespace eval ::widgets::${child} {
@@ -1100,25 +1098,17 @@ proc vTcl:widget:register_widget_megachildren {w} {
                 set ::widgets::${child}::parent $w
             }
             
-            #puts "=>$w"
-		#puts "before: $children"
-            
             # Now, we shall unmark those widgets as parent that
             # are in childsites, because the user should be able
             # to manipulate them. First, let try to get a list of
             # eligible children.
             
             set childrenCmd [lindex $classes($wdg_class,treeChildrenCmd) 0]
-            if {$childrenCmd == ""} {
-                return
-            }
+            if {$childrenCmd == ""} { return }
 
-            # don't include levels info for widget tree display
-            #                                 v
+            ## Don't include levels info for widget tree display
             set realChildren [$childrenCmd $w ""]
 		
-            #puts "after: $realChildren"
-            
             foreach realChild $realChildren {
                 if {[info exists ::widgets::${realChild}::parent]} {
                    unset ::widgets::${realChild}::parent
