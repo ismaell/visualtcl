@@ -61,6 +61,10 @@ proc vTcl:select_bind {} {
     if {$listnum != ""} {
         set vTcl(bind,event) [.vTcl.bind.fra9.fra9.lis10 get $listnum]
         .vTcl.bind.fra9.fra16.tex21 insert end [bind $vTcl(w,widget) $vTcl(bind,event)]
+       # Nelson @RJ Ent 05/13/2000
+       # syntax colouring
+       vTcl:syntax_color .vTcl.bind.fra9.fra16.tex21
+       # end Nelson @RJ Ent    
     }
 }
 
