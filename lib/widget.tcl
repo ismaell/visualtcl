@@ -606,7 +606,7 @@ proc vTcl:set_alias {target {alias ""} {noupdate ""}} {
 
     if {[lempty $target]} { return }
 
-    set c $vTcl(w,class)
+    set c [vTcl:get_class $target]
     set was {}
     if {[lempty $alias]} {
 	if {![info exists widget(rev,$target)]} {
@@ -714,10 +714,9 @@ proc vTcl:set_textvar {t} {
     vTcl:update_widget_info $t
 }
 
-proc vTcl:widget_dblclick {target x y} {
+proc vTcl:widget_dblclick {target X Y x y} {
     global vTcl classes
-    set vTcl(mouseX) $x
-    set vTcl(mouseY) $y
+    vTcl:set_mouse_coords $X $Y $x $y
     set c [vTcl:get_class $target 1]
     set class [winfo class $target]
 
@@ -841,6 +840,8 @@ proc vTcl:new_widget {type button {options ""}} {
 
     if {$vTcl(pr,autoplace) || $type == "toplevel" \
     	|| $widgets($type,autoPlace)} {
+	vTcl:status "Status"
+	vTcl:rebind_button_1
     	return [vTcl:auto_place_widget $type $options]
     }
 
@@ -861,7 +862,7 @@ proc vTcl:place_widget {type button options rx ry x y} {
 	vTcl:rebind_button_1
     }
 
-    vTcl:active_widget [winfo containing $rx $ry]
+    set vTcl(w,insert) [winfo containing $rx $ry]
 
     set vTcl(mgrs,update) no
     if $vTcl(pr,getname) {

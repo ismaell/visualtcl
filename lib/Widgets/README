@@ -96,3 +96,13 @@ Export		<proc>
 		Export, vTcl will export that proc to the save file when
 		it saves, ensuring that the program will still run with
 		the necesary procedures.
+
+WidgetProc	<proc>
+		This is the proc that widgets of this type will be aliased
+		to when Command Aliasing is turned on.
+
+AliasPrefix	<string>
+		When auto-aliasing is turned on, widgets are automatically
+		assigned an alias name based on AliasPrefix and the order
+		of their creation.
+		(defaults to <Class>)
