@@ -411,6 +411,8 @@ ttd.text {1.5 Options Menu}
 ttd.tagoff {Level 2 Title}
 ttd.text {
 }
+ttd.text {
+}
 ttd.tagon {Level 3 Title}
 ttd.text {1.5.1 Set Insert
 }
@@ -558,6 +560,8 @@ ttd.text {1.5.7 Hide}
 ttd.tagoff {Level 3 Title}
 ttd.text {
 }
+ttd.text {Hides the currently selected widget. If a toplevel window, it is removed from view. If a widget inside a toplevel, the widget is removed from the manager that was handling it.
+}
 ttd.text {
 }
 ttd.tagon {Level 2 Title}
@@ -565,29 +569,76 @@ ttd.text {1.6 Window Menu}
 ttd.tagoff {Level 2 Title}
 ttd.text {
 }
-ttd.tagon {Level 3 Title}
-ttd.text {1.6.1 Attribute Editor}
 ttd.text {
 }
+ttd.tagon {Level 3 Title}
+ttd.text {1.6.1 Attribute Editor
+}
+ttd.tagoff {Level 3 Title}
+ttd.text {Shows the attributes editor window.
+}
+ttd.text {
+}
+ttd.tagon {Level 3 Title}
 ttd.text {1.6.2 Function List
 }
+ttd.tagoff {Level 3 Title}
+ttd.text {Shows the list of procedures defined within your application.
+}
+ttd.text {
+}
+ttd.tagon {Level 3 Title}
 ttd.text {1.6.3 Window List
+}
+ttd.tagoff {Level 3 Title}
+ttd.text {Shows the window list, that is, the list of toplevel windows in your project.}
+ttd.tagon {Level 3 Title}
+ttd.text {
+}
+ttd.text {
 }
 ttd.text {1.6.4 Command Console
 }
+ttd.tagoff {Level 3 Title}
+ttd.text {Shows or hides the command console. The command console is TkCon.
+}
+ttd.text {
+}
+ttd.tagon {Level 3 Title}
 ttd.text {1.6.5 Widget Tree
+}
+ttd.tagoff {Level 3 Title}
+ttd.text {Shows the widget tree.}
+ttd.tagon {Level 3 Title}
+ttd.text {
+}
+ttd.text {
 }
 ttd.text {1.6.6 System Inspector
 }
+ttd.tagoff {Level 3 Title}
+ttd.text {Shows the system inspector window.
+}
+ttd.text {
+}
+ttd.tagon {Level 3 Title}
 ttd.text {1.6.7 Save Window locations
 }
 ttd.tagoff {Level 3 Title}
+ttd.text {Saves the current locations of all the vTcl windows. Also, saves the current state of the preferences.
+}
 ttd.text {
 }
 ttd.tagon {Level 2 Title}
 ttd.text {1.7 Widget Menu}
 ttd.tagoff {Level 2 Title}
 ttd.text {
+}
+ttd.text {The Widget menu offers editing options for the currently selected widget. If there is no currently selected widget, the Widget menu is empty.
+}
+ttd.text {
+}
+ttd.text {If you select a toplevel window, for example, the Widget menu allows you to edit the menu for that toplevel, or resize the toplevel to the minimum needed to contain its widgets.
 }
 ttd.text {
 }
@@ -596,18 +647,67 @@ ttd.text {1.8 Help Menu}
 ttd.tagoff {Level 2 Title}
 ttd.text {
 }
+ttd.text {
+}
 ttd.tagon {Level 3 Title}
 ttd.text {1.8.1 About Visual Tcl...
 }
+ttd.tagoff {Level 3 Title}
+ttd.text {Shows the Visual Tcl version number and the credits.
+}
+ttd.text {
+}
+ttd.tagon {Level 3 Title}
 ttd.text {1.8.2 Libraries...
 }
+ttd.tagoff {Level 3 Title}
+ttd.text {Displays the list of libraries currently loaded. If a library could not find the matching extension, it will show (not detected).
+}
+ttd.text {
+}
+ttd.text {The following libraries are available, depending on the tcl extensions you have installed on your machine:
+}
+ttd.text {- Tix
+}
+ttd.text {- BLT
+}
+ttd.text {- BWidget (Visual Tcl comes with its own modified version of BWidget 1.3.1)
+}
+ttd.text {- [incr Widgets]
+}
+ttd.text {- Tcl/Tk Core Widgets (always required)
+}
+ttd.text {- Visual Tcl Widget Library (a collection of multiple columns listbox, combo box and progress }
+ttd.text {bar)
+}
+ttd.text {- tablelist (see www.nemethi.de)
+}
+ttd.text {- tkTable
+}
+ttd.text {
+}
+ttd.tagon {Level 3 Title}
 ttd.text {1.8.3 Index of Help
 }
+ttd.tagoff {Level 3 Title}
+ttd.text {Shows the text that you are reading right now.
+}
+ttd.tagon {Level 3 Title}
+ttd.text {
+}
 ttd.text {1.8.4 Tip of the Day
+}
+ttd.tagoff {Level 3 Title}
+ttd.text {Shows the tip of the day window.
+}
+ttd.tagon {Level 3 Title}
+ttd.text {
 }
 ttd.text {1.8.5 Visual Tcl News
 }
 ttd.tagoff {Level 3 Title}
+ttd.text {Shows the Visual Tcl News window.
+}
 ttd.text {
 }
 ttd.tagon {Level 2 Title}
@@ -699,6 +799,16 @@ ttd.tagon {Level 1 Title}
 ttd.text {7. Attribute Editor}
 ttd.tagoff {Level 1 Title}
 ttd.text {
+}
+ttd.text {The attributes editor shows properties for the currently selected widget. When a property value is different than the default value for that property, the box on the right side of the property is checked.
+}
+ttd.text {
+}
+ttd.text {If you do not want to save a particular property (eg. window background, for example, to avoid platform dependencies), uncheck the box next to that property.
+}
+ttd.text {
+}
+ttd.text {When you right-click on the property name, a submenu appears.
 }
 ttd.text {
 }
