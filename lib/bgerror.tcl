@@ -86,7 +86,7 @@ proc vTclWindow.vTcl.bgerror {base} {
     button $base.fra25.but28 \
         -padx 9 -text {Stack Trace...}  \
         -command "::vTcl::InitTkcon
-	          edit -attach \[::tkcon::Attach\] -type error -- \{$errorInfo\}
+	          edit -attach \[::tkcon::Attach\] -type error -- [list $errorInfo]
                   set [vTcl:rename $base.dialogStatus] ok
                   after idle \{destroy $base\}"
 

@@ -502,15 +502,6 @@ namespace eval ::menu_edit {
         tk_popup $widget($top,NewMenuToolbarPopup)  $x [expr $y + $h]
     }
 
-    proc {::menu_edit::indicate_label_or_image} {top} {
-
-        if { [vTcl:at ${top}::entry_image] != ""} {
-            set ${top}::label image
-        } else {
-            set ${top}::label label
-        }
-    }
-
     proc {::menu_edit::show_menu} {top index} {
         global widget
 
@@ -544,7 +535,6 @@ namespace eval ::menu_edit {
                 set ${top}::entry_font         [$m entrycget $i -font]
                 set ${top}::entry_accelerator  [$m entrycget $i -accelerator]
                 ::menu_edit::fill_command $top [$m entrycget $i -command]
-                ::menu_edit::indicate_label_or_image $top
             }
             "cascade" {
                 ::menu_edit::enable_controls $top {"label" 1}  {"font" 1} \
@@ -554,7 +544,6 @@ namespace eval ::menu_edit {
                 set ${top}::entry_image [$m entrycget $i -image]
                 set ${top}::entry_font  [$m entrycget $i -font]
                 set ${top}::entry_accelerator ""
-                ::menu_edit::indicate_label_or_image $top
                 vTcl:active_widget [$m entrycget $i -menu]
             }
             "separator" {
@@ -575,7 +564,6 @@ namespace eval ::menu_edit {
                 set ${top}::entry_variable     [$m entrycget $i -variable]
                 set ${top}::entry_value_on     [$m entrycget $i -value]
                 ::menu_edit::fill_command $top [$m entrycget $i -command]
-                ::menu_edit::indicate_label_or_image $top
             }
             "checkbutton" {
                 ::menu_edit::enable_controls $top  {"label" 1} {"font" 1} \
@@ -589,7 +577,6 @@ namespace eval ::menu_edit {
                 set ${top}::entry_value_on     [$m entrycget $i -onvalue]
                 set ${top}::entry_value_off    [$m entrycget $i -offvalue]
                 ::menu_edit::fill_command $top [$m entrycget $i -command]
-                ::menu_edit::indicate_label_or_image $top
             }
         }
 
@@ -1075,10 +1062,10 @@ proc vTclWindow.vTclMenuEdit {base menu} {
         -accelerator {} -command "::menu_edit::toggle_tearoff $base" \
         -label Tearoff
     frame $base.cpd24.02
-    radiobutton $base.cpd24.02.rad20 \
-        -padx 1 -pady 1 -text Label: -value label -variable ${base}::label
-    radiobutton $base.cpd24.02.rad21 \
-        -text Image: -value image -variable ${base}::label
+    label $base.cpd24.02.rad20 \
+        -padx 1 -pady 1 -text Label:
+    label $base.cpd24.02.rad21 \
+        -text Image:
     frame $base.cpd24.02.fra22 \
         -borderwidth 2 -relief flat
     label $base.cpd24.02.fra22.lab31 \
@@ -1112,8 +1099,7 @@ proc vTclWindow.vTclMenuEdit {base menu} {
         -padx 1 -pady 0 -text ... -command "::menu_edit::browse_font $base"
     button $base.cpd24.02.but27 \
         -padx 1 -pady 0 -text ... \
-        -command "::menu_edit::browse_image $base
-                  ::menu_edit::indicate_label_or_image $base"
+        -command "::menu_edit::browse_image $base"
     label $base.cpd24.02.lab28 \
         -padx 1 -pady 1 -text Accelerator:
     entry $base.cpd24.02.ent29 \
@@ -1201,10 +1187,10 @@ proc vTclWindow.vTclMenuEdit {base menu} {
     grid rowconf $base.cpd24.02 9 -weight 1
     grid $base.cpd24.02.rad20 \
         -in $base.cpd24.02 -column 0 -row 0 -columnspan 1 -rowspan 1 \
-        -sticky nw
+        -sticky ne -padx 5
     grid $base.cpd24.02.rad21 \
         -in $base.cpd24.02 -column 0 -row 1 -columnspan 1 -rowspan 1 \
-        -sticky nw
+        -sticky ne -padx 5
     grid $base.cpd24.02.fra22 \
         -in $base.cpd24.02 -column 0 -row 9 -columnspan 3 -rowspan 1 -padx 5 \
         -pady 5 -sticky nesw
