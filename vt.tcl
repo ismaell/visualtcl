@@ -411,8 +411,10 @@ proc vTclWindow.vTcl {args} {
     entry .vTcl.widgetname -textvar fakeClipboard
 }
 
-proc vTcl:vtcl:remap {} {
+proc vTcl:vtcl:remap {w} {
     global vTcl
+
+    if {![vTcl:streq $w ".vTcl"]} { return }
 
     foreach i $vTcl(tops) {
 	if {![winfo exists $i]} { continue }
@@ -577,8 +579,8 @@ proc vTcl:define_bindings {} {
     }
 
     ## If we iconify or deiconify vTcl, take the top windows with us.
-    bind vTcl(a) <Unmap> { vTcl:vtcl:unmap }
-    bind vTcl(a) <Map> { vTcl:vtcl:remap }
+    bind .vTcl <Unmap> { vTcl:vtcl:unmap }
+    bind .vTcl <Map> { vTcl:vtcl:remap %W }
 
     vTcl:status "Status"
 }
