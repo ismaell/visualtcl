@@ -59,7 +59,10 @@ proc vTcl:dump:labeledframe {target basename} {
 
     set result [vTcl:dump_widget_opt $target $basename]
     set page   [$target childsite]
-    append result [vTcl:lib_itcl:dump_subwidgets $page]
+    set sitevariable "site_[llength [split $page .]]_0"
+    append result "$vTcl(tab)set $sitevariable "
+    append result "\[$basename childsite\]\n"
+    append result [vTcl:lib_itcl:dump_subwidgets $page \$$sitevariable]
 
     return $result
 }
