@@ -57,11 +57,9 @@ proc vTcl:WidgetProc {w args} {
     if {[llength $args] == 0} {
         return -code error "wrong # args: should be \"$w option ?arg arg ...?\""
     }
-
     ## The first argument is a switch, they must be doing a configure.
     if {[string index $args 0] == "-"} {
         set command configure
-
         ## There's only one argument, must be a cget.
         if {[llength $args] == 1} {
             set command cget
@@ -70,42 +68,40 @@ proc vTcl:WidgetProc {w args} {
         set command [lindex $args 0]
         set args [lrange $args 1 end]
     }
-
     eval $w $command $args
 }
 
 proc vTcl:DefineAlias {target alias widgetProc top_or_alias cmdalias} {
-
     global widget
-
     set widget($alias) $target
     set widget(rev,$target) $alias
-
     if {$cmdalias} {
         interp alias {} $alias {} $widgetProc $target
     }
-
     if {$top_or_alias != ""} {
         set widget($top_or_alias,$alias) $target
-
         if {$cmdalias} {
             interp alias {} $top_or_alias.$alias {} $widgetProc $target
         }
     }
 }
 
-proc vTcl:FireEvent {target event} {
-
+proc vTcl:FireEvent {target event {params {}}} {
+    ## The window may have disappeared
+    if {![winfo exists $target]} return
+    ## Process each binding tag, looking for the event
     foreach bindtag [bindtags $target] {
         set tag_events [bind $bindtag]
         set stop_processing 0
         foreach tag_event $tag_events {
             if {$tag_event == $event} {
                 set bind_code [bind $bindtag $tag_event]
-                regsub -all %W $bind_code $target bind_code
+                foreach rep "\{%W $target\} $params" {
+                    regsub -all [lindex $rep 0] $bind_code [lindex $rep 1] bind_code
+                }
                 set result [catch {uplevel #0 $bind_code} errortext]
                 if {$result == 3} {
-                    # break exception, stop processing
+                    ## break exception, stop processing
                     set stop_processing 1
                 } elseif {$result != 0} {
                     bgerror $errortext

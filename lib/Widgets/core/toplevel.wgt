@@ -133,16 +133,12 @@ proc vTcl:widget:toplevel:set_new_geom {} {
 }
 
 proc vTcl:Toplevel:WidgetProc {w args} {
-    global tcl_platform
-
     if {[llength $args] == 0} {
         return -code error "wrong # args: should be \"$w option ?arg arg ...?\""
     }
-
     ## The first argument is a switch, they must be doing a configure.
     if {[string index $args 0] == "-"} {
         set command configure
-
         ## There's only one argument, must be a cget.
         if {[llength $args] == 1} {
             set command cget
@@ -151,24 +147,20 @@ proc vTcl:Toplevel:WidgetProc {w args} {
         set command [lindex $args 0]
         set args [lrange $args 1 end]
     }
-
     switch -- $command {
         "hide" - "Hide" {
             Window hide $w
         }
-
         "show" - "Show" {
             Window show $w
         }
-
         "ShowModal" {
             Window show $w
-            if {$tcl_platform(platform) != "unix"} {raise $w}
+            if {$::tcl_platform(platform) != "unix"} {raise $w}
             grab $w
             tkwait window $w
             grab release $w
         }
-
         default {
             eval $w $command $args
         }

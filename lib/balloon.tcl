@@ -21,64 +21,81 @@
 ##############################################################################
 #
 
-bind vTcl(balloon) <Enter> {
-    set ::vTcl::balloon::set 0
-    set ::vTcl::balloon::first 1
-    set ::vTcl::balloon::id [after 500 {vTcl:balloon %W ${::vTcl::balloon::%W}}]
-}
-
-bind vTcl(balloon) <Button> {
-    set ::vTcl::balloon::first 0
-    vTcl:kill_balloon
-}
-
-bind vTcl(balloon) <Leave> {
-    set ::vTcl::balloon::first 0
-    vTcl:kill_balloon
-}
-
-bind vTcl(balloon) <Motion> {
-    if {$::vTcl::balloon::set == 0} {
-        after cancel $::vTcl::balloon::id
-        set ::vTcl::balloon::id [after 500 {vTcl:balloon %W ${::vTcl::balloon::%W}}]
+bind _vTclBalloon <Enter> {
+    namespace eval ::vTcl::balloon {
+        ## self defining balloon?
+        if {![info exists %W]} {
+            vTcl:FireEvent %W <<SetBalloon>>
+        }
+        set set 0
+        set first 1
+        set id [after 500 {vTcl:FireEvent %W <<vTclBalloon>>}]
     }
 }
 
-proc vTcl:set_balloon {target message} {
-    global vTcl
-    set ::vTcl::balloon::$target $message
-    bindtags $target "[bindtags $target] vTcl(balloon)"
-}
-
-proc vTcl:kill_balloon {} {
-    global vTcl
-    after cancel $::vTcl::balloon::id
-    if {[winfo exists .vTcl.balloon] == 1} {
-        destroy .vTcl.balloon
+bind _vTclBalloon <Motion> {
+    namespace eval ::vTcl::balloon {
+        if {!$set} {
+            after cancel $id
+            set id [after 500 {vTcl:FireEvent %W <<vTclBalloon>>}]
+        }
     }
-    set ::vTcl::balloon::set 0
 }
 
-proc vTcl:balloon {target message} {
-    global vTcl
-    # the window may have disappeared
-    if {![winfo exists $target]} return
+bind _vTclBalloon <Button> {
+    namespace eval ::vTcl::balloon {
+        set first 0
+    }
+    vTcl:FireEvent %W <<KillBalloon>>
+}
 
-    if {$::vTcl::balloon::first == 1 && $vTcl(pr,balloon) == 1} {
-        set ::vTcl::balloon::first 2
-        set x [expr {[winfo rootx $target] + ([winfo width $target]/2)}]
-        set y [expr {[winfo rooty $target] + [winfo height $target] + 4}]
+bind _vTclBalloon <Leave> {
+    namespace eval ::vTcl::balloon {
+        set first 0
+    }
+    vTcl:FireEvent %W <<KillBalloon>>
+}
+
+bind _vTclBalloon <<KillBalloon>> {
+    namespace eval ::vTcl::balloon {
+        after cancel $id
+        if {[winfo exists .vTcl.balloon]} {
+            destroy .vTcl.balloon
+        }
+        set set 0
+    }
+}
+
+bind _vTclBalloon <<vTclBalloon>> {
+    if {$::vTcl::balloon::first != 1} {return}
+
+    namespace eval ::vTcl::balloon {
+        set first 2
+        if {![winfo exists .vTcl]} {
+            toplevel .vTcl; wm withdraw .vTcl
+        }
         if {![winfo exists .vTcl.balloon]} {
             toplevel .vTcl.balloon -bg black
         }
         wm overrideredirect .vTcl.balloon 1
         label .vTcl.balloon.l \
-            -text $message -relief flat \
+            -text ${%W} -relief flat \
             -bg #ffffaa -fg black -padx 2 -pady 0 -anchor w
         pack .vTcl.balloon.l -side left -padx 1 -pady 1
-        wm geometry .vTcl.balloon +${x}+${y}
-        set ::vTcl::balloon::set 1
+        wm geometry \
+            .vTcl.balloon \
+            +[expr {[winfo rootx %W]+[winfo width %W]/2}]+[expr {[winfo rooty %W]+[winfo height %W]+4}]
+        set set 1
     }
 }
 
+proc vTcl:set_balloon {target message} {
+    ## Balloons disabled?
+    if {!$::vTcl(pr,balloon)} {return}
 
+    namespace eval ::vTcl::balloon "variable $target"
+    set ::vTcl::balloon::$target $message
+
+    ## Add tag to the widget
+    bindtags $target "[bindtags $target] _vTclBalloon"
+}

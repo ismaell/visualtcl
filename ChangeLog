@@ -1,6 +1,15 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Done a bit of compacting in some library routines.
+    o Preparing support for balloon help in projects by making all balloon
+      help code self contained in a binding tag. This way, to set the balloon
+      for a widget, the _vTclBalloon tag should be added, and for the widget,
+      the <<SetBalloon>> event should be defined with the following
+      code: "set ::vTcl::balloon::%w {balloon help text}". Will add support
+      for property manager soon.
+    o Goal to have balloon code in a binding tag: support for copy/paste,
+      very few changes to code generation, backward compatible with 1.5.2
     o Made code to dump procedures/functions more uniform.
     o Added "foreach" body support to stack trace window.
     o Repaired problem with new project generating error on save.
