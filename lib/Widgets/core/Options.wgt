@@ -83,6 +83,7 @@ NewOption -listvariable         "list var"              type
 NewOption -menu			"menu"			menu
 NewOption -offvalue		"off value"		type
 NewOption -onvalue		"on value"		type
+NewOption -offrelief		"off relief"	relief
 NewOption -orient		"orient"		choice \
   "vertical horizontal"
 NewOption -padx			"x pad"			type
@@ -143,4 +144,5 @@ OptionConfigCmd -_tooltip       get                     vTcl:get_balloon
 NewOption -compound             "compound"              choice    "none bottom center left right top"
 NewOption -disabledbackground   "disabled bg"           color     {}   Colors
 NewOption -overrelief           "over relief"           relief
+
 
