@@ -1,9 +1,9 @@
-Class         Combobox
+Class         Combobox2
 Lib           vtcl
 
 CreateCmd     ::combobox::combobox
 Icon          icon_combobox.gif
-Balloon       combo box
+Balloon       vTcl combo box
 DumpChildren  no
 MegaWidget    yes
 Resizable     horizontal
