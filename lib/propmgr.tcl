@@ -227,7 +227,7 @@ proc vTcl:key_release_cmd {k config_cmd target option variable args} {
 
     ## Don't change if the user presses a directional key.
     if {$k < 37 || $k > 40} {
-        set value [vTcl:at $variable]
+        set value [set $variable]
         set ::vTcl::config($target) [list $config_cmd $target $option $variable $value $args]
 
         ## Geometry options do not have checkboxes to save/not save
@@ -258,7 +258,7 @@ proc vTcl:focus_out_cmd {} {
 proc vTcl:prop:config_cmd {target option variable value args} {
     global vTcl
     if {$value == ""} {
-        $target configure $option [vTcl:at $variable]
+        $target configure $option [set $variable]
         vTcl:prop:save_opt $target $option $variable
         vTcl:place_handles $target
     } else {
@@ -271,7 +271,7 @@ proc vTcl:prop:spec_config_cmd {target option variable value args} {
     global vTcl
     set cmd $args
     if {$value == ""} {
-        $cmd $target [vTcl:at $variable]
+        $cmd $target [set $variable]
         vTcl:prop:save_opt $target $option $variable
         vTcl:place_handles $target
     } else {
@@ -285,7 +285,7 @@ proc vTcl:prop:geom_config_mgr {target option variable value args} {
     set mgr $args
     vTcl:setup_unbind_widget $target
     if {$value == ""} {
-        $mgr configure $target $option [vTcl:at $variable]
+        $mgr configure $target $option [set $variable]
         vTcl:place_handles $target
     } else {
         $mgr configure $target $option $value
@@ -299,7 +299,7 @@ proc vTcl:prop:geom_config_cmd {target option variable value args} {
     set cmd $args
     vTcl:setup_unbind_widget $target
     if {$value == ""} {
-        $cmd $target $option [vTcl:at $variable]
+        $cmd $target $option [set $variable]
         vTcl:place_handles $target
     } else {
         $cmd $target $option $value
@@ -434,7 +434,7 @@ proc vTcl:prop:update_attr {} {
 
 proc vTcl:prop:combo_update {w var args} {
     if {[winfo exists $w]} {
-        set values [vTcl:at ::$var]
+        set values [set ::$var]
         set index [lindex $values 0]
         $w configure -values [lrange $values 1 end]
         if {$index != -1} {
@@ -454,7 +454,7 @@ proc vTcl:prop:combo_edit {w option} {
 proc vTcl:prop:choice_update {w var args} {
     if {[winfo exists $w]} {
         set values [$w cget -values]
-        set value  [vTcl:at ::$var]
+        set value  [set ::$var]
         set index [lsearch -exact $values $value]
         if {$index != -1} {
             $w setvalue @$index
@@ -592,7 +592,7 @@ proc vTcl:prop:new_attr {top option variable config_cmd config_args prefix {isGe
 		    vTcl:show_color $top.t${option}.f $option $variable ${base}.f
 		    vTcl:prop:save_opt \$vTcl(w,widget) $option $variable
 		"
-	    vTcl:prop:color_update ${base}.f [vTcl:at $variable]
+	    vTcl:prop:color_update ${base}.f [set $variable]
             pack ${base}.l -side left -expand 1 -fill x
             pack ${base}.f -side right -fill y -pady 1 -padx 1
 	    set focusControl ${base}.l
@@ -1013,7 +1013,7 @@ proc vTcl:propmgr:show_rightclick_menu {base option variable X Y} {
 		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
 			$::vTcl::_rclick_option $::vTcl::_rclick_variable \
 			subwidgets vTcl:prop:set_opt \
-                        [vTcl:at $::vTcl::_rclick_variable]} \
+                        [set $::vTcl::_rclick_variable]} \
                 -label {Same Class Subwidgets}
 
         $base.menu_rightclk.men26 add command \
@@ -1021,7 +1021,7 @@ proc vTcl:propmgr:show_rightclick_menu {base option variable X Y} {
 		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
 			$::vTcl::_rclick_option $::vTcl::_rclick_variable \
 			frame vTcl:prop:set_opt \
-                        [vTcl:at $::vTcl::_rclick_variable]} \
+                        [set $::vTcl::_rclick_variable]} \
                 -label {All Same Class Widgets in same Parent}
 
         $base.menu_rightclk.men26 add command \
@@ -1029,7 +1029,7 @@ proc vTcl:propmgr:show_rightclick_menu {base option variable X Y} {
 		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
 			$::vTcl::_rclick_option $::vTcl::_rclick_variable \
 			toplevel vTcl:prop:set_opt \
-                        [vTcl:at $::vTcl::_rclick_variable]} \
+                        [set $::vTcl::_rclick_variable]} \
                 -label {All Same Class Widgets in toplevel}
 
         $base.menu_rightclk.men26 add command \
@@ -1037,7 +1037,7 @@ proc vTcl:propmgr:show_rightclick_menu {base option variable X Y} {
 		-command {vTcl:prop:apply_opt $vTcl(w,widget) \
 			$::vTcl::_rclick_option $::vTcl::_rclick_variable \
 			all vTcl:prop:set_opt \
-                        [vTcl:at $::vTcl::_rclick_variable]} \
+                        [set $::vTcl::_rclick_variable]} \
                 -label {All Same Class Widgets in this project}
 
         menu $base.menu_rightclk.men22 -tearoff 0
@@ -1226,4 +1226,5 @@ proc vTcl:propmgr:scrollWheelMouse {delta label} {
 	vTcl:propmgr:focusNext $label
     }
 }
+
 

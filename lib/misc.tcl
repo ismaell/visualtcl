@@ -334,7 +334,7 @@ proc vTcl:right_click {widget X Y x y} {
 
     # megawidget ?
     if {[info exists ::widgets::${widget}::parent]} {
-        set parent [vTcl:at ::widgets::${widget}::parent]
+        set parent [set ::widgets::${widget}::parent]
     }
 
     vTcl:active_widget $parent
@@ -1018,7 +1018,7 @@ proc vTcl:formCompound:add {cpd type args} {
 	   set ${varname}_count 0
 	}
 
-	set count [vTcl:at ${varname}_count]
+	set count [set ${varname}_count]
 
 	if {$type == "entry"} { set type vTcl:entry }
 	set window_name $cpd.i$count
@@ -1234,7 +1234,7 @@ namespace eval ::vTcl::ui::attributes {
 
     proc show_color {w variable args} {
         catch {
-            set color_value [vTcl:at $variable]
+            set color_value [set $variable]
             if {$color_value == ""} {
                 set color_value [[winfo parent $w] cget -background]
             }
@@ -1243,7 +1243,7 @@ namespace eval ::vTcl::ui::attributes {
     }
 
     proc select_color {w config_cmd variable} {
-        set initial [::vTcl:at $variable]
+        set initial [::set $variable]
         set $variable [::vTcl:get_color $initial $w]
         eval $config_cmd
     }
@@ -1251,7 +1251,7 @@ namespace eval ::vTcl::ui::attributes {
     proc set_command {target option config_cmd variable} {
         variable counter
 
-        set cmd [::vTcl:at $variable]
+        set cmd [::set $variable]
         incr counter
 
         ## if the command is in the form "vTcl:DoCmdOption target cmd",
@@ -1274,7 +1274,7 @@ namespace eval ::vTcl::ui::attributes {
     }
 
     proc set_font {config_cmd variable} {
-        set font [::vTcl:at $variable]
+        set font [::set $variable]
         set r [::vTcl:font:prompt_noborder_fontlist $font]
         if {$r == ""} {
             return
@@ -1284,7 +1284,7 @@ namespace eval ::vTcl::ui::attributes {
     }
 
     proc set_image {config_cmd variable} {
-        set image [::vTcl:at $variable]
+        set image [::set $variable]
         set r [::vTcl:prompt_user_image2 $image]
         set $variable $r
         eval $config_cmd
@@ -1461,6 +1461,7 @@ namespace eval ::vTcl::ui::attributes {
         }
     }
 }
+
 
 
 
