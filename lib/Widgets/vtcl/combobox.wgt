@@ -8,7 +8,7 @@ DumpChildren  no
 MegaWidget    yes
 Resizable     horizontal
 TreeLabel     Combo Box
-AliasPrefix   Combobox
+AliasPrefix   Combo
 ResizeCmd     vTcl:Combobox2:Resize
 
 # New options for this widget
