@@ -27,7 +27,7 @@
 
 ##############################################################################
 
-set version 1.5.1
+set version 1.5.2
 set bldroot /home/cgavin/vtcl
 set bldtmp $bldroot/build/tmp
 
