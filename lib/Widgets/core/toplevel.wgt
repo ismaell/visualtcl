@@ -64,7 +64,7 @@ proc vTcl:Toplevel:WidgetProc {w args} {
 	"ShowModal" {
 	    Window show $w
 	    grab $w
-	    tkwait visibility $w
+	    tkwait window $w
 	    grab release $w
 	}
 
