@@ -104,7 +104,8 @@ proc vTclWindow.vTcl.bind {args} {
     interp alias {} Frame3 {} vTcl:WidgetProc $base.cpd21.03
     set widget(MoveTagUp) $base.cpd21.01.fra22.but25
     set widget(MoveTagDown) $base.cpd21.01.fra22.but26
-
+    set widget(AddTag) $base.cpd21.01.fra22.but27
+    
     ###################
     # CREATING WIDGETS
     ###################
@@ -196,6 +197,11 @@ proc vTclWindow.vTcl.bind {args} {
         -highlightthickness 0 \
         -image down \
         -padx 0 -pady 0 -text button -width 23 
+    button $base.cpd21.01.fra22.but27 \
+        -command "tk_messageBox -message {To be implemented}" \
+        -height 23 \
+        -highlightthickness 0 \
+        -padx 0 -pady 0 -image icon_message.gif -width 23 
     frame $base.cpd21.01.cpd25 \
         -background #dcdcdc -borderwidth 1 -height 30 \
         -highlightbackground #dcdcdc -highlightcolor #000000 -relief raised \
@@ -207,14 +213,14 @@ proc vTclWindow.vTcl.bind {args} {
     bind $base.cpd21.01.cpd25.01 <Button-3> {
         ListboxBindings selection clear 0 end
         ListboxBindings selection set @%x,%y
-        ::widgets_bindings::enable_add_delete
+        ::widgets_bindings::enable_toolbar_buttons
         ::widgets_bindings::select_binding
     }
     bind $base.cpd21.01.cpd25.01 <ButtonRelease-1> {
         set n [vTcl:rename $widget(BindingsEditor)]
         set ${n}::lastselected [lindex [ListboxBindings curselection] 0]
 
-        ::widgets_bindings::enable_add_delete
+        ::widgets_bindings::enable_toolbar_buttons
         after idle "::widgets_bindings::select_binding"
     }
     bind $base.cpd21.01.cpd25.01 <ButtonRelease-3> {
@@ -364,6 +370,9 @@ proc vTclWindow.vTcl.bind {args} {
     pack $base.cpd21.01.fra22.but24 \
         -in $base.cpd21.01.fra22 -anchor center -expand 0 -fill none \
         -side left 
+    pack $base.cpd21.01.fra22.but27  \
+        -in $base.cpd21.01.fra22 -anchor center -expand 0 -fill none \
+        -side left -padx 5
     pack $base.cpd21.01.fra22.but25  \
         -in $base.cpd21.01.fra22 -anchor center -expand 0 -fill none \
         -side left 
@@ -407,7 +416,8 @@ proc vTclWindow.vTcl.bind {args} {
     vTcl:set_balloon $widget(RemoveBinding) "Remove a binding"
     vTcl:set_balloon $widget(MoveTagUp)     "Move tag up"
     vTcl:set_balloon $widget(MoveTagDown)   "Move tag down"
-        
+    vTcl:set_balloon $widget(AddTag)        "Add/Reuse tag"
+
     Window hide .vTcl.newbind
     
     ::widgets_bindings::init
@@ -808,7 +818,7 @@ namespace eval ::widgets_bindings {
         ::widgets_bindings::fill_bindings $target
     }
 
-    proc {::widgets_bindings::enable_add_delete} {} {
+    proc {::widgets_bindings::enable_toolbar_buttons} {} {
 
         global widget
         
@@ -849,6 +859,9 @@ namespace eval ::widgets_bindings {
     proc {::widgets_bindings::fill_bindings} {target} {
 
         global widget vTcl tk_version
+
+        set w $widget(BindingsEditor)
+        set n [vTcl:rename $w]
         
         # before selecting a different binding, make sure we
         # save the current one
@@ -860,6 +873,7 @@ namespace eval ::widgets_bindings {
         set index 0
         set tags $vTcl(bindtags,$target)
         
+        set ::${n}::bindingslist ""
         ListboxBindings delete 0 end
         
         foreach tag $tags {
@@ -871,7 +885,9 @@ namespace eval ::widgets_bindings {
                }
            }
            
+           lappend ::${n}::bindingslist [list $tag ""]
            incr index
+           
            set events [bind $tag]
            foreach event $events {
               
@@ -882,16 +898,15 @@ namespace eval ::widgets_bindings {
                    }
                }
                
+               lappend ::${n}::bindingslist [list $tag $event]
                incr index
            }
         }
         
-        set w $widget(BindingsEditor)
-        set n [vTcl:rename $w]
         set ::${n}::target $target
         
         # enable/disable various buttons
-        ::widgets_bindings::enable_add_delete
+        ::widgets_bindings::enable_toolbar_buttons
     }
 
     proc {::widgets_bindings::find_tag_event} {l index ref_tag ref_event} {
@@ -900,35 +915,33 @@ namespace eval ::widgets_bindings {
         upvar $ref_tag tag
         upvar $ref_event event
         
-        set event [$l get $index]
-        
-        # just a tag
-        if { ![string match " *" $event]} {
-        
-            set tag $event
+        if {$index == ""} {
+            set tag ""
             set event ""
             return
         }
         
-        while {$index >= 0} {
-        
-           incr index -1
-           set t [$l get $index]
-           
-           if { [string range $t 0 0] != " " } {
-               set tag $t
-               set event [string trim $event]
-               break
-           }
-        }
+        set w $widget(BindingsEditor)
+        set n [vTcl:rename $w]
+
+        eval set bindingslist \$::${n}::bindingslist
+        set tagevent [lindex $bindingslist $index]
+
+        set tag   [lindex $tagevent 0]
+        set event [lindex $tagevent 1]       
     }
 
     proc {::widgets_bindings::init} {} {
 
         global widget vTcl
                 
-        TextBindings configure -font $vTcl(pr,font_fixed)
-                
+        ListboxBindings delete 0 end
+
+        TextBindings configure -state normal
+        TextBindings delete 0.0 end
+        TextBindings configure -font $vTcl(pr,font_fixed) \
+                               -background gray -state disabled
+ 
         set w $widget(BindingsEditor)
         set n [vTcl:rename $w]
         
@@ -937,7 +950,11 @@ namespace eval ::widgets_bindings {
             variable lasttag ""
             variable lastevent ""
             variable target ""
+            variable bindingslist ""
         }
+
+        # enable/disable various buttons
+        ::widgets_bindings::enable_toolbar_buttons
     }
 
     proc {::widgets_bindings::right_click_modifier} {modifier} {
@@ -1038,29 +1055,33 @@ namespace eval ::widgets_bindings {
         
         # let's find it in the listbox first
         set lasttag ""
-        set tags_events [ListboxBindings get 0 end]
         set index 0
         
         # Tk replaces bindings with shortcuts
         regsub -all Button1 $event B1 event
         regsub -all Button2 $event B2 event
         regsub -all Button3 $event B3 event
+
+        set w $widget(BindingsEditor)
+        set n [vTcl:rename $w]
+
+        eval set bindingslist \$::${n}::bindingslist
         
-        foreach tag_event $tags_events {
-        
-            if {! [string match " *" $tag_event] } {
-                set lasttag $tag_event
-            } else {
-                if {$lasttag == $tag &&
-                    [string trim $tag_event] == $event} {
+        foreach tag_event $bindingslist {
+
+            set current_tag   [lindex $tag_event 0]
+            set current_event [lindex $tag_event 1]
+            
+            if {$current_tag   == $tag &&
+                $current_event == $event} {
                     
-                    ListboxBindings selection clear 0 end
-                    ListboxBindings selection set $index
+                ListboxBindings selection clear 0 end
+                ListboxBindings selection set $index
                     
-                    ::widgets_bindings::show_binding $tag $event
-                    break
-                }
+                ::widgets_bindings::show_binding $tag $event
+                break
             }
+
             incr index
         }
     }
