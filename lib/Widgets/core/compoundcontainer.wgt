@@ -32,6 +32,7 @@ MegaWidget      yes
 DumpChildren    no
 InsertCmd       vTcl::widgets::core::compoundcontainer::insertCmd
 CreateCmd       vTcl::widgets::core::compoundcontainer::createCmd
+DumpCmd         vTcl::widgets::core::compoundcontainer::dumpCmd
 WidgetProc      vTcl::widgets::core::compoundcontainer::widgetProc
 Export          vTcl::widgets::core::compoundcontainer::cgetProc
 Export          vTcl::widgets::core::compoundcontainer::configureProc
@@ -46,7 +47,63 @@ QueryInsertOptionsCmd \
 NewOption -compoundClass  "Cmpd Class"  type
 NewOption -compoundType   "Cmpd Type"   type
 
+## Support for editing a megawidget's options
+
+## Right-click menu
+Function        "Edit megawidget..."         vTcl::widgets::core::compoundcontainer::editCmd
+
+namespace eval vTcl::widgets::core::compoundcontainer::edit {
+
+    proc getTitle {target} {
+        return "Edit megawidget options for $target"
+    }
+
+    proc getLabelOption {} {
+        return -__ ; # don't care, just use a name that will never be an option...
+    }
+
+    proc getItems {target} {
+        ## first item in the list is the current index
+        set values "0 options"
+        return $values
+    }
+
+    proc addItem {target} {
+        ## cannot add anything; we use the dialog for subwidgets/pages as it is convenient
+        return ""
+    }
+
+    proc removeItem {target index} {
+        error "Not supported!"
+    }
+
+    proc itemConfigure {target index args} {
+        if {$args == ""} {
+            set options [$target widget configure]
+            set result ""
+            foreach option $options {
+                ## only return valid options
+                if {[llength $option] == 5} {
+                    lappend result $option
+                }
+            }
+            return $result
+        } else {
+            set result [eval $target widget configure $args]
+            return $result
+        }
+    }
+
+    proc moveUpOrDown {target index direction} {
+        error "Not supported!"
+    }
+}
+
 namespace eval vTcl::widgets::core::compoundcontainer {
+
+    proc editCmd {} {
+        vTcl::itemEdit::edit $::vTcl(w,widget) vTcl::widgets::core::compoundcontainer::edit
+    }
 
     proc cgetProc {w args} {
         ## This procedure may be used free of restrictions.
@@ -234,6 +291,19 @@ namespace eval vTcl::widgets::core::compoundcontainer {
         return $path
     }
 
+    proc dumpCmd {target basename} {
+        set result [vTcl:dump_widget_opt $target $basename]
+
+        upvar ::${target}::compoundClass compoundClass
+        if {[winfo class ${target}.cmpd] == "MegaWidget"} {
+            set conf [${target}.cmpd widget configure]
+            set pairs [vTcl:get_subopts_special $conf $target]
+            append result "$::vTcl(tab)${basename}.cmpd widget configure \\\n"
+            append result "[vTcl:clean_pairs $pairs]\n"
+        }
+        return $result
+    }
+
     proc treeChildrenCmd {target {diff \#0}} {
         return {}
     }
@@ -247,8 +317,4 @@ namespace eval vTcl::widgets::core::compoundcontainer {
         return "Compound Container: [join $compoundClass]"
     }
 }
-
-
-
-
 
