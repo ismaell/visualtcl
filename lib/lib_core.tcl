@@ -51,6 +51,7 @@ proc vTcl:widget:lib:lib_core {args} {
     if {[info tclversion] >= 8.4} {
 	lappend order Spinbox
 	lappend order Labelframe
+	lappend order PanedWindow
     }
 
     vTcl:lib:add_widgets_to_toolbar $order
@@ -387,6 +388,41 @@ proc vTcl:core:set_option {target option description} {
         # keep showing the selection in the toplevel
         # (do not destroy the selection handles)
         vTcl:init_wtree 0
+    }
+}
+
+namespace eval vTcl::widgets::core {
+
+    ## Utility proc.  Dump a megawidget's children, but not those that are
+    ## part of the megawidget itself.  Differs from vTcl:dump:widgets in that
+    ## it dumps the geometry of $subwidget, but it doesn't dump $subwidget
+    ## itself (`vTcl:dump:widgets $subwidget' doesn't do the right thing if
+    ## the grid geometry manager is used to manage children of $subwidget.
+    proc dump_subwidgets {subwidget {sitebasename {}}} {
+        global vTcl basenames classes
+        set output ""
+        set geometry ""
+        set widget_tree [vTcl:widget_tree $subwidget]
+        set length      [string length $subwidget]
+        set basenames($subwidget) $sitebasename
+
+        foreach i $widget_tree {
+
+            set basename [vTcl:base_name $i]
+
+            # don't try to dump subwidget itself
+            if {"$i" != "$subwidget"} {
+                set basenames($i) $basename
+                set class [vTcl:get_class $i]
+                append output [$classes($class,dumpCmd) $i $basename]
+                append geometry [vTcl:dump_widget_geom $i $basename]
+                unset basenames($i)
+            }
+        }
+        append output $geometry
+
+        unset basenames($subwidget)
+        return $output
     }
 }
 

@@ -1,6 +1,10 @@
 ChangeLog for Visual Tcl:
 
 1.6.0a2 ->
+    o Added panedwindow widget for Tk 8.4. If Tk 8.4 is present, paned window
+      widget is removed from the toolbar for the BWidget library, because
+      it has the same class name. By design vTcl does not support
+      different widgets with the same class.
     o Changed spinbox icon to gray (Tk 8.4)
     o Added labelframe widget (Tk 8.4)
     o Fixed problem where an alias would be defined twice when doing

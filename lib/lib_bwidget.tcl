@@ -60,10 +60,15 @@ proc vTcl:widget:lib:lib_bwidget {args} {
         PanedWindow
 	ProgressBar
 	ScrolledWindow
-      ScrollableFrame
+        ScrollableFrame
 	Separator
 	TitleFrame
 	Tree
+    }
+
+    ## avoid conflicts with Tk 8.4
+    if {[info tclversion] >= 8.4} {
+        ::vTcl::lremove order PanedWindow
     }
 
     vTcl:lib:add_widgets_to_toolbar $order

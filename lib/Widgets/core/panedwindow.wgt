@@ -1,0 +1,119 @@
+##############################################################################
+#
+# Visual TCL - A cross-platform application development environment
+#
+# Copyright (C) 2001 Damon Courtney
+#
+# Description file for Tk Widget
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+##############################################################################
+#
+
+if {[info tclversion] >= 8.4} {
+
+Class		PanedWindow
+Lib		core
+MegaWidget      yes
+CreateCmd       panedwindow
+
+Icon		@vTcl::widgets::core::panedwindow::getIcon
+TreeLabel	Paned window
+InsertCmd       vTcl::widgets::core::panedwindow::insertCmd
+TreeChildrenCmd	{vTcl::widgets::core::panedwindow::treeChildrenCmd
+		 vTcl::widgets::core::panedwindow::treeChildrenChildsite}
+DumpCmd         vTcl::widgets::core::panedwindow::dumpCmd
+
+## Special proc for setting up icons on the toolbar.
+proc vTcl:PanedWindow:ToolBarSetup {} {
+
+    vTcl:toolbar_add PanedWindow \
+	"horizontal paned window" \
+	../lib/Widgets/core/panedwindowhoriz.gif "-orient horizontal"
+
+    vTcl:toolbar_add PanedWindow \
+    	"vertical paned window" \
+	../lib/Widgets/core/panedwindow.gif "-orient vertical"
+}
+
+namespace eval vTcl::widgets::core::panedwindow {
+
+    proc getIcon {{w ""}} {
+        if {[lempty $w]} {
+            return [list ../lib/Widgets/core/panedwindow.gif \
+	                 ../lib/Widgets/core/panedwindowhoriz.gif]
+        }
+        switch [$w cget -orient] {
+            horizontal {
+                return ../lib/Widgets/core/panedwindowhoriz.gif
+            }
+            vertical {
+                return ../lib/Widgets/core/panedwindow.gif
+            }
+        }
+    }
+
+    proc insertCmd {target} {
+        frame $target.f1
+	frame $target.f2
+	$target add $target.f1
+	$target add $target.f2
+	$target paneconfigure $target.f1 -sticky nsew
+	$target paneconfigure $target.f2 -sticky nsew
+    }
+
+     proc dumpCmd {target basename} {
+        set result [vTcl:dump_widget_opt $target $basename]
+	set i 0
+	set panes [$target panes]
+        foreach pane $panes {
+            set last [lindex [split $pane .] end]
+            append result [vTcl:dump_widget_opt $pane $basename.$last]
+            append result "$::vTcl(tab)"
+            set sitevariable "site_[llength [split $pane .]]_$i"
+            append result "set $sitevariable $basename.$last\n"
+            append result \
+                [vTcl::widgets::core::dump_subwidgets $pane \$$sitevariable]
+            append result "$::vTcl(tab)$basename add $basename.$last\n"
+	    if {$i < [llength $panes] -1} {
+	        set coord [$target sash coord $i]
+		lassign $coord x y
+		append result "$::vTcl(tab)after idle \"update; $basename sash place $i $x $y\"\n"
+	    }
+	    incr i
+        }
+        return $result
+    }
+
+    proc treeChildrenCmd {target {diff \#0}} {
+        set children ""
+        set wantsdiff [expr {$diff != ""}]
+
+        foreach site [treeChildrenChildsite $target] {
+            foreach child [::vTcl:complete_widget_tree $site $wantsdiff] {
+                lappend children $child$diff
+            }
+        }
+
+        return $children
+    }
+
+    proc treeChildrenChildsite {target} {
+        return [$target panes]
+    }
+}
+
+} ; # if ...

@@ -23,6 +23,9 @@
 ##############################################################################
 #
 
+## conflicts with Tcl/Tk 8.4
+if {[info tclversion] < 8.4} {
+
 Class           PanedWindow
 Lib             bwidget
 
@@ -118,3 +121,5 @@ namespace eval vTcl::widgets::bwidgets::panedwindow {
         return $result
     }
 }
+
+}; ## if {[info tclversion < 8.4]}
