@@ -22,6 +22,7 @@
 #
 
 proc vTclWindow.vTcl.about {args} {
+    global vTcl
     set base .vTcl.about
     if {[winfo exists .vTcl.about]} {
         wm deiconify .vTcl.about; return
@@ -32,53 +33,52 @@ proc vTclWindow.vTcl.about {args} {
     wm withdraw .vTcl.about
     wm title .vTcl.about "About Visual Tcl"
     label .vTcl.about.lab6 \
-        -image title -relief raised -text label 
+        -image title -relief raised -text label
     pack .vTcl.about.lab6 \
         -in .vTcl.about -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 \
-        -padx 5 -pady 5 -side top 
+        -padx 5 -pady 5 -side top
     label .vTcl.about.lab7 \
         -borderwidth 0 \
-        -text {Copyright (C) 1996-1998 Stewart Allen} 
+        -text {Copyright (C) 1996-1998 Stewart Allen}
     pack .vTcl.about.lab7 \
         -in .vTcl.about -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 \
-        -padx 1 -pady 1 -side top 
+        -padx 1 -pady 1 -side top
     label .vTcl.about.lab2 \
         -borderwidth 0 \
-        -text (stewart@neuron.com) 
+        -text (stewart@neuron.com)
     pack .vTcl.about.lab2 \
         -in .vTcl.about -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 \
-        -padx 0 -pady 0 -side top 
+        -padx 0 -pady 0 -side top
     label .vTcl.about.lab21 \
         -borderwidth 0 \
         -text "Maintained by Christian Gavin (cgavin@dnai.com)\nfreeWrap is Copyright (C) 1998\nby Dennis R. LaBelle (dlabelle@albany.net)\nAll Rights Reserved."
     pack .vTcl.about.lab21 \
         -in .vTcl.about -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 \
-        -padx 0 -pady 0 -side top 
+        -padx 0 -pady 0 -side top
     frame .vTcl.about.fra8 \
-        -height 30 -width 30 
+        -height 30 -width 30
     pack .vTcl.about.fra8 \
         -in .vTcl.about -anchor center -expand 1 -fill y -ipadx 0 -ipady 0 \
-        -padx 2 -pady 2 -side top 
+        -padx 2 -pady 2 -side top
     label .vTcl.about.fra8.lab9 \
         -borderwidth 0 \
         -text "Visual Tcl Version "
     pack .vTcl.about.fra8.lab9 \
         -in .vTcl.about.fra8 -anchor center -expand 0 -fill none -ipadx 0 \
-        -ipady 0 -padx 0 -pady 0 -side left 
+        -ipady 0 -padx 0 -pady 0 -side left
     label .vTcl.about.fra8.lab10 \
         -borderwidth 0 \
-         -text 1.04 \
-        -textvariable vTcl(version) 
+         -text "$vTcl(version) beta 1"
     pack .vTcl.about.fra8.lab10 \
         -in .vTcl.about.fra8 -anchor center -expand 0 -fill none -ipadx 0 \
-        -ipady 0 -padx 0 -pady 0 -side left 
+        -ipady 0 -padx 0 -pady 0 -side left
     button .vTcl.about.but11 \
         -command {destroy .vTcl.about} \
          -padx 11 \
-        -pady 4 -text OK 
+        -pady 4 -text OK
     pack .vTcl.about.but11 \
         -in .vTcl.about -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 \
-        -padx 0 -pady 0 -side top 
+        -padx 0 -pady 0 -side top
     update idletasks
     set sw [winfo screenwidth .]
     set sh [winfo screenheight .]
