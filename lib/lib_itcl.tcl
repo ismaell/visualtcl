@@ -258,3 +258,26 @@ proc vTcl:widget:combobox:inscmd {target} {
             $target insert list end {Item 2}; \
             $target insert list end {Item 3}"
 }
+
+# Utility proc.  Dump a megawidget's children, but not those that are
+# part of the megawidget itself.  Differs from vTcl:dump:widgets in that
+# it dumps the geometry of $subwidget, but it doesn't dump $subwidget
+# itself (`vTcl:dump:widgets $subwidget' doesn't do the right thing if
+# the grid geometry manager is used to manage children of $subwidget.
+proc vTcl:lib_itcl:dump_subwidgets {subwidget} {
+    global vTcl classes
+    set output ""
+    set widget_tree [vTcl:widget_tree $subwidget]
+
+    foreach i $widget_tree {
+        set basename [vTcl:base_name $i]
+
+        # don't try to dump subwidget itself
+        if {"$i" != "$subwidget"} {
+            set class [vTcl:get_class $i]
+            append output [$classes($class,dumpCmd) $i $basename]
+            append output [vTcl:dump_widget_geom $i $basename]
+        }
+    }
+    return $output
+}

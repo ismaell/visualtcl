@@ -252,6 +252,32 @@ proc vTcl:list_widget_tree {target {which ""} {include_menus 0} {include_megachi
     return $w_tree
 }
 
+# this func returns the same as list_widget_tree plus all the
+# children in megawidgets' childsites
+
+proc vTcl:complete_widget_tree {{root .}} {
+
+    global classes
+    set tree [vTcl:list_widget_tree $root]
+
+    set result ""
+    foreach i $tree {
+        lappend result $i
+
+        set childrenCmd [lindex $classes([vTcl:get_class $i],treeChildrenCmd) 0]
+        if {$childrenCmd == ""} {
+            continue
+        }
+
+        set children [$childrenCmd $i]
+        foreach j $children {
+            lappend result $j
+        }
+    }
+
+    return $result
+}
+
 ##############################################################################
 # WIDGET INFO ROUTINES
 ##############################################################################

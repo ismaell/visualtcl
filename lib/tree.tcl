@@ -67,29 +67,6 @@ proc vTcl:clear_wtree {} {
     $b configure -scrollregion "0 0 0 0"
 }
 
-proc vTcl:display_widget_tree {} {
-
-    global classes
-    set tree [vTcl:list_widget_tree .]
-
-    set result ""
-    foreach i $tree {
-        lappend result $i
-
-        set childrenCmd [lindex $classes([vTcl:get_class $i],treeChildrenCmd) 0]
-        if {$childrenCmd == ""} {
-            continue
-        }
-
-        set children [$childrenCmd $i]
-        foreach j $children {
-            lappend result $j
-        }
-    }
-
-    return $result
-}
-
 proc vTcl:right_click_tree {i X Y x y} {
 
     global vTcl
@@ -120,7 +97,7 @@ proc vTcl:init_wtree {{wants_destroy_handles 1}} {
 
     vTcl:clear_wtree
     set y 10
-    set tree [vTcl:display_widget_tree]
+    set tree [vTcl:complete_widget_tree]
     foreach ii $tree {
         set ii   [split $ii \#]
         set i    [lindex $ii 0]
