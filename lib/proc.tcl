@@ -360,7 +360,7 @@ proc vTclWindow.vTcl.proc {args} {
     pack configure $butOK -side right
     vTcl:set_balloon $butOK "Save changes"
 
-    ScrolledWindow $base.f4
+    ScrolledWindow $base.f4 -auto vertical
     text $base.f4.text \
         -background white -borderwidth 0 -height 3 -wrap none -relief flat
 

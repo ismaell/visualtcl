@@ -569,7 +569,6 @@ proc vTclWindow.vTcl.inspector {base {container 0}} {
         wm minsize $base 1 1
         wm overrideredirect $base 0
         wm resizable $base 1 1
-        wm deiconify $base
         wm title $base "System Inspector"
         wm protocol $base WM_DELETE_WINDOW "Window hide $base"
     }
