@@ -183,7 +183,6 @@ proc vTcl:open {{file ""}} {
     proc exit {args} {}
     proc init {argc argv} {}
     proc main {argc argv} {}
-    proc vTcl:project:info {} {}
     vTcl:load_lib vtclib.tcl;            vTcl:statbar 10
     set vTcl(tops) ""
     set vTcl(vars) ""
@@ -202,11 +201,11 @@ proc vTcl:open {{file ""}} {
     vTcl:status "Updating variable list"
     vTcl:update_var_list;                vTcl:statbar 85
     vTcl:status "Updating proc list"
-    vTcl:update_proc_list;               vTcl:statbar 95
+    vTcl:update_proc_list;               vTcl:statbar 90
     vTcl:status "Updating aliases"
-    vTcl:update_aliases
-    vTcl:status "Registering widgets"
-    vTcl:widget:register_all_widgets;	 vTcl:statbar 97
+    vTcl:update_aliases;                 vTcl:statbar 92
+
+    vTcl:status "Loading Project Info";  vTcl:statbar 95
 
     set vTcl(project,file) $file
     set vTcl(project,name) [file tail $file]
@@ -223,9 +222,10 @@ proc vTcl:open {{file ""}} {
     }
 
     ## If there are project settings, load them
-    if { [info proc vTcl:project:info] != "" } {
-    	vTcl:project:info
-    }
+    if {![lempty [info proc vTcl:project:info]]} { vTcl:project:info }
+
+    vTcl:status "Registering widgets"
+    vTcl:widget:register_all_widgets;	 vTcl:statbar 97
     
     wm title .vTcl "Visual Tcl - $vTcl(project,name)"
     vTcl:status "Done Loading"
