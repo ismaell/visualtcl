@@ -49,8 +49,10 @@ proc vTcl:image:get_creation_type {filename} {
 
 proc {vTcl:image:create_new_image} {filename
                                     {description {no description}}
-                                    {type {}}} {
-    global vTcl
+                                    {type {}}
+                                    {data {}}} {
+
+	global vTcl env
 
     # image already existing ?
     if [info exists vTcl(images,files)] {
@@ -61,40 +63,56 @@ proc {vTcl:image:create_new_image} {filename
 	}
     }
 
-    # wait a minute... does the file actually exist?
-    if {![file exists $filename] } {
-	# try current directory
-	set script [file dirname [info script]]
-	set filename [file join $script [file tail $filename] ]
-	# puts "looking for $filename..."
-    }
+    if {! [info exists vTcl(sourcing)] &&
+        [string length $data] > 0} {
 
-    if {![file exists $filename] } {
-	set description "file not found!"
+		set object [image create \
+			[vTcl:image:get_creation_type $filename] \
+			-data $data]
 
-	set object [image create bitmap -data {
-	    #define open_width 16
-	    #define open_height 16
-	    static char open_bits[] = {
-		0x7F, 0xFE,
-		0x41, 0x82,
-		0x21, 0x81,
-		0x41, 0x82,
-		0x21, 0x81,
-		0x21, 0x81,
-		0x21, 0x81,
-		0x91, 0x80,
-		0x21, 0x81,
-		0x91, 0x80,
-		0x21, 0x81,
-		0x21, 0x81,
-		0x21, 0x81,
-		0x41, 0x82,
-		0x41, 0x82,
-		0x7F, 0xFE};}]
     } else {
-	set object [image create \
-	    [vTcl:image:get_creation_type $filename] -file $filename]
+
+        # wait a minute... does the file actually exist?
+        if {! [file exists $filename] } {
+
+            # try current directory
+            set script [file dirname [info script]]
+            set filename [file join $script [file tail $filename] ]
+
+            # puts "looking for $filename..."
+        }
+
+        if {! [file exists $filename] } {
+
+            set description "file not found!"
+
+            set object [image create bitmap -data {
+                #define open_width 16
+                #define open_height 16
+                static char open_bits[] = {
+                0x7F, 0xFE,
+                0x41, 0x82,
+                0x21, 0x81,
+                0x41, 0x82,
+                0x21, 0x81,
+                0x21, 0x81,
+                0x21, 0x81,
+                0x91, 0x80,
+                0x21, 0x81,
+                0x91, 0x80,
+                0x21, 0x81,
+                0x21, 0x81,
+                0x21, 0x81,
+                0x41, 0x82,
+                0x41, 0x82,
+                0x7F, 0xFE};}]
+
+        } else {
+
+            set object [image create \
+                [vTcl:image:get_creation_type $filename] \
+                -file $filename]
+        }
     }
 
     set reference [vTcl:rename $filename]
@@ -502,6 +520,30 @@ proc vTcl:image:dump_proc {fileID name} {
     puts $fileID ""
 }
 
+proc vTcl:image:dump_create_image {fileID image} {
+
+	global vTcl
+
+	puts $fileID "vTcl:image:create_new_image \"$image\" \\"
+	puts $fileID "    \"[vTcl:image:get_description $image]\" \\"
+	puts $fileID "    \"[vTcl:image:get_type $image]\"" nonewline
+
+    if { ! [info exists vTcl(pr,saveimagesinline)] } {
+
+    	set vTcl(pr,saveimagesinline) 0
+    }
+
+    if {$vTcl(pr,saveimagesinline)} {
+
+        puts $fileID "\\\n\"[::base64::encode_file $image]\"\n"
+
+    } else {
+
+        puts $fileID " {}\n"
+
+    }
+}
+
 proc vTcl:image:generate_image_stock {fileID} {
     global vTcl
 
@@ -515,13 +557,13 @@ proc vTcl:image:generate_image_stock {fileID} {
     vTcl:image:dump_proc $fileID "vTcl:image:get_image"
     vTcl:image:dump_proc $fileID "vTcl:image:get_creation_type"
 
-    foreach image $vTcl(images,files) {
-	if {[vTcl:image:get_type $image] == "stock"} {
-	    puts $fileID "vTcl:image:create_new_image \"$image\" \\"
-	    puts $fileID "    \"[vTcl:image:get_description $image]\" \\"
-	    puts $fileID "    \"[vTcl:image:get_type $image]\""
+	foreach image $vTcl(images,files) {
+
+		if {[vTcl:image:get_type $image] == "stock"} {
+
+			vTcl:image:dump_create_image $fileID $image
+		}
 	}
-    }
 
     puts $fileID "\}"
 }
@@ -532,13 +574,13 @@ proc vTcl:image:generate_image_user {fileID} {
     puts $fileID {############################}
     puts $fileID "\# vTcl Code to Load User Images\n"
 
-    foreach image $vTcl(images,files) {
-	if {[vTcl:image:get_type $image] == "user"} {
-	    puts $fileID "vTcl:image:create_new_image \"$image\" \\"
-	    puts $fileID "    \"[vTcl:image:get_description $image]\" \\"
-	    puts $fileID "    \"[vTcl:image:get_type $image]\""
+	foreach image $vTcl(images,files) {
+
+		if {[vTcl:image:get_type $image] == "user"} {
+
+			vTcl:image:dump_create_image $fileID $image
+		}
 	}
-    }
 }
 
 proc vTcl:image:delete_image {image} {
@@ -665,6 +707,13 @@ proc vTcl:image:prompt_image_manager {} {
 
 proc vTcl:image:get_files_list {} {
     global vTcl
+
+    if {$vTcl(pr,saveimagesinline)} {
+
+        # if we save images inline we don't need to wrap them
+        return ""
+    }
+
     return $vTcl(images,files)
 }
 
