@@ -30,6 +30,8 @@ set vTcl(menu,file) {
     {{Save As With Binary...} {}   vTcl:save_as_binary        }
     {Close            Ctrl+W       vTcl:close                 }
     {separator        {}           {}                         }
+    {@vTcl:initRcFileMenu				      }
+    {separator	      {}           {}                         }
     {Source...        {}           vTcl:file_source           }
     {Preferences...   {}           vTclWindow.vTcl.prefs      }
     {separator        {}           {}                         }
@@ -44,7 +46,7 @@ set vTcl(menu,edit) {
     {Copy             Ctrl+C       vTcl:copy                  }
     {Paste            Ctrl+V       vTcl:paste                 }
     {separator        {}           {}                         }
-    {Delete           {}           vTcl:delete                }
+    {Delete           {Del}        vTcl:delete                }
     {separator        {}           {}                         }
     {Images...        {}           vTcl:image:prompt_image_manager }
     {Fonts...         {}           vTcl:font:prompt_font_manager   }
@@ -129,6 +131,8 @@ proc vTcl:menu:insert {menu name {root ""}} {
             set cmd [lindex $item 2]
             if {$txt == "separator"} {
                 $menu add separator
+	    } elseif {[string index $txt 0] == "@"} {
+	    	eval [string range $item 1 end]
             } else {
                 $menu add command -label $txt$tab -accel $acc -command $cmd
                 set vTcl(menu,$name,widget) $menu
@@ -137,4 +141,54 @@ proc vTcl:menu:insert {menu name {root ""}} {
     }
 }
 
+proc vTcl:initRcFileMenu {} {
+    global vTcl
 
+    if {[info tclversion] >= 8} {
+	set base .vTcl.m.file
+    } else {
+	set base $vTcl(gui,main).menu
+    }
+
+    set w [menu $base.projects -tearoff 0]
+
+    $base add cascade -label Projects -menu $w
+
+    vTcl:updateRcFileMenu
+}
+
+proc vTcl:addRcFile {file} {
+    global vTcl
+
+    lremove vTcl(rcFiles) $file
+    set vTcl(rcFiles) [linsert $vTcl(rcFiles) 0 $file]
+    vTcl:updateRcFileMenu
+}
+
+proc vTcl:updateRcFileMenu {} {
+    global vTcl
+
+    if {![info exists vTcl(rcFiles)]} { set vTcl(rcFiles) {} }
+
+    if {[info tclversion] >= 8} {
+	set w .vTcl.m.file.projects
+    } else {
+	set w $vTcl(gui,main).menu.projects
+    }
+
+    $w delete 0 end
+
+    ##
+    # Trim down the number of files to the specified amount.
+    ##
+    set vTcl(rcFiles) [lrange $vTcl(rcFiles) 0 [expr $vTcl(numRcFiles) - 1]]
+
+    set i 1
+    foreach file $vTcl(rcFiles) {
+	$w insert end command \
+	    -label "$i $file" \
+	    -command "vTcl:open [list $file]" \
+	    -underline 0
+	incr i
+    }
+}

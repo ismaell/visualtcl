@@ -225,6 +225,8 @@ proc vTcl:lib_itcl:setup {} {
 	        -fixed \
 	        -range \
 	        -step \
+	        -validate \
+		-vcmd \
 	        -labeltext \
 	        -labelpos \
 	        -textfont \
@@ -349,6 +351,9 @@ proc vTcl:lib_itcl:setup {} {
 	set vTcl(opt,-labelpos)       { {Label Pos}        {}
 	                                choice  {n ne e se s sw w nw center} }
 	set vTcl(opt,-fixed)          { {Fixed}            longname type    {} }
+	set vTcl(opt,-validate)       { {Validate}     {}
+					choice {none focus focusin focusout key all} }
+	set vTcl(opt,-vcmd)           { {Validate Cmd}     {}       command {}}
 	set vTcl(opt,-decrement)      { {Decrement Cmd}    {}       command {}}
 	set vTcl(opt,-increment)      { {Increment Cmd}    {}       command {}}
 	set vTcl(opt,-labeltext)      { Label              longname type    {} }

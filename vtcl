@@ -1,10 +1,9 @@
 #!/bin/sh
 
-PATH_TO_WISH=/usr/bin/wish
-VTCL_HOME=/usr/local/vtcl-1.2.2
+PATH_TO_WISH=/opt/local/bin/wish
+VTCL_HOME=/opt/local/src/vtcl
 
 export PATH_TO_WISH
 export VTCL_HOME
 
-exec ${PATH_TO_WISH} ${VTCL_HOME}/vt.tcl
-
+exec ${PATH_TO_WISH} ${VTCL_HOME}/vt.tcl $*

@@ -104,6 +104,7 @@ proc vTcl:widget:text:inscmd {target} {
 proc vTcl:widget:toplevel:inscmd {target} {
     global vTcl
     return "
+	wm geometry $target $vTcl(pr,geom_new)
         wm protocol $target WM_DELETE_WINDOW {vTcl:hide_top $target}
         if {$vTcl(pr,winfocus) == 1} {
             wm protocol $target WM_TAKE_FOCUS {vTcl:wm_take_focus $target}
@@ -124,7 +125,8 @@ proc vTcl:widget:entry:dblclick {target} {
 }
 
 proc vTcl:widget:message:dblclick {target} {
-    vTcl:set_label $target
+    vTcl:set_text $target "Set Text"
+    # vTcl:set_label $target
 }
 
 proc vTcl:widget:label:dblclick {target} {
@@ -822,3 +824,66 @@ set vTcl(opt,-tearoff)         { tearoff         {}       boolean        {0 1} }
 set vTcl(opt,-postcommand)     { {post cmd}      {}       command        {} }
 set vTcl(opt,-tearoffcommand)  { {tearoff cmd}   {}       command        {} }
 set vTcl(opt,-title)           { {title}         {}       type           {} }
+
+set vTcl(button,functions) {
+    {{Set Text}			{vTcl:button:setText}}
+    {{Set Command}		{vTcl:button:setCommand}}
+}
+
+proc vTcl:button:setText {} {
+    global vTcl
+    vTcl:set_label $vTcl(w,widget)
+}
+
+proc vTcl:button:setCommand {} {
+    global vTcl
+    vTcl:set_command $vTcl(w,widget)
+}
+
+set vTcl(label,functions) {
+    {{Set Text}			{vTcl:label:setText}}
+}
+
+proc vTcl:label:setText {} {
+    global vTcl
+    vTcl:set_label $vTcl(w,widget)
+}
+
+set vTcl(scrollbar,functions) {
+    {{Attach to Widget}		{vTcl:scrollbar:attach}}
+}
+
+proc vTcl:scrollbar:attach {} {
+    global vTcl widgetSelected
+
+    set w $vTcl(w,widget)
+    set status $vTcl(status)
+
+    catch {unset widgetSelected}
+    vTcl:status "Select a widget to attach scrollbar to"
+    vwait widgetSelected
+
+    ## Widget we're attaching to.
+    set a $vTcl(w,widget)
+
+    vTcl:status $status
+
+    set orient [$w cget -orient]
+
+    if {$orient == "horizontal"} {
+    	set cmd xview
+	set opt -xscrollcommand
+    } else {
+    	set cmd yview
+	set opt -yscrollcommand
+    }
+    if {[catch {$a cget $opt}]} {
+	bell
+	error "Cannot attach scrollbar to that!"
+    	return
+    }
+
+
+    $w configure -command "$a $cmd"
+    $a configure $opt "$w set"
+}

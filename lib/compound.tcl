@@ -69,10 +69,34 @@ proc vTcl:load_compounds {{file ""}} {
     vTcl:statbar 0
 }
 
-proc vTcl:put_compound {compound} {
+proc vTcl:name_replace {name s} {
     global vTcl
+    foreach i $vTcl(cmp,alias) {
+        set s [vTcl:replace [lindex $i 0] $name[lindex $i 1] $s]
+    }
+    return $s
+}
+
+proc vTcl:put_compound {text compound} {
+    global vTcl
+
+    if {$vTcl(pr,autoplace)} {
+	vTcl:auto_place_compound $compound $vTcl(w,def_mgr) {}
+	return
+    }
+
+    vTcl:status "Insert $text"
+
+    bind vTcl(b) <Button-1> \
+    	"vTcl:place_compound [list $compound] $vTcl(w,def_mgr) %X %Y %x %y"
+}
+
+proc vTcl:auto_place_compound {compound gmgr gopt} {
+    global vTcl
+
     set name [vTcl:new_widget_name cpd $vTcl(w,insert)]
-    vTcl:insert_compound $name $compound $vTcl(w,def_mgr)
+
+    vTcl:insert_compound $name $compound $gmgr $gopt
     vTcl:setup_bind_tree $name
     vTcl:active_widget $name
     vTcl:update_proc_list
@@ -82,21 +106,31 @@ proc vTcl:put_compound {compound} {
     # when new compound inserted into window, automatically
     # refresh widget tree
 
-    after idle {vTcl:init_wtree}
+    # after idle {vTcl:init_wtree}
+
+    vTcl:init_wtree
 
     # @@end_change
 }
 
-proc vTcl:name_replace {name s} {
+proc vTcl:place_compound {compound gmgr rx ry x y} {
     global vTcl
-    foreach i $vTcl(cmp,alias) {
-        set s [vTcl:replace [lindex $i 0] $name[lindex $i 1] $s]
-    }
-    return $s
+
+    vTcl:status Status
+
+    bind vTcl(b) <Button-1> {vTcl:bind_button_1 %W %X %Y}
+
+    vTcl:active_widget [winfo containing $rx $ry]
+
+    set gopt {}
+    if {$gmgr == "place"} { append gopt "-x $x -y $y" }
+
+    vTcl:auto_place_compound $compound $gmgr $gopt
 }
 
 proc vTcl:insert_compound {name compound {gmgr pack} {gopt ""}} {
     global vTcl
+
     set cpd \{[lindex $compound 0]\}
     set alias [lindex $compound 1]
     set vTcl(cmp,alias) [lsort -decreasing -command vTcl:sort_cmd $alias]
@@ -104,6 +138,7 @@ proc vTcl:insert_compound {name compound {gmgr pack} {gopt ""}} {
     set do "$cmd"
     set undo "destroy $name"
     vTcl:push_action $do $undo
+    lappend vTcl(widgets,[winfo toplevel $name]) $name
 }
 
 proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {

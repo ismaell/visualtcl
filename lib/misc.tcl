@@ -240,9 +240,14 @@ proc vTcl:status {message} {
     update idletasks
 }
 
-proc vTcl:right_click {widget x y} {
+proc vTcl:right_click {widget rx ry x y} {
     global vTcl
-    $vTcl(gui,rc_menu) post $x $y
+
+    set vTcl(mouseX) $x
+    set vTcl(mouseY) $y
+
+    vTcl:active_widget $widget
+    $vTcl(gui,rc_menu) post $rx $ry
     grab $vTcl(gui,rc_menu)
     bind $vTcl(gui,rc_menu) <ButtonRelease> {
         grab release $vTcl(gui,rc_menu)
@@ -297,7 +302,7 @@ proc vTcl:cmp_user_menu {} {
     menu $m -tearoff 0
     foreach i [lsort $vTcl(cmpd,list)] {
         $m add comm -label $i -comm "
-            vTcl:put_compound \$vTcl(cmpd:$i)
+            vTcl:put_compound [list $i] \$vTcl(cmpd:$i)
         "
     }
 }
@@ -310,7 +315,7 @@ proc vTcl:cmp_sys_menu {} {
     menu $m -tearoff 0
     foreach i [lsort $vTcl(syscmpd,list)] {
         $m add comm -label $i -comm "
-            vTcl:put_compound \$vTcl(syscmpd:$i)
+            vTcl:put_compound [list $i] \$vTcl(syscmpd:$i)
         "
     }
 }
@@ -651,6 +656,45 @@ proc vTcl:display_pulldown {base xl yl} {
     }
 }
 
+proc vTcl:split_geom {geom} {
+    set vars {height width x y}
+    foreach var $vars { set $var {} }
+    regexp {([0-9]+)x([0-9]+)\+([0-9]+)\+([0-9]+)} $geom \
+    	trash width height x y
+    return [list $width $height $x $y]
+}
+
+proc vTcl:get_win_position {w} {
+    lassign [vTcl:split_geom [wm geometry $w]] width height x y
+    return "+$x+$y"
+}
+
+proc lremove {varName args} {
+    upvar 1 $varName list
+
+    set found 0
+    foreach pattern $args {
+	set s [lsearch $list $pattern]
+	while {$s > -1} {
+	    set list [lreplace $list $s $s]
+	    set s [lsearch $list $pattern]
+	    incr found
+	}
+    }
+    return $found
+}
+
+proc lempty {list} {
+    return [expr [llength $list] == 0]
+}
+
+proc lassign {list args} {
+    foreach elem $list varName $args {
+    	upvar 1 $varName var
+	set var $elem
+    }
+}
+
 proc vTcl:namespace_tree {{root "::"}} {
 
     set children [namespace children $root]
@@ -665,4 +709,25 @@ proc vTcl:namespace_tree {{root "::"}} {
     }
 
     return $result
+}
+
+proc vTcl:copy_widgetname {} {
+    global fakeClipboard vTcl
+    set fakeClipboard $vTcl(w,widget)
+    .vTcl.widgetname selection range 0 end
+}
+
+proc error {string} {
+    tk_messageBox -title Error -icon error -type ok -message $string
+}
+
+proc echo {args} {
+    puts stdout [join $args ""]
+    flush stdout
+}
+
+proc incr0 {varName {num 1}} {
+    upvar 1 $varName var
+    if {![info exists var]} { set var 0 }
+    incr var $num
 }

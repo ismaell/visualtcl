@@ -26,7 +26,7 @@ proc vTcl:get_name {type} {
     set vTcl(x) ""
     Window show .vTcl.name
     focus .vTcl.name.ent18
-    grab .vTcl.name
+    catch {grab .vTcl.name}
     wm title .vTcl.name "Naming new $type"
     tkwait window .vTcl.name
     if {[string first . $vTcl(x)] != -1} {

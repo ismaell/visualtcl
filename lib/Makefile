@@ -1,6 +1,6 @@
 all: TAGS
 
-TAGS: *.tcl ../*.tcl
+TAGS:
 	etags --regex='/proc[ \t]+\([^ \t]+\)/\1/' *.tcl ../*.tcl
-clean::
+clean:
 	rm -f TAGS

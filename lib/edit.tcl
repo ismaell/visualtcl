@@ -59,40 +59,67 @@ proc vTcl:delete {} {
     if { $vTcl(w,widget) == "." } {
         return
     }
+    set w $vTcl(w,widget)
+    set top [winfo toplevel $w]
+    set children [winfo children $w]
+
     vTcl:destroy_handles
     set parent [winfo parent $vTcl(w,widget)]
     set buffer [vTcl:create_compound $vTcl(w,widget)]
     set do "destroy $vTcl(w,widget)"
     set undo "vTcl:insert_compound $vTcl(w,widget) \{$buffer\} $vTcl(w,def_mgr)"
     vTcl:push_action $do $undo
-    vTcl:select_widget $parent
-    set vTcl(w,insert) $parent
+
+    if {![info exists vTcl(widgets,$top)]} { set vTcl(widgets,$top) {} }
+    ## Activate the widget created before this one in the widget order.
+    set s [lsearch $vTcl(widgets,$top) $w]
+
+    ## Remove the window and all its children from the widget order.
+    eval lremove vTcl(widgets,$top) $w $children
+
+    if {$s > 0} {
+	set n [lindex $vTcl(widgets,$top) [expr $s - 1]]
+    } else {
+    	set n [lindex $vTcl(widgets,$top) end]
+    }
+
+    if {[lempty $vTcl(widgets,$top)] || ![winfo exists $n]} { set n $parent }
 
     # @@change by Christian Gavin 3/5/2000
     # automatically refresh widget tree after delete operation
     
     after idle {vTcl:init_wtree}
-    
+
     # @@end_change
+
+    if {[winfo exists $n]} { vTcl:active_widget $n }
 }
 
-proc vTcl:paste {} {
+proc vTcl:paste {{fromMouse ""}} {
     global vTcl
-    if { $vTcl(buffer) != "" } {
-        set name [vTcl:new_widget_name $vTcl(buffer,type) $vTcl(w,insert)]
-        set do "
-            vTcl:insert_compound $name \{$vTcl(buffer)\} $vTcl(w,def_mgr)
-            vTcl:setup_bind_tree $name
-        "
-        set undo "destroy $name"
-        vTcl:push_action $do $undo
-        vTcl:active_widget $name
 
-	# @@change by Christian Gavin 3/5/2000
-	# automatically refresh widget tree after paste operation
-    
- 	after idle {vTcl:init_wtree}
-    
-	# @@end_change
+    if {![info exists vTcl(buffer)] || [lempty $vTcl(buffer)]} { return }
+
+    set opts {}
+    if {$fromMouse == "-mouse" && $vTcl(w,def_mgr) == "place"} {
+    	set opts "-x $vTcl(mouseX) -y $vTcl(mouseY)"	
     }
+
+    set name [vTcl:new_widget_name $vTcl(buffer,type) $vTcl(w,insert)]
+    set do "
+	vTcl:insert_compound $name [list $vTcl(buffer)] $vTcl(w,def_mgr) \
+	    [list $opts]
+	vTcl:setup_bind_tree $name
+    "
+    set undo "destroy $name"
+    vTcl:push_action $do $undo
+
+    # @@change by Christian Gavin 3/5/2000
+    # automatically refresh widget tree after paste operation
+
+    after idle {vTcl:init_wtree}
+
+    # @@end_change
+
+    vTcl:active_widget $name
 }

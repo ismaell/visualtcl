@@ -24,7 +24,12 @@
 proc vTcl:new {} {
     global vTcl
     if { [vTcl:close] == -1 } { return }
-    vTcl:new_widget toplevel
+
+    set vTcl(mode) EDIT
+
+    set w [vTcl:auto_place_widget toplevel]
+    wm geometry $w $vTcl(pr,geom_new)
+
     vTcl:setup_bind_tree .
     vTcl:update_top_list
     vTcl:update_var_list
@@ -45,6 +50,7 @@ proc vTcl:file_source {} {
 }
 
 proc vTcl:is_vtcl_prj {file} {
+    global vTcl
 
     set fileID [open $file r]
     set contents [read $fileID]
@@ -55,16 +61,14 @@ proc vTcl:is_vtcl_prj {file} {
     set vminor ""
 
     foreach line [split $contents \n] {
-
 	if [regexp {# Visual Tcl v(.?)\.(.?.?) Project} $line \
-	       matchAll vmajor vminor] {
-
-		set found 1
+	    matchAll vmajor vminor] {
+	    set found 1
+	    set version $vmajor.$vminor
 	}
     }
 
     if !$found {
-
 	tk_messageBox -title "Error loading file" \
 	              -message "This is not a vTcl project!" \
 	              -icon error \
@@ -74,10 +78,9 @@ proc vTcl:is_vtcl_prj {file} {
     }
 
     if {$vmajor != "" && $vminor != ""} {
-
+	# if {$version > $vTcl(version)} { }
     	if {$vmajor > 1 ||
     	    ($vmajor == 1 && $vminor > 40)} {
-
 		tk_messageBox -title "Error loading file" \
 		              -message "You are trying to load a project created using Visual Tcl v$vmajor.$vminor\n\nPlease update to vTcl $vmajor.$vminor and try again." \
 	              -icon error \
@@ -156,10 +159,14 @@ proc vTcl:open {{file ""}} {
     } else {
         if ![file exists $file] {return}
     }
-    if {$file != ""} {
 
+    if {![info exists vTcl(rcFiles)]} { set vTcl(rcFiles) {} }
+
+    if {$file != ""} {
     	# only open a Visual Tcl project and nothing else
     	if ![vTcl:is_vtcl_prj $file] {return}
+    	
+	vTcl:addRcFile $file
 
         set vTcl(file,mode) ""
         proc exit {args} {}
@@ -318,6 +325,8 @@ proc vTcl:save_as_binary {} {
 
     vTcl:save2 $file
 
+    if {[lempty $file]} { return }
+
     # now comes the magic
     set filelist [file rootname $file].txt
 
@@ -327,10 +336,19 @@ proc vTcl:save_as_binary {} {
                           [file dirname $file] \
                           [file rootname $file] ] \n]
     close $listID
+    
+    ##
+    # Guess the ostag and look for an appropriate freewrap binary.
+    ##
+    if {[string tolower $tcl_platform(platform)] == "windows"} {
+    	set ostag Windows
+    } else {
+	set ostag [exec $env(VTCL_HOME)/Freewrap/config.guess]
+    }
 
     # launches freewrap
-    set freewrap $env(VTCL_HOME)/freewrap/$tcl_platform(platform)/bin/freewrap
-
+    set freewrap $env(VTCL_HOME)/Freewrap/$ostag/bin/freewrap
+    
     exec $freewrap $file -f $filelist
 }
 
@@ -395,6 +413,8 @@ proc vTcl:save2 {file} {
 
     # @@end_change
 
+    vTcl:addRcFile $file
+    
     close $output
     vTcl:status "Done Saving"
     set vTcl(file,mode) ""
@@ -435,8 +455,12 @@ proc vTcl:quit {} {
 
 proc vTcl:save_prefs {} {
     global vTcl
-    set output ""
+
+    set w $vTcl(gui,main)
+    set pos [vTcl:get_win_position $w]
+    set output "set vTcl(geometry,$w) $vTcl(pr,geom_vTcl)$pos\n"
     set showlist ""
+
     foreach i $vTcl(windows) {
         if {[winfo exists $i]} {
             if {[wm state $i] == "normal"} {
@@ -453,6 +477,9 @@ proc vTcl:save_prefs {} {
     foreach i [array names vTcl pr,*] {
         append output "set vTcl($i) [list $vTcl($i)]\n"
     }
+
+    if {![info exists vTcl(rcFiles)]} { set vTcl(rcFiles) {} }
+    append output "set vTcl(rcFiles) \[list $vTcl(rcFiles)\]\n"
     catch {
         set file [open $vTcl(CONF_FILE) w]
         puts $file $output

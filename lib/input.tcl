@@ -43,10 +43,12 @@ proc vTcl:snarf_string {base} {
 }
 
 proc vTcl:string_window {title base {value ""}} {
+    global vTcl
+
     toplevel $base
     wm transient $base .vTcl
     wm focusmodel $base passive
-    wm geometry $base 225x49+288+216
+    wm geometry $base 225x49+[expr $vTcl(mouseX)-120]+[expr $vTcl(mouseY)-20]
     wm maxsize $base 500 870
     wm minsize $base 225 1
     wm overrideredirect $base 0
@@ -87,4 +89,73 @@ proc vTcl:string_window {title base {value ""}} {
     grab $base
 }
 
+proc vTcl:set_text {target title {var text}} {
+    global vTcl
+    set base .vTcl.[vTcl:rename $target]
+    vTcl:text_window $base $title $target
+    tkwait window $base
 
+    ## They closed it without hitting the done button.  Just forget it.
+    if {![info exists vTcl(x,$base)]} { return }
+
+    $target configure -$var $vTcl(x,$base)
+    unset vTcl(x,$base)
+    vTcl:create_handles $target
+}
+
+proc vTcl:get_text {base text} {
+    global vTcl
+
+    set vTcl(x,$base) [$text get 0.0 end]
+    destroy $base
+}
+
+proc vTcl:text_window {base title target} {
+    global vTcl
+    toplevel $base -class Toplevel
+    wm focusmodel $base passive
+    wm geometry $base 274x289+[expr $vTcl(mouseX)-130]+[expr $vTcl(mouseY)-20]
+    wm maxsize $base 1265 994
+    wm minsize $base 1 1
+    wm overrideredirect $base 0
+    wm resizable $base 1 1
+    wm deiconify $base
+    wm title $base $title
+
+    frame $base.cpd48 \
+        -borderwidth 1 -height 245 -relief raised -width 262 
+    scrollbar $base.cpd48.01 \
+        -command "$base.cpd48.03 xview" -orient horizontal -width 10 
+    scrollbar $base.cpd48.02 \
+        -command "$base.cpd48.03 yview" -width 10 
+    text $base.cpd48.03 \
+        -font -Adobe-Helvetica-Medium-R-Normal-*-*-120-*-*-*-*-*-* -height 1 \
+        -width 8 -xscrollcommand "$base.cpd48.01 set" \
+        -yscrollcommand "$base.cpd48.02 set" 
+    button $base.but52 \
+        -text Done -command "
+	    vTcl:get_text $base $base.cpd48.03
+	"
+
+    bind $base <Key-Escape> "$base.but52 invoke"
+
+    ###################
+    # SETTING GEOMETRY
+    ###################
+    place $base.cpd48 \
+        -x 5 -y 5 -width 262 -height 245 -anchor nw 
+    grid columnconf $base.cpd48 0 -weight 1
+    grid rowconf $base.cpd48 0 -weight 1
+    grid $base.cpd48.01 \
+        -in $base.cpd48 -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew 
+    grid $base.cpd48.02 \
+        -in $base.cpd48 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns 
+    grid $base.cpd48.03 \
+        -in $base.cpd48 -column 0 -row 0 -columnspan 1 -rowspan 1 \
+        -sticky nesw 
+    place $base.but52 \
+        -x 100 -y 255 -anchor nw -bordermode ignore 
+
+    $base.cpd48.03 insert end [$target cget -text]
+    focus $base.cpd48.03
+}

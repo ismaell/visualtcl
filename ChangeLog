@@ -1,6 +1,14 @@
 ChangeLog for Visual Tcl:
 
 1.22   -> 1.4 (not released yet)
+	o changed the way widget placement is handled.  It is now more like a
+	  traditional GUI builder.  This can be turned off in the preferences
+	  menu.
+	o added support for recent projects in the File menu.
+	o fixed a bug concerning the placement of toplevel windows.
+	o fixed a bug that caused a problem if the console window was killed
+	  through the OS window manager.
+	o added a lot more functions to the right-click menu.
         o added tutorial.html to doc folder (html version of the tutorial.txt file)
         o added multiple file support
         o added option in Preferences dialog for "Single file project" or

@@ -54,14 +54,14 @@ proc vTclWindow.editor {base} {
         -anchor w -menu $base.cpd18.01.02 -padx 4 -pady 3 -text File \
         -width 4 
     menu $base.cpd18.01.02 -tearoff 0 
-    $base.cpd18.01.02 add command  -accelerator Ctrl-N -label New 
-    $base.cpd18.01.02 add command  -accelerator Ctrl-O -label Open 
-    $base.cpd18.01.02 add command  -accelerator Ctrl-W -label Close 
+    $base.cpd18.01.02 add command  -accelerator Ctrl+N -label New 
+    $base.cpd18.01.02 add command  -accelerator Ctrl+O -label Open 
+    $base.cpd18.01.02 add command  -accelerator Ctrl+W -label Close 
     $base.cpd18.01.02 add separator
-    $base.cpd18.01.02 add command  -accelerator Ctrl-S -label Save 
+    $base.cpd18.01.02 add command  -accelerator Ctrl+S -label Save 
     $base.cpd18.01.02 add command  -label {Save As} 
     $base.cpd18.01.02 add separator
-    $base.cpd18.01.02 add command  -accelerator Ctrl-Q -label Exit 
+    $base.cpd18.01.02 add command  -accelerator Ctrl+Q -label Exit 
     menubutton $base.cpd18.03 \
         -anchor w -menu $base.cpd18.03.04 -padx 4 -pady 3 -text Edit \
         -width 4 

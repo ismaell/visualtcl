@@ -79,6 +79,13 @@ proc vTcl:log {msg} {
 #    vTcl:proc $name $args $body
 # }
 
+proc vTcl:splash_status {string {nodots {}}} {
+    global statusMsg
+    if {$nodots == {}} { append string ... }
+    set statusMsg $string
+    update
+}
+
 proc vTcl:splash {} {
     global vTcl
     toplevel .x -bd 3 -relief raised
@@ -88,18 +95,22 @@ proc vTcl:splash {} {
     image create photo "title" \
         -file [file join $vTcl(VTCL_HOME) images title.gif]
     wm overrideredirect .x 1
-    label .x.l -image title -bd 1 -relief sunken
+    label .x.l -image title -bd 1 -relief sunken -background black
     pack .x.l -side top -expand 1 -fill both
+    entry .x.status -relief flat -background black -foreground white \
+    	-textvar statusMsg
+    pack .x.status -side bottom -expand 1 -fill both
     set x [expr {($sw - 200)/2}]
     set y [expr {($sh - 250)/2}]
     wm geometry .x +$x+$y
     wm deiconify .x
     update idletasks
-    after 2000 {catch {destroy .x}}
+    # after 2000 {catch {destroy .x}}
 }
 
 proc vTcl:load_lib {lib} {
     global vTcl
+    vTcl:splash_status "Loading library [file tail $lib]"
     # vTcl:puts "Loading library: $lib"
 
     set file [file join $vTcl(LIB_DIR) $lib]
@@ -112,6 +123,8 @@ proc vTcl:load_lib {lib} {
 
 proc vTcl:load_widgets {} {
     global vTcl
+
+    vTcl:splash_status "Loading widgets"
 
     # ok, by default, we enable all the libraries to be loaded
     # now let's check for a .vtcllibs file that tells us what the
@@ -162,9 +175,12 @@ proc vTcl:setup {} {
     # @@change by Christian Gavin 3/14/2000
     # text widget children should not be saved/seen
     lappend vTcl(megaWidget) Text
-
     set vTcl(version)   1.40
-    set vTcl(VTCL_HOME) $env(VTCL_HOME)
+    if {$env(VTCL_HOME) == ""} {
+        set vTcl(VTCL_HOME) [pwd]
+    } else {
+        set vTcl(VTCL_HOME) $env(VTCL_HOME)
+    }
 
     if {$env(HOME) == ""} {
         set vTcl(CONF_FILE) [file join $env(VTCL_HOME) .vtclrc]
@@ -225,8 +241,9 @@ proc vTcl:setup_meta {} {
 }
 
 proc vTcl:setup_gui {} {
-
     global vTcl tcl_platform tk_version
+
+    vTcl:splash_status "Setting Up Workspace"
 
     if {$tcl_platform(platform) == "macintosh"} {
         set vTcl(pr,balloon) 0
@@ -264,6 +281,8 @@ proc vTcl:setup_gui {} {
     foreach i $vTcl(gui,showlist) {
         Window show $i
     }
+    vTcl:clear_wtree
+
     vTcl:define_bindings
     vTcl:cmp_sys_menu
 
@@ -277,13 +296,13 @@ proc vTclWindow.vTcl {args} {
     toplevel $vTcl(gui,main)
     wm title $vTcl(gui,main) "Visual Tcl"
     wm resizable $vTcl(gui,main) 0 0
-	wm group $vTcl(gui,main) $vTcl(gui,main)
-	wm command $vTcl(gui,main) "$vTcl(VTCL_HOME)/vtcl"
-	wm iconname $vTcl(gui,main) "Visual Tcl"
+    wm group $vTcl(gui,main) $vTcl(gui,main)
+    wm command $vTcl(gui,main) "$vTcl(VTCL_HOME)/vtcl"
+    wm iconname $vTcl(gui,main) "Visual Tcl"
     if {$tcl_platform(platform) == "macintosh"} {
-        wm geometry $vTcl(gui,main) +0+20
+        wm geometry $vTcl(gui,main) $vTcl(pr,geom_vTcl)+0+20
     } else {
-        wm geometry $vTcl(gui,main) +0+0
+        wm geometry $vTcl(gui,main) $vTcl(pr,geom_vTcl)+0+0
     }
     catch {wm geometry .vTcl $vTcl(geometry,.vTcl)}
     wm protocol .vTcl WM_DELETE_WINDOW {vTcl:quit}
@@ -292,34 +311,46 @@ proc vTclWindow.vTcl {args} {
     frame .vTcl.stat -relief flat
     pack $tmp -side top -expand 1 -fill x
 
-	if {$tcl_version >= 8} {
-		.vTcl conf -menu .vTcl.m
-	}
-    foreach menu {file edit mode compound options window} {
-		if {$tcl_version >= 8} {
-			vTcl:menu:insert .vTcl.m.$menu $menu .vTcl.m
-		} else {
-			menubutton $tmp.$menu -text [vTcl:upper_first $menu] \
-				-menu $tmp.$menu.m -anchor w
-			vTcl:menu:insert $tmp.$menu.m $menu
-			pack $tmp.$menu -side left
-		}
+    if {$tcl_version >= 8} {
+	.vTcl conf -menu .vTcl.m
     }
 
+    foreach menu {file edit mode compound options window} {
 	if {$tcl_version >= 8} {
-		vTcl:menu:insert .vTcl.m.help help .vTcl.m
+	    vTcl:menu:insert .vTcl.m.$menu $menu .vTcl.m
 	} else {
-		menubutton $tmp.help -text Help -menu $tmp.help.m -anchor w
-		vTcl:menu:insert $tmp.help.m help
-		pack $tmp.help -side right
+	    menubutton $tmp.$menu -text [vTcl:upper_first $menu] \
+		-menu $tmp.$menu.m -anchor w
+	    vTcl:menu:insert $tmp.$menu.m $menu
+	    pack $tmp.$menu -side left
 	}
+    }
+
+    if {$tcl_version >= 8} {
+	vTcl:menu:insert .vTcl.m.help help .vTcl.m
+    } else {
+	menubutton $tmp.help -text Help -menu $tmp.help.m -anchor w
+	vTcl:menu:insert $tmp.help.m help
+	pack $tmp.help -side right
+    }
 
     # RIGHT CLICK MENU
     set vTcl(gui,rc_menu) .vTcl.menu_rc
     menu $vTcl(gui,rc_menu) -tearoff 0
+
+    set vTcl(gui,rc_widget_menu) .vTcl.menu_rc.widgets
+    menu $vTcl(gui,rc_widget_menu) -tearoff 0
+
+	$vTcl(gui,rc_menu) add cascade -label "Widget" \
+	    -menu $vTcl(gui,rc_widget_menu)
+
         $vTcl(gui,rc_menu) add command -label "Set Insert" -command {
             vTcl:set_insert
         }
+	$vTcl(gui,rc_menu) add command -label "Set Alias" -command {
+	    vTcl:set_alias $vTcl(w,widget)
+	}
+
         $vTcl(gui,rc_menu) add separator
         $vTcl(gui,rc_menu) add command -label "Select Toplevel" -command {
             vTcl:select_toplevel
@@ -328,9 +359,28 @@ proc vTclWindow.vTcl {args} {
             vTcl:select_parent
         }
         $vTcl(gui,rc_menu) add separator
+
+	$vTcl(gui,rc_menu) add comm -label "Cut" -comm {
+	    vTcl:cut
+	} -accel "Ctrl+X"
+	$vTcl(gui,rc_menu) add comm -label "Copy" -comm {
+	    vTcl:copy
+	} -accel "Ctrl+C"
+	$vTcl(gui,rc_menu) add comm -label "Paste" -comm {
+	    vTcl:paste -mouse
+	} -accel "Ctrl+V"
+	$vTcl(gui,rc_menu) add comm -label "Delete" -comm {
+	    vTcl:delete
+	} -accel "Del"
+
+        $vTcl(gui,rc_menu) add separator
+
         $vTcl(gui,rc_menu) add comm -label "Hide" -comm {
             vTcl:hide
-        }
+        } -accel "Ctrl+H"
+	$vTcl(gui,rc_menu) add command -label "Copy Widgetname" -command {
+	    vTcl:copy_widgetname
+	}
 
     # MINI-ATTRIBUTE AREA
     vTcl:attrbar
@@ -352,6 +402,10 @@ proc vTclWindow.vTcl {args} {
     pack .vTcl.stat -side top -fill both
 
     vTcl:setup_vTcl:bind .vTcl
+
+    ## Create a hidden entry widget that holds the name of the current widget.
+    ## We use this for copying the widget name and using it globally.
+    entry .vTcl.widgetname -textvar fakeClipboard
 }
 
 proc vTcl:vtcl:remap {} {
@@ -401,6 +455,7 @@ proc vTcl:define_bindings {} {
         bind vTcl($i) <Control-o>  { vTcl:open }
         bind vTcl($i) <Control-s>  { vTcl:save }
         bind vTcl($i) <Control-w>  { vTcl:close }
+	bind vTcl($i) <Control-h>  { vTcl:hide }
         bind vTcl($i) <Key-Delete> { vTcl:delete }
         bind vTcl($i) <Alt-a>      { vTcl:set_alias $vTcl(w,widget) }
         bind vTcl($i) <Alt-f>      { vTcl:proclist:show flip }
@@ -481,8 +536,8 @@ proc vTcl:define_bindings {} {
     }
 
     bind vTcl(b) <Shift-Button-1>    {vTcl:bind_scrollbar %W $vTcl(w,widget)}
-    bind vTcl(b) <Button-3>          {vTcl:right_click %W %X %Y}
-    bind vTcl(b) <Double-Button-1>   {vTcl:widget_dblclick %W}
+    bind vTcl(b) <Button-3>          {vTcl:right_click %W %X %Y %x %y}
+    bind vTcl(b) <Double-Button-1>   {vTcl:widget_dblclick %W %X %Y}
     bind vTcl(b) <Button-1>          {vTcl:bind_button_1 %W %X %Y}
     bind vTcl(b) <Button-2>          {vTcl:bind_button_2 %W %X %Y}
     bind vTcl(b) <Control-Button-1>  {vTcl:bind_button_2 %W %X %Y}
@@ -577,11 +632,12 @@ proc vTcl:main {argc argv} {
             set vTcl(VTCL_HOME) [pwd]
         }
         vTcl:setup
-        if {$argc == 1} {
-            if {[file exists $argv]} {
-                vTcl:open $argv
-            } elseif {[file exists [file join [pwd] $argv]]} {
-                vTcl:open [file join [pwd] $argv]
+        if {$argc > 1} {
+	    set file [lindex $argv end]
+            if {[file exists $file]} {
+                vTcl:open $file
+            } elseif {[file exists [file join [pwd] $file]]} {
+                vTcl:open [file join [pwd] $file]
             }
         }
         if {[info commands console] == "console"} {
@@ -598,8 +654,9 @@ proc vTcl:main {argc argv} {
         }
         # @@end_change
     }
+
+    vTcl:splash_status "              vTcl Loaded" -nodots
+    after 1000 "destroy .x"
 }
 
 vTcl:main $argc $argv
-
-

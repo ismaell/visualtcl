@@ -124,7 +124,7 @@ proc vTcl:select_toplevel {} {
 }
 
 proc vTcl:active_widget {target} {
-    global vTcl
+    global vTcl widgetSelected
     if {$target == ""} {return}
     if {$vTcl(w,widget) != "$target"} {
         vTcl:select_widget $target
@@ -145,13 +145,14 @@ proc vTcl:active_widget {target} {
     } elseif {$vTcl(w,class) == "Toplevel"} {
         set vTcl(w,insert) $target
     }
+    set widgetSelected 1
 }
 
 proc vTcl:select_widget {target} {
     global vTcl
+
     vTcl:log "vTcl:select_widget $target"
     if {$target == $vTcl(w,widget)} {
-
         # @@change by Christian Gavin 3/13/2000
         # show selection in widget tree
         vTcl:show_selection_in_tree $target
@@ -164,6 +165,7 @@ proc vTcl:select_widget {target} {
     vTcl:update_widget_info $target
     vTcl:prop:update_attr
     vTcl:get_bind $target
+    vTcl:add_functions_to_rc_menu
 
     # @@change by Christian Gavin 3/13/2000
     # show selection in widget tree
@@ -265,8 +267,13 @@ proc vTcl:split_wm_info {target} {
             # because window managers behave unpredictably with wm and
             # winfo, one is used for editing and the other for saving
             #
+	    ##
+	    # This causes windows to have the wrong geometry.  At least under
+	    # my window manager.  Have to look into this further. -D
+	    ##
             if {$vTcl(mode) == "EDIT"} {
-                set vTcl(w,wm,$i) [winfo $i $target]
+                # set vTcl(w,wm,$i) [winfo $i $target]
+                set vTcl(w,wm,$i) [wm $i $target]
             } else {
                 set vTcl(w,wm,$i) [wm $i $target]
             }
@@ -276,12 +283,11 @@ proc vTcl:split_wm_info {target} {
     }
     set vTcl(w,wm,class) [winfo class $target]
     if { $vTcl(var_update) == "yes" } {
-        set geo [split $vTcl(w,wm,geometry) "+"]
-        set geo_hw [split [lindex $geo 0] x]
-        set vTcl(w,wm,geometry,w)    [lindex $geo_hw 0]
-        set vTcl(w,wm,geometry,h)    [lindex $geo_hw 1]
-        set vTcl(w,wm,geometry,x)    [lindex $geo 1]
-        set vTcl(w,wm,geometry,y)    [lindex $geo 2]
+	lassign [vTcl:split_geom $vTcl(w,wm,geometry)] w h x y
+        set vTcl(w,wm,geometry,w)    $w
+        set vTcl(w,wm,geometry,h)    $h
+        set vTcl(w,wm,geometry,x)    $x
+        set vTcl(w,wm,geometry,y)    $y
         set vTcl(w,wm,minsize,x)     [lindex $vTcl(w,wm,minsize) 0]
         set vTcl(w,wm,minsize,y)     [lindex $vTcl(w,wm,minsize) 1]
         set vTcl(w,wm,maxsize,x)     [lindex $vTcl(w,wm,maxsize) 0]
@@ -331,14 +337,41 @@ proc vTcl:update_widget_info {target} {
     set vTcl(w,class) [vTcl:get_class $target]
     set vTcl(w,r_class) [winfo class $target]
     set vTcl(w,conf) [$target configure]
+
+    set attrs $vTcl(attr,winfo)
+    ##
+    # Remove class from the attributes, 'cause we don't want [winfo class]
+    # over setting the value we stored from get_class. -Damon
+    ##
+    lremove attrs class
     switch $vTcl(w,class) {
         Toplevel {
             set vTcl(w,opt,-text) [wm title $target]
+
+	    ##
+	    # Set the geometry based on results from [wm geometry] instead of
+	    # [winfo geometry].  Remove those attributes from the list of
+	    # attributes to setup in the vTcl(w,*) array.
+	    ##
+	    set remove {geometry height width rootx rooty x y}
+	    eval lremove attrs $remove
+	    set geometry [wm geometry $target]
+	    lassign [vTcl:split_geom $geometry] width height x y
+	    set rootx $x
+	    set rooty $y
+	    foreach var $remove {
+	    	set vTcl(w,$var) [set $var]
+	    }
         }
         default {
             set vTcl(w,opt,-text) ""
         }
     }
+
+    foreach i $attrs {
+        set vTcl(w,$i) [winfo $i $target]
+    }
+
     switch $vTcl(w,manager) {
         {} {}
         grid -
@@ -465,13 +498,12 @@ proc vTcl:setup_unbind_tree {target} {
 ##############################################################################
 # INSERT NEW WIDGET ROUTINE
 ##############################################################################
-proc vTcl:new_widget {type {options ""}} {
+proc vTcl:auto_place_widget {type {options ""}} {
     global vTcl
     if {$vTcl(mode) == "TEST"} {
         vTcl:error "Inserting widgets is not\nallowed in Test mode."
         return
     }
-    global vTcl
     if { ($vTcl(w,insert) == "." && $type != "toplevel") ||
          ([winfo exists $vTcl(w,insert)] == 0 && $type != "toplevel")} {
         vTcl:dialog "No insertion point set!"
@@ -485,7 +517,7 @@ proc vTcl:new_widget {type {options ""}} {
     }
     if {$new_widg != ""} {
 
-    	set created_widget [vTcl:create_widget $type $options $new_widg]
+    	set created_widget [vTcl:create_widget $type $options $new_widg 0 0]
 
         # @@change by Christian Gavin 3/5/2000
         #
@@ -499,12 +531,14 @@ proc vTcl:new_widget {type {options ""}} {
         after idle "\
 	        vTcl:init_wtree 0
 	        vTcl:show_selection_in_tree $created_widget"
-
+        
         # @@end_change
+
+	return $created_widget
     }
 }
 
-proc vTcl:create_widget {type options new_widg} {
+proc vTcl:create_widget {type options new_widg x y} {
     global vTcl
     set do ""
     set undo ""
@@ -520,7 +554,9 @@ proc vTcl:create_widget {type options new_widg} {
         append do "[vTcl:widget:$type:inscmd $new_widg];"
     }
     if {$type != "toplevel"} {
-        append do "$vTcl(w,def_mgr) $new_widg $vTcl($vTcl(w,def_mgr),insert);"
+        append do "$vTcl(w,def_mgr) $new_widg $vTcl($vTcl(w,def_mgr),insert)"
+	if {$vTcl(w,def_mgr) == "place"} { append do " -x $x -y $y" }
+	append do ";"
     }
     append do "vTcl:setup_bind_tree $new_widg; "
     append do "vTcl:active_widget $new_widg; "
@@ -530,6 +566,12 @@ proc vTcl:create_widget {type options new_widg} {
     vTcl:push_action $do $undo
     update idletasks
     set vTcl(mgrs,update) yes
+
+    if {$type != "toplevel"} {
+	lappend vTcl(widgets,[winfo toplevel $new_widg]) $new_widg
+    } else {
+    	set vTcl(widgets,$new_widg) {}
+    }
     return $new_widg
 }
 
@@ -602,13 +644,16 @@ proc vTcl:set_label {t} {
 proc vTcl:set_textvar {t} {
     global vTcl
     if {$t == ""} {return}
-    set label [vTcl:get_string "Setting label" $t [$t cget -textvar]]
+    set label [vTcl:get_string "Setting textvariable" $t [$t cget -textvar]]
     $t conf -textvar $label
     vTcl:place_handles $t
+    vTcl:update_widget_info $t
 }
 
-proc vTcl:widget_dblclick {target} {
+proc vTcl:widget_dblclick {target x y} {
     global vTcl
+    set vTcl(mouseX) $x
+    set vTcl(mouseY) $y
     set c [vTcl:get_class $target 1]
     if {[info procs vTcl:widget:$c:dblclick] != ""} {
         eval vTcl:widget:$c:dblclick $target
@@ -695,14 +740,88 @@ proc vTcl:manager_update {mgr} {
 # given text widget
 
 proc vTcl:insert_widget_in_text {t} {
+    global vTcl
 
-	global vTcl
+    if {$vTcl(w,alias) != ""} {
+	set name \$widget\($vTcl(w,alias)\)
+    } else {
+	set name $vTcl(w,widget)
+    }
 
-	if {$vTcl(w,alias) != ""} {
-		set name \$widget\($vTcl(w,alias)\)
-	} else {
-		set name $vTcl(w,widget)
-	}
+    $t insert insert $name
+}
 
-	$t insert insert $name
+proc vTcl:add_functions_to_rc_menu {} {
+    global vTcl
+
+    set class [string tolower $vTcl(w,class)]
+    $vTcl(gui,rc_widget_menu) delete 0 end
+    if {![info exists vTcl($class,functions)]} { return }
+
+    foreach line $vTcl($class,functions) {
+    	lassign $line text function
+	$vTcl(gui,rc_widget_menu) add command -label $text -command $function
+    }
+}
+
+proc vTcl:new_widget {type button {options ""}} {
+    global vTcl
+    if {$vTcl(mode) == "TEST"} {
+        vTcl:error "Inserting widgets is not\nallowed in Test mode."
+        return
+    }
+
+    if {[info exists vTcl(x,lastButton)]} {
+    	$vTcl(x,lastButton) configure -relief raised
+    }
+    set vTcl(x,lastButton) $button
+
+    if {$vTcl(pr,autoplace) || $type == "toplevel"} {
+	bind vTcl(b) <Button-1> {vTcl:bind_button_1 %W %X %Y}
+    	return [vTcl:auto_place_widget $type $options]
+    }
+
+    $button configure -relief sunken
+
+    vTcl:status "Insert $type"
+
+    bind vTcl(b) <Button-1> \
+    	"vTcl:place_widget $type $button [list $options] %X %Y %x %y"
+}
+
+proc vTcl:place_widget {type button options rx ry x y} {
+    global vTcl
+
+    $button configure -relief raised
+    vTcl:status "Status"
+    bind vTcl(b) <Button-1> {vTcl:bind_button_1 %W %X %Y}
+
+    vTcl:active_widget [winfo containing $rx $ry]
+
+    set vTcl(mgrs,update) no
+    if $vTcl(pr,getname) {
+        set new_widg [vTcl:get_name $type]
+    } else {
+        set new_widg [vTcl:new_widget_name $type $vTcl(w,insert)]
+    }
+    if {$new_widg == ""} { return }
+
+    set created_widget [vTcl:create_widget $type $options $new_widg $x $y]
+
+    # @@change by Christian Gavin 3/5/2000
+    #
+    # when new widget is inserted, automatically refresh
+    # widget tree
+
+    # we do not destroy the handles that were just created
+    # (remember, the handles are used to grab and move a widget
+    # around)
+
+    after idle "\
+	    vTcl:init_wtree 0
+	    vTcl:show_selection_in_tree $created_widget"
+    
+    # @@end_change
+
+    return $created_widget
 }

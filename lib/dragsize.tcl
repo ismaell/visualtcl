@@ -23,6 +23,10 @@
 
 proc vTcl:bind_button_1 {target x y} {
     global vTcl
+
+    set vTcl(mouseX) $x
+    set vTcl(mouseY) $y
+
     if {[lindex [split %W .] 1] != "vTcl"} {
         if {$target != "." && [winfo class $target] != "Toplevel"} {
             vTcl:active_widget $target
@@ -37,6 +41,10 @@ proc vTcl:bind_button_1 {target x y} {
 
 proc vTcl:bind_button_2 {target x y} {
     global vTcl
+
+    set vTcl(mouseX) $x
+    set vTcl(mouseY) $y
+
     if {$vTcl(w,widget) != "." && \
         [winfo class $vTcl(w,widget)] != "Toplevel" && \
         $vTcl(w,widget) != ""} {
@@ -55,6 +63,10 @@ proc vTcl:bind_motion {x y} {
 
 proc vTcl:bind_release {x y} {
     global vTcl
+
+    set vTcl(mouseX) $x
+    set vTcl(mouseY) $y
+
     if {$vTcl(w,widget) == ""} {return}
     $vTcl(w,widget) configure -cursor "$vTcl(cursor,last)"
     vTcl:place_handles $vTcl(w,widget)
@@ -208,30 +220,36 @@ proc vTcl:grab_resize {absX absY handle} {
             }
             if { $newW < 0 } { set newW 0 }
             if { $newH < 0 } { set newH 0 }
-            
-            # @@change by Christian Gavin 3/19/2000
-            # added catch in case some widgets don't have a -width
-            # or a -height option (for example Iwidgets toolbar)
-            
-            catch {
-                switch $vTcl(w,class) {
-                   Label -
-                   Entry -
-                   Message -
-                   Scrollbar -
-                   Scale {
-                       $widget configure -width $newW
-                   }
-                   default {
-                       $widget configure -width $newW -height $newH
-                   }
-                }
-            }
-            
-            # @@end_change
-        }
+	}
     }
+            
+    vTcl:update_widget_size $widget $newW $newH
     vTcl:place_handles $widget
 }
 
+proc vTcl:update_widget_size {widget w h} {
+    # @@change by Christian Gavin 3/19/2000
+    # added catch in case some widgets don't have a -width
+    # or a -height option (for example Iwidgets toolbar)
 
+    if {![winfo exists $widget]} { return }
+
+    set class [winfo class $widget]
+    
+    catch {
+	switch $class {
+	   Label -
+	   Entry -
+	   Message -
+	   Scrollbar -
+	   Scale {
+	       $widget configure -width $w
+	   }
+	   default {
+	       $widget configure -width $w -height $h
+	   }
+	}
+    }
+    
+    # @@end_change
+}

@@ -90,6 +90,11 @@ proc vTclWindow.vTcl.prefs {{base ""}} {
         -activebackground #bcbcbc -activeforeground #000000 -anchor w \
         -foreground #000000 -highlightbackground #bcbcbc \
         -highlightcolor #000000 -highlightthickness 0 \
+        -text {Auto place new widgets} -variable vTcl(pr,autoplace)
+    checkbutton $base.fra18.che42 \
+        -activebackground #bcbcbc -activeforeground #000000 -anchor w \
+        -foreground #000000 -highlightbackground #bcbcbc \
+        -highlightcolor #000000 -highlightthickness 0 \
         -text {Auto load compounds} -variable vTcl(pr,autoloadcomp) \
         -command {
     	if {$vTcl(pr,autoloadcomp) && $vTcl(pr,autoloadcompfile) == ""} {
@@ -251,11 +256,14 @@ proc vTclWindow.vTcl.prefs {{base ""}} {
     grid $base.fra18.che41 \
         -in $base.fra18 -column 0 -row 7 -columnspan 1 -rowspan 1 \
         -sticky nesw
+    grid $base.fra18.che42 \
+        -in $base.fra18 -column 0 -row 8 -columnspan 1 -rowspan 1 \
+        -sticky nesw
     grid $base.fra18.fra17 \
         -in $base.fra18 -column 0 -row 9 -columnspan 1 -rowspan 1 \
         -sticky nesw
     grid $base.fra18.cpd17 \
-        -in $base.fra18 -column 0 -row 8 -columnspan 1 -rowspan 1
+        -in $base.fra18 -column 0 -row 9 -columnspan 1 -rowspan 1
     pack $base.fra18.cpd17.01 \
         -in $base.fra18.cpd17 -anchor center -expand 0 -fill none -padx 2 \
         -pady 2 -side left

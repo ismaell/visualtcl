@@ -130,7 +130,11 @@ proc vTcl:init_wtree {{wants_destroy_handles 1}} {
                 canvas {set t "Canvas"}
                 message        -
                 menubutton {set t [$i cget -text]}
-                entry {set t "-textvariable [$i cget -textvariable]"}
+                entry {
+		    set val [$i cget -textvariable]
+		    if {[lempty $val]} { set val NONE }
+		    set t "VAR: $val"
+		}
                 default    {
                 	set t ""
                 	set tmpClass [string toupper [string range $c 0 0]]

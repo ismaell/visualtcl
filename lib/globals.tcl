@@ -86,6 +86,8 @@ set vTcl(pr,getname)     0
 set vTcl(pr,geom_on)     1
 set vTcl(pr,geom_comm)   "350x200"
 set vTcl(pr,geom_proc)   "500x400"
+set vTcl(pr,geom_vTcl)	 "555x110"
+set vTcl(pr,geom_new)	 "609x422+220+159"
 set vTcl(pr,info_on)     1
 set vTcl(pr,manager)     place
 set vTcl(pr,shortname)   1
@@ -94,6 +96,8 @@ set vTcl(pr,show_func)   1
 set vTcl(pr,show_var)    -1
 set vTcl(pr,show_top)    -1
 set vTcl(pr,winfocus)    0
+set vTcl(pr,autoplace)	 0
+set vTcl(numRcFiles)	 5
 # end preferences
 set vTcl(proc,name)      ""
 set vTcl(proc,args)      ""

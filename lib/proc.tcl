@@ -76,7 +76,7 @@ proc vTcl:proclist:show {{on ""}} {
 
 proc vTcl:update_proc {base} {
     global vTcl
-    set vTcl(pr,geom_proc) [lindex [split [wm geom $base] +-] 0]
+    set vTcl(pr,geom_proc) [wm geometry $base]
     set name [$base.f2.f8.procname get]
     set args [$base.f2.f9.args get]
     set body [string trim [$base.f3.text get 0.0 end] "\n"]
@@ -388,6 +388,7 @@ proc vTcl:proc:edit_cancel {base} {
     global vTcl
     if {$vTcl(proc,$base,chg) == 0} {
         grab release $base
+    	set vTcl(pr,geom_proc) [wm geometry $base]
         destroy $base
     } else {
         vTcl:dialog "Buffer has changed. Do you\nwish to save the changes?" {Yes No Cancel}

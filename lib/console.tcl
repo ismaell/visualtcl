@@ -44,6 +44,7 @@ proc vTclWindow.vTcl.con {args} {
     wm transient .vTcl.con .vTcl
     wm minsize .vTcl.con 375 80
     wm title .vTcl.con "Command Console"
+    wm protocol .vTcl.con WM_DELETE_WINDOW { vTcl:attrbar:toggle_console }
     frame .vTcl.con.fra5 \
         -height 30 -width 30
     pack .vTcl.con.fra5 \
@@ -90,8 +91,9 @@ proc vTclWindow.vTcl.con {args} {
         .vTcl.con.fra5.tex7 conf -state normal
         .vTcl.con.fra5.tex7 insert end "\n[.vTcl.con.fra6.ent10 get]" vTcl:bold
         .vTcl.con.fra5.tex7 conf -state disabled
-
-        set caught [expr [catch [.vTcl.con.fra6.ent10 get] vTcl(err)] == 1]
+        
+	set cmd [.vTcl.con.fra6.ent10 get]
+	set caught [expr [catch $cmd vTcl(err)] == 1]
 
 	# not needed, since the redefined "puts" command calls this function
         # vTcl:console:get_output
