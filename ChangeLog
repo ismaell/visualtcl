@@ -1,6 +1,7 @@
 ChangeLog for Visual Tcl:
 
 1.22   -> 1.4 (not released yet)
+	o revamped Preferences... dialog (cool no?)
         o added an option in the Preferences... dialog to save all images as
           inline using Base64. Allows for self contained projects without any
           dependencies on external images. However, while editing the project,
