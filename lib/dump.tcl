@@ -840,10 +840,10 @@ proc vTcl:dump:project_info {basedir project} {
             lappend list $var $save($var)
         }
 
-        set widget [vTcl:dump:make_relative_paths $widget]
+        set relative [vTcl:dump:make_relative_paths $widget]
 
         append out $vTcl(tab)
-        append out "namespace eval ::widgets::$widget \{\n"
+        append out "namespace eval ::widgets::$relative \{\n"
         append out $vTcl(tab2)
         append out "array set save [list $list]\n"
         if {[winfo manager $widget] == "wm"} {
