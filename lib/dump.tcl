@@ -84,6 +84,11 @@ proc vTcl:export_procs {} {
         }
     }
 
+    # support procs for multiple file projects
+    if {$vTcl(pr,projecttype) == "multiple"} {
+        lappend list chasehelper info_script
+    }
+
     foreach i [concat Window [vTcl:lrmdups $list]] {
         append output [vTcl:dump_proc $i "Library "]
     }
@@ -142,7 +147,7 @@ proc vTcl:dump_top_tofile {target basedir project_name} {
        "    source \"[vTcl:dump:get_top_filename $target $basedir $project_name]\"\n"
     append output "\} else \{\n"
     append output \
-       "    source \"\[file join \[file dirname \[info script\] \] [vTcl:dump:get_multifile_project_dir $project_name] f$target.tcl\]\"\n"
+       "    source \"\[file join \[file dirname \[info_script\] \] [vTcl:dump:get_multifile_project_dir $project_name] f$target.tcl\]\"\n"
     append output "\}\n"
 
     return $output

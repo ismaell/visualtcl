@@ -113,3 +113,49 @@ proc vTcl:FireEvent {target event {params {}}} {
         if {$stop_processing} {break}
     }
 }
+
+#
+# Two utilities:
+#
+# info script: returns the absolute filename of the currently
+#              interpreted script.
+# chase filename: chases a given path "filename" and follows any
+#              symlinks until getting a real file/directory or
+#              whatever, or until 8 levels of symlinks are reached,
+#              when it aborts with an error message.
+#              The nesting level can be changed at the location
+#              "$count ==" below
+#
+
+proc {chasehelper} {filename {count 0}} {
+    file lstat $filename filestat
+    if {$filestat(type) == "link"} {
+	if {$count == 8} { error "Too many symbolic links" }
+	# Recurse into next link-level
+	chasehelper [file readlink $filename] [incr count]
+    } else {
+	return $filename
+    }
+}
+
+proc {info_script} {} {
+
+    set scriptinfo [info script]
+    if {$::tcl_platform(platform) != "unix"} {
+        return $scriptinfo      ;# windows/mac don't have symbolic links
+    }
+
+    if {[string index $scriptinfo 0] == "!"} then {
+	set scriptdir $scriptinfo
+    } else {
+	# For cosmetics we remove ./ in front of the filename
+	set scriptpath [file split $scriptinfo]
+	if {[lindex $scriptpath 0] == "."} {
+	    set scriptpath [lrange $scriptpath 1 [llength $scriptpath]]
+	}
+        set filename [eval file join [pwd] $scriptpath]
+
+	set scriptdir [chasehelper $filename]
+    }
+    return $scriptdir
+}
