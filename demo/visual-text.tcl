@@ -130,7 +130,7 @@ proc vTcl:image:broken_image {} {
 
 foreach img {
 
-        {{[file join C:/ {My Documents} vtcl images edit add.gif]} {} stock {
+        {{[file join / home cgavin vtcl images edit add.gif]} {} stock {
 R0lGODdhFAAUAPcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwMDcwKbK8AAA
 AAAAKgAAVQAAfwAAqgAA1AAqAAAqKgAqVQAqfwAqqgAq1ABVAABVKgBVVQBV
 fwBVqgBV1AB/AAB/KgB/VQB/fwB/qgB/1ACqAACqKgCqVQCqfwCqqgCq1ADU
@@ -151,7 +151,7 @@ cn9/f4yMjJmZmaWlpbKysr+/v8zMzNjY2OXl5fLy8v/78KCgpICAgP8AAAD/
 AP//AAAA//8A/wD//////ywAAAAAFAAUAAAIWADnCRxIsKDBgwgTKlzIsCA+
 gfj+zcO3r+FDihQBzNOoEeE+iv/wiXwosKNDkQf2VWw4ryK+lCQHmiSITyNF
 ljQRziS4E6fCniV9sgS6sShHo0KTKl26MCAAOw==}}
-        {{[file join C:/ {My Documents} vtcl images edit remove.gif]} {} stock {
+        {{[file join / home cgavin vtcl images edit remove.gif]} {} stock {
 R0lGODdhFAAUAPcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwMDcwKbK8AAA
 AAAAKgAAVQAAfwAAqgAA1AAqAAAqKgAqVQAqfwAqqgAq1ABVAABVKgBVVQBV
 fwBVqgBV1AB/AAB/KgB/VQB/fwB/qgB/1ACqAACqKgCqVQCqfwCqqgCq1ADU
@@ -215,14 +215,6 @@ proc Window {args} {
         hide    { if $exists {wm withdraw $newname; return} }
         iconify { if $exists {wm iconify $newname; return} }
         destroy { if $exists {destroy $newname; return} }
-    }
-}
-
-proc vTcl:WindowsCleanup {} {
-    global vTcl
-    if {[info exists vTcl(sourcing)]} { return }
-    foreach w [winfo children .] {
-    	wm protocol $w WM_DELETE_WINDOW { exit }
     }
 }
 }
@@ -1410,14 +1402,14 @@ proc vTclWindow. {base {container 0}} {
     ###################
     if {!$container} {
     wm focusmodel $base passive
-    wm geometry $base 200x200+84+84; update
-    wm maxsize $base 1284 1010
-    wm minsize $base 100 1
+    wm geometry $base 1x1+0+0; update
+    wm maxsize $base 1009 738
+    wm minsize $base 1 1
     wm overrideredirect $base 0
     wm resizable $base 1 1
     wm withdraw $base
-    wm title $base "vtcl"
-    bindtags $base "$base Vtcl all"
+    wm title $base "vtcl.tcl"
+    bindtags $base "$base Vtcl.tcl all"
     }
     ###################
     # SETTING GEOMETRY
@@ -1505,7 +1497,7 @@ proc vTclWindow.top21 {base {container 0}} {
     vTcl:toplevel $base -class Toplevel \
         -menu "$base.m26" 
     wm focusmodel $base passive
-    wm geometry $base 678x575+152+43; update
+    wm geometry $base 678x575+160+83; update
     wm maxsize $base 1009 738
     wm minsize $base 100 1
     wm overrideredirect $base 0
@@ -1571,12 +1563,12 @@ proc vTclWindow.top21 {base {container 0}} {
         -borderwidth 2 -height 75 -width 125 
     button $base.cpd23.02.fra22.but23 \
         -command {::visual_text::command-add_tag VisualText EditTag} \
-        -image [vTcl:image:get_image [file join C:/ {My Documents} vtcl images edit add.gif]] \
+        -image [vTcl:image:get_image [file join / home cgavin vtcl images edit add.gif]] \
         -relief flat -text button 
     bindtags $base.cpd23.02.fra22.but23 "$base.cpd23.02.fra22.but23 Button $base all FlatToolbarButton"
     button $base.cpd23.02.fra22.but24 \
         \
-        -image [vTcl:image:get_image [file join C:/ {My Documents} vtcl images edit remove.gif]] \
+        -image [vTcl:image:get_image [file join / home cgavin vtcl images edit remove.gif]] \
         -relief flat -text button 
     bindtags $base.cpd23.02.fra22.but24 "$base.cpd23.02.fra22.but24 Button $base all FlatToolbarButton"
     frame $base.cpd23.02.cpd22 \
@@ -1781,7 +1773,7 @@ proc vTclWindow.top22 {base {container 0}} {
     label $base.lab23 \
         -anchor w -text {Tag name:} 
     entry $base.ent24 \
-        -background white -textvariable .top22::tag_name 
+        -background white -textvariable "$base\::tag_name" 
     bindtags $base.ent24 "Entry $base all $base.ent24"
     bind $base.ent24 <Key> {
         ::edit_tag::enable_ok $widget(rev,[winfo toplevel %W])
@@ -1818,7 +1810,7 @@ proc vTclWindow.top22 {base {container 0}} {
         -padx 0 -pady 0 -text < 
     entry $base.fra27.fra29.fra30.ent32 \
         -background white -justify center -state disabled \
-        -textvariable .top22::font_size_entry -width 3 
+        -textvariable "$base\::font_size_entry" -width 3 
     button $base.fra27.fra29.fra30.but33 \
         \
         -command {incr ::.top22::font_size_entry
@@ -1826,28 +1818,28 @@ proc vTclWindow.top22 {base {container 0}} {
         -padx 0 -pady 0 -text > 
     checkbutton $base.fra27.fra29.che35 \
         -anchor w -command {::edit_tag::update_sample $widget(rev,.top22)} \
-        -pady 0 -text Bold -variable .top22::bold_check 
+        -pady 0 -text Bold -variable "$base\::bold_check" 
     checkbutton $base.fra27.fra29.che37 \
         -anchor w -command {::edit_tag::update_sample $widget(rev,.top22)} \
-        -pady 0 -text Italic -variable .top22::italic_check 
+        -pady 0 -text Italic -variable "$base\::italic_check" 
     checkbutton $base.fra27.fra29.che38 \
         -anchor w -command {::edit_tag::update_sample $widget(rev,.top22)} \
-        -pady 0 -text Underline -variable .top22::underline_check 
+        -pady 0 -text Underline -variable "$base\::underline_check" 
     checkbutton $base.fra27.fra29.che39 \
         -anchor w -command {::edit_tag::update_sample $widget(rev,.top22)} \
-        -pady 0 -text Overstrike -variable .top22::overstrike_check 
+        -pady 0 -text Overstrike -variable "$base\::overstrike_check" 
     label $base.fra27.fra29.lab40 \
         -anchor w -text Justify 
     radiobutton $base.fra27.fra29.rad41 \
         -anchor w -command {::edit_tag::update_sample $widget(rev,.top22)} \
-        -pady 0 -text left -value left -variable .top22::justify_radio 
+        -pady 0 -text left -value left -variable "$base\::justify_radio" 
     radiobutton $base.fra27.fra29.rad42 \
         -anchor w -command {::edit_tag::update_sample $widget(rev,.top22)} \
         -padx 1 -pady 0 -text center -value center \
-        -variable .top22::justify_radio 
+        -variable "$base\::justify_radio" 
     radiobutton $base.fra27.fra29.rad43 \
         -anchor w -command {::edit_tag::update_sample $widget(rev,.top22)} \
-        -pady 0 -text right -value right -variable .top22::justify_radio 
+        -pady 0 -text right -value right -variable "$base\::justify_radio" 
     label $base.fra27.fra29.lab22 \
         -background white -text Bkgnd 
     bind $base.fra27.fra29.lab22 <Button-1> {

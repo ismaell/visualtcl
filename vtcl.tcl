@@ -646,14 +646,14 @@ proc vTcl:main {argc argv} {
     catch {package require Unsafe} ; #for running in Netscape
     catch {package require dde}    ; #for windows
     catch {package require Tk}     ; #for dynamic loading tk
-    if {$tcl_version < 8.0} {
+    if {$tcl_version < 8.3} {
         wm deiconify .
         wm title . "Time to upgrade"
         frame .f -relief groove -bd 2
         pack .f -expand 1 -fill both -padx 2 -pady 2
         label .f.l1 -text "This version of Tk is too old..."
-        label .f.l2 -text "Tcl8.0 and Tk8.0 or newer required"
-        button .f.b -text "Bummer!" -command {exit}
+        label .f.l2 -text "Tcl8.3 and Tk8.3 or newer required"
+        button .f.b -text "Close" -command {exit}
         pack .f.l1 .f.l2 -side top -padx 5
         pack .f.b -side top -pady 5
     } else {

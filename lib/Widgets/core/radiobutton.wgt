@@ -2,6 +2,7 @@ Class		Radiobutton
 Lib		core
 
 Icon		icon_radiobutton.gif
+InsertCmd       vTcl:widget:radiobutton:inscmd
 DefaultOptions	-text radio
 DefaultValues   -activebackground -activeforeground -activeborderwidth \
                 -background -foreground -highlightbackground -highlightcolor
@@ -27,4 +28,11 @@ proc vTcl:widget:radiobutton:SetValue {} {
     vTcl:core:set_option $vTcl(w,widget)\
                          -value \
                          "Value for $vTcl(w,widget)"
+}
+
+proc vTcl:widget:radiobutton:inscmd {target} {
+
+    return "global \[$target cget -variable\]
+            unset  \[$target cget -variable\]
+            $target configure -variable \"\[winfo toplevel $target\]::selectedButton\""
 }

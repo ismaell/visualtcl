@@ -290,6 +290,30 @@ set vTcl(option,noencase,-command) 1
 
 set vTcl(option,noencasewhen,-command) vTcl:core:noencasewhenscroll
 
+set vTcl(option,translate,-variable) vTcl:core:variabletranslate
+set vTcl(option,noencase,-variable) 1
+set vTcl(option,noencasewhen,-variable) vTcl:core:noencasewhen
+
+set vTcl(option,translate,-textvariable) vTcl:core:variabletranslate
+set vTcl(option,noencase,-textvariable) 1
+set vTcl(option,noencasewhen,-textvariable) vTcl:core:noencasewhen
+
+proc vTcl:core:variabletranslate {value} {
+
+        global vTcl
+
+	if {[regexp {(\.[\.a-zA-Z0-9_]+)::(.*)} $value matchAll path variable]} {
+
+            ## potential candidate, is it a window ?
+            if {![winfo exists $path]} {return $value}
+
+            set path [vTcl:base_name $path]
+            return "\"${path}\\::${variable}\""
+        }
+
+        return $value
+}
+
 proc vTcl:core:scrolltranslate {value} {
 
 	global vTcl

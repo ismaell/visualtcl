@@ -2,6 +2,7 @@ Class		Checkbutton
 Lib		core
 
 Icon		icon_checkbutton.gif
+InsertCmd       vTcl:widget:checkbutton:inscmd
 DefaultOptions	-text check
 DefaultValues   -activebackground -activeforeground -activeborderwidth \
                 -background -foreground -highlightbackground -highlightcolor
@@ -17,4 +18,13 @@ proc vTcl:widget:checkbutton:SetVariable {} {
     vTcl:core:set_option $vTcl(w,widget)\
                          -variable \
                          "Variable for $vTcl(w,widget)"
+}
+
+proc vTcl:widget:checkbutton:inscmd {target} {
+    set last [lindex [split $target .] end]
+    set last [vTcl:rename $last]
+
+    return "global \[$target cget -variable\]
+            unset  \[$target cget -variable\]
+            $target configure -variable \"\[winfo toplevel $target\]::$last\""
 }

@@ -1,6 +1,9 @@
 ChangeLog for Visual Tcl:
 
 1.51b4 -> 1.51rc0
+    o Now checks for Tcl/Tk 8.3 version or higher
+    o Saves -variable with namespace as $base\::variable instead of .top22::variable
+    o Sets default -variable for checkbutton and radiobutton
     o Added 'Insert image...' menu item to VisualText
     o Replaced 'wm withdraw .top22' by 'wm withdraw $base' in saved project
     o Added Shift + Click functionality to scrollbar to link to table widget
