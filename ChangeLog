@@ -1,6 +1,8 @@
 ChangeLog for Visual Tcl:
 
-1.51b4 -> 1.51rc0
+1.51b4 -> 1.51
+    o Fixed delete toplevel bug
+    o Added support for deleting childsites in notebook/panedwindow (Tix)
     o Added support for deleting childsites in tabnotebook/notebook [Iwidgets]
     o Added notebook widget for Itcl. Supports copy/paste.
     o Common options like -background take their default values on project

@@ -11,6 +11,7 @@ TreeChildrenCmd	{
 		}
 DumpCmd		vTcl:dump:panedwindow
 InsertCmd	vTcl:widget:panedwindow:inscmd
+DeleteSiteCmd   vTcl:widget:panedwindow:deleteSiteCmd
 TagsCmd         vTcl:widget:panedwindow:tagscmd
 CompoundCmd     vTcl:compound:panedwindow
 
@@ -67,6 +68,15 @@ proc vTcl:widget:panedwindow:treeChildrenCmd {target {diff \#-1}} {
 proc vTcl:widget:panedwindow:treeChildrenChildsite {target} {
 
     return [$target childsite]
+}
+
+proc vTcl:widget:panedwindow:deleteSiteCmd {target site} {
+
+    set index [lsearch -exact [$target childsite] $site]
+
+    if {$index != -1} {
+        $target delete $index
+    }
 }
 
 proc vTcl:dump:panedwindow {target basename} {

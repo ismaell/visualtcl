@@ -10,6 +10,7 @@ CompoundCmd     vTcl:compound:tixPanedWindow
 DumpChildren    no
 MegaWidget      yes
 InsertCmd       vTcl:widget:tixPanedWindow:inscmd
+DeleteSiteCmd   vTcl:widget:tixPanedWindow:deleteSiteCmd
 TreeChildrenCmd     "vTcl:widget:tixPanedWindow:treeChildrenCmd \
                      vTcl:widget:tixPanedWindow:treeChildrenChildsite"
 
@@ -50,6 +51,19 @@ proc vTcl:widget:tixPanedWindow:treeChildrenChildsite {target} {
     }
 
     return $sites
+}
+
+proc vTcl:widget:tixPanedWindow:deleteSiteCmd {target site} {
+
+    set entries [$target panes]
+
+    foreach page $entries {
+        set subwidget [$target subwidget $page]
+        if {$site == $subwidget} {
+            $target delete $page
+            return
+        }
+    }
 }
 
 proc vTcl:dump:TixPanedWindow {target basename} {

@@ -6,6 +6,7 @@ DoubleClickCmd	vTcl:widget:toplevel:dblclkcmd
 
 TreeLabel	@vTcl:core:get_widget_tree_label
 InsertCmd	vTcl:widget:toplevel:inscmd
+DeleteCmd       vTcl:widget:toplevel:deletecmd
 WidgetProc	vTcl:Toplevel:WidgetProc
 DefaultValues   -background -highlightbackground -highlightcolor
 
@@ -41,6 +42,13 @@ proc vTcl:widget:toplevel:inscmd {target} {
 	lappend vTcl(tops) $target
 	vTcl:update_top_list
     "
+}
+
+proc vTcl:widget:toplevel:deletecmd {target} {
+    global vTcl
+    set vTcl(tops) [lremove $vTcl(tops) $target]
+    destroy $target
+    vTcl:update_top_list
 }
 
 proc vTcl:widget:toplevel:adjust_size {} {

@@ -9,17 +9,20 @@ CompoundCmd     vTcl:compound:tixNoteBook
 DumpChildren    no
 MegaWidget      yes
 InsertCmd       vTcl:widget:tixNoteBook:inscmd
+DeleteSiteCmd   vTcl:widget:tixNotebook:deleteSiteCmd
 TreeChildrenCmd     "vTcl:widget:tixNotebook:treeChildrenCmd \
                      vTcl:widget:tixNotebook:treeChildrenChildsite"
 
 proc vTcl:widget:tixNoteBook:inscmd {target} {
-    # Add two pages to start with.  Unfortunately, additional pages have
+    # Add three pages to start with.  Unfortunately, additional pages have
     # to be added manually by the user, and the project re-read into vtcl.
     return "
         $target add page1 -label {Page 1};
         $target add page2 -label {Page 2};
+        $target add page3 -label {Page 3};
         $target subwidget page1 configure -width 30 -height 30;
         $target subwidget page2 configure -width 30 -height 30;
+        $target subwidget page3 configure -width 30 -height 30;
     "
 }
 
@@ -55,6 +58,20 @@ proc vTcl:widget:tixNotebook:treeChildrenChildsite {target} {
     }
 
     return $sites
+}
+
+proc vTcl:widget:tixNotebook:deleteSiteCmd {target site} {
+
+    set entries [$target pages]
+
+    foreach page $entries {
+        set subwidget [$target subwidget $page]
+        if {$site == $subwidget} {
+            $target delete $page
+            $target raise [lindex [$target pages] 0]
+            return
+        }
+    }
 }
 
 #

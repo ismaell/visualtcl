@@ -97,8 +97,6 @@ proc vTcl:delete {{w ""}} {
 
     ## If it's a toplevel window, remove it from the tops list.
     if {$class == "Toplevel"} {
-        lremove vTcl(tops) $w
-
         if {[info procs vTclWindow$w] != ""} {
             rename vTclWindow$w {}
         }
