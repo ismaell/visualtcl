@@ -663,6 +663,7 @@ if {$font_desc != ""} {
 
     vTcl:font:display_fonts $base
     wm protocol $base WM_DELETE_WINDOW "wm withdraw $base"
+    vTcl:setup_vTcl:bind $base
 }
 
 proc vTcl:font:prompt_font_manager {} {
@@ -890,8 +891,5 @@ proc vTcl:font:get_manager_position {} {
     global vTcl
     return [lindex [$vTcl(fonts,font_mgr,win).cpd31.03 yview] 0]
 }
-
-
-
 
 

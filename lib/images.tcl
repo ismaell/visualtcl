@@ -789,8 +789,10 @@ proc vTcl:image:translate {value} {
     if [info exists vTcl(images,filename,$value)] {
         set newvalue "\[vTcl:image:get_image "
         append newvalue "[vTcl:portable_filename $vTcl(images,filename,$value)]\]"
+        return $newvalue
+    } else {
+        return $value
     }
-    return $newvalue
 }
 
 proc vTcl:image:refresh_manager {{position 0.0}} {

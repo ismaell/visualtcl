@@ -123,6 +123,7 @@ proc vTclWindow.vTcl.credits {base {container 0}} {
     ###################
     if {!$container} {
     toplevel $base -class Toplevel
+    wm transient $base .vTcl
     wm overrideredirect $base 0
     wm focusmodel $base passive
     wm withdraw $base
@@ -130,7 +131,6 @@ proc vTclWindow.vTcl.credits {base {container 0}} {
     wm minsize $base 100 1
     wm resizable $base 1 1
     wm title $base "Visual Tcl Credits"
-    wm transient $base .vTcl
     }
     button $base.but23 \
         -command {Window hide $widget(CreditsWindow)} -text Close -width 8

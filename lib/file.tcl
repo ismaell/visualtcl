@@ -567,9 +567,14 @@ proc vTcl:get_file {mode {title File} {ext .tcl}} {
             if {$initname == ""} {
                 set initname "unknown.tcl"
             }
-            set file [tk_getSaveFile -defaultextension $ext \
-                -initialdir [pwd] -filetypes $types \
-                -initialfile $initname]
+            if {$tcl_platform(platform) == "macintosh"} then {
+                set file [tk_getSaveFile -defaultextension $ext \
+                    -initialdir [pwd] -initialfile $initname]
+            } else {
+                set file [tk_getSaveFile -defaultextension $ext \
+                    -initialdir [pwd] -filetypes $types \
+                    -initialfile $initname]
+            }
         }
     }
     set tk_strictMotif 1
