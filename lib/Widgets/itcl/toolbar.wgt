@@ -32,6 +32,7 @@ DumpChildren	no
 MegaWidget	yes
 TagsCmd         vTcl:lib_itcl:tagscmd
 InsertCmd       vTcl:widget:toolbar:inscmd
+DumpCmd         vTcl:dump:toolbar
 
 proc vTcl:widget:toolbar:inscmd {target} {
 
@@ -40,5 +41,33 @@ proc vTcl:widget:toolbar:inscmd {target} {
     return "$target add button open \
         -balloonstr \"Open\" \
         -image [vTcl:image:get_image $env(VTCL_HOME)/images/edit/open.gif] \
-        -command {tk_messageBox -message {TODO: Command handler here!}}"
+        -command {tk_messageBox -message {TODO: Open Command handler here!}}
+        $target add button save \
+        -balloonstr \"Save\" \
+        -image [vTcl:image:get_image $env(VTCL_HOME)/images/edit/save.gif] \
+        -command {tk_messageBox -message {TODO: Save Command handler here!}}"
+}
+
+proc vTcl:dump:toolbar {target basename} {
+
+    global vTcl
+    set result [vTcl:dump_widget_opt $target $basename]
+
+    set components [$target component]
+    foreach component $components {
+        if {$component == "hull"} {continue}
+
+        set path [$target component $component]
+        set class [vTcl:get_class $path]
+
+        set conf [$target itemconfigure $component]
+        set pairs [vTcl:get_opts_special $conf $target \
+                "-text -command -image -balloonstr"]
+
+        append result "$vTcl(tab)$basename add [string tolower $class]"
+        append result " $component \\\n"
+        append result "[vTcl:clean_pairs $pairs]\n"
+    }
+
+    return $result
 }

@@ -1,6 +1,10 @@
 ChangeLog for Visual Tcl:
 
 1.51b4 -> 1.51
+    o Modified demo app Visual Text to support tag names with spaces.
+    o Fixed problem when Tcl/Tk 8.3.3 from ActiveState passes a {} parameter
+      to the command line causing Visual Tcl to fail on startup
+    o Added code to dump a toolbar with its components.
     o Don't allow inserting into widgets that are not part of the widget tree
     o Fixed bug where combobox/mclistbox/progressbar code wouldn't be
       saved with project in some situations

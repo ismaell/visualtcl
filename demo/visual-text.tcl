@@ -1077,7 +1077,7 @@ proc {::edit_tag::add_new_tag} {mainw w selrange} {
 global widget
 upvar #0 ::${w}::tag_name tag_name
 
-eval $mainw.MainText tag add $tag_name $selrange
+eval $mainw.MainText tag add [list $tag_name] $selrange
 ::edit_tag::set_existing_tag $mainw $w
 }
 
@@ -1414,7 +1414,7 @@ proc {::ttd::get} {args} {
     set tagData {}
     foreach tag [$w tag names] {
 	if {[info exists tags($tag)]} {
-	    lappend tagData [concat ttd.tagdef $tag $tags($tag)]
+	    lappend tagData [concat ttd.tagdef [list $tag] $tags($tag)]
 	}
     }
     set imageData {}
@@ -1486,7 +1486,7 @@ set ttdCode {
     }
 
     proc ttd.tagdef {name args} {
-	eval masterTextWidget tag configure $name $args
+	eval masterTextWidget tag configure [list $name] $args
     }
 
     proc ttd.text {string} {
@@ -1499,7 +1499,7 @@ set ttdCode {
 
 	# I'm confused by this, but we need to keep track of our
 	# tags in reverse order.
-	set taglist [concat $tag $taglist]
+	set taglist [concat [list $tag] $taglist]
     }
 
     proc ttd.tagoff {tag} {
@@ -1536,7 +1536,7 @@ proc {::ttd::insert} {w ttd} {
     catch {interp delete $safeInterpreter }
     set safeInterpreter [interp create -safe]
 
-    # we want the widget command to be available to the 
+    # we want the widget command to be available to the
     # safe interpreter. Also, the text may include embedded
     # images, so we need the image command available as well.
     interp alias $safeInterpreter masterTextWidget {} $w
@@ -1550,7 +1550,7 @@ proc {::ttd::insert} {w ttd} {
     # a problem.
     if {[catch {$safeInterpreter eval $ttd} error]} {
 	set message "Error opening file:\n\n$error"
-	tk_messageBox -icon info  -message $message  -title "Bad file"  -type ok 
+	tk_messageBox -icon info  -message $message  -title "Bad file"  -type ok
     }
 
     # and clean up after ourselves
@@ -1569,9 +1569,9 @@ set tag   [$w.TagsListbox get $index]
 
 ## apply or unapply the tag?
 if {[$w.TagsListbox itemcget $index -background] == "white"} {
-    eval $w.MainText tag add $tag [$w.MainText tag ranges sel]
+    eval $w.MainText tag add [list $tag] [$w.MainText tag ranges sel]
 } else {
-    eval $w.MainText tag remove $tag [$w.MainText tag ranges sel]
+    eval $w.MainText tag remove [list $tag] [$w.MainText tag ranges sel]
 }
 
 ::visual_text::show_tags_at_insert $w
@@ -1725,7 +1725,7 @@ set tags [$mainw.MainText tag names]
 foreach tag $tags {
 
     if {$tag == "sel"} continue
-    
+
     set opts [$mainw.MainText tag configure $tag]
     set optvals ""
 
@@ -1734,11 +1734,11 @@ foreach tag $tags {
         set val  [lindex $opt 4]
         lappend optvals $name $val
     }
-    
+
     $mainw.TagsListbox insert end $tag
     $mainw.TagsText insert end $tag\n $tag
     $mainw.TagsText insert end \n default
-    eval $mainw.TagsText tag configure $tag $optvals
+    eval $mainw.TagsText tag configure [list $tag] $optvals
 }
 
 $mainw.TagsText tag configure default -background white

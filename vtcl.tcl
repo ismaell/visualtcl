@@ -678,7 +678,7 @@ proc vTcl:main {argc argv} {
             set vTcl(VTCL_HOME) [pwd]
         }
         vTcl:setup
-        if {$argc > 0} {
+        if {$argc > 0 && [lindex $argv end] != ""} {
 	    set file [lindex $argv end]
             if {[file exists $file]} {
                 vTcl:open $file
