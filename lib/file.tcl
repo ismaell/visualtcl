@@ -108,8 +108,13 @@ proc vTcl:open {{file ""}} {
 		
 	# @@change by Christian Gavin 3/5/2000
 	# refresh widget tree automatically after File Open...
+	# refresh image manager and font manager too
 	
-	after idle {vTcl:init_wtree}
+	after idle {
+		vTcl:init_wtree
+		vTcl:image:refresh_manager
+		vTcl:font:refresh_manager
+	}
 	
 	# @@end_change
     }
@@ -157,6 +162,11 @@ proc vTcl:close {} {
     
     # @@change by Christian Gavin 3/5/2000
     # refresh widget tree automatically after File Close
+    # delete user images (e.g. per project images)
+    # delete user fonts (e.g. per project fonts)
+
+    vTcl:image:remove_user_images
+    vTcl:font:remove_user_fonts
     
     after idle {vTcl:init_wtree}
 	
@@ -287,7 +297,7 @@ proc vTcl:save2 {file} {
     # we go
     
     if {$tcl_platform(platform) == "unix"} {
-    	    file attributes $file -permissions 755
+    	    file attributes $file -permissions [expr 0755]
     }
     
     # @@end_change

@@ -57,7 +57,7 @@ proc vTcl:show_proc {name} {
         set win .vTcl.proc_[vTcl:rename $name]
         Window show .vTcl.proc $win $name $args $body
     } else {
-        Window show .vTcl.proc .vTcl.proc_new "" "" ""
+        Window show .vTcl.proc .vTcl.proc_new "" "" "global widget\n\n"
     }
 }
 
@@ -299,7 +299,7 @@ proc vTclWindow.vTcl.proc {args} {
     # widget
     button $base.f3.butInsert \
         -text "Insert selected widget name" \
-        -command "$base.f3.text insert insert \"\$vTcl(w,widget) \""
+        -command "vTcl:insert_widget_in_text $base.f3.text"
     pack $base.f3.butInsert -fill x -side top
     # @@end_change 
 

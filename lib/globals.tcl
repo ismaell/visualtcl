@@ -126,7 +126,8 @@ set vTcl(w,widget)       ""
 set vTcl(winname)        "vTclWindow"
 set vTcl(windows)        ".vTcl.toolbar .vTcl.mgr .vTcl.ae .vTcl.wstat
                           .vTcl.proclist .vTcl.varlist .vTcl.toplist .vTcl.tree
-                          .vTcl.con .vTcl.prefs .vTcl.about .vTcl.bind"
+                          .vTcl.con .vTcl.prefs .vTcl.about .vTcl.bind .vTcl.imgManager
+                          .vTcl.fontManager"
 set vTcl(newtops)        1
 set vTcl(mode)           "EDIT"
 set vTcl(pwd)            [pwd]
@@ -465,3 +466,6 @@ proc vTcl:syntax:iscommand {command} {
 	
 	return [ expr { [info command $command] == $command } ]
 }
+
+# special case for -in option
+set vTcl(option,noencase,-in) 1

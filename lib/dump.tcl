@@ -120,7 +120,13 @@ proc vTcl:get_class {target {lower 0}} {
     return $class
 }
 
-proc vTcl:get_mgropts {opts} {
+# if basename is 1 then the -in option will have the
+# first path component replaced by $base
+#
+# example: -in .top27.fra32
+#       => -in $base.fra32
+
+proc vTcl:get_mgropts {opts {basename 0}} {
 #    if {[lindex $opts 0] == "-in"} {
 #        set opts [lrange $opts 2 end]
 #    }
@@ -140,6 +146,16 @@ proc vTcl:get_mgropts {opts} {
                 -relx -
                 -rely {
                     if {$v != "" && $v != 0} {
+                        lappend nopts $o $v
+                    }
+                }
+                -in {
+                    if {$basename} {
+                    	set v [vTcl:base_name $v]	
+                    	puts "Base name $v!"
+                    }
+                    
+                    if {$v != ""} {
                         lappend nopts $o $v
                     }
                 }
@@ -254,7 +270,7 @@ proc vTcl:dump_widget_geom {target basename} {
     if {$mgr != "wm" && $mgr != "menubar" && $mgr != "tixGeometry" && $mgr != "tixForm"} {
         set opts [$mgr info $target]
         set result "$vTcl(tab)$mgr $basename \\\n"
-        append result "[vTcl:clean_pairs [vTcl:get_mgropts $opts]]\n"
+        append result "[vTcl:clean_pairs [vTcl:get_mgropts $opts 1]]\n"
     }
     set pre g
     set gcolumn [lindex [grid size $target] 0]

@@ -527,3 +527,90 @@ proc vTcl:syntax_color {w} {
 		eval $w tag configure $tag $vTcl(syntax,$tag,configure)
 	}
 }
+
+# @@change by Christian Gavin 4/22/2000
+#
+# procedure to prepare a pull-down modal window
+#
+# on Windows systems, Tk8.2 does not set the geometry of a window if it
+# is withdraw
+#
+# to avoid seeing the window change in size and move around, we move it
+# out of the way of the current display, then it is created and finally
+# repositioned using display_pulldown
+#
+# @@end_change
+
+proc vTcl:prepare_pulldown {base xl yl} {
+
+    global tcl_platform
+    
+    set size $xl
+    set size [append size x]
+    set size [append size $yl]
+    
+    if {$tcl_platform(platform)=="windows"} {
+
+        wm geometry $base $size+1600+1200
+    } else {
+
+	wm geometry $base $size+0+0
+    }
+}
+
+# @@change by Christian Gavin 4/22/2000
+#
+# procedure to position a pull-down modal window near the mouse pointer
+# arrange the window so that it fits inside the current display
+#
+# xl is the requested width
+# yl is the requested height
+#
+# @@end_change
+
+proc vTcl:display_pulldown {base xl yl} {
+
+    global tcl_platform
+    
+    wm withdraw $base
+
+    wm overrideredirect $base 1
+    update
+
+    # move it near mouse pointer
+    set xm [winfo pointerx $base]
+    set ym [winfo pointery $base]
+
+    vTcl:log "mouse=$xm,$ym"
+    
+    set x0 [expr $xm - $xl ]
+    set y0 $ym
+
+    set x1 $xm
+    set y1 [expr $ym + $yl ]
+
+    set xmax [winfo screenwidth $base]
+    set ymax [winfo screenheight $base]
+
+    if {$x1 > $xmax } {
+    	set x0 [expr $xmax - $xl ]
+    }
+
+    if {$y1 > $ymax } {
+	set y0 [expr $ymax - $yl ]
+    }
+
+    if {$x0 < 0} "set x0 0"
+    if {$y0 < 0} "set y0 0"
+
+    wm geometry $base "+$x0+$y0"
+    wm deiconify $base
+
+    # add this line for $%@^! Windows
+    # apparently the 8.2 implementation of Tk does not change the
+    # geometry of the window if it is "withdrawn"
+
+    if {$tcl_platform(platform)=="windows"} {
+        wm geometry $base "+$x0+$y0"
+    }
+}

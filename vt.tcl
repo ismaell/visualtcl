@@ -33,6 +33,9 @@ proc puts {args} {
 	} else {
 		eval vTcl:puts $vTcl(LOG_FD_W) $args
 		flush $vTcl(LOG_FD_W)
+
+		# refresh the command console if visible
+		vTcl:console:get_output
 	}
 }
 
@@ -64,6 +67,7 @@ catch {
     namespace import iwidgets::toolbar
     namespace import iwidgets::feedback
     namespace import iwidgets::optionmenu
+    namespace import iwidgets::hierarchy
 } errorText
 vTcl:log $errorText
 
@@ -164,17 +168,18 @@ proc vTcl:setup {} {
         catch {uplevel #0 [list source $vTcl(CONF_FILE)]}
         catch {set vTcl(w,def_mgr) $vTcl(pr,manager)}
     }
-    vTcl:setup_gui
-    update idletasks
-    set vTcl(start,procs)   [lsort [info procs]]
-    set vTcl(start,globals) [lsort [info globals]]
-    vTcl:setup_meta
 
     # initializes the stock images database
     vTcl:image:init_stock
 
     # initializes the stock fonts database
     vTcl:font:init_stock
+
+    vTcl:setup_gui
+    update idletasks
+    set vTcl(start,procs)   [lsort [info procs]]
+    set vTcl(start,globals) [lsort [info globals]]
+    vTcl:setup_meta
 }
 
 proc vTcl:setup_meta {} {
@@ -415,6 +420,14 @@ proc vTcl:define_bindings {} {
     # handles auto-indent
     #
     bind Text <Key-Return>    {
+
+        # exclude user inserted text widgets from vTcl bindings
+        if {! [string match .vTcl* %W] } {
+            tkTextInsert %W "\n"
+            focus %W
+            break
+        }
+        
     	vTcl:syntax_color %W
         set pos [%W index "insert linestart"]
         set nos [%W search -regexp -nocase "\[a-z0-9\]" $pos]

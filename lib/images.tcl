@@ -191,7 +191,7 @@ proc {vTcl:image:init_img_manager} {} {
 		   catch {
 		   	button $base.${reference}_delete \
 		   	-image [vTcl:image:get_image $env(VTCL_HOME)/images/edit/cut.gif] \
-	 	  	-command "tk_messageBox -message Todo:delete"
+	 	  	-command "vTcl:image:ask_delete_image \"$image\""
 	 	  	
 	 	  	vTcl:set_balloon $base.${reference}_delete "Remove image from list"
 	 	   }
@@ -199,7 +199,7 @@ proc {vTcl:image:init_img_manager} {} {
 		   catch {
 		   	button $base.${reference}_replace \
 		   	-image [vTcl:image:get_image $env(VTCL_HOME)/images/edit/replace.gif] \
-		   	-command "vTcl:image:replace_image $image"
+		   	-command "vTcl:image:replace_image \"$image\""
 
 	 	  	vTcl:set_balloon $base.${reference}_replace "Replace image by another"
 		   }
@@ -249,20 +249,6 @@ proc {vTcl:image:init_stock} {} {
 	vTcl:image:create_new_image "$env(VTCL_HOME)/images/edit/open.gif"    "" stock
 	vTcl:image:create_new_image "$env(VTCL_HOME)/images/edit/save.gif"    "" stock
 	vTcl:image:create_new_image "$env(VTCL_HOME)/images/edit/replace.gif" "" stock
-
-	vTcl:image:create_new_image "$env(VTCL_HOME)/images/logo100.gif"      "" stock
-	vTcl:image:create_new_image "$env(VTCL_HOME)/images/logo64.gif"       "" stock
-	vTcl:image:create_new_image "$env(VTCL_HOME)/images/logoMed.gif"      "" stock
-	vTcl:image:create_new_image "$env(VTCL_HOME)/images/pwrdLogo75.gif"   "" stock
-	vTcl:image:create_new_image "$env(VTCL_HOME)/images/pwrdLogo100.gif"  "" stock
-	vTcl:image:create_new_image "$env(VTCL_HOME)/images/pwrdLogo150.gif"  "" stock
-	vTcl:image:create_new_image "$env(VTCL_HOME)/images/pwrdLogo175.gif"  "" stock
-	vTcl:image:create_new_image "$env(VTCL_HOME)/images/pwrdLogo200.gif"  "" stock
-
-	vTcl:image:create_new_image "$env(VTCL_HOME)/images/paintcan.gif"     "" stock
-	vTcl:image:create_new_image "$env(VTCL_HOME)/images/red_x.gif"        "" stock
-	vTcl:image:create_new_image "$env(VTCL_HOME)/images/arrow_left.gif"   "" stock
-	vTcl:image:create_new_image "$env(VTCL_HOME)/images/arrow_right.gif"  "" stock
 }
 
 proc {vTcl:image:new_image_file} {} {
@@ -292,11 +278,7 @@ proc {vTcl:image:new_image_file} {} {
 	         set object [vTcl:image:create_new_image $newImageFile "user image" "user"]
          
 	         # let's refresh!
-	         if [winfo exists $vTcl(images,manager_dlg,win)] {
-
-		         vTcl:image:init_img_manager
-		         $vTcl(images,manager_dlg,win).cpd29.03 yview end
-		 }
+	         vTcl:image:refresh_manager
 		 
 		 return $object
 	    } 
@@ -413,15 +395,7 @@ proc vTcl:image:create_selector_dlg {base} {
         -highlightcolor #000000 
     wm focusmodel $base passive
 
-    # move it out of the way for now
-    
-    if {$tcl_platform(platform)=="windows"} {
-
-        wm geometry $base 496x252+1600+1200
-    } else {
-
-	wm geometry $base 496x252+362+203
-    }
+    vTcl:prepare_pulldown $base 496 252
     
     wm maxsize $base 1009 738
     wm minsize $base 1 1
@@ -439,7 +413,6 @@ proc vTcl:image:create_selector_dlg {base} {
         -troughcolor #bcbcbc
     text $base.cpd29.03 \
         -background #bcbcbc \
-        -font -Adobe-Helvetica-Medium-R-Normal-*-*-120-*-*-*-*-*-*\
         -foreground #000000 -highlightbackground #f3f3f3 \
         -highlightcolor #000000 -selectbackground #000080 \
         -selectforeground #ffffff -state disabled \
@@ -457,50 +430,7 @@ proc vTcl:image:create_selector_dlg {base} {
         -in $base.cpd29 -column 0 -row 0 -columnspan 1 -rowspan 1 \
         -sticky nesw 
         
-    wm withdraw $base
-
-    wm overrideredirect $base 1
-    update
-
-    # move it near mouse pointer
-    set xm [winfo pointerx $base]
-    set ym [winfo pointery $base]
-
-    vTcl:log "mouse=$xm,$ym"
-    
-    set xl 496
-    set yl 252
-
-    set x0 [expr $xm - $xl ]
-    set y0 $ym
-
-    set x1 $xm
-    set y1 [expr $ym + $yl ]
-
-    set xmax [winfo screenwidth $base]
-    set ymax [winfo screenheight $base]
-
-    if {$x1 > $xmax } {
-    	set x0 [expr $xmax - $xl ]
-    }
-
-    if {$y1 > $ymax } {
-	set y0 [expr $ymax - $yl ]
-    }
-
-    if {$x0 < 0} "set x0 0"
-    if {$y0 < 0} "set y0 0"
-
-    wm geometry $base "+$x0+$y0"
-    wm deiconify $base
-
-    # add this line for $%@^! Windows
-    # apparently the 8.2 implementation of Tk does not change the
-    # geometry of the window if it is "withdrawn"
-
-    if {$tcl_platform(platform)=="windows"} {
-        wm geometry $base "+$x0+$y0"
-    }
+    vTcl:display_pulldown $base 496 252
 
     vTcl:image:fill_noborder_image_list $base.cpd29.03
 }
@@ -537,6 +467,10 @@ proc vTcl:prompt_user_image {target option} {
         
     if {$r != ""} {
 	    $target configure $option $r
+
+	    # refresh property manager
+	    vTcl:update_widget_info $target
+	    vTcl:prop:update_attr
     }
 }
 
@@ -593,6 +527,42 @@ proc vTcl:image:generate_image_user {fileID} {
 	}
 }
 
+proc vTcl:image:delete_image {image} {
+
+	global vTcl
+	
+	set object [vTcl:image:get_image $image]
+	set reference [vTcl:rename $image]
+			
+	image delete $object
+			
+	set index [lsearch -exact $vTcl(images,files) $image]
+	set vTcl(images,files) [lreplace $vTcl(images,files) $index $index]
+			
+	unset vTcl(images,$reference,image)
+	unset vTcl(images,$reference,description)
+	unset vTcl(images,$reference,type)
+	unset vTcl(images,filename,$object)
+}
+
+proc vTcl:image:ask_delete_image {image} {
+	
+	set result [
+	
+		tk_messageBox \
+			-message "Do you want to remove $image from the project?" \
+			-title "Visual Tcl" \
+			-type yesno \
+			-icon question
+	]
+	
+	if {$result == "yes"} {
+		
+		vTcl:image:delete_image $image
+		vTcl:image:refresh_manager
+	}
+}
+
 proc vTcl:image:remove_user_images {} {
 
 	global vTcl
@@ -600,25 +570,17 @@ proc vTcl:image:remove_user_images {} {
 	foreach image $vTcl(images,files) {
 
 		if {[vTcl:image:get_type $image] == "user"} {
-			
-			set object [vTcl:image:get_image $image]
-			set reference [vTcl:rename $image]
-			
-			image delete $object
-			
-			set index [lsearch -exact $vTcl(images,files) $image]
-			set vTcl(images,files) [lreplace $vTcl(images,files) $index $index]
-			
-			unset vTcl(images,$reference,image)
-			unset vTcl(images,$reference,description)
-			unset vTcl(images,$reference,type)
-			unset vTcl(images,filename,$object)
+	
+			vTcl:image:delete_image $image		
 		}
 	}
+	
+	vTcl:image:refresh_manager
 }
 
-proc vTcl:image:create_manager_dlg {base} {
-
+proc vTclWindow.vTcl.imgManager {args} {
+	
+    set base ""
     if {$base == ""} {
         set base .vTcl.imgManager
     }
@@ -649,7 +611,6 @@ proc vTcl:image:create_manager_dlg {base} {
     
     label $base.lab28 \
         -background #bcbcbc -borderwidth 1 \
-        -font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1 \
         -foreground #000000 -highlightbackground #bcbcbc \
         -highlightcolor #000000 -relief sunken -text Images 
     frame $base.cpd29 \
@@ -668,7 +629,6 @@ proc vTcl:image:create_manager_dlg {base} {
         -troughcolor #bcbcbc 
     text $base.cpd29.03 \
         -background #bcbcbc \
-        -font -Adobe-Helvetica-Medium-R-Normal-*-*-120-*-*-*-*-*-* \
         -foreground #000000 -height 1 -highlightbackground #f3f3f3 \
         -highlightcolor #000000 -selectbackground #000080 \
         -selectforeground #ffffff -state disabled -tabs {0.2i 3i 3.75i} \
@@ -681,14 +641,12 @@ proc vTcl:image:create_manager_dlg {base} {
     button $base.fra30.but31 \
         -activebackground #bcbcbc -activeforeground #000000 \
         -background #bcbcbc \
-        -font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1 \
         -foreground #000000 -highlightbackground #bcbcbc \
         -highlightcolor #000000 -padx 9 -pady 3 -text Close \
         -command {destroy $vTcl(images,manager_dlg,win)}
     button $base.but32 \
         -activebackground #bcbcbc -activeforeground #000000 \
         -background #bcbcbc -command vTcl:image:new_image_file \
-        -font -adobe-helvetica-bold-r-normal--12-120-75-75-p-70-iso8859-1 \
         -foreground #000000 -highlightbackground #bcbcbc \
         -highlightcolor #000000 -padx 9 -pady 3 -text {Add new image...} 
     ###################
@@ -714,13 +672,14 @@ proc vTcl:image:create_manager_dlg {base} {
     pack $base.but32 \
         -in $base -anchor center -expand 0 -fill x -side top 
 
+    catch {wm geometry $base $vTcl(geometry,$base)}
+    
     vTcl:image:init_img_manager
 }
 
 proc vTcl:image:prompt_image_manager {} {
 
-    global vTcl
-    vTcl:image:create_manager_dlg ""
+    Window show .vTcl.imgManager
 }
 
 proc vTcl:image:get_files_list {} {
@@ -744,4 +703,18 @@ proc vTcl:image:translate {value} {
       	}
       	
       	return $value
+}
+
+proc vTcl:image:refresh_manager {} {
+
+	global vTcl
+		
+        if [info exists vTcl(images,manager_dlg,win)] {
+	         	
+	       	if [winfo exists $vTcl(images,manager_dlg,win)] {
+
+	         	vTcl:image:init_img_manager
+			$vTcl(images,manager_dlg,win).cpd29.03 yview end
+		}
+	}
 }

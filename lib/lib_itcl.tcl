@@ -68,10 +68,11 @@ proc vTcl:widget:lib:lib_itcl {args} {
     # added toolbar
     # added feedback
     # added optionmenu
+    # added hierarchy
     # @@end_change
     
     foreach i {
-        entryfield spinint combobox scrolledlistbox calendar dateentry scrolledhtml toolbar feedback optionmenu
+        entryfield spinint combobox scrolledlistbox calendar dateentry scrolledhtml toolbar feedback optionmenu hierarchy
     } {
         set img_file [file join $vTcl(VTCL_HOME) images icon_$i.gif]
         if {![file exists $img_file]} {
@@ -102,6 +103,7 @@ proc vTcl:lib_itcl:setup {} {
 	set vTcl(toolbar,insert)               ""
 	set vTcl(feedback,insert)              "-labeltext {Percent complete:}"
 	set vTcl(optionmenu,insert)            "-labeltext {Select option:}"
+	set vTcl(hierarchy,insert)             ""
 
 	#
 	# add to procedure, var, bind regular expressions
@@ -119,7 +121,8 @@ proc vTcl:lib_itcl:setup {} {
                 Scrolledhtml \
                 Toolbar \
                 Feedback \
-                Optionmenu
+                Optionmenu \
+                Hierarchy
 
 	# @@change by Christian Gavin 3/7/2000
 	# list of megawidgets whose children are not visible by Vtcl
@@ -133,7 +136,8 @@ proc vTcl:lib_itcl:setup {} {
 				 Scrolledhtml \
 				 Toolbar \
 				 Feedback \
-				 Optionmenu
+				 Optionmenu \
+				 Hierarchy
 	
 	# @@end_change
 	
@@ -182,7 +186,35 @@ proc vTcl:lib_itcl:setup {} {
 	        -troughcolor \
 	        -clicktime \
 	        -cyclicon \
+	        -alwaysquery \
+	        -closedicon \
+	        -expanded \
+	        -filter \
+	        -iconcommand \
+	        -markbackground \
+	        -markforeground \
+	        -menucursor \
+	        -nodeicon \
+	        -openicon \
+	        -querycommand \
+	        -selectcommand \
+	        -textbackground \
+	        -textfont
 	        
+	set vTcl(opt,-alwaysquery)    { {Always Query}     {}       boolean {false true} }
+	set vTcl(opt,-closedicon)     { {Closed icon}      {}       image    {} }
+	set vTcl(opt,-expanded)       { {Expanded}         {}       boolean {false true} }
+	set vTcl(opt,-filter)         { {Filter}           {}       boolean {false true} }
+	set vTcl(opt,-iconcommand)    { {Icon Cmd}         {}       command {} }
+	set vTcl(opt,-markbackground) { {Mark BgColor}     Colors   color   {} }
+	set vTcl(opt,-markforeground) { {Mark FgColor}     Colors   color   {} }
+	set vTcl(opt,-menucursor)     { {Menu Cursor}      {}       type    {} }
+	set vTcl(opt,-nodeicon)       { {Node Icon}        {}       image   {} }
+	set vTcl(opt,-openicon)       { {Open Icon}        {}       image   {} }
+	set vTcl(opt,-querycommand)   { {Query Cmd}        {}       command {} }
+	set vTcl(opt,-selectcommand)  { {Select Cmd}       {}       command {} }
+	set vTcl(opt,-textbackground) { {Text BgColor}     Colors   color   {} }
+	set vTcl(opt,-textfont)       { {Text Font}        {}       font    {} }
 	set vTcl(opt,-clicktime)      { {Click Time}       {}       type    {} }
 	set vTcl(opt,-cyclicon)       { {Cyclic}           {}       boolean {false true} }
         set vTcl(opt,-barcolor)       { {Bar Color}        Colors   color   {} }
@@ -239,6 +271,7 @@ proc vTcl:lib_itcl:setup {} {
 	set vTcl(Toolbar,dump_opt)             vTcl:lib_itcl:dump_widget_opt
 	set vTcl(Feedback,dump_opt)            vTcl:lib_itcl:dump_widget_opt
 	set vTcl(Optionmenu,dump_opt)          vTcl:lib_itcl:dump_widget_opt
+	set vTcl(Hierarchy,dump_opt)           vTcl:lib_itcl:dump_widget_opt
 	#
 	# define whether or not do dump children of a class
 	#
@@ -252,6 +285,7 @@ proc vTcl:lib_itcl:setup {} {
 	set vTcl(Toolbar,dump_children)            0
 	set vTcl(Feedback,dump_children)           0
 	set vTcl(Optionmenu,dump_children)         0
+	set vTcl(Hierarchy,dump_children)          0
 	
 	# @@change by Christian Gavin 3/9/2000
 	# code to be generated at the top of a file if Itcl is supported
@@ -271,7 +305,8 @@ proc vTcl:lib_itcl:setup {} {
                 \# namespace import iwidgets::scrolledhtml
                 \# namespace import iwidgets::toolbar
                 \# namespace import iwidgets::feedback
-                \# namespace import iwidgets::optionmenu"
+                \# namespace import iwidgets::optionmenu
+                \# namespace import iwidgets::hierarchy"
 	
 	# @@end_change
 	
@@ -286,6 +321,7 @@ proc vTcl:lib_itcl:setup {} {
 	set vTcl(Toolbar,get_widget_tree_label)         vTcl:lib_itcl:get_widget_tree_label
 	set vTcl(Feedback,get_widget_tree_label)        vTcl:lib_itcl:get_widget_tree_label
 	set vTcl(Optionmenu,get_widget_tree_label)      vTcl:lib_itcl:get_widget_tree_label
+	set vTcl(Hierarchy,get_widget_tree_label)       vTcl:lib_itcl:get_widget_tree_label
 	
 	# @@end_change
 	
@@ -299,8 +335,24 @@ proc vTcl:lib_itcl:setup {} {
 	set vTcl(option,noencase,-textfont) 1
 	set vTcl(option,translate,-balloonfont) vTcl:font:translate
 	set vTcl(option,noencase,-balloonfont) 1
+	set vTcl(option,translate,-textfont) vTcl:font:translate
+	set vTcl(option,noencase,-textfont) 1
 
 	# @@end_change
+	
+	# hum... this is not too clean, but the hierarchy widget creates icons on the fly
+	#
+	# in brief, the hierarchy widget does not know about the following images:
+	#    openFolder
+	#    closedFolder
+	#    nodeFolder
+	#
+	# unless their respective options -openFolder,-closedFolder,-nodeFolder haven't been
+	# specified while creating a hierarchy widget in which case Iwidgets creates them
+	#
+	# this creates problems while sourcing a Iwidgets project in vTcl
+	#
+	# see save_option proc below for resolution
 }
 
 proc vTcl:lib_itcl:get_widget_tree_label {className} {
@@ -315,6 +367,7 @@ proc vTcl:lib_itcl:get_widget_tree_label {className} {
 		"toolbar"           {return "Toolbar"}
 		"feedback"          {return "Feedback"}
 		"optionmenu"        {return "Option menu"}
+		"hierarchy"         {return "Hierarchy"}
 		
 		default             {return ""}
 	}
@@ -350,9 +403,22 @@ proc vTcl:widget:optionmenu:inscmd {target} {
 #   1 means save the option
 #   0 means don't save it
 proc vTcl:lib_itcl:save_option {opt} {
-#    if [string match *::iwidgets* $opt] {
-#        return 0
-#    }
+	
+    set opt_name  [lindex $opt 0]
+    set opt_value [lindex $opt 4]
+    
+    if {$opt_name  == "-openicon" &&
+        $opt_value == "openFolder"} {
+        return 0 }
+        
+    if {$opt_name  == "-closedicon" &&
+        $opt_value == "closedFolder"} {
+        return 0 }
+
+    if {$opt_name  == "-nodeicon" &&
+        $opt_value == "nodeFolder"} {
+        return 0 }
+        
     vTcl:log "save_option '$opt'"
     return 1
 }

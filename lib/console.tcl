@@ -70,7 +70,7 @@ proc vTclWindow.vTcl.con {args} {
     # widget
     button .vTcl.con.fra6.but1 \
         -text "Insert selected widget name" \
-        -command ".vTcl.con.fra6.ent10 insert end \"\$vTcl(w,widget) \""
+        -command "vTcl:insert_widget_in_text .vTcl.con.fra6.ent10"
     pack .vTcl.con.fra6.but1 -fill x -side top
     # @@end_change 
     entry .vTcl.con.fra6.ent10 \
@@ -85,7 +85,8 @@ proc vTclWindow.vTcl.con {args} {
         
         set caught [expr [catch [.vTcl.con.fra6.ent10 get] vTcl(err)] == 1]
 
-        vTcl:console:get_output
+	# not needed, since the redefined "puts" command calls this function
+        # vTcl:console:get_output
         
         .vTcl.con.fra5.tex7 conf -state normal
 
@@ -111,13 +112,19 @@ proc vTclWindow.vTcl.con {args} {
 
 proc vTcl:console:get_output {} {
     global vTcl
+
+    # is the console actually visible ? if not, we'll show output later
+    if {! [winfo exists .vTcl.con]} {
+    	return
+    }
     
     set contents [read $vTcl(LOG_FD_R)]
     if {$contents != ""} {
-		.vTcl.con.fra5.tex7 conf -state normal
+
+	.vTcl.con.fra5.tex7 conf -state normal
         .vTcl.con.fra5.tex7 insert end "\n$contents" vTcl:return_value
-		.vTcl.con.fra5.tex7 yview end
-		.vTcl.con.fra5.tex7 conf -state disabled
+	.vTcl.con.fra5.tex7 yview end
+	.vTcl.con.fra5.tex7 conf -state disabled
     }
 }
 

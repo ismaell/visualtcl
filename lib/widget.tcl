@@ -656,4 +656,22 @@ proc vTcl:manager_update {mgr} {
     vTcl:update_top_list
 }
 
+# @@change by Christian Gavin 4/16/2000
+# proc to insert widget in text editor
+# @@end_change
 
+# insert the current widget name (eg. .top30) or alias into
+# given text widget
+
+proc vTcl:insert_widget_in_text {t} {
+	
+	global vTcl
+	
+	if {$vTcl(w,alias) != ""} {
+		set name \$widget\($vTcl(w,alias)\)
+	} else {
+		set name $vTcl(w,widget)
+	}
+	
+	$t insert insert $name
+}
