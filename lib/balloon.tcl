@@ -67,7 +67,7 @@ bind _vTclBalloon <<KillBalloon>> {
 }
 
 bind _vTclBalloon <<vTclBalloon>> {
-    if {$::vTcl::balloon::first != 1} {return}
+    if {$::vTcl::balloon::first != 1} {break}
 
     namespace eval ::vTcl::balloon {
         set first 2
