@@ -388,6 +388,109 @@ namespace eval ::inspector {
         InspectorValue insert end [package present $node_info]
         InspectorValue configure -state disabled
     }
+
+    proc {::inspector::expand_windows} {listbox node_index node_info level} {
+        global widget
+
+        # insert just after the node
+        incr node_index
+        incr level
+
+        foreach child "." {
+
+            ::inspector::insert_node $listbox  $node_index  $child  $level  yes $child \
+                {::inspector::expand_widget ::inspector::show_widget}
+
+            incr node_index
+        }
+    }
+
+    proc {::inspector::expand_widget} {listbox node_index node_info level} {
+        global widget
+
+        set children [winfo children $node_info]
+
+        # insert just after the node
+        incr node_index
+        incr level
+
+        foreach child $children {
+
+            ::inspector::insert_node $listbox  $node_index  $child  $level yes $child \
+                {::inspector::expand_widget ::inspector::show_widget}
+            incr node_index
+        }
+
+        ::inspector::insert_node $listbox  $node_index "Bindtags" $level yes $node_info \
+            {::inspector::expand_bindtags}
+        incr node_index
+    }
+
+    proc {::inspector::show_widget} {node_info} {
+        InspectorItem delete 0 end
+        InspectorItem insert end $node_info
+
+        InspectorValue configure -state normal
+        InspectorValue delete 0.0 end
+
+        set options [$node_info configure]
+        foreach option $options {
+            InspectorValue insert end ${option}\n
+        }
+    }
+
+    proc {::inspector::expand_bindtags} {listbox node_index node_info level} {
+
+        set children [bindtags $node_info]
+
+        # insert just after the node
+        incr node_index
+        incr level
+
+        foreach child $children {
+
+            ::inspector::insert_node $listbox  $node_index  $child  $level  yes $child \
+                 {::inspector::expand_bindtag}
+
+            incr node_index
+        }
+    }
+
+    proc {::inspector::expand_bindtag} {listbox node_index node_info level} {
+
+        set children [lsort [bind $node_info]]
+
+        # insert just after the node
+        incr node_index
+        incr level
+
+        foreach child $children {
+
+            ::inspector::insert_node $listbox  $node_index  $child  $level  no "$node_info $child" \
+                 {{} ::inspector::show_bind}
+
+            incr node_index
+        }
+    }
+
+    proc {::inspector::show_bind} {node_info} {
+
+        global widget
+
+        set bindtag [lindex $node_info 0]
+        set binding [lindex $node_info 1]
+
+        set bindcmd [bind $bindtag $binding]
+
+        InspectorItem delete 0 end
+        InspectorItem insert end $node_info
+
+        InspectorValue configure -state normal
+        InspectorValue delete 0.0 end
+        InspectorValue insert end $bindcmd
+
+        vTcl:syntax_color $widget(InspectorValue) 0 -1
+    }
 }
 
 proc vTclWindow.vTcl.inspector {base {container 0}} {
@@ -474,7 +577,7 @@ proc vTclWindow.vTcl.inspector {base {container 0}} {
 
         lassign $content_line has_children  node_info  item_commands  level  expanded
 
-        if {($has_children == "no") && [llength $item_commands] >= 2} {
+        if {[llength $item_commands] >= 2} {
 
             set click_cmd [lindex $item_commands 1]
             $click_cmd $node_info
@@ -614,6 +717,7 @@ proc vTclWindow.vTcl.inspector {base {container 0}} {
     ::inspector::init $widget(InspectorListbox)
     ::inspector::insert_node $widget(InspectorListbox)  end  "::"  0  yes  "::"  ::inspector::expand_namespace
     ::inspector::insert_node $widget(InspectorListbox)  end  "Packages"  0  yes  "Packages"  ::inspector::expand_packages
+    ::inspector::insert_node $widget(InspectorListbox)  end  "Windows"  0 yes "Windows" ::inspector::expand_windows
 
     InspectorValue configure -font $vTcl(pr,font_fixed)
 }
