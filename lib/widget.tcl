@@ -718,26 +718,11 @@ proc vTcl:set_alias {target {alias ""} {noupdate ""}} {
         }
     }
 
-    if {![lempty $was]} {
-        ## Unset the widget variables and delete the alias from the interpreter.
-        catch {
-            unset widget([vTcl:get_top_level_or_alias $target],$was)
-        }
-        catch {
-            interp alias {} $was {} {}
-            if {[winfo toplevel $target] != $target} {
-                interp alias {} [vTcl:get_top_level_or_alias $target].$was {}
-            }
-        }
-        catch {
-            unset widget($was)
-        }
-        catch {
-            unset widget(rev,$target)
-        }
+    if {![lempty $was] && $alias != $was} {
+        vTcl:unset_alias $target
     }
 
-    if {![lempty $alias]} {
+    if {![lempty $alias] && $alias != $was} {
         set widget($alias) $target
         set widget(rev,$target) $alias
 
@@ -755,45 +740,51 @@ proc vTcl:set_alias {target {alias ""} {noupdate ""}} {
 
         # Refresh property manager after changing an alias
         if {[lempty $noupdate]} { vTcl:update_widget_info $target }
-
-        ## This is not really necesary.
-        # vTcl:prop:update_attr
     }
 }
 
 proc vTcl:unset_alias {w} {
-    global widget widgetNums
-
-    # puts "unset_alias: $w"
+    global widget widgetNums vTcl classes
 
     if {![info exists widget(rev,$w)]} { return }
     set alias $widget(rev,$w)
+    set class [vTcl:get_class $w]
+    set other ""
 
+    catch { unset widget([vTcl:get_top_level_or_alias $w],$alias) }
+    catch { unset widget([winfo top level $w],$alias) }
+    catch { unset widget(rev,$w) }
     catch {
-        unset widget([vTcl:get_top_level_or_alias $w],$alias)
-    }
-    catch {
-        unset widget([winfo top level $w],$alias)
-    }
-    catch {
-        interp alias {} $alias {} {}
         if {[winfo toplevel $w] != $w} {
             interp alias {} [vTcl:get_top_level_or_alias $w].$alias {}
         }
     }
-    catch {
-        unset widget($alias)
-    }
-    catch {
-        unset widget(rev,$w)
+    catch { interp alias {} $alias {} {} }
+
+    # if alias is defined for another toplevel, let's be more careful
+    foreach name [array names widget] {
+        if {[string match *,$alias $name]} {
+            set other $widget($name)
+            break
+        }
     }
 
-    set class [vTcl:get_class $w]
+    catch {
+
+        if {$other == ""} {
+            unset widget($alias)
+        } else {
+            set widget($alias) $other
+            if { $vTcl(pr,cmdalias) } {
+                interp alias {} $alias {} $classes($class,widgetProc) $other
+            }
+        }
+    }
 
     ## If the alias is something like Button1, we try to remove its number
     ## from the widgetNums($class) variable.  This lets us re-use aliases
     ## when widgets are deleted.
-    if {[regexp "$class\(\[0-9\]+\)" $alias trash num]} {
+    if {[regexp "$class\(\[0-9\]+\)" $alias trash num] && $other == ""} {
         lremove widgetNums($class) $num
     }
 }

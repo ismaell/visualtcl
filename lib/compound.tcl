@@ -80,7 +80,9 @@ proc vTcl:name_replace {name s} {
 proc vTcl:put_compound {text compound} {
     global vTcl
 
-    if {$vTcl(pr,autoplace)} {
+    set rootclass [lindex [lindex $compound 0] 0]
+
+    if {$vTcl(pr,autoplace) || $rootclass == "Toplevel"} {
 	vTcl:auto_place_compound $compound $vTcl(w,def_mgr) {}
 	return
     }
@@ -180,23 +182,17 @@ proc vTcl:alias_in_other_toplevel {target alias} {
     global widget
     if {! [info exists widget($alias)]} {return 1}
 
-    set toplevel ""
-    catch {
-	set toplevel [winfo toplevel $target]
-    }
-
-    set toplevel_alias ""
-    catch {
-        set toplevel_alias [winfo toplevel $widget($alias)]
-    }
-
-    # puts "target=$target alias=$alias top=$toplevel topalias=$toplevel_alias"
-
-    if {$toplevel != $toplevel_alias} {
-        return 1
-    } else {
+    set class [vTcl:get_class $target]
+    if {$class == "Toplevel" && [info exists widget($alias)]} {
         return 0
     }
+
+    set toplevel ""
+    catch {
+	set toplevel [vTcl:get_top_level_or_alias $target]
+    }
+
+    return [expr ![info exists widget($toplevel,$alias)]]
 }
 
 proc vTcl:extract_compound {base name compound {level 0} {gmgr ""} {gopt ""}} {
@@ -418,11 +414,8 @@ proc vTcl:gen_compound {target {name ""} {cmpdname ""}} {
     } else {
         set mgrt [winfo manager $target]
 
-        # @@debug
-        vTcl:log "gen_compound: mgrt=\"$mgrt\""
-        # @@end_debug
+        # vTcl:log "gen_compound: mgrt=\"$mgrt\""
 
- 	# @@change by Christian Gavin 3/6/2000
  	# in Iwidgets, some controls are not yet packed/gridded/placed
  	# when they are in edit mode, therefore there is no manager at
  	# this time
@@ -432,8 +425,6 @@ proc vTcl:gen_compound {target {name ""} {cmpdname ""}} {
         } else {
 	    set mgri [vTcl:get_mgropts [$mgrt info $target]]
 	}
-
- 	# @@end_change
     }
     lappend mgr $mgrt $mgri
     set blst [bind $target]
