@@ -547,6 +547,9 @@ proc vTcl:dump_widget_bind {target basename} {
     set bindlist [lsort [bind $target]]
     foreach i $bindlist {
         set command [bind $target $i]
+	## replace occurences of widget path by %W to avoid absolute widget paths
+	regsub -all $target $command %W command
+	## dump it
         if {"$vTcl(bind,ignore)" == "" || ![regexp "^($vTcl(bind,ignore))" [string trim $command]]} {
             append result "$vTcl(tab)bind $basename $i \{\n"
             append result "$vTcl(tab2)[string trim $command]\n    \}\n"
