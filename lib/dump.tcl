@@ -803,18 +803,22 @@ proc vTcl:dump:project_info {basedir project} {
     set out "proc vTcl:project:info \{\} \{\n"
 
     foreach widget $widgets {
-	if {[vTcl:streq $widget "."]} { continue }
-	upvar ::widgets::${widget}::save save
-	set list {}
-	foreach var [lsort [array names save]] {
-	    if {!$save($var)} { continue }
-	    lappend list $var $save($var)
-	}
-    	append out $vTcl(tab)
-	append out "namespace eval ::widgets::$widget \{\n"
-	append out $vTcl(tab2)
-	append out "array set save [list $list]\n"
-	append out "$vTcl(tab)\}\n"
+        if {[vTcl:streq $widget "."]} { continue }
+        set testing [namespace children :: ::widgets::$widget]
+        if {$testing == ""} { continue }
+
+        upvar ::widgets::${widget}::save save
+        set list {}
+        foreach var [lsort [array names save]] {
+            if {!$save($var)} { continue }
+            lappend list $var $save($var)
+        }
+
+        append out $vTcl(tab)
+        append out "namespace eval ::widgets::$widget \{\n"
+        append out $vTcl(tab2)
+        append out "array set save [list $list]\n"
+        append out "$vTcl(tab)\}\n"
     }
 
     append out $vTcl(tab)
