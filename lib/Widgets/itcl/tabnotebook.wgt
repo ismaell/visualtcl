@@ -4,3 +4,14 @@ Lib   itcl
 Icon icon_tabnotebook.gif
 DumpChildren  no
 MegaWidget    yes
+AdditionalClasses Notebook Tabset Page
+
+InsertCmd vTcl:widget:tabnotebook:inscmd
+
+proc vTcl:widget:tabnotebook:inscmd {target} {
+
+    return "$target add -label {Page 1} ;\
+            $target add -label {Page 2} ;\
+            $target add -label {Page 3} ;\
+            $target select 0"
+}
