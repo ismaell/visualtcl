@@ -81,6 +81,8 @@ proc vTcl:boolean_radio {path args} {
     vTcl:boolean_radio_get $var _$var
 
     ## use the new variable for setting the old one
+    ## good enough for now since we always use vTcl(...) here as variable
+    global vTcl
     trace variable $var w "vTcl:boolean_radio_get $var _$var"
 }
 
