@@ -15,3 +15,4 @@ TreeChildrenCmd   {vTcl::widgets::bwidgets::labelframe::treeChildrenCmd
                    vTcl::widgets::bwidgets::labelframe::treeChildrenChildsite}
 DumpCmd     vTcl::widgets::bwidgets::labelframe::dumpCmd
 CompoundCmd vTcl::widgets::bwidgets::labelframe::compoundCmd
+IgnoreProc      ::TitleFrame::* TitleFrame
