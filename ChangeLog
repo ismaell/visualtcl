@@ -1,6 +1,16 @@
 ChangeLog for Visual Tcl:
 
 1.21 -> 1.22 (not released yet)
+        o Preferences dialog now uses default font
+	o Support for mclistbox (multicolumn listbox) package
+	  mclistbox by Bryan Oakley <oakley@channelpoint.com>
+	o Added dialog box to list Visual Tcl libraries and display their
+	  status (e.g. Itcl/Tk not detected, BLT detected, etc.)
+	o Added Scrolledtext Itcl/Tk Megawidget
+	o in TEST mode users are prevented from selecting widgets in the
+	  widget tree
+	o Font manager and image manager keep their scrolling position
+	  when changing/deleting a font/image
 	o Fixed problem when user tries to resize a packed label or
 	  entryfield using the handles
 	o Filter out Itcl generated procedures on open/save
