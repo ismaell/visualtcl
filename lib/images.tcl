@@ -47,6 +47,33 @@ proc vTcl:image:get_creation_type {filename} {
     }
 }
 
+proc vTcl:image:broken_image {} {
+
+    return {
+        R0lGODdhFAAUAPcAAAAAAIAAAACAAICAAAAAgIAAgACAgMDAwICAgP8AAAD/
+        AP//AAAA//8A/wD//////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAACwAAAAAFAAUAAAIhAAPCBxIsKDBgwgPAljIUOBC
+        BAkBPJg4UeBEBBAVPkCI4EHGghIHChAwsKNHgyEPCFBA0mFDkBtVjiz4AADK
+        mAds0tRJMCVBBkAl8hwYMsFPBwyE3jzQwKhAoASUwmTagCjDmksbVDWIderC
+        g1174gQ71CHFigfOhrXKUGfbrwnjyp0bEAA7
+    }
+}
+
 proc {vTcl:image:create_new_image} {filename
                                     {description {no description}}
                                     {type {}}
@@ -86,26 +113,7 @@ proc {vTcl:image:create_new_image} {filename
 
             set description "file not found!"
 
-            set object [image create bitmap -data {
-                #define open_width 16
-                #define open_height 16
-                static char open_bits[] = {
-                0x7F, 0xFE,
-                0x41, 0x82,
-                0x21, 0x81,
-                0x41, 0x82,
-                0x21, 0x81,
-                0x21, 0x81,
-                0x21, 0x81,
-                0x91, 0x80,
-                0x21, 0x81,
-                0x91, 0x80,
-                0x21, 0x81,
-                0x21, 0x81,
-                0x21, 0x81,
-                0x41, 0x82,
-                0x41, 0x82,
-                0x7F, 0xFE};}]
+            set object [image create photo -data [vTcl:image:broken_image] ]
 
         } else {
 
@@ -522,13 +530,9 @@ proc vTcl:image:dump_proc {fileID name} {
     puts $fileID ""
 }
 
-proc vTcl:image:dump_create_image {fileID image} {
+proc vTcl:image:dump_create_image {image} {
 
-	global vTcl
-
-	puts $fileID "vTcl:image:create_new_image \"$image\" \\"
-	puts $fileID "    \"[vTcl:image:get_description $image]\" \\"
-	puts $fileID "    \"[vTcl:image:get_type $image]\"" nonewline
+    global vTcl
 
     if { ! [info exists vTcl(pr,saveimagesinline)] } {
 
@@ -537,13 +541,39 @@ proc vTcl:image:dump_create_image {fileID image} {
 
     if {$vTcl(pr,saveimagesinline)} {
 
-        puts $fileID "\\\n\"[::base64::encode_file $image]\"\n"
-
+        set inline [::base64::encode_file $image]
     } else {
 
-        puts $fileID " {}\n"
-
+        set inline ""
     }
+
+    set result [list \
+                   $image \
+                   [vTcl:image:get_description $image] \
+                   [vTcl:image:get_type $image] \
+                   $inline]
+
+    return $vTcl(tab)$vTcl(tab)[list $result]
+}
+
+proc vTcl:image:dump_create_image_header {} {
+
+    global vTcl
+
+    return "foreach img \{\n"
+}
+
+proc vTcl:image:dump_create_image_footer {} {
+
+    global vTcl
+
+    set result ""
+    append result "$vTcl(tab)\} \{\n"
+    append result "$vTcl(tab)$vTcl(tab)vTcl:image:create_new_image\\\n"
+    append result "$vTcl(tab)$vTcl(tab)$vTcl(tab)"
+    append result "\[lindex \$img 0\] \[lindex \$img 1\] "
+    append result "\[lindex \$img 2\] \[lindex \$img 3\]\n"
+    append result "\}\n"
 }
 
 proc vTcl:image:generate_image_stock {fileID} {
@@ -558,15 +588,19 @@ proc vTcl:image:generate_image_stock {fileID} {
     vTcl:image:dump_proc $fileID "vTcl:image:create_new_image"
     vTcl:image:dump_proc $fileID "vTcl:image:get_image"
     vTcl:image:dump_proc $fileID "vTcl:image:get_creation_type"
+    vTcl:image:dump_proc $fileID "vTcl:image:broken_image"
+
+    puts $fileID [vTcl:image:dump_create_image_header]
 
 	foreach image $vTcl(images,files) {
 
 		if {[vTcl:image:get_type $image] == "stock"} {
 
-			vTcl:image:dump_create_image $fileID $image
+			puts $fileID [vTcl:image:dump_create_image $image]
 		}
 	}
 
+    puts $fileID [vTcl:image:dump_create_image_footer]
     puts $fileID "\}"
 }
 
@@ -576,13 +610,17 @@ proc vTcl:image:generate_image_user {fileID} {
     puts $fileID {############################}
     puts $fileID "\# vTcl Code to Load User Images\n"
 
-	foreach image $vTcl(images,files) {
+    puts $fileID [vTcl:image:dump_create_image_header]
+
+    foreach image $vTcl(images,files) {
 
 		if {[vTcl:image:get_type $image] == "user"} {
 
-			vTcl:image:dump_create_image $fileID $image
+			puts $fileID [vTcl:image:dump_create_image $image]
 		}
-	}
+    }
+
+    puts $fileID [vTcl:image:dump_create_image_footer]
 }
 
 proc vTcl:image:delete_image {image} {
