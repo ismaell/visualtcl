@@ -56,7 +56,7 @@ proc vTcl:delete {{w ""}} {
     # cut/copy/paste handled by text widget only
     if {[vTcl:entry_or_text $w]} then return
 
-    global vTcl
+    global vTcl classes
     if { $vTcl(w,widget) == "." } { return }
 
     set w $vTcl(w,widget)
@@ -72,12 +72,16 @@ proc vTcl:delete {{w ""}} {
 
     set buffer [vTcl:create_compound $vTcl(w,widget)]
     set do ""
+    set destroy_cmd "destroy"
     foreach child $children {
         append do "vTcl:unset_alias $child; "
     }
+    if {$classes($class,deleteCmd) != ""} {
+        set destroy_cmd $classes($class,deleteCmd)
+    }
     append do "vTcl:unset_alias $vTcl(w,widget); "
     append do "vTcl:setup_unbind $vTcl(w,widget); "
-    append do "destroy $vTcl(w,widget); "
+    append do "$destroy_cmd $vTcl(w,widget); "
     append do "set _cmds \[info commands $vTcl(w,widget).*\]; "
     append do {foreach _cmd $_cmds {catch {rename $_cmd ""}}}
     set undo "vTcl:insert_compound $vTcl(w,widget) \{$buffer\} $vTcl(w,def_mgr)"

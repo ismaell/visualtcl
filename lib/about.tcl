@@ -62,7 +62,7 @@ proc vTclWindow.vTcl.about {args} {
         -borderwidth 1 -font [vTcl:font:get_font "vTcl:font5"]
     label $base.lab21 \
         -borderwidth 1 -font [vTcl:font:get_font "vTcl:font5"] \
-        -text {Version 1.5.1b2} -foreground white -background black
+        -text {Version 1.5.1b3} -foreground white -background black
     ###################
     # SETTING GEOMETRY
     ###################
@@ -169,10 +169,32 @@ Routines for encoding and decoding base64
    decoding from Pascual Alonso,
    namespace'ing and bugs from Parand Tony Darugar (tdarugar@binevolve.com)\n
 Combobox and Multicolumn listbox Copyright (c) 1999, Bryan Oakley
-Progressbar Copyright (c) 2000 Alexander Schoepe\n"
+Progressbar Copyright (c) 2000 Alexander Schoepe\n
+======================================================================
+Enhanced Tk Console, part of the VerTcl system
+
+Originally based off Brent Welch's Tcl Shell Widget
+(from \"Practical Programming in Tcl and Tk\")
+
+Thanks to the following (among many) for early bug reports & code ideas:
+Steven Wahl <steven@indra.com>, Jan Nijtmans <nijtmans@nici.kun.nl>
+Crimmins <markcrim@umich.edu>, Wart <wart@ugcs.caltech.edu>
+
+Copyright 1995-2000 Jeffrey Hobbs
+Initiated: Thu Aug 17 15:36:47 PDT 1995
+
+jeff.hobbs@acm.org
+
+source standard_disclaimer.tcl
+source bourbon_ware.tcl
+======================================================================
+"
     CreditsText insert end \
          "\nTcl version $tcl_version\nTk version $tk_version"
     bind $base <Key-Escape> "$base.but23 invoke"
+
+    # avoid syntax coloring in credits text...
+    bind $widget(CreditsText) <KeyRelease> "break"
 
     wm geometry $base 500x420
     vTcl:center $base 500 420

@@ -776,6 +776,32 @@ namespace eval ::menu_edit {
         return 0
     }
 
+    proc {::menu_edit::is_open_existing_editor} {m} {
+        # let's check each menu editor
+        variable menu_edit_windows
+
+        foreach top $menu_edit_windows {
+
+            if {[::menu_edit::includes_menu $top $m] != -1} then {
+                return $top
+            }
+        }
+
+        return ""
+    }
+
+    # refreshes the menu editor
+
+    proc {::menu_edit::refreshes_existing_editor} {top} {
+
+        ::menu_edit::fill_menu_list $top [vTcl:at ::${top}::menu]
+
+        $top.MenuListbox selection clear 0 end
+        $top.MenuListbox selection set 0
+        $top.MenuListbox activate 0
+        ::menu_edit::show_menu $top 0
+    }
+
 } ; # namespace eval
 
 proc vTclWindow.vTclMenuEdit {base menu} {

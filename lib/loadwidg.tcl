@@ -102,6 +102,7 @@ proc SetClassArray {} {
         $tmp(class),autoPlace       0
         $tmp(class),treeLabel       $tmp(class)
         $tmp(class),treeChildrenCmd {}
+        $tmp(class),deleteCmd       {}
     "
 
     foreach elem [array names classes $tmp(class),*] {
@@ -213,6 +214,11 @@ proc MegaWidget {val} {
 proc InsertCmd {name} {
     global tmp
     set tmp(insertCmd) $name
+}
+
+proc DeleteCmd {name} {
+    global tmp
+    set tmp(deleteCmd) $name
 }
 
 proc DoubleClickCmd {name} {
