@@ -498,7 +498,8 @@ proc vTcl:define_bindings {} {
     bind Text <Key-Return>    {
 
         # exclude user inserted text widgets from vTcl bindings
-        if {! [string match .vTcl* %W] } {
+        if {(! [string match .vTcl* %W]) ||
+            [info exists %W.nosyntax] } {
             tkTextInsert %W "\n"
             focus %W
             break
@@ -522,7 +523,8 @@ proc vTcl:define_bindings {} {
     bind Text <KeyRelease>   {
 
         # exclude user inserted text widgets from vTcl bindings
-        if {! [string match .vTcl* %W] } {
+        if {(! [string match .vTcl* %W]) ||
+            [info exists %W.nosyntax]  } {
             break
         }
 
