@@ -419,11 +419,15 @@ proc vTcl:vtcl:remap {w} {
     global vTcl
 
     if {![vTcl:streq $w ".vTcl"]} { return }
+    if {![info exists vTcl(tops,unmapped)]} { return }
 
-    foreach i $vTcl(tops) {
-	if {![winfo exists $i]} { continue }
-	vTcl:show_top $i
+    foreach i $vTcl(tops,unmapped) {
+        if {![winfo exists $i]} { continue }
+
+        vTcl:show_top $i
     }
+
+    set vTcl(tops,unmapped) ""
 }
 
 proc vTcl:vtcl:unmap {w} {
@@ -432,9 +436,14 @@ proc vTcl:vtcl:unmap {w} {
     if {![vTcl:streq $w ".vTcl"]} { return }
     if {[vTcl:streq [wm state $w] "normal"]} { return }
 
+    set vTcl(tops,unmapped) ""
+
     foreach i $vTcl(tops) {
 	if {![winfo exists $i]} { continue }
-	vTcl:hide_top $i
+        if {[wm state $i] != "withdrawn"} {
+            vTcl:hide_top $i
+            lappend vTcl(tops,unmapped) $i
+        }
     }
 }
 
