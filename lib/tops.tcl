@@ -144,8 +144,8 @@ proc vTclWindow.vTcl.toplist {args} {
         -borderwidth 1 -height 30 -relief sunken -width 30 
     pack .vTcl.toplist.frame7 \
         -in .vTcl.toplist -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 \
-        -padx 0 -pady 0 -side top 
-    button .vTcl.toplist.frame7.button8 \
+        -padx 0 -pady 0 -side top
+    vTcl:toolbar_button .vTcl.toplist.frame7.button8 \
         -command {
             set vTcl(x) [.vTcl.toplist.f2.list curselection]
             if {$vTcl(x) != ""} {
@@ -158,7 +158,7 @@ proc vTclWindow.vTcl.toplist {args} {
         -in .vTcl.toplist.frame7 -anchor center -expand 0 -fill none -ipadx 0 \
         -ipady 0 -padx 0 -pady 0 -side left 
     vTcl:set_balloon .vTcl.toplist.frame7.button8 "Show toplevel window"
-    button .vTcl.toplist.frame7.button9 \
+    vTcl:toolbar_button .vTcl.toplist.frame7.button9 \
         -command {
             set vTcl(x) [.vTcl.toplist.f2.list curselection]
             if {$vTcl(x) != ""} {
@@ -171,7 +171,7 @@ proc vTclWindow.vTcl.toplist {args} {
         -in .vTcl.toplist.frame7 -anchor center -expand 0 -fill none -ipadx 0 \
         -ipady 0 -padx 0 -pady 0 -side left
     vTcl:set_balloon .vTcl.toplist.frame7.button9 "Hide toplevel window"
-    button .vTcl.toplist.frame7.button10 \
+    vTcl:toolbar_button .vTcl.toplist.frame7.button10 \
         -command {
             set vTcl(x) [.vTcl.toplist.f2.list curselection]
             if {$vTcl(x) != ""} {
@@ -184,7 +184,7 @@ proc vTclWindow.vTcl.toplist {args} {
         -in .vTcl.toplist.frame7 -anchor center -expand 0 -fill none -ipadx 0 \
         -ipady 0 -padx 0 -pady 0 -side left
     vTcl:set_balloon .vTcl.toplist.frame7.button10 "Delete toplevel window"
-    button $base.frame7.button11 \
+    vTcl:toolbar_button $base.frame7.button11 \
     	-command "vTcl:toplist:show 0" \
 	-image [vTcl:image:get_image ok.gif]
     pack $base.frame7.button11 \

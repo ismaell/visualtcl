@@ -546,7 +546,7 @@ proc vTclWindow.vTcl.inspector {base {container 0}} {
     }
     frame $base.fra23 \
         -borderwidth 2
-    button $base.fra23.but24 \
+    vTcl:toolbar_button $base.fra23.but24 \
         -image [vTcl:image:get_image "ok.gif"] \
         -command "Window hide $base"
     frame $base.cpd26 \
@@ -595,7 +595,7 @@ proc vTclWindow.vTcl.inspector {base {container 0}} {
         -command "$base.cpd26.01.cpd27.01 yview"
     frame $base.cpd26.01.fra29 \
         -borderwidth 2
-    button $base.cpd26.01.fra29.but30 \
+    vTcl:toolbar_button $base.cpd26.01.fra29.but30 \
         -image [vTcl:image:get_image "refresh.gif"]
     frame $base.cpd26.02
     label $base.cpd26.02.lab22 \

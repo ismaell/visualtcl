@@ -21,6 +21,31 @@
 ##############################################################################
 #
 
+proc vTcl:toolbar_button {args} {
+   eval button $args
+   set path [lindex $args 0]
+   $path configure -relief flat -highlightthickness 0 -height 23 -width 23
+   bind $path <Enter> "%W configure -relief raised"
+   bind $path <Leave> "%W configure -relief flat"
+}
+
+proc vTcl:toolbar_menubutton {args} {
+   eval menubutton $args
+   set path [lindex $args 0]
+   $path configure -relief flat -highlightthickness 0 -height 23 -width 23
+   bind $path <Enter> "%W configure -relief raised"
+   bind $path <Leave> "%W configure -relief flat"
+   bind $path <ButtonPress-1> "%W configure -relief flat"
+}
+
+proc vTcl:toolbar_label {args} {
+   eval label $args
+   set path [lindex $args 0]
+   $path configure -relief flat -highlightthickness 0 -height 23 -width 23
+   bind $path <Enter> "%W configure -relief raised"
+   bind $path <Leave> "%W configure -relief flat"
+}
+
 proc vTcl:portable_filename {filename} {
 
    set result "\[file join "

@@ -1,6 +1,9 @@
 ChangeLog for Visual Tcl:
 
 1.51b4 -> 1.51rc0
+    o Adopted Interned Explorer-like toolbar buttons for a much nicer look
+      (well, that's my opinion at least)
+    o Fixed lremove bug in bindings editor
     o Added more default values to scale and message widget, to avoid
       saving them in the project when not needed.
     o Updated tix panedwindow and notebook to save childsites using

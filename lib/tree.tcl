@@ -286,10 +286,10 @@ proc vTclWindow.vTcl.tree {args} {
     wm title $base "Widget Tree"
 
     frame $base.frameTop
-    button $base.frameTop.buttonRefresh \
+    vTcl:toolbar_button $base.frameTop.buttonRefresh \
         -image [vTcl:image:get_image "refresh.gif"] \
         -command vTcl:init_wtree
-    button $base.frameTop.buttonClose \
+    vTcl:toolbar_button $base.frameTop.buttonClose \
         -image [vTcl:image:get_image "ok.gif"] \
         -command "wm withdraw .vTcl.tree"
     frame $base.cpd21 -relief sunken -borderwidth 2

@@ -40,19 +40,14 @@ proc vTclWindow.vTcl.bind {args} {
     if {[winfo exists $base] && (!$container)} { wm deiconify $base; return }
 
     global widget
-    set widget(rev,$base) {BindingsEditor}
     set {widget(BindingsEditor)} "$base"
     interp alias {} BindingsEditor {} vTcl:Toplevel:WidgetProc $base
-    set widget(rev,$base.cpd21.01.cpd25.01) {ListboxBindings}
     set {widget(ListboxBindings)} "$base.cpd21.01.cpd25.01"
     interp alias {} ListboxBindings {} vTcl:WidgetProc $base.cpd21.01.cpd25.01
-    set widget(rev,$base.fra22.but24) {RemoveBinding}
     set {widget(RemoveBinding)} "$base.fra22.but24"
     interp alias {} RemoveBinding {} vTcl:WidgetProc $base.fra22.but24
-    set widget(rev,$base.fra22.men20) {AddBinding}
     set {widget(AddBinding)} "$base.fra22.men20"
     interp alias {} AddBinding {} vTcl:WidgetProc $base.fra22.men20
-    set widget(rev,$base.cpd21.02.cpd21.03) {TextBindings}
     set {widget(TextBindings)} "$base.cpd21.02.cpd21.03"
     interp alias {} TextBindings {} vTcl:WidgetProc $base.cpd21.02.cpd21.03
     set widget(MoveTagUp) $base.fra22.but25
@@ -133,9 +128,9 @@ proc vTclWindow.vTcl.bind {args} {
     frame $base.fra22 \
         -borderwidth 2 -height 75 \
         -width 125
-    button $base.fra22.but34 \
+    vTcl:toolbar_button $base.fra22.but34 \
         -image [vTcl:image:get_image "ok.gif"] \
-        -padx 9 -pady 3 -text button -command "Window hide .vTcl.bind"
+        -command "Window hide .vTcl.bind"
     vTcl:set_balloon $base.fra22.but34 "Close"
     frame $base.cpd21 \
         -background #000000 -height 100 -highlightbackground #dcdcdc \
@@ -143,11 +138,12 @@ proc vTclWindow.vTcl.bind {args} {
     frame $base.cpd21.01 \
         -background #9900991B99FE -highlightbackground #dcdcdc \
         -highlightcolor #000000
-    menubutton $base.fra22.men20 \
-        -height 23 \
-        -image [vTcl:image:get_image "add.gif"] \
-        -menu "$base.fra22.men20.m" -padx 0 -pady 0 -relief raised \
-        -text menu -width 23
+    vTcl:toolbar_label $base.fra22.men20 \
+        -image [vTcl:image:get_image "add.gif"]
+    bind $base.fra22.men20 <ButtonPress-1> {
+        if {[%W cget -state] == "normal"} {
+          tk_popup %W.m [winfo rootx %W] [expr [winfo rooty %W] + [winfo height %W]]}
+    }
     menu $base.fra22.men20.m \
         -borderwidth 1 \
         -tearoff 0
@@ -165,11 +161,11 @@ proc vTclWindow.vTcl.bind {args} {
         -label ButtonRelease-2
     $base.fra22.men20.m add command \
         -command {::widgets_bindings::add_binding <ButtonRelease-3>} \
-        -label ButtonRelease-3 
+        -label ButtonRelease-3
     $base.fra22.men20.m add command \
-        -command {::widgets_bindings::add_binding <Motion>} -label Motion 
+        -command {::widgets_bindings::add_binding <Motion>} -label Motion
     $base.fra22.men20.m add command \
-        -command {::widgets_bindings::add_binding <Enter>} -label Enter 
+        -command {::widgets_bindings::add_binding <Enter>} -label Enter
     $base.fra22.men20.m add command \
         -command {::widgets_bindings::add_binding <Leave>} -label Leave 
     $base.fra22.men20.m add command \
@@ -183,34 +179,24 @@ proc vTclWindow.vTcl.bind {args} {
         -command {::widgets_bindings::add_binding <FocusOut>} -label FocusOut
     $base.fra22.men20.m add command \
         -command {Window show .vTcl.newbind} -label Advanced...
-    button $base.fra22.but24 \
-        -command ::widgets_bindings::delete_binding \
-        -height 23 \
-        -highlightthickness 0 \
+    vTcl:toolbar_button $base.fra22.but24 \
+        -command "::widgets_bindings::delete_binding" \
         -image [vTcl:image:get_image "remove.gif"] \
-        -padx 0 -pady 0 -text button -width 23
-    button $base.fra22.but25 \
+        -padx 0 -pady 0 -text button
+    vTcl:toolbar_button $base.fra22.but25 \
         -command "::widgets_bindings::movetag up" \
-        -height 23 \
-        -highlightthickness 0 \
         -image up \
-        -padx 0 -pady 0 -text button -width 23
-    button $base.fra22.but26 \
+        -padx 0 -pady 0 -text button
+    vTcl:toolbar_button $base.fra22.but26 \
         -command "::widgets_bindings::movetag down" \
-        -height 23 \
-        -highlightthickness 0 \
         -image down \
-        -padx 0 -pady 0 -text button -width 23
-    button $base.fra22.but27 \
+        -padx 0 -pady 0 -text button
+    vTcl:toolbar_button $base.fra22.but27 \
         -command "vTcl:Toplevel:WidgetProc .vTcl.newtag ShowModal" \
-        -height 23 \
-        -highlightthickness 0 \
-        -padx 0 -pady 0 -image icon_message.gif -width 23
-    button $base.fra22.but28 \
+        -padx 0 -pady 0 -image icon_message.gif
+    vTcl:toolbar_button $base.fra22.but28 \
         -command "::widgets_bindings::delete_tag" \
-        -height 23 \
-        -highlightthickness 0 \
-        -padx 0 -pady 0 -image delete_tag -width 23
+        -padx 0 -pady 0 -image delete_tag
     frame $base.cpd21.01.cpd25 \
         -background #dcdcdc -borderwidth 1 -height 30 \
         -highlightbackground #dcdcdc -highlightcolor #000000 -relief raised \
@@ -271,13 +257,9 @@ proc vTclWindow.vTcl.bind {args} {
         -command {::widgets_bindings::right_click_modifier Button3} \
         -label Button3
     scrollbar $base.cpd21.01.cpd25.02 \
-        -activebackground #dcdcdc -background #dcdcdc \
-        -command "$base.cpd21.01.cpd25.01 xview" \
-        -orient horizontal -troughcolor #dcdcdc
+        -command "$base.cpd21.01.cpd25.01 xview" -orient horizontal
     scrollbar $base.cpd21.01.cpd25.03 \
-        -activebackground #dcdcdc -background #dcdcdc \
-        -command "$base.cpd21.01.cpd25.01 yview" \
-        -troughcolor #dcdcdc
+        -command "$base.cpd21.01.cpd25.01 yview"
     frame $base.cpd21.02 \
         -background #9900991B99FE -highlightbackground #dcdcdc \
         -highlightcolor #000000 
@@ -286,13 +268,9 @@ proc vTclWindow.vTcl.bind {args} {
         -highlightbackground #dcdcdc -highlightcolor #000000 -relief raised \
         -width 30 
     scrollbar $base.cpd21.02.cpd21.01 \
-        -activebackground #dcdcdc -background #dcdcdc \
-        -command "$base.cpd21.02.cpd21.03 xview"  \
-        -orient horizontal -troughcolor #dcdcdc  
+        -command "$base.cpd21.02.cpd21.03 xview" -orient horizontal
     scrollbar $base.cpd21.02.cpd21.02 \
-        -activebackground #dcdcdc -background #dcdcdc \
-        -command "$base.cpd21.02.cpd21.03 yview"  \
-        -troughcolor #dcdcdc  
+        -command "$base.cpd21.02.cpd21.03 yview"
     text $base.cpd21.02.cpd21.03 \
         -background white \
         -foreground #000000 -height 1 -highlightbackground #ffffff \
@@ -447,16 +425,12 @@ proc vTclWindow.vTcl.newbind {base {container 0}} {
     }
 
     global widget
-    set widget(rev,$base) {BindingsInsert}
     set {widget(BindingsInsert)} "$base"
     interp alias {} BindingsInsert {} vTcl:Toplevel:WidgetProc $base
-    set widget(rev,$base.fra23.cpd34.01) {BindingsModifiers}
     set {widget(BindingsModifiers)} "$base.fra23.cpd34.01"
     interp alias {} BindingsModifiers {} vTcl:WidgetProc $base.fra23.cpd34.01
-    set widget(rev,$base.fra23.cpd35.01) {BindingsEvents}
     set {widget(BindingsEvents)} "$base.fra23.cpd35.01"
     interp alias {} BindingsEvents {} vTcl:WidgetProc $base.fra23.cpd35.01
-    set widget(rev,$base.fra36.ent38) {BindingsEventEntry}
     set {widget(BindingsEventEntry)} "$base.fra36.ent38"
     interp alias {} BindingsEventEntry {} vTcl:WidgetProc $base.fra36.ent38
 
@@ -668,16 +642,12 @@ proc vTclWindow.vTcl.newtag {base} {
     # am destroying it when the user clicks "Cancel"
 
     global widget
-    set widget(rev,$base.fra20.but21) {NewBindingTagOK}
     set {widget(NewBindingTagOK)} "$base.fra20.but21"
     interp alias {} NewBindingTagOK {} vTcl:WidgetProc $base.fra20.but21
-    set widget(rev,$base.fra20.but23) {NewBindingTagCancel}
     set {widget(NewBindingTagCancel)} "$base.fra20.but23"
     interp alias {} NewBindingTagCancel {} vTcl:WidgetProc $base.fra20.but23
-    set widget(rev,$base.fra24.cpd26.01) {ListboxTags}
     set {widget(ListboxTags)} "$base.fra24.cpd26.01"
     interp alias {} ListboxTags {} vTcl:WidgetProc $base.fra24.cpd26.01
-    set widget(rev,$base.fra24.ent28) {NewBindingTagEntry}
     set {widget(NewBindingTagEntry)} "$base.fra24.ent28"
     interp alias {} NewBindingTagEntry {} vTcl:WidgetProc $base.fra24.ent28
 
@@ -832,7 +802,7 @@ namespace eval ::widgets_bindings {
 
         set target $widgets_bindings::target
 
-        lremove vTcl(bindtags,$target) $tag
+        vTcl::lremove vTcl(bindtags,$target) $tag
 
         ::widgets_bindings::fill_bindings $target
         ::widgets_bindings::select_show_binding $target ""
