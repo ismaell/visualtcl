@@ -1,17 +1,15 @@
 
- Visual Tcl 1.20
- November 24, 1998
+ Visual Tcl 1.21
+ November 24, 1999
 
- Announcing the 1.2.0 release of Visual Tcl. This represents the first
- cut at the "stable" 1.2.x development tree. All new features will be
- introduced in the 1.3.x branch.
+ Announcing the 1.2.1 release of Visual Tcl. This represents the first
+ point release of the "stable" 1.2.x development tree. All new features
+ will be introduced in the 1.3.x branch.
 
 
-Changes since 1.11p1:
+Changes since 1.20:
 
-	o Evaluation optimizations for Tcl/Tk8.0
-	o Fix to major toplevel naming bug (Thanks Rick)
-	o Additional blt widget support (Thanks Victor)
+    o Root window placer fix (long-standing bug) from Alex Goodyear
 
 
 HOW TO GET IT:
