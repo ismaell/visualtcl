@@ -224,7 +224,7 @@ proc {vTcl:image:init_img_manager} {} {
 	    set file [file join $vTcl(VTCL_HOME) images edit open.gif]
 	    button $base.${reference}_edit \
 		-image [vTcl:image:get_image $file] \
-		-command "exec \"\$vTcl(pr,imageeditor)\" \"$realname\" &"
+		-command "vTcl:image:external_editor $realname"
 
 	    vTcl:set_balloon $base.${reference}_edit "Edit image"
 	}
@@ -791,6 +791,13 @@ proc vTcl:image:refresh_manager {{position 0.0}} {
 }
 
 proc vTcl:image:get_manager_position {} {
-	global vTcl
-	return [lindex [$vTcl(images,manager_dlg,win).cpd29.03 yview] 0]
+    global vTcl
+    return [lindex [$vTcl(images,manager_dlg,win).cpd29.03 yview] 0]
+}
+
+proc vTcl:image:external_editor {imageName} {
+    global vTcl
+    if {[catch {exec "$vTcl(pr,imageeditor)" "$imageName" &}]} {
+    	vTcl:error "Could not execute external image editor"
+    }
 }
