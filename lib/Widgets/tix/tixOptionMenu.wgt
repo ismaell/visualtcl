@@ -2,6 +2,7 @@ Name		tixOptionMenu
 Lib		tix
 
 Class		TixOptionMenu
+Icon		icon_tixOptionMenu.gif
 TreeLabel	Tix OptionMenu
 DefaultOptions	-label "OptionMenu:" -options {label.anchor e}
 DumpCmd		vTcl:dump:TixOptionMenu

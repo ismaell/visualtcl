@@ -2,6 +2,7 @@ Name		tixComboBox
 Lib		tix
 
 Class		TixComboBox
+Icon		icon_tixComboBox.gif
 TreeLabel	Tix ComboBox
 DumpCmd		vTcl:lib_tix:dump_widget_opt
 DumpChildren	no

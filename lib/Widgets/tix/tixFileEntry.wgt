@@ -2,6 +2,7 @@ Name		tixFileEntry
 Lib		tix
 
 Class		TixFileEntry
+Icon		icon_tixFileEntry.gif
 TreeLabel	Tix FileEntry
 DefaultOptions	-label "FileEntry:" -options {label.anchor e}
 DumpCmd		vTcl:dump:TixFileEntry

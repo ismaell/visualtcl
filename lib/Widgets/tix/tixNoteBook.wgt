@@ -2,6 +2,7 @@ Name		tixNoteBook
 Lib		tix
 
 Class		TixNoteBook
+Icon		icon_tixNoteBook.gif
 TreeLabel	Tix NoteBook
 DumpCmd		vTcl:dump:TixNoteBook
 DumpChildren	no

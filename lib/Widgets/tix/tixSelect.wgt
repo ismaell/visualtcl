@@ -2,6 +2,7 @@ Name		tixSelect
 Lib		tix
 
 Class		TixSelect
+Icon		icon_tixSelect.gif
 TreeLabel	Tix Select
 DefaultOptions	-radio 1
 DumpCmd		vTcl:dump:TixSelect

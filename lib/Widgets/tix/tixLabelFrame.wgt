@@ -2,6 +2,7 @@ Name		tixLabelFrame
 Lib		tix
 
 Class		TixLabelFrame
+Icon		icon_tixLabelFrame.gif
 TreeLabel	Tix LabelFrame
 DefaultOptions	-label "Label"
 DumpCmd		vTcl:dump:TixLabelFrame

@@ -2,6 +2,7 @@ Name		tixPanedWindow
 Lib		tix
 
 Class		TixPanedWindow
+Icon		icon_tixPanedWindow.gif
 TreeLabel	Tix PanedWindow
 DefaultOptions	-orient vertical
 DumpCmd		vTcl:dump:TixPanedWindow
