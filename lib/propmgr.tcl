@@ -776,7 +776,7 @@ proc vTcl:propmgr:focusNext {w} {
 proc vTcl:propmgr:scrollToLabel {c w units} {
     global vTcl
     set split [split $w .]
-    set split [lrange $split 0 4]
+    set split [lrange $split 0 5]
     set frame [join $split .]
 
     if {$units > 0} {
