@@ -487,6 +487,11 @@ proc vTcl:dump_widget_geom {target basename} {
     if {[info exists classes($class,megaWidget)] &&
         $classes($class,megaWidget)} {return $result}
 
+    append result [vTcl:dump_grid_geom $target $basename]
+}
+
+proc vTcl:dump_grid_geom {target basename} {
+    set result ""
     set pre g
     set gcolumn [lindex [grid size $target] 0]
     set grow [lindex [grid size $target] 1]
@@ -498,7 +503,7 @@ proc vTcl:dump_widget_geom {target basename} {
                     set x [expr {round([grid ${a}conf $target $i -$b])}]
                 }]} {set x 0}
                 if {$x} {
-                    append result "$vTcl(tab)grid ${a}conf $basename $i -$b $x\n"
+                    append result "$::vTcl(tab)grid ${a}conf $basename $i -$b $x\n"
                 }
             }
         }
@@ -798,5 +803,6 @@ proc vTcl:dump:sourcing_footer {varName} {
     if {![vTcl:streq [string index $var end] "\n"]} { append var "\n" }
     append var "\}\n"
 }
+
 
 

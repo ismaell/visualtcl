@@ -138,7 +138,7 @@ namespace eval vTcl::widgets::bwidgets {
 
             set basename [vTcl:base_name $i]
 
-            # don't try to dump subwidget itself
+            ## don't try to dump subwidget itself
             if {"$i" != "$subwidget"} {
                 set basenames($i) $basename
                 set class [vTcl:get_class $i]
@@ -147,6 +147,10 @@ namespace eval vTcl::widgets::bwidgets {
                 catch {unset basenames($i)}
             }
         }
+
+        ## don't forget to dump grid geometry though
+        append geometry [vTcl:dump_grid_geom $subwidget $sitebasename]
+
         append output $geometry
 
         catch {unset basenames($subwidget)}

@@ -192,6 +192,10 @@ proc vTcl:lib_itcl:dump_subwidgets {subwidget {sitebasename {}}} {
             catch {unset basenames($i)}
         }
     }
+
+    ## don't forget to dump grid geometry though
+    append geometry [vTcl:dump_grid_geom $subwidget $sitebasename]
+
     append output $geometry
 
     catch {unset basenames($subwidget)}
@@ -456,4 +460,5 @@ namespace eval vTcl::widgets::iwidgets::notebooks::edit {
         error "Not implemented yet!"
     }
 }
+
 
