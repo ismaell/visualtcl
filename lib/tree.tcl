@@ -26,15 +26,17 @@ set vTcl(tree,last_yview) 0.0
 
 proc vTcl:show_selection_in_tree {widget_path} {
 
-    vTcl:show_selection .vTcl.tree.fra4.can8.[vTcl:rename $widget_path]
+    vTcl:show_selection .vTcl.tree.fra4.can8.[vTcl:rename $widget_path] \
+    	$widget_path
 }
 
-proc vTcl:show_selection {button_path} {
-
+proc vTcl:show_selection {button_path target} {
     global vTcl
 
     # do not refresh the widget tree if it does not exist
     if {![winfo exists .vTcl.tree]} return
+
+    if {[vTcl:streq $target "."]} { return }
 
     vTcl:log "widget tree select: $button_path"
     set b .vTcl.tree.fra4.can8
@@ -51,6 +53,7 @@ proc vTcl:show_selection {button_path} {
 proc vTcl:show_wtree {} {
     global vTcl
     Window show .vTcl.tree
+    vTcl:init_wtree
 }
 
 proc vTcl:clear_wtree {} {
@@ -92,7 +95,7 @@ proc vTcl:init_wtree {{wants_destroy_handles 1}} {
         set y2 [expr $y + 15]
         set j [vTcl:rename $i]
         if {$i == "."} {
-            set c toplevel
+            set c vTclRoot
 	    set type toplevel
         } else {
 	    set type [vTcl:get_type $i 1]
@@ -112,7 +115,7 @@ proc vTcl:init_wtree {{wants_destroy_handles 1}} {
                 if \{\$vTcl(mode) == \"EDIT\"\} \{
                 	$cmd $i
                 	vTcl:active_widget $i
-                	vTcl:show_selection $b.$j
+                	vTcl:show_selection $b.$j $i
                 \}
             "
             vTcl:set_balloon $b.$j $i
@@ -124,6 +127,7 @@ proc vTcl:init_wtree {{wants_destroy_handles 1}} {
             # added "message" class
             # 3/15/2000 added generic proc for getting label
             switch $c {
+		vTclRoot { set t "Visual Tcl" }
                 toplevel {set t [wm title $i]}
                 frame {set t Frame}
                 text {set t "Text Widget"}
@@ -250,6 +254,7 @@ proc vTclWindow.vTcl.tree {args} {
     pack .vTcl.tree.fra6.fra10 \
         -in .vTcl.tree.fra6 -anchor center -expand 0 -fill none -ipadx 0 \
         -ipady 0 -padx 0 -pady 0 -side right
+
     button .vTcl.tree.fra11.but3 \
         -command vTcl:init_wtree \
         -highlightthickness 0 -padx 5 -pady 2 \
@@ -258,6 +263,15 @@ proc vTclWindow.vTcl.tree {args} {
         -in .vTcl.tree.fra11 -anchor center -expand 0 -fill none -ipadx 0 \
         -ipady 0 -padx 2 -pady 2 -side left
     vTcl:set_balloon .vTcl.tree.fra11.but3 "Refresh the widget tree"
+
+    button .vTcl.tree.fra11.but4 \
+    	-command "wm withdraw .vTcl.tree" \
+	-highlightthickness 0 \
+	-image [vTcl:image:get_image ok.gif]
+    pack .vTcl.tree.fra11.but4 \
+    	-in .vTcl.tree.fra11 -anchor center -expand 0 -fill none -ipadx 0 \
+	-ipady 0 -padx 2 -pady 2 -side right
+    vTcl:set_balloon .vTcl.tree.fra11.but4 "Close"
 
     catch {wm geometry .vTcl.tree $vTcl(geometry,.vTcl.tree)}
     vTcl:init_wtree

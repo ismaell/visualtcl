@@ -81,6 +81,7 @@ proc vTcl:bind_scrollbar {t1 t2} {
 #
 proc vTcl:show {target} {
     global vTcl
+    if {[vTcl:streq $target "."]} { return }
     if {![winfo viewable $target]} {
         if {[catch {eval $vTcl(hide,$target,m) $target $vTcl(hide,$target,i)}] == 1} {
             catch {$vTcl(w,def_mgr) $target $vTcl($vTcl(w,def_mgr),insert)}
@@ -126,6 +127,7 @@ proc vTcl:select_toplevel {} {
 proc vTcl:active_widget {target} {
     global vTcl widgetSelected
     if {$target == ""} {return}
+    if {[vTcl:streq $target "."]} { return }
     if {$vTcl(w,widget) != "$target"} {
         vTcl:select_widget $target
         vTcl:attrbar_color $target
@@ -552,7 +554,7 @@ proc vTcl:auto_place_widget {type {options ""}} {
 }
 
 proc vTcl:create_widget {type options new_widg x y} {
-    global vTcl widgets classes widgetNums
+    global vTcl widgets classes
 
     set do ""
     set undo ""
@@ -600,13 +602,13 @@ proc vTcl:create_widget {type options new_widg x y} {
 }
 
 proc vTcl:set_alias {target {alias ""} {noupdate ""}} {
-    global vTcl widget
+    global vTcl widget classes
 
     if {[lempty $target]} { return }
 
+    set c $vTcl(w,class)
     set was {}
     if {[lempty $alias]} {
-	set c $vTcl(w,class)
 	if {![info exists widget(rev,$target)]} {
 	    set alias [vTcl:get_string "Widget alias for $c" $target]
 	} else {
@@ -639,7 +641,7 @@ proc vTcl:set_alias {target {alias ""} {noupdate ""}} {
 
 	## Create an alias in the interpreter.
 	if { $vTcl(pr,cmdalias) } { 
-	    interp alias {} $alias {} vTcl:WidgetProc $target
+	    interp alias {} $alias {} $classes($c,widgetProc) $target
 	}
 
 	# Refresh property manager after changing an alias
@@ -891,17 +893,21 @@ proc vTcl:place_widget {type button options rx ry x y} {
 }
 
 proc vTcl:next_widget_name {class} {
-    global widgetNums
+    global widgetNums classes
 
+    set var $class
+    if {[info exists classes($class,aliasPrefix)]} {
+    	set var $classes($class,aliasPrefix)
+    }
     ## Get the next available widget number for this class.
     ## IE: Edit1, Edit2, Edit3...
-    if {![info exists widgetNums($class)] || [lempty $widgetNums($class)]} {
-    	set widgetNums($class) 0
+    if {![info exists widgetNums($var)] || [lempty $widgetNums($var)]} {
+    	set widgetNums($var) 0
     }
-    set num [lindex [lsort -decreasing -integer $widgetNums($class)] 0]
+    set num [lindex [lsort -decreasing -integer $widgetNums($var)] 0]
     incr num
-    lappend widgetNums($class) $num
-    return $class$num
+    lappend widgetNums($var) $num
+    return $var$num
 }
 
 proc vTcl:update_aliases {} {

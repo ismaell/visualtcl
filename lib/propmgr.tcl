@@ -95,7 +95,7 @@ proc vTclWindow.vTcl.ae {args} {
     wm title $ae "Attribute Editor"
     wm geometry $ae 206x325
     wm resizable $ae 1 1
-	wm transient $vTcl(gui,ae) .vTcl
+    wm transient $vTcl(gui,ae) .vTcl
 
     canvas $ae.c -yscrollcommand "$ae.sv set" \
         -xscrollcommand "$ae.sh set" -highlightthickness 0
@@ -495,4 +495,27 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
     # @@end_change
 
     grid $top.$option $base -sticky news
+}
+
+proc vTcl:prop:clear {} {
+    global vTcl
+
+    ## Destroy and rebuild the Attributes frame
+    set fr $vTcl(gui,ae).c.f2.f
+    catch {destroy $fr}
+    frame $fr; pack $fr -side top -expand 1 -fill both
+
+    ## Destroy and rebuild the Geometry frame
+    set fr $vTcl(gui,ae).c.f3.f
+    catch {destroy $fr}
+    frame $fr; pack $fr -side top -expand 1 -fill both
+
+    set vTcl(w,widget)  {}
+    set vTcl(w,insert)  {}
+    set vTcl(w,class)   {}
+    set vTcl(w,alias)   {}
+    set vTcl(w,manager) {}
+
+    update
+    vTcl:prop:recalc_canvas
 }

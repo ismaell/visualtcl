@@ -65,6 +65,7 @@ proc vTcl:destroy_top {target} {
 
 proc vTcl:show_top {target} {
     global vTcl
+    if {[vTcl:streq $target "."]} { return }
     if [winfo exists $target] {
         if {[vTcl:get_class $target] == "Toplevel"} {
             wm deiconify $target
@@ -187,10 +188,10 @@ proc vTclWindow.vTcl.toplist {args} {
         -ipady 0 -padx 0 -pady 0 -side left 
     vTcl:set_balloon .vTcl.toplist.frame7.button10 "Delete toplevel window"
     button $base.frame7.button11 \
-        -command "wm withdraw $base" \
-        -image [vTcl:image:get_image ok.gif]
+    	-command "wm withdraw $base" \
+	-image [vTcl:image:get_image ok.gif]
     pack $base.frame7.button11 \
-        -expand 0 -side right
+    	-expand 0 -side right
     vTcl:set_balloon $base.frame7.button11 "Close"
 
     frame .vTcl.toplist.f2 \

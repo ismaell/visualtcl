@@ -28,16 +28,14 @@ proc vTclWindow.vTcl.help {args} {
         wm deiconify .vTcl.help; return
     }
     toplevel .vTcl.help -class Toplevel
+    wm withdraw .vTcl.help
     wm transient .vTcl.help .vTcl
     wm focusmodel .vTcl.help passive
-    wm geometry .vTcl.help 600x425
-    vTcl:center .vTcl.help 600 425
     wm title .vTcl.help "Help for Visual Tcl"
     wm maxsize .vTcl.help 1137 870
     wm minsize .vTcl.help 1 1
     wm overrideredirect .vTcl.help 0
     wm resizable .vTcl.help 1 1
-    wm deiconify .vTcl.help
     frame .vTcl.help.fra18 \
         -borderwidth 1 -height 30 -relief raised -width 30 
     text .vTcl.help.fra18.tex22 \
@@ -76,6 +74,8 @@ proc vTclWindow.vTcl.help {args} {
         close $f
     }
     .vTcl.help.fra18.tex22 conf -state disabled
+
+    wm geometry .vTcl.help 600x425
+    vTcl:center .vTcl.help 600 425
+    wm deiconify .vTcl.help
 }
-
-

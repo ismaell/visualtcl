@@ -56,7 +56,6 @@ proc vTcl:save_procs {} {
     global vTcl
     set output ""
     set list $vTcl(procs)
-    vTcl:list add Window list
     foreach i $list {
         if {[vTcl:ignore_procname_when_saving $i] == 0} {
             set args ""
@@ -97,9 +96,10 @@ proc vTcl:export_procs {} {
 
     foreach class [vTcl:lrmdups $classList] {
 	eval lappend list $classes($class,exportCmds)
+	eval lappend list $classes($class,widgetProc)
     }
 
-    foreach i $list {
+    foreach i [vTcl:lrmdups $list] {
         if {[vTcl:ignore_procname_when_saving $i] == 0} {
             set args ""
             foreach j [info args $i] {
@@ -130,21 +130,12 @@ proc vTcl:export_procs {} {
 proc vTcl:vtcl_library_procs {} {
     global vTcl classes
 
-    set list vTcl:WidgetProc
-
-    set children [vTcl:list_widget_tree .]
-
-    foreach child $children {
-	lappend classList [vTcl:get_class $child]
-    }
-
-    foreach class [vTcl:lrmdups $classList] {
-	if {[lempty $classes($class,widgetProc)]} { continue }
-	lappend list $classes($class,widgetProc)
+    set list {
+	Window
     }
 
     foreach proc $list {
-	append output [vTcl:maybe_dump_proc vTcl:WidgetProc]
+	append output [vTcl:maybe_dump_proc $proc]
     }
     return $output
 }
@@ -667,7 +658,9 @@ proc vTcl:dump:aliases {target} {
 	append output "set \{widget(child,$alias)\} \"[join $components .]\"\n"
 
 	append output $vTcl(tab)
-	append output "interp alias {} $alias {} vTcl:WidgetProc $value\n"
+	## Find out what command we're aliased to.  Usually vTcl:WidgetProc.
+	set cmd [interp alias {} $alias]
+	append output "interp alias {} $alias {} $cmd $value\n"
     }
 
     return "$output\n"

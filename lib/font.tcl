@@ -559,18 +559,18 @@ proc vTclWindow.vTcl.fontManager {args} {
     toplevel $base -class Toplevel \
         -background #bcbcbc -highlightbackground #bcbcbc \
         -highlightcolor #000000
+    wm withdraw $base
     wm focusmodel $base passive
-    wm geometry $base 491x544+314+132
-    vTcl:center $base 491 544
     wm maxsize $base 1009 738
     wm minsize $base 1 1
     wm overrideredirect $base 0
     wm resizable $base 1 1
-    wm deiconify $base
     wm title $base "Font manager"
     wm transient .vTcl.fontManager .vTcl
 
-    button $base.but30 \
+    frame $base.butfr
+
+    button $base.butfr.but30 \
         -command {set font_desc "-family {Helvetica} -size 12"
 
 set font_desc [vTcl:font:prompt_user_font_2 $font_desc]
@@ -583,6 +583,10 @@ if {$font_desc != ""} {
    $vTcl(fonts,font_mgr,win).cpd31.03 yview end
 }} \
         -padx 9 -pady 3 -image [vTcl:image:get_image add.gif]
+
+    button $base.butfr.but31 \
+    	-command "wm withdraw $base" -image [vTcl:image:get_image ok.gif]
+
     frame $base.cpd31 \
         -borderwidth 1 -height 30 \
         -relief raised \
@@ -602,11 +606,17 @@ if {$font_desc != ""} {
     ###################
     # SETTING GEOMETRY
     ###################
-    pack $base.but30 \
-        -in $base -anchor nw -expand 0 -fill none -side top
-    vTcl:set_balloon $base.but30 "Add new font"
+    pack $base.butfr -side top -in $base -fill x
+    pack $base.butfr.but30 \
+        -anchor nw -expand 0 -fill none -side left
+    vTcl:set_balloon $base.butfr.but30 "Add new font"
+    pack $base.butfr.but31 \
+        -anchor nw -expand 0 -fill none -side right
+    vTcl:set_balloon $base.butfr.but30 "Close"
+
     pack $base.cpd31 \
         -in $base -anchor center -expand 1 -fill both -side top
+    
     grid columnconf $base.cpd31 0 -weight 1
     grid rowconf $base.cpd31 0 -weight 1
     grid $base.cpd31.01 \
@@ -617,7 +627,10 @@ if {$font_desc != ""} {
         -in $base.cpd31 -column 0 -row 0 -columnspan 1 -rowspan 1 \
         -sticky nesw
 
+    wm geometry $base 491x544+314+132
+    vTcl:center $base 491 544
     catch {wm geometry $base $vTcl(geometry,$base)}
+    wm deiconify $base
 
     vTcl:font:display_fonts $base
     wm protocol $base WM_DELETE_WINDOW "wm withdraw $base"
@@ -701,7 +714,6 @@ proc vTcl:font:create_noborder_fontlist {base} {
     wm maxsize $base 1009 738
     wm minsize $base 1 1
     wm resizable $base 1 1
-    wm deiconify $base
 
     frame $base.cpd29 \
         -background #bcbcbc -borderwidth 1 -height 30 \

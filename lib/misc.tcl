@@ -284,7 +284,6 @@ proc vTcl:show_bindings {} {
 # from long Windows 9x filenames with spaces
 
 proc vTcl:rename {name} {
-
     regsub -all "\\." $name "_" ret
     regsub -all "\\-" $ret "_" ret
     regsub -all " " $ret "_" ret
@@ -823,8 +822,6 @@ proc vTcl:raise_last_button {newButton} {
 # decoding from Pascual Alonso,
 # namespace'ing and bugs from Parand Tony Darugar
 # (tdarugar@binevolve.com)
-#
-# $Id: misc.tcl,v 1.17 2000/10/24 02:45:02 cgavin Exp $
 # -------------------------------------------------------------------
 
 namespace eval base64 {
@@ -1182,3 +1179,7 @@ proc vTcl:tabnotebook_refresh {win} {
 
 vTcl:notebook_init
 vTcl:tabnotebook_init
+
+proc vTcl:streq {s1 s2} {
+    return [expr [string compare $s1 $s2] == 0]
+}

@@ -79,7 +79,8 @@ proc SetClassArray {} {
 	$tmp(class),functionCmds	{}
 	$tmp(class),functionText	{}
 	$tmp(class),typeCmd		{}
-	$tmp(class),widgetProc		{}
+	$tmp(class),aliasPrefix		$tmp(class)
+	$tmp(class),widgetProc		vTcl:WidgetProc
     "
 
     foreach elem [array names classes $tmp(class),*] {
@@ -243,4 +244,14 @@ proc AutoPlace {val} {
     set num 0
     if {[string tolower $val] == "yes"} { set num 1 }
     set tmp(autoPlace) $num
+}
+
+proc AliasPrefix {val} {
+    global tmp
+    set tmp(aliasPrefix) $val
+}
+
+proc WidgetProc {val} {
+    global tmp
+    set tmp(widgetProc) $val
 }

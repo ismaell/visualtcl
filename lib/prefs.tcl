@@ -26,7 +26,6 @@ proc vTcl:prefs:uninit {base} {
 }
 
 proc vTcl:prefs:init {base} {
-
     global vTcl
 
     # this is to store all variables
@@ -52,8 +51,8 @@ proc vTcl:prefs:init {base} {
        variable saveimagesinline ""
     }
 
-    set prefs::font_dlg   [eval font create [font actual $vTcl(pr,font_dlg)] ]
-    set prefs::font_fixed [eval font create [font actual $vTcl(pr,font_fixed)] ]
+    set prefs::font_dlg [eval font create [font actual $vTcl(pr,font_dlg)]]
+    set prefs::font_fixed [eval font create [font actual $vTcl(pr,font_fixed)]]
 
     # set the variables for the dialog
     vTcl:prefs:data_exchange 0
@@ -87,7 +86,7 @@ proc vTclWindow.vTcl.prefs {{base ""} {container 0}} {
     # CREATING WIDGETS
     ###################
     if {!$container} {
-    toplevel $base -class Topleve \
+    toplevel $base -class Toplevel \
     	-background #dcdcdc -highlightbackground #dcdcdc \
 	-highlightcolor #000000
     wm focusmodel $base passive
@@ -130,9 +129,6 @@ proc vTclWindow.vTcl.prefs {{base ""} {container 0}} {
     wm geometry $base 450x400
     vTcl:center $base 450 400
     wm deiconify $base
-    
-    update idletasks
-    wm deiconify $base
 }
 
 proc vTclWindow.vTcl.infolibs {{base ""} {container 0}} {
@@ -157,14 +153,12 @@ proc vTclWindow.vTcl.infolibs {{base ""} {container 0}} {
     ###################
     if {!$container} {
     toplevel $base -class Toplevel
+    wm withdraw $base
     wm focusmodel $base passive
-    wm geometry $base 446x322
-    vTcl:center $base 446 322
     wm maxsize $base 1009 738
     wm minsize $base 1 1
     wm overrideredirect $base 0
     wm resizable $base 1 1
-    wm deiconify $base
     wm title $base "Visual Tcl Libraries"
     }
     label $base.lab38 \
@@ -204,64 +198,64 @@ proc vTclWindow.vTcl.infolibs {{base ""} {container 0}} {
     foreach name $vTcl(libNames) {
         $widget(libraries_listbox) insert end $name
     }
+
+    wm geometry $base 446x322
+    vTcl:center $base 446 322
+    wm deiconify $base
 }
 
 proc {vTcl:prefs:data_exchange} {save_and_validate} {
+    global widget vTcl
 
-	global widget vTcl
+    # if save_and_validate is set to 0, values are transferred from
+    # the preferences to the dialog (this is typically done when
+    # initializing the dialog)
 
-	# if save_and_validate is set to 0, values are transferred from
-	# the preferences to the dialog (this is typically done when
-	# initializing the dialog)
+    # if save_and_validate is set to 1, values are transferred from
+    # the dialog to the preferences (this is typically done when
+    # the user presses the OK button
 
-	# if save_and_validate is set to 1, values are transferred from
-	# the dialog to the preferences (this is typically done when
-	# the user presses the OK button
-
-	vTcl:data_exchange_var vTcl(pr,balloon)          \
-		prefs::balloon          $save_and_validate
-	vTcl:data_exchange_var vTcl(pr,getname)          \
-		prefs::getname          $save_and_validate
-	vTcl:data_exchange_var vTcl(pr,shortname)        \
-		prefs::shortname        $save_and_validate
-	vTcl:data_exchange_var vTcl(pr,fullcfg)          \
-		prefs::fullcfg          $save_and_validate
-	vTcl:data_exchange_var vTcl(pr,saveglob)         \
-		prefs::saveglob         $save_and_validate
-	vTcl:data_exchange_var vTcl(pr,winfocus)         \
-		prefs::winfocus         $save_and_validate
-	vTcl:data_exchange_var vTcl(pr,autoplace)        \
-		prefs::autoplace        $save_and_validate
-	vTcl:data_exchange_var vTcl(pr,autoloadcomp)     \
-		prefs::autoloadcomp     $save_and_validate
-	vTcl:data_exchange_var vTcl(pr,autoloadcompfile) \
-		prefs::autoloadcompfile $save_and_validate
-	vTcl:data_exchange_var vTcl(pr,manager)          \
-		prefs::manager          $save_and_validate
-	vTcl:data_exchange_var vTcl(pr,encase)           \
-		prefs::encase           $save_and_validate
-	vTcl:data_exchange_var vTcl(pr,projecttype)      \
-		prefs::projecttype      $save_and_validate
-	vTcl:data_exchange_var vTcl(pr,imageeditor)      \
-		prefs::imageeditor      $save_and_validate
-	vTcl:data_exchange_var vTcl(pr,saveimagesinline) \
-		prefs::saveimagesinline $save_and_validate
-	vTcl:data_exchange_var vTcl(pr,cmdalias)        \
-		prefs::cmdalias        $save_and_validate
-	vTcl:data_exchange_var vTcl(pr,autoalias)        \
-		prefs::autoalias        $save_and_validate
-	vTcl:data_exchange_var vTcl(pr,multiplace)        \
-		prefs::multiplace        $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,balloon)          \
+	prefs::balloon          $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,getname)          \
+	prefs::getname          $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,shortname)        \
+	prefs::shortname        $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,fullcfg)          \
+	prefs::fullcfg          $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,saveglob)         \
+	prefs::saveglob         $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,winfocus)         \
+	prefs::winfocus         $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,autoplace)        \
+	prefs::autoplace        $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,autoloadcomp)     \
+	prefs::autoloadcomp     $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,autoloadcompfile) \
+	prefs::autoloadcompfile $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,manager)          \
+	prefs::manager          $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,encase)           \
+	prefs::encase           $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,projecttype)      \
+	prefs::projecttype      $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,imageeditor)      \
+	prefs::imageeditor      $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,saveimagesinline) \
+	prefs::saveimagesinline $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,cmdalias)        \
+	prefs::cmdalias        $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,autoalias)        \
+	prefs::autoalias        $save_and_validate
+    vTcl:data_exchange_var vTcl(pr,multiplace)        \
+	prefs::multiplace        $save_and_validate
 
     if {$save_and_validate} {
-
-        set vTcl(pr,font_dlg)   [font configure $prefs::font_dlg]
-        set vTcl(pr,font_fixed) [font configure $prefs::font_fixed]
-
+    	set vTcl(pr,font_dlg)   [font configure $prefs::font_dlg]
+	set vTcl(pr,font_fixed) [font configure $prefs::font_fixed]
     } else {
-
-	  eval font configure $prefs::font_dlg   [font actual $vTcl(pr,font_dlg)]
-        eval font configure $prefs::font_fixed [font actual $vTcl(pr,font_fixed)]
+        eval font configure $prefs::font_dlg   [font actual $vTcl(pr,font_dlg)]
+	eval font configure $prefs::font_fixed [font actual $vTcl(pr,font_fixed)]
     }
 }
 
@@ -334,16 +328,14 @@ proc {vTcl:prefs:browse_file} {varname} {
 }
 
 proc {vTcl:prefs:browse_font} {fontname} {
+    global widget
 
-	global widget
+    set value [font configure $fontname]
+    set newfont [vTcl:font:prompt_user_font_2 $value]
 
-	set value [font configure $fontname]
-	set newfont [vTcl:font:prompt_user_font_2 $value]
-
-	if {$newfont != ""} {
-
-           eval font configure $fontname $newfont
-	}
+    if {$newfont != ""} {
+	eval font configure $fontname $newfont
+    }
 }
 
 proc {vTcl:prefs:fonts} {tab} {

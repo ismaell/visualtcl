@@ -6,6 +6,7 @@ Icon		icon_toplevel.gif
 DoubleClickCmd	vTcl:edit_target_menu
 TreeLabel	@vTcl:core:get_widget_tree_label
 InsertCmd	vTcl:widget:toplevel:inscmd
+WidgetProc	vTcl:Toplevel:WidgetProc
 
 Function	"Set New Toplevel Geometry" vTcl:widget:toplevel:set_new_geom
 
@@ -29,4 +30,25 @@ proc vTcl:widget:toplevel:set_new_geom {} {
     global vTcl
 
     set vTcl(pr,geom_new) [wm geometry $vTcl(w,widget)]
+}
+
+proc vTcl:Toplevel:WidgetProc {w args} {
+    if {[llength $args] == 0} {
+    	return -code error [vTcl:WrongNumArgs "$w option ?arg arg ...?"]
+    }
+
+    ## The first argument is a switch, they must be doing a configure.
+    if {[string index $args 0] == "-"} {
+    	set command configure
+
+	## There's only one argument, must be a cget.
+	if {[llength $args] == 1} {
+	    set command cget
+	}
+    } else {
+    	set command [lindex $args 0]
+	set args [lrange $args 1 end]
+    }
+
+    eval $w $command $args
 }

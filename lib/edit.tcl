@@ -83,6 +83,11 @@ proc vTcl:delete {} {
 
     # @@end_change
 
+    if {[vTcl:streq $n "."]} {
+    	vTcl:prop:clear
+	return
+    }
+
     if {[winfo exists $n]} { vTcl:active_widget $n }
 }
 

@@ -277,10 +277,10 @@ proc {vTcl:image:init_stock} {} {
     set images {
     	copy
 	cut
-      inswidg
+	inswidg
 	paste
 	new
-      ok
+	ok
 	open
 	save
 	replace
@@ -648,14 +648,12 @@ proc vTclWindow.vTcl.imgManager {args} {
     # CREATING WIDGETS
     ###################
     toplevel $base -class Toplevel
+    wm withdraw $base
     wm focusmodel $base passive
-    wm geometry $base 494x581
-    vTcl:center $base 494 581
     wm maxsize $base 1009 738
     wm minsize $base 1 1
     wm overrideredirect $base 0
     wm resizable $base 1 1
-    wm deiconify $base
     wm title $base "Image manager"
     wm protocol $base WM_DELETE_WINDOW "wm withdraw $base"
     wm transient .vTcl.imgManager .vTcl
@@ -676,9 +674,13 @@ proc vTclWindow.vTcl.imgManager {args} {
         -state disabled -tabs {0.2i 3i 3.75i} \
         -width 8 -wrap none -xscrollcommand "$base.cpd29.01 set" \
         -yscrollcommand "$base.cpd29.02 set"
-    button $base.but32 \
+    frame $base.butfr
+    button $base.butfr.but32 \
         -command vTcl:image:new_image_file \
         -padx 9 -pady 3 -image [vTcl:image:get_image add.gif]
+    button $base.butfr.but33 \
+    	-command "wm withdraw $base" \
+	-image [vTcl:image:get_image ok.gif]
     ###################
     # SETTING GEOMETRY
     ###################
@@ -693,11 +695,18 @@ proc vTclWindow.vTcl.imgManager {args} {
     grid $base.cpd29.03 \
         -in $base.cpd29 -column 0 -row 0 -columnspan 1 -rowspan 1 \
         -sticky nesw
-    pack $base.but32 \
-        -in $base -anchor nw -expand 0 -fill none -side top
-    vTcl:set_balloon $base.but32 "Add new image"
+    pack $base.butfr -fill x -side top
+    pack $base.butfr.but32 \
+        -anchor nw -expand 0 -fill none -side left
+    vTcl:set_balloon $base.butfr.but32 "Add new image"
+    pack $base.butfr.but33 \
+    	-anchor nw -expand 0 -fill none -side right
+    vTcl:set_balloon $base.butfr.but33 "Close"
 
+    wm geometry $base 494x581
+    vTcl:center $base 494 581
     catch {wm geometry $base $vTcl(geometry,$base)}
+    wm deiconify $base
 
     vTcl:image:init_img_manager
 }

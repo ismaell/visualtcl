@@ -22,7 +22,7 @@
 #
 
 proc vTcl:new {} {
-    global vTcl widgetNums
+    global vTcl
     if { [vTcl:close] == -1 } { return }
 
     set vTcl(mode) EDIT
@@ -299,6 +299,7 @@ proc vTcl:close {} {
 
     vTcl:image:remove_user_images
     vTcl:font:remove_user_fonts
+    vTcl:prop:clear
 
     after idle {vTcl:init_wtree}
 

@@ -117,7 +117,7 @@ proc vTcl:grab_resize {absX absY handle} {
     set deltaY [expr {$Y - $vTcl(grab,startY)}]
 
     ## Can we resize this widget with this handle?
-    set can [can_resize $handle]
+    set can [vTcl:can_resize $handle]
 
     ## We definitely can't resize.
     if {$can == 0} { return }
@@ -300,7 +300,7 @@ proc vTcl:adjust_widget_size {widget w h} {
 ## 2 = horizontal
 ## 3 = vertical
 
-proc can_resize {dir} {
+proc vTcl:can_resize {dir} {
     global vTcl classes
 
     set c [vTcl:get_class $vTcl(w,widget)]
