@@ -428,14 +428,22 @@ namespace eval ::menu_edit {
                 vTcl::widgets::saveSubOptions $menu -label -command
             }
             "radiobutton" {
+                set toplevel [findToplevel $menu]
                 $menu add $type -label "New radio"  \
-                    -command "\# TODO: Your menu handler here"
-                vTcl::widgets::saveSubOptions $menu -label -command
+                    -command "\# TODO: Your menu handler here" \
+                    -variable ::${toplevel}::menuSelectedButton
+                vTcl::widgets::saveSubOptions $menu -label -command -variable
             }
             "checkbutton" {
+                set num 1
+                set toplevel [findToplevel $menu]
+                while {[info exists ::${toplevel}::check${num}]} {incr num}
+
                 $menu add $type -label "New check"  \
-                    -command "\# TODO: Your menu handler here"
-                vTcl::widgets::saveSubOptions $menu -label -command
+                    -command "\# TODO: Your menu handler here" \
+                    -variable ::${toplevel}::check${num}
+                set ::${toplevel}::check${num} 1
+                vTcl::widgets::saveSubOptions $menu -label -command -variable
             }
             "separator" {
                 $menu add $type
@@ -443,6 +451,13 @@ namespace eval ::menu_edit {
         }
 
         ::menu_edit::fill_menu_list $top [set ::${top}::menu]
+    }
+
+    proc findToplevel {menu} {
+        set toplevel [winfo toplevel $menu]
+        while {[winfo class $toplevel] != "Toplevel"} {
+            set toplevel [winfo parent $toplevel]}
+        return $toplevel
     }
 
     proc {::menu_edit::post_context_new_menu} {top X Y} {
@@ -1186,6 +1201,7 @@ proc vTclWindow.vTclMenuEdit {base menu} {
 
     wm deiconify $base
 }
+
 
 
 
