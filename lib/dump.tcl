@@ -659,7 +659,9 @@ proc vTcl:dump:aliases {target} {
 
 	if {$vTcl(pr,cmdalias)} {
 	    append output $vTcl(tab)
-	    append output "interp alias {} $alias {} [interp alias {} $alias]\n"
+	    set cmd [lindex [interp alias {} $alias] 0]
+	    set widg [vTcl:base_name $value]
+	    append output "interp alias {} $alias {} $cmd $widg\n"
 	}
     }
 

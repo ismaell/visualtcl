@@ -54,7 +54,7 @@ proc Window {args} {
 
 proc vTcl:WidgetProc {w args} {
     if {[llength $args] == 0} {
-    	return -code error [vTcl:WrongNumArgs "$w option ?arg arg ...?"]
+    	return -code error "wrong # args: should be \"$w option ?arg arg ...?\""
     }
 
     ## The first argument is a switch, they must be doing a configure.
