@@ -99,23 +99,24 @@ proc vTcl:put_compound {text compound} {
 proc vTcl:auto_place_compound {compound gmgr gopt} {
     global vTcl
 
-    set name [vTcl:new_widget_name cpd $vTcl(w,insert)]
+    set rootclass [lindex [lindex $compound 0] 0]
+    if {$rootclass == "Toplevel"} {
+        set class $rootclass
+    } else {
+        set class cpd
+    }
+
+    set name [vTcl:new_widget_name $class $vTcl(w,insert)]
 
     vTcl:insert_compound $name $compound $gmgr $gopt
     vTcl:setup_bind_tree $name
     vTcl:active_widget $name
     vTcl:update_proc_list
 
-    # @@change by Christian Gavin 3/5/2000
-    #
     # when new compound inserted into window, automatically
     # refresh widget tree
 
-    # after idle {vTcl:init_wtree}
-
     vTcl:init_wtree
-
-    # @@end_change
 }
 
 proc vTcl:place_compound {compound gmgr rx ry x y} {

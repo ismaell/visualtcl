@@ -34,7 +34,7 @@ proc vTcl:copy {{w ""}} {
 
     global vTcl
     set vTcl(buffer) [vTcl:create_compound $vTcl(w,widget)]
-    set vTcl(buffer,type) [vTcl:lower_first $vTcl(w,class)]
+    set vTcl(buffer,class) $vTcl(w,class)
 }
 
 proc vTcl:cut {{w ""}} {
@@ -150,7 +150,7 @@ proc vTcl:paste {{fromMouse ""} {w ""}} {
     	set opts "-x $vTcl(mouse,x) -y $vTcl(mouse,y)"
     }
 
-    set name [vTcl:new_widget_name $vTcl(buffer,type) $vTcl(w,insert)]
+    set name [vTcl:new_widget_name $vTcl(buffer,class) $vTcl(w,insert)]
     set do "
 	vTcl:insert_compound $name [list $vTcl(buffer)] $vTcl(w,def_mgr) \
 	    [list $opts]

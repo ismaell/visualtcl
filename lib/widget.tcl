@@ -649,7 +649,7 @@ proc vTcl:create_widget {class options new_widg x y} {
     set do ""
     set undo ""
     if {$vTcl(pr,getname) == 1} {
-        if { $vTcl(w,insert) == "." } {
+        if { $vTcl(w,insert) == "." || $class == "Toplevel"} {
             set new_widg ".$new_widg"
         } else {
             set new_widg "$vTcl(w,insert).$new_widg"
