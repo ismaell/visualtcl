@@ -64,7 +64,7 @@ eval exec cp [glob $bldroot/doc/*.*]           $copyroot/doc
 eval exec cp [glob $bldroot/demo/*.*]          $copyroot/demo
 eval exec cp $bldroot/demo/README              $copyroot/demo
 eval exec cp [glob $bldroot/demo/images/*.*]   $copyroot/demo/images
-eval exec cp [glob $bldroot/sample/*.*]        $copyroot/sample
+eval exec cp [glob $bldroot/sample/*.tcl]       $copyroot/sample
 
 cd $bldtmp
 exec tar cf - -C $bldtmp vtcl-$version | gzip >vtcl-$version.tar.gz

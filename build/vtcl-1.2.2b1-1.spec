@@ -139,6 +139,7 @@ install -m 644 usr/local/vtcl-%{version}/images/rel_sunken.gif		$RPM_BUILD_ROOT/
 install -m 644 usr/local/vtcl-%{version}/images/relief.gif		$RPM_BUILD_ROOT/usr/local/vtcl-%{version}/images/relief.gif
 install -m 644 usr/local/vtcl-%{version}/images/title.gif		$RPM_BUILD_ROOT/usr/local/vtcl-%{version}/images/title.gif
 install -m 644 usr/local/vtcl-%{version}/images/unknown.gif		$RPM_BUILD_ROOT/usr/local/vtcl-%{version}/images/unknown.gif
+install -m 644 usr/local/vtcl-%{version}/images/tconsole.gif		$RPM_BUILD_ROOT/usr/local/vtcl-%{version}/images/tconsole.gif
 install -m 644 usr/local/vtcl-%{version}/lib/Makefile			$RPM_BUILD_ROOT/usr/local/vtcl-%{version}/lib/Makefile
 install -m 644 usr/local/vtcl-%{version}/lib/about.tcl			$RPM_BUILD_ROOT/usr/local/vtcl-%{version}/lib/about.tcl
 install -m 644 usr/local/vtcl-%{version}/lib/attrbar.tcl		$RPM_BUILD_ROOT/usr/local/vtcl-%{version}/lib/attrbar.tcl
@@ -305,6 +306,7 @@ install -m 644 usr/local/vtcl-%{version}/vtclmac			$RPM_BUILD_ROOT/usr/local/vtc
 /usr/local/vtcl-%{version}/images/rel_sunken.gif
 /usr/local/vtcl-%{version}/images/relief.gif
 /usr/local/vtcl-%{version}/images/title.gif
+/usr/local/vtcl-%{version}/images/tconsole.gif
 /usr/local/vtcl-%{version}/images/unknown.gif
 /usr/local/vtcl-%{version}/lib/Makefile
 /usr/local/vtcl-%{version}/lib/about.tcl
