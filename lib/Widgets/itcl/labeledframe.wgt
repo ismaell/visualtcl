@@ -32,46 +32,54 @@ DumpChildren	no
 MegaWidget	yes
 TagsCmd         vTcl:lib_itcl:tagscmd
 TreeChildrenCmd	{
-		vTcl:widget:labeledframe:treeChildrenCmd
-		vTcl:widget:labeledframe:treeChildrenChildsite
+		vTcl::widgets::iwidgets::labeledframe::treeChildrenCmd
+		vTcl::widgets::iwidgets::labeledframe::treeChildrenChildsite
 		}
-DumpCmd		vTcl:dump:labeledframe
-CompoundCmd     vTcl:compound:labeledframe
+DumpCmd		vTcl::widgets::iwidgets::labeledframe::dumpCmd
+CompoundCmd     vTcl::widgets::iwidgets::labeledframe::compoundCmd
 DefaultOptions	-labeltext "Labeled frame"
 
-proc vTcl:widget:labeledframe:treeChildrenCmd {target {diff ""}} {
-    set children ""
-    set wantsdiff [expr {$diff != ""}]
+########################################
+## for compatibility with 1.5 and 1.60a1
+##
+proc vTcl:widget:labeledframe:treeChildrenChildsite {target} {
+    return [vTcl::widgets::iwidgets::labeledframe::treeChildrenChildSite $target]
+}
 
-    foreach child [vTcl:complete_widget_tree [$target childsite] $wantsdiff] {
-        lappend children $child$diff
+namespace eval vTcl::widgets::iwidgets::labeledframe {
+
+    proc treeChildrenCmd {target {diff ""}} {
+        set children ""
+        set wantsdiff [expr {$diff != ""}]
+
+        foreach child [vTcl:complete_widget_tree [$target childsite] $wantsdiff] {
+            lappend children $child$diff
+        }
+
+        return $children
     }
 
-    return $children
-}
+    proc treeChildrenChildsite {target} {
+        return [$target childsite]
+    }
 
-proc vTcl:widget:labeledframe:treeChildrenChildsite {target} {
-    return [$target childsite]
-}
+    proc dumpCmd {target basename} {
+        global vTcl
+        set result [vTcl:dump_widget_opt $target $basename]
+        set page   [$target childsite]
+        set sitevariable "site_[llength [split $page .]]_0"
+        append result "$vTcl(tab)set $sitevariable "
+        append result "\[$basename childsite\]\n"
+        append result [vTcl:lib_itcl:dump_subwidgets $page \$$sitevariable]
 
-proc vTcl:dump:labeledframe {target basename} {
-    global vTcl
+        return $result
+    }
 
-    set result [vTcl:dump_widget_opt $target $basename]
-    set page   [$target childsite]
-    set sitevariable "site_[llength [split $page .]]_0"
-    append result "$vTcl(tab)set $sitevariable "
-    append result "\[$basename childsite\]\n"
-    append result [vTcl:lib_itcl:dump_subwidgets $page \$$sitevariable]
+    proc compoundCmd {target} {
+        set result ""
 
-    return $result
-}
-
-proc vTcl:compound:labeledframe {target} {
-    set result ""
-
-    set compound [vTcl:create_compound [$target childsite]]
-    append result "vTcl:insert_compound \[\$target childsite\] [list $compound] pack \{\}; "
-
-    return $result
+        set compound [vTcl:create_compound [$target childsite]]
+        append result "vTcl:insert_compound \[\$target childsite\] [list $compound] pack \{\}; "
+        return $result
+    }
 }

@@ -126,6 +126,7 @@ proc vTcl:lib_tix:init {} {
 
     if {[catch {package require Tix} erg]} {
         lappend vTcl(libNames) {(not detected) Tix Widget Support Library}
+	puts $erg
         rename option vTcl:lib_tix:ignore_option
         rename _option option
         return 0

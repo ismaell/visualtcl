@@ -73,6 +73,7 @@ proc vTcl:prefs:init {base} {
     vTcl:prefs:fonts   [$tb insert end "Fonts" -text "Fonts"]
     vTcl:prefs:bgcolor [$tb insert end "Colors" -text "Colors"]
     vTcl:prefs:images  [$tb insert end "Images" -text "Images"]
+    vTcl:prefs:libs    [$tb insert end "Libraries" -text "Libraries"]
     #vTcl:prefs:external [$tb insert end "External" -text "External"]
 
     $tb raise Basics
@@ -129,6 +130,12 @@ proc vTclWindow.vTcl.prefs {{base ""}} {
         -in $base.fra19 -side left
     pack $base.fra19.but21 \
         -in $base.fra19 -side left
+
+    ###################
+    # Balloon help
+    ###################
+    vTcl:set_balloon $base.fra19.but20 "Apply changes and close dialog"
+    vTcl:set_balloon $base.fra19.but21 "Cancel changes and close dialog"
 
     vTcl:prefs:init $base
     vTcl:BindHelp $base Preferences
@@ -473,6 +480,29 @@ proc {vTcl:prefs:images} {tab} {
 
 	vTcl:formCompound:add $tab checkbutton \
 		-text "Save images as inline" -variable prefs::saveimagesinline
+}
+
+proc vTcl:prefs:libs {tab} {
+    set last  [vTcl:formCompound:add $tab  label \
+	-text "Load libs on startup" -background gray -relief raised]
+    pack configure $last -fill x
+
+    set last [vTcl:formCompound:add $tab listbox -background white -selectmode multiple]
+    pack configure $last -fill both -expand 1 -pady 5
+
+    set libs [glob -nocomplain [file join $::vTcl(VTCL_HOME) lib lib*.tcl]]
+    set i 0
+    foreach load $::vTcl::toload {
+        lappend toload [file tail $load]
+    }
+    foreach lib $libs {
+        set item [file tail $lib]
+	$last insert end $item
+	if {[lsearch -exact $toload $item] != -1} {
+	    $last selection set $i
+	}
+	incr i
+    }
 }
 
 proc vTcl:prefs:external {tab} {

@@ -107,24 +107,24 @@ proc vTcl:load_widgets {} {
     # user wants to load (which can significantly reduce startup time)
 
     if {[file exists $vTcl(LIB_FILE)]} {
-    	set toload ""
+    	set ::vTcl::toload ""
     	set inID [open $vTcl(LIB_FILE) r]
     	set contents [split [read $inID] \n]
     	close $inID
 
     	foreach content $contents {
 	    if { [string trim $content] == ""} continue
-	    lappend toload [file join $vTcl(LIB_DIR) $content]
+	    lappend ::vTcl::toload [file join $vTcl(LIB_DIR) $content]
     	}
     } else {
-	set toload $vTcl(LIB_WIDG)
+	set ::vTcl::toload $vTcl(LIB_WIDG)
     }
 
     ## Make sure lib_core loads before all other widget libraries.
-    ::vTcl::lremove toload *lib_core.tcl
-    set toload [linsert $toload 0 lib_core.tcl]
+    ::vTcl::lremove ::vTcl::toload *lib_core.tcl
+    set ::vTcl::toload [linsert $::vTcl::toload 0 lib_core.tcl]
 
-    foreach i $toload {
+    foreach i $::vTcl::toload {
         set lib [lindex [split [file root $i] _] end]
         if {[vTcl:load_lib $i]} {
             set libname [lindex [split [lindex [file split $i] end] .] 0]
