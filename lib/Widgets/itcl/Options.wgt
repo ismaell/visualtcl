@@ -89,7 +89,7 @@ NewOption -unique            {Unique}           boolean {0 1}
 NewOption -cyclicon          {Cyclic}           boolean {0 1}
 NewOption -iconcommand       {Icon Cmd}         command
 NewOption -querycommand      {Query Cmd}        command
-NewOption -vcmd              {Validate Cmd}     command
+# NewOption -vcmd              {Validate Cmd}     command
 NewOption -decrement         {Decrement Cmd}    command
 NewOption -increment         {Increment Cmd}    command
 NewOption -items             Items              command
@@ -117,3 +117,4 @@ OptionConfigCmd -_itcl_radiocheckboxes      get        vTcl::widgets::iwidgets::
 OptionConfigCmd -_itcl_radiocheckboxes      select     vTcl::widgets::iwidgets::boxes::select_page
 OptionConfigCmd -_itcl_radiocheckboxes      edit       vTcl::itemEdit::edit
 OptionConfigCmd -_itcl_radiocheckboxes      editArg    vTcl::widgets::iwidgets::boxes::edit
+
