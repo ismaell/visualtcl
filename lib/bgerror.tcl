@@ -956,14 +956,12 @@ proc bgerror {error} {
     unset [vTcl:rename $top.errorInfo]
     unset [vTcl:rename $top.dialogStatus]
 
-    if {$status == "skip"} {
-
-		return -code break
-
-    } else {
+    if {$status != "skip"} {
 
         return
     }
+
+    return -code break
 }
 
 
