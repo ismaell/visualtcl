@@ -10,9 +10,8 @@ DefaultOptions  -entrybg white -range {0 100 1}
 
 ## Reuse insert proc from the entry widget. This proc assigns a
 ## default -textvariable to the widget.
-InsertCmd   vTcl:widget:entry:inscmd
-
+InsertCmd   ::vTcl::widgets::core::entry::insertCmd
 NewOption   -range    "range"             type
 
-lappend vTcl(proc,ignore) "::SpinBox::*"
-lappend vTcl(proc,ignore) SpinBox
+IgnoreProc "::SpinBox::*"
+IgnoreProc SpinBox

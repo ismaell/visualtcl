@@ -1,6 +1,10 @@
 ChangeLog for Visual Tcl:
 
 1.6.0a2 ->
+    o Added Context Menu to Itcl paned window to edit panes.
+    o Fixed BWidget Spinbox that was broken by namespacization.
+    o When dumping binding tags, replace occurences of the widget path by %W
+      to remove absolute paths to widgets.
     o Aliases are dumped alongside each widget.
     o New way of dumping widgets: frames recursively dump themselves,
       same for menus. Goals:

@@ -31,19 +31,22 @@ Icon            @vTcl::widgets::iwidgets::panedwindow::getIcon
 DumpChildren	no
 MegaWidget	yes
 TreeChildrenCmd	{
-		vTcl:widget:panedwindow:treeChildrenCmd
-		vTcl:widget:panedwindow:treeChildrenChildsite
+		vTcl::widgets::iwidgets::panedwindow::treeChildrenCmd
+		vTcl::widgets::iwidgets::panedwindow::treeChildrenChildsite
 		}
-DumpCmd		vTcl:dump:panedwindow
-InsertCmd	vTcl:widget:panedwindow:inscmd
-DeleteSiteCmd   vTcl:widget:panedwindow:deleteSiteCmd
-TagsCmd         vTcl:widget:panedwindow:tagscmd
-CompoundCmd     vTcl:compound:panedwindow
+DumpCmd		vTcl::widgets::iwidgets::panedwindow::dumpCmd
+InsertCmd	vTcl::widgets::iwidgets::panedwindow::insertCmd
+DeleteSiteCmd   vTcl::widgets::iwidgets::panedwindow::deleteSiteCmd
+TagsCmd         vTcl::widgets::iwidgets::panedwindow::tagsCmd
+CompoundCmd     vTcl::widgets::iwidgets::panedwindow::compoundCmd
 
 AdditionalClasses Pane
 
 ## Pane specific options
 NewOption -minimum		"min size"		type
+
+## Right-click menu
+Function        "Edit Panes..."         vTcl::widgets::iwidgets::panedwindow::editCmd
 
 ###########################################################
 ## Special proc for setting up icons on the toolbar.
@@ -88,9 +91,135 @@ OptionConfigCmd -_itcl_panedwindow_panes    edit       vTcl::itemEdit::edit
 OptionConfigCmd -_itcl_panedwindow_panes    editArg    vTcl::widgets::iwidgets::panedwindow::edit
 
 ###########################################################
-## Code for showing panes in attributes editor
+## Code for inserting, dumping the widget,
+## showing panes in attributes editor
 ##
 namespace eval vTcl::widgets::iwidgets::panedwindow {
+
+    proc editCmd {} {
+        set target $::vTcl(w,widget)
+        ::vTcl::itemEdit::edit $target vTcl::widgets::iwidgets::panedwindow::edit
+    }
+
+    proc insertCmd {target} {
+        $target add pane1
+        $target add pane2
+    }
+
+    proc tagsCmd {target} {
+
+        global vTcl
+
+        # workaround for special binding tags in IWidgets
+        set tags $vTcl(bindtags,$target)
+        set special1 [lsearch -glob $tags pw-config-*]
+        set special2 [lsearch -glob $tags itk-delete-*]
+
+        set class [winfo class $target]
+        set toplevel [winfo toplevel $target]
+        set result ""
+
+        if {$special1 != -1} {
+            lappend result [lindex $tags $special1]
+        }
+        if {$special2 != -1} {
+            lappend result [lindex $tags $special2]
+        }
+
+        lappend result $target $class $toplevel all
+        return $result
+    }
+
+    # All right, I explain it: -1 is the number of levels
+    # in the window path between the megawidget and its
+    # pages (childsites). This is used by the widget tree
+    # to skip 4 levels (otherwise it would draw 4 vertical
+    # lines)
+
+    proc treeChildrenCmd {target {diff \#-1}} {
+
+        set children ""
+        set wantsdiff [expr {$diff != ""}]
+
+        foreach site [$target childsite] {
+            foreach child [vTcl:complete_widget_tree $site $wantsdiff] {
+                lappend children $child$diff
+            }
+        }
+
+        return $children
+    }
+
+    proc treeChildrenChildsite {target} {
+
+        return [$target childsite]
+    }
+
+    proc deleteSiteCmd {target site} {
+
+        set index [lsearch -exact [$target childsite] $site]
+
+        if {$index != -1} {
+            $target delete $index
+        }
+    }
+
+    proc dumpCmd {target basename} {
+
+        global vTcl
+        set result [vTcl:dump_widget_opt $target $basename]
+        set entries [$target childsite]
+        set size [llength $entries]
+        for {set i 0} {$i < $size} {incr i} {
+            set conf [$target paneconfigure $i]
+            set pairs [vTcl:get_subopts_special $conf $target]
+            append result "$vTcl(tab)$basename add pane$i\n"
+            append result "$vTcl(tab)$basename paneconfigure pane$i \\\n"
+            append result "[vTcl:clean_pairs $pairs]\n"
+        }
+        for {set i 0} {$i < $size} {incr i} {
+            set page [lindex $entries $i]
+            append result "$vTcl(tab)"
+            set sitevariable "site_[llength [split $page .]]_$i"
+            append result "set $sitevariable "
+            append result "\[lindex \[$basename childsite\] $i\]\n"
+            append result [vTcl:lib_itcl:dump_subwidgets $page \$$sitevariable]
+        }
+        return $result
+    }
+
+    ## this function returns the necessary code to insert all
+    ## the childsites into the panedwindow widget (basically
+    ## the returned code will be stored in a compound)
+    ##
+    ## the returned code makes the body of a procedure whose
+    ## parameter is 'target'; to insert the childsites into the
+    ## compound, this procedure should be called with target
+    ## pointing to the new widget
+
+    proc compoundCmd {target} {
+        set result ""
+
+        set entries [$target childsite]
+        set size [llength $entries]
+        for {set i 0} {$i < $size} {incr i} {
+            set conf [$target paneconfigure $i]
+            set pairs [vTcl:conf_to_pairs $conf ""]
+            append result "set site($i) \[\$target add pane$i $pairs\]; "
+        }
+
+        ## we have to ask for the childsites list, because the add
+        ## command doesn't seem to be returning the correct path to the
+        ## pane it just added
+
+        for {set i 0} {$i < $size} {incr i} {
+            set compound [vTcl:create_compound [lindex $entries $i]]
+            append result "vTcl:insert_compound "
+            append result "\[lindex \[\$target childsite\] $i\] [list $compound] pack \{\}; "
+        }
+
+        return $result
+    }
 
     proc getPanes {target} {
     }
@@ -143,9 +272,14 @@ namespace eval vTcl::widgets::iwidgets::panedwindow::edit {
     }
 
     proc addItem {target} {
-        $target add pane_new
+        set index 1
+	set components [$target component]
+	while {[lsearch -exact $components pane$index] != -1} {
+	    incr index
+	}
+        $target add pane$index
         vTcl:init_wtree
-        return "New Pane"
+        return "Pane $index"
     }
 
     proc removeItem {target index} {
@@ -174,124 +308,4 @@ namespace eval vTcl::widgets::iwidgets::panedwindow::edit {
     proc moveUpOrDown {target index direction} {
         error "Not implemented yet!"
     }
-}
-
-proc vTcl:widget:panedwindow:inscmd {target} {
-    $target add pane1
-    $target add pane2
-}
-
-proc vTcl:widget:panedwindow:tagscmd {target} {
-
-    global vTcl
-
-    # workaround for special binding tags in IWidgets
-    set tags $vTcl(bindtags,$target)
-    set special1 [lsearch -glob $tags pw-config-*]
-    set special2 [lsearch -glob $tags itk-delete-*]
-
-    set class [winfo class $target]
-    set toplevel [winfo toplevel $target]
-    set result ""
-
-    if {$special1 != -1} {
-        lappend result [lindex $tags $special1]
-    }
-    if {$special2 != -1} {
-        lappend result [lindex $tags $special2]
-    }
-
-    lappend result $target $class $toplevel all
-    return $result
-}
-
-# All right, I explain it: -1 is the number of levels
-# in the window path between the megawidget and its
-# pages (childsites). This is used by the widget tree
-# to skip 4 levels (otherwise it would draw 4 vertical
-# lines)
-
-proc vTcl:widget:panedwindow:treeChildrenCmd {target {diff \#-1}} {
-
-    set children ""
-    set wantsdiff [expr {$diff != ""}]
-
-    foreach site [$target childsite] {
-        foreach child [vTcl:complete_widget_tree $site $wantsdiff] {
-            lappend children $child$diff
-        }
-    }
-
-    return $children
-}
-
-proc vTcl:widget:panedwindow:treeChildrenChildsite {target} {
-
-    return [$target childsite]
-}
-
-proc vTcl:widget:panedwindow:deleteSiteCmd {target site} {
-
-    set index [lsearch -exact [$target childsite] $site]
-
-    if {$index != -1} {
-        $target delete $index
-    }
-}
-
-proc vTcl:dump:panedwindow {target basename} {
-
-    global vTcl
-    set result [vTcl:dump_widget_opt $target $basename]
-    set entries [$target childsite]
-    set size [llength $entries]
-    for {set i 0} {$i < $size} {incr i} {
-        set conf [$target paneconfigure $i]
-        set pairs [vTcl:get_subopts_special $conf $target]
-        append result "$vTcl(tab)$basename add pane$i\n"
-        append result "$vTcl(tab)$basename paneconfigure pane$i \\\n"
-        append result "[vTcl:clean_pairs $pairs]\n"
-    }
-    for {set i 0} {$i < $size} {incr i} {
-        set page [lindex $entries $i]
-        append result "$vTcl(tab)"
-        set sitevariable "site_[llength [split $page .]]_$i"
-        append result "set $sitevariable "
-        append result "\[lindex \[$basename childsite\] $i\]\n"
-        append result [vTcl:lib_itcl:dump_subwidgets $page \$$sitevariable]
-    }
-    return $result
-}
-
-## this function returns the necessary code to insert all
-## the childsites into the panedwindow widget (basically
-## the returned code will be stored in a compound)
-##
-## the returned code makes the body of a procedure whose
-## parameter is 'target'; to insert the childsites into the
-## compound, this procedure should be called with target
-## pointing to the new widget
-
-proc vTcl:compound:panedwindow {target} {
-    set result ""
-
-    set entries [$target childsite]
-    set size [llength $entries]
-    for {set i 0} {$i < $size} {incr i} {
-        set conf [$target paneconfigure $i]
-        set pairs [vTcl:conf_to_pairs $conf ""]
-        append result "set site($i) \[\$target add pane$i $pairs\]; "
-    }
-
-    ## we have to ask for the childsites list, because the add
-    ## command doesn't seem to be returning the correct path to the
-    ## pane it just added
-
-    for {set i 0} {$i < $size} {incr i} {
-        set compound [vTcl:create_compound [lindex $entries $i]]
-        append result "vTcl:insert_compound "
-        append result "\[lindex \[\$target childsite\] $i\] [list $compound] pack \{\}; "
-    }
-
-    return $result
 }
