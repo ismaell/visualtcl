@@ -187,7 +187,7 @@ proc vTcl:font:get_font_dlg {base font_desc} {
     checkbutton $base.fra28.che35 \
         -text Overstrike \
         -variable vTcl(x,$base,overstrike)
-    entry $base.fra28.ent36 \
+    vTcl:entry $base.fra28.ent36 \
         -textvariable vTcl(x,$base,size) -width 10
     menubutton $base.fra28.men37 \
         -menu $base.fra28.men37.m -padx 4 -pady 3 \

@@ -186,7 +186,7 @@ proc vTcl:attrbar {args} {
     pack .vTcl.attr.01 \
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 3 -pady 2 \
         -side left
-    entry .vTcl.attr.01.02 \
+    vTcl:entry .vTcl.attr.01.02 \
         -highlightthickness 0 -width 15 -textvariable vTcl(w,opt,-text)
     bind .vTcl.attr.01.02 <Return> {
         .vTcl.attr.01.02 insert end "\n"

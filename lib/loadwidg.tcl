@@ -97,13 +97,13 @@ proc SetClassArray {} {
 	$tmp(class),defaultOptions	{}
 	$tmp(class),insertCmd		{}
 	$tmp(class),dblClickCmd		{}
-	$tmp(class),treeLabel		{}
 	$tmp(class),exportCmds		{}
 	$tmp(class),functionCmds	{}
 	$tmp(class),functionText	{}
 	$tmp(class),typeCmd		{}
 	$tmp(class),aliasPrefix		$tmp(class)
 	$tmp(class),widgetProc		vTcl:WidgetProc
+	$tmp(class),resizeCmd		vTcl:adjust_widget_size
     "
 
     foreach elem [array names classes $tmp(class),*] {
@@ -123,6 +123,7 @@ proc SetWidgetArray {} {
 	$tmp(name),balloon		$tmp(name)
 	$tmp(name),addOptions		{}
 	$tmp(name),autoPlace		0
+	$tmp(name),treeLabel		$tmp(class)
     "
 
     foreach elem [array names widgets $tmp(name),*] {
@@ -277,4 +278,9 @@ proc AliasPrefix {val} {
 proc WidgetProc {val} {
     global tmp
     set tmp(widgetProc) $val
+}
+
+proc ResizeCmd {val} {
+    global tmp
+    set tmp(resizeCmd) $val
 }

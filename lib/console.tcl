@@ -74,7 +74,7 @@ proc vTclWindow.vTcl.con {args} {
         -command "vTcl:insert_widget_in_text .vTcl.con.fra6.ent10"
     pack .vTcl.con.fra6.but1 -fill x -side top
     # @@end_change
-    entry .vTcl.con.fra6.ent10 \
+    vTcl:entry .vTcl.con.fra6.ent10 \
         -highlightthickness 0
     pack .vTcl.con.fra6.ent10 \
         -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 2 -pady 2 \

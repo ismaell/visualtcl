@@ -108,7 +108,7 @@ proc vTcl:grab_release {widget} {
 }
 
 proc vTcl:grab_resize {absX absY handle} {
-    global vTcl
+    global vTcl classes
     set vTcl(w,didmove) 1
     set widget $vTcl(w,widget)
     set X [vTcl:grid_snap x $absX]
@@ -251,7 +251,7 @@ proc vTcl:grab_resize {absX absY handle} {
 	}
     }
             
-    vTcl:adjust_widget_size $widget $newW $newH
+    $classes($vTcl(w,class),resizeCmd) $widget $newW $newH
     vTcl:place_handles $widget
 }
 
@@ -272,9 +272,6 @@ proc vTcl:adjust_widget_size {widget w h} {
 	   Scrollbar -
 	   Scale {
 	       $widget configure -width $w
-	   }
-	   Progressbar {
-	       $widget configure -width [expr $w - 10]
 	   }
 	   default {
 	       $widget configure -width $w

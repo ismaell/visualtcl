@@ -7,3 +7,4 @@ Class		Scrollbar
 Icon		icon_scrollbar_v.gif
 Balloon		vertical scrollbar
 AddOptions	-orient vertical
+TreeLabel	Vert Scrollbar

@@ -6,6 +6,7 @@ Icon		icon_menubutton.gif
 DefaultOptions	-text menu
 DoubleClickCmd	vTcl:edit_target_menu
 InsertCmd	vTcl:widget:menubutton:inscmd
+TreeLabel	@vTcl:core:get_widget_tree_label
 
 proc vTcl:widget:menubutton:inscmd {target} {
     return "

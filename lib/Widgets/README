@@ -64,11 +64,13 @@ InsertCmd	<proc>
 DoubleClickCmd	<proc>
 		A command executed if the widget is double-clicked.
 
-TreeLabel	<string>
+TreeLabel	<string | proc>
 		The string displayed next to the widget in the widget tree.
 		If <string> has an @ as the first character, then string is
 		the name of a proc to execute that will return the string
 		to display.
+		The proc must have one arguments: Widget
+		    Widget is the widget to get the label for.
 
 TypeCmd		<proc>
 		A proc to return what type a widget is.  This must be specified
@@ -106,3 +108,15 @@ AliasPrefix	<string>
 		assigned an alias name based on AliasPrefix and the order
 		of their creation.
 		(defaults to <Class>)
+
+ResizeCmd	<proc>
+		This is the proc that is called when a widget is grabbed by
+		a handle and resized.  vTcl takes care of whether or not
+		the widget CAN be resized based on the <Resizable> argument.
+		Once vTcl has determined that it can resize this widget, it
+		calls this command.
+		The proc must have three arguments: Widget Width Height
+		    Widget is the widget being resized
+		    Width is the new width for the widget
+		    Height is the new height for the widget
+		(default is vTcl:adjust_widget_size)

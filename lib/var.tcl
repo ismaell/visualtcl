@@ -131,7 +131,7 @@ proc vTclWindow.vTcl.var {args} {
     pack .vTcl.var.fra2.lab7 \
         -in .vTcl.var.fra2 -anchor center -expand 0 -fill none -ipadx 0 \
         -ipady 0 -padx 2 -pady 0 -side left 
-    entry .vTcl.var.fra2.ent8 \
+    vTcl:entry .vTcl.var.fra2.ent8 \
         -cursor {}  \
         -highlightthickness 0 -textvariable vTcl(var,name) 
     pack .vTcl.var.fra2.ent8 \

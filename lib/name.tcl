@@ -61,7 +61,7 @@ proc vTclWindow.vTcl.name {args} {
     bind .vTcl.name <Key-Return> {
         vTcl:ok_new_widget
     }
-    entry .vTcl.name.ent18 \
+    vTcl:entry .vTcl.name.ent18 \
         -cursor {}  
     pack .vTcl.name.ent18 \
         -in .vTcl.name -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 \

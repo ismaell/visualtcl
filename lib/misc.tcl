@@ -951,6 +951,7 @@ proc vTcl:formCompound:add {cpd type args} {
 
 	eval set count $${varname}_count
 
+	if {$type == "entry"} { set type vTcl:entry }
 	set window_name $cpd.i$count
 	set cmd "$type $window_name $args"
 	eval $cmd
@@ -1182,4 +1183,9 @@ vTcl:tabnotebook_init
 
 proc vTcl:streq {s1 s2} {
     return [expr [string compare $s1 $s2] == 0]
+}
+
+proc vTcl:entry {w args} {
+    eval entry $w $args
+    bind $w <Control-Key-u> "$w delete 0 end"
 }

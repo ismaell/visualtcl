@@ -97,9 +97,11 @@ proc vTcl:init_wtree {{wants_destroy_handles 1}} {
         if {$i == "."} {
             set c vTclRoot
 	    set type toplevel
+	    set t "Visual Tcl"
         } else {
 	    set type [vTcl:get_type $i 1]
 	    set c [vTcl:get_class $i 1]
+	    set t {}
         }
         if {![winfo exists $b.$j]} {
             set l($depth) [llength [vTcl:get_children $i]]
@@ -121,42 +123,16 @@ proc vTcl:init_wtree {{wants_destroy_handles 1}} {
             vTcl:set_balloon $b.$j $i
             $b create window $x $y -window $b.$j -anchor nw -tags $b.$j
 
-            # @@change by Christian Gavin 3/5/2000
-            # added "checkbutton" and "radiobutton" classes
-            # added "entry" class
-            # added "message" class
-            # 3/15/2000 added generic proc for getting label
-            switch $c {
-		vTclRoot { set t "Visual Tcl" }
-                toplevel {set t [wm title $i]}
-                frame {set t Frame}
-                text {set t "Text Widget"}
-                scrollbar {set t "Scrollbar"}
-                scrollbar_h {set t "Horz Scrollbar"}
-                scrollbar_v {set t "Vert Scrollbar"}
-                canvas {set t "Canvas"}
-                message        -
-                menubutton {set t [$i cget -text]}
-                entry {
-		    set val [$i cget -textvariable]
-		    if {[lempty $val]} { set val NONE }
-		    set t "VAR: $val"
-		}
-                default    {
-		    set t ""
-		    set tmp [vTcl:upper_first $c]
-		    set t $classes($tmp,treeLabel)
+	    if {[lempty $t]} {
+		set t ""
+		set t $widgets($type,treeLabel)
 
-		    ## If the first char is a @, execute it as a command.
-		    ## Otherwise, just put the text.
-		    if {![lempty $t]} {
-			if {[string index $t 0] == "@"} {
-			    set t [[string range $t 1 end] $c $i]
-			}
-		    }
-                }
-            }
-            # @@end_change
+		## If the first char is a @, execute it as a command.
+		## Otherwise, just put the text.
+		if {![lempty $t] && [string index $t 0] == "@"} {
+		    set t [[string range $t 1 end] $i]
+		}
+	    }
 
             $b create text $x2 $y2 -text $t -anchor w -tags "TEXT TEXT$b.$j"
             set d2 [expr $depth - 1]

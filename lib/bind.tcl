@@ -150,7 +150,7 @@ proc vTclWindow.vTcl.bind {args} {
     pack .vTcl.bind.fra9.fra9.scr11 \
         -in .vTcl.bind.fra9.fra9 -anchor center -expand 0 -fill y -ipadx 0 \
         -ipady 0 -padx 0 -pady 0 -side right
-    entry .vTcl.bind.fra9.ent14 \
+    vTcl:entry .vTcl.bind.fra9.ent14 \
          \
         -highlightthickness 0 -textvariable vTcl(bind,scratch)
     bind .vTcl.bind.fra9.ent14 <KeyPress> {
@@ -159,7 +159,7 @@ proc vTclWindow.vTcl.bind {args} {
     place .vTcl.bind.fra9.ent14 \
         -x 75 -relx 0 -y 5 -rely 0 -width 60 -relwidth {} -height 20 \
         -relheight {} -anchor nw -bordermode ignore
-    entry .vTcl.bind.fra9.ent15 \
+    vTcl:entry .vTcl.bind.fra9.ent15 \
          \
         -highlightthickness 0 -textvariable vTcl(bind,event)
     place .vTcl.bind.fra9.ent15 \
@@ -207,7 +207,7 @@ proc vTclWindow.vTcl.bind {args} {
     place .vTcl.bind.fra9.lab26 \
         -x 5 -relx 0 -y 166 -rely 0 -width 50 -relwidth {} -height 20 \
         -relheight {} -anchor nw -bordermode ignore
-    entry .vTcl.bind.fra9.ent27 \
+    vTcl:entry .vTcl.bind.fra9.ent27 \
          \
         -highlightthickness 0 -textvariable vTcl(bind,tags)
     place .vTcl.bind.fra9.ent27 \

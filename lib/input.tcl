@@ -55,7 +55,7 @@ proc vTcl:string_window {title base {value ""}} {
     wm resizable $base 1 0
     wm deiconify $base
     wm title $base "$title"
-    entry $base.ent18 \
+    vTcl:entry $base.ent18 \
         -cursor {}  
     pack $base.ent18 \
         -in $base -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 \

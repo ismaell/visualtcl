@@ -359,7 +359,7 @@ proc vTcl:edit_menu {target} {
     pack $base.fra16.lab20 \
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 2 -pady 2 \
         -side left
-    entry $base.fra16.ent21 \
+    vTcl:entry $base.fra16.ent21 \
         -highlightthickness 0 -textvariable vTcl(menu,$target,name) \
         -width 14
     pack $base.fra16.ent21 \
@@ -403,12 +403,12 @@ proc vTcl:edit_menu {target} {
     place $base.fra17.lab13 \
         -x 5 -relx 0 -y 25 -rely 0 -width 75 -height 20 -anchor nw \
         -bordermode ignore
-    entry $base.fra17.ent15 \
+    vTcl:entry $base.fra17.ent15 \
         -highlightthickness 0 -textvariable vTcl(menu,$target,label)
     place $base.fra17.ent15 \
         -x 85 -relx 0 -y 25 -rely 0 -width 161 -height 19 -anchor nw \
         -bordermode ignore
-    entry $base.fra17.ent16 \
+    vTcl:entry $base.fra17.ent16 \
         -highlightthickness 0 -textvariable vTcl(menu,$target,accel)
     bind $base.fra17.ent16 <Return> "
         vTcl:menu_item_add $base $target
@@ -540,72 +540,71 @@ proc vTcl:core:get_menu_label {class {target ""}} {
 	return "Menu"
 }
 
-proc vTcl:core:get_widget_tree_label {class {target ""}} {
+proc vTcl:core:get_widget_tree_label {target} {
+    set t ""
 
-	set t ""
+    set class [vTcl:get_class $target]
 
-	switch [string tolower $class] {
+    switch [string tolower $class] {
+	toplevel { set t [wm title $target] }
+	label {
+	    set ttt1 [$target cget -text]
+	    set ttt2 [$target cget -textvariable]
 
-	   label {
-                    set ttt1 [$target cget -text]
-                    set ttt2 [$target cget -textvariable]
+	    if {$ttt2 == ""} {
+		set t "LAB: $ttt1"
+	    } else {
+		set t "LAB: $ttt1 var=$ttt2"
+	    }
+	}
 
-                    if {$ttt2 == ""} {
-                          set t "LAB: $ttt1"
-                    } else {
-                          set t "LAB: $ttt1 var=$ttt2"
-                    }
+	radiobutton {
+	    set ttt1 [$target cget -text]
+	    set ttt2 [$target cget -variable]
+	    set ttt3 [$target cget -value]
 
-           }
+	    if {$ttt2 == ""} {
+		set t "RB: $ttt1"
+	    } else {
+		set t "RB: $ttt1 var=$ttt2\(val=$ttt3\)"
+	    }
+	}
 
-           listbox {
-                   return "Listbox"
-           }
+	checkbutton {
+	    set ttt1 [$target cget -text]
+	    set ttt2 [$target cget -variable]
+	    set ttt3 [$target cget -onvalue]
+	    set ttt4 [$target cget -offvalue]
 
-           radiobutton {
+	    if {$ttt2 == ""} {
+		set t "CB: $ttt1"
+	    } else {
+		set t "CB: $ttt1 var=$ttt2\(on=$ttt3,off=$ttt4\)"
+	    }
+	}
 
-  	            set ttt1 [$target cget -text]
-                    set ttt2 [$target cget -variable]
-                    set ttt3 [$target cget -value]
+	button {
+	    set ttt1 [$target cget -text]
+	    set ttt2 [$target cget -textvariable]
 
-                    if {$ttt2 == ""} {
-                          set t "RB: $ttt1"
-                    } else {
-                          set t "RB: $ttt1 var=$ttt2\(val=$ttt3\)"
-                    }
+	    if {$ttt2 == ""} {
+		set t "BUT: $ttt1"
+	    } else {
+		set t "BUT: $ttt1 var=$ttt2"
+	    }
+	}
 
-           }
+	entry {
+	    set val [$target cget -textvariable]
+	    if {[lempty $val]} { set val NONE }
+	    set t "VAR: $val"
+	}
 
-           checkbutton {
+	message    -
+	menubutton { set t [$target cget -text] }
+    }
 
-                    set ttt1 [$target cget -text]
-                    set ttt2 [$target cget -variable]
-                    set ttt3 [$target cget -onvalue]
-                    set ttt4 [$target cget -offvalue]
-
-                    if {$ttt2 == ""} {
-                           set t "CB: $ttt1"
-                    } else {
-                           set t "CB: $ttt1 var=$ttt2\(on=$ttt3,off=$ttt4\)"
-                    }
-           }
-
-	   button {
-                    set ttt1 [$target cget -text]
-                    set ttt2 [$target cget -textvariable]
-
-                    if {$ttt2 == ""} {
-                           set t "BUT: $ttt1"
-                    } else {
-                           set t "BUT: $ttt1 var=$ttt2"
-                    }
-
-           }
-
-           default {}
-        }
-
-	return $t
+    return $t
 }
 
 # translation for options when saving files

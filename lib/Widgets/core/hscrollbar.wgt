@@ -7,3 +7,4 @@ Class		Scrollbar
 Icon		icon_scrollbar_h.gif
 Balloon		horizontal scrollbar
 AddOptions	-orient horizontal
+TreeLabel	Horz Scrollbar
