@@ -731,7 +731,7 @@ proc vTcl:propmgr:focusOnLabel {w dir} {
     ## We want to set the focus to the focusControl, but we want the canvas
     ## to scroll to the label of the focusControl.
     focus $propmgrLabels($next)
-    vTcl:propmgr:scrolltolabel $vTcl(gui,ae).c $next
+    vTcl:propmgr:scrollToLabel $vTcl(gui,ae).c $next
 }
 
 proc vTcl:propmgr:focusPrev {w} {
@@ -742,15 +742,13 @@ proc vTcl:propmgr:focusNext {w} {
     vTcl:propmgr:focusOnLabel $w 1
 }
 
-proc vTcl:propmgr:scrolltolabel {c w} {
+proc vTcl:propmgr:scrollToLabel {c w} {
     global vTcl
     set split [split $w .]
     set split [lrange $split 0 4]
     set frame [join $split .]
     lassign [$c cget -scrollregion] foo foo cx cy
     lassign [vTcl:split_geom [winfo geometry $w]] foo foo ix iy
-    set x [expr $ix.0 / $cx]
     set y [expr ($iy.0 + $vTcl(propmgr,frame,$frame)) / $cy]
-    $c xview moveto $x
     $c yview moveto $y
 }

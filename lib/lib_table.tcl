@@ -19,11 +19,9 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 proc vTcl:lib_table:init {} {
-
     global vTcl
 
     if {[catch {package require Tktable} erg]} {
-
         lappend vTcl(libNames) {(not detected) tkTable Widgets Support Library}
         return 0
     }
