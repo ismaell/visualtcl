@@ -157,6 +157,11 @@ proc vTcl:active_widget {target} {
 proc vTcl:select_widget {target} {
     global vTcl
 
+    if {[vTcl:streq $target "."]} {
+	vTcl:prop:clear
+    	return
+    }
+
     vTcl:log "vTcl:select_widget $target"
     if {$target == $vTcl(w,widget)} {
         # @@change by Christian Gavin 3/13/2000
@@ -580,6 +585,7 @@ proc vTcl:create_widget {class options new_widg x y} {
 	append do ";"
     }
     append do "vTcl:setup_bind_tree $new_widg; "
+    append do "vTcl:widget:register_widget $new_widg; "
     append do "vTcl:active_widget $new_widg; "
     if {$undo == ""} {
         set undo "destroy $new_widg; vTcl:active_widget [list $vTcl(w,widget)];"
@@ -947,4 +953,47 @@ proc vTcl:widget:get_tree_label {w} {
     	set t [[string range $t 1 end] $w]
     }
     return $t
+}
+
+###
+## Register a widget and give it a containing namespace to hold data.
+###
+proc vTcl:widget:register_widget {w} {
+    set opts [$w configure]
+
+    if {![catch {namespace children ::widgets} namespaces]} {
+	if {[lsearch $namespaces ::widgets::${w}] > -1} {return}
+    }
+
+    namespace eval ::widgets::${w} {
+    	variable options
+	variable save
+	variable defaults
+    }
+
+    foreach list $opts {
+    	lassign $list opt x x def val
+	set ::widgets::${w}::options($opt) $val
+	set ::widgets::${w}::defaults($opt) $def
+	if {[vTcl:streq $def $val]} {
+	    set ::widgets::${w}::save($opt) 0
+	} else {
+	    set ::widgets::${w}::save($opt) 1
+	}
+    }
+}
+
+###
+## Register all unregistered widgets.  This is called when loading a project.
+## If the project has widget registry information already stored, the namespace
+## for each widget will already exist, and the widget will not be registered.
+##
+## If there is no registry, one will be created.  This lets us register old
+## imported projects that don't contain saved registry information.
+###
+proc vTcl:widget:register_all_widgets {} {
+    set widgets [vTcl:list_widget_tree .]
+    foreach w $widgets {
+    	vTcl:widget:register_widget $w
+    }
 }

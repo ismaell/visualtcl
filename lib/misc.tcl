@@ -106,63 +106,54 @@ proc vTcl:clean_pairs {list {indent 8}} {
     foreach i $list {
         if {$last == ""} {
             set last $i
-        } else {
-            # @@change by Christian Gavin 3/18/2000
-            # special case to handle image filenames
-            # 3/26/2000
-            # special case to handle font keys
+	    continue
+	}
+	# @@change by Christian Gavin 3/18/2000
+	# special case to handle image filenames
+	# 3/26/2000
+	# special case to handle font keys
 
-	    set noencase 0
+	set noencase 0
 
-	    if {[info exists vTcl(option,noencase,$last)]} {
-
-	        if [string match *font* $last] {
-
-	       		if [string match {\[*\]} $i] {
-	       			set noencase 1
-	       		}
-
+	if {[info exists vTcl(option,noencase,$last)]} {
+	    if [string match *font* $last] {
+		if [string match {\[*\]} $i] { set noencase 1 }
+	    } else {
+		if [info exists vTcl(option,noencasewhen,$last)] {
+		    set noencase [$vTcl(option,noencasewhen,$last) $i]
+		    # vTcl:puts "noencase :$noencase, $i"
 		} else {
-			if [info exists vTcl(option,noencasewhen,$last)] {
-
-				set noencase [$vTcl(option,noencasewhen,$last) $i]
-				# vTcl:puts "noencase :$noencase, $i"
-			} else {
-
-				set noencase 1
-			}
+		    set noencase 1
 		}
 	    }
+	}
 
-            if {$noencase} {
+	if {$noencase} {
+	    set i "$last $i "
+	} else {
+	    switch $vTcl(pr,encase) {
+	       list {
+		  set i "$last [list $i] "
+	       }
+	       brace {
+		  set i "$last \{$i\} "
+	       }
+	       quote {
+		   set i "$last \"$i\" "
+	       }
+	   }
+	}
 
-            	    set i "$last $i "
-
-            } else {
-	            switch $vTcl(pr,encase) {
- 	               list {
-  	                  set i "$last [list $i] "
-   	               }
-    	               brace {
-     	                  set i "$last \{$i\} "
-      	               }
-       	  	       quote {
-        	           set i "$last \"$i\" "
-         	       }
-         	   }
-            }
-
-            # @@end_change
-            set last ""
-            set len [string length $i]
-            if { [expr $index + $len] > 78 } {
-                append output "\\\n${tab}${i}"
-                set index [expr $indent + $len]
-            } else {
-                append output "$i"
-                incr index $len
-            }
-        }
+	# @@end_change
+	set last ""
+	set len [string length $i]
+	if { [expr $index + $len] > 78 } {
+	    append output "\\\n${tab}${i}"
+	    set index [expr $indent + $len]
+	} else {
+	    append output "$i"
+	    incr index $len
+	}
     }
     return $output
 }

@@ -64,14 +64,50 @@ proc vTclWindow.vTcl.help {args} {
     grid .vTcl.help.fra18.scr24 \
         -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns 
 
-    catch {
-        set f [open [file join $vTcl(VTCL_HOME) lib HELP] r]
-        .vTcl.help.fra18.tex22 insert end [read $f]
-        close $f
+    set file [file join $vTcl(VTCL_HOME) lib Help Main]
+    if {[file exists $file]} {
+	set fp [open $file]
+	.vTcl.help.fra18.tex22 delete 0.0 end
+	.vTcl.help.fra18.tex22 insert end [read $fp]
+	close $fp
     }
-    .vTcl.help.fra18.tex22 conf -state disabled
+
+    .vTcl.help.fra18.tex22 configure -state disabled
 
     wm geometry .vTcl.help 600x425
     vTcl:center .vTcl.help 600 425
     wm deiconify .vTcl.help
+}
+
+###
+## Open the help window and set the text to the text of the file referenced
+## by helpName.
+###
+proc vTcl:Help {helpName} {
+    global vTcl
+
+    set file [file join $vTcl(VTCL_HOME) lib Help $helpName]
+    if {![file exist $file]} { return }
+
+    Window show .vTcl.help
+
+    wm title .vTcl.help $helpName
+
+    .vTcl.help.fra18.tex22 configure -state normal
+
+    set fp [open $file]
+    .vTcl.help.fra18.tex22 delete 0.0 end
+    .vTcl.help.fra18.tex22 insert end [read $fp]
+    close $fp
+
+    .vTcl.help.fra18.tex22 configure -state disabled
+
+    update
+}
+
+###
+## Bind a particular help file to a window or widget.
+###
+proc vTcl:BindHelp {w help} {
+    bind $w <Key-F1> "vTcl:Help $help"
 }

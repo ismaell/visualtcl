@@ -198,6 +198,9 @@ proc vTcl:open {{file ""}} {
     vTcl:update_proc_list;               vTcl:statbar 95
     vTcl:status "Updating aliases"
     vTcl:update_aliases
+    vTcl:status "Registering widgets"
+    vTcl:widget:register_all_widgets;	 vTcl:statbar 97
+
     set vTcl(project,file) $file
     set vTcl(project,name) [lindex [file split $file] end]
     wm title .vTcl "Visual Tcl - $vTcl(project,name)"

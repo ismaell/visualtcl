@@ -319,11 +319,9 @@ proc vTcl:get_mgropts {opts {basename 0}} {
 proc vTcl:get_opts {opts} {
     set ret ""
     foreach i $opts {
-        set o [lindex $i 0]
-        set v [lindex $i 4]
-        if {$o != "-class" && $v != [lindex $i 3]} {
-            lappend ret $o $v
-        }
+	lassign $i opt x x def val
+	if {[vTcl:streq $opt "-class"] || [vTcl:streq $val $def]} { continue }
+	lappend ret $opt $val
     }
     return $ret
 }
@@ -332,23 +330,21 @@ proc vTcl:get_opts {opts} {
 # converts image names to filenames before saving
 # converts font object names to font keys before saving
 
-proc vTcl:get_opts_special {opts} {
-
+proc vTcl:get_opts_special {opts w} {
     global vTcl
-    set ret ""
+    upvar ::widgets::${w}::save save
+
+    set ret {}
     foreach i $opts {
-        set o [lindex $i 0]
-        set v [lindex $i 4]
-        if {$o != "-class" && $v != [lindex $i 3]} {
+	lassign $i opt x x def val
+	if {[vTcl:streq $opt "-class"] || [vTcl:streq $val $def]} { continue }
+	if {[info exists save($opt)] && !$save($opt)} { continue }
 
-	    if [info exists vTcl(option,translate,$o)] {
-
-	    	set v [$vTcl(option,translate,$o) $v]
-	    	vTcl:log "Translated option: $o value: $v"
-	    }
-
-            lappend ret $o $v
-        }
+	if [info exists vTcl(option,translate,$opt)] {
+	    set val [$vTcl(option,translate,$opt) $val]
+	    vTcl:log "Translated option: $opt value: $val"
+	}
+	lappend ret $opt $val
     }
     return $ret
 }
@@ -392,7 +388,7 @@ proc vTcl:dump_widget_opt {target basename} {
         # use special proc to convert image names to filenames before
         # saving to disk
 
-        set p [vTcl:get_opts_special $opt]
+        set p [vTcl:get_opts_special $opt $target]
 
         # @@end_change
 
@@ -503,7 +499,7 @@ proc vTcl:dump_menu_widget {target basename} {
                 # set pairs [vTcl:conf_to_pairs $conf ""]
 
 		# to allow option translation
-		set pairs [vTcl:get_opts_special $conf]
+		set pairs [vTcl:get_opts_special $conf $target]
 
                 append result "$vTcl(tab)$basename add $type \\\n"
                 append result "[vTcl:clean_pairs $pairs]\n"

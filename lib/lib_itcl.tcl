@@ -679,7 +679,7 @@ proc vTcl:lib_itcl:dump_widget_opt {target basename} {
             lappend keep_opt $e
         }
     }
-    set p [vTcl:get_opts_special $keep_opt]
+    set p [vTcl:get_opts_special $keep_opt $target]
     if {$p != ""} {
     	vTcl:log "=> megawidget: $p"
         append result " \\\n[vTcl:clean_pairs $p]\n"

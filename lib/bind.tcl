@@ -121,12 +121,9 @@ proc vTclWindow.vTcl.bind {args} {
     wm transient .vTcl.bind .vTcl
     }
     frame $base.fra22 \
-        -background #dcdcdc -borderwidth 2 -height 75 \
-        -highlightbackground #dcdcdc -highlightcolor #000000 -width 125 
+        -borderwidth 2 -height 75 \
+        -width 125 
     button $base.fra22.but24 \
-        -activebackground #dcdcdc -activeforeground #000000 \
-        -background #dcdcdc -foreground #000000 -highlightbackground #dcdcdc \
-        -highlightcolor #000000 \
         -image [vTcl:image:get_image "/home/cgavin/vtcl/images/edit/ok.gif"] \
         -padx 9 -pady 3 -text button -command "Window hide .vTcl.bind"
     vTcl:set_balloon $base.fra22.but24 "Close"
@@ -140,16 +137,13 @@ proc vTclWindow.vTcl.bind {args} {
         -background #dcdcdc -borderwidth 2 -height 75 \
         -highlightbackground #dcdcdc -highlightcolor #000000 -width 125 
     menubutton $base.cpd21.01.fra22.men20 \
-        -activebackground #dcdcdc -activeforeground #000000 \
-        -background #dcdcdc -foreground #000000 -height 23 \
-        -highlightbackground #dcdcdc -highlightcolor #000000 \
+        -height 23 \
         -image [vTcl:image:get_image "/home/cgavin/vtcl/images/edit/add.gif"] \
         -menu "$base.cpd21.01.fra22.men20.m" -padx 0 -pady 0 -relief raised \
-        -text menu -width 23
+        -text menu -width 23 
     menu $base.cpd21.01.fra22.men20.m \
-        -activebackground #dcdcdc -activeborderwidth 1 \
-        -activeforeground #000000 -background #dcdcdc -borderwidth 1 \
-        -foreground #000000 -tearoff 0 
+        -borderwidth 1 \
+        -tearoff 0 
     $base.cpd21.01.fra22.men20.m add command \
         -command {::widgets_bindings::add_binding <Button-1>} -label Button-1 
     $base.cpd21.01.fra22.men20.m add command \
@@ -183,10 +177,8 @@ proc vTclWindow.vTcl.bind {args} {
     $base.cpd21.01.fra22.men20.m add command \
         -command {Window show .vTcl.newbind} -label Advanced... 
     button $base.cpd21.01.fra22.but24 \
-        -activebackground #dcdcdc -activeforeground #000000 \
-        -background #dcdcdc -command ::widgets_bindings::delete_binding \
-        -foreground #000000 -height 23 \
-        -highlightbackground #dcdcdc -highlightcolor #000000 \
+        -command ::widgets_bindings::delete_binding \
+        -height 23 \
         -highlightthickness 0 \
         -image [vTcl:image:get_image "/home/cgavin/vtcl/images/edit/remove.gif"] \
         -padx 0 -pady 0 -text button -width 23 
@@ -195,10 +187,7 @@ proc vTclWindow.vTcl.bind {args} {
         -highlightbackground #dcdcdc -highlightcolor #000000 -relief raised \
         -width 30 
     listbox $base.cpd21.01.cpd25.01 \
-        -background #dcdcdc \
-        -foreground #000000 -highlightbackground #ffffff \
-        -highlightcolor #000000 -selectbackground #008080 \
-        -selectforeground #ffffff -selectmode single \
+        -selectmode single \
         -xscrollcommand "$base.cpd21.01.cpd25.02 set" \
         -yscrollcommand "$base.cpd21.01.cpd25.03 set" 
     bind $base.cpd21.01.cpd25.01 <Button-3> {
@@ -223,9 +212,8 @@ after idle "::widgets_bindings::select_binding"
         ::widgets_bindings::delete_binding
     }
     menu $base.cpd21.01.cpd25.01.menu \
-        -activebackground #dcdcdc -activeborderwidth 1 \
-        -activeforeground #000000 -background #dcdcdc -borderwidth 1 \
-        -foreground #000000 -tearoff 0 
+        -borderwidth 1 \
+        -tearoff 0 
     $base.cpd21.01.cpd25.01.menu add command \
         -command {::widgets_bindings::right_click_modifier ""} \
         -label {<no modifier>} 
@@ -258,12 +246,12 @@ after idle "::widgets_bindings::select_binding"
         -activebackground #dcdcdc -background #dcdcdc \
         -command "$base.cpd21.01.cpd25.01 xview" \
         -highlightbackground #dcdcdc -highlightcolor #000000 \
-        -orient horizontal -troughcolor #dcdcdc -width 10 
+        -orient horizontal -troughcolor #dcdcdc  
     scrollbar $base.cpd21.01.cpd25.03 \
         -activebackground #dcdcdc -background #dcdcdc \
         -command "$base.cpd21.01.cpd25.01 yview" \
         -highlightbackground #dcdcdc -highlightcolor #000000 \
-        -troughcolor #dcdcdc -width 10 
+        -troughcolor #dcdcdc  
     frame $base.cpd21.02 \
         -background #9900991B99FE -highlightbackground #dcdcdc \
         -highlightcolor #000000 
@@ -275,12 +263,12 @@ after idle "::widgets_bindings::select_binding"
         -activebackground #dcdcdc -background #dcdcdc \
         -command "$base.cpd21.02.cpd21.03 xview"  \
         -highlightbackground #dcdcdc -highlightcolor #000000 \
-        -orient horizontal -troughcolor #dcdcdc -width 10 
+        -orient horizontal -troughcolor #dcdcdc  
     scrollbar $base.cpd21.02.cpd21.02 \
         -activebackground #dcdcdc -background #dcdcdc \
         -command "$base.cpd21.02.cpd21.03 yview"  \
         -highlightbackground #dcdcdc -highlightcolor #000000 \
-        -troughcolor #dcdcdc -width 10 
+        -troughcolor #dcdcdc  
     text $base.cpd21.02.cpd21.03 \
         -background white \
         -foreground #000000 -height 1 -highlightbackground #ffffff \
@@ -474,14 +462,10 @@ proc vTclWindow.vTcl.newbind {base {container 0}} {
         -background #dcdcdc -borderwidth 2 -highlightbackground #dcdcdc \
         -highlightcolor #000000 -width 125 
     label $base.fra20.lab21 \
-        -activebackground #dcdcdc -activeforeground #000000 \
-        -background #dcdcdc -borderwidth 1 -foreground #000000 \
-        -highlightbackground #dcdcdc -highlightcolor #000000 \
+        -borderwidth 1 -foreground #000000 \
         -text {Type keystrokes} 
     entry $base.fra20.ent22 \
         -background #ffffff -cursor {} -foreground #000000 \
-        -highlightbackground #ffffff -highlightcolor #000000 \
-        -selectbackground #008080 -selectforeground #ffffff \
         -textvariable bindingsKeystrokes -width 10 
     bind $base.fra20.ent22 <Key> {
         set bindingsEventEntry "$bindingsEventEntry<Key-%K>"
@@ -491,9 +475,7 @@ after idle {set bindingsKeystrokes ""}
         -background #dcdcdc -borderwidth 2 -highlightbackground #dcdcdc \
         -highlightcolor #000000 -width 125 
     label $base.fra23.lab24 \
-        -activebackground #dcdcdc -activeforeground #000000 \
-        -background #dcdcdc -borderwidth 1 -foreground #000000 \
-        -highlightbackground #dcdcdc -highlightcolor #000000 \
+        -borderwidth 1 \
         -text {Select a mouse event or a key event} 
     bind $base.fra23.lab24 <Double-Key-a> {
         puts "aa"
@@ -516,12 +498,12 @@ set bindingsEventEntry [::widgets_bindings::set_modifier_in_event $bindingsEvent
         -activebackground #dcdcdc -background #dcdcdc \
         -command "$base.fra23.cpd34.01 xview"  \
         -highlightbackground #dcdcdc -highlightcolor #000000 \
-        -orient horizontal -troughcolor #dcdcdc -width 10 
+        -orient horizontal -troughcolor #dcdcdc  
     scrollbar $base.fra23.cpd34.03 \
         -activebackground #dcdcdc -background #dcdcdc \
         -command "$base.fra23.cpd34.01 yview"  \
         -highlightbackground #dcdcdc -highlightcolor #000000 \
-        -troughcolor #dcdcdc -width 10 
+        -troughcolor #dcdcdc  
     frame $base.fra23.cpd35 \
         -background #dcdcdc -borderwidth 1 -height 30 \
         -highlightbackground #dcdcdc -highlightcolor #000000 -relief raised \
@@ -540,23 +522,20 @@ set bindingsEventEntry $bindingsEventEntry<$event>
         -activebackground #dcdcdc -background #dcdcdc \
         -command "$base.fra23.cpd35.01 xview"  \
         -highlightbackground #dcdcdc -highlightcolor #000000 \
-        -orient horizontal -troughcolor #dcdcdc -width 10 
+        -orient horizontal -troughcolor #dcdcdc  
     scrollbar $base.fra23.cpd35.03 \
         -activebackground #dcdcdc -background #dcdcdc \
         -command "$base.fra23.cpd35.01 yview"  \
         -highlightbackground #dcdcdc -highlightcolor #000000 \
-        -troughcolor #dcdcdc -width 10 
+        -troughcolor #dcdcdc  
     frame $base.fra36 \
         -background #dcdcdc -borderwidth 2 -height 75 \
         -highlightbackground #dcdcdc -highlightcolor #000000 
     label $base.fra36.lab37 \
-        -activebackground #dcdcdc -activeforeground #000000 \
-        -background #dcdcdc -borderwidth 1 -foreground #000000 \
+        -borderwidth 1 \
         -highlightbackground #dcdcdc -highlightcolor #000000 -text Event 
     entry $base.fra36.ent38 \
         -background #ffffff -cursor {} -foreground #000000 \
-        -highlightbackground #ffffff -highlightcolor #000000 \
-        -selectbackground #008080 -selectforeground #ffffff \
         -textvariable bindingsEventEntry 
     frame $base.fra39 \
         -background #dcdcdc -borderwidth 2 -height 75 \
@@ -792,6 +771,7 @@ namespace eval ::widgets_bindings {
         eval set target $${n}::target
         
         if {$tag == $target} {
+        
             AddBinding configure -state normal
             
             if {$event == ""} {
@@ -800,6 +780,7 @@ namespace eval ::widgets_bindings {
                 RemoveBinding configure -state normal
             }
         } else {
+        
             AddBinding    configure -state disabled
             RemoveBinding configure -state disabled
         }
@@ -825,7 +806,7 @@ namespace eval ::widgets_bindings {
         
            ListboxBindings insert end $tag
            if {$tag == $target} {
-               if {$tk_version >= 8.2} {
+               if {$tk_version > 8.2} {
                    ListboxBindings itemconfigure $index  -foreground blue
                }
            }
@@ -836,7 +817,7 @@ namespace eval ::widgets_bindings {
               
                ListboxBindings insert end "   $event"
                if {$tag == $target} {
-                   if {$tk_version >= 8.2} {
+                   if {$tk_version > 8.2} {
                        ListboxBindings itemconfigure $index  -foreground blue
                    }
                }

@@ -116,11 +116,14 @@ proc vTclWindow.vTcl.ae {args} {
     set f3 $ae.c.f3; frame $f3       ; # Widget Geometry
         $ae.c create window 0 0 -window $f3 -anchor nw -tag geom
 
-    label $f1.l -text "Widget"     -relief raised -bg #aaaaaa -bd 1 -width 30
+    label $f1.l -text "Widget"     -relief raised -bg #aaaaaa -bd 1 -width 30 \
+    	-anchor center
         pack $f1.l -side top -fill x
-    label $f2.l -text "Attributes" -relief raised -bg #aaaaaa -bd 1 -width 30
+    label $f2.l -text "Attributes" -relief raised -bg #aaaaaa -bd 1 -width 30 \
+    	-anchor center
         pack $f2.l -side top -fill x
-    label $f3.l -text "Geometry"   -relief raised -bg #aaaaaa -bd 1 -width 30
+    label $f3.l -text "Geometry"   -relief raised -bg #aaaaaa -bd 1 -width 30 \
+    	-anchor center
         pack $f3.l -side top -fill x
 
     bind $f1.l <ButtonPress> {vTcl:prop:set_visible info}
@@ -175,6 +178,8 @@ proc vTclWindow.vTcl.ae {args} {
     catch {wm geometry .vTcl.ae $vTcl(geometry,.vTcl.ae)}
     update idletasks
     vTcl:prop:recalc_canvas
+
+    vTcl:BindHelp $ae PropManager
 
     wm deiconify $ae
 }
@@ -253,6 +258,11 @@ proc vTcl:prop:update_attr {} {
         return
     }
 
+    if {[vTcl:streq $vTcl(w,widget) "."]} {
+    	vTcl:prop:clear
+	return
+    }
+
     vTcl:log "vTcl:prop:update_attr"
     #
     # Update Widget Attributes
@@ -327,25 +337,27 @@ proc vTcl:prop:update_attr {} {
         pack $top -side top -expand 1 -fill both
         grid columnconf $top 1 -weight 1
 
-		catch {
-        foreach i "$vTcl(m,$mgr,list) $vTcl(m,$mgr,extlist)" {
-            set variable "vTcl(w,$mgr,$i)"
-            set cmd [lindex $vTcl(m,$mgr,$i) 4]
-            set config_cmd "$cmd \$vTcl(w,widget) $i \$$variable"
-            set focus_out_cmd "vTcl:focus_out_geometry_cmd $i $cmd"
+	catch {
+	    foreach i "$vTcl(m,$mgr,list) $vTcl(m,$mgr,extlist)" {
+		set variable "vTcl(w,$mgr,$i)"
+		set cmd [lindex $vTcl(m,$mgr,$i) 4]
+		set config_cmd "$cmd \$vTcl(w,widget) $i \$$variable"
+		set focus_out_cmd "vTcl:focus_out_geometry_cmd $i $cmd"
 
-            if {$cmd == ""} {
-                set config_cmd "$mgr conf \$vTcl(w,widget) $i \$$variable"
-                set focus_out_cmd "vTcl:focus_out_geometry_cmd $i $mgr conf"
-            }
-            append config_cmd ";vTcl:place_handles \$vTcl(w,widget)"
-            vTcl:prop:new_attr $top $i $variable $config_cmd m,$mgr $focus_out_cmd
-        }
+		if {$cmd == ""} {
+		    set config_cmd "$mgr conf \$vTcl(w,widget) $i \$$variable"
+		    set focus_out_cmd "vTcl:focus_out_geometry_cmd $i $mgr conf"
 		}
+		append config_cmd ";vTcl:place_handles \$vTcl(w,widget)"
+		vTcl:prop:new_attr $top $i $variable $config_cmd m,$mgr \
+		    $focus_out_cmd
+	    }
+	}
     }
 
     update idletasks
     vTcl:prop:recalc_canvas
+    vTcl:prop:update_saves $vTcl(w,widget)
 }
 
 proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
@@ -371,6 +383,8 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
 
     set focusControl $base
 
+    append config_cmd "; vTcl:prop:save_opt \$vTcl(w,widget) $option $variable"
+    
     switch $type {
         boolean {
             frame $base
@@ -402,17 +416,19 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
             button $base \
                 -text "<click to edit>" -relief sunken -bd 1 -width 12 \
                 -highlightthickness 1 -fg black -padx 0 -pady 1 \
-                -command {
-                    vTcl:edit_target_menu $vTcl(w,widget)
-                } -anchor w
+                -command "
+                    vTcl:edit_target_menu \$vTcl(w,widget)
+		    vTcl:prop:save_opt \$vTcl(w,widget) $option $variable
+                " -anchor w
         }
 	menuspecial {
             button $base \
                 -text "<click to edit>" -relief sunken -bd 1 -width 12 \
                 -highlightthickness 1 -fg black -padx 0 -pady 1 \
-                -command {
-                    vTcl:edit_menu $vTcl(w,widget)
-                } -anchor w
+                -command "
+                    vTcl:edit_menu \$vTcl(w,widget)
+		    vTcl:prop:save_opt \$vTcl(w,widget) $option $variable
+                " -anchor w
 	}
         color {
             frame $base
@@ -424,7 +440,10 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
             frame ${base}.f -relief raised -bd 1 \
                 -bg [subst $$variable] -width 20 -height 5
             bind ${base}.f <ButtonPress> \
-                "vTcl:show_color $top.t${option}.f $option $variable"
+                "
+		vTcl:show_color $top.t${option}.f $option $variable
+		vTcl:prop:save_opt \$vTcl(w,widget) $option $variable
+		"
             pack ${base}.l -side left -expand 1 -fill x
             pack ${base}.f -side right -fill y -pady 1 -padx 1
         }
@@ -432,12 +451,19 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
             frame $base
             vTcl:entry ${base}.l -relief sunken -bd 1 \
                 -textvariable $variable -width 8 \
-                -highlightthickness 1 -fg black
+                -highlightthickness 1 -fg black -validate key \
+		-vcmd "
+		    vTcl:prop:save_opt \$vTcl(w,widget) $option $variable
+		    return 1
+		"
             bind ${base}.l <KeyRelease-Return> $config_cmd
             button ${base}.f \
                 -image ellipses -bd 1 -width 12 \
                 -highlightthickness 1 -fg black -padx 0 -pady 1 \
-                -command "vTcl:set_command \$vTcl(w,widget) $option"
+                -command "
+		vTcl:set_command \$vTcl(w,widget) $option
+		vTcl:prop:save_opt \$vTcl(w,widget) $option $variable
+		"
             pack ${base}.l -side left -expand 1 -fill x
             pack ${base}.f -side right -fill y -pady 1 -padx 1
 	    set focusControl ${base}.l
@@ -451,7 +477,10 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
             button ${base}.f \
                 -image ellipses -bd 1 -width 12 \
                 -highlightthickness 1 -fg black -padx 0 -pady 1 \
-                -command "vTcl:font:prompt_user_font \$vTcl(w,widget) $option"
+                -command "
+		vTcl:font:prompt_user_font \$vTcl(w,widget) $option
+		vTcl:prop:save_opt \$vTcl(w,widget) $option $variable
+		"
             pack ${base}.l -side left -expand 1 -fill x
             pack ${base}.f -side right -fill y -pady 1 -padx 1
         }
@@ -464,14 +493,21 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
             button ${base}.f \
                 -image ellipses -bd 1 -width 12 \
                 -highlightthickness 1 -fg black -padx 0 -pady 1 \
-                -command "vTcl:prompt_user_image \$vTcl(w,widget) $option"
+                -command "
+		vTcl:prompt_user_image \$vTcl(w,widget) $option
+		vTcl:prop:save_opt \$vTcl(w,widget) $option $variable
+		"
             pack ${base}.l -side left -expand 1 -fill x
             pack ${base}.f -side right -fill y -pady 1 -padx 1
         }
         default {
             vTcl:entry $base \
                 -textvariable $variable -relief sunken -bd 1 -width 12 \
-                -highlightthickness 1 -fg black
+                -highlightthickness 1 -fg black -validate key \
+		-vcmd "
+		vTcl:prop:save_opt \$vTcl(w,widget) $option $variable
+		return 1
+		"
         }
     }
     # @@end_change
@@ -496,7 +532,12 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
 
     # @@end_change
 
-    grid $top.$option $base -sticky news
+    if {[vTcl:streq $prefix "opt"]} {
+    	set saveCheck [checkbutton ${base}_save]
+	grid $top.$option $base $saveCheck -sticky news
+    } else {
+	grid $top.$option $base -sticky news
+    }
 }
 
 proc vTcl:prop:clear {} {
@@ -520,4 +561,43 @@ proc vTcl:prop:clear {} {
 
     update
     vTcl:prop:recalc_canvas
+}
+
+###
+## Update all the option save checkboxes in the property manager.
+###
+proc vTcl:prop:update_saves {w} {
+    global vTcl
+
+    set class [vTcl:get_class $w]
+    foreach opt $vTcl(w,optlist) {
+    	set check .vTcl.ae.c.f2.f._$class.t${opt}_save
+	if {![winfo exists $check]} { continue }
+	$check configure -variable ::widgets::${w}::save($opt)
+    }
+}
+
+###
+## Update the checkbox for an option in the property manager.
+##
+## If the option becomes the default option, we uncheck the checkbox.
+## This will save on space because we're not storing options we don't need to.
+###
+proc vTcl:prop:save_opt {w opt varName} {
+    if {[vTcl:streq $w "."]} { return }
+
+    upvar #0 $varName var
+    upvar #0 ::widgets::${w}::options options
+    upvar #0 ::widgets::${w}::defaults defaults
+
+    if {![info exists options($opt)]} { return }
+    if {[vTcl:streq $options($opt) $var]} { return }
+
+    set ::widgets::${w}::options($opt) $var
+
+    if {$options($opt) == $defaults($opt)} {
+	set ::widgets::${w}::save($opt) 0
+    } else {
+	set ::widgets::${w}::save($opt) 1
+    }
 }
