@@ -1,6 +1,10 @@
 ChangeLog for Visual Tcl:
 
-1.6.0a2 ->
+1.6.0a3 ->
+    o Converted compounds to new system with namespaces.
+    o Added compound container widget, to insert compounds as black boxes.
+
+1.6.0a2 -> 1.6.0a3
     o Support for Iwidgets spintime.
     o Added code to ensure multiple file projects track symbolic links on
       loading. I think the code was submitted by Jorge Leon (hope I spell it
@@ -957,4 +961,5 @@ ChangeLog for Visual Tcl:
     o And much, much more :)
 
 1.01 released (December 5, 1996)
+
 
