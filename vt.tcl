@@ -540,11 +540,11 @@ proc vTcl:define_bindings {} {
     bind vTcl(b) <Button-1>          {vTcl:bind_button_1 %W %X %Y %x %y}
     bind vTcl(b) <Button-2>          {vTcl:bind_button_2 %W %X %Y %x %y}
     bind vTcl(b) <Control-Button-1>  {vTcl:bind_button_2 %W %X %Y %x %y}
-    bind vTcl(b) <B1-Motion>         {vTcl:bind_motion %X %Y}
-    bind vTcl(b) <B2-Motion>         {vTcl:bind_motion %X %Y}
-    bind vTcl(b) <Control-B1-Motion> {vTcl:bind_motion %X %Y}
-    bind vTcl(b) <ButtonRelease-1>   {vTcl:bind_release %X %Y %x %y}
-    bind vTcl(b) <ButtonRelease-2>   {vTcl:bind_release %X %Y %x %y}
+    bind vTcl(b) <B1-Motion>         {vTcl:bind_motion %W %X %Y}
+    bind vTcl(b) <B2-Motion>         {vTcl:bind_motion %W %X %Y}
+    bind vTcl(b) <Control-B1-Motion> {vTcl:bind_motion %W %X %Y}
+    bind vTcl(b) <ButtonRelease-1>   {vTcl:bind_release %W %X %Y %x %y}
+    bind vTcl(b) <ButtonRelease-2>   {vTcl:bind_release %W %X %Y %x %y}
 
     bind vTcl(b) <Up> {
         vTcl:widget_delta $vTcl(w,widget) 0 -$vTcl(key,y) 0 0
