@@ -80,7 +80,7 @@ proc vTcl:widget:lib:lib_itcl {args} {
     set order {Entryfield Spinint Combobox Scrolledlistbox Calendar
                Dateentry Scrolledhtml Toolbar Feedback Optionmenu
                Hierarchy Buttonbox Checkbox Radiobox Labeledframe 
-               Notebook Tabnotebook Panedwindow Scrolledtext}
+               Notebook Tabnotebook Panedwindow Scrolledtext Scrolledcanvas}
 
     vTcl:lib:add_widgets_to_toolbar $order
 

@@ -134,7 +134,8 @@ namespace eval ::menu_edit {
         global widget
 
         foreach ctrl "$top.EntryLabel   $top.EntryImage  $top.EntryAccelerator
-                    $top.EntryVariable $top.EntryValueOn $top.EntryValueOff" {
+                    $top.EntryVariable $top.EntryValueOn $top.EntryValueOff
+                    $top.EntryFont" {
 
             set [$ctrl cget -textvariable] ""
         }
@@ -153,31 +154,22 @@ namespace eval ::menu_edit {
                 set newbg    white}
             }
 
+            set ctrlAlias(label)       "RadioLabel       EntryLabel"
+            set ctrlAlias(image)       "RadioImage       EntryImage"
+            set ctrlAlias(font)        "LabelFont        EntryFont"
+            set ctrlAlias(accelerator) "LabelAccelerator EntryAccelerator"
+            set ctrlAlias(variable)    "LabelVariable    EntryVariable"
+            set ctrlAlias(value_on)    "LabelValueOn     EntryValueOn"
+            set ctrlAlias(value_off)   "LabelValueOff    EntryValueOff"
+
             switch $ctrl {
-                "label" {
-                    $top.RadioLabel configure -state $newstate
-                    $top.EntryLabel configure -state $newstate -bg $newbg
-                }
-                "image" {
-                    $top.RadioImage configure -state $newstate
-                    $top.EntryImage configure -state $newstate -bg $newbg
-                }
-                "accelerator" {
-                    $top.LabelAccelerator configure -state $newstate
-                    $top.EntryAccelerator configure -state $newstate \
-                        -bg $newbg
-                }
-                "variable" {
-                    $top.LabelVariable configure -state $newstate
-                    $top.EntryVariable configure -state $newstate -bg $newbg
-                }
-                "value_on" {
-                    $top.LabelValueOn configure -state $newstate
-                    $top.EntryValueOn configure -state $newstate -bg $newbg
-                }
-                "value_off" {
-                    $top.LabelValueOff configure -state $newstate
-                    $top.EntryValueOff configure -state $newstate -bg $newbg
+                "label" -
+                "image" - "font" -
+                "accelerator" -
+                "variable" -
+                "value_on" - "value_off" {
+                    $top.[lindex $ctrlAlias($ctrl) 0] configure -state $newstate
+                    $top.[lindex $ctrlAlias($ctrl) 1] configure -state $newstate -bg $newbg
                 }
                 "text" {
                     $top.LabelCommand configure -state $newstate
@@ -530,7 +522,7 @@ namespace eval ::menu_edit {
         set i [lindex $reference end]
 
         if {$i == -1} {
-            ::menu_edit::enable_controls $top {"label" 0} \
+            ::menu_edit::enable_controls $top {"label" 0} {"font" 0} \
                 {"image" 0} {"accelerator" 0} {"variable" 0} \
                 {"value_on" 0} {"value_off" 0} {"text" 0}
             set ::${top}::current_menu  $m
@@ -544,38 +536,41 @@ namespace eval ::menu_edit {
 
         switch $mtype {
             "command" {
-                ::menu_edit::enable_controls $top  {"label" 1} \
+                ::menu_edit::enable_controls $top  {"label" 1} {"font" 1} \
                     {"image" 1} {"accelerator" 1} {"variable" 0} \
                     {"value_on" 0} {"value_off" 0} {"text" 1}
                 set ${top}::entry_label        [$m entrycget $i -label]
                 set ${top}::entry_image        [$m entrycget $i -image]
+                set ${top}::entry_font         [$m entrycget $i -font]
                 set ${top}::entry_accelerator  [$m entrycget $i -accelerator]
                 ::menu_edit::fill_command $top [$m entrycget $i -command]
                 ::menu_edit::indicate_label_or_image $top
             }
             "cascade" {
-                ::menu_edit::enable_controls $top {"label" 1} \
+                ::menu_edit::enable_controls $top {"label" 1}  {"font" 1} \
                     {"image" 1} {"accelerator" 1} {"variable" 0} \
                     {"value_on" 0} {"value_off" 0}  {"text" 0}
                 set ${top}::entry_label [$m entrycget $i -label]
                 set ${top}::entry_image [$m entrycget $i -image]
+                set ${top}::entry_font  [$m entrycget $i -font]
                 set ${top}::entry_accelerator ""
                 ::menu_edit::indicate_label_or_image $top
                 vTcl:active_widget [$m entrycget $i -menu]
             }
             "separator" {
-                ::menu_edit::enable_controls $top {"label" 0} \
+                ::menu_edit::enable_controls $top {"label" 0}  {"font" 0} \
                     {"image" 0} {"accelerator" 0} {"variable" 0} \
                     {"value_on" 0} {"value_off" 0}  {"text" 0}
                 set ${top}::entry_label ""
                 set ${top}::entry_accelerator ""
             }
             "radiobutton" {
-                ::menu_edit::enable_controls $top  {"label" 1} \
+                ::menu_edit::enable_controls $top  {"label" 1} {"font" 1} \
                     {"image" 1} {"accelerator" 1} {"variable" 1} \
                     {"value_on" 1} {"value_off" 0} {"text" 1}
                 set ${top}::entry_label        [$m entrycget $i -label]
                 set ${top}::entry_image        [$m entrycget $i -image]
+                set ${top}::entry_font         [$m entrycget $i -font]
                 set ${top}::entry_accelerator  [$m entrycget $i -accelerator]
                 set ${top}::entry_variable     [$m entrycget $i -variable]
                 set ${top}::entry_value_on     [$m entrycget $i -value]
@@ -583,11 +578,12 @@ namespace eval ::menu_edit {
                 ::menu_edit::indicate_label_or_image $top
             }
             "checkbutton" {
-                ::menu_edit::enable_controls $top  {"label" 1} \
+                ::menu_edit::enable_controls $top  {"label" 1} {"font" 1} \
                     {"image" 1} {"accelerator" 1} {"variable" 1} \
                     {"value_on" 1} {"value_off" 1} {"text" 1}
                 set ${top}::entry_label        [$m entrycget $i -label]
                 set ${top}::entry_image        [$m entrycget $i -image]
+                set ${top}::entry_font         [$m entrycget $i -font]
                 set ${top}::entry_accelerator  [$m entrycget $i -accelerator]
                 set ${top}::entry_variable     [$m entrycget $i -variable]
                 set ${top}::entry_value_on     [$m entrycget $i -onvalue]
@@ -651,6 +647,8 @@ namespace eval ::menu_edit {
                 ::menu_edit::update_option $top $menu $index \
                     -image [vTcl:at ::${top}::entry_image]
                 ::menu_edit::update_option $top $menu $index \
+                    -font [vTcl:at ::${top}::entry_font]
+                ::menu_edit::update_option $top $menu $index \
                     -accelerator [vTcl:at ::${top}::entry_accelerator]
             }
             "command"  {
@@ -658,6 +656,8 @@ namespace eval ::menu_edit {
                     -label [vTcl:at ::${top}::entry_label]
                 ::menu_edit::update_option $top $menu $index \
                     -image [vTcl:at ::${top}::entry_image]
+                ::menu_edit::update_option $top $menu $index \
+                    -font [vTcl:at ::${top}::entry_font]
                 ::menu_edit::update_option $top $menu $index \
                     -accelerator [vTcl:at ::${top}::entry_accelerator]
                 ::menu_edit::update_option $top $menu $index \
@@ -670,6 +670,8 @@ namespace eval ::menu_edit {
                     -label [vTcl:at ::${top}::entry_label]
                 ::menu_edit::update_option $top $menu $index \
                     -image [vTcl:at ::${top}::entry_image]
+                ::menu_edit::update_option $top $menu $index \
+                    -font [vTcl:at ::${top}::entry_font]
                 ::menu_edit::update_option $top $menu $index \
                     -accelerator [vTcl:at ::${top}::entry_accelerator]
                 ::menu_edit::update_option $top $menu $index \
@@ -684,6 +686,8 @@ namespace eval ::menu_edit {
                     -label [vTcl:at ::${top}::entry_label]
                 ::menu_edit::update_option $top $menu $index \
                     -image [vTcl:at ::${top}::entry_image]
+                ::menu_edit::update_option $top $menu $index \
+                    -font [vTcl:at ::${top}::entry_font]
                 ::menu_edit::update_option $top $menu $index \
                     -accelerator [vTcl:at ::${top}::entry_accelerator]
                 ::menu_edit::update_option $top $menu $index \
@@ -735,10 +739,17 @@ namespace eval ::menu_edit {
     }
 
     proc {::menu_edit::browse_image} {top} {
-
         set image [vTcl:at ::${top}::entry_image]
         set r [vTcl:prompt_user_image2 $image]
         set ::${top}::entry_image $r
+    }
+
+    proc {::menu_edit::browse_font} {top} {
+        set font [vTcl:at ::${top}::entry_font]
+        set r [vTcl:font:prompt_noborder_fontlist $font]
+        if {$r != ""} {
+            set ::${top}::entry_font $r
+        }
     }
 
     proc {::menu_edit::click_listbox} {top} {
@@ -896,6 +907,8 @@ proc vTclWindow.vTclMenuEdit {base menu} {
     vTcl:DefineAlias $base.cpd24.02.but27 BrowseImage vTcl:WidgetProc $base 1
     vTcl:DefineAlias $base.cpd24.02.ent23 EntryLabel vTcl:WidgetProc $base 1
     vTcl:DefineAlias $base.cpd24.02.ent24 EntryImage vTcl:WidgetProc $base 1
+    vTcl:DefineAlias $base.cpd24.02.labFont LabelFont vTcl:WidgetProc $base 1
+    vTcl:DefineAlias $base.cpd24.02.entFont EntryFont vTcl:WidgetProc $base 1
     vTcl:DefineAlias $base.cpd24.02.ent25 EntryVariable vTcl:WidgetProc $base 1
     vTcl:DefineAlias $base.cpd24.02.ent27 EntryValueOn vTcl:WidgetProc $base 1
     vTcl:DefineAlias $base.cpd24.02.ent29 EntryAccelerator vTcl:WidgetProc $base 1
@@ -1088,6 +1101,15 @@ proc vTclWindow.vTclMenuEdit {base menu} {
     bind $base.cpd24.02.ent24 <FocusOut> {
         ::menu_edit::update_current [winfo toplevel %W]
     }
+    label $base.cpd24.02.labFont \
+        -padx 1 -pady 1 -text Font:
+    entry $base.cpd24.02.entFont \
+        -background white -cursor {} -textvariable ${base}::entry_font
+    bind $base.cpd24.02.entFont <FocusOut> {
+        ::menu_edit::update_current [winfo toplevel %W]
+    }
+    button $base.cpd24.02.butFont \
+        -padx 1 -pady 0 -text ... -command "::menu_edit::browse_font $base"
     button $base.cpd24.02.but27 \
         -padx 1 -pady 0 -text ... \
         -command "::menu_edit::browse_image $base
@@ -1176,7 +1198,7 @@ proc vTclWindow.vTclMenuEdit {base menu} {
         -x 0 -relx 1 -y 0 -width -1 -relwidth 0.6388 -relheight 1 -anchor ne \
         -bordermode ignore
     grid columnconf $base.cpd24.02 1 -weight 1
-    grid rowconf $base.cpd24.02 8 -weight 1
+    grid rowconf $base.cpd24.02 9 -weight 1
     grid $base.cpd24.02.rad20 \
         -in $base.cpd24.02 -column 0 -row 0 -columnspan 1 -rowspan 1 \
         -sticky nw
@@ -1184,7 +1206,7 @@ proc vTclWindow.vTclMenuEdit {base menu} {
         -in $base.cpd24.02 -column 0 -row 1 -columnspan 1 -rowspan 1 \
         -sticky nw
     grid $base.cpd24.02.fra22 \
-        -in $base.cpd24.02 -column 0 -row 8 -columnspan 3 -rowspan 1 -padx 5 \
+        -in $base.cpd24.02 -column 0 -row 9 -columnspan 3 -rowspan 1 -padx 5 \
         -pady 5 -sticky nesw
     pack $base.cpd24.02.fra22.lab31 \
         -in $base.cpd24.02.fra22 -anchor w -expand 0 -fill none -side top
@@ -1202,35 +1224,43 @@ proc vTclWindow.vTclMenuEdit {base menu} {
         -sticky ew
     grid $base.cpd24.02.but27 \
         -in $base.cpd24.02 -column 2 -row 1 -columnspan 1 -rowspan 1 -padx 5
-    grid $base.cpd24.02.lab28 \
+    grid $base.cpd24.02.labFont \
         -in $base.cpd24.02 -column 0 -row 3 -columnspan 1 -rowspan 1 -padx 5 \
+        -pady 5 -sticky e
+    grid $base.cpd24.02.entFont \
+        -in $base.cpd24.02 -column 1 -row 3 -columnspan 1 -rowspan 1 -pady 5 \
+        -sticky ew
+    grid $base.cpd24.02.butFont \
+        -in $base.cpd24.02 -column 2 -row 3 -columnspan 1 -rowspan 1 -padx 5
+    grid $base.cpd24.02.lab28 \
+        -in $base.cpd24.02 -column 0 -row 4 -columnspan 1 -rowspan 1 -padx 5 \
         -sticky e
     grid $base.cpd24.02.ent29 \
-        -in $base.cpd24.02 -column 1 -row 3 -columnspan 1 -rowspan 1 \
+        -in $base.cpd24.02 -column 1 -row 4 -columnspan 1 -rowspan 1 \
         -sticky new
     grid $base.cpd24.02.fra30 \
         -in $base.cpd24.02 -column 0 -row 2 -columnspan 3 -rowspan 1 \
         -sticky new
     grid $base.cpd24.02.fra21 \
-        -in $base.cpd24.02 -column 0 -row 4 -columnspan 3 -rowspan 1 \
+        -in $base.cpd24.02 -column 0 -row 5 -columnspan 3 -rowspan 1 \
         -sticky new
     grid $base.cpd24.02.lab22 \
-        -in $base.cpd24.02 -column 0 -row 5 -columnspan 1 -rowspan 1 -padx 5 \
-        -pady 5 -sticky e
-    grid $base.cpd24.02.ent25 \
-        -in $base.cpd24.02 -column 1 -row 5 -columnspan 1 -rowspan 1 -pady 5 \
-        -sticky ew
-    grid $base.cpd24.02.lab26 \
         -in $base.cpd24.02 -column 0 -row 6 -columnspan 1 -rowspan 1 -padx 5 \
         -pady 5 -sticky e
-    grid $base.cpd24.02.ent27 \
+    grid $base.cpd24.02.ent25 \
         -in $base.cpd24.02 -column 1 -row 6 -columnspan 1 -rowspan 1 -pady 5 \
         -sticky ew
-    grid $base.cpd24.02.lab29 \
+    grid $base.cpd24.02.lab26 \
         -in $base.cpd24.02 -column 0 -row 7 -columnspan 1 -rowspan 1 -padx 5 \
         -pady 5 -sticky e
-    grid $base.cpd24.02.ent30 \
+    grid $base.cpd24.02.ent27 \
         -in $base.cpd24.02 -column 1 -row 7 -columnspan 1 -rowspan 1 -pady 5 \
+        -sticky ew
+    grid $base.cpd24.02.lab29 \
+        -in $base.cpd24.02 -column 0 -row 8 -columnspan 1 -rowspan 1 -padx 5 \
+        -pady 5 -sticky e
+    grid $base.cpd24.02.ent30 \
+        -in $base.cpd24.02 -column 1 -row 8 -columnspan 1 -rowspan 1 -pady 5 \
         -sticky ew
     place $base.cpd24.03 \
         -x 0 -relx 0.3612 -y 0 -rely 0.9 -width 10 -height 10 -anchor s \

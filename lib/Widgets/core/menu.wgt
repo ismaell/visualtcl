@@ -94,21 +94,24 @@ namespace eval vTcl::widgets::core::menu {
         }
     }
 
-    proc getImagesCmd {target} {
+    proc getOption {target option} {
         set result {}
         set size [$target index end]
         if {[vTcl:streq $size "none"]} { continue }
         for {set i 0} {$i <= $size} {incr i} {
-	    if {![catch {$target entrycget $i -image} image]} {
-                lappend result $image
+	    if {![catch {$target entrycget $i $option} value]} {
+                lappend result $value
             }
         }
         return $result
     }
 
+    proc getImagesCmd {target} {
+        return [getOption $target -image]
+    }
+
     proc getFontsCmd {target} {
-        ## fonts not yet supported in menu editor
-        return {}
+        return [getOption $target -font]
     }
 
     proc dumpCmd {target basename} {

@@ -866,5 +866,5 @@ proc vTcl:dump:not_sourcing_header {varName} {
 proc vTcl:dump:sourcing_footer {varName} {
     upvar 1 $varName var
     if {![vTcl:streq [string index $var end] "\n"]} { append var "\n" }
-    append var "\}"
+    append var "\}\n"
 }

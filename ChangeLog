@@ -1,6 +1,9 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Support font option in menu editor.
+    o Fixed closing brace bug.
+    o Added scrolledcanvas for [Incr widgets]
     o Editing radioboxes, checkboxes and buttonboxes
     o Support for %top and %widget in commands for megawidget subitems
       (eg. commands for a button in a buttonbox)
