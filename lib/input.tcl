@@ -55,34 +55,35 @@ proc vTcl:string_window {title base {value ""}} {
     wm resizable $base 1 0
     wm deiconify $base
     wm title $base "$title"
-    vTcl:entry $base.ent18 \
-        -cursor {}  
-    pack $base.ent18 \
-        -in $base -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 \
-        -padx 0 -pady 0 -side top 
     frame $base.fra19 \
-        -borderwidth 1 -height 30 -relief sunken -width 30 
+        -borderwidth 1 -height 30 -relief sunken -width 30
     pack $base.fra19 \
         -in $base -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 \
-        -padx 0 -pady 0 -side top 
-    button $base.fra19.but20 \
-        -command "vTcl:snarf_string \{$base\}" \
-         -padx 9 \
-        -pady 3 -text OK -width 5 
-    pack $base.fra19.but20 \
-        -in $base.fra19 -anchor center -expand 1 -fill x -ipadx 0 \
-        -ipady 0 -padx 0 -pady 0 -side left 
+        -padx 0 -pady 0 -side top
     button $base.fra19.but21 \
         -command "
             $base.ent18 delete 0 end
             vTcl:set_string \{$base\} \{$value\}
         " \
          -padx 9 \
-        -pady 3 -text Cancel -width 5 
+        -pady 3 -image [vTcl:image:get_image remove.gif]
     pack $base.fra19.but21 \
-        -in $base.fra19 -anchor center -expand 1 -fill x -ipadx 0 \
-        -ipady 0 -padx 0 -pady 0 -side left 
+        -in $base.fra19 -anchor center -expand 0 -fill none -ipadx 0 \
+        -ipady 0 -padx 0 -pady 0 -side right
+    button $base.fra19.but20 \
+        -command "vTcl:snarf_string \{$base\}" \
+         -padx 9 \
+        -pady 3 -image [vTcl:image:get_image ok.gif]
+    pack $base.fra19.but20 \
+        -in $base.fra19 -anchor center -expand 0 -fill none -ipadx 0 \
+        -ipady 0 -padx 0 -pady 0 -side right
+    vTcl:entry $base.ent18 \
+        -cursor {} -background white
+    pack $base.ent18 \
+        -in $base -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 \
+        -padx 0 -pady 0 -side top
     bind $base <Key-Return> "vTcl:snarf_string \{$base\}; break"
+    bind $base <Key-Escape> "$base.fra19.but21 invoke"
     $base.ent18 insert end $value
     update idletasks
     focus $base.ent18
@@ -127,15 +128,14 @@ proc vTcl:text_window {base title target} {
     wm title $base $title
 
     frame $base.cpd48 \
-        -borderwidth 1 -height 245 -relief raised -width 262 
+        -borderwidth 1 -height 245 -relief raised -width 262
     scrollbar $base.cpd48.01 \
-        -command "$base.cpd48.03 xview" -orient horizontal -width 10 
+        -command "$base.cpd48.03 xview" -orient horizontal
     scrollbar $base.cpd48.02 \
-        -command "$base.cpd48.03 yview" -width 10 
+        -command "$base.cpd48.03 yview"
     text $base.cpd48.03 \
-        -font -Adobe-Helvetica-Medium-R-Normal-*-*-120-*-*-*-*-*-* -height 1 \
         -width 8 -xscrollcommand "$base.cpd48.01 set" \
-        -yscrollcommand "$base.cpd48.02 set" 
+        -yscrollcommand "$base.cpd48.02 set" -background white
 
     frame $base.butfr
 
@@ -149,7 +149,7 @@ proc vTcl:text_window {base title target} {
     	-command "destroy $base"
     vTcl:set_balloon $base.butfr.but53 "Discard Changes"
 
-    bind $base <Key-Escape> "$base.but52 invoke"
+    bind $base <Key-Escape> "$base.butfr.but53 invoke"
 
     ###################
     # SETTING GEOMETRY
@@ -162,9 +162,9 @@ proc vTcl:text_window {base title target} {
     grid columnconf $base.cpd48 0 -weight 1
     grid rowconf $base.cpd48 0 -weight 1
     grid $base.cpd48.01 \
-        -in $base.cpd48 -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew 
+        -in $base.cpd48 -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew
     grid $base.cpd48.02 \
-        -in $base.cpd48 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns 
+        -in $base.cpd48 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns
     grid $base.cpd48.03 \
         -in $base.cpd48 -column 0 -row 0 -columnspan 1 -rowspan 1 \
         -sticky nesw 
