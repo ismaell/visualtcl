@@ -651,7 +651,7 @@ proc vTclWindow.vTcl.fontManager {args} {
         -background #bcbcbc \
         -foreground #000000 -highlightbackground #bcbcbc \
         -highlightcolor #000000 -padx 9 -pady 3 -text Close \
-        -command "destroy $base"
+        -command "wm withdraw $base"
     button $base.but30 \
         -activebackground #bcbcbc -activeforeground #000000 \
         -background #bcbcbc \
@@ -711,7 +711,7 @@ if {$font_desc != ""} {
     catch {wm geometry $base $vTcl(geometry,$base)}
 
     vTcl:font:display_fonts $base
-    wm protocol $base WM_DELETE_WINDOW "destroy $base"
+    wm protocol $base WM_DELETE_WINDOW "wm withdraw $base"
 }
 
 proc vTcl:font:prompt_font_manager {} {

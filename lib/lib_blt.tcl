@@ -170,12 +170,40 @@ proc vTcl:lib_blt:setup {} {
 	# @@change by Christian Gavin 3/9/2000
 	# commands to generate in header of a file when saving
 	
-	set vTcl(head,importheader) "$vTcl(head,importheader)
-	        \# uncomment if your project uses BLT
-		\# package require BLT
-		\# namespace import blt::graph
-		\# namespace import blt::hierbox"
+	append vTcl(head,importheader) {
+		
+		# provoke name search
+	        catch {package require foobar}
+	        set names [package names]
+                
+	        # check if BLT is available
+	        if { [lsearch -exact $names BLT] != -1} { 
+
+		   package require BLT
+		   namespace import blt::vector
+		   namespace import blt::graph
+		   namespace import blt::hierbox
+		   namespace import blt::stripchart
+		}
+	}
+	
 	# @@end_change
+
+	set vTcl(Graph,get_widget_tree_label)       vTcl:lib_blt:get_widget_tree_label
+	set vTcl(Hierbox,get_widget_tree_label)     vTcl:lib_blt:get_widget_tree_label
+	set vTcl(Stripchart,get_widget_tree_label)  vTcl:lib_blt:get_widget_tree_label
+}
+
+proc vTcl:lib_blt:get_widget_tree_label {className} {
+	
+	switch [string tolower $className] {
+		
+		"graph"	       {return "BLT Graph"}
+		"hierbox"      {return "BLT Hierarchy Box"}
+		"stripchart"   {return "BLT Stripchart"}
+		
+		default        return ""
+	}
 }
 
 #

@@ -117,6 +117,8 @@ proc vTcl:init_wtree {{wants_destroy_handles 1}} {
                 frame {set t Frame}
                 text {set t "Text Widget"}
                 scrollbar {set t "Scrollbar"}
+                scrollbar_h {set t "Horz Scrollbar"}
+                scrollbar_v {set t "Vert Scrollbar"}
                 canvas {set t "Canvas"}
                 label      -
                 button     -

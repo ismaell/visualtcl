@@ -152,7 +152,7 @@ proc vTcl:get_mgropts {opts {basename 0}} {
                 -in {
                     if {$basename} {
                     	set v [vTcl:base_name $v]	
-                    	puts "Base name $v!"
+                    	vTcl:log "Base name $v!"
                     }
                     
                     if {$v != ""} {

@@ -72,13 +72,28 @@ proc {vTcl:image:create_new_image} {filename
 	# wait a minute... does the file actually exist?
 	if {! [file exists $filename] } {
 
-		if [info exists env(VTCL_HOME)] {
-			set rootdir $env(VTCL_HOME)
-		} else {
-			set rootdir "."
-		}
+		set description "file not found!"
 		
-		set object [image create photo -file $rootdir/images/unknown.gif]
+		set object [image create bitmap -data {
+		    #define open_width 16
+		    #define open_height 16
+		    static char open_bits[] = {
+			0x7F, 0xFE, 
+			0x41, 0x82, 
+			0x21, 0x81, 
+			0x41, 0x82, 
+			0x21, 0x81, 
+			0x21, 0x81, 
+			0x21, 0x81, 
+			0x91, 0x80,
+			0x21, 0x81, 
+			0x91, 0x80, 
+			0x21, 0x81, 
+			0x21, 0x81, 
+			0x21, 0x81, 
+			0x41, 0x82, 
+			0x41, 0x82,
+			0x7F, 0xFE};}]
 		
 	} else {
 
@@ -324,7 +339,7 @@ proc vTcl:image:replace_image {filename} {
 		unset vTcl(images,$oldreference,description)
 		unset vTcl(images,$oldreference,type)
 		
-		vTcl:image:init_img_manager
+		vTcl:image:refresh_manager
 	    }
 	}
 }
@@ -606,7 +621,7 @@ proc vTclWindow.vTcl.imgManager {args} {
     wm resizable $base 1 1
     wm deiconify $base
     wm title $base "Image manager"
-    wm protocol $base WM_DELETE_WINDOW "$base.fra30.but31 invoke"
+    wm protocol $base WM_DELETE_WINDOW "wm withdraw $base"
     wm transient .vTcl.imgManager .vTcl
     
     label $base.lab28 \
@@ -628,7 +643,7 @@ proc vTclWindow.vTcl.imgManager {args} {
         -highlightbackground #bcbcbc -highlightcolor #000000 -orient vert \
         -troughcolor #bcbcbc 
     text $base.cpd29.03 \
-        -background #bcbcbc \
+        -background #bcbcbc -cursor left_ptr \
         -foreground #000000 -height 1 -highlightbackground #f3f3f3 \
         -highlightcolor #000000 -selectbackground #000080 \
         -selectforeground #ffffff -state disabled -tabs {0.2i 3i 3.75i} \
@@ -643,7 +658,7 @@ proc vTclWindow.vTcl.imgManager {args} {
         -background #bcbcbc \
         -foreground #000000 -highlightbackground #bcbcbc \
         -highlightcolor #000000 -padx 9 -pady 3 -text Close \
-        -command {destroy $vTcl(images,manager_dlg,win)}
+        -command "wm withdraw $base"
     button $base.but32 \
         -activebackground #bcbcbc -activeforeground #000000 \
         -background #bcbcbc -command vTcl:image:new_image_file \

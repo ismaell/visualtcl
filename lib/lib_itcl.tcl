@@ -30,7 +30,34 @@
 
 # Initializes this library
 #
-    
+ 
+# @@change by Christian Gavin 3/6/2000
+# Itcl/tk and IWidgets support
+
+catch {
+    package require Itcl 3.0
+    namespace import itcl::*
+    package require Itk 3.0
+    package require Iwidgets 3.0
+    namespace import iwidgets::entryfield
+    namespace import iwidgets::spinint
+    namespace import iwidgets::combobox
+    namespace import iwidgets::scrolledlistbox
+    namespace import iwidgets::calendar
+    namespace import iwidgets::dateentry
+    namespace import iwidgets::scrolledhtml
+    namespace import iwidgets::toolbar
+    namespace import iwidgets::feedback
+    namespace import iwidgets::optionmenu
+    namespace import iwidgets::hierarchy
+    namespace import iwidgets::buttonbox
+    namespace import iwidgets::checkbox
+    namespace import iwidgets::radiobox
+} errorText
+vTcl:log $errorText
+
+# @@end_change
+   
 proc vTcl:widget:lib:lib_itcl {args} {
 
     global vTcl
@@ -51,7 +78,7 @@ proc vTcl:widget:lib:lib_itcl {args} {
     # @@end_change
     
     # @@change by Christian Gavin 3/6/2000
-    vTcl:log "Support for Itcl activated"
+    # vTcl:log "Support for Itcl activated"
     
     # @@end_change
     
@@ -69,10 +96,26 @@ proc vTcl:widget:lib:lib_itcl {args} {
     # added feedback
     # added optionmenu
     # added hierarchy
+    # added buttonbox
+    # added checkbox
+    # added radiobox
     # @@end_change
     
     foreach i {
-        entryfield spinint combobox scrolledlistbox calendar dateentry scrolledhtml toolbar feedback optionmenu hierarchy
+        entryfield 
+        spinint
+        combobox
+        scrolledlistbox
+        calendar
+        dateentry
+        scrolledhtml
+        toolbar
+        feedback
+        optionmenu
+        hierarchy
+        buttonbox
+        checkbox
+        radiobox
     } {
         set img_file [file join $vTcl(VTCL_HOME) images icon_$i.gif]
         if {![file exists $img_file]} {
@@ -104,6 +147,9 @@ proc vTcl:lib_itcl:setup {} {
 	set vTcl(feedback,insert)              "-labeltext {Percent complete:}"
 	set vTcl(optionmenu,insert)            "-labeltext {Select option:}"
 	set vTcl(hierarchy,insert)             ""
+	set vTcl(buttonbox,insert)             ""
+	set vTcl(checkbox,insert)              ""
+	set vTcl(radiobox,insert)              ""
 
 	#
 	# add to procedure, var, bind regular expressions
@@ -122,7 +168,10 @@ proc vTcl:lib_itcl:setup {} {
                 Toolbar \
                 Feedback \
                 Optionmenu \
-                Hierarchy
+                Hierarchy \
+                Buttonbox \
+                Checkbox \
+                Radiobox
 
 	# @@change by Christian Gavin 3/7/2000
 	# list of megawidgets whose children are not visible by Vtcl
@@ -137,7 +186,10 @@ proc vTcl:lib_itcl:setup {} {
 				 Toolbar \
 				 Feedback \
 				 Optionmenu \
-				 Hierarchy
+				 Hierarchy \
+				 Buttonbox \
+				 Checkbox \
+				 Radiobox
 	
 	# @@end_change
 	
@@ -272,6 +324,9 @@ proc vTcl:lib_itcl:setup {} {
 	set vTcl(Feedback,dump_opt)            vTcl:lib_itcl:dump_widget_opt
 	set vTcl(Optionmenu,dump_opt)          vTcl:lib_itcl:dump_widget_opt
 	set vTcl(Hierarchy,dump_opt)           vTcl:lib_itcl:dump_widget_opt
+	set vTcl(Buttonbox,dump_opt)           vTcl:lib_itcl:dump_widget_opt
+	set vTcl(Checkbox,dump_opt)            vTcl:lib_itcl:dump_widget_opt
+	set vTcl(Radiobox,dump_opt)            vTcl:lib_itcl:dump_widget_opt
 	#
 	# define whether or not do dump children of a class
 	#
@@ -286,27 +341,50 @@ proc vTcl:lib_itcl:setup {} {
 	set vTcl(Feedback,dump_children)           0
 	set vTcl(Optionmenu,dump_children)         0
 	set vTcl(Hierarchy,dump_children)          0
+	set vTcl(Buttonbox,dump_children)          0
+	set vTcl(Checkbox,dump_children)           0
+	set vTcl(Radiobox,dump_children)           0
 	
 	# @@change by Christian Gavin 3/9/2000
 	# code to be generated at the top of a file if Itcl is supported
 	
-	set vTcl(head,importheader) "$vTcl(head,importheader)
-	        \# uncomment if your project uses Itcl
-		\# package require Itcl 3.0
-		\# namespace import itcl::*
-		\# package require Itk 3.0
-		\# package require Iwidgets 3.0
-                \# namespace import iwidgets::entryfield
-                \# namespace import iwidgets::spinint
-                \# namespace import iwidgets::combobox
-                \# namespace import iwidgets::scrolledlistbox
-                \# namespace import iwidgets::calendar
-                \# namespace import iwidgets::dateentry
-                \# namespace import iwidgets::scrolledhtml
-                \# namespace import iwidgets::toolbar
-                \# namespace import iwidgets::feedback
-                \# namespace import iwidgets::optionmenu
-                \# namespace import iwidgets::hierarchy"
+	append vTcl(head,importheader) {
+		
+		# provoke name search
+	        catch {package require foobar}
+	        set names [package names]
+                
+	        # check if Itcl is available
+	        if { [lsearch -exact $names Itcl] != -1} { 
+
+		   package require Itcl 3.0
+		   namespace import itcl::* }
+                
+		# check if Itk is available
+		if { [lsearch -exact $names Itk] != -1} {
+		    
+		   package require Itk 3.0 } 
+		
+		# check if Iwidgets is available
+		if { [lsearch -exact $names Iwidgets] != -1} {
+		  
+		   package require Iwidgets 3.0
+                   namespace import iwidgets::entryfield
+                   namespace import iwidgets::spinint
+                   namespace import iwidgets::combobox
+                   namespace import iwidgets::scrolledlistbox
+                   namespace import iwidgets::calendar
+                   namespace import iwidgets::dateentry
+                   namespace import iwidgets::scrolledhtml
+                   namespace import iwidgets::toolbar
+                   namespace import iwidgets::feedback
+                   namespace import iwidgets::optionmenu
+                   namespace import iwidgets::hierarchy
+                   namespace import iwidgets::buttonbox
+                   namespace import iwidgets::checkbox
+                   namespace import iwidgets::radiobox
+                }
+        }
 	
 	# @@end_change
 	
@@ -322,6 +400,9 @@ proc vTcl:lib_itcl:setup {} {
 	set vTcl(Feedback,get_widget_tree_label)        vTcl:lib_itcl:get_widget_tree_label
 	set vTcl(Optionmenu,get_widget_tree_label)      vTcl:lib_itcl:get_widget_tree_label
 	set vTcl(Hierarchy,get_widget_tree_label)       vTcl:lib_itcl:get_widget_tree_label
+	set vTcl(Buttonbox,get_widget_tree_label)       vTcl:lib_itcl:get_widget_tree_label
+	set vTcl(Checkbox,get_widget_tree_label)        vTcl:lib_itcl:get_widget_tree_label
+	set vTcl(Radiobox,get_widget_tree_label)        vTcl:lib_itcl:get_widget_tree_label
 	
 	# @@end_change
 	
@@ -366,8 +447,11 @@ proc vTcl:lib_itcl:get_widget_tree_label {className} {
 		"scrolledhtml"      {return "Scrolled HTML"}
 		"toolbar"           {return "Toolbar"}
 		"feedback"          {return "Feedback"}
-		"optionmenu"        {return "Option menu"}
+		"optionmenu"        {return "Option Menu"}
 		"hierarchy"         {return "Hierarchy"}
+		"buttonbox"         {return "Button Box"}
+		"checkbox"          {return "Check Box"}
+		"radiobox"          {return "Radio Box"}
 		
 		default             {return ""}
 	}
@@ -392,16 +476,38 @@ proc vTcl:widget:optionmenu:inscmd {target} {
 	return "$target insert 0 {Choice 1} {Choice 2} {Choice 3}"
 }
 
+proc vTcl:widget:buttonbox:inscmd {target} {
+	
+	return "$target add ok     -text OK ;\
+	        $target add cancel -text Cancel ;\
+	        $target add help   -text Help"
+}
+
+proc vTcl:widget:checkbox:inscmd {target} {
+	
+	return "$target add check1   -text {Check 1} ;\
+	        $target add check2   -text {Check 2} ;\
+	        $target add check3   -text {Check 3}"
+}
+
+proc vTcl:widget:radiobox:inscmd {target} {
+	
+	return "$target add radio1   -text {Radio 1} ;\
+	        $target add radio2   -text {Radio 2} ;\
+	        $target add radio3   -text {Radio 3}"
+}
+
 #
 # per-widget-class dump procedures
 #
-
+#
 # Utility proc.  Ignore color options (-background, etc.) based on
 # preference.
 #
 # returns:
 #   1 means save the option
 #   0 means don't save it
+
 proc vTcl:lib_itcl:save_option {opt} {
 	
     set opt_name  [lindex $opt 0]
@@ -426,6 +532,7 @@ proc vTcl:lib_itcl:save_option {opt} {
 # Utility proc.  Dump a itcl widget.
 # Differs from vTcl:dump_widget_opt in that it tries harder to avoid
 # dumping options that shouldn't really be dumped, e.g. -fg,-bg,-font.
+
 proc vTcl:lib_itcl:dump_widget_opt {target basename} {
 
     global vTcl
@@ -453,6 +560,7 @@ proc vTcl:lib_itcl:dump_widget_opt {target basename} {
 # Utility proc.  Dump a itcl widget.
 # Differs from vTcl:dump_widget_opt in that it tries harder to avoid
 # dumping options that shouldn't really be dumped, e.g. -fg,-bg,-font.
+
 proc vTcl:lib_itcl:dump_combobox {target basename} {
     global vTcl
     # @@change by Christian Gavin 3/8/2000

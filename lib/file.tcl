@@ -44,6 +44,53 @@ proc vTcl:file_source {} {
     }
 }
 
+proc vTcl:is_vtcl_prj {file} {
+	
+    set fileID [open $file r]
+    set contents [read $fileID]
+    close $fileID
+    
+    set found 0
+    set vmajor ""
+    set vminor ""
+    
+    foreach line [split $contents \n] {
+	
+	if [regexp {# Visual Tcl v(.?)\.(.?.?) Project} $line \
+	       matchAll vmajor vminor] {
+		
+		set found 1
+	}
+    }
+
+    if !$found {
+
+	tk_messageBox -title "Error loading file" \
+	              -message "This is not a vTcl project!" \
+	              -icon error \
+	              -type ok
+		              
+	return 0
+    }    
+
+    if {$vmajor != "" && $vminor != ""} {
+    	
+    	if {$vmajor > 1 ||
+    	    ($vmajor == 1 && $vminor > 21)} {
+
+		tk_messageBox -title "Error loading file" \
+		              -message "You are trying to load a project created using Visual Tcl v$vmajor.$vminor\n\nPlease update to vTcl $vmajor.$vminor and try again." \
+	              -icon error \
+	              -type ok
+	              
+	        return 0
+    	}
+    }
+    
+    # all right, it's a vtcl project
+    return 1
+}
+
 proc vTcl:source {file} {
     global vTcl
     set vTcl(sourcing) 1
@@ -85,6 +132,10 @@ proc vTcl:open {{file ""}} {
         if ![file exists $file] {return}
     }
     if {$file != ""} {
+    	
+    	# only open a Visual Tcl project and nothing else
+    	if ![vTcl:is_vtcl_prj $file] {return}
+    	
         set vTcl(file,mode) ""
         proc exit {args} {}
         proc init {argc argv} {}
@@ -94,6 +145,10 @@ proc vTcl:open {{file ""}} {
         set vTcl(vars) ""
         set vTcl(procs) ""
         vTcl:source $file;                   vTcl:statbar 55
+
+        # make sure the 'Window' procedure is the latest
+        vTcl:load_lib vtclib.tcl;            vTcl:statbar 60
+        
         vTcl:list add "init main" vTcl(procs)
         vTcl:setup_bind_tree .;              vTcl:statbar 65
         vTcl:update_top_list;                vTcl:statbar 75
@@ -134,6 +189,25 @@ proc vTcl:close {} {
             }
         }
     }
+    
+    # @@change by Christian Gavin 5/2/2000
+    #
+    # deletes all iTcl objects that are not destroyed by the
+    # destroy command
+ 
+    catch {   
+    	set obj_list [itcl::find objects]
+ 
+    	while {[llength $obj_list] > 0} {
+    		
+    		set obj [lindex $obj_list 0]
+    		itcl::delete object $obj
+	    	set obj_list [itcl::find objects]
+    	}
+    }
+    
+    # @@end_change
+    
     set tops [winfo children .]
     foreach i $tops {
         if {$i != ".vTcl" && $i != ".__tk_filedialog"} {destroy $i}

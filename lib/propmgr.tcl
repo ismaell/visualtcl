@@ -218,7 +218,7 @@ proc vTcl:focus_out_cmd {option} {
 	    	set vTcl(w,last_value)     ""
 	    	
 	} else {
-	    # puts "oops:$vTcl(w,widget),$vTcl(w,last_widget_in)!"
+	    vTcl:log "oops:$vTcl(w,widget),$vTcl(w,last_widget_in)!"
 	}
 }
 
@@ -454,18 +454,18 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
     # @@change by Christian Gavin 3/12/2000
     # tries to activate changes when the user clicks outside an option
     
-    # puts "widget: $vTcl(w,widget)"
-    # puts "config_cmd: $config_cmd"
-    # puts "focus_out_cmd: $focus_out_cmd"
+    # vTcl:log "widget: $vTcl(w,widget)"
+    # vTcl:log "config_cmd: $config_cmd"
+    # vTcl:log "focus_out_cmd: $focus_out_cmd"
     
-    set focus_in_cmd "puts in:\$vTcl(w,widget),\$vTcl(w,last_widget_in)"
-    # puts "focus_in_cmd: $focus_in_cmd"
+    set focus_in_cmd "vTcl:log in:\$vTcl(w,widget),\$vTcl(w,last_widget_in)"
+    # vTcl:log "focus_in_cmd: $focus_in_cmd"
     
     bind $focusControl <FocusIn> $focus_in_cmd
 
-    bind $focusControl <FocusOut> "puts \"out:(\$vTcl(w,widget)),\$vTcl(w,last_widget_in), value:\$vTcl(w,last_value)\";$focus_out_cmd"
+    bind $focusControl <FocusOut> "vTcl:log \"out:(\$vTcl(w,widget)),\$vTcl(w,last_widget_in), value:\$vTcl(w,last_value)\";$focus_out_cmd"
     
-    bind $focusControl <KeyRelease> "puts \"type: \$vTcl(w,widget)\"; set vTcl(w,last_widget_in) \$vTcl(w,widget); set vTcl(w,last_value) \$$variable"
+    bind $focusControl <KeyRelease> "vTcl:log \"type: \$vTcl(w,widget)\"; set vTcl(w,last_widget_in) \$vTcl(w,widget); set vTcl(w,last_value) \$$variable"
     	
     # @@end_change
     
