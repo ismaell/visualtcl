@@ -231,10 +231,9 @@ proc {vTcl:prefs:basics} {tab} {
 
 	set entry [vTcl:formCompound:add $form_entry entry \
 		-textvariable prefs::autoloadcompfile]
-	pack configure $entry -fill x -padx 5 -side left -expand 1
+	pack configure $entry -fill x -padx 2 -pady 2 -side left -expand 1
 
-	set browse_file [vTcl:formCompound:add $form_entry button \
-		-text "Browse..." \
+	set browse_file [vTcl:formCompound:add $form_entry ::vTcl::BrowseButton\
 		-command "vTcl:prefs:browse_file prefs::autoloadcompfile"]
 	pack configure $browse_file -side right
 }
@@ -399,10 +398,10 @@ proc {vTcl:prefs:images} {tab} {
 
 	set last [vTcl:formCompound:add $form_entry entry  \
 		-textvariable prefs::imageeditor]
-	pack configure $last -fill x -expand 1 -padx 4 -side left
+	pack configure $last -fill x -expand 1 -padx 2 -pady 2 -side left
 
-	set last [vTcl:formCompound:add $form_entry button \
-		-text "Browse..." -command "vTcl:prefs:browse_file prefs::imageeditor"]
+	set last [vTcl:formCompound:add $form_entry ::vTcl::BrowseButton \
+		-command "vTcl:prefs:browse_file prefs::imageeditor"]
 	pack configure $last -side right
 
 	vTcl:formCompound:add $tab checkbutton \
@@ -416,9 +415,9 @@ proc vTcl:prefs:external {tab} {
     set f [vTcl:formCompound:add $tab frame]
     pack configure $f -fill x
     set x [vTcl:formCompound:add $f entry -textvariable prefs::texteditor]
-    pack configure $x -fill x -expand 1 -side left -padx 4
+    pack configure $x -fill x -expand 1 -side left -padx 2 -pady 2
 
-    set x [vTcl:formCompound:add $f button -text "Browse" \
+    set x [vTcl:formCompound:add $f ::vTcl::BrowseButton \
 	-command "vTcl:prefs:browse_file prefs::texteditor"]
     pack configure $x -side left -anchor nw
 }

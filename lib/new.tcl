@@ -129,8 +129,10 @@ proc vTclWindow.vTcl.newProjectWizard {args} {
     set listbox [ListBox $p1.left.list -bg white -width 25 -padx 25 -deltay 20]
     pack $listbox -fill both -expand 1
 
+    pack [frame $p1.spacer1 -width 10] -side left
+
     set f [frame $p1.right]
-    pack $f -side right -expand 1 -fill both
+    pack $f -side left -expand 1 -fill both
 
     label $f.l1 -text "Project Name:" -underline 8
     pack $f.l1 -anchor w

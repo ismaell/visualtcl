@@ -1291,6 +1291,11 @@ proc ::vTcl::CancelButton {path args} {
     eval $path configure $args
 }
 
+proc ::vTcl::BrowseButton {path args} {
+    button $path -image [vTcl:image:get_image browse.gif]
+    eval $path configure $args
+}
+
 proc ::vTcl::MessageBox {args} {
     global tk_strictMotif
     set tk_strictMotif 0
