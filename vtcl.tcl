@@ -660,6 +660,11 @@ proc vTcl:main {argc argv} {
     }
     if {![file isdir $env(VTCL_HOME)]} { set vTcl(VTCL_HOME) [pwd] }
     vTcl:setup
+
+    ## init the bindings editor
+    ::widgets_bindings::init
+
+    ## load file passed in command line
     if {$argc > 0 && [lindex $argv end] != ""} {
 	set file [lindex $argv end]
 	if {[file exists $file]} {
@@ -681,9 +686,6 @@ proc vTcl:main {argc argv} {
     if {[info exists vTcl(pr,dontshowtips)] && !$vTcl(pr,dontshowtips)} {
         Window show .vTcl.tip
     }
-
-    ## init the bindings editor
-    ::widgets_bindings::init
 
     ## Show vTcl news.
     set vTcl(tmp,newsAfter) [after 5000 {
