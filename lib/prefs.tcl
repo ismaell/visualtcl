@@ -83,14 +83,22 @@ proc vTclWindow.vTcl.prefs {{base ""}} {
     if {[winfo exists $base]} {
         wm deiconify $base; return
     }
+
     ###################
     # CREATING WIDGETS
     ###################
     toplevel $base -class Toplevel
-    # should use frames for spacing instead
-    #wm geometry   $base 400x400
-    wm focusmodel $base passive
+    wm geometry $base +0+0
     wm withdraw $base
+    ## measure text height then compute an approximate dialog height
+    radiobutton $base.rb -text "Single line"
+    place $base.rb -x 0 -y 0
+    update
+    set height [expr ([winfo height $base.rb] + 1) * 15]
+    destroy $base.rb
+    ## end measurement
+    wm geometry   $base 400x$height
+    wm focusmodel $base passive
     wm maxsize $base 1284 1010
     wm minsize $base 100 1
     wm overrideredirect $base 0
@@ -103,14 +111,11 @@ proc vTclWindow.vTcl.prefs {{base ""}} {
     bind $base <Key-Escape> {
         wm withdraw [winfo toplevel %W]; vTcl:prefs:data_exchange 0
     }
-    
-    # frame $base.fra19 \
-        # -borderwidth 2 -height 75 -width 125
     frame $base.fra19
     ::vTcl::OkButton $base.fra19.but20 \
-    	-command "vTcl:prefs:data_exchange 1; wm withdraw $base"
+     -command "vTcl:prefs:data_exchange 1; wm withdraw $base"
     ::vTcl::CancelButton $base.fra19.but21 \
-    	-command "vTcl:prefs:data_exchange 0; wm withdraw $base"
+     -command "vTcl:prefs:data_exchange 0; wm withdraw $base"
     ###################
     # SETTING GEOMETRY
     ###################
@@ -122,15 +127,11 @@ proc vTclWindow.vTcl.prefs {{base ""}} {
         -in $base.fra19 -side left
 
     vTcl:prefs:init $base
-
     vTcl:BindHelp $base Preferences
 
     update
-
-    ## We have to deiconify first.  There's no way around it.  This causes
-    ## the ugly window jump, but oh well.
+    vTcl:center $base 400 $height
     wm deiconify $base
-    vTcl:center $base
 }
 
 proc {vTcl:prefs:data_exchange} {save_and_validate} {
@@ -345,11 +346,11 @@ proc {vTcl:prefs:project} {tab} {
 	pack configure $last -fill x
 
 	vTcl:formCompound:add $tab radiobutton  \
-		-text "List"   -variable prefs::encase -value list
+		-text "List"   -variable prefs::encase -value list -pady 0
 	vTcl:formCompound:add $tab radiobutton  \
-		-text "Braces" -variable prefs::encase -value brace
+		-text "Braces" -variable prefs::encase -value brace -pady 0
  	vTcl:formCompound:add $tab radiobutton  \
- 		-text "Quotes" -variable prefs::encase -value quote
+ 		-text "Quotes" -variable prefs::encase -value quote -pady 0
 
 	#======================================================================
 
@@ -357,9 +358,9 @@ proc {vTcl:prefs:project} {tab} {
 		-text "Project type" -background gray -relief raised]
 	pack configure $last -fill x
 
-	vTcl:formCompound:add $tab radiobutton  \
+	vTcl:formCompound:add $tab radiobutton -pady 0 \
 		-text "Single file project" -variable prefs::projecttype -value single
-	vTcl:formCompound:add $tab radiobutton  \
+	vTcl:formCompound:add $tab radiobutton -pady 0 \
 		-text "Multiple file project" -variable prefs::projecttype -value multiple
 
 	#======================================================================
@@ -369,11 +370,11 @@ proc {vTcl:prefs:project} {tab} {
 	pack configure $last -fill x
 
 	vTcl:formCompound:add $tab radiobutton  \
-		-text "Grid" -variable prefs::manager -value grid
+		-text "Grid" -variable prefs::manager -value grid -pady 0
 	vTcl:formCompound:add $tab radiobutton  \
-		-text "Pack" -variable prefs::manager -value pack
+		-text "Pack" -variable prefs::manager -value pack -pady 0
 	vTcl:formCompound:add $tab radiobutton  \
-		-text "Place" -variable prefs::manager -value place
+		-text "Place" -variable prefs::manager -value place -pady 0
 
 	#======================================================================
 

@@ -1,6 +1,9 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Trying to compute approximate height of preferences dialog based on
+      dialog font and a hidden radio button. Seems a good compromise.
+    o Set font for notebook widget to vtcl dialog font so it looks uniform.
     o Added tooltip text property in attributes window.
     o Done a bit of compacting in some library routines.
     o Preparing support for balloon help in projects by making all balloon
