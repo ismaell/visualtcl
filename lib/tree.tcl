@@ -72,6 +72,7 @@ proc vTcl:init_wtree {{wants_destroy_handles 1}} {
 
     # do not refresh the widget tree if it does not exist
     if {![winfo exists .vTcl.tree]} return
+    if {![info exists vTcl(tree,width)]} { set vTcl(tree,width) 0 }
 
     set b .vTcl.tree.fra4.can8
 
@@ -84,7 +85,6 @@ proc vTcl:init_wtree {{wants_destroy_handles 1}} {
     set y 10
     set tree [vTcl:list_widget_tree .]
     foreach i $tree {
-
         if {$i == "."} {
             set depth 1
         } else {
@@ -132,7 +132,12 @@ proc vTcl:init_wtree {{wants_destroy_handles 1}} {
 
 	    if {[lempty $t]} { set t [vTcl:widget:get_tree_label $i] }
 
-            $b create text $x2 $y2 -text $t -anchor w -tags "TEXT TEXT$b.$j"
+            set t [$b create text $x2 $y2 -text $t -anchor w \
+		    -tags "TEXT TEXT$b.$j"]
+
+	    set size [lindex [$b bbox $t] 2]
+	    if {$size > $vTcl(tree,width)} { set vTcl(tree,width) $size }
+
             set d2 [expr $depth - 1]
             for {set k 1} {$k <= $d2} {incr k} {
                 if {$depth > 1} {
@@ -158,15 +163,14 @@ proc vTcl:init_wtree {{wants_destroy_handles 1}} {
         }
         incr y 30
     }
-    $b configure -scrollregion "0 0 [expr $x + 200] $y"
+    $b configure -scrollregion "0 0 [expr $vTcl(tree,width) + 30] $y"
 
     if {!$wants_destroy_handles} {
-
         vTcl:create_handles $vTcl(w,widget)
         vTcl:place_handles $vTcl(w,widget)
-     }
+    }
 
-    # restore scrolling position
+    # Restore scrolling position
     $b yview moveto $vTcl(tree,last_yview)
 }
 
