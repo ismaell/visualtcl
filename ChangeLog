@@ -1,5 +1,13 @@
 ChangeLog for Visual Tcl:
 
+1.20 -> 1.21 (November 23, 1999)
+    o Root window placer fix (long-standing bug) from Alex Goodyear
+    o Added more comments into the code (ok, still needs work :)
+    o Added sorting to font list
+    o Added font A-Z sub-menus when too many fonts exist
+    o Changed all editable fields to a white background
+    o Widget tree automatically updates when it's open
+
 1.11 -> 1.20 (November 14, 1998)
     o Evaluation optimizations for Tcl/Tk8.0
     o Fix to major toplevel naming bug (Thanks Rick)
