@@ -44,7 +44,7 @@ DefaultOptions	-labeltext "Labeled frame"
 ## for compatibility with 1.5 and 1.60a1
 ##
 proc vTcl:widget:labeledframe:treeChildrenChildsite {target} {
-    return [vTcl::widgets::iwidgets::labeledframe::treeChildrenChildSite $target]
+    return [vTcl::widgets::iwidgets::labeledframe::treeChildrenChildsite $target]
 }
 
 namespace eval vTcl::widgets::iwidgets::labeledframe {
