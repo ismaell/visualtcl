@@ -222,7 +222,6 @@ proc vTcl:setup {} {
 
 proc vTcl:setup_meta {} {
     global vTcl tcl_platform
-    rename exit vTcl:exit
     proc exit {args} {}
     proc init {argc argv} {}
     proc main {argc argv} {}
@@ -241,6 +240,8 @@ vTcl:WindowsCleanup
 
 proc vTcl:setup_gui {} {
     global vTcl tcl_platform tk_version
+
+    rename exit vTcl:exit
 
     vTcl:splash_status "Setting Up Workspace"
 
