@@ -428,10 +428,10 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
             frame $base
             radiobutton ${base}.y \
                 -variable $variable -value 1 -text "Yes" -relief sunken -bd 1 \
-                -command "$config_cmd" -selectcolor #0077ff -padx 0 -pady 1
+                -command "$config_cmd" -padx 0 -pady 1
             radiobutton ${base}.n \
                 -variable $variable -value 0 -text "No" -relief sunken -bd 1 \
-                -command "$config_cmd" -selectcolor #0077ff -padx 0 -pady 1
+                -command "$config_cmd" -padx 0 -pady 1
             pack ${base}.y ${base}.n -side left -expand 1 -fill both
         }
         choice {
@@ -690,9 +690,11 @@ proc vTcl:prop:clear {} {
 proc vTcl:prop:update_saves {w} {
     global vTcl
 
+    set c $vTcl(gui,ae,canvas)
+
     set class [vTcl:get_class $w]
     foreach opt $vTcl(w,optlist) {
-    	set check .vTcl.ae.c.f2.f._$class.t${opt}_save
+    	set check $c.f2.f._$class.t${opt}_save
 	if {![winfo exists $check]} { continue }
 	$check configure -variable ::widgets::${w}::save($opt)
     }
