@@ -397,7 +397,7 @@ proc vTcl:dump_widget_alias {target basename} {
 
     set c [vTcl:get_class $target]
     append output $vTcl(tab)
-    append output "vTcl:DefineAlias \"[vTcl:base_name $target]\" \"$alias\""
+    append output "vTcl:DefineAlias \"$basename\" \"$alias\""
     append output " $classes($c,widgetProc)"
     append output " \"[vTcl:base_name $top_or_alias]\" $vTcl(pr,cmdalias)\n"
 
@@ -744,4 +744,5 @@ proc vTcl:dump:sourcing_footer {varName} {
     if {![vTcl:streq [string index $var end] "\n"]} { append var "\n" }
     append var "\}\n"
 }
+
 

@@ -574,3 +574,46 @@ proc vTcl:name_compound {t} {
     set vTcl(cmpd:$name) [vTcl:create_compound $t $name]
     vTcl:cmp_user_menu
 }
+
+##########################################################################
+## New Compound Widgets Technology Here
+
+namespace eval ::vTcl::compounds {
+
+    proc createCompound {target compoundName} {
+
+        set output ""
+        append output "namespace eval ::vTcl::compounds::$compoundName \{\n"
+
+        ## append of version of vTcl:DefineAlias that is local to this namespace
+        append output "\n"
+        append output "proc vTcl:DefineAlias \{target alias args\} \{\n"
+        append output "    set class \[vTcl:get_class \$target\]\n"
+        append output "    vTcl:set_alias \$target \[vTcl:next_widget_name \$class \$target \$alias\] -noupdate\n"
+        append output "\}\n"
+        append output "\n"
+
+        set class [vTcl:get_class $target]
+        set ::vTcl(num,index) 0
+	  set ::vTcl(num,total) [llength [vTcl:list_widget_tree $target]]
+
+        ## in addition, each toplevel has its own procedure
+        if {$class == "Toplevel"} {
+            append output [vTcl::widgets::core::toplevel::dumpTop $target]
+            append output "\n"
+        }
+
+        append output "proc compoundCmd \{target\} \{\n"
+        if {$class == "Toplevel"} {
+            append output "    vTclWindow$target \$target\n"
+        } else {
+            append output "[$::classes($class,dumpCmd) $target \$target]\n"
+        }
+        append output "\}\n"
+
+        ## closing brace of namespace statement
+        append output "\}\n"
+        return $output
+    }
+}
+
