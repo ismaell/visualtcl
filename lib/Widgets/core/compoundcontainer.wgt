@@ -43,6 +43,7 @@ TreeChildrenCmd	{vTcl::widgets::core::compoundcontainer::treeChildrenCmd
 TreeLabel       @vTcl::widgets::core::compoundcontainer::getWidgetTreeLabel
 QueryInsertOptionsCmd \
                 vTcl::widgets::core::compoundcontainer::queryInsertOptionsCmd
+GetImagesCmd    vTcl::widgets::core::compoundcontainer::getImagesCmd
 
 NewOption -compoundClass  "Cmpd Class"  type
 NewOption -compoundType   "Cmpd Type"   type
@@ -315,6 +316,12 @@ namespace eval vTcl::widgets::core::compoundcontainer {
     proc getWidgetTreeLabel {target} {
         upvar ::${target}::compoundClass compoundClass
         return "Compound Container: [join $compoundClass]"
+    }
+
+    proc getImagesCmd {target} {
+        upvar ::${target}::compoundClass compoundClass
+        upvar ::${target}::compoundType compoundType
+        return [::vTcl::compounds::getImages $compoundType [join $compoundClass]]
     }
 }
 

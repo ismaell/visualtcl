@@ -344,6 +344,12 @@ proc vTcl:font:prompt_font_manager {} {
     Window show .vTcl.fontManager
 }
 
+proc vTcl:font:dump_create_font {font} {
+	return [list [list [font configure $font] \
+	             [vTcl:font:get_type $font] \
+	             [vTcl:font:get_key $font]]]
+}
+
 proc vTcl:font:generate_font_stock {fileID} {
     global vTcl
 
@@ -536,5 +542,6 @@ proc vTcl:font:get_manager_position {} {
     global vTcl
     return [lindex [$vTcl(fonts,font_mgr,win).cpd31.03 yview] 0]
 }
+
 
 

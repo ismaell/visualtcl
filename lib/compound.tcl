@@ -510,6 +510,47 @@ namespace eval ::vTcl::compounds {
         return 0
     }
 
+    proc defineCompoundImages {target} {
+        set used [::vTcl::widgets::usedResources $target image]
+        if {[lempty $used]} {
+            return ""
+        }
+
+        set result "set images \{\n"
+        foreach item $used {
+            set reference [vTcl:image:get_reference $item]
+            append result [vTcl:image:dump_create_image $reference]
+            append result "\n"
+        }
+        append result "\}\n\n"
+
+        append result "proc imagesCmd \{target\} \{\n"
+        append result "    variable images\n"
+        append result "    foreach img \$images \{\n"
+        append result "        eval set file \[lindex \$img 0\]\n"
+        append result "        vTcl:image:create_new_image "
+        append result "\$file \[lindex \$img 1\] \[lindex \$img 2\] \[lindex \$img 3\]\n\}\n"
+        append result "\}\n\n"
+
+        return $result
+    }
+
+    proc defineCompoundFonts {target} {
+        set used [::vTcl::widgets::usedResources $target font]
+        if {[lempty $used]} {
+            return ""
+        }
+
+        set result "set fonts \{\n"
+        foreach item $used {
+            append result [vTcl:font:dump_create_font $item]
+            append result "\n"
+        }
+        append result "\}\n\n"
+
+        return $result
+    }
+
     proc createCompound {target type compoundName \
                         {procs {}} {initCmd {}} {mainCmd {}}} {
 
@@ -552,10 +593,19 @@ namespace eval ::vTcl::compounds {
         }
         append output "\}\n\n"
 
+        ## a list of images/fonts used by the compound
+        set imagesDef [defineCompoundImages $target]
+        append output $imagesDef
+        set fontsDef  [defineCompoundFonts $target]
+        append output $fontsDef
+
         ## code to actually create the compound
         append output "proc compoundCmd \{target\} \{\n"
         if {$initCmd != ""} {
             append output "    $initCmd \$target\n\n"
+        }
+        if {$imagesDef != ""} {
+            append output "    imagesCmd \$target\n"
         }
         if {$class == "Toplevel"} {
             append output "    vTclWindow$target \$target\n"
@@ -647,19 +697,19 @@ namespace eval ::vTcl::compounds {
 
     proc mergeCompoundCode {type compoundName {mergeCode 0}} {
         set spc ${type}::[list $compoundName]
-        if {![lempty [vTcl:at ${spc}::procs]]} {
+        if {![lempty [set ${spc}::procs]]} {
             ${spc}::procsCmd
             if {$mergeCode} {
-                set ::vTcl(procs) [concat $::vTcl(procs) [vTcl:at ${spc}::procs]]
+                set ::vTcl(procs) [concat $::vTcl(procs) [set ${spc}::procs]]
                 set ::vTcl(procs) [vTcl:lrmdups $::vTcl(procs)]
                 vTcl:update_proc_list
             }
         }
 
-        if {![lempty [vTcl:at ${spc}::bindtags]]} {
+        if {![lempty [set ${spc}::bindtags]]} {
             ${spc}::bindtagsCmd
             if {$mergeCode} {
-                foreach tag [vTcl:at ${spc}::bindtags] {
+                foreach tag [set ${spc}::bindtags] {
                     ::widgets_bindings::add_tag_to_tagslist $tag
                 }
             }
@@ -722,7 +772,7 @@ namespace eval ::vTcl::compounds {
     ## auto place a compound at insertion point
     proc autoPlaceCompound {type compoundName gmgr gopt} {
         set spc ${type}::[list $compoundName]
-        set rootclass [vTcl:at ${spc}::class]
+        set rootclass [set ${spc}::class]
 
         if {$rootclass == "Toplevel"} {
             set namePrefix $rootclass
@@ -763,7 +813,7 @@ namespace eval ::vTcl::compounds {
         vTcl::compounds::mergeCompoundCode $type $compoundName 1
         vTcl::compounds::${spc}::compoundCmd $target
         vTcl::compounds::${spc}::infoCmd $target
-        if {[vTcl:at ${spc}::class] == "Toplevel"} {
+        if {[set ${spc}::class] == "Toplevel"} {
             set gmgr wm
             set gopt ""
         }
@@ -794,7 +844,7 @@ namespace eval ::vTcl::compounds {
 
     proc getClass {type compoundName} {
         set spc ${type}::[list $compoundName]
-        return [vTcl:at ${spc}::class]
+        return [set ${spc}::class]
     }
 
     proc getLibraries {type compoundName} {
@@ -808,9 +858,23 @@ namespace eval ::vTcl::compounds {
         return [set ${spc}::libraries]
     }
 
+    proc getImages {type compoundName} {
+        set spc ${type}::[list $compoundName]
+        if {![info exists ${spc}::images]} {
+            return ""
+        }
+        set result ""
+        set images [set ${spc}::images]
+        foreach img $images {
+            eval set file [lindex $img 0]
+            lappend result [vTcl:image:get_image $file]
+        }
+        return $result
+    }
+
     proc getProcs {type compoundName} {
         set spc ${type}::[list $compoundName]
-        return [vTcl:at ${spc}::procs]
+        return [set ${spc}::procs]
     }
 
     proc deleteCompound {type compoundName} {

@@ -134,6 +134,10 @@ proc {vTcl:image:create_new_image} {filename
     return $object
 }
 
+proc vTcl:image:get_reference {image} {
+    return $::vTcl(images,filename,$image)
+}
+
 proc {vTcl:image:get_description} {filename} {
     set reference [vTcl:rename $filename]
     return $::vTcl(images,$reference,description)
@@ -828,3 +832,4 @@ proc vTcl:image:external_editor {imageName} {
         vTcl:error "Could not execute external image editor!"
     }
 }
+
