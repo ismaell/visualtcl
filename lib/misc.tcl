@@ -650,3 +650,19 @@ proc vTcl:display_pulldown {base xl yl} {
         wm geometry $base "+$x0+$y0"
     }
 }
+
+proc vTcl:namespace_tree {{root "::"}} {
+
+    set children [namespace children $root]
+    set result "$root"
+
+    foreach child $children {
+
+        foreach subchild [vTcl:namespace_tree $child] {
+
+            lappend result $subchild
+        }
+    }
+
+    return $result
+}

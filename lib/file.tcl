@@ -95,7 +95,22 @@ proc vTcl:source {file} {
     global vTcl
     set vTcl(sourcing) 1
     set ov [uplevel #0 info vars];           vTcl:statbar 15
-    set op [uplevel #0 info procs];          vTcl:statbar 20
+    set op ""
+
+    foreach context [vTcl:namespace_tree] {
+
+        set cop [namespace eval $context {info procs}]
+
+        foreach procname $cop {
+            if {$context == "::"} {
+               lappend op $procname
+            } else {
+               lappend op ${context}::$procname
+            }
+        }
+    }
+
+    vTcl:statbar 20
     if [catch {uplevel #0 [list source $file]} err] {
         vTcl:dialog "Error Sourcing Project\n$err"
     }
@@ -111,11 +126,21 @@ proc vTcl:source {file} {
     }
     # kc: ignore global procs like "tixSelect"
     set np ""
-    foreach procname [uplevel #0 info procs] {
-        if {[vTcl:ignore_procname_when_sourcing $procname] == 0} {
-            lappend np $procname
-        }
+    foreach context [vTcl:namespace_tree] {
+
+        set cop [namespace eval $context {info procs}]
+
+        foreach procname $cop {
+            if {[vTcl:ignore_procname_when_sourcing $procname] == 0} {
+               if {$context == "::"} {
+                   lappend np $procname
+               } else {
+                   lappend np ${context}::$procname
+               }
+            }
+       }
     }
+
     vTcl:list add [vTcl:diff_list $ov $nv] vTcl(vars)
     vTcl:list add [vTcl:diff_list $op $np] vTcl(procs)
     vTcl:statbar 45

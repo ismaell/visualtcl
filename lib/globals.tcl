@@ -419,6 +419,12 @@ set vTcl(head,proj) [string trim {
 #
 }]
 
+set vTcl(head,projfile) [string trim {
+#############################################################################
+# Visual Tcl v$vTcl(version) Window, part of a multiple files project
+#
+}]
+
 set vTcl(head,vars) [string trim {
 #################################
 # GLOBAL VARIABLES

@@ -69,7 +69,16 @@ proc vTcl:save_procs {} {
             }
             set body [string trim [info body $i]]
             if {($body != "" || $i == "main") && $i != "init"} {
+
+                if {[regexp (.*):: $i matchAll context] } {
+                   append output "\nnamespace eval ${context} \{\n"
+                }
+
                 append output "\nproc \{$i\} \{$args\} \{\n$body\n\}\n"
+
+                if {[regexp (.*):: $i]} {
+                   append output "\n\}\n"
+                }
             }
         }
     }
@@ -78,16 +87,20 @@ proc vTcl:save_procs {} {
 
 proc vTcl:dump_top_tofile {target basedir project_name} {
 
+    global vTcl
+
     catch {
         file mkdir [file join $basedir [file rootname $project_name]]
     }
 
     set filename [file join $basedir [file rootname $project_name] $target.tcl]
     set id [open $filename w]
+    puts $id "[subst $vTcl(head,projfile)]\n\n"
     puts $id [vTcl:dump_top $target]
     close $id
 
-    set output "source \"$filename\"\n"
+    set output \
+       "source \"\[file join \[file dirname \[info script\] \] [file rootname $project_name] $target.tcl\]\"\n"
     return $output
 }
 
@@ -500,7 +513,7 @@ proc vTcl:dump:aliases {target} {
 
     	    set alias $value
     	    set value $widget($alias)
-    	    append output "$vTcl(tab)set widget($alias) \"[vTcl:base_name $value]\"\n"
+    	    append output "$vTcl(tab)set \{widget($alias)\} \"[vTcl:base_name $value]\"\n"
     	}
     }
 

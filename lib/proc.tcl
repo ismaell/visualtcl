@@ -81,6 +81,13 @@ proc vTcl:update_proc {base} {
     set args [$base.f2.f9.args get]
     set body [string trim [$base.f3.text get 0.0 end] "\n"]
     if {$name != ""} {
+
+        if {[regexp (.*):: $name matchAll context]} {
+
+            # create new namespace if necessary
+	    namespace eval ${context} {}
+	}
+
         proc $name $args $body
     } else {
     	# user hasn't entered a proc name yet
@@ -147,6 +154,12 @@ proc vTcl:ignore_procname_when_saving {name} {
 
 # kc: for backward compatibility
 proc vTcl:valid_procname {name} {
+
+    # include namespace procedures
+    if {[string match *::* $name]} {
+	return 1
+    }
+
     return [expr ![vTcl:ignore_procname_when_saving $name]]
 }
 
@@ -166,17 +179,17 @@ proc vTclWindow.vTcl.proclist {args} {
     wm title $base "Function List"
     wm protocol $base WM_DELETE_WINDOW {vTcl:proclist:show 0}
     frame $base.frame7 \
-        -borderwidth 1 -height 30 -relief sunken -width 30 
+        -borderwidth 1 -height 30 -relief sunken -width 30
     pack $base.frame7 \
         -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 \
-        -side bottom 
+        -side bottom
     button $base.frame7.button8 \
         -command {vTcl:show_proc ""} \
          -padx 9 \
-        -pady 3 -text Add -width 4 
+        -pady 3 -text Add -width 4
     pack $base.frame7.button8 \
         -anchor center -expand 1 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 \
-        -side left 
+        -side left
     button $base.frame7.button9 \
         -command {
             set vTcl(x) [.vTcl.proclist.f2.list curselection]
@@ -185,10 +198,10 @@ proc vTclWindow.vTcl.proclist {args} {
             }
         } \
         -padx 9 \
-        -pady 3 -text Edit -width 4 
+        -pady 3 -text Edit -width 4
     pack $base.frame7.button9 \
         -anchor center -expand 1 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 \
-        -side left 
+        -side left
     button $base.frame7.button10 \
         -command {
             set vTcl(x) [.vTcl.proclist.f2.list curselection]
@@ -197,22 +210,22 @@ proc vTclWindow.vTcl.proclist {args} {
             }
         } \
         -padx 9 \
-        -pady 3 -text Delete -width 4 
+        -pady 3 -text Delete -width 4
     pack $base.frame7.button10 \
         -anchor center -expand 1 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 \
-        -side left 
+        -side left
     button $base.frame7.button11 \
         -command { vTcl:proclist:show 0 }\
-         -padx 9 -pady 3 -text Done -width 4 
+         -padx 9 -pady 3 -text Done -width 4
     pack $base.frame7.button11 \
         -anchor center -expand 1 -fill x -side left
     frame $base.f2 \
-        -borderwidth 1 -height 30 -relief sunken -width 30 
+        -borderwidth 1 -height 30 -relief sunken -width 30
     pack $base.f2 \
         -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 0 -pady 0 \
-        -side top 
+        -side top
     listbox $base.f2.list \
-        -yscrollcommand {.vTcl.proclist.f2.sb4  set} 
+        -yscrollcommand {.vTcl.proclist.f2.sb4  set}
     bind $base.f2.list <Double-Button-1> {
         set vTcl(x) [.vTcl.proclist.f2.list curselection]
         if {$vTcl(x) != ""} {
@@ -221,12 +234,12 @@ proc vTclWindow.vTcl.proclist {args} {
     }
     pack $base.f2.list \
         -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 0 -pady 0 \
-        -side left 
+        -side left
     scrollbar $base.f2.sb4 \
         -command "$base.f2.list yview"
     pack $base.f2.sb4 \
         -anchor center -expand 0 -fill y -ipadx 0 -ipady 0 -padx 0 -pady 0 \
-        -side right 
+        -side right
 
     wm withdraw $vTcl(gui,proclist)
     vTcl:setup_vTcl:bind $vTcl(gui,proclist)
@@ -255,47 +268,47 @@ proc vTclWindow.vTcl.proc {args} {
     wm deiconify $base
     wm title $base "$title"
     bind $base <Key-Escape> "vTcl:update_proc $base"
-    frame $base.f2 -height 30 -width 30 
+    frame $base.f2 -height 30 -width 30
     pack $base.f2 \
         -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 3 -pady 3 \
-        -side top 
-    frame $base.f2.f8 -height 30 -width 30 
+        -side top
+    frame $base.f2.f8 -height 30 -width 30
     pack $base.f2.f8 \
         -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 0 -pady 0 \
-        -side top 
+        -side top
     label $base.f2.f8.label10 -anchor w  \
-        -relief groove -text Function -width 9 
+        -relief groove -text Function -width 9
     pack $base.f2.f8.label10 \
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 2 -pady 0 \
-        -side left 
+        -side left
     entry $base.f2.f8.procname \
         -cursor {}  \
-        -highlightthickness 0 
+        -highlightthickness 0
     pack $base.f2.f8.procname \
         -anchor center -expand 1 -fill x -ipadx 0 -ipady 0 -padx 2 -pady 2 \
-        -side left 
+        -side left
     frame $base.f2.f9 \
-        -height 30 -width 30 
+        -height 30 -width 30
     pack $base.f2.f9 \
         -anchor center -expand 0 -fill both -ipadx 0 -ipady 0 -padx 0 -pady 0 \
-        -side top 
+        -side top
     label $base.f2.f9.label12 \
         -anchor w  \
-        -relief groove -text Arguments -width 9 
+        -relief groove -text Arguments -width 9
     pack $base.f2.f9.label12 \
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 2 -pady 0 \
-        -side left 
+        -side left
     entry $base.f2.f9.args \
         -cursor {}  \
-        -highlightthickness 0 
+        -highlightthickness 0
     pack $base.f2.f9.args \
         -anchor center -expand 1 -fill x -ipadx 0 -ipady 0 -padx 2 -pady 2 \
-        -side left 
+        -side left
     frame $base.f3 \
-        -borderwidth 2 -height 30 -relief groove -width 30 
+        -borderwidth 2 -height 30 -relief groove -width 30
     pack $base.f3 \
         -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 3 -pady 3 \
-        -side top 
+        -side top
 
     # @@change by Christian Gavin 3/13/2000
     # button to insert the complete name of the currently selected
@@ -304,7 +317,7 @@ proc vTclWindow.vTcl.proc {args} {
         -text "Insert selected widget name" \
         -command "vTcl:insert_widget_in_text $base.f3.text"
     pack $base.f3.butInsert -fill x -side top
-    # @@end_change 
+    # @@end_change
 
     text $base.f3.text \
         -height 7 -highlightthickness 0 -width 16 \
@@ -312,31 +325,31 @@ proc vTclWindow.vTcl.proc {args} {
         -background white
     pack $base.f3.text \
         -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 2 -pady 2 \
-        -side left 
+        -side left
     bind $base.f3.text <KeyPress> "+set vTcl(proc,[lindex $args 0],chg) 1"
     scrollbar $base.f3.scrollbar4 \
         -command "$base.f3.text yview"
     pack $base.f3.scrollbar4 \
         -anchor center -expand 0 -fill y -ipadx 0 -ipady 0 -padx 0 -pady 0 \
-        -side left 
+        -side left
     frame $base.frame14 \
         -borderwidth 1 -height 30 -relief sunken -width 30
     pack $base.frame14 \
         -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 3 -pady 3 \
-        -side top 
+        -side top
     button $base.frame14.button15 \
         -command "vTcl:update_proc $base" \
-        -padx 9 -pady 3 -text OK -width 5 
+        -padx 9 -pady 3 -text OK -width 5
     pack $base.frame14.button15 \
         -anchor center -expand 1 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 \
-        -side left 
+        -side left
     button $base.frame14.button16 \
         -command "vTcl:proc:edit_cancel $base" \
          -padx 9 \
-        -pady 3 -text Cancel -width 5 
+        -pady 3 -text Cancel -width 5
     pack $base.frame14.button16 \
         -anchor center -expand 1 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 \
-        -side left 
+        -side left
 
     set pname $base.f2.f8.procname
     set pargs $base.f2.f9.args
@@ -362,12 +375,12 @@ proc vTclWindow.vTcl.proc {args} {
     	\} else \{ \
     	      $base.frame14.button15 configure -state normal \
     	\}"
-    	
+
     # @@change by Christian Gavin 3/19/2000
     # syntax colouring
-    
+
     vTcl:syntax_color $base.f3.text
-    
+
     # @@end_change
 }
 
