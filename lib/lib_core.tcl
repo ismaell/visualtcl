@@ -60,12 +60,13 @@ proc vTcl:widget:lib:lib_core {args} {
     vTcl:lib:add_widgets_to_toolbar $order
 
     append vTcl(head,core,importheader) {
+    package require Tk
     switch $tcl_platform(platform) {
 	windows {
             option add *Button.padY 0
 	}
 	default {
-	    option add *Scrollbar.width 10
+            option add *Scrollbar.width 10
             option add *Scrollbar.highlightThickness 0
             option add *Scrollbar.elementBorderWidth 2
             option add *Scrollbar.borderWidth 2
@@ -988,6 +989,7 @@ namespace eval ::vTcl::itemEdit {
 	$top.ItemsEditMenuAddDelete entryconfigure 1 -state $state($enabled)
     }
 }
+
 
 
 
