@@ -1,6 +1,8 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Added "foreach" body support to stack trace window.
+    o Repaired problem with new project generating error on save.
     o Saving geometry with or without position and size, depending on
       "set origin" and "set size" properties.
     o Added "set origin" and "set size" option to toplevels. To be

@@ -230,7 +230,8 @@ namespace eval ::stack_trace {
 
         } elseif { [string match {("if" then script line *)} $context] ||
                    [string match {("eval" body line *)} $context] ||
-                   [string match {(in namespace eval "*" script line *)} $context] } {
+                   [string match {(in namespace eval "*" script line *) ||
+                   [string match {("foreach" body line *)} $context] } $context] } {
 
             set statement \
                 [::stack_trace::get_statement_at_level \
@@ -335,7 +336,8 @@ namespace eval ::stack_trace {
 
         } elseif { [string match {("if" then script line *)} $context]  ||
                    [string match {("eval" body line *)} $context] ||
-                   [string match {(in namespace eval "*" script line *)} $context] } {
+                   [string match {(in namespace eval "*" script line *)} $context] ||
+                   [string match {("foreach" body line *)} $context] } {
 
             set statement \
                 [::stack_trace::get_statement_at_level $top [expr $index + 1] ]

@@ -500,7 +500,10 @@ proc vTcl:update_widget_info {target} {
             ##
             foreach special {set,origin set,size} {
                 if {![info exists ::widgets::${target}::${special}]} {
-                    set ::widgets::${target}::${special} 1
+                    namespace eval ::widgets::${target} "
+                        variable $special
+                        set $special 1
+                    "
                 }
                 set vTcl(w,wm,$special) [vTcl:at ::widgets::${target}::${special}]
             }
