@@ -26,12 +26,13 @@ proc vTcl:widget:tixPanedWindow:inscmd {target} {
 proc vTcl:widget:tixPanedWindow:treeChildrenCmd {target {diff ""}} {
 
     set children ""
+    set wantsdiff [expr {$diff != ""}]
 
     set entries [$target panes]
     foreach pane $entries {
         set site [$target subwidget $pane]
-        foreach child [vTcl:complete_widget_tree $site] {
-            lappend children $child
+        foreach child [vTcl:complete_widget_tree $site $wantsdiff] {
+            lappend children $child$diff
         }
     }
 
