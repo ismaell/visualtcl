@@ -106,3 +106,14 @@ then press the Left/Up, Right/Down keys to change its order.
 To move a widget around in a grid, activate it by clicking on it,
 then use the cursor keys.
 }
+
+{
+In some situations you want to insert a widget inside a frame, but
+you have a hard time selecting the frame in the toplevel, because
+it is completely filled with widgets.
+
+Visual Tcl allows you to select the insertion point in the widget
+tree (say, a frame) then place the new widget inside it by pressing
+the Shift key then clicking on the widget you want to insert in
+the toolbar.
+}

@@ -26,3 +26,5 @@ NewOption -rowtagcommand "Tag Cmd Row" 	 command
 NewOption -coltagcommand "Tag Cmd Col" 	 command
 NewOption -sparsearray   "Sparse Array"  boolean  {0 1}
 SpecialOpt -validate     "Validate"      boolean  {0 1}
+NewOption -colstretchmode "Col Stretch" choice {none unset all last}
+NewOption -rowstretchmode "Row Stretch" choice {none unset all last fill}
