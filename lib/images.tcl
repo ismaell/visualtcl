@@ -201,7 +201,7 @@ proc {vTcl:image:init_img_manager} {} {
 	catch {
 	    set realname $image
 	    if {$tcl_platform(platform) == "windows"} {
-		 regsub -all / $realname {\\\\} realname
+		 regsub -all / $realname {\\} realname
 	    }
 
 	    set file [file join $vTcl(VTCL_HOME) images edit open.gif]
@@ -785,6 +785,16 @@ proc vTcl:image:external_editor {imageName} {
     	vTcl:error "Could not execute external image editor"
     }
 }
+
+
+
+
+
+
+
+
+
+
 
 
 

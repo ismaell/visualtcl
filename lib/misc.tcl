@@ -50,7 +50,7 @@ proc vTcl:load_images {} {
     foreach i {fg bg mgr_grid mgr_pack mgr_place
                 rel_groove rel_ridge rel_raised rel_sunken justify
                 relief border ellipses anchor fontbase fontsize fontstyle
-                tconsole up down delete_tag} {
+                tconsole up down delete_tag pack_img} {
         image create photo "$i" \
             -file [file join $vTcl(VTCL_HOME) images $i.gif]
     }
@@ -1184,3 +1184,16 @@ proc vTcl:entry {w args} {
     eval entry $w $args
     bind $w <Control-Key-u> "$w delete 0 end"
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

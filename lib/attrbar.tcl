@@ -106,6 +106,15 @@ proc vTcl:widget_set_anchor {anchor} {
     $vTcl(w,widget) conf -anchor $anchor
 }
 
+proc vTcl:widget_set_pack_side {side} {
+    global vTcl
+    if {$vTcl(w,widget) == ""} {return}
+    set mgr [winfo manager $vTcl(w,widget)]
+    if {$mgr != "pack"} {return}
+    pack configure $vTcl(w,widget) -side $side
+    vTcl:place_handles $vTcl(w,widget)
+}
+
 proc vTcl:widget_set_fg {target} {
     global vTcl
     if {$vTcl(w,widget) == ""} {return}
@@ -291,9 +300,26 @@ proc vTcl:attrbar {args} {
         vTcl:widget_set_anchor se
     } -variable vTcl(w,opt,-anchor) -value se
     vTcl:set_balloon .vTcl.attr.04.anchor "label anchor"
+    menubutton .vTcl.attr.04.pack -bd 1 -relief raised -image pack_img \
+        -highlightthickness 0 -menu .vTcl.attr.04.pack.m
+    menu .vTcl.attr.04.pack.m -tearoff 0
+    .vTcl.attr.04.pack.m add radiobutton -image anchor_n -command {
+        vTcl:widget_set_pack_side top
+    } -variable vTcl(w,pack,-side) -value top
+    .vTcl.attr.04.pack.m add radiobutton -image anchor_s -command {
+        vTcl:widget_set_pack_side bottom
+    } -variable vTcl(w,pack,-side) -value bottom
+    .vTcl.attr.04.pack.m add radiobutton -image anchor_e -command {
+        vTcl:widget_set_pack_side right
+    } -variable vTcl(w,pack,-side) -value right
+    .vTcl.attr.04.pack.m add radiobutton -image anchor_w -command {
+        vTcl:widget_set_pack_side left
+    } -variable vTcl(w,pack,-side) -value left
+    vTcl:set_balloon .vTcl.attr.04.pack "pack side"
     pack .vTcl.attr.04.relief -side left -padx 2 -pady 2
     pack .vTcl.attr.04.border -side left -padx 2 -pady 2
     pack .vTcl.attr.04.anchor -side left -padx 2 -pady 2
+    pack .vTcl.attr.04.pack   -side left -padx 2 -pady 2
 
     frame .vTcl.attr.010 \
         -borderwidth 1 -height 20 -relief raised -width 20
@@ -399,5 +425,17 @@ proc vTcl:attrbar {args} {
     set vTcl(mgrs,wm,widget) .vTcl.attr.016.020
     button .vTcl.attr.016.020
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
