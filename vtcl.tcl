@@ -221,11 +221,18 @@ proc vTcl:setup {} {
 }
 
 proc vTcl:setup_meta {} {
-    global vTcl
+    global vTcl tcl_platform
     rename exit vTcl:exit
     proc exit {args} {}
     proc init {argc argv} {}
     proc main {argc argv} {}
+
+    if {[vTcl:streq $tcl_platform(platform) "windows"]} {
+    	proc main {argc argv} {
+## This will clean up and call exit properly on Windows.
+vTcl:WindowsCleanup
+	}
+    }
 
     vTcl:proclist:show $vTcl(pr,show_func)
     vTcl:varlist:show  $vTcl(pr,show_var)
@@ -571,7 +578,7 @@ proc vTcl:define_bindings {} {
     }
 
     bind vTcl(b) <Alt-h> {
-        if { $vTcl(h,exist) == "yes" } {
+        if {$vTcl(h,exist)} {
             vTcl:destroy_handles
         } else {
             vTcl:create_handles $vTcl(w,widget)

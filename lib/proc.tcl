@@ -261,8 +261,8 @@ proc vTclWindow.vTcl.proclist {args} {
 
 proc vTclWindow.vTcl.proc {args} {
     global vTcl
-    set base "[lindex $args 0]"
-    set title "[lindex $args 1]"
+    set base  [lindex $args 0]
+    set title [lindex $args 1]
     set iproc [lindex $args 1]
     set iargs [lindex $args 2]
     set ibody [lindex $args 3]

@@ -21,6 +21,37 @@
 # Architecture by Stewart Allen
 # Implementation by Kenneth H. Cox <kcox@senteinc.com>
 
+proc vTcl:widget:lib:lib_tix {args} {
+    global vTcl
+
+    # Setup required variables
+    vTcl:lib_tix:setup
+
+    set order {
+        TixNoteBook
+        TixLabelFrame
+        TixComboBox
+        TixMeter
+        TixFileEntry
+        TixLabelEntry
+        TixScrolledHList
+        TixScrolledListBox
+        TixSelect
+        TixPanedWindow
+        TixOptionMenu
+    }
+
+    vTcl:lib:add_widgets_to_toolbar $order
+
+    append vTcl(head,tix,importheader) {
+    # Check if Tix is available
+    if {[lsearch -exact $packageNames Tix] != -1} {
+	package require Tix
+    }
+    }
+}
+
+
 ##############################################################################
 #
 # this modified version of the "option" command ignores all
@@ -105,36 +136,6 @@ proc vTcl:lib_tix:init {} {
 
     lappend vTcl(libNames) {Tix Widget Support Library}
     return 1
-}
-
-proc vTcl:widget:lib:lib_tix {args} {
-    global vTcl
-
-    # Setup required variables
-    vTcl:lib_tix:setup
-
-    set order {
-        TixNoteBook
-        TixLabelFrame
-        TixComboBox
-        TixMeter
-        TixFileEntry
-        TixLabelEntry
-        TixScrolledHList
-        TixScrolledListBox
-        TixSelect
-        TixPanedWindow
-        TixOptionMenu
-    }
-
-    vTcl:lib:add_widgets_to_toolbar $order
-
-    append vTcl(head,importheader) {
-    # Check if Tix is available
-    if {[lsearch -exact $packageNames Tix] != -1} {
-	package require Tix
-    }
-    }
 }
 
 #

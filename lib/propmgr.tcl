@@ -187,8 +187,9 @@ proc vTclWindow.vTcl.ae {args} {
 
 proc vTcl:prop:recalc_canvas {} {
     global vTcl
+
     set ae $vTcl(gui,ae)
-    if {![winfo exists $ae]} {return}
+    if {![winfo exists $ae]} { return }
 
     set f1 $ae.c.f1                              ; # Widget Info Frame
     set f2 $ae.c.f2                              ; # Widget Attribute Frame
@@ -205,6 +206,12 @@ proc vTcl:prop:recalc_canvas {} {
                 [winfo height $f3] ]
     $ae.c configure -scrollregion "0 0 $w $h"
     wm minsize .vTcl.ae $w 200
+
+    set vTcl(propmgr,frame,$f1) 0
+    lassign [vTcl:split_geom [winfo geometry $f1]] x y
+    set vTcl(propmgr,frame,$f2) $y
+    lassign [vTcl:split_geom [winfo geometry $f2]] x y
+    set vTcl(propmgr,frame,$f3) $y
 }
 
 proc vTcl:focus_out_cmd {option} {
@@ -353,7 +360,7 @@ proc vTcl:prop:update_attr {} {
 		}
 		append config_cmd ";vTcl:place_handles \$vTcl(w,widget)"
 		vTcl:prop:new_attr $top $i $variable $config_cmd m,$mgr \
-		    $focus_out_cmd
+		    $focus_out_cmd -geomOpt
 	    }
 	}
     }
@@ -363,7 +370,8 @@ proc vTcl:prop:update_attr {} {
     vTcl:prop:update_saves $vTcl(w,widget)
 }
 
-proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
+proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd
+			{isGeomOpt ""}} {
     global vTcl $variable options specialOpts propmgrLabels
 
     set base $top.t${option}
@@ -561,9 +569,14 @@ proc vTcl:prop:new_attr {top option variable config_cmd prefix focus_out_cmd} {
 
     ## Append the label to the list for this widget and add the focusControl
     ## to the lookup table.  This is used when scrolling through the property
-    ## manager with the directional keys.
+    ## manager with the directional keys.  We don't want to append geometry
+    ## options, we just handle them later.
     set c [vTcl:get_class $vTcl(w,widget)]
-    lappend vTcl(propmgr,$c) $label
+    if {[lempty $isGeomOpt]} {
+	lappend vTcl(propmgr,labels,$c) $label
+    } else {
+	lappend vTcl(propmgr,labels,$vTcl(w,manager)) $label
+    }
     set propmgrLabels($label) $focusControl
 
     ## If they click the label, select the focus control.
@@ -697,42 +710,45 @@ proc vTcl:propmgr:deselect_attr {} {
     unset vTcl(propmgr,lastAttr)
 }
 
-proc vTcl:propmgr:focusPrev {w} {
+proc vTcl:propmgr:focusOnLabel {w dir} {
     global vTcl propmgrLabels
 
-    set class [vTcl:get_class $vTcl(w,widget)]
+    set m $vTcl(w,manager)
+    set c [vTcl:get_class $vTcl(w,widget)]
+    set list [concat $vTcl(propmgr,labels,$c) $vTcl(propmgr,labels,$m)]
 
-    set ind [lsearch $vTcl(propmgr,$class) $w]
-    incr ind -1
+    set ind [lsearch $list $w]
+    incr ind $dir
 
     if {$ind < 0} { return }
 
-    set next [lindex $vTcl(propmgr,$class) $ind]
+    set next [lindex $list $ind]
 
     if {[lempty $next]} { return }
 
     ## We want to set the focus to the focusControl, but we want the canvas
     ## to scroll to the label of the focusControl.
     focus $propmgrLabels($next)
-    vTcl:canvas:seewidget $vTcl(gui,ae).c $next
+    vTcl:propmgr:scrolltolabel $vTcl(gui,ae).c $next
+}
+
+proc vTcl:propmgr:focusPrev {w} {
+    vTcl:propmgr:focusOnLabel $w -1
 }
 
 proc vTcl:propmgr:focusNext {w} {
-    global vTcl propmgrLabels
+    vTcl:propmgr:focusOnLabel $w 1
+}
 
-    set class [vTcl:get_class $vTcl(w,widget)]
-
-    set ind [lsearch $vTcl(propmgr,$class) $w]
-    incr ind 1
-
-    if {$ind < 0} { return }
-
-    set next [lindex $vTcl(propmgr,$class) $ind]
-
-    if {[lempty $next]} { return }
-
-    ## We want to set the focus to the focusControl, but we want the canvas
-    ## to scroll to the label of the focusControl.
-    focus $propmgrLabels($next)
-    vTcl:canvas:seewidget $vTcl(gui,ae).c $next
+proc vTcl:propmgr:scrolltolabel {c w} {
+    global vTcl
+    set split [split $w .]
+    set split [lrange $split 0 4]
+    set frame [join $split .]
+    lassign [$c cget -scrollregion] foo foo cx cy
+    lassign [vTcl:split_geom [winfo geometry $w]] foo foo ix iy
+    set x [expr $ix.0 / $cx]
+    set y [expr ($iy.0 + $vTcl(propmgr,frame,$frame)) / $cy]
+    $c xview moveto $x
+    $c yview moveto $y
 }

@@ -134,12 +134,16 @@ proc vTcl:export_procs {} {
 }
 
 proc vTcl:vtcl_library_procs {} {
-    global vTcl classes
+    global vTcl classes tcl_platform
 
     set list {
         Window
     }
 
+    if {[vTcl:streq $tcl_platform(platform) "windows"]} {
+	lappend list vTcl:WindowsCleanup
+    }
+	
     vTcl:dump:not_sourcing_header output
     foreach proc $list {
         append output [vTcl:maybe_dump_proc $proc]

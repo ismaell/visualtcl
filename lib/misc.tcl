@@ -679,7 +679,7 @@ proc vTcl:display_pulldown {base xl yl {close_action ""}} {
 proc vTcl:split_geom {geom} {
     set vars {height width x y}
     foreach var $vars { set $var {} }
-    regexp {([0-9]+)x([0-9]+)\+([0-9]+)\+([0-9]+)} $geom \
+    regexp {([0-9-]+)x([0-9-]+)\+([0-9-]+)\+([0-9-]+)} $geom \
     	trash width height x y
     return [list $width $height $x $y]
 }
@@ -1247,15 +1247,6 @@ proc ::vTcl::InitTkcon {} {
 proc vTcl:canvas:see {c item} {
     lassign [$c cget -scrollregion] foo foo cx cy
     lassign [$c bbox $item] ix iy
-    set x [expr $ix.0 / $cx]
-    set y [expr $iy.0 / $cy]
-    $c xview moveto $x
-    $c yview moveto $y
-}
-
-proc vTcl:canvas:seewidget {c w} {
-    lassign [$c cget -scrollregion] foo foo cx cy
-    lassign [vTcl:split_geom [winfo geometry $w]] foo foo ix iy
     set x [expr $ix.0 / $cx]
     set y [expr $iy.0 / $cy]
     $c xview moveto $x

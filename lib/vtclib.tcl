@@ -23,19 +23,17 @@
 
 proc Window {args} {
     global vTcl
-    set cmd [lindex $args 0]
-    set name [lindex $args 1]
+    set cmd     [lindex $args 0]
+    set name    [lindex $args 1]
     set newname [lindex $args 2]
-    set rest [lrange $args 3 end]
-    if {$name == "" || $cmd == ""} {return}
-    if {$newname == ""} {
-        set newname $name
-    }
+    set rest    [lrange $args 3 end]
+    if {$name == "" || $cmd == ""} { return }
+    if {$newname == ""} { set newname $name }
     if {$name == "."} { wm withdraw $name; return }
     set exists [winfo exists $newname]
     switch $cmd {
         show {
-            if {$exists} { wm deiconify $name; return }
+            if {$exists} { wm deiconify $newname; return }
             if {[info procs vTclWindow(pre)$name] != ""} {
                 eval "vTclWindow(pre)$name $newname $rest"
             }
@@ -71,4 +69,10 @@ proc vTcl:WidgetProc {w args} {
     }
 
     eval $w $command $args
+}
+
+proc vTcl:WindowsCleanup {} {
+    foreach w [winfo children .] {
+    	wm protocol $w WM_DELETE_WINDOW { exit }
+    }
 }
