@@ -27,7 +27,7 @@
 
 ##############################################################################
 
-set version 1.6.0a3
+set version 1.6.0b1
 set bldroot /home/cgavin/vtcl2-0/vtcl
 set bldtmp $bldroot/build/tmp
 
@@ -57,6 +57,10 @@ file mkdir $copyroot/images/edit
 file mkdir $copyroot/doc
 file mkdir $copyroot/demo
 file mkdir $copyroot/demo/images
+file mkdir $copyroot/demo/tutorial
+file mkdir $copyroot/demo/tutorial/core
+file mkdir $copyroot/demo/tutorial/megawidgets
+file mkdir $copyroot/demo/tutorial/megawidgets/imagelist
 file mkdir $copyroot/sample
 
 exec cp $bldroot/ChangeLog                                $copyroot
@@ -99,6 +103,9 @@ eval exec cp [glob $bldroot/demo/*.ttd]                   $copyroot/demo
 eval exec cp [glob $bldroot/demo/*.html]                  $copyroot/demo
 eval exec cp $bldroot/demo/README                         $copyroot/demo
 eval exec cp [glob $bldroot/demo/images/*.*]              $copyroot/demo/images
+eval exec cp [glob $bldroot/demo/tutorial/core/*.tcl]     $copyroot/demo/tutorial/core
+eval exec cp [glob $bldroot/demo/tutorial/megawidgets/imagelist/*.tcl]     $copyroot/demo/tutorial/megawidgets/imagelist
+eval exec cp [glob $bldroot/demo/tutorial/megawidgets/imagelist/*.txt]     $copyroot/demo/tutorial/megawidgets/imagelist
 eval exec cp [glob $bldroot/sample/*.tcl]                 $copyroot/sample
 
 # temp for the alpha version
@@ -110,9 +117,10 @@ exec tar cf - -C $bldtmp vtcl-$version | gzip >vtcl-$version.tar.gz
 cd $copyroot/..
 exec tar cf - -C . vtcl-$version | gzip >vtcl-$version.tar.gz
 
-cd $bldroot/build
-file copy -force vtcl-$version-1.spec         /root/rpm/SPECS
-file copy -force $bldtmp/vtcl-$version.tar.gz /root/rpm/SOURCES
-file copy -force $bldroot/images/title.gif    /root/rpm/SOURCES
+#cd $bldroot/build
+#file copy -force vtcl-$version-1.spec         /root/rpm/SPECS
+#file copy -force $bldtmp/vtcl-$version.tar.gz /root/rpm/SOURCES
+#file copy -force $bldroot/images/title.gif    /root/rpm/SOURCES
+#
+#exec /bin/rpm -ba /root/rpm/SPECS/vtcl-$version-1.spec
 
-exec /bin/rpm -ba /root/rpm/SPECS/vtcl-$version-1.spec
