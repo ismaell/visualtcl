@@ -28,6 +28,7 @@ proc vTclWindow.vTcl.help {args} {
 
     toplevel $base -class Toplevel
     wm withdraw $base
+    wm geometry $base 600x425
     wm transient $base .vTcl
     wm focusmodel $base passive
     wm title $base "Help for Visual Tcl"
@@ -59,8 +60,7 @@ proc vTclWindow.vTcl.help {args} {
 
     $base.fra18.tex22 configure -state disabled
 
-    wm geometry $base 600x425
-    vTcl:center $base 600 425
+    catch {wm geometry $base $vTcl(geometry,$base)}
     wm deiconify $base
 }
 
@@ -426,5 +426,6 @@ proc vTclWindow.vTcl.infolibs {{base ""}} {
     vTcl:center $base 446 322
     wm deiconify $base
 }
+
 
 

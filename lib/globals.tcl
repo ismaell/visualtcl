@@ -161,7 +161,7 @@ set vTcl(winname)        "vTclWindow"
 set vTcl(windows)        ".vTcl.toolbar .vTcl.mgr .vTcl.ae .vTcl.wstat
                           .vTcl.proclist .vTcl.toplist .vTcl.tree
                           .vTcl.tkcon .vTcl.prefs .vTcl.about .vTcl.bind .vTcl.imgManager
-                          .vTcl.fontManager .vTcl.inspector"
+                          .vTcl.fontManager .vTcl.inspector .vTcl.help"
 set vTcl(newtops)        1
 set vTcl(mode)           "EDIT"
 set vTcl(pwd)            [pwd]
@@ -373,4 +373,5 @@ proc vTcl:syntax:iscommand {command} {
 
 # special case for -in option
 set vTcl(option,noencase,-in) 1
+
 
