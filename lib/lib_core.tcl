@@ -90,6 +90,8 @@ proc vTcl:pack:conf_ext {target var value} {
 
 proc vTcl:wm:conf_geom {target var value} {
     global vTcl
+    set ::widgets::${target}::set,origin $vTcl(w,wm,set,origin)
+    set ::widgets::${target}::set,size   $vTcl(w,wm,set,size)
     set x $vTcl(w,wm,geometry,x)
     set y $vTcl(w,wm,geometry,y)
     set w $vTcl(w,wm,geometry,w)

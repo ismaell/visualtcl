@@ -491,6 +491,20 @@ proc vTcl:update_widget_info {target} {
             foreach var $remove {
                 set vTcl(w,$var) [set $var]
             }
+
+            ##
+            # Special attributes that do not belong to Tk toplevels but allow
+            # control over whether to specify origin and/or size or let the
+            # window manager decide instead. Defaults to 1, which means the
+            # user has control over toplevel position and size
+            ##
+            foreach special {set,origin set,size} {
+                if {![info exists ::widgets::${target}::${special}]} {
+                    set ::widgets::${target}::${special} 1
+                }
+                set vTcl(w,wm,$special) [vTcl:at ::widgets::${target}::${special}]
+            }
+
         }
         default {
             set vTcl(w,opt,-text) ""

@@ -239,10 +239,12 @@ set vTcl(m,grid,row,minsize)       { {row minsize}   {}       type    {} {vTcl:g
 set vTcl(m,grid,propagate)         { propagate       {}       boolean {0 1} {vTcl:grid:conf_ext} }
 
 set vTcl(m,wm,list) ""
-set vTcl(m,wm,extlist) "geometry,x geometry,y geometry,w geometry,h resizable,w resizable,h
-                        minsize,x minsize,y maxsize,x maxsize,y state title"
+set vTcl(m,wm,extlist) "set,origin geometry,x geometry,y set,size geometry,w geometry,h
+                        resizable,w resizable,h minsize,x minsize,y maxsize,x maxsize,y state title"
+set vTcl(m,wm,set,origin)          { {set origin}    {}       boolean {0 1}  {vTcl:wm:conf_geom} }
 set vTcl(m,wm,geometry,x)          { {x position}    {}       type    {} {vTcl:wm:conf_geom} }
 set vTcl(m,wm,geometry,y)          { {y position}    {}       type    {} {vTcl:wm:conf_geom} }
+set vTcl(m,wm,set,size)            { {set size}      {}       boolean {0 1}  {vTcl:wm:conf_geom} }
 set vTcl(m,wm,geometry,w)          { width           {}       type    {} {vTcl:wm:conf_geom} }
 set vTcl(m,wm,geometry,h)          { height          {}       type    {} {vTcl:wm:conf_geom} }
 set vTcl(m,wm,resizable,w)         { {resize width}  {}       boolean {0 1} {vTcl:wm:conf_resize} }

@@ -1,6 +1,9 @@
 ChangeLog for Visual Tcl:
 
 1.52 -> ?
+    o Added "set origin" and "set size" option to toplevels. To be
+      saved in the project soon.
+    o Fixed what Damon broke in the toplevel list :-)
     o Added vTcl(pr,entryactivecolor) preference to set the bgcolor when
       the mouse pointer is over entry fields.
     o Renamed vTcl(propmgr,relief) to vTcl(pr,proprelief) so it gets
