@@ -322,9 +322,7 @@ proc vTclWindow.vTcl {args} {
     frame .vTcl.stat -relief flat
     pack $tmp -side top -expand 1 -fill x
 
-    if {$tcl_version >= 8} {
-	.vTcl conf -menu .vTcl.m
-    }
+    .vTcl conf -menu .vTcl.m
 
     foreach menu {file edit mode compound options window} {
 	if {$tcl_version >= 8} {
@@ -337,13 +335,7 @@ proc vTclWindow.vTcl {args} {
 	}
     }
 
-    if {$tcl_version >= 8} {
-	vTcl:menu:insert .vTcl.m.help help .vTcl.m
-    } else {
-	menubutton $tmp.help -text Help -menu $tmp.help.m -anchor w
-	vTcl:menu:insert $tmp.help.m help
-	pack $tmp.help -side right
-    }
+    vTcl:menu:insert .vTcl.m.help help .vTcl.m
 
     # RIGHT CLICK MENU
     set vTcl(gui,rc_menu) .vTcl.menu_rc
@@ -417,6 +409,9 @@ proc vTclWindow.vTcl {args} {
     ## Create a hidden entry widget that holds the name of the current widget.
     ## We use this for copying the widget name and using it globally.
     entry .vTcl.widgetname -textvariable vTcl(fakeClipboard)
+
+    ## Make the menu flat
+    .vTcl.m configure -relief flat
 }
 
 proc vTcl:vtcl:remap {w} {
