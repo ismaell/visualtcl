@@ -2,6 +2,7 @@ Class		Toplevel
 Lib		core
 
 Icon		icon_toplevel.gif
+CreateCmd   vTcl:toplevel
 DoubleClickCmd	vTcl:widget:toplevel:dblclkcmd
 
 TreeLabel	@vTcl:core:get_widget_tree_label
@@ -15,6 +16,13 @@ Function	"Set New Toplevel Geometry" vTcl:widget:toplevel:set_new_geom
 Function        "Adjust Size To Children"   vTcl:widget:toplevel:adjust_size
 
 Export          vTcl:DefineAlias
+Export          vTcl:toplevel
+
+proc vTcl:toplevel {args} {
+    eval toplevel $args
+    set target [lindex $args 0]
+    namespace eval ::$target {}
+}
 
 proc vTcl:widget:toplevel:edit_menu {} {
     global vTcl
@@ -48,6 +56,7 @@ proc vTcl:widget:toplevel:deletecmd {target} {
     global vTcl
     set vTcl(tops) [lremove $vTcl(tops) $target]
     destroy $target
+    namespace delete ::$target
     vTcl:update_top_list
 }
 

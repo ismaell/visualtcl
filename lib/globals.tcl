@@ -306,7 +306,7 @@ set vTcl(syntax,vTcl:dollar,configure)  {-foreground #00A000}
 set vTcl(syntax,vTcl:bracket)           {\[|\]|\{|\}}
 set vTcl(syntax,vTcl:bracket,configure) {-foreground #FF0000}
 
-set vTcl(syntax,vTcl:command)           {[a-zA-Z0-9_:]+}
+set vTcl(syntax,vTcl:command)           {[a-zA-Z0-9_\-:]+}
 set vTcl(syntax,vTcl:command,configure) {-foreground #B000B0}
 set vTcl(syntax,vTcl:command,validate)  vTcl:syntax:iscommand
 

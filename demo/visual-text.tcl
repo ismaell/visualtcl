@@ -262,6 +262,12 @@ proc {vTcl:WidgetProc} {w args} {
 
     eval $w $command $args
 }
+
+proc {vTcl:toplevel} {args} {
+    eval toplevel $args
+    set target [lindex $args 0]
+    namespace eval ::$target {}
+}
 }
 
 if {[info exists vTcl(sourcing)]} {
@@ -420,7 +426,7 @@ proc vTcl:project:info {} {
         array set save {-anchor 1 -command 1 -pady 1 -text 1 -value 1 -variable 1}
     }
     namespace eval ::widgets::.top22.fra27.fra29.lab22 {
-        array set save {-background 1 -padx 1 -text 1}
+        array set save {-background 1 -text 1}
     }
     namespace eval ::widgets::.top22.fra27.fra29.lab23 {
         array set save {-background 1 -padx 1 -pady 1 -text 1}
@@ -450,7 +456,25 @@ proc vTcl:project:info {} {
         array set save {-command 1 -text 1 -width 1}
     }
     namespace eval ::widgets::.top22.fra46.but48 {
-        array set save {-command 1 -text 1 -width 1}
+        array set save {-command 1 -padx 1 -text 1 -width 1}
+    }
+    namespace eval ::widgets::.top18 {
+        array set save {}
+    }
+    namespace eval ::widgets::.top18.cpd19 {
+        array set save {-borderwidth 1 -height 1 -relief 1 -width 1}
+    }
+    namespace eval ::widgets::.top18.cpd19.01 {
+        array set save {-command 1 -highlightthickness 1 -orient 1}
+    }
+    namespace eval ::widgets::.top18.cpd19.02 {
+        array set save {-command 1 -highlightthickness 1}
+    }
+    namespace eval ::widgets::.top18.cpd19.03 {
+        array set save {-background 1 -font 1 -height 1 -relief 1 -width 1 -xscrollcommand 1 -yscrollcommand 1}
+    }
+    namespace eval ::widgets::.top18.but20 {
+        array set save {-command 1 -pady 1 -text 1 -width 1}
     }
     namespace eval ::widgets_bindings {
         set tagslist {}
@@ -460,6 +484,236 @@ proc vTcl:project:info {} {
 #################################
 # USER DEFINED PROCEDURES
 #
+###########################################################
+## Procedure:  ::about::init
+
+namespace eval ::about {
+
+proc {::about::init} {} {
+global widget
+
+set id [open [file join [file dirname [info script]] about.ttd] r]
+set ttd [read $id]
+close $id
+
+AboutVisualText.AboutText configure -state normal
+AboutVisualText.AboutText delete 1.0 end
+ttd::insert $widget(AboutVisualText,AboutText) $ttd
+AboutVisualText.AboutText configure -state disabled
+}
+
+}
+###########################################################
+## Procedure:  ::edit_tag::add_new_tag
+
+namespace eval ::edit_tag {
+
+proc {::edit_tag::add_new_tag} {mainw w selrange} {
+global widget
+upvar #0 ::$widget($w)::tag_name tag_name
+
+eval $mainw.MainText tag add $tag_name $selrange
+::edit_tag::set_existing_tag $mainw $w
+}
+
+}
+###########################################################
+## Procedure:  ::edit_tag::do_modal
+
+namespace eval ::edit_tag {
+
+proc {::edit_tag::do_modal} {w} {
+global widget
+
+set ::$widget($w)::edit_tag_status ""
+$w show
+vwait ::$widget($w)::edit_tag_status
+$w hide
+}
+
+}
+###########################################################
+## Procedure:  ::edit_tag::enable_ok
+
+namespace eval ::edit_tag {
+
+proc {::edit_tag::enable_ok} {w} {
+global widget
+upvar #0 ::$widget($w)::tag_name tag_name
+
+if {$tag_name == ""} {
+    $w.EditTagOK configure -state disabled
+} else {
+    $w.EditTagOK configure -state normal
+}
+}
+
+}
+###########################################################
+## Procedure:  ::edit_tag::get_status
+
+namespace eval ::edit_tag {
+
+proc {::edit_tag::get_status} {w} {
+## easier access to namespace variable
+global widget
+upvar #0 $widget($w)::edit_tag_status edit_tag_status
+return $edit_tag_status
+}
+
+}
+###########################################################
+## Procedure:  ::edit_tag::init_edit_tag
+
+namespace eval ::edit_tag {
+
+proc {::edit_tag::init_edit_tag} {w} {
+global widget
+upvar #0 ::$widget($w)::edit_tag_status edit_tag_status
+upvar #0 ::$widget($w)::selected_font   selected_font
+upvar #0 ::$widget($w)::justify_radio   justify_radio
+upvar #0 ::$widget($w)::font_size_entry font_size_entry
+
+$w.FontsListbox delete 0 end
+foreach family [lsort [font families]] {
+    $w.FontsListbox insert end $family
+}
+$w.FontsListbox selection set 0
+set selected_font [$w.FontsListbox get 0]
+
+set justify_radio left
+set font_size_entry 10
+
+$w.TagSampleText delete 1.0 end
+$w.TagSampleText insert end "The Quick Brown Fox jumped over a lazy dog's back" sample
+
+::edit_tag::update_sample $w
+}
+
+}
+###########################################################
+## Procedure:  ::edit_tag::prepare_edit_tag
+
+namespace eval ::edit_tag {
+
+proc {::edit_tag::prepare_edit_tag} {mainw w tag_to_edit} {
+global widget 
+upvar #0 ::$widget($w)::tag_name         tag_name
+upvar #0 ::$widget($w)::edit_tag_status  edit_tag_status 
+upvar #0 ::$widget($w)::selected_font    selected_font
+upvar #0 ::$widget($w)::bold_check       bold_check
+upvar #0 ::$widget($w)::italic_check     italic_check
+upvar #0 ::$widget($w)::justify_radio    justify_radio
+upvar #0 ::$widget($w)::font_size_entry  font_size_entry
+upvar #0 ::$widget($w)::underline_check  underline_check
+upvar #0 ::$widget($w)::overstrike_check overstrike_check
+
+set tag_name $tag_to_edit
+set font [$mainw.MainText tag cget $tag_name -font]
+set font_name [string tolower [get_option $font -family]]
+
+## try to match font case insensitive
+$w.FontsListbox selection clear 0 end
+for {set i 0} {$i < [$w.FontsListbox index end]} {incr i} {
+    if {[string tolower [$w.FontsListbox get $i]] == $font_name} {
+        $w.FontsListbox selection set $i
+        $w.FontsListbox see $i
+        set selected_font [$w.FontsListbox get $i]
+        break
+    }
+}
+
+set justify_radio [$mainw.MainText tag cget $tag_name -justify]
+
+set background    [$mainw.MainText tag cget $tag_name -background]
+if {$background == ""} {set background [$mainw.MainText cget -background]}
+$w.TagBackground configure -background $background
+
+set foreground    [$mainw.MainText tag cget $tag_name -foreground]
+if {$foreground == ""} {set foreground [$mainw.MainText cget -foreground]}
+$w.TagForeground configure -background $foreground
+
+set weight [get_option $font -weight]
+set slant  [get_option $font -slant]
+
+set font_size_entry  [get_option $font -size]
+if {$font_size_entry == ""} {set font_size_entry 10}
+set bold_check       [expr {$weight == "bold"}]
+set italic_check     [expr {$slant  == "italic"}]
+set underline_check  [get_option $font -underline]
+if {$underline_check == ""} {set underline_check 0}
+set overstrike_check [get_option $font -overstrike]
+if {$overstrike_check == ""} {set overstrike_check 0}
+
+::edit_tag::update_sample $w
+}
+
+}
+###########################################################
+## Procedure:  ::edit_tag::set_existing_tag
+
+namespace eval ::edit_tag {
+
+proc {::edit_tag::set_existing_tag} {mainw w} {
+global widget
+upvar #0 ::$widget($w)::tag_name         tag_name
+upvar #0 ::$widget($w)::edit_tag_status  edit_tag_status 
+upvar #0 ::$widget($w)::selected_font    selected_font
+upvar #0 ::$widget($w)::bold_check       bold_check
+upvar #0 ::$widget($w)::italic_check     italic_check
+upvar #0 ::$widget($w)::justify_radio    justify_radio
+upvar #0 ::$widget($w)::font_size_entry  font_size_entry
+upvar #0 ::$widget($w)::underline_check  underline_check
+upvar #0 ::$widget($w)::overstrike_check overstrike_check
+
+set family $selected_font
+set weight normal
+if {$bold_check} {set weight bold}
+set slant roman
+if {$italic_check} {set slant italic}
+
+$mainw.MainText tag configure $tag_name -font "-family [list $family] -weight $weight -slant $slant -size $font_size_entry -underline $underline_check -overstrike $overstrike_check"
+$mainw.MainText tag configure $tag_name -justify $justify_radio
+$mainw.MainText tag configure $tag_name -background [$w.TagBackground cget -background]
+$mainw.MainText tag configure $tag_name -foreground [$w.TagForeground cget -background]
+
+::visual_text::fill_tags $mainw
+::visual_text::show_tags_at_insert $mainw
+}
+
+}
+###########################################################
+## Procedure:  ::edit_tag::update_sample
+
+namespace eval ::edit_tag {
+
+proc {::edit_tag::update_sample} {w} {
+global widget
+upvar #0 ::$widget($w)::tag_name         tag_name
+upvar #0 ::$widget($w)::edit_tag_status  edit_tag_status 
+upvar #0 ::$widget($w)::selected_font    selected_font
+upvar #0 ::$widget($w)::bold_check       bold_check
+upvar #0 ::$widget($w)::italic_check     italic_check
+upvar #0 ::$widget($w)::justify_radio    justify_radio
+upvar #0 ::$widget($w)::font_size_entry  font_size_entry
+upvar #0 ::$widget($w)::underline_check  underline_check
+upvar #0 ::$widget($w)::overstrike_check overstrike_check
+
+set family $selected_font
+set weight normal
+if {$bold_check} {set weight bold}
+set slant roman
+if {$italic_check} {set slant italic}
+
+$w.TagSampleText tag configure sample -font "-family [list $family] -weight $weight -slant $slant -size $font_size_entry -underline $underline_check -overstrike $overstrike_check"
+$w.TagSampleText tag configure sample -justify $justify_radio
+$w.TagSampleText tag configure sample -background [$w.TagBackground cget -background]
+$w.TagSampleText tag configure sample -foreground [$w.TagForeground cget -background]
+}
+
+}
+###########################################################
+## Procedure:  ::ttd::get
 
 namespace eval ::ttd {
 
@@ -609,6 +863,8 @@ proc {::ttd::get} {args} {
 }
 
 }
+###########################################################
+## Procedure:  ::ttd::insert
 
 namespace eval ::ttd {
 
@@ -644,67 +900,98 @@ variable ttdVersion {}
 }
 
 }
+###########################################################
+## Procedure:  ::visual_text::apply_tag
 
-proc {add_new_tag} {selrange} {
-global tag_name
+namespace eval ::visual_text {
 
-eval MainText tag add $tag_name $selrange
-set_existing_tag
-}
-
-proc {apply_tag} {x y} {
-set index [TagsListbox index @$x,$y]
-set tag   [TagsListbox get $index]
+proc {::visual_text::apply_tag} {w x y} {
+set index [$w.TagsListbox index @$x,$y]
+set tag   [$w.TagsListbox get $index]
 
 ## apply or unapply the tag?
-if {[TagsListbox itemcget $index -background] == "white"} {
-    eval MainText tag add $tag [MainText tag ranges sel]
+if {[$w.TagsListbox itemcget $index -background] == "white"} {
+    eval $w.MainText tag add $tag [$w.MainText tag ranges sel]
 } else {
-    eval MainText tag remove $tag [MainText tag ranges sel]
+    eval $w.MainText tag remove $tag [$w.MainText tag ranges sel]
 }
 
-show_tags_at_insert
+::visual_text::show_tags_at_insert $w
 }
 
-proc {command-add_tag} {} {
-global tag_name
+}
+###########################################################
+## Procedure:  ::visual_text::command-add_tag
 
+namespace eval ::visual_text {
+
+proc {::visual_text::command-add_tag} {mainw w} {
 ## if there is no selection, we cannot add a tag
-set selrange [MainText tag ranges sel]
+set selrange [$mainw.MainText tag ranges sel]
 if {$selrange == ""} {
-    tk_messageBox -message "Please select a bloc of text first" -title "Visual Text"
+    tk_messageBox -message "Please select a bloc of text first." -title "Visual Text"
     return
 }
 
-global widget edit_tag_status
+global widget 
 
 ## we allow the user to enter a new tag name
-set tag_name ""
-EditTagOK    configure -state disabled
-TagNameEntry configure -state normal
-Window show $widget(EditTag)
+set ::$widget($w)::tag_name ""
+$w.EditTagOK    configure -state disabled
+$w.TagNameEntry configure -state normal
 
-## this variable will change when dialog closes
-vwait edit_tag_status
-Window hide $widget(EditTag)
-
-if {$edit_tag_status != "OK"} return
+## launch modal dialog box and check status ("OK" or "Cancel")
+::edit_tag::do_modal $w
+if {[::edit_tag::get_status $w] != "OK"} return
 
 ## add a new tag to the selection
-add_new_tag $selrange
+::edit_tag::add_new_tag $mainw $w $selrange
 }
 
-proc {command-new} {} {
-set tags [MainText tag names]
+}
+###########################################################
+## Procedure:  ::visual_text::command-edit_tag
+
+namespace eval ::visual_text {
+
+proc {::visual_text::command-edit_tag} {mainw w tag_to_edit} {
+global widget
+
+## we don't allow the user to modify the existing tag name
+$w.TagNameEntry configure -state disabled
+::edit_tag::prepare_edit_tag $mainw $w $tag_to_edit
+
+## launch modal dialog and check status
+::edit_tag::do_modal $w
+if {[::edit_tag::get_status $w] != "OK"} return
+
+## apply changes to the existing tag
+::edit_tag::set_existing_tag $mainw $w
+}
+
+}
+###########################################################
+## Procedure:  ::visual_text::command-new
+
+namespace eval ::visual_text {
+
+proc {::visual_text::command-new} {mainw} {
+set tags [$mainw.MainText tag names]
 foreach tag $tags {
-    MainText tag delete $tag
+    $mainw.MainText tag delete $tag
 }
 
-MainText delete 1.0 end
-fill_tags
+$mainw.MainText delete 1.0 end
+::visual_text::fill_tags $mainw
 }
 
-proc {command-open} {w {file {}}} {
+}
+###########################################################
+## Procedure:  ::visual_text::command-open
+
+namespace eval ::visual_text {
+
+proc {::visual_text::command-open} {mainw {file {}}} {
 global filename widget tk_strictMotif
     
     if {$file == ""} {
@@ -716,21 +1003,28 @@ global filename widget tk_strictMotif
 
     if {$file == ""} {return}
 
-    $w delete 1.0 end
+    ## starts new empty document, then load the file
+    ::visual_text::command-new $mainw
 
     set filename $file
-    wm title $widget(VisualText) "$filename - Visual Text"
+    wm title $widget($mainw) "$filename - Visual Text"
     set id [open $filename]
     set ttd [read $id]
     close $id
-    if {[catch {ttd::insert $w $ttd} message]} {
+    if {[catch {ttd::insert $widget($mainw,MainText) $ttd} message]} {
 	tk_messageBox -icon info  -message $message  -title "The file cannot be opened"  -type ok  -parent $w
     }
-    $w mark set insert 1.0
-    fill_tags
+    $mainw.MainText mark set insert 1.0
+    ::visual_text::fill_tags $mainw
 }
 
-proc {command-save} {w} {
+}
+###########################################################
+## Procedure:  ::visual_text::command-save
+
+namespace eval ::visual_text {
+
+proc {::visual_text::command-save} {mainw} {
 global filename tk_strictMotif widget
 
     set old $tk_strictMotif
@@ -741,12 +1035,161 @@ global filename tk_strictMotif widget
     if {$file != ""} {
 	set filename $file
 	set id [open $filename w]
-	set data [::ttd::get $w]
+	set data [::ttd::get $widget($mainw,MainText)]
 	puts -nonewline $id $data
 	close $id
-	wm title $widget(VisualText) "$file - Visual Text"
+	wm title $widget($mainw) "$file - Visual Text"
     }
 }
+
+}
+###########################################################
+## Procedure:  ::visual_text::fill_tags
+
+namespace eval ::visual_text {
+
+proc {::visual_text::fill_tags} {mainw} {
+global widget
+
+$mainw.TagsText configure -state normal
+$mainw.TagsText delete 1.0 end
+$mainw.TagsListbox delete 0 end
+
+set tags [$mainw.MainText tag names]
+
+foreach tag $tags {
+
+    if {$tag == "sel"} continue
+    
+    set opts [$mainw.MainText tag configure $tag]
+    set optvals ""
+
+    foreach opt $opts {
+        set name [lindex $opt 0]
+        set val  [lindex $opt 4]
+        lappend optvals $name $val
+    }
+    
+    $mainw.TagsListbox insert end $tag
+    $mainw.TagsText insert end $tag\n $tag
+    $mainw.TagsText insert end \n default
+    eval $mainw.TagsText tag configure $tag $optvals
+}
+
+$mainw.TagsText tag configure default -background white
+$mainw.TagsText configure -state disabled
+}
+
+}
+###########################################################
+## Procedure:  ::visual_text::show_insert_position
+
+namespace eval ::visual_text {
+
+proc {::visual_text::show_insert_position} {mainw} {
+set position [$mainw.MainText index insert]
+regexp {([0-9]+)\.([0-9]+)} $position matchAll line col
+$mainw.LineCol configure -text "Line $line Col $col"
+}
+
+}
+###########################################################
+## Procedure:  ::visual_text::show_tags_at_insert
+
+namespace eval ::visual_text {
+
+proc {::visual_text::show_tags_at_insert} {mainw} {
+## if anything is selected, we show tags related to the selection
+if {[$mainw.MainText tag ranges sel] != ""} {
+    ::visual_text::show_tags_at_selection $mainw
+    return
+}
+
+set tags [$mainw.MainText tag names insert]
+
+$mainw.TagsListbox selection clear 0 end
+set listtags [$mainw.TagsListbox get 0 end]
+
+for {set i 0} {$i < [llength $listtags]} {incr i} {
+    set tag [lindex $listtags $i]
+    if {[lsearch -exact $tags $tag] != -1} {
+        $mainw.TagsListbox itemconfigure $i -background #8080FF
+    } else {
+        $mainw.TagsListbox itemconfigure $i -background white
+    }
+}
+
+::visual_text::show_insert_position $mainw
+}
+
+}
+###########################################################
+## Procedure:  ::visual_text::show_tags_at_selection
+
+namespace eval ::visual_text {
+
+proc {::visual_text::show_tags_at_selection} {mainw} {
+$mainw.TagsListbox selection clear 0 end
+set listtags [$mainw.TagsListbox get 0 end]
+
+set selranges [$mainw.MainText tag ranges sel]
+set selstart  [lindex $selranges 0]
+set selend    [lindex $selranges 1]
+
+foreach tag $listtags {
+    set ranges($tag) [$mainw.MainText tag ranges $tag]
+}
+
+for {set i 0} {$i < [llength $listtags]} {incr i} {
+    set tag [lindex $listtags $i]
+    
+    ## check if a text is inside the selection or not
+    set range $ranges($tag)
+    set found 0
+                
+    while {[llength $range] > 0} {
+        set start [lindex $range 0]
+        set end   [lindex $range 1]
+        set range [lreplace $range 0 1]
+        
+        set comp1 [compare_range $start $selstart]
+        set comp2 [compare_range $selend     $end] 
+        if {$comp1 <= 0 && $comp2 <= 0} {
+            ## the tag is applied to the whole selection
+            $mainw.TagsListbox itemconfigure $i -background #8080FF
+            set found 1
+            break
+        } elseif {$comp1 >= 0 && $comp2 >= 0} {
+            ## the tag is applied somewhere inside the selection
+            $mainw.TagsListbox itemconfigure $i -background gray
+            set found 1
+            break
+        } elseif {$comp1 == -1 && $comp2 == 1 &&
+                  [compare_range $end $selstart] == 1} {
+            ## the tag starts before the selection, ends in the middle
+            $mainw.TagsListbox itemconfigure $i -background gray
+            set found 1
+            break
+        } elseif {$comp1 == 1 && $comp2 == -1 &&
+                  [compare_range $selend $start] == 1} {
+            ## the tag starts inside the selection, ends outside
+            $mainw.TagsListbox itemconfigure $i -background gray
+            set found 1
+            break
+        } 
+    }
+
+    if {!$found} {
+        $mainw.TagsListbox itemconfigure $i -background white
+    }
+}
+
+::visual_text::show_insert_position $mainw
+}
+
+}
+###########################################################
+## Procedure:  compare_range
 
 proc {compare_range} {range1 range2} {
 set range1 [split $range1 .]
@@ -773,237 +1216,8 @@ if {$line1 == $line2} {
     return 1
 }
 }
-
-proc {fill_tags} {} {
-global widget
-
-TagsText configure -state normal
-TagsText delete 1.0 end
-TagsListbox delete 0 end
-
-set tags [MainText tag names]
-
-foreach tag $tags {
-
-    if {$tag == "sel"} continue
-    
-    set opts [MainText tag configure $tag]
-    set optvals ""
-
-    foreach opt $opts {
-        set name [lindex $opt 0]
-        set val  [lindex $opt 4]
-        lappend optvals $name $val
-    }
-    
-    TagsListbox insert end $tag
-    TagsText insert end $tag\n $tag
-    TagsText insert end \n default
-    eval TagsText tag configure $tag $optvals
-}
-
-TagsText tag configure default -background white
-TagsText configure -state disabled
-}
-
-proc {init_edit_tag} {} {
-global edit_tag_status
-global selected_font
-global justify_radio font_size_entry
-
-FontsListbox delete 0 end
-foreach family [lsort [font families]] {
-    FontsListbox insert end $family
-}
-FontsListbox selection set 0
-set selected_font [FontsListbox get 0]
-
-set justify_radio left
-set font_size_entry 10
-
-TagSampleText delete 1.0 end
-TagSampleText insert end "The Quick Brown Fox jumped over a lazy dog's back" sample
-
-update_sample
-set edit_tag_status ""
-}
-
-proc {show_insert_position} {} {
-set position [MainText index insert]
-regexp {([0-9]+)\.([0-9]+)} $position matchAll line col
-LineCol configure -text "Line $line Col $col"
-}
-
-proc {show_tags_at_insert} {} {
-## if anything is selected, we show tags related to the selection
-if {[MainText tag ranges sel] != ""} {
-    show_tags_at_selection
-    return
-}
-
-global widget
-set tags [MainText tag names insert]
-
-TagsListbox selection clear 0 end
-set listtags [TagsListbox get 0 end]
-
-for {set i 0} {$i < [llength $listtags]} {incr i} {
-    set tag [lindex $listtags $i]
-    if {[lsearch -exact $tags $tag] != -1} {
-        TagsListbox itemconfigure $i -background #8080FF
-    } else {
-        TagsListbox itemconfigure $i -background white
-    }
-}
-
-show_insert_position
-}
-
-proc {show_tags_at_selection} {} {
-global widget
-
-TagsListbox selection clear 0 end
-set listtags [TagsListbox get 0 end]
-
-set selranges [MainText tag ranges sel]
-set selstart  [lindex $selranges 0]
-set selend    [lindex $selranges 1]
-
-foreach tag $listtags {
-    set ranges($tag) [MainText tag ranges $tag]
-}
-
-for {set i 0} {$i < [llength $listtags]} {incr i} {
-    set tag [lindex $listtags $i]
-    
-    ## check if a text is inside the selection or not
-    set range $ranges($tag)
-    set found 0
-                
-    while {[llength $range] > 0} {
-        set start [lindex $range 0]
-        set end   [lindex $range 1]
-        set range [lreplace $range 0 1]
-        
-        set comp1 [compare_range $start $selstart]
-        set comp2 [compare_range $selend     $end] 
-        if {$comp1 <= 0 && $comp2 <= 0} {
-            ## the tag is applied to the whole selection
-            TagsListbox itemconfigure $i -background #8080FF
-            set found 1
-            break
-        } elseif {$comp1 >= 0 && $comp2 >= 0} {
-            ## the tag is applied somewhere inside the selection
-            TagsListbox itemconfigure $i -background gray
-            set found 1
-            break
-        } elseif {$comp1 == -1 && $comp2 == 1 &&
-                  [compare_range $end $selstart] == 1} {
-            ## the tag starts before the selection, ends in the middle
-            TagsListbox itemconfigure $i -background gray
-            set found 1
-            break
-        } elseif {$comp1 == 1 && $comp2 == -1 &&
-                  [compare_range $selend $start] == 1} {
-            ## the tag starts inside the selection, ends outside
-            TagsListbox itemconfigure $i -background gray
-            set found 1
-            break
-        } 
-    }
-
-    if {!$found} {
-        TagsListbox itemconfigure $i -background white
-    }
-}
-
-show_insert_position
-}
-
-proc {update_sample} {} {
-global selected_font
-global bold_check italic_check justify_radio font_size_entry
-global underline_check overstrike_check
-
-set family $selected_font
-set weight normal
-if {$bold_check} {set weight bold}
-set slant roman
-if {$italic_check} {set slant italic}
-
-TagSampleText tag configure sample -font "-family [list $family] -weight $weight -slant $slant -size $font_size_entry -underline $underline_check -overstrike $overstrike_check"
-TagSampleText tag configure sample -justify $justify_radio
-TagSampleText tag configure sample -background [TagBackground cget -background]
-TagSampleText tag configure sample -foreground [TagForeground cget -background]
-}
-
-proc {main} {argc argv} {
-wm protocol .top21 WM_DELETE_WINDOW {exit}
-
-init_edit_tag
-}
-
-proc {command-edit_tag} {tag_to_edit} {
-global widget edit_tag_status
-
-## we don't allow the user to modify the existing tag name
-TagNameEntry configure -state disabled
-prepare_edit_tag $tag_to_edit
-Window show $widget(EditTag)
-
-## this variable will change when dialog closes
-vwait edit_tag_status
-Window hide $widget(EditTag)
-
-if {$edit_tag_status != "OK"} return
-
-## apply changes to the existing tag
-set_existing_tag
-}
-
-proc {prepare_edit_tag} {tag_to_edit} {
-global widget tag_name
-global edit_tag_status selected_font
-global bold_check italic_check justify_radio font_size_entry
-global underline_check overstrike_check
-
-set tag_name $tag_to_edit
-set font [MainText tag cget $tag_name -font]
-set font_name [string tolower [get_option $font -family]]
-
-FontsListbox selection clear 0 end
-for {set i 0} {$i < [FontsListbox index end]} {incr i} {
-    if {[string tolower [FontsListbox get $i]] == $font_name} {
-        FontsListbox selection set $i
-        FontsListbox see $i
-        set selected_font [FontsListbox get $i]
-        break
-    }
-}
-
-set justify_radio [MainText tag cget $tag_name -justify]
-set background [MainText tag cget $tag_name -background]
-if {$background == ""} {set background [MainText cget -background]}
-set foreground [MainText tag cget $tag_name -foreground]
-if {$foreground == ""} {set foreground [MainText cget -foreground]}
-TagBackground configure -background $background
-TagForeground configure -background $foreground
-
-set weight [get_option $font -weight]
-set slant  [get_option $font -slant]
-
-set font_size_entry  [get_option $font -size]
-if {$font_size_entry == ""} {set font_size_entry 10}
-set bold_check       [expr {$weight == "bold"}]
-set italic_check     [expr {$slant  == "italic"}]
-set underline_check  [get_option $font -underline]
-if {$underline_check == ""} {set underline_check 0}
-set overstrike_check [get_option $font -overstrike]
-if {$overstrike_check == ""} {set overstrike_check 0}
-
-update_sample
-set edit_tag_status ""
-}
+###########################################################
+## Procedure:  get_option
 
 proc {get_option} {opts opt} {
 set index [lsearch -exact $opts $opt]
@@ -1014,26 +1228,17 @@ if {$index == -1} {
 incr index
 return [lindex $opts $index]
 }
+###########################################################
+## Procedure:  init
+###########################################################
+## Procedure:  main
 
-proc {set_existing_tag} {} {
+proc {main} {argc argv} {
 global widget
-global selected_font tag_name
-global bold_check italic_check justify_radio font_size_entry
-global underline_check overstrike_check
+wm protocol .top21 WM_DELETE_WINDOW {exit}
 
-set family $selected_font
-set weight normal
-if {$bold_check} {set weight bold}
-set slant roman
-if {$italic_check} {set slant italic}
-
-MainText tag configure $tag_name -font "-family [list $family] -weight $weight -slant $slant -size $font_size_entry -underline $underline_check -overstrike $overstrike_check"
-MainText tag configure $tag_name -justify $justify_radio
-MainText tag configure $tag_name -background [TagBackground cget -background]
-MainText tag configure $tag_name -foreground [TagForeground cget -background]
-
-fill_tags
-show_tags_at_insert
+::edit_tag::init_edit_tag EditTag
+::about::init
 }
 
 proc init {argc argv} {
@@ -1144,6 +1349,64 @@ proc vTclWindow. {base {container 0}} {
     ###################
 }
 
+proc vTclWindow.top18 {base {container 0}} {
+    if {$base == ""} {
+        set base .top18
+    }
+    if {[winfo exists $base] && (!$container)} {
+        wm deiconify $base; return
+    }
+
+    global widget
+    vTcl:DefineAlias "$base" "AboutVisualText" vTcl:Toplevel:WidgetProc "" 1
+    vTcl:DefineAlias "$base.cpd19.03" "AboutText" vTcl:WidgetProc "AboutVisualText" 1
+
+    ###################
+    # CREATING WIDGETS
+    ###################
+    if {!$container} {
+    vTcl:toplevel $base -class Toplevel
+    wm withdraw .top18
+    wm focusmodel $base passive
+    wm geometry $base 471x392+256+141; update
+    wm maxsize $base 1009 738
+    wm minsize $base 1 1
+    wm overrideredirect $base 0
+    wm resizable $base 1 1
+    wm title $base "About Visual Text"
+    }
+    frame $base.cpd19 \
+        -borderwidth 1 -height 30 -relief sunken -width 30 
+    scrollbar $base.cpd19.01 \
+        -command "$base.cpd19.03 xview" -highlightthickness 0 \
+        -orient horizontal 
+    scrollbar $base.cpd19.02 \
+        -command "$base.cpd19.03 yview" -highlightthickness 0 
+    text $base.cpd19.03 \
+        -background white \
+        -font -Adobe-Helvetica-Medium-R-Normal-*-*-120-*-*-*-*-*-* -height 10 \
+        -relief flat -width 20 -xscrollcommand "$base.cpd19.01 set" \
+        -yscrollcommand "$base.cpd19.02 set" 
+    button $base.but20 \
+        -command {AboutVisualText hide} -pady 1m -text Close -width 8 
+    ###################
+    # SETTING GEOMETRY
+    ###################
+    pack $base.cpd19 \
+        -in $base -anchor center -expand 1 -fill both -side top 
+    grid columnconf $base.cpd19 0 -weight 1
+    grid rowconf $base.cpd19 0 -weight 1
+    grid $base.cpd19.01 \
+        -in $base.cpd19 -column 0 -row 1 -columnspan 1 -rowspan 1 -sticky ew 
+    grid $base.cpd19.02 \
+        -in $base.cpd19 -column 1 -row 0 -columnspan 1 -rowspan 1 -sticky ns 
+    grid $base.cpd19.03 \
+        -in $base.cpd19 -column 0 -row 0 -columnspan 1 -rowspan 1 \
+        -sticky nesw 
+    pack $base.but20 \
+        -in $base -anchor center -expand 0 -fill none -pady 5 -side top 
+}
+
 proc vTclWindow.top21 {base {container 0}} {
     if {$base == ""} {
         set base .top21
@@ -1163,21 +1426,21 @@ proc vTclWindow.top21 {base {container 0}} {
     # CREATING WIDGETS
     ###################
     if {!$container} {
-    toplevel $base -class Toplevel \
+    vTcl:toplevel $base -class Toplevel \
         -menu "$base.m26" 
     wm focusmodel $base passive
-    wm geometry $base 678x613+153+50; update
+    wm geometry $base 678x613+157+77; update
     wm maxsize $base 1009 738
     wm minsize $base 1 1
     wm overrideredirect $base 0
     wm resizable $base 1 1
     wm deiconify $base
-    wm title $base "/home/cgavin/vtcl/demo/about.ttd - Visual Text"
+    wm title $base "/home/cgavin/vtcl/test/experiment.ttd - Visual Text"
     }
     frame $base.fra22 \
         -borderwidth 1 
     label $base.fra22.lab30 \
-        -borderwidth 1 -padx 1 -relief sunken -text {Line 10 Col 0} 
+        -borderwidth 1 -padx 1 -relief sunken -text {Line 15 Col 0} 
     label $base.fra22.lab31 \
         -borderwidth 1 -padx 1 -relief sunken -text INS 
     frame $base.cpd23 \
@@ -1189,32 +1452,32 @@ proc vTclWindow.top21 {base {container 0}} {
         -command "$base.cpd23.01.cpd24.03 xview" -highlightthickness 0 \
         -orient horizontal 
     scrollbar $base.cpd23.01.cpd24.02 \
-        -command "$base.cpd23.01.cpd24.03 yview" -highlightthickness 0
+        -command "$base.cpd23.01.cpd24.03 yview" -highlightthickness 0 
     text $base.cpd23.01.cpd24.03 \
         -background white -borderwidth 0 -wrap word \
         -xscrollcommand "$base.cpd23.01.cpd24.01 set" \
         -yscrollcommand "$base.cpd23.01.cpd24.02 set" 
     bindtags $base.cpd23.01.cpd24.03 "Text $base all $base.cpd23.01.cpd24.03"
     bind $base.cpd23.01.cpd24.03 <Button-1> {
-        show_tags_at_insert
+        ::visual_text::show_tags_at_insert VisualText
     }
     bind $base.cpd23.01.cpd24.03 <Key-Down> {
-        show_tags_at_insert
+        ::visual_text::show_tags_at_insert VisualText
     }
     bind $base.cpd23.01.cpd24.03 <Key-Left> {
-        show_tags_at_insert
+        ::visual_text::show_tags_at_insert VisualText
     }
     bind $base.cpd23.01.cpd24.03 <Key-Next> {
-        show_tags_at_insert
+        ::visual_text::show_tags_at_insert VisualText
     }
     bind $base.cpd23.01.cpd24.03 <Key-Prior> {
-        show_tags_at_insert
+        ::visual_text::show_tags_at_insert VisualText
     }
     bind $base.cpd23.01.cpd24.03 <Key-Right> {
-        show_tags_at_insert
+        ::visual_text::show_tags_at_insert VisualText
     }
     bind $base.cpd23.01.cpd24.03 <Key-Up> {
-        show_tags_at_insert
+        ::visual_text::show_tags_at_insert VisualText
     }
     frame $base.cpd23.02
     frame $base.cpd23.02.fra25 \
@@ -1231,9 +1494,9 @@ proc vTclWindow.top21 {base {container 0}} {
     frame $base.cpd23.02.fra22 \
         -borderwidth 2 -height 75 -width 125 
     button $base.cpd23.02.fra22.but23 \
-        -command command-add_tag \
+        -command {::visual_text::command-add_tag VisualText EditTag} \
         -image [vTcl:image:get_image [file join / home cgavin vtcl images edit add.gif]] \
-        -relief flat -text button
+        -relief flat -text button 
     bindtags $base.cpd23.02.fra22.but23 "$base.cpd23.02.fra22.but23 Button $base all FlatToolbarButton"
     button $base.cpd23.02.fra22.but24 \
         \
@@ -1248,12 +1511,12 @@ proc vTclWindow.top21 {base {container 0}} {
         -yscrollcommand "$base.cpd23.02.cpd22.03 set" 
     bind $base.cpd23.02.cpd22.01 <Button-1> {
         if {[MainText tag ranges sel] != ""} {
-    apply_tag %x %y
+    ::visual_text::apply_tag VisualText %x %y
 }
 break
     }
     bind $base.cpd23.02.cpd22.01 <Button-3> {
-        command-edit_tag [TagsListbox get @%x,%y]
+        ::visual_text::command-edit_tag VisualText EditTag [TagsListbox get @%x,%y]
     }
     scrollbar $base.cpd23.02.cpd22.02 \
         -command "$base.cpd23.02.cpd22.01 xview" -highlightthickness 0 \
@@ -1295,17 +1558,19 @@ break
     menu $base.m26.men27 \
         -tearoff 0 
     $base.m26.men27 add command \
-        -accelerator {Ctrl + N} -command command-new -image {} -label New 
+        -accelerator {Ctrl + N} \
+        -command {::visual_text::command-new VisualText} -image {} -label New 
     $base.m26.men27 add separator
     $base.m26.men27 add command \
-        -accelerator {Ctrl + O} -command {command-open $widget(MainText)} \
-        -image {} -label Open... 
+        -accelerator {Ctrl + O} \
+        -command {::visual_text::command-open VisualText} -image {} \
+        -label Open... 
     $base.m26.men27 add command \
         -accelerator {Ctrl + S} -command {# TODO: Your menu handler here} \
         -image {} -label Save 
     $base.m26.men27 add command \
-        -accelerator {} -command {command-save $widget(MainText)} -image {} \
-        -label {Save As...} 
+        -accelerator {} -command {::visual_text::command-save VisualText} \
+        -image {} -label {Save As...} 
     $base.m26.men27 add separator
     $base.m26.men27 add command \
         -accelerator {Ctrl + Q} -command exit -image {} -label Quit 
@@ -1321,9 +1586,9 @@ break
         -accelerator {Ctrl + V} -command {# TODO: Your menu handler here} \
         -image {} -label Paste 
     menu $base.m26.men29 \
-        -tearoff 0
+        -tearoff 0 
     $base.m26.men29 add command \
-        -accelerator {} -command {# TODO: Your menu handler here} -image {} \
+        -accelerator {} -command {AboutVisualText show} -image {} \
         -label About... 
     ###################
     # SETTING GEOMETRY
@@ -1365,7 +1630,7 @@ break
     grid rowconf $base.cpd23.02.fra25 0 -weight 1
     grid $base.cpd23.02.fra25.01 \
         -in $base.cpd23.02.fra25 -column 0 -row 1 -columnspan 1 -rowspan 1 \
-        -sticky ew
+        -sticky ew 
     grid $base.cpd23.02.fra25.02 \
         -in $base.cpd23.02.fra25 -column 1 -row 0 -columnspan 1 -rowspan 1 \
         -sticky ns 
@@ -1423,10 +1688,10 @@ proc vTclWindow.top22 {base {container 0}} {
     # CREATING WIDGETS
     ###################
     if {!$container} {
-    toplevel $base -class Toplevel
+    vTcl:toplevel $base -class Toplevel
     wm withdraw .top22
     wm focusmodel $base passive
-    wm geometry $base 439x473+116+161; update
+    wm geometry $base 439x473+303+154; update
     wm maxsize $base 1009 738
     wm minsize $base 1 1
     wm overrideredirect $base 0
@@ -1436,14 +1701,10 @@ proc vTclWindow.top22 {base {container 0}} {
     label $base.lab23 \
         -anchor w -text {Tag name:} 
     entry $base.ent24 \
-        -background white -textvariable tag_name 
+        -background white -textvariable .top22::tag_name 
     bindtags $base.ent24 "Entry $base all $base.ent24"
     bind $base.ent24 <Key> {
-        if {$tag_name == ""} {
-    EditTagOK configure -state disabled
-} else {
-    EditTagOK configure -state normal
-}
+        ::edit_tag::enable_ok $widget(rev,[winfo toplevel %W])
     }
     frame $base.fra25 \
         -borderwidth 2 -height 2 -relief groove -width 125 
@@ -1456,8 +1717,8 @@ proc vTclWindow.top22 {base {container 0}} {
         -xscrollcommand "$base.fra27.cpd28.02 set" \
         -yscrollcommand "$base.fra27.cpd28.03 set" 
     bind $base.fra27.cpd28.01 <<ListboxSelect>> {
-        set selected_font [%W get [%W curselection]]
-update_sample
+        set ::[winfo toplevel %W]::selected_font [%W get [%W curselection]]
+::edit_tag::update_sample $widget(rev,[winfo toplevel %W])
     }
     scrollbar $base.fra27.cpd28.02 \
         -command "$base.fra27.cpd28.01 xview" -highlightthickness 0 \
@@ -1471,49 +1732,53 @@ update_sample
     label $base.fra27.fra29.fra30.lab34 \
         -text Size: 
     button $base.fra27.fra29.fra30.but31 \
-        -command {incr font_size_entry -1
-update_sample} -padx 0 -pady 0 \
-        -text < 
+        \
+        -command {incr ::.top22::font_size_entry -1
+::edit_tag::update_sample $widget(rev,.top22)} \
+        -padx 0 -pady 0 -text < 
     entry $base.fra27.fra29.fra30.ent32 \
         -background white -justify center -state disabled \
-        -textvariable font_size_entry -width 3 
+        -textvariable .top22::font_size_entry -width 3 
     button $base.fra27.fra29.fra30.but33 \
-        -command {incr font_size_entry
-update_sample} -padx 0 -pady 0 -text > 
+        \
+        -command {incr ::.top22::font_size_entry
+::edit_tag::update_sample $widget(rev,.top22)} \
+        -padx 0 -pady 0 -text > 
     checkbutton $base.fra27.fra29.che35 \
-        -anchor w -command update_sample -pady 0 -text Bold \
-        -variable bold_check 
+        -anchor w -command {::edit_tag::update_sample $widget(rev,.top22)} \
+        -pady 0 -text Bold -variable .top22::bold_check 
     checkbutton $base.fra27.fra29.che37 \
-        -anchor w -command update_sample -pady 0 -text Italic \
-        -variable italic_check 
+        -anchor w -command {::edit_tag::update_sample $widget(rev,.top22)} \
+        -pady 0 -text Italic -variable .top22::italic_check 
     checkbutton $base.fra27.fra29.che38 \
-        -anchor w -command update_sample -pady 0 -text Underline \
-        -variable underline_check 
+        -anchor w -command {::edit_tag::update_sample $widget(rev,.top22)} \
+        -pady 0 -text Underline -variable .top22::underline_check 
     checkbutton $base.fra27.fra29.che39 \
-        -anchor w -command update_sample -pady 0 -text Overstrike \
-        -variable overstrike_check 
+        -anchor w -command {::edit_tag::update_sample $widget(rev,.top22)} \
+        -pady 0 -text Overstrike -variable .top22::overstrike_check 
     label $base.fra27.fra29.lab40 \
         -anchor w -text Justify 
     radiobutton $base.fra27.fra29.rad41 \
-        -anchor w -command update_sample -pady 0 -text left -value left \
-        -variable justify_radio 
+        -anchor w -command {::edit_tag::update_sample $widget(rev,.top22)} \
+        -pady 0 -text left -value left -variable .top22::justify_radio 
     radiobutton $base.fra27.fra29.rad42 \
-        -anchor w -command update_sample -padx 1 -pady 0 -text center \
-        -value center -variable justify_radio 
+        -anchor w -command {::edit_tag::update_sample $widget(rev,.top22)} \
+        -padx 1 -pady 0 -text center -value center \
+        -variable .top22::justify_radio 
     radiobutton $base.fra27.fra29.rad43 \
-        -anchor w -command update_sample -pady 0 -text right -value right \
-        -variable justify_radio 
+        -anchor w -command {::edit_tag::update_sample $widget(rev,.top22)} \
+        -pady 0 -text right -value right -variable .top22::justify_radio 
     label $base.fra27.fra29.lab22 \
-        -background #fffeff -padx 1 -text Bkgnd 
+        -background white -text Bkgnd 
     bind $base.fra27.fra29.lab22 <Button-1> {
         %W configure -background [tk_chooseColor -initialcolor [%W cget -background]]
-update_sample
+::edit_tag::update_sample $widget(rev,[winfo toplevel %W])
     }
     label $base.fra27.fra29.lab23 \
-        -background #b466e2 -padx 1 -pady 1 -text Foregnd 
+        -background #000000 -padx 1 -pady 1 -text Foregnd 
     bind $base.fra27.fra29.lab23 <Button-1> {
         %W configure -background [tk_chooseColor -initialcolor [%W cget -background]]
-update_sample
+::edit_tag::update_sample $widget(rev,[winfo toplevel %W])
     }
     frame $base.fra26 \
         -borderwidth 2 -height 2 -relief groove -width 125 
@@ -1533,9 +1798,10 @@ update_sample
     frame $base.fra46 \
         -borderwidth 2 -height 75 -width 125 
     button $base.fra46.but47 \
-        -command {set edit_tag_status "OK"} -text OK -width 8 
+        -command {set ::.top22::edit_tag_status "OK"} -text OK -width 8 
     button $base.fra46.but48 \
-        -command {set edit_tag_status "Cancel"} -text Cancel -width 8 
+        -command {set ::.top22::edit_tag_status "Cancel"} -padx 3m \
+        -text Cancel -width 8 
     ###################
     # SETTING GEOMETRY
     ###################
@@ -1625,6 +1891,7 @@ update_sample
 }
 
 Window show .
+Window show .top18
 Window show .top21
 Window show .top22
 

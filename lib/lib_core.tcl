@@ -263,7 +263,7 @@ proc vTcl:core:menutranslate {value} {
 
 	global vTcl
 
-	if [regexp {((\.[a-zA-Z0-9]+)+)} $value matchAll path] {
+	if [regexp {((\.[a-zA-Z0-9_]+)+)} $value matchAll path] {
 
 		if {$matchAll == $value} {
 
@@ -294,7 +294,7 @@ proc vTcl:core:scrolltranslate {value} {
 
 	global vTcl
 
-	if [regexp {((\.[a-zA-Z0-9]+)+) set} $value matchAll path] {
+	if [regexp {((\.[a-zA-Z0-9_]+)+) set} $value matchAll path] {
 
                	set path [vTcl:base_name $path]
 
@@ -308,14 +308,14 @@ proc vTcl:core:scrollviewtranslate {value} {
 
 	global vTcl
 
-	if [regexp {((\.[a-zA-Z0-9]+)+) xview} $value matchAll path] {
+	if [regexp {((\.[a-zA-Z0-9_]+)+) xview} $value matchAll path] {
 
                	set path [vTcl:base_name $path]
 
 		return "\"$path xview\""
 	} else {
 
-		if [regexp {((\.[a-zA-Z0-9]+)+) yview} $value matchAll path] {
+		if [regexp {((\.[a-zA-Z0-9_]+)+) yview} $value matchAll path] {
 
         	       	set path [vTcl:base_name $path]
 

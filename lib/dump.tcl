@@ -66,6 +66,8 @@ proc vTcl:save_procs {} {
                     lappend args $j
                 }
             }
+            append output {###########################################################}
+            append output "\n\#\# Procedure:  $i\n"
             set body [string trim [info body $i]]
             if {($body != "" || $i == "main") && $i != "init"} {
 

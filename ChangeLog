@@ -1,6 +1,17 @@
 ChangeLog for Visual Tcl:
 
 1.51b4 -> 1.51rc0
+    o Namespace'ized demo application VisualText
+    o Added 'About' box in Visual Text
+    o Now dumps procedures with a header including procedure name
+    o Added - to characters for commands in syntax colouring
+    o Fixing _ problem in toplevel names when saving projects with scrollbars
+    o Toplevels are now automatically assigned a namespace with the window
+      path, allowing the user to save his data inside. For example, a window
+      named .top2 will be assigned a ::.top22 namespace while a window named
+      my_own_window will have a ::my_own_window namespace. It is recommended
+      to use this namespace to store variables like check box variable, radio
+      box variable, etc.
     o Fixed a few tix bugs: tixFileEntry, tixScrollHList
     o Added -fillcolor option to tixMeter
     o Fix cursor bug on insert if clicking too fast
