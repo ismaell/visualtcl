@@ -51,10 +51,8 @@ proc vTcl:font:prompt_user_font_2 {font_desc} {
 }
 
 proc vTcl:font:init_stock {} {
-    global vTcl
-
-    set vTcl(fonts,objects) ""
-    set vTcl(fonts,counter) 0
+    set ::vTcl(fonts,objects) ""
+    set ::vTcl(fonts,counter) 0
 
     # stock fonts
     vTcl:font:add_font "-family helvetica -size 12"              stock
@@ -69,13 +67,15 @@ proc vTcl:font:init_stock {} {
 }
 
 proc vTcl:font:get_type {object} {
-    global vTcl
-    return $vTcl(fonts,$object,type)
+    return $::vTcl(fonts,$object,type)
 }
 
 proc vTcl:font:get_key {object} {
-    global vTcl
-    return $vTcl(fonts,$object,key)
+    return $::vTcl(fonts,$object,key)
+}
+
+proc vTcl:font:get_descr {object} {
+    return $::vTcl(fonts,$object,font_descr)
 }
 
 proc vTcl:font:get_font {key} {
@@ -84,9 +84,21 @@ proc vTcl:font:get_font {key} {
     ## Other packages and widget toolkits have different licensing requirements.
     ##    Please read their license agreements for details.
 
-    global vTcl
-    if {[info exists vTcl(fonts,$key,object)]} then {
-        return $vTcl(fonts,$key,object)
+    if {[info exists ::vTcl(fonts,$key,object)]} then {
+        return $::vTcl(fonts,$key,object)
+    } else {
+        return ""
+    }
+}
+
+proc vTcl:font:getFontFromDescr {font_descr} {
+    ## This procedure may be used free of restrictions.
+    ##    Exception added by Christian Gavin on 08/08/02.
+    ## Other packages and widget toolkits have different licensing requirements.
+    ##    Please read their license agreements for details.
+
+    if {[info exists ::vTcl(fonts,$font_descr,object)]} {
+        return $::vTcl(fonts,$font_descr,object)
     } else {
         return ""
     }
@@ -98,33 +110,32 @@ proc {vTcl:font:add_font} {font_descr font_type {newkey {}}} {
     ## Other packages and widget toolkits have different licensing requirements.
     ##    Please read their license agreements for details.
 
-     global vTcl
-
-     incr vTcl(fonts,counter)
+     incr ::vTcl(fonts,counter)
      set newfont [eval font create $font_descr]
 
-     lappend vTcl(fonts,objects) $newfont
+     lappend ::vTcl(fonts,objects) $newfont
 
-     # each font has its unique key so that when a project is
-     # reloaded, the key is used to find the font description
-
+     ## each font has its unique key so that when a project is
+     ## reloaded, the key is used to find the font description
      if {$newkey == ""} {
-          set newkey vTcl:font$vTcl(fonts,counter)
+          set newkey vTcl:font$::vTcl(fonts,counter)
 
-          # let's find an unused font key
+          ## let's find an unused font key
           while {[vTcl:font:get_font $newkey] != ""} {
-             incr vTcl(fonts,counter)
-             set newkey vTcl:font$vTcl(fonts,counter)
+             incr ::vTcl(fonts,counter)
+             set newkey vTcl:font$::vTcl(fonts,counter)
           }
      }
 
-     set vTcl(fonts,$newfont,type)                      $font_type
-     set vTcl(fonts,$newfont,key)                       $newkey
-     set vTcl(fonts,$vTcl(fonts,$newfont,key),object)   $newfont
+     set ::vTcl(fonts,$newfont,type)       $font_type
+     set ::vTcl(fonts,$newfont,key)        $newkey
+     set ::vTcl(fonts,$newfont,font_descr) $font_descr
+     set ::vTcl(fonts,$font_descr,object)  $newfont
+     set ::vTcl(fonts,$newkey,object)      $newfont
 
-     lappend vTcl(fonts,$font_type) $newfont
+     lappend ::vTcl(fonts,$font_type) $newfont
 
-     # in case caller needs it
+     ## in case caller needs it
      return $newfont
 }
 
@@ -132,6 +143,7 @@ proc vTcl:font:delete_font {key} {
      global vTcl
 
      set object $vTcl(fonts,$key,object)
+     set font_descr $vTcl(fonts,$object,font_descr)
 
      set index [lsearch -exact $vTcl(fonts,objects) $object]
      set vTcl(fonts,objects) [lreplace $vTcl(fonts,objects) $index $index]
@@ -140,7 +152,9 @@ proc vTcl:font:delete_font {key} {
 
      unset vTcl(fonts,$object,type)
      unset vTcl(fonts,$object,key)
+     unset vTcl(fonts,$object,font_descr)
      unset vTcl(fonts,$key,object)
+     unset vTcl(fonts,$font_descr,object)
 }
 
 proc vTcl:font:ask_delete_font {key} {
@@ -364,13 +378,13 @@ proc vTcl:font:generate_font_stock {fileID} {
     puts $fileID "set vTcl(fonts,counter) 0"
 
     foreach i {vTcl:font:add_font
-               vTcl:font:get_font} {
+               vTcl:font:getFontFromDescr} {
         puts $fileID [vTcl:dump_proc $i]
     }
 
     foreach font $vTcl(dump,stockFonts) {
 	puts $fileID "vTcl:font:add_font \\"
-	puts $fileID "    \"[font configure $font]\" \\"
+	puts $fileID "    \"[vTcl:font:get_descr $font]\" \\"
 	puts $fileID "    [vTcl:font:get_type $font] \\"
 	puts $fileID "    [vTcl:font:get_key $font]"
     }
@@ -543,5 +557,14 @@ proc vTcl:font:get_manager_position {} {
     return [lindex [$vTcl(fonts,font_mgr,win).cpd31.03 yview] 0]
 }
 
+TranslateOption    -font vTcl:font:translate
+NoEncaseOption     -font 1
 
+proc vTcl:font:translate {value} {
+    if [info exists ::vTcl(fonts,$value,font_descr)] {
+	set value "\[vTcl:font:getFontFromDescr \"$::vTcl(fonts,$value,font_descr)\"\]"
+    }
+
+    return $value
+}
 

@@ -792,11 +792,11 @@ proc vTcl:image:get_files_list {} {
 }
 
 # translation for options when saving files
-set vTcl(option,translate,-image) vTcl:image:translate
-set vTcl(option,noencase,-image) 1
+TranslateOption    -image vTcl:image:translate
+NoEncaseOption     -image 1
 
-set vTcl(option,translate,-selectimage) vTcl:image:translate
-set vTcl(option,noencase,-selectimage) 1
+TranslateOption    -selectimage vTcl:image:translate
+NoEncaseOption     -selectimage 1
 
 proc vTcl:image:translate {value} {
     global vTcl
@@ -832,4 +832,5 @@ proc vTcl:image:external_editor {imageName} {
         vTcl:error "Could not execute external image editor!"
     }
 }
+
 

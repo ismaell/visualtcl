@@ -250,22 +250,9 @@ proc vTcl:edit_menu {menu} {
 
 # translation for options when saving files
 
-TranslateOption    -font vTcl:font:translate
-NoEncaseOption     -font 1
-
 TranslateOption    -menu vTcl:core:menutranslate
 NoEncaseOption     -menu 1
 NoEncaseOptionWhen -menu vTcl:core:noencasewhen
-
-proc vTcl:font:translate {value} {
-    global vTcl
-
-    if [info exists vTcl(fonts,$value,key)] {
-	set value "\[vTcl:font:get_font \"$vTcl(fonts,$value,key)\"\]"
-    }
-
-    return $value
-}
 
 proc vTcl:core:menutranslate {value} {
 
@@ -995,6 +982,7 @@ namespace eval ::vTcl::itemEdit {
 	$top.ItemsEditMenuAddDelete entryconfigure 1 -state $state($enabled)
     }
 }
+
 
 
 
