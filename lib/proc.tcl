@@ -88,6 +88,17 @@ proc vTcl:update_proc {base {close 1}} {
     set name [$base.f2.f8.procname get]
     set args [$base.f2.f9.args get]
     set body [string trim [$base.f4.text get 0.0 end] "\n"]
+
+#Don't submit if there is any syntax errors    
+    if { [info complete $body] == 0 } {
+
+          ::vTcl::MessageBox -type ok -icon error \
+  	       -message "Syntax Error: Please check you're code and try again." \
+	       -title "Syntax Error" 
+          return
+    }
+		
+    
     if {[lempty $name]} { return }
     if {[regexp (.*):: $name matchAll context]} {
 

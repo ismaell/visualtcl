@@ -120,8 +120,16 @@ proc vTcl:command:save_geom {base} {
 proc vTcl:command:edit_save {base} {
     global vTcl
     vTcl:command:save_geom $base
-    set vTcl(x,$base) [$base.f.text get 0.0 end]
-    destroy $base
+# Check to see that it is in correct format before submitting
+    if { [info complete [$base.f.text get 0.0 end] ] == 1 } {
+    	set vTcl(x,$base) [$base.f.text get 0.0 end]
+    	destroy $base
+    } else {
+    	::vTcl::MessageBox -icon error -parent $base \
+	-message "Syntax Error: Please check you're code and try again." \
+	-title "Syntax Error"
+	}
+    
 }
 
 proc vTcl:command:edit_cancel {base} {

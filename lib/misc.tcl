@@ -815,10 +815,12 @@ proc vTcl:rebind_button_1 {} {
 
 proc vTcl:lib:add_widgets_to_toolbar {list {headerLabel {}}} {
     global classes
+    
 
     if {$headerLabel != ""} {
-        vTcl::toolbar_header $headerLabel
+        vTcl::toolbar_header $headerLabel 
     }
+    
 
     foreach i $list {
 	if {![info exists classes($i,lib)]} { continue }

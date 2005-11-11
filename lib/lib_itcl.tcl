@@ -91,7 +91,7 @@ proc vTcl:widget:lib:lib_itcl {args} {
         ::vTcl::lremove order Panedwindow
     }
 
-    vTcl:lib:add_widgets_to_toolbar $order {[Incr Widgets]}
+    vTcl:lib:add_widgets_to_toolbar $order  "Incr Widgets"
 
     lappend vTcl(proc,ignore) "::iwidgets::*"
 

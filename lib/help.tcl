@@ -240,7 +240,7 @@ namespace eval ::tip {
 
 namespace eval ::vTcl::news {
     variable http	""
-    variable URL	"http://www.unreality.com/vtcl/news.txt"
+    variable URL	"http://vtcl.sourceforge.net/news/news.txt"
 
     proc ::vTcl::news::Init {} {
 	variable http

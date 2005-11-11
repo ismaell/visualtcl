@@ -25,11 +25,12 @@ proc vTcl:toolbar_create {args} {
     global vTcl
     set base .vTcl.toolbar
     if {[winfo exists $base]} {return}
-    vTcl:toplevel $base -width 0 -height 0 -class vTcl
+    vTcl:toplevel $base -width 237 -height 0 -class vTcl
     wm transient $base .vTcl
     wm withdraw $base
     wm title $base "Widget Toolbar"
     wm geometry $base +0+110
+    wm minsize $base 237 40
     wm overrideredirect $base 0
     catch {wm geometry .vTcl.toolbar $vTcl(geometry,.vTcl.toolbar)}
     wm deiconify $base
@@ -37,36 +38,37 @@ proc vTcl:toolbar_create {args} {
     wm protocol .vTcl.toolbar WM_DELETE_WINDOW {
         vTcl:error "You cannot remove the toolbar"
     }
+    
+    kpwidgets::scrolledbands .vTcl.toolbar.sbands -width 60
+    
+    frame $base.tframe -relief raise -bd 1 
 
-    ScrolledWindow .vTcl.toolbar.sw
-    ScrollableFrame .vTcl.toolbar.sw.sf
-    .vTcl.toolbar.sw setwidget .vTcl.toolbar.sw.sf
-    pack .vTcl.toolbar.sw -side top -fill both -expand 1
-    pack .vTcl.toolbar.sw.sf -side top -fill both -expand 1
-    set base [.vTcl.toolbar.sw.sf getframe]
-    set f [vTcl:new_widget_name tb $base]
-    frame $f
-    pack $f -side top -fill x
     image create photo pointer \
         -file [file join $vTcl(VTCL_HOME) images icon_pointer.gif]
-    button $f.b -bd 1 -image pointer -relief sunken -command "
-	$f.b configure -relief sunken
-	vTcl:raise_last_button $f.b
+    button $base.tframe.b -bd 1 -image pointer -relief sunken -command "
+    	$base.tframe.b configure -relief sunken
+    	vTcl:raise_last_button $base.tframe.b
 	vTcl:rebind_button_1
 	vTcl:status Status
-    	set vTcl(x,lastButton) $f.b
+    	set vTcl(x,lastButton) $base.tframe.b
     " -padx 0 -pady 0 -highlightthickness 0
-    lappend vTcl(tool,list) $f.b
-    set vTcl(x,lastButton) $f.b
-    pack $f.b -side left
-    label $f.l -text "Pointer" 
-    pack $f.l -side left
+    
+    pack $base.tframe -side top -fill x 
+    
+    lappend vTcl(tool,list) $base.tframe.b
+    set vTcl(x,lastButton) $base.tframe.b
+    
+    pack $base.tframe.b -side left
+    label $base.tframe.l -text "Pointer" 
+    pack $base.tframe.l -side left
+    pack .vTcl.toolbar.sbands  -fill both -expand yes -side bottom
+
 }
 
-proc vTcl:toolbar_add {class name image cmd_add} {
+proc vTcl:toolbar_add {class name image cmd_add } {
     global vTcl
     if {![winfo exists $.vTcl.toolbar]} { vTcl:toolbar_create }
-    set base [.vTcl.toolbar.sw.sf getframe]
+    set base [.vTcl.toolbar.sbands current_childsite]
     set f [vTcl:new_widget_name tb $base]
     ensureImage $image
     frame $f
@@ -74,10 +76,10 @@ proc vTcl:toolbar_add {class name image cmd_add} {
     button $f.b -bd 1 -image $image -padx 0 -pady 0 -highlightthickness 0
 
     bind $f.b <ButtonRelease-1> \
-        "vTcl:new_widget \$vTcl(pr,autoplace) $class $f.b \"$cmd_add\""
+       "vTcl:new_widget \$vTcl(pr,autoplace) $class $f.b \"$cmd_add\""
 
     bind $f.b <Shift-ButtonRelease-1> \
-        "vTcl:new_widget 1 $class $f.b \"$cmd_add\""
+       "vTcl:new_widget 1 $class $f.b \"$cmd_add\""
 
     vTcl:set_balloon $f.b $name
     lappend vTcl(tool,list) $f.b
@@ -90,10 +92,8 @@ proc vTcl:toolbar_add {class name image cmd_add} {
 namespace eval ::vTcl {
     proc toolbar_header {header} {
         if {![winfo exists $.vTcl.toolbar]} { vTcl:toolbar_create }
-        set base [.vTcl.toolbar.sw.sf getframe]
-        set l [vTcl:new_widget_name tb $base]
-        label $l -text $header -anchor w -relief raised -background #cccccc
-        pack $l -side top -fill x
+        set base .vTcl.toolbar.sbands 
+        $base new_frame $header 
     }
 }
 

@@ -66,7 +66,7 @@ proc vTcl:widget:lib:lib_bwidget {args} {
 	Tree
     }
 
-    vTcl:lib:add_widgets_to_toolbar $order "BWidget"
+    vTcl:lib:add_widgets_to_toolbar $order "BWidget" 
 
     append vTcl(head,bwidget,importheader) {
     package require BWidget

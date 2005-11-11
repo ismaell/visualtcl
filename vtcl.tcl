@@ -174,7 +174,7 @@ proc vTcl:setup {} {
                   input.tcl loadwidg.tcl font.tcl images.tcl menu.tcl
 			misc.tcl name.tcl prefs.tcl proc.tcl tclet.tcl
 			toolbar.tcl tops.tcl tree.tcl var.tcl vtclib.tcl
-			widget.tcl help.tcl menus.tcl new.tcl ttd/ttd.tcl"
+			widget.tcl help.tcl menus.tcl new.tcl ttd/ttd.tcl kpwidgets/scrolledbands.tcl"
 
     # UKo 2000-12-10: initiate some variables
     set vTcl(libs)      {}

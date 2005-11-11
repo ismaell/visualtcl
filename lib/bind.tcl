@@ -72,8 +72,8 @@ proc vTclWindow.vTcl.bind {args} {
     $base.m37 add cascade \
         -menu "$base.m37.men39" -label Delete
     menu $base.m37.men38 -tearoff 0 \
-        -postcommand "vTcl:enable_entries $base.m37.men38 \
-                     \$::widgets_bindings::uistate(AddBinding)"
+        -postcommand "vTcl:enable_entries $base.m37.men38 \$::widgets_bindings::uistate(AddBinding)" 
+		     
     foreach ev {Button-1        Button-2        Button-3
                 ButtonRelease-1 ButtonRelease-2 ButtonRelease-3
                 Motion          Enter           Leave
@@ -105,7 +105,7 @@ proc vTclWindow.vTcl.bind {args} {
         -postcommand "$base.m37.men41 entryconfigure 0 -state \
                      \$::widgets_bindings::uistate(MoveTagUp)
                       $base.m37.men41 entryconfigure 1 -state \
-                     \$::widgets_bindings::uistate(MoveTagDown)"
+                     \$::widgets_bindings::uistate(MoveTagDown) "
     $base.m37.men41 add command \
         -command {::widgets_bindings::movetag up} \
         -label Up
@@ -116,7 +116,12 @@ proc vTclWindow.vTcl.bind {args} {
     frame $base.fra22 \
         -borderwidth 2 -height 75 \
         -width 125
-    ::vTcl::OkButton $base.fra22.but34 -command "Window hide $base"
+    ::vTcl::OkButton $base.fra22.but34 \
+    	-command { 
+			if { [::widgets_bindings::save_current_binding] != 1 } {
+    					Window hide .vTcl.bind
+			}
+		 }
     vTcl:set_balloon $base.fra22.but34 "Close"
     frame $base.cpd21 \
         -background #000000 -height 100 -highlightbackground #dcdcdc \
@@ -280,8 +285,10 @@ proc vTclWindow.vTcl.bind {args} {
             -command "TextBindings insert insert %%Y"
         tk_popup %W.menu %X %Y
     }
+    #This binding is disabled in  select_bindings so that the 
+    #syntax is not checked twice
     bind $base.cpd21.02.cpd21.03 <FocusOut> {
-        ::widgets_bindings::save_current_binding
+        ::widgets_bindings::save_current_binding 
     }
 
     frame $base.cpd21.03 \
@@ -609,13 +616,16 @@ proc vTclWindow.vTcl.newtag {base} {
     button $base.fra20.but21 \
         -text OK -width 8 \
         -command {
-            if {$NewBindingTagName != ""} {
-                ::widgets_bindings::add_tag $NewBindingTagName
-            } else {
-                ::widgets_bindings::add_tag \
-                     [ListboxTags get [lindex [ListboxTags curselection] 0] ]
-            }
-            Window destroy .vTcl.newtag } \
+	    
+            	if {$NewBindingTagName != ""} {
+                	::widgets_bindings::add_tag $NewBindingTagName
+		} else {
+			::widgets_bindings::add_tag \
+                  		[ListboxTags get [lindex [ListboxTags curselection] 0] ]
+     		}
+       		Window destroy .vTcl.newtag 
+	    	
+	    } \
         -state disabled
     button $base.fra20.but23 \
         -text Cancel -width 8 \
@@ -703,9 +713,9 @@ namespace eval ::widgets_bindings {
     }
 
     proc {::widgets_bindings::listbox_click} {} {
-
-        set widgets_bindings::lastselected [lindex [ListboxBindings curselection] 0]
-
+	set widgets_bindings::saveselected $::widgets_bindings::lastselected
+	set widgets_bindings::lastselected [lindex [ListboxBindings curselection] 0]
+	
         ::widgets_bindings::enable_toolbar_buttons
         after idle "::widgets_bindings::select_binding"
     }
@@ -831,7 +841,12 @@ namespace eval ::widgets_bindings {
 
         # before selecting a different binding, make sure we
         # save the current one
-        ::widgets_bindings::save_current_binding
+        if { [::widgets_bindings::save_current_binding] == 1 } {
+		
+		return
+	}
+
+	
 
         set indices [ListboxBindings curselection]
         set index [lindex $indices 0]
@@ -839,7 +854,7 @@ namespace eval ::widgets_bindings {
         if {$index == ""} {
             set index $::widgets_bindings::lastselected
         }
-
+	    
         set tag ""
         set tmp_event ""
 
@@ -1028,7 +1043,6 @@ namespace eval ::widgets_bindings {
 
         # before selecting a different binding, make sure we
         # save the current one
-        ::widgets_bindings::save_current_binding
 
         # w is the bindings editor window
         # target is the widgets whose bindings we want to edit
@@ -1147,7 +1161,7 @@ namespace eval ::widgets_bindings {
         TextBindings configure -state normal
         TextBindings delete 0.0 end
         TextBindings configure -background gray -state disabled
-
+	variable saveselected 0
         variable lastselected 0
         variable lasttag ""
         variable lastevent ""
@@ -1196,12 +1210,21 @@ namespace eval ::widgets_bindings {
                         
         set old_bind [string trim [bind $tag $event]]
         set new_bind [string trim [TextBindings get 0.0 end]]
-
-        # is it really different?
-        if {$new_bind != $old_bind} {
-            bind $tag $event $new_bind
-            ::vTcl::change
-        }
+	if { [info complete $new_bind] == 0 } {
+		::vTcl::MessageBox -icon error \
+		 -message "Syntax Error: Please check you're code and try again." \
+		 -title "Syntax Error"
+		return 1			
+	
+	} else {
+        	# is it really different?
+        		if {$new_bind != $old_bind} {
+            			bind $tag $event $new_bind
+            			::vTcl::change
+				return 0
+        		}
+		}
+	
     }
 
     proc clear_current_binding {} {
@@ -1210,12 +1233,25 @@ namespace eval ::widgets_bindings {
     }
 
     proc {::widgets_bindings::select_binding} {} {
-
-        global widget
+	
+    global widget
+    #disable focus out binding 	
+    bind $widget(TextBindings) <FocusOut> {  }
+    
 
         # before selecting a different binding, make sure we
         # save the current one
-        ::widgets_bindings::save_current_binding
+	#revert to the old selection if there was a syntax error
+        if { [::widgets_bindings::save_current_binding] == 1 } {
+		
+		ListboxBindings selection clear  0 end
+						
+		ListboxBindings selection set $::widgets_bindings::saveselected \
+					      $::widgets_bindings::saveselected
+	  	set widgets_bindings::lastselected $::widgets_bindings::saveselected	
+		focus $widget(TextBindings)
+		return
+	}
 
         set indices [ListboxBindings curselection]
         set index [lindex $indices 0]
@@ -1239,6 +1275,12 @@ namespace eval ::widgets_bindings {
         ::widgets_bindings::show_binding $tag $event
         focus $widget(ListboxBindings)
         ListboxBindings selection set $index
+	focus $widget(TextBindings)
+#reenaable the binding for focus out
+    	bind $widget(TextBindings) <FocusOut> {
+        	::widgets_bindings::save_current_binding 
+    	}
+	
     }
 
     proc {::widgets_bindings::select_show_binding} {tag event} {
@@ -1275,6 +1317,9 @@ namespace eval ::widgets_bindings {
 
             incr index
         }
+	set widgets_bindings::saveselected $index 
+	set widgets_bindings::lastselected $index
+	
     }
 
     proc {::widgets_bindings::set_modifier_in_event} {event modifier} {

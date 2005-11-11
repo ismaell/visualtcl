@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# attrbar.tcl - attribute icon bar under menus
+# attrbar.tcl - attribute icon bar under menus / attributes in main window
 #
 # Copyright (C) 1996-1998 Stewart Allen
 #
@@ -200,9 +200,11 @@ proc vTcl:attrbar {args} {
 
     set base .vTcl
     frame .vTcl.attr \
-        -borderwidth 1 -height 30 -relief sunken -width 30
+        -borderwidth 1 -height 30 -relief flat -width 30
     pack .vTcl.attr \
         -expand 1 -fill x -side top
+
+    
     frame .vTcl.attr.01 \
         -borderwidth 1 -height 20 -width 20 -relief raised
     pack .vTcl.attr.01 \
@@ -233,7 +235,7 @@ proc vTcl:attrbar {args} {
     button .vTcl.attr.console.console_toggle -image tconsole -highlightthickness 0 \
         -command vTcl:attrbar:toggle_console
     if {[info exist vTcl(attrbar,console_state)] && $vTcl(attrbar,console_state)} {
-    	.vTcl.attr.console.console_toggle configure -relief sunken }
+    	.vTcl.attr.console.console_toggle configure -relief flat}
     vTcl:set_balloon .vTcl.attr.console.console_toggle "show/hide console"
     pack .vTcl.attr.console -side left -padx 5
     pack .vTcl.attr.console.console_toggle -side left -padx 2 -pady 1

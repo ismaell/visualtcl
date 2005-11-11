@@ -69,7 +69,10 @@ proc vTclWindow.vTcl.bgerror {base} {
         -background #dcdcdc -font [vTcl:font:get_font "vTcl:font8"] \
         -foreground #000000 -height 1 -highlightbackground #ffffff \
         -highlightcolor #000000 -selectbackground #008080 \
-        -selectforeground #ffffff -width 8 -wrap word
+        -selectforeground #ffffff \
+	-width 8 -wrap word 
+	
+
     $base.fra20.cpd23 setwidget $base.fra20.cpd23.03
 
     frame $base.fra25 \
@@ -112,6 +115,9 @@ proc vTclWindow.vTcl.bgerror {base} {
         -in $base.fra25 -anchor center -expand 1 -fill none -side left
 
     $widget($base,error_box_text) insert 1.0 $error
+    #The box must be disabled after the error is inserted
+    $widget($base,error_box_text) configure -state disabled
+
 }
 
 proc bgerror {error} {
