@@ -28,7 +28,7 @@ if {![info exists vTcl(sourcing)]} {
 
     # Check if Iwidgets is available
     if {[lsearch -exact $packageNames Iwidgets] != -1} {
-	package require Iwidgets 3.0
+	package require Iwidgets 4.0
 
 	switch $tcl_platform(platform) {
 	    windows {

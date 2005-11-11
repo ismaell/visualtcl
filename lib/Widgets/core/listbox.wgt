@@ -28,7 +28,7 @@ Lib		core
 
 TreeLabel	@vTcl::widgets::core::listbox::getWidgetTreeLabel
 Icon		icon_listbox.gif
-DoubleClickCmd	vTcl:set_list
+DoubleClickCmd	vTcl::widgets::core::listbox::set_list
 InsertCmd	vTcl::widgets::core::listbox::insertCmd
 DefaultValues   -foreground \
                 -highlightbackground -highlightcolor \
@@ -50,5 +50,8 @@ namespace eval vTcl::widgets::core::listbox {
         set val [$target cget -listvariable]
 	if {[lempty $val]} { set val NONE }
 	return "Listbox VAR: $val"
+    }
+    proc set_list {args} {
+    	tk_messageBox -message "Not Implimented! "
     }
 }
