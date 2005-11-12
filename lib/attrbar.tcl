@@ -186,30 +186,72 @@ proc vTcl:attrbar:toggle_console {} {
     	set vTcl(attrbar,console_state) 1
     } elseif {$vTcl(attrbar,console_state)} {
 	tkcon hide
-	.vTcl.attr.console.console_toggle configure -relief raised
+	.vTcl.attr.console.console_toggle configure -relief flat
 	set vTcl(attrbar,console_state) 0
     }
 }
 
+#If you want to change the appearance of the main toolbar then you can use
+#the misc.tcl procs toolbar_menubutton and toolbar_button. 
 proc vTcl:attrbar {args} {
     global vTcl tk_version
-
     if {[expr [lsearch -exact $vTcl(gui,showlist) .vTcl.tkcon] != -1]} {
 	vTcl:attrbar:toggle_console
     }
 
     set base .vTcl
     frame .vTcl.attr \
-        -borderwidth 1 -height 30 -relief flat -width 30
+        -borderwidth 1 -height 10 -relief ridge  -width 30
     pack .vTcl.attr \
-        -expand 1 -fill x -side top
+        -expand 1  -side top 
+# FILE BAR----------------------------------------------------------------------
+    frame .vTcl.attr.filebar \
+        -borderwidth 1 -height 20 -width 20 -relief groove
+    pack .vTcl.attr.filebar \
+        -anchor center -expand 0 -fill y -ipadx 0 -ipady 0 -padx 0  -pady 0 \
+	-side left
+   
+    vTcl:toolbar_button .vTcl.attr.filebar.new -image image5\
+        -command vTcl:new 
+    vTcl:set_balloon .vTcl.attr.filebar.new "New Project"
+    pack .vTcl.attr.filebar.new -side left -padx 1 -pady 1
+    
+    vTcl:toolbar_button  .vTcl.attr.filebar.open -image image7 \
+        -command vTcl:open 
+    vTcl:set_balloon .vTcl.attr.filebar.open "Open Project"
+    pack .vTcl.attr.filebar.open -side left -padx 1 -pady 1
+
+    vTcl:toolbar_button .vTcl.attr.filebar.save -image image8 \
+        -command vTcl:save 
+    vTcl:set_balloon .vTcl.attr.filebar.save "Save Project"
+    pack .vTcl.attr.filebar.save -side left -padx 1 -pady 1
+#--------------------------------------------------------------------------------   
+   
+#CLIPBOARD BAR-------------------------------------------------------------------
+    frame .vTcl.attr.clipbar \
+    	-borderwidth 1 -height 20 -width 20 -relief groove
+    pack .vTcl.attr.clipbar \
+        -anchor center -expand 0 -fill y -ipadx 0 -ipady 0 -padx 0 -pady 0 \
+	-side left
+    
+    vTcl:toolbar_button .vTcl.attr.clipbar.cut -image image2 -command vTcl:cut
+    vTcl:set_balloon .vTcl.attr.clipbar.cut "Cut"
+    pack .vTcl.attr.clipbar.cut -side left -padx 1 -pady 1
 
     
+    vTcl:toolbar_button .vTcl.attr.clipbar.copy -image image1 -command vTcl:copy
+    vTcl:set_balloon .vTcl.attr.clipbar.copy "Copy"
+    pack .vTcl.attr.clipbar.copy -side left -padx 1 -pady 1
+    
+    vTcl:toolbar_button .vTcl.attr.clipbar.paste -image image4 -command vTcl:paste
+    vTcl:set_balloon .vTcl.attr.clipbar.paste "Paste"
+    pack .vTcl.attr.clipbar.paste -side left -padx 1 -pady 1
+
+
+#--------------------------------------------------------------------------------
+   
     frame .vTcl.attr.01 \
-        -borderwidth 1 -height 20 -width 20 -relief raised
-    pack .vTcl.attr.01 \
-        -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 3 -pady 2 \
-        -side left
+        -borderwidth 1 -height 20 -width 20 -relief groove
     vTcl:entry .vTcl.attr.01.02 \
         -highlightthickness 0 -width 15 -textvariable vTcl(w,opt,-text) \
         -bg white
@@ -223,29 +265,29 @@ proc vTcl:attrbar {args} {
     vTcl:set_balloon .vTcl.attr.01.02 "text"
     pack .vTcl.attr.01.02 \
         -anchor center -expand 1 -fill both -padx 2 -pady 2 -side left
-    button .vTcl.attr.01.03 \
-        -highlightthickness 0 -bd 1 -padx 4 -pady 1 -image ellipses -command {
-            vTcl:set_command $vTcl(w,widget)
-        }
+    vTcl:toolbar_button .vTcl.attr.01.03 -image ellipses \
+       -command  {   vTcl:set_command $vTcl(w,widget)  }
+       
     vTcl:set_balloon .vTcl.attr.01.03 "command"
     pack .vTcl.attr.01.03 \
         -anchor center -padx 2 -pady 2 -side left
 
-    frame .vTcl.attr.console -borderwidth 1 -relief flat
-    button .vTcl.attr.console.console_toggle -image tconsole -highlightthickness 0 \
-        -command vTcl:attrbar:toggle_console
+    frame .vTcl.attr.console -borderwidth 1 -relief groove
+    button .vTcl.attr.console.console_toggle -image tconsole -highlightthickness 0  -height 30 -width 30\
+        -command vTcl:attrbar:toggle_console -relief flat -bd 1
     if {[info exist vTcl(attrbar,console_state)] && $vTcl(attrbar,console_state)} {
-    	.vTcl.attr.console.console_toggle configure -relief flat}
+    	.vTcl.attr.console.console_toggle configure -relief flat }
     vTcl:set_balloon .vTcl.attr.console.console_toggle "show/hide console"
-    pack .vTcl.attr.console -side left -padx 5
+    pack .vTcl.attr.console -side left -fill y
     pack .vTcl.attr.console.console_toggle -side left -padx 2 -pady 1
+    
 
     frame .vTcl.attr.04 \
-        -borderwidth 1 -height 20 -relief flat -width 20
+        -borderwidth 1 -height 20 -relief groove -width 200
     pack .vTcl.attr.04 \
-        -anchor center -expand 0 -fill none -padx 3 -pady 2 -side left
-    vTcl:toolbar_menubutton .vTcl.attr.04.relief -bd 1 -relief raised -image relief \
-        -highlightthickness 0 -menu .vTcl.attr.04.relief.m
+        -anchor center -expand yes -fill y -padx 0 -pady 0 -side left
+	
+    vTcl:toolbar_menubutton .vTcl.attr.04.relief -image relief -menu .vTcl.attr.04.relief.m 
     menu .vTcl.attr.04.relief.m -tearoff 0
     .vTcl.attr.04.relief.m add radiobutton -image rel_raised -command {
         vTcl:widget_set_relief raised
@@ -264,8 +306,9 @@ proc vTcl:attrbar {args} {
         vTcl:widget_set_relief flat
     } -variable vTcl(w,opt,-relief) -value flat
     vTcl:set_balloon .vTcl.attr.04.relief "border"
-    vTcl:toolbar_menubutton .vTcl.attr.04.border -bd 1 -relief raised -image border \
-        -highlightthickness 0 -menu .vTcl.attr.04.border.m
+    
+    
+    vTcl:toolbar_menubutton .vTcl.attr.04.border -image border -menu .vTcl.attr.04.border.m
     menu .vTcl.attr.04.border.m -tearoff 0
     .vTcl.attr.04.border.m add radiobutton -label 1 -command {
         vTcl:widget_set_border 1
@@ -284,8 +327,8 @@ proc vTcl:attrbar {args} {
         vTcl:widget_set_border 0
     } -variable vTcl(w,opt,-borderwidth) -value 0
     vTcl:set_balloon .vTcl.attr.04.border "border width"
-    vTcl:toolbar_menubutton .vTcl.attr.04.anchor -bd 1 -relief raised -image anchor \
-        -highlightthickness 0 -menu .vTcl.attr.04.anchor.m
+    
+    vTcl:toolbar_menubutton .vTcl.attr.04.anchor -image anchor -menu .vTcl.attr.04.anchor.m
     menu .vTcl.attr.04.anchor.m -tearoff 0
     .vTcl.attr.04.anchor.m add radiobutton -image anchor_c -command {
         vTcl:widget_set_anchor center
@@ -315,8 +358,8 @@ proc vTcl:attrbar {args} {
         vTcl:widget_set_anchor se
     } -variable vTcl(w,opt,-anchor) -value se
     vTcl:set_balloon .vTcl.attr.04.anchor "label anchor"
-    vTcl:toolbar_menubutton .vTcl.attr.04.pack -bd 1 -relief raised -image pack_img \
-        -highlightthickness 0 -menu .vTcl.attr.04.pack.m
+    
+    vTcl:toolbar_menubutton .vTcl.attr.04.pack -image pack_img -menu .vTcl.attr.04.pack.m
     menu .vTcl.attr.04.pack.m -tearoff 0
     .vTcl.attr.04.pack.m add radiobutton -image anchor_n -command {
         vTcl:widget_set_pack_side top
@@ -331,55 +374,55 @@ proc vTcl:attrbar {args} {
         vTcl:widget_set_pack_side left
     } -variable vTcl(w,pack,-side) -value left
     vTcl:set_balloon .vTcl.attr.04.pack "pack side"
-    pack .vTcl.attr.04.relief -side left -padx 2 -pady 2
-    pack .vTcl.attr.04.border -side left -padx 2 -pady 2
-    pack .vTcl.attr.04.anchor -side left -padx 2 -pady 2
-    pack .vTcl.attr.04.pack   -side left -padx 2 -pady 2
+    pack .vTcl.attr.04.relief -side left -padx 1 -pady 1 -fill both
+    pack .vTcl.attr.04.border -side left -padx 1 -pady 1 -fill both
+    pack .vTcl.attr.04.anchor -side left -padx 1 -pady 1 -fill both
+    pack .vTcl.attr.04.pack   -side left -padx 1 -pady 1 -fill both
 
     frame .vTcl.attr.010 \
-        -borderwidth 1 -height 20 -relief flat -width 20
+        -borderwidth 1 -height 20 -relief groove -width 20
     pack .vTcl.attr.010 \
-        -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 3 -pady 2 \
+        -anchor center -expand 0 -fill y -ipadx 0 -ipady 0 -padx 0 -pady 0 \
         -side left
-    vTcl:toolbar_button .vTcl.attr.010.lab41 \
-        -bd 1 -image fg -pady 3 -padx 2 -highlightthickness 0 -command {
+    vTcl:toolbar_button .vTcl.attr.010.lab41 -image fg  -command {
             vTcl:widget_set_fg .vTcl.attr.010.lab41
         }
+	
     vTcl:set_balloon .vTcl.attr.010.lab41 "foreground"
     pack .vTcl.attr.010.lab41 \
-        -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 2 -pady 2 \
+        -anchor center -expand 0 -fill none -ipadx 0 -ipady 1 -padx 1 -pady 0 \
         -side left
-    vTcl:toolbar_button .vTcl.attr.010.lab42 \
-        -bd 1 -pady 3 -image bg -padx 2 -highlightthickness 0 -command {
+    vTcl:toolbar_button .vTcl.attr.010.lab42 -image bg -command {
             vTcl:widget_set_bg .vTcl.attr.010.lab42
         }
+
     vTcl:set_balloon .vTcl.attr.010.lab42 "background"
     pack .vTcl.attr.010.lab42 \
-        -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 2 -pady 2 \
+        -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 1 -pady 1 \
         -side left
 
     ## Font Browsing
     #
     frame .vTcl.attr.011 \
-        -borderwidth 1 -height 20 -relief flat -width 20
+        -borderwidth 1 -height 20 -relief groove -width 20
     pack .vTcl.attr.011 \
-        -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 3 -pady 2 \
+        -anchor center -expand 0 -fill y -ipadx 0 -ipady 0 -padx 0 -pady 0 \
         -side left
+    
     vTcl:toolbar_menubutton .vTcl.attr.011.lab41 \
-        -bd 1 -relief raised -image fontbase -pady 3 -padx 2 \
-        -highlightthickness 0 -menu .vTcl.attr.011.lab41.m
+        -image fontbase -menu .vTcl.attr.011.lab41.m
     menu .vTcl.attr.011.lab41.m -tearoff 0
     vTcl:fill_font_menu .vTcl.attr.011.lab41.m
     vTcl:set_balloon .vTcl.attr.011.lab41 "font"
+    
     vTcl:toolbar_menubutton .vTcl.attr.011.lab42 \
-        -bd 1 -relief raised -image fontsize -pady 3 -padx 2 \
-        -highlightthickness 0 -menu .vTcl.attr.011.lab42.m
+        -image fontsize -menu .vTcl.attr.011.lab42.m
     menu .vTcl.attr.011.lab42.m -tearoff 0
     vTcl:fill_fontsize_menu .vTcl.attr.011.lab42.m
     vTcl:set_balloon .vTcl.attr.011.lab42 "font size"
-    vTcl:toolbar_menubutton .vTcl.attr.011.lab43 \
-        -bd 1 -relief raised -image fontstyle -pady 3 -padx 2 \
-        -highlightthickness 0 -menu .vTcl.attr.011.lab43.m
+
+    
+    vTcl:toolbar_menubutton .vTcl.attr.011.lab43 -image fontstyle -menu .vTcl.attr.011.lab43.m
     menu .vTcl.attr.011.lab43.m -tearoff 0
     .vTcl.attr.011.lab43.m add check -variable vTcl(w,fontstyle,bold) \
         -label bold -command "vTcl:set_font style \$vTcl(w,widget) bold"
@@ -388,9 +431,9 @@ proc vTcl:attrbar {args} {
     .vTcl.attr.011.lab43.m add check -variable vTcl(w,fontstyle,underline) \
         -label underline -comm "vTcl:set_font style \$vTcl(w,widget) underline"
     vTcl:set_balloon .vTcl.attr.011.lab43 "font style"
+    
     vTcl:toolbar_menubutton .vTcl.attr.011.lab44 \
-        -bd 1 -relief raised -image justify -pady 3 -padx 2 \
-        -highlightthickness 0 -menu .vTcl.attr.011.lab44.m
+        -image justify -menu .vTcl.attr.011.lab44.m
     menu .vTcl.attr.011.lab44.m -tearoff 0
     .vTcl.attr.011.lab44.m add radiobutton -variable vTcl(w,opt,-justify) \
         -label left -command "vTcl:set_justify \$vTcl(w,widget) left"
@@ -403,38 +446,42 @@ proc vTcl:attrbar {args} {
         .vTcl.attr.011.lab44 \
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 2 -pady 2 \
         -side left
-
+#PACKAGE MANAGER CONTROL USES STANDARD BUTTONS. WE REALLY NEED A NEW CONTROL FOR
+#TOGGLE BUTTONS
     frame .vTcl.attr.016 \
-        -borderwidth 1 -height 20 -relief flat -width 20
+        -borderwidth 1 -height 20 -relief groove -width 20
     pack .vTcl.attr.016 \
-        -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 3 -pady 2 \
+        -anchor center -expand 0 -fill y -ipadx 0 -ipady 0 -padx 0 -pady 0 \
         -side left
     set vTcl(mgrs,grid,widget) .vTcl.attr.016.017
-    button .vTcl.attr.016.017 \
-        -command {vTcl:set_manager grid} \
-        -highlightthickness 0 -image mgr_grid -padx 0 -pady 0
+
+    
+    button .vTcl.attr.016.017  -height 30 -width 30 \
+        -highlightthickness 0 -padx 0 -pady 0 -bd 1 \
+        -image mgr_grid \
+        -command {vTcl:set_manager grid} 
     vTcl:set_balloon .vTcl.attr.016.017 "use grid manager"
     pack .vTcl.attr.016.017 \
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 2 -pady 2 \
         -side left
     set vTcl(mgrs,pack,widget) .vTcl.attr.016.018
-    button .vTcl.attr.016.018 \
+    button .vTcl.attr.016.018  -height 30 -width 30\
         -command {vTcl:set_manager pack} \
-        -highlightthickness 0 -image mgr_pack -padx 0 -pady 0
+        -highlightthickness 0 -image mgr_pack -padx 0 -pady 0 -bd 1
     vTcl:set_balloon .vTcl.attr.016.018 "use packer manager"
     pack .vTcl.attr.016.018 \
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 2 -pady 2 \
         -side left
     set vTcl(mgrs,place,widget) .vTcl.attr.016.019
-    button .vTcl.attr.016.019 \
+    button .vTcl.attr.016.019 -height 30 -width 30\
         -command {vTcl:set_manager place} \
-        -highlightthickness 0 -image mgr_place -padx 0 -pady 0
+        -highlightthickness 0 -image mgr_place -padx 0 -pady 0 -bd 1
     vTcl:set_balloon .vTcl.attr.016.019 "use place manager"
     pack .vTcl.attr.016.019 \
         -anchor center -expand 0 -fill none -ipadx 0 -ipady 0 -padx 2 -pady 2 \
         -side left
     set vTcl(mgrs,wm,widget) .vTcl.attr.016.020
-    button .vTcl.attr.016.020
+    button .vTcl.attr.016.020 -height 30 -width 30
 }
 
 
