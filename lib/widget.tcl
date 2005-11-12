@@ -818,6 +818,8 @@ proc vTcl:create_widget {class options new_widg x y} {
     foreach def $classes($c,dontSaveOptions) {
         append do "vTcl:prop:save_or_unsave_opt $new_widg $def vTcl(w,opt,$def) 0; "
     }
+	#give it some time, idle should work but it didn't
+    	append do "after 500 {vTcl:init_wtree};"
 
 #WAS NOT DELETEING WIDGETS WITH SPECIAL DELETE COMMANDS SUCH AS TOPLEVEL
     if {$undo == ""} {
@@ -829,9 +831,11 @@ proc vTcl:create_widget {class options new_widg x y} {
 		set destroy_command $classes($class,deleteCmd)
  	}
 	append undo "$destroy_command $new_widg;"
-	append undo "set _cmds \[info commands $new_widg.*\];"
-	append undo {foreach _cmd $_cmds {catch {rename $_cmd ""}}}
-       	
+	#append undo "set _cmds \[info commands $new_widg.*\];"
+	#append undo "foreach _cmd \$_cmds {catch {rename \$_cmd \"\"}};"
+	append undo "vTcl:prop:clear;"
+	append undo "after idle {vTcl:init_wtree};"
+    	
     }
 
 
