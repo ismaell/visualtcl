@@ -129,12 +129,8 @@ proc vTclWindow.vTcl.bind {args} {
     frame $base.cpd21.01 \
         -background #9900991B99FE -highlightbackground #dcdcdc \
         -highlightcolor #000000
-    vTcl:toolbar_label $base.fra22.men20 \
-        -image [vTcl:image:get_image "add.gif"]
-    bind $base.fra22.men20 <ButtonPress-1> {
-        if {[%W cget -state] == "normal"} {
-          tk_popup %W.m [winfo rootx %W] [expr [winfo rooty %W] + [winfo height %W]]}
-    }
+    vTcl:toolbar_menubutton $base.fra22.men20 \
+        -image [vTcl:image:get_image "add.gif"] -menu $base.fra22.men20.m
     menu $base.fra22.men20.m \
         -borderwidth 1 \
         -tearoff 0
