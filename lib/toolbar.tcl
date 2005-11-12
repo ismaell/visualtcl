@@ -25,11 +25,11 @@ proc vTcl:toolbar_create {args} {
     global vTcl
     set base .vTcl.toolbar
     if {[winfo exists $base]} {return}
-    vTcl:toplevel $base -width 237 -height 0 -class vTcl
+    vTcl:toplevel $base -width 237 -height 110 -class vTcl
     wm transient $base .vTcl
     wm withdraw $base
     wm title $base "Widget Toolbar"
-    wm geometry $base +0+110
+    wm geometry $base +110+110
     wm minsize $base 237 40
     wm overrideredirect $base 0
     catch {wm geometry .vTcl.toolbar $vTcl(geometry,.vTcl.toolbar)}
