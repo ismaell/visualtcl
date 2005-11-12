@@ -24,7 +24,8 @@
 proc vTcl:toolbar_button {args} {
     eval button $args
     set path [lindex $args 0]
-    $path configure -relief flat -highlightthickness 0 -height 23 -width 23
+    $path configure -relief flat -highlightthickness 0 -height 30 -width 30 \
+    		    -border 1
     bind $path <Enter> {
 	if {[%W cget -state] != "disabled"} {
 	    %W configure -relief raised
@@ -36,7 +37,8 @@ proc vTcl:toolbar_button {args} {
 proc vTcl:toolbar_menubutton {args} {
     eval menubutton $args
     set path [lindex $args 0]
-    $path configure -relief flat -highlightthickness 0 -height 23 -width 23
+    $path configure -relief flat -highlightthickness 0 -height 30 -width 30 -bd 1
+
     bind $path <Enter> {
 	if {[%W cget -state] != "disabled"} {
 	    %W configure -relief raised
