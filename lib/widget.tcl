@@ -786,8 +786,8 @@ proc vTcl:create_widget {class options new_widg x y} {
             set new_widg "$vTcl(w,insert).$new_widg"
         }
     }
-
-    set c $class
+    
+    set c $class 
     set p ""
     if {[winfo exists $insert]} {
         set p [vTcl:get_class $insert]
@@ -819,9 +819,24 @@ proc vTcl:create_widget {class options new_widg x y} {
         append do "vTcl:prop:save_or_unsave_opt $new_widg $def vTcl(w,opt,$def) 0; "
     }
 
+#WAS NOT DELETEING WIDGETS WITH SPECIAL DELETE COMMANDS SUCH AS TOPLEVEL
     if {$undo == ""} {
-        set undo "destroy $new_widg; vTcl:active_widget [list $vTcl(w,widget)];"
+	append undo "vTcl:unset_alias $new_widg;"
+	append undo "::vTcl::notify::publish delete_widget $new_widg;"
+	append undo "vTcl:setup_unbind_widget $new_widg;"
+	set destroy_command "destroy"
+	if {$classes($class,deleteCmd) != ""} {
+		set destroy_command $classes($class,deleteCmd)
+ 	}
+	append undo "$destroy_command $new_widg;"
+	append undo "set _cmds \[info commands $new_widg.*\];"
+	append undo {foreach _cmd $_cmds {catch {rename $_cmd ""}}}
+       	
     }
+
+
+
+
     vTcl:push_action $do $undo
     update idletasks
     set vTcl(mgrs,update) yes
