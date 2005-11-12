@@ -167,6 +167,14 @@ proc vTclWindow.vTcl.tip {base} {
              TipWindow.TipText configure -state disabled
         } \
         -text {Next >} -width 8 
+    
+    button $base.fra20.but20        -command {
+                  TipWindow.TipText configure -state normal
+                  TipWindow.TipText delete 0.0 end
+                  TipWindow.TipText insert end	[::tip::get_previous_tip]
+                  TipWindow.TipText configure -state disabled
+             }     -text {< Previous} -width 8
+    		     
     frame $base.fra23 \
         -borderwidth 2 
     label $base.fra23.lab24 \
@@ -192,9 +200,14 @@ proc vTclWindow.vTcl.tip {base} {
         -side right 
     pack $base.fra20.che26 \
         -in $base.fra20 -anchor center -expand 0 -fill none -side left 
-    pack $base.fra20.but19 \
+   
+   pack $base.fra20.but19 \
         -in $base.fra20 -anchor center -expand 0 -fill none -padx 5 -pady 5 \
         -side right 
+   pack $base.fra20.but20 \
+        -in $base.fra20 -anchor center -expand 0 -fill none -padx 5 -pady 5 \
+        -side right
+   	
     pack $base.fra23 \
         -in $base -anchor center -expand 0 -fill y -side left
     pack $base.fra23.lab24 \
@@ -230,12 +243,20 @@ namespace eval ::tip {
 		lappend Tips [string trim $tip]
 	    }
 	}
-
+   
         set length [llength $Tips]
         set Index  [expr ($Index + 1) % $length]
 
         return [lindex $Tips $Index]
     }
+    proc {::tip::get_previous_tip} {} {
+    	variable Tips
+	variable Index
+	set length [llength $Tips]
+	set Index [expr ($Index - 1) % $length]
+	return [lindex $Tips $Index]
+    }
+    
 }
 
 namespace eval ::vTcl::news {
