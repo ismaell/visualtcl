@@ -1163,8 +1163,12 @@ proc ::vTcl::web_browser {} {
     }
 
     foreach path [split $env(PATH) :] {
-    	if {![file executable [file join $path netscape]]} { continue }
-	return [file join $path netscape]
+    	#if {![file executable [file join $path mozilla]]} { continue }
+
+    	#if {![file executable [file join $path netscape]]} { continue }
+	
+	#return [file join $path netscape]
+	return mozilla
     }
 }
 
