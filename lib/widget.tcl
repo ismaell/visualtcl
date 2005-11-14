@@ -453,7 +453,6 @@ proc vTcl:get_grid_stickies {sticky} {
 }
 
 proc vTcl:update_widget_info {target} {
-
     vTcl:log "update_widget_info $target"
 
     global vTcl widget
@@ -549,6 +548,8 @@ proc vTcl:update_widget_info {target} {
             $::configcmd($spec_opt,update) $target vTcl(w,opt,$spec_opt)
         }
     }
+
+
 }
 
 proc vTcl:conf_to_pairs {conf opt} {
