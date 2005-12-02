@@ -631,10 +631,14 @@ proc vTcl:setup_bind {target} {
 proc vTcl:switch_mode {} {
     global vTcl
     if {$vTcl(mode) == "EDIT"} {
-    	vTcl:propmgr:deselect_attr
+        vTcl:propmgr:deselect_attr
         vTcl:setup_unbind_tree .
+        #Save unregistered widgets. 
+        vTcl:widget:register_all_widgets
     } else {
         vTcl:setup_bind_tree .
+        #remove widgets created at runtime
+        vTcl:widget:remove_unregistered_widgets
     }
 }
 
@@ -1485,6 +1489,21 @@ proc vTcl:widget:register_widget {w {save_options ""}} {
 
     vTcl:widget:register_widget_custom $w
 }
+##
+# Destroy all widgets that have not been registered. These will usually be ones 
+# that are created at run time or using tkcon.
+##
+proc vTcl:widget:remove_unregistered_widgets {{w .}} {
+	set widgets [vTcl:list_widget_tree $w]
+	foreach w $widgets {
+		if {![catch {namespace children ::widgets} namespaces]} {
+	        	if { [lsearch $namespaces ::widgets::${w}] <= -1 } {
+				pack forget $w
+				destroy $w
+		   	   }
+		}
+	}
+}
 
 ###
 ## Register all unregistered widgets.  This is called when loading a project.
@@ -1494,6 +1513,7 @@ proc vTcl:widget:register_widget {w {save_options ""}} {
 ## If there is no registry, one will be created.  This lets us register old
 ## imported projects that don't contain saved registry information.
 ###
+
 proc vTcl:widget:register_all_widgets {{w .}} {
     set widgets [vTcl:list_widget_tree $w]
     foreach w $widgets {
