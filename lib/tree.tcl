@@ -32,7 +32,6 @@ proc vTcl:show_selection_in_tree {widget_path} {
 
 proc vTcl:show_selection {button_path target} {
     global vTcl
-
     # do not refresh the widget tree if it does not exist
     if {![winfo exists .vTcl.tree]} return
 
@@ -47,7 +46,8 @@ proc vTcl:show_selection {button_path target} {
 
     set fill #0000ff
     if {![lempty $vTcl(pr,treehighlight)]} { set fill $vTcl(pr,treehighlight) }
-    $b itemconfigure "TEXT$button_path" -fill $fill
+    $b itemconfigure "TEXT$button_path" -fill $fill	
+    
 
     set vTcl(tree,last_selected) $button_path
 
@@ -93,7 +93,15 @@ proc vTcl:left_click_tree {cmd i b j} {
 
     if {$::classes([vTcl:get_class $i],ignoreLeftClk)} return
     if {$vTcl(mode) == "TEST"} return
-
+    
+    #IF THE WIDGET DOES NOT EXIST REGISTER IT
+    if {![catch {namespace children ::widgets} namespaces]} {
+    	if { [lsearch $namespaces ::widgets::${i}] <= -1 } {
+		
+		vTcl:widget:register_widget $i
+	}
+    }
+    
     $cmd $i
     vTcl:active_widget $i
     vTcl:show_selection $b.$j $i
