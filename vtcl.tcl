@@ -137,7 +137,9 @@ proc ::vTcl::load_bwidgets {} {
     	set dir [file join $vTcl(LIB_DIR) bwidget]
 	source  [file join $dir pkgIndex.tcl]
     }
+
 }
+
 
 proc vTcl:setup {} {
     global tk_strictMotif env vTcl tcl_platform __vtlog
@@ -168,13 +170,14 @@ proc vTcl:setup {} {
     set vTcl(LIB_DIR)   [file join $vTcl(VTCL_HOME) lib]
     set vTcl(LIB_WIDG)  [glob -nocomplain [file join $vTcl(LIB_DIR) lib_*.tcl]]
     set LIBS            "globals.tcl about.tcl propmgr.tcl balloon.tcl
-        		attrbar.tcl bgerror.tcl bind.tcl command.tcl color.tcl
-			tkcon.tcl compound.tcl compounds.tcl do.tcl
-			dragsize.tcl dump.tcl edit.tcl file.tcl handle.tcl
-                  input.tcl loadwidg.tcl font.tcl images.tcl menu.tcl
-			misc.tcl name.tcl prefs.tcl proc.tcl tclet.tcl
-			toolbar.tcl tops.tcl tree.tcl var.tcl vtclib.tcl
-			widget.tcl help.tcl menus.tcl new.tcl ttd/ttd.tcl kpwidgets/scrolledbands.tcl"
+                         attrbar.tcl bgerror.tcl bind.tcl command.tcl color.tcl
+			 tkcon.tcl compound.tcl compounds.tcl do.tcl
+			 dragsize.tcl dump.tcl edit.tcl file.tcl handle.tcl 
+			 input.tcl loadwidg.tcl font.tcl images.tcl menu.tcl
+			 misc.tcl name.tcl prefs.tcl proc.tcl tclet.tcl
+			 tops.tcl tree.tcl var.tcl vtclib.tcl
+			 widget.tcl help.tcl menus.tcl new.tcl ttd/ttd.tcl 
+			 toolbar.tcl "
 
     # UKo 2000-12-10: initiate some variables
     set vTcl(libs)      {}
@@ -184,17 +187,20 @@ proc vTcl:setup {} {
     set tk_strictMotif    1
     wm withdraw .
     vTcl:splash
+    ::vTcl::load_bwidgets
+    #for scrolled Bands widget
+    source [ file join $vTcl(LIB_DIR) kpwidgets sbands.tcl ]
+    namespace import kpwidgets::*
     vTcl:load_libs $LIBS
-
+    vTcl:load_widgets
+    
     ## load preferences
     if {[file exists $vTcl(CONF_FILE)]} {
         catch {uplevel #0 [list source $vTcl(CONF_FILE)]}
         catch {set vTcl(w,def_mgr) $vTcl(pr,manager)}
     }
 
-    ::vTcl::load_bwidgets
-    vTcl:load_widgets
-    ::vTcl::load_bwidgets
+    #::vTcl::load_bwidgets
 
     # initializes the stock images database
     vTcl:image:init_stock
@@ -546,7 +552,6 @@ proc vTcl:define_bindings {} {
             break
         }
     }
-
     bind Text <KeyRelease>   {
 
         # exclude user inserted text widgets from vTcl bindings
