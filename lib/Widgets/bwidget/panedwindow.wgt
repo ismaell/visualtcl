@@ -40,11 +40,11 @@ DumpInfoCmd     vTcl::widgets::bwidgets::panedwindow::dumpInfoCmd
 ## Special proc for setting up icons on the toolbar.
 proc vTcl:PanedWindow:ToolBarSetup {} {
 
-    vTcl:toolbar_add PanedWindow \
+    vTcl:toolbar_add bwidgets PanedWindow \
 	"vertical paned window" \
 	icon_BwPanedWindow.gif "-side left"
 
-    vTcl:toolbar_add PanedWindow \
+    vTcl:toolbar_add bwidgets PanedWindow \
     	"horizontal paned window" \
 	icon_BwPanedWindowHoriz.gif "-side top"
 }

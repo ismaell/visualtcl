@@ -55,11 +55,11 @@ Function        "Edit Panes..."         vTcl::widgets::iwidgets::panedwindow::ed
 ##
 proc vTcl:Panedwindow:ToolBarSetup {} {
 
-    vTcl:toolbar_add Panedwindow \
+    vTcl:toolbar_add itcl Panedwindow \
 	"vertical paned window" \
 	icon_panedwindow.gif "-orient horizontal"
 
-    vTcl:toolbar_add Panedwindow \
+    vTcl:toolbar_add itcl Panedwindow \
     	"horizontal paned window" \
 	../lib/Widgets/itcl/panedwindowhoriz.gif "-orient vertical"
 }

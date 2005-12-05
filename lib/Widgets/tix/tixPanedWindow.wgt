@@ -24,11 +24,11 @@ NewOption -orientation "orientation" choice {vertical horizontal}
 ## Special proc for setting up icons on the toolbar.
 proc vTcl:TixPanedWindow:ToolBarSetup {} {
 
-    vTcl:toolbar_add TixPanedWindow \
+    vTcl:toolbar_add tix TixPanedWindow \
 	"vertical paned window" \
 	icon_tixPanedWindow.gif "-orientation vertical"
 
-    vTcl:toolbar_add TixPanedWindow \
+    vTcl:toolbar_add tix TixPanedWindow \
     	"horizontal paned window" \
 	../lib/Widgets/tix/tixPanedWindowHoriz.gif "-orientation horizontal"
 }
