@@ -20,7 +20,6 @@
 
 ##############################################################################
 #
-
 proc vTcl:toolbar_create {args} {
     global vTcl
     set base .vTcl.toolbar
@@ -39,8 +38,10 @@ proc vTcl:toolbar_create {args} {
         vTcl:error "You cannot remove the toolbar"
     }
     
-    kpwidgets::scrolledbands .vTcl.toolbar.sbands -width 60
+    set sbands [kpwidgets::SBands .vTcl.toolbar.sbands]
     
+
+
     frame $base.tframe -relief raise -bd 1 
 
     image create photo pointer \
@@ -61,14 +62,15 @@ proc vTcl:toolbar_create {args} {
     pack $base.tframe.b -side left
     label $base.tframe.l -text "Pointer" 
     pack $base.tframe.l -side left
-    pack .vTcl.toolbar.sbands  -fill both -expand yes -side bottom
+    pack $sbands -fill both -expand yes -side bottom
 
 }
 
-proc vTcl:toolbar_add {class name image cmd_add } {
+proc vTcl:toolbar_add {band_name class name image cmd_add } {
     global vTcl
     if {![winfo exists $.vTcl.toolbar]} { vTcl:toolbar_create }
-    set base [.vTcl.toolbar.sbands current_childsite]
+    
+    set base [.vTcl.toolbar.sbands childsite $band_name]
     set f [vTcl:new_widget_name tb $base]
     ensureImage $image
     frame $f
@@ -79,7 +81,7 @@ proc vTcl:toolbar_add {class name image cmd_add } {
        "vTcl:new_widget \$vTcl(pr,autoplace) $class $f.b \"$cmd_add\""
 
     bind $f.b <Shift-ButtonRelease-1> \
-       "vTcl:new_widget 1 $class $f.b \"$cmd_add\""
+    "vTcl:new_widget 1 $class $f.b \"$cmd_add\""
 
     vTcl:set_balloon $f.b $name
     lappend vTcl(tool,list) $f.b
@@ -90,10 +92,11 @@ proc vTcl:toolbar_add {class name image cmd_add } {
 }
 
 namespace eval ::vTcl {
-    proc toolbar_header {header} {
+    proc toolbar_header { band_name title } {
+    	
         if {![winfo exists $.vTcl.toolbar]} { vTcl:toolbar_create }
         set base .vTcl.toolbar.sbands 
-        $base new_frame $header 
+        $base new_frame $band_name $title 
     }
 }
 
