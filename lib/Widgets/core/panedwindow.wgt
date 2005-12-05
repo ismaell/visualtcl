@@ -50,11 +50,11 @@ NewOption -sticky       "sticky"		type
 ## Special proc for setting up icons on the toolbar.
 proc vTcl:Panedwindow:ToolBarSetup {} {
 
-    vTcl:toolbar_add Panedwindow \
+    vTcl:toolbar_add core Panedwindow \
 	"horizontal paned window" \
 	../lib/Widgets/core/panedwindowhoriz.gif "-orient horizontal"
 
-    vTcl:toolbar_add Panedwindow \
+    vTcl:toolbar_add core Panedwindow \
     	"vertical paned window" \
 	../lib/Widgets/core/panedwindow.gif "-orient vertical"
 }
