@@ -44,7 +44,7 @@ proc vTcl:widget:lib:lib_blt {args} {
       Tabset
     }
 
-    vTcl:lib:add_widgets_to_toolbar $order "BLT Widgets"
+    vTcl:lib:add_widgets_to_toolbar $order BLT "BLT Widgets"
 
     append vTcl(head,blt,importheader) {
     # BLT is needed

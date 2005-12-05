@@ -57,7 +57,7 @@ proc vTcl:widget:lib:lib_core {args} {
 	lappend order Panedwindow
     }
 
-    vTcl:lib:add_widgets_to_toolbar $order "Standard/vTcl Tcl/Tk Widgets"
+    vTcl:lib:add_widgets_to_toolbar $order core "Standard/vTcl Tcl/Tk Widgets"
 
     append vTcl(head,core,importheader) {
     package require Tk

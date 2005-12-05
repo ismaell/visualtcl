@@ -27,5 +27,5 @@ proc vTcl:widget:lib:lib_user {args} {
 
     if {![info exists vTcl(lib_user,classes)]} { return }
 
-    vTcl:lib:add_widgets_to_toolbar $vTcl(lib_user,classes)
+    vTcl:lib:add_widgets_to_toolbar $vTcl(lib_user, classes) $vTcl(lib_user,classes)
 }

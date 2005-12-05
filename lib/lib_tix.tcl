@@ -41,7 +41,7 @@ proc vTcl:widget:lib:lib_tix {args} {
         TixOptionMenu
     }
 
-    vTcl:lib:add_widgets_to_toolbar $order "Tix Widgets"
+    vTcl:lib:add_widgets_to_toolbar $order tix "Tix Widgets"
 
     append vTcl(head,tix,importheader) {
     # Tix is required
