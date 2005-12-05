@@ -815,12 +815,12 @@ proc vTcl:rebind_button_1 {} {
     bind vTcl(b) <Button-1> {vTcl:bind_button_1 %W %X %Y %x %y}
 }
 
-proc vTcl:lib:add_widgets_to_toolbar {list {headerLabel {}}} {
+proc vTcl:lib:add_widgets_to_toolbar { list  band_name headerLabel } {
     global classes
-    
-
+   
     if {$headerLabel != ""} {
-        vTcl::toolbar_header $headerLabel 
+
+        vTcl::toolbar_header $band_name $headerLabel
     }
     
 
@@ -831,8 +831,9 @@ proc vTcl:lib:add_widgets_to_toolbar {list {headerLabel {}}} {
 	    vTcl:$i:ToolBarSetup
 	    continue
 	}
-	vTcl:toolbar_add $i $classes($i,balloon) \
-	    $classes($i,icon) $classes($i,addOptions)
+
+	vTcl:toolbar_add $band_name $i $classes($i,balloon) \
+	    $classes($i,icon) $classes($i,addOptions)  
     }
 }
 
