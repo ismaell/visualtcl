@@ -19,7 +19,10 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 ##############################################################################
-#
+# 20051213 Nelson - rough modifications on this file to get tclets operational again.
+# These modifications seem to mostly work but it appears that you should NOT enable or 
+# code around "Use widget command aliasing" and "Use auto-aliasing for new widgets" features.
+# I have left remarks in various places as I sort through the tclet operation.
 
 proc vTcl:create_tclet {target} {
     global vTcl
@@ -194,4 +197,158 @@ proc vTcl:tclet_from_cmpd {base name compound {level 0}} {
         }
     }
     return $todo
+}
+
+###############################################################
+# 20051213 Nelson - This is the magic proc that I am working on
+# to bring tclet operations back to life. This proc is starting 
+# from the change that remove the proc from the compound.tcl file
+# and is documented on the diff below:
+# http://cvs.sourceforge.net/viewcvs.py/vtcl/vtcl/lib/compound.tcl?r1=1.31&r2=1.32
+# So I am now moving the proc back in with some modifications to 
+# the tclet.tcl file.
+
+proc vTcl:gen_compound {target {name ""} {cmpdname ""}} {
+    global vTcl widget classes
+    set ret ""
+    set mgr ""
+    set bind ""
+    set menu ""
+    set chld ""
+    set alias ""
+    set grid ""
+    set proc ""
+    if {![winfo exists $target]} {
+        return ""
+    }
+    set class [vTcl:get_class $target]
+
+    # rename conf to configure because Iwidgets don't like conf only
+    set opts [vTcl:get_opts [$target configure]]
+
+    if {$class == "Menu"} {
+        set mnum [$target index end]
+        if {$mnum != "none"} {
+            for {set i 0} {$i <= $mnum} {incr i} {
+                set t [$target type $i]
+                set c [vTcl:get_opts [$target entryconf $i]]
+                lappend menu "$t \{$c\}"
+            }
+        }
+        set mgrt {}
+        set mgri {}
+    } elseif {$class == "Toplevel"} {
+        set mgrt "wm"
+        set mgri ""
+    } else {
+        set mgrt [winfo manager $target]
+
+        ## in Iwidgets, some controls are not yet packed/gridded/placed when
+        ## they are in edit mode, therefore there is no manager at this time
+        ##
+        ## in BWidgets, pages in a notebook either don't have a manager or have
+        ## the 'canvas' manager
+
+	if {[lempty $mgrt] || [lempty [info commands $mgrt]] || $mgrt == "canvas"} {
+	    set mgri {}
+        } else {
+	    set mgri [vTcl:get_mgropts [$mgrt info $target]]
+	}
+    }
+    lappend mgr $mgrt $mgri
+    set blst [bind $target]
+    foreach i $blst {
+        lappend bind "$i \{[bind $target $i]\}"
+    }
+
+    # now, are bindtags non-standard ?
+    set bindtags $vTcl(bindtags,$target)
+    # 20051213 Nelson - Do normal stuff and then also make sure to exclude the toplevel binding things.
+    if {$bindtags != [::widgets_bindings::get_standard_bindtags $target] && [vTcl:get_class $target] != "Toplevel" } {
+        # append the list of binding tags
+	puts "Bind here is - $bind"
+        lappend bind [list [vTcl:normalize_bindtags $target $bindtags]]
+	puts "Now bind here is - $bind"
+
+        # keep all bindings definitions with the compound
+        # (even if children define them too)
+	# puts "Putting bindtag - $bindtags"
+        foreach bindtag $bindtags {
+            if {[lsearch -exact $::widgets_bindings::tagslist $bindtag] >= 0} {
+                foreach event [bind $bindtag] {
+                    lappend bind "$bindtag $event \{[bind $bindtag $event]\}"
+                }
+            }
+        }
+    }
+
+    foreach i [vTcl:get_children $target] {
+
+      if {[string match {*#*} $i]} {continue}
+
+      # retain children names while creating a compound
+      set windowpath [split $i .]
+      set lastpath [lindex $windowpath end]
+
+	append chld "[vTcl:gen_compound $i $name.$lastpath] "
+    }
+
+    catch {set alias $widget(rev,$target)}
+    set pre g
+    set gcolumn [lindex [grid size $target] 0]
+    set grow [lindex [grid size $target] 1]
+    foreach a {column row} {
+        foreach b {weight minsize} {
+            set num [subst $$pre$a]
+            for {set i 0} {$i < $num} {incr i} {
+                if {[catch {
+                    set x [expr {round([grid ${a}conf $target $i -$b])}]
+                }]} {set x 0}
+                if {$x > 0} {
+                    lappend grid "${a}conf $i -$b $x"
+                }
+            }
+        }
+    }
+    if {$cmpdname != ""} {
+        foreach i $vTcl(procs) {
+            if {[string match ::${cmpdname}::* $i]} {
+                lappend proc [list $i [vTcl:proc:get_args $i] [info body $i]]
+            }
+        }
+    }
+
+    ## special case for megawidgets: code to recreate all the childsites
+    if {$classes($class,compoundCmd) != ""} {
+        set compoundCode [$classes($class,compoundCmd) $target]
+        lappend proc [list __insert$target target $compoundCode]
+    }
+
+# 20051213 Nelson taken out
+#    set topopt ""
+#    if {$class == "Toplevel"} {
+#        foreach i $vTcl(attr,tops) {
+#            set v [wm $i $target]
+#            if {$v != ""} {
+#                lappend topopt [list $i $v]
+#            }
+#        }
+#    }
+    puts "Class - $class"
+    puts "OPTS - $opts"
+    puts "MGR - $mgr"
+    puts "Bind - $bind"
+    puts "Menu - $menu"
+    puts "Chld - $chld"
+    puts "Name - $name"
+    puts "Alias - $alias"
+    puts "Grid - $grid"
+    puts "Proc - $proc"
+    puts "CmpdName - $cmpdname"
+#    puts "Topopt - $topopt"
+    
+#    lappend ret $class $opts $mgr $bind $menu $chld $name $alias $grid $proc $cmpdname $topopt
+    lappend ret $class $opts $mgr $bind $menu $chld $name $alias $grid $proc $cmpdname
+    vTcl:append_alias $target $name
+    return \{$ret\}
 }
