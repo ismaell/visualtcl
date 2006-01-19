@@ -11,7 +11,7 @@ ttd.tagdef {Centered Title} -background #fefefe -font {-family helvetica -weight
 ttd.tagdef center -background white -font {-family helvetica -weight normal -slant roman -size 10 -underline 0 -overstrike 0} -foreground #000000 -justify center
 
 ttd.tagon {Centered Title}
-ttd.text {Visual Tcl 1.6.0}
+ttd.text {Visual Tcl 1.6.x-development}
 ttd.tagoff {Centered Title}
 ttd.text {
 }
@@ -54,7 +54,7 @@ ttd.text {
 ttd.text {
 }
 ttd.tagon Header
-ttd.text {Maintained by:}
+ttd.text {Previously Maintained by:}
 ttd.tagoff Header
 ttd.text {
 }
@@ -64,6 +64,19 @@ ttd.text {Christian Gavin (cgavin@dnai.com)
 ttd.text {Damon Courtney (damon@unreality.com)
 }
 ttd.text {Luke Myers
+}
+ttd.tagoff body
+ttd.text {
+}
+ttd.tagon Header
+ttd.text {Currently maintained by:}
+ttd.tagoff Header
+ttd.text {
+}
+ttd.tagon body
+ttd.text {Kenneth Parker (kenparkerjr@users.sourceforge.net)
+}
+ttd.text {Richard Nelson (unixabg@users.sourceforge.net)
 }
 ttd.tagoff body
 ttd.text {
