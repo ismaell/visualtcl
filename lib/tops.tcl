@@ -135,8 +135,12 @@ proc vTcl:toplist:show {{on ""}} {
 
 proc vTcl:toplist:show_selection {base {show show}} {
     global vTcl
-    set vTcl(x) [$base.f2.list curselection]
-    if {$vTcl(x) != ""} {
+    if { $vTcl(mode) == "TEST" } {
+    	::vTcl::MessageBox -message "Removing Top Level is not allowed in test mode!"
+    	return
+    }
+    	set vTcl(x) [$base.f2.list curselection]
+    	if {$vTcl(x) != ""} {
         vTcl:${show}_top $vTcl(tops,$vTcl(x))
     }
 }
