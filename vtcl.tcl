@@ -192,7 +192,6 @@ proc vTcl:setup {} {
     source [ file join $vTcl(LIB_DIR) kpwidgets sbands.tcl ]
     namespace import kpwidgets::*
     vTcl:load_libs $LIBS
-    vTcl:load_widgets
     
     ## load preferences
     if {[file exists $vTcl(CONF_FILE)]} {
@@ -200,6 +199,7 @@ proc vTcl:setup {} {
         catch {set vTcl(w,def_mgr) $vTcl(pr,manager)}
     }
 
+    vTcl:load_widgets
     #::vTcl::load_bwidgets
 
     # initializes the stock images database
@@ -577,7 +577,6 @@ proc vTcl:define_bindings {} {
 	}
     }
 
-    bind vTcl(b) <Shift-Button-1>    {vTcl:bind_scrollbar %W $vTcl(w,widget)}
     bind vTcl(b) <Button-3>          {vTcl:right_click %W %X %Y %x %y}
     bind vTcl(b) <Double-Button-1>   {vTcl:widget_dblclick %W %X %Y %x %y}
     bind vTcl(b) <Button-1>          {vTcl:bind_button_1 %W %X %Y %x %y}
