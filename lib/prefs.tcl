@@ -277,7 +277,7 @@ proc {vTcl:prefs:browse_file} {varname} {
 	}
 
 	set tk_strictMotif 0
-	set newfile [tk_getOpenFile -filetypes $types -defaultextension .tcl]
+	set newfile [tk_getOpenFile -filetypes $types]
 	set tk_strictMotif 1
 
 	if {$newfile != ""} {
