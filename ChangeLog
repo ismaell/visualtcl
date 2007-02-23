@@ -1,5 +1,16 @@
 ChangeLog for Visual Tcl:
 
+1.6.0 -> 1.6.1a1
+    o Changed the CVS type of several GIF files, which prevented correct
+      checkout on Windows and probably MAC.
+    o Fixed BUG ID 823361: Problem undoing Toplevel.
+    o Fixed errors caused by clicking on unregistered widgets. Those created
+      by tkcon or at runtime.
+    o Disallow removing top when in test mode.
+    o Several toolbar enhancements (sections and others).
+    o Check the syntax of procedures, bindings, commands, etc., avoid saving
+      projects that cannot be reloaded because of a missing brace.
+
 1.6.0b2 -> 1.6.0
     o Do not save a menubutton's menu if it does not exist.
     o Redesigned font and image selection from attributes manager.
