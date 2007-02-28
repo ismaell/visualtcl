@@ -65,6 +65,8 @@ ttd.text {Damon Courtney (damon@unreality.com)
 }
 ttd.text {Luke Myers
 }
+ttd.text {Kenneth Parker (kenparkerjr@users.sourceforge.net)
+}
 ttd.tagoff body
 ttd.text {
 }
@@ -74,8 +76,6 @@ ttd.tagoff Header
 ttd.text {
 }
 ttd.tagon body
-ttd.text {Kenneth Parker (kenparkerjr@users.sourceforge.net)
-}
 ttd.text {Richard Nelson (unixabg@users.sourceforge.net)
 }
 ttd.tagoff body
