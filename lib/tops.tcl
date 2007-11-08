@@ -106,18 +106,18 @@ proc vTcl:convert_tops {} {
 # adds the _TopLevel binding tag if it is missing, so that
 # the project automatically exits when all toplevels have been closed
 proc vTcl:bind_tops {} {
-    global vTcl
+    #global vTcl
 
     ## do this anyway so that the latest version of the bindings
     ## will be saved into the file
-    vTcl::widgets::core::toplevel::setBindings
+    #vTcl::widgets::core::toplevel::setBindings
 
-    foreach i $vTcl(tops) {
+    #foreach i $vTcl(tops) {
 	# convert from 1.51 to 1.6
-	if {[lsearch $::vTcl(bindtags,$i) _TopLevel] == -1} {
-	    lappend ::vTcl(bindtags,$i) _TopLevel
-	}
-    }
+	#if {[lsearch $::vTcl(bindtags,$i) _TopLevel] == -1} {
+	#    lappend ::vTcl(bindtags,$i) _TopLevel
+	#}
+    #}
 }
 
 proc vTcl:toplist:show {{on ""}} {

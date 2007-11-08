@@ -146,19 +146,25 @@ namespace eval vTcl::widgets::core::toplevel {
     proc setBindings {} {
 
     	  bind _TopLevel <<Create>> {
+##Automatically generated code do not edit.
 	    if {![info exists _topcount]} {set _topcount 0}; incr _topcount
+##Insert additional code below.
         }
 
         bind _TopLevel <Destroy> {
+##Automatically generated code do not edit.
             if {[winfo toplevel %W] == "%W"} {incr _topcount -1}
+##Insert additional code below.
         }
 
         bind _TopLevel <<DeleteWindow>> {
+##Automatically generated code do not edit.
             if {[set ::%W::_modal]} {
                 vTcl:Toplevel:WidgetProc %W endmodal
             } else {
                 destroy %W; if {$_topcount == 0} {exit}
             }
+##Insert additional code below.
         }
 
         ::widgets_bindings::add_tag_to_tagslist _TopLevel
