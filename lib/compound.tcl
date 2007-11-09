@@ -608,7 +608,7 @@ namespace eval ::vTcl::compounds {
         ## code to actually create the compound
         append output "proc compoundCmd \{target\} \{\n"
         if {$initCmd != ""} {
-            append output "    $initCmd \$target\n\n"
+            append output "    $ \$target\n\n"
         }
         if {$imagesDef != ""} {
             append output "    imagesCmd \$target\n"

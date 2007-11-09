@@ -31,8 +31,11 @@ proc vTcl:entry_or_text {w} {
 proc vTcl:copy {{w ""}} {
     # Cut/copy/paste handled by text widget only
     if {[vTcl:entry_or_text $w]} { return }
-
-    eval [vTcl::compounds::createCompound $::vTcl(w,widget) clipboard scrap]
+	set ::vTcl(w,last_height) 0
+	set ::vTcl(w,last_width) 0
+	 catch {set ::vTcl(w,last_width) [$::vTcl(w,widget) cget -width] }
+	 catch {set ::vTcl(w,last_height) [$::vTcl(w,widget) cget -height] }
+	 eval [vTcl::compounds::createCompound $::vTcl(w,widget) clipboard scrap]
 }
 
 proc vTcl:cut {{w ""}} {
@@ -157,15 +160,25 @@ proc vTcl:paste {{fromMouse ""} {w ""}} {
     }
 
     set mgr $vTcl(w,def_mgr)
+
+	
     set opts {}
     if {$fromMouse == "-mouse" && $mgr == "place"} {
          set opts "-x $vTcl(mouse,x) -y $vTcl(mouse,y)"
     } elseif {$mgr == "place"} {
          set opts "-x 0 -y 0"
     }
-
+#	set spc $clipboard::scrap
+	
+	set width $::vTcl(w,last_width)
+	set height $::vTcl(w,last_height)
+	if { $width != 0} {
+		if { $height != 0 } {
+			append opts " -width $width -height $height "	
+		}
+	}
     if {[vTcl::compounds::getClass clipboard scrap] == "Toplevel"} {
-        set mgr "wm"
+        set mgr "wm"  
         set opts ""
     }
 
