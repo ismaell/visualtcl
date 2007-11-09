@@ -19,7 +19,7 @@ namespace eval ProgressBar {
         {-borderwidth TkResource 2          0 frame}
         {-troughcolor TkResource ""         0 scrollbar}
         {-relief      TkResource sunken     0 label}
-        {-orient      Enum       horizontal 1 {horizontal vertical}}
+        {-orient      Enum       horizontal 0 {horizontal vertical}}
         {-variable    String     ""         0}
         {-idle        Boolean    0          0}
         {-width       TkResource 100        0 frame}
