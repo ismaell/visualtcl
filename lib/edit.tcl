@@ -58,7 +58,9 @@ proc vTcl:delete {recipient {w ""}} {
     if {$w == ""} {
         set w $vTcl(w,widget)
     }
-
+	
+	vTcl:widget:unbind_scrollbar $w
+	
     if {[lempty $w]} { return }
     if {[vTcl:streq $w "."]} { return }
 

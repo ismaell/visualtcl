@@ -1301,7 +1301,42 @@ proc vTcl:update_aliases {} {
 	}
     }
 }
+#remove associations between scrollbars and scrollable widgets. 
+proc vTcl:widget:unbind_scrollbar {w} {
+	set class_name [vTcl:get_class $w]
+	##Handles Scrollbars 
+	##
+	if { $class_name == "Scrollbar" } {
+		set scrollcommand [$w cget -command]
+		if { $scrollcommand == "" } { return }
+		set scrollorient [$w cget -orient]
+		set scrolltarget [lindex $scrollcommand 0]
+		if {$scrollorient == "horizontal"} {
+			$scrolltarget configure -xscrollcomand "" 
+		} elseif {$scrollorient == "vertical"} {
+			$scrolltarget configure -yscrollcomand "" 
+		}
+		return 
+	} 
+	##Handles scrollable controls, cant check a class name here. Too many scrollable widgets
+	if {[catch { set xscrollcommand [$w cget -xscrollcommand] }]} {
+		return
+	}
+	set xscroll [lindex $xscrollcommand 0]
+	if { $xscroll != "" } {
+		$xscroll configure -command ""	
+	}
 
+	if {[catch { set yscrollcommand [$w cget -yscrollcommand] }]} {
+		return
+	}
+	
+	set yscroll [lindex $yscrollcommand 0]
+	if {$yscroll != ""} {
+		$yscroll configure -command ""	
+	}
+
+}
 proc vTcl:widget:get_image {w} {
     global vTcl classes
 
