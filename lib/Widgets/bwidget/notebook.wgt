@@ -30,7 +30,7 @@ Icon		icon_BwTabnotebook.gif
 TreeLabel	BWidget Tabbed Notebook
 CreateCmd	NoteBook
 MegaWidget	yes
-DefaultOptions	-width 300 -height 200
+DefaultOptions	-width 300 -height 200 -ibd 0
 DefaultValues   -background -foreground -font
 ClassOption     -_bwidgets_notebook_pages
 InsertCmd       vTcl::widgets::bwidgets::notebook::insertCmd
@@ -43,6 +43,7 @@ DumpCmd         vTcl::widgets::bwidgets::notebook::dumpCmd
 DumpInfoCmd     vTcl::widgets::bwidgets::notebook::dumpInfoCmd
 GetImagesCmd    vTcl::widgets::bwidgets::notebook::getImagesCmd
 
+NewOption -internalborderwidth		"internal bw"		text
 ## Tabbed notebook support
 NewOption -_bwidgets_notebook_pages  "pages"  combobox
 OptionConfigCmd -_bwidgets_notebook_pages     config     vTcl::widgets::bwidgets::config_pages
