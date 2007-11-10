@@ -69,14 +69,15 @@ proc vTcl:create_handles {target} {
 proc vTcl:place_handles {target} {
     global vTcl
     if {$target == ""} { return }
-
     ## Don't place handles on a toplevel window.
-    if {[vTcl:get_class $target] == "Toplevel"} {
-	vTcl:destroy_handles
-	return
-    }
+	
 
+	
     if {$vTcl(h,exist) && [winfo exists $vTcl(h,n)]} {
+	    if {[vTcl:get_class $target] == "Toplevel"} {
+			vTcl:destroy_handles
+			return
+			}
         update idletasks
         set s $vTcl(h,size)
         set x [winfo x $target]
