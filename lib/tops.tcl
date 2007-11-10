@@ -67,6 +67,8 @@ proc vTcl:hide_top {target} {
             wm withdraw $target
             vTcl:select_widget .
         }
+		$vTcl(gui,rc_widget_menu) delete 0 end
+		.vTcl.m.widget delete 0 end
     }
 }
 
