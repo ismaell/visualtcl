@@ -33,7 +33,7 @@ proc kpwidgets::SBands::new_frame { path args } {
 	set frm $bfrm.frm
 	pack [ frame $bfrm ] -expand yes -fill x
 	set title [ linsert $title end (+) ]
-	pack [ label $lbl -text $title -bg #aaaaaa -bd 1 -relief groove \
+	pack [ label $lbl -text $title -bg #aaaaaa -bd 1 -relief raised \
 		-width 31 ] -side top -fill x -expand yes -padx 2
 	frame $frm 
 	bind $lbl <ButtonPress> "kpwidgets::SBands::Expand $bfrm"
