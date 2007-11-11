@@ -487,8 +487,16 @@ proc vTcl:define_bindings {} {
         bind vTcl($i) <Control-z>  { vTcl:pop_action }
         bind vTcl($i) <Control-r>  { vTcl:redo_action }
         bind vTcl($i) <Control-x>  { vTcl:cut %W }
-        bind vTcl($i) <Control-c>  { vTcl:copy %W }
+		bind vTcl($i) <Alt-c>  	   { vTcl:copycopy %W }
         bind vTcl($i) <Control-v>  { vTcl:paste {} %W }
+		
+        bind vTcl($i) <Control-c>  { vTcl:copy %W }
+		
+		### Now use pastepaste for all pastes, if vTcl(copycopy) 
+		### does not exist, then we revert to normal paste
+		### user does a copy for first widget, then copycopy for 
+		### 2..nth, we remember these with vTcl(copycopy) 
+        ##bind vTcl($i) <Control-v>  { vTcl:paste {} %W }
         bind vTcl($i) <Control-q>  { vTcl:quit }
         bind vTcl($i) <Control-n>  { vTcl:new }
         bind vTcl($i) <Control-o>  { vTcl:open }
@@ -503,7 +511,7 @@ proc vTcl:define_bindings {} {
         bind vTcl($i) <Alt-e>      { vTcl:setup_bind_tree . }
         bind vTcl($i) <Alt-b>      { vTcl:show_bindings }
         bind vTcl($i) <Alt-w>      { vTcl:show_wtree }
-        bind vTcl($i) <Alt-c>      { vTcl:name_compound $vTcl(w,widget) }
+        #bind vTcl($i) <Alt-c>      { vTcl:name_compound $vTcl(w,widget) }
 	    	
     }
 
@@ -717,7 +725,6 @@ proc vTcl:main {argc argv} {
 	set vTcl(tmp,newsAfter) [after 5000 ::vTcl::news::get_news]
     }
 }
-
 vTcl:main $argc $argv
 
 

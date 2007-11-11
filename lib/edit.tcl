@@ -27,15 +27,19 @@ proc vTcl:entry_or_text {w} {
     if {[vTcl:streq $c "Text"] || [vTcl:streq $c "Entry"]} { return 1 }
     return 0
 }
+proc vTcl:copycopy {{w ""}} {
+    # Cut/copy/paste handled by text widget only
+    if {[vTcl:entry_or_text $w]} { return }
+	lappend ::vTcl(w,copylist) $::vTcl(w,widget)
 
+}
 proc vTcl:copy {{w ""}} {
     # Cut/copy/paste handled by text widget only
     if {[vTcl:entry_or_text $w]} { return }
-	set ::vTcl(w,last_height) 0
-	set ::vTcl(w,last_width) 0
-	 catch {set ::vTcl(w,last_width) [$::vTcl(w,widget) cget -width] }
-	 catch {set ::vTcl(w,last_height) [$::vTcl(w,widget) cget -height] }
-	 eval [vTcl::compounds::createCompound $::vTcl(w,widget) clipboard scrap]
+ 
+	 set ::vTcl(w,copylist) "" 
+	 lappend ::vTcl(w,copylist) $::vTcl(w,widget)
+
 }
 
 proc vTcl:cut {{w ""}} {
@@ -156,8 +160,60 @@ proc vTcl:paste {{fromMouse ""} {w ""}} {
     if {[vTcl:entry_or_text $w]} { return }
 
     global vTcl
+	
+	set FirstX [winfo x [lindex $::vTcl(w,copylist) 0]]
+	set FirstY [winfo y [lindex $::vTcl(w,copylist) 0]]
+	
+	foreach ClipBoardWidget $::vTcl(w,copylist)  {
+		append relativeX [ expr [winfo x $ClipBoardWidget] - $FirstX ] 
+		append relativeX " "
+		append relativeY [ expr [winfo y $ClipBoardWidget] - $FirstY ]
+		append relativeY " "
+	}
+	set tmpX ""
+	foreach X $relativeX {
+		append tmpX [incr X $::vTcl(mouse,x)]
+		append tmpX " "
+	}
+	set relativeX $tmpX
+	
+	set tmpY ""
+	foreach Y $relativeY {
+		append tmpY [incr Y $::vTcl(mouse,y)]
+		append tmpY " "
+	}
+	set relativeY $tmpY
+	
+	foreach  ClipBoardWidget $::vTcl(w,copylist) X $relativeX Y $relativeY {
+		set save_opts ""
+		set width 0
+		set height 0
+		catch { set width [$ClipBoardWidget cget -width] }
+		catch { set height [$ClipBoardWidget cget -height] }
+		
+		
+		
+		if { $width != 0 } {
+			append save_opts " -width $width "
+		}
+		if { $height !=0 } {
+			append save_opts " -height $height "
+		}
+		if { $vTcl(w,def_mgr) == "place" } {
 
-    if {[lempty [vTcl::compounds::enumerateCompounds clipboard]]} {
+			append save_opts " -x $X -y $Y "
+		}
+		
+		
+		eval [vTcl::compounds::createCompound  $ClipBoardWidget clipboard scrap]
+		vTcl:paste_single $fromMouse $w $save_opts
+	}
+	set $::vTcl(w,copylist) ""
+
+}
+ proc vTcl:paste_single {{fromMouse ""} {w ""} {saveOpts ""}} {
+	global vTcl
+	if {[lempty [vTcl::compounds::enumerateCompounds clipboard]]} {
         return
     }
 
@@ -165,28 +221,23 @@ proc vTcl:paste {{fromMouse ""} {w ""}} {
 
 	
     set opts {}
-    if {$fromMouse == "-mouse" && $mgr == "place"} {
-         set opts "-x $vTcl(mouse,x) -y $vTcl(mouse,y)"
-    } elseif {$mgr == "place"} {
-         set opts "-x 0 -y 0"
-    }
-#	set spc $clipboard::scrap
+
+    #if {$fromMouse == "-mouse" && $mgr == "place"} {
+    #     set opts "-x $vTcl(mouse,x) -y $vTcl(mouse,y)"
+    #} elseif {$mgr == "place"} {
+    #     set opts "-x 0 -y 0"
+    #}
+
 	
-	set width $::vTcl(w,last_width)
-	set height $::vTcl(w,last_height)
-	if { $width != 0} {
-		if { $height != 0 } {
-			append opts " -width $width -height $height "	
-		}
-	}
+	append opts " $saveOpts "
+
     if {[vTcl::compounds::getClass clipboard scrap] == "Toplevel"} {
         set mgr "wm"  
         set opts ""
     }
 
     vTcl::compounds::autoPlaceCompound clipboard scrap $mgr $opts
-}
-
+ }
 namespace eval ::vTcl::findReplace {
     variable base	.vTcl.find
     variable txtbox	""
