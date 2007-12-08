@@ -134,9 +134,19 @@ proc vTclWindow.vTcl.ae {args} {
     	-anchor center
         pack $f3.l -side top -fill x
 
-    bind $f1.l <ButtonPress> {vTcl:prop:set_visible info}
-    bind $f2.l <ButtonPress> {vTcl:prop:set_visible attr}
-    bind $f3.l <ButtonPress> {vTcl:prop:set_visible geom}
+	# TODO : Add a vTcl menu preference to choose between the two following kinds of binding
+
+	# With this binding, the user hs to press the corresponding section to fold / unfold it :
+
+    #bind $f1.l <ButtonPress> {vTcl:prop:set_visible info}
+    #bind $f2.l <ButtonPress> {vTcl:prop:set_visible attr}
+    #bind $f3.l <ButtonPress> {vTcl:prop:set_visible geom}
+
+	# With this one, the user just has to overfly the section header to open it, all others are automatically closed  :
+
+    bind $f1.l <Enter> { vTcl:prop:set_visible info 1    ; vTcl:prop:set_visible attr FOLD ; vTcl:prop:set_visible geom FOLD }
+    bind $f2.l <Enter> { vTcl:prop:set_visible info FOLD ; vTcl:prop:set_visible attr 1    ; vTcl:prop:set_visible geom FOLD }
+    bind $f3.l <Enter> { vTcl:prop:set_visible info FOLD ; vTcl:prop:set_visible attr FOLD ; vTcl:prop:set_visible geom 1    }
 
     set w $f1.f
     frame $w; pack $w -side top -expand 1 -fill both

@@ -45,6 +45,7 @@ proc vTcl:pop_action {} {
         eval $vTcl(action,$vTcl(action_index),undo)
         incr vTcl(action_index) -1
         vTcl:setup_bind_widget .
+        set vTcl(w,widget) .
     } else {
         ::vTcl::MessageBox -icon error -parent .vTcl -title "No undo!" \
             -message "Nothing to undo!" -type ok

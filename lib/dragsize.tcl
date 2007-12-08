@@ -148,9 +148,9 @@ proc vTcl:grab_motion {parent widget absX absY} {
     if { $vTcl(w,manager) == "place" } {
         place $parent \
             -x [vTcl:grid_snap x \
-                [expr {$absX-$vTcl(grab,startX)+$vTcl(w,x)}]] \
+                [expr $absX-$vTcl(grab,startX)+$vTcl(w,x)]] \
             -y [vTcl:grid_snap y \
-                [expr {$absY-$vTcl(grab,startY)+$vTcl(w,y)}]]
+                [expr $absY-$vTcl(grab,startY)+$vTcl(w,y)]]
     }
     vTcl:place_handles $parent
 }

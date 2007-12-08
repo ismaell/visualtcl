@@ -204,7 +204,7 @@ proc vTclWindow.vTcl.proclist {args} {
     wm withdraw $vTcl(gui,proclist)
     wm focusmodel $base passive
     wm geometry $base 200x200+48+237
-    wm maxsize $base 1137 870
+    wm maxsize $base [winfo screenwidth .] [winfo screenheight .]
     wm minsize $base 200 100
     wm overrideredirect $base 0
     wm resizable $base 1 1

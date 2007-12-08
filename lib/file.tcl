@@ -172,6 +172,7 @@ proc vTcl:open {{file ""}} {
         set file [vTcl:get_file open "Open Project"]
     } else {
         if ![file exists $file] {return}
+		catch {cd [file dirname $file]}
     }
 
     if {![info exists vTcl(rcFiles)]} { set vTcl(rcFiles) {} }
