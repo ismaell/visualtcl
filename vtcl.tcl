@@ -25,6 +25,7 @@ exec wish "$0" "$@"
 ##############################################################################
 #
 
+
 namespace eval ::vTcl {}
 
 set vTcl(sourcing) 0
@@ -644,6 +645,9 @@ proc vTcl:main {argc argv} {
     catch {package require Unsafe} ; #for running in Netscape
     catch {package require dde}    ; #for windows
     catch {package require Tk}     ; #for dynamic loading tk
+
+tk_messageBox -icon info -type ok -title "PureTkGUI project info" -message "Please visit and try http://sourceforge.net/projects/puretkgui/, this project is the  follow-up of Visual Tcl. Don't hesitate to post your requests on PureTkGUI forum."
+
 
 	## for Tcl/Tk 8.4
 	if {![llength [info commands tkTextInsert]]} {
